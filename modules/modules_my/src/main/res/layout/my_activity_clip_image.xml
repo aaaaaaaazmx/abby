@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:orientation="vertical">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/black">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text=""
+                android:textColor="#ffffff"
+                android:textSize="20sp" />
+
+        </RelativeLayout>
+
+        <!--圆形裁剪框示例
+            app:clipBorderWidth="5dp"     ： 裁剪框边框宽度
+            app:clipType="circle"         ： 裁剪框类型为圆形
+            app:mHorizontalPadding="30dp" ：裁剪框距离左右边距为30dp
+         -->
+        <com.cl.common_base.widget.crop.ClipViewLayout
+            android:id="@+id/clipViewLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:userClipBorderWidth="2dp"
+            app:userClipType="circle"
+            app:userHorizontalPadding="10dp" />
+
+
+        <!--矩形裁剪框示例 -->
+        <com.cl.common_base.widget.crop.ClipViewLayout
+            android:id="@+id/clipViewLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            app:userClipBorderWidth="2dp"
+            app:userClipType="rectangle"
+            app:userHorizontalPadding="30dp"
+            app:userRectangleHeight="240dp"
+            app:userRectangleWidth="120dp" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="#1C1C1C">
+
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignTop="@+id/bt_ok"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:gravity="center_vertical|start"
+                android:paddingStart="15dp"
+                android:paddingLeft="15dp"
+                android:paddingEnd="0dp"
+                android:paddingRight="0dp"
+                android:text="Retake"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/bt_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical|end"
+                android:paddingStart="0dp"
+                android:paddingLeft="0dp"
+                android:paddingEnd="15dp"
+                android:paddingRight="15dp"
+                android:text="Use Photo"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+        </RelativeLayout>
+
+
+    </LinearLayout>
+</layout>

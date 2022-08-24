@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        tools:context=".ui.LoginActivity"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/tv_login"
+            android:layout_width="118dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="121dp"
+            android:text="Login"
+            android:textColor="@color/mainColor"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/filledTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="24dp"
+            android:hint="Username"
+            android:orientation="vertical"
+            android:textColorHint="#C9C9C9"
+            android:textSize="15sp"
+            android:theme="@style/TextInputLayoutTheme"
+            app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="none"
+            app:boxStrokeColor="@color/mainColor"
+            app:layout_constraintTop_toBottomOf="@+id/tv_login"
+            app:passwordToggleDrawable="@mipmap/ic_launcher">
+
+            <EditText
+                android:background="@null"
+                android:id="@+id/account_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:textSize="15sp"
+                android:theme="@style/TextInputLayoutTheme" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mainColor" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginEnd="24dp"
+            android:hint="Password"
+            android:orientation="vertical"
+            android:textColorHint="#C9C9C9"
+            android:textSize="15sp"
+            android:theme="@style/TextInputLayoutTheme"
+            app:boxBackgroundColor="@color/white"
+            app:boxBackgroundMode="none"
+            app:boxStrokeColor="@color/mainColor"
+            app:layout_constraintTop_toBottomOf="@+id/filledTextField"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleDrawable="@drawable/login_password_visible_invisible"
+            >
+
+            <!--this is the actual edit text which takes the input-->
+            <EditText
+                android:background="@null"
+                android:id="@+id/password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="textPassword"
+                android:textSize="15sp"
+                android:theme="@style/TextInputLayoutTheme" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/mainColor" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tv_error_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Forgot password ？"
+            android:textColor="#F72E47"
+            android:textSize="15sp"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
+
+        <TextView
+            android:id="@+id/tv_forget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="Forgot password ？"
+            android:textColor="@color/mainColor"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="@+id/password"
+            app:layout_constraintTop_toBottomOf="@+id/password" />
+
+
+        <RelativeLayout
+            android:id="@+id/rl_btn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/login_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/tv_create"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Login"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+
+        <TextView
+            android:textStyle="bold"
+            android:id="@+id/tv_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="110dp"
+            android:gravity="center"
+            android:text="Create New Account"
+            android:textColor="@color/mainColor"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        <View
+            android:layout_marginTop="1dp"
+            app:layout_constraintEnd_toEndOf="@+id/tv_create"
+            app:layout_constraintStart_toStartOf="@+id/tv_create"
+            app:layout_constraintTop_toBottomOf="@+id/tv_create"
+            android:background="@color/mainColor"
+            android:layout_width="0dp"
+            android:layout_height="1dp"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

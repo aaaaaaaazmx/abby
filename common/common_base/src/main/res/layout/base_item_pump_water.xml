@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="data"
+            type="com.cl.common_base.bean.AdvertisingData" />
+
+    </data>
+
+        <LinearLayout
+            android:padding="24dp"
+            android:background="@mipmap/base_pump_water_bg"
+            android:layout_width="match_parent"
+            android:layout_height="348dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_marginTop="27dp"
+                android:layout_marginStart="17dp"
+                android:layout_marginEnd="17dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_idea"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/base_pump_water_idea" />
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/iv_idea"
+                    android:layout_marginStart="21dp"
+                    android:text="Tip"
+                    android:textColor="@color/mainColor"
+                    android:textSize="17sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:visibility="gone"
+                url="@{data.picture}"
+                android:id="@+id/iv_pic"
+                android:layout_width="match_parent"
+                android:layout_height="171dp"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="17dp"
+                tools:background="@mipmap/ic_launcher" />
+
+            <TextView
+                android:text="@{data.description}"
+                android:id="@+id/tv_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="17dp"
+                android:layout_marginBottom="50dp"
+                android:textColor="#161B19"
+                android:textSize="15sp"
+                tools:ignore="MissingConstraints"
+                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod endum laoreet. Proin gravida dolor sit amet lacus accumsan" />
+        </LinearLayout>
+
+
+</layout>

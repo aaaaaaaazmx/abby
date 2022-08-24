@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.cl.modules_pairing_connection">
+
+
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" /> <!-- 配置权限,用来记录应用配置信息 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 重力加速度传感器权限 -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> <!-- Android8.0安装apk需要请求安装权限 -->
+    <uses-permission android:name="android.permission.VIBRATE" /> <!-- 小米push -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.hardware.sensor.accelerometer" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+
+    <application>
+        <activity android:name="com.cl.modules_pairing_connection.PlantCheckActivity"/>
+        <activity
+            android:launchMode="singleTask"
+            android:name="com.cl.modules_pairing_connection.ui.PlantActivity" />
+        <activity
+            android:launchMode="singleTask"
+            android:name="com.cl.modules_pairing_connection.ui.PairOnePageActivity" />
+        <activity
+            android:launchMode="singleTask"
+            android:name="com.cl.modules_pairing_connection.ui.PairReconnectActivity" />
+        <activity
+            android:launchMode="singleTask"
+            android:name="com.cl.modules_pairing_connection.ui.PairBleScanTimeOutActivity" />
+        <activity android:name="com.cl.modules_pairing_connection.ui.PairDistributionWifiActivity" />
+        <activity android:name="com.cl.modules_pairing_connection.ui.PairFailActivity" />
+        <activity android:name=".ui.PairFrontScanCodeActivity" />
+    </application>
+</manifest>

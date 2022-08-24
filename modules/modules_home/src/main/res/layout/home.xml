@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:id="@+id/cl_root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!--未种植状态-->
+            <include
+                android:id="@+id/plant_first"
+                layout="@layout/home_item_plant_one"
+                android:visibility="gone" />
+
+            <!--引导种植加水步骤-->
+            <include
+                android:id="@+id/plant_add_water"
+                layout="@layout/home_item_plant_two"
+                android:visibility="gone" />
+
+            <!--引导种植倒数第二步-->
+            <include
+                android:id="@+id/plant_clone"
+                layout="@layout/home_item_plant_seven"
+                android:visibility="gone" />
+
+            <!--引导种植最有一步-->
+            <include
+                android:id="@+id/pplant_ninth"
+                layout="@layout/home_item_plant_ninth"
+                android:visibility="gone" />
+
+            <!--设备离线显示图, 这个需要显示在最下面，必须的！-->
+            <include
+                android:id="@+id/plant_off_line"
+                layout="@layout/home_item_off_line"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

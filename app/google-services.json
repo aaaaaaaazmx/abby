@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "995131742482",
+    "project_id": "hey-abby",
+    "storage_bucket": "hey-abby.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995131742482:android:2c3e085a7e24e5dc027bcb",
+        "android_client_info": {
+          "package_name": "com.cl.abby"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995131742482-8oq163kb35oria5idl62eip4t1pc4cig.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cl.abby",
+            "certificate_hash": "ce7264ded60e69fc4f5ffc2419c612ff362974bf"
+          }
+        },
+        {
+          "client_id": "995131742482-rcmv4nb2qq9cr5alfdqkpecdaeqkddbo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-xob6aAnNRk7J1X4dvCPqUJV0FNvyao0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995131742482-rcmv4nb2qq9cr5alfdqkpecdaeqkddbo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

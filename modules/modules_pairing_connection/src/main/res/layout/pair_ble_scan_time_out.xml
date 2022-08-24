@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:background="@color/white"
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/lineBg"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginStart="26dp"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginEnd="26dp"
+                        android:background="@mipmap/pair_time_out" />
+
+                    <TextView
+                        android:id="@+id/tv_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="26dp"
+                        android:layout_marginTop="20dp"
+                        android:text="Can't find your device currently"
+                        android:textColor="#161B19"
+                        android:textSize="15sp"
+                        tools:ignore="MissingConstraints"
+                        tools:text="Can't find your device currently" />
+
+
+                    <TextView
+                        android:id="@+id/tv_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="26dp"
+                        android:layout_marginTop="38dp"
+                        android:text="You can do the following"
+                        android:textColor="@color/mainColor"
+                        android:textSize="24sp"
+                        tools:ignore="MissingConstraints"
+                        tools:text="You can do the following" />
+
+
+                    <TextView
+                        android:layout_marginEnd="24dp"
+                        android:id="@+id/tv_four"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="26dp"
+                        android:textColor="#161B19"
+                        android:textSize="15sp"
+                        tools:ignore="MissingConstraints"
+                        tools:text=" 2. Place the phone close to the device \n     and pair it again." />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_success"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="144dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="94dp"
+                    android:background="@drawable/create_state_button"
+                    android:enabled="true"
+                    android:text="Try again"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

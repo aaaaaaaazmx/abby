@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:background="@color/lineBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                app:title="3/3"
+                android:background="@color/white"
+                android:id="@+id/title_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/lineBg"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/title_bar">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="24dp"
+                    android:text="Select WiFi network"
+                    android:textColor="@color/mainColor"
+                    android:textSize="24sp"
+                    tools:ignore="MissingConstraints"
+                    tools:text="Select WiFi network" />
+
+                <TextView
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginEnd="24dp"
+                    android:id="@+id/tv_desc_three"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    tools:text="1.Wi-Fi only supports alphanumeric character
+\n \n2.Your phone must be connected to the same 2.4G wifi as abby"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    tools:ignore="MissingConstraints" />
+
+                <com.cl.common_base.widget.SvTextView
+                    android:visibility="gone"
+                    android:id="@+id/svt_no_wifi"
+                    android:layout_marginTop="8dp"
+                    android:padding="9dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/mainColor"
+                    android:text="Enter your Wi-Fi name or allow location access to find nearby Wi-Fi devices."
+                    app:svRadius="5dp"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginEnd="24dp"
+                    app:svSolidType="solid"
+                    app:svSolidColor="#668FEFB2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:id="@+id/tv_ble_nane"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="24dp"
+                    android:textColor="#161B19"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:ignore="MissingConstraints"
+                    tools:text="hey abby i need wifi" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="45dp"
+                    android:layout_marginEnd="24dp">
+
+                    <TextView
+                        android:id="@+id/tv_wifi_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:textColor="#161B19"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        tools:text="wiif name" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="19dp"
+                        android:background="@mipmap/pair_down"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_wifi_name"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_wifi_name" />
+
+                    <View
+                        android:id="@+id/vv_one"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_below="@+id/tv_wifi_name"
+                        android:layout_marginTop="13dp"
+                        android:background="@color/mainColor"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_wifi_name" />
+
+
+                    <EditText
+                        android:inputType="textPassword"
+                        app:layout_constraintEnd_toStartOf="@+id/fl_psd_state"
+                        android:id="@+id/et_wifi_pwd"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginTop="44dp"
+                        android:background="@null"
+                        android:hint="Network Password"
+                        android:textColorHint="#C9C9C9"
+                        android:textSize="16sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/vv_one" />
+
+                    <View
+                        android:id="@+id/vv_two"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="13dp"
+                        android:background="@color/mainColor"
+                        app:layout_constraintTop_toBottomOf="@+id/et_wifi_pwd" />
+
+
+                    <TextView
+                        android:visibility="invisible"
+                        android:id="@+id/error"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:textColor="#D61744"
+                        android:textSize="15sp"
+                        android:text="Wrong password!"
+                        app:layout_constraintTop_toBottomOf="@+id/vv_two"
+                        tools:ignore="MissingConstraints"
+                        tools:text="Wrong password!" />
+
+                    <FrameLayout
+                        android:id="@+id/fl_psd_state"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        app:layout_constraintBottom_toBottomOf="@+id/et_wifi_pwd"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/et_wifi_pwd">
+
+                        <ImageView
+                            android:layout_marginEnd="19dp"
+                            android:id="@+id/cb_check"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right|center_vertical"
+                            android:background="@mipmap/pair_psd_close"
+                            android:checked="false"
+                             />
+                    </FrameLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_success"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="207dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/create_state_button"
+                android:enabled="false"
+                android:text="Confirm"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:layout_gravity="bottom"
+                android:textSize="18sp"
+                 />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

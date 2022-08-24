@@ -1,0 +1,11 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <!--启动页面-->
+    <style name="StartAppTheme" parent="Theme.Abby">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowBackground">@drawable/layout_start_background</item>
+    </style>
+
+</resources>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="data"
+            type="com.cl.modules_my.viewmodel.SettingViewModel" />
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:title="Settings" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/lineBg"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="3.5dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="@color/lineBg"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:text="Device"
+                    android:textColor="#C4C4C4"
+                    android:textSize="14sp" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_current_fir"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="Current firmware" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    isOffline="@{data.isOffLine()}"
+                    android:id="@+id/ft_fir_update"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="Firmware upgrade" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    isOffline="@{data.isOffLine()}"
+                    android:id="@+id/ft_water_tank"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="7dp"
+                    app:itemTitle="Empty water tank" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_replant"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="Replant" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    app:hideArrow="true"
+                    android:id="@+id/ft_sub"
+                    android:layout_marginTop="7dp"
+                    app:itemTitle="Subscription"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    app:hideArrow="true"
+                    android:id="@+id/ft_SN"
+                    app:itemTitle="SN"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"/>
+
+
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/dt_delete_device"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="7dp"
+                    app:itemTitle="Delete Abby"
+                    app:itemTitleColor="#D61744" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="3.5dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/lineBg"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:text="hey abby APP"
+                    android:textColor="#C4C4C4"
+                    android:textSize="14sp" />
+
+                <com.cl.common_base.widget.FeatureItemSwitch
+                    android:id="@+id/ft_notif"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="Notifications" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_vision"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/white"
+                    app:hideArrow="true"
+                    app:itemTitle="Vision" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_new_vision"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    app:itemTitle="New Vision" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

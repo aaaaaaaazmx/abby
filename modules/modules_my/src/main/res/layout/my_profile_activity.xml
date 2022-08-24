@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/lineBg">
+
+        <com.cl.common_base.widget.FeatureTitleBar
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            app:title="Profile" />
+
+        <LinearLayout
+            android:id="@+id/ll_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/white"
+            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@+id/title">
+
+            <com.cl.common_base.widget.FeatureItemView
+                android:id="@+id/ft_head"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                app:itemTitle="Profile Photo" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/lineBg" />
+
+            <com.cl.common_base.widget.FeatureItemView
+                android:id="@+id/ft_nick_name"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                app:itemTitle="Nick Name" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/lineBg" />
+
+            <com.cl.common_base.widget.FeatureItemView
+                android:id="@+id/ft_id"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                app:itemTitle="Abby ID" />
+        </LinearLayout>
+
+
+        <FrameLayout
+            android:id="@+id/fl_login_out"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/ll_root"
+            android:layout_width="match_parent"
+            android:layout_height="60dp">
+
+            <TextView
+                android:id="@+id/tv_login_out"
+                android:layout_gravity="center"
+                android:text="Sign out of account"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="#D61744"
+                android:textSize="15sp" />
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

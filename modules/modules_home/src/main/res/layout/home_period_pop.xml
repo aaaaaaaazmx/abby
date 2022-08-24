@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:background="@drawable/bg_round_tl_tr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginStart="24dp"
+            android:paddingTop="28dp"
+            android:paddingBottom="28dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/home_plant_time_bg" />
+
+            <TextView
+                android:layout_marginStart="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Growth Period"
+                android:textColor="@color/mainColor"
+                android:textSize="19sp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_time"
+                app:layout_constraintStart_toEndOf="@+id/iv_time"
+                app:layout_constraintTop_toTopOf="@+id/iv_time" />
+
+            <ImageView
+                app:layout_constraintEnd_toEndOf="parent"
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="13dp"
+                android:background="@mipmap/iv_close" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.joketng.timelinestepview.view.TimeLineStepView
+            app:markInActive="@mipmap/home_period_time_gray_bg"
+            app:markStart="@mipmap/home_period_time_main_bg"
+            app:markActive="@mipmap/home_period_time_main_bg"
+            app:markCurrent="@mipmap/home_period_time_current_bg"
+            app:lineInActiveColor="@color/lineBg"
+            app:lineActiveColor="@color/mainColor"
+            android:layout_marginBottom="50dp"
+            android:paddingEnd="24dp"
+            android:paddingStart="24dp"
+            app:lineWidth="6dp"
+            android:id="@+id/time_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+</layout>

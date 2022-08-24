@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="itemIcon" format="reference" />
+    <attr name="itemImg" format="reference" />
+    <attr name="itemIconWidth" format="dimension|reference" />
+    <attr name="itemIconHeight" format="dimension|reference" />
+    <attr name="itemTitle" format="string|reference" />
+    <attr name="itemHint" format="string|reference" />
+    <attr name="itemTitleColor" format="color|reference" />
+    <attr name="itemValue" format="string|reference" />
+    <attr name="itemValueColor" format="color|reference" />
+    <attr name="itemValueSize" format="dimension|reference" />
+    <attr name="itemBackgroundColor" format="color|reference" />
+    <attr name="hideArrow" format="boolean" />
+    <attr name="itemChecked" format="boolean" />
+
+    <declare-styleable name="FeatureItemView">
+        <attr name="itemIcon" />
+        <attr name="itemImg" />
+        <attr name="itemIconWidth" />
+        <attr name="itemIconHeight" />
+        <attr name="itemTitle" />
+        <attr name="itemHint" />
+        <attr name="itemTitleColor" />
+        <attr name="itemValue" />
+        <attr name="itemValueColor" />
+        <attr name="itemValueSize" />
+        <attr name="hideArrow" />
+        <attr name="itemBackgroundColor" />
+    </declare-styleable>
+
+    <declare-styleable name="FeatureItemTimeView">
+        <attr name="itemIcon" />
+        <attr name="itemIconWidth" />
+        <attr name="itemIconHeight" />
+        <attr name="itemTitle" />
+        <attr name="itemHint" />
+        <attr name="itemTitleColor" />
+        <attr name="itemValue" />
+        <attr name="itemValueColor" />
+        <attr name="itemValueSize" />
+        <attr name="hideArrow" />
+        <attr name="itemBackgroundColor" />
+    </declare-styleable>
+
+
+    <declare-styleable name="FeatureItemSwitch">
+        <attr name="itemIcon" />
+        <attr name="itemIconWidth" />
+        <attr name="itemIconHeight" />
+        <attr name="itemTitle" />
+        <attr name="itemHint" />
+        <attr name="itemTitleColor" />
+        <attr name="itemValue" />
+        <attr name="itemValueColor" />
+        <attr name="itemChecked" />
+        <attr name="itemBackgroundColor" />
+    </declare-styleable>
+
+    <declare-styleable name="HealthSleepItemView">
+        <attr name="itemIcon" />
+        <attr name="itemIconWidth" />
+        <attr name="itemIconHeight" />
+        <attr name="itemTitle" />
+        <attr name="itemHint" />
+        <attr name="itemTitleColor" />
+        <attr name="itemValue" />
+        <attr name="itemValueColor" />
+        <attr name="itemValueSize" />
+        <attr name="hideArrow" />
+        <attr name="itemContent" format="string|reference" />
+    </declare-styleable>
+
+
+</resources>

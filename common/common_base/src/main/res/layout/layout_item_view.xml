@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp">
+
+    <ImageView
+        android:id="@+id/fiv_item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/fiv_item_value"
+        app:layout_constraintStart_toEndOf="@+id/fiv_item_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_goneMarginStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/fiv_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/fiv_item_title"
+                android:background="@mipmap/base_prohibit_bg"
+                android:id="@+id/item_value_end_drawable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/fiv_item_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/fiv_item_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:gravity="end"
+        android:maxLines="2"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/fiv_item_switch"
+        app:layout_constraintEnd_toStartOf="@+id/fiv_item_switch"
+        app:layout_constraintStart_toEndOf="@id/ll_title"
+        app:layout_constraintTop_toTopOf="@+id/fiv_item_switch"
+        app:layout_goneMarginEnd="0dp" />
+
+    <ImageView
+        android:id="@+id/fiv_item_img"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/fiv_item_switch"
+        app:layout_constraintEnd_toStartOf="@+id/fiv_item_switch"
+        app:layout_constraintTop_toTopOf="@+id/fiv_item_switch"
+        app:layout_goneMarginEnd="0dp" />
+
+    <TextView
+        android:visibility="gone"
+        android:text="P"
+        android:id="@+id/nohead_show"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/head_bg"
+        android:gravity="center"
+        android:textColorHint="@color/mainColor"
+        android:textSize="40sp"
+        app:layout_constraintBottom_toBottomOf="@+id/fiv_item_switch"
+        app:layout_constraintEnd_toStartOf="@+id/fiv_item_switch"
+        app:layout_constraintTop_toTopOf="@+id/fiv_item_switch"
+        app:layout_goneMarginEnd="0dp" />
+
+    <View
+        android:visibility="gone"
+        android:layout_marginEnd="8dp"
+        android:id="@+id/fiv_red_dot"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:background="@drawable/base_dot_red"
+        app:layout_constraintBottom_toBottomOf="@+id/fiv_item_switch"
+        app:layout_constraintEnd_toStartOf="@+id/fiv_item_switch"
+        app:layout_constraintTop_toTopOf="@+id/fiv_item_switch" />
+
+    <ImageView
+        android:id="@+id/fiv_item_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:background="@mipmap/iv_right"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <com.cl.common_base.widget.SvTextView
+        android:visibility="gone"
+        android:id="@+id/svt_text"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="8dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:svRadius="16dp"
+        app:svSolidColor="@color/mainColor"
+        app:svSolidType="solid" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
