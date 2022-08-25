@@ -109,7 +109,7 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
 
         // 延时任务
         job = mViewModel.countDownCoroutines(
-            1000 * 60 * 5,
+            1000 * 60 * 50,
             lifecycleScope,
             onTick = {},
             onStart = {},

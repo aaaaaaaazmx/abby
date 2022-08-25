@@ -79,7 +79,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                 TuyaHomeSdk.getUserInstance().logout(object : ILogoutCallback {
                     override fun onSuccess() {
                         // 清除缓存数据
-                        Prefs.clear()
+                        Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
                         // 清除上面所有的Activity
                         // 跳转到Login页面
                         ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)

@@ -37,9 +37,9 @@ class MyRePlantPop(
                 }
             }
 
-            ivClose.setOnClickListener { smartDismiss() }
+            ivClose.setOnClickListener { dismiss() }
             btnSuccess.setOnClickListener {
-                smartDismiss()
+                dismiss()
                 onNextAction?.invoke()
             }
 

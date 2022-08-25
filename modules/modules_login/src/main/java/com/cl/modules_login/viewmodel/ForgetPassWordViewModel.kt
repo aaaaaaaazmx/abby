@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.util.Prefs
 import com.cl.modules_login.repository.RegisterLoginRepository
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,11 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class ForgetPassWordViewModel @Inject constructor(private val repository: RegisterLoginRepository) :
     ViewModel() {
+
+    // 账号
+    val account: String by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
+    }
 
     /**
      * 忘记密码,发送邮箱验证码

@@ -63,6 +63,8 @@ class ForgetPasswordActivity : BaseActivity<ActivityForgetPasswordBinding>() {
             val name = it.toString()
             binding.btnSuccess.isEnabled = EmailUtil.isEmail(name)
         }
+        // 设置默认账号
+        binding.etName.setText(mViewModel.account)
     }
 
 }

@@ -36,6 +36,11 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
     private val _loginReq = MutableLiveData(LoginReq())
     val loginReq: LiveData<LoginReq> = _loginReq
 
+    // 账号
+    val account by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
+    }
+
     /**
      * 登录
      */

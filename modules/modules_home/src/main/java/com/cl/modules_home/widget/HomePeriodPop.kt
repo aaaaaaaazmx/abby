@@ -68,7 +68,7 @@ class HomePeriodPop(
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<HomePeriodPopBinding>(popupImplView)?.apply {
-            ivClose.setOnClickListener { smartDismiss() }
+            ivClose.setOnClickListener { dismiss() }
             showView(LayoutType.RIGHT)
         }
     }
@@ -111,10 +111,12 @@ class HomePeriodPop(
                         svtUnlock.visibility = View.GONE
                         ivGou.visibility = View.GONE
                         svtWaitUnlock.visibility = View.GONE
+                        periodTime.visibility = View.GONE
 
                         // 赋值
                         periodTitle.text =
                             data?.get(position)?.journeyName
+                        // 未解锁时不显示周期
                         periodTime.text =
                             "Week${data?.get(position)?.week} Day${data?.get(position)?.day}"
 
@@ -123,6 +125,7 @@ class HomePeriodPop(
                                 KEY_WAIT -> {
                                     svtWaitUnlock.text = "Unlock"
                                     svtWaitUnlock.visibility = View.VISIBLE
+                                    // 待解锁状态下，不显示时间周期
 
                                     clRoot.background = ContextCompat.getDrawable(
                                         context,
@@ -138,6 +141,7 @@ class HomePeriodPop(
                                 }
                                 KEY_UNLOCKING_COMPLETED -> {
                                     ivGou.visibility = View.VISIBLE
+                                    periodTime.visibility = View.VISIBLE
 
                                     clRoot.background = ContextCompat.getDrawable(
                                         context,
@@ -153,6 +157,7 @@ class HomePeriodPop(
                                 }
                                 KEY_ON_GOING -> {
                                     tvGoing.visibility = View.VISIBLE
+                                    periodTime.visibility = View.VISIBLE
 
                                     // 进行中
                                     clRoot.background = ContextCompat.getDrawable(

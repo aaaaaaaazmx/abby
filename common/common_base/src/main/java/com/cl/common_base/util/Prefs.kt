@@ -79,6 +79,11 @@ object Prefs {
         mmkv.clear().apply()
     }
 
+    // 删除单个key
+    fun removeKey(key: String) {
+        mmkv.removeValueForKey(key)
+    }
+
     /*****************************************************************************/
 
     /**

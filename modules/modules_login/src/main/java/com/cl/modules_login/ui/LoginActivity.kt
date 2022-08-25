@@ -43,6 +43,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
     override fun initView() {
         ARouter.getInstance().inject(this)
+        // 设置默认的账号
+        binding.accountEditText.setText(mViewModel.account)
     }
 
     private val plantSix by lazy {
@@ -145,10 +147,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 is Resource.DataError -> {
                     hideProgressLoading()
                     // 错误信息显示出来
-                    ViewUtils.setVisible(binding.tvErrorInfo)
                     when (it.errorCode) {
                         1007 -> {
                             binding.tvErrorInfo.text = "Incorrect password!"
+                            ViewUtils.setVisible(binding.tvErrorInfo)
                         }
                         else -> {
                             it.errorMsg?.let { msg -> ToastUtil.shortShow(msg) }
@@ -216,7 +218,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             val account = binding.accountEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
             // 直接劝退
-            if (account.isNullOrEmpty() || password.isNullOrEmpty()) return@setOnClickListener
+            if (account.isNullOrEmpty()) {
+                ToastUtil.shortShow("Account cannot be empty")
+                return@setOnClickListener
+            }
+            if (password.isNullOrEmpty()) {
+                ToastUtil.shortShow("Password cannot be empty")
+                return@setOnClickListener
+            }
 
             // 需要先同意隐私协议
             val privatePropertyAgree =
@@ -237,7 +246,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         val account = binding.accountEditText.text.toString()
         val password = binding.passwordEditText.text.toString()
         // 直接劝退
-        if (account.isNullOrEmpty() || password.isNullOrEmpty()) return
+        // 直接劝退
+        if (account.isNullOrEmpty()) {
+            ToastUtil.shortShow("Account cannot be empty")
+            return
+        }
+        if (password.isNullOrEmpty()) {
+            ToastUtil.shortShow("Password cannot be empty")
+            return
+        }
         letMultiple(account, password) { ac, ps ->
             val value = mViewModel.loginReq.value
             value?.password = AESCipher.aesEncryptString(

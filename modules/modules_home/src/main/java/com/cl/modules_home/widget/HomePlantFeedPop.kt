@@ -21,6 +21,11 @@ class HomePlantFeedPop(
 
     private var binding: HomePlantFeedPopBinding? = null
 
+    override fun onDismiss() {
+        super.onDismiss()
+        binding?.cbThree?.isChecked = false
+    }
+
     override fun onCreate() {
         super.onCreate()
 

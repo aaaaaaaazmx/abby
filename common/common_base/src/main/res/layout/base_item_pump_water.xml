@@ -4,25 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="data"
             type="com.cl.common_base.bean.AdvertisingData" />
 
     </data>
 
+    <com.lin.cardlib.SwipeTouchLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
         <LinearLayout
-            android:padding="24dp"
-            android:background="@mipmap/base_pump_water_bg"
             android:layout_width="match_parent"
             android:layout_height="348dp"
-            android:orientation="vertical">
+            android:background="@mipmap/base_pump_water_bg"
+            android:orientation="vertical"
+            android:padding="24dp">
 
             <RelativeLayout
-                android:layout_marginTop="27dp"
-                android:layout_marginStart="17dp"
-                android:layout_marginEnd="17dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="27dp"
+                android:layout_marginEnd="17dp">
 
                 <ImageView
                     android:id="@+id/iv_idea"
@@ -31,29 +36,28 @@
                     android:background="@mipmap/base_pump_water_idea" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/iv_idea"
                     android:layout_marginStart="21dp"
+                    android:layout_toRightOf="@+id/iv_idea"
                     android:text="Tip"
                     android:textColor="@color/mainColor"
-                    android:textSize="17sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:textSize="17sp" />
             </RelativeLayout>
 
             <ImageView
-                android:visibility="gone"
-                url="@{data.picture}"
                 android:id="@+id/iv_pic"
+                url="@{data.picture}"
                 android:layout_width="match_parent"
                 android:layout_height="171dp"
                 android:layout_marginStart="17dp"
                 android:layout_marginTop="28dp"
                 android:layout_marginEnd="17dp"
+                android:visibility="gone"
                 tools:background="@mipmap/ic_launcher" />
 
             <TextView
-                android:text="@{data.description}"
                 android:id="@+id/tv_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,11 +65,13 @@
                 android:layout_marginTop="27dp"
                 android:layout_marginEnd="17dp"
                 android:layout_marginBottom="50dp"
+                android:text="@{data.description}"
                 android:textColor="#161B19"
                 android:textSize="15sp"
+                android:textStyle="bold"
                 tools:ignore="MissingConstraints"
                 tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod endum laoreet. Proin gravida dolor sit amet lacus accumsan" />
         </LinearLayout>
-
+    </com.lin.cardlib.SwipeTouchLayout>
 
 </layout>

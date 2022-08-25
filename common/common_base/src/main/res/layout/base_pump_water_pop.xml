@@ -47,7 +47,8 @@
                 android:layout_marginTop="43dp"
                 android:text="Click the button to start draining"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
 
             <CheckBox

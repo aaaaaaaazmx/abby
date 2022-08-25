@@ -15,6 +15,7 @@
         android:layout_height="64dp">
 
         <TextView
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="16dp"
             android:layout_marginTop="13dp"
@@ -41,6 +42,7 @@
 
 
         <com.cl.common_base.widget.SvTextView
+            android:textStyle="bold"
             android:id="@+id/svt_unlock"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
@@ -57,6 +59,7 @@
             android:layout_height="34dp"/>
 
         <com.cl.common_base.widget.SvTextView
+            android:textStyle="bold"
             android:id="@+id/svt_wait_unlock"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
@@ -73,6 +76,7 @@
             android:layout_height="34dp"/>
 
         <TextView
+            android:textStyle="bold"
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"

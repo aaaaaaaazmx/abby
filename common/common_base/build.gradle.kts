@@ -94,7 +94,8 @@ dependencies {
     api(Deps.fastJson)
     api(Deps.okHttpUrl)
     // 探探卡片滑动布局
-    api(Deps.cardSwipe)
+//    api(Deps.cardSwipe)
+    api("lin.jerrylin0322.reswipecard:reswipecard:1.0.1")
     // 时间轴，整体就几个布局，不会占很大的空间
     api(Deps.stepView)
     // FCM推送通道

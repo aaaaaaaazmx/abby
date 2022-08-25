@@ -14,6 +14,7 @@
         android:paddingTop="16dp">
 
         <TextView
+            android:textStyle="bold"
             android:id="@+id/tv_title"
             android:layout_gravity="center_horizontal"
             android:textSize="17sp"

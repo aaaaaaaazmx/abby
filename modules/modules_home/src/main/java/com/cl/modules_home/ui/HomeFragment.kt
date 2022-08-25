@@ -92,6 +92,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         mViewMode.getAppVersion()
 
         // 极光应用内部消息
+        // 主要是用来显示气泡
         LiveEventBus.get().with(Constants.Jpush.KEY_IN_APP_MESSAGE, String::class.java)
             .observe(viewLifecycleOwner) {
                 if (it.isNullOrEmpty()) return@observe
@@ -131,7 +132,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 context?.let { cc ->
                     ContextCompat.getDrawable(
                         cc,
-                        R.mipmap.home_low_water
+                        R.mipmap.home_ok_water
                     )
                 }
             }
@@ -221,6 +222,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 也就是需要继承到第几步骤了。
                 // 首先需要弹窗判断当前植物是否继承
                 // todo 弹出继承或者重新种植的的窗口
+                ViewUtils.setVisible(binding.plantExtendBg.root)
                 plantExtendPop.show()
             }
             // 种植完成过
@@ -309,12 +311,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 点击弹出周期弹窗
             clPeroid.setOnClickListener {
+                // 调用接口一次
+                mViewMode.plantInfo()
                 mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
                 periodPopDelegate.show()
             }
 
             // 点击环境弹窗
             clEnvir.setOnClickListener {
+                // 每次都获取到了信息
                 mViewMode.tuyaDeviceBean?.devId?.let { devId -> mViewMode.environmentInfo(devId) }
             }
 
@@ -490,10 +495,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     onNextAction = { status ->
                         when (status) {
                             HomePlantExtendPop.KEY_NEW_PLANT -> {
+                                ViewUtils.setGone(binding.plantExtendBg.root)
                                 ViewUtils.setVisible(binding.plantFirst.root)
                             }
                             HomePlantExtendPop.KEY_EXTEND -> {
                                 // 直接跳转到种植界面
+                                ViewUtils.setGone(binding.plantExtendBg.root)
                                 ViewUtils.setGone(binding.plantFirst.root)
                                 ViewUtils.setVisible(binding.pplantNinth.root)
                                 mViewMode.startRunning(null, true)
@@ -788,7 +795,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         XPopup.Builder(context)
             .isDestroyOnDismiss(false)
             .enableDrag(false)
-            .dismissOnTouchOutside(true)
+            .dismissOnTouchOutside(false)
             .asCustom(periodPop)
 
     }
@@ -808,7 +815,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         XPopup.Builder(context)
             .isDestroyOnDismiss(false)
             .enableDrag(false)
-            .dismissOnTouchOutside(true)
+            .dismissOnTouchOutside(false)
             .asCustom(envirPop)
     }
     private val envirPop by lazy {
@@ -881,22 +888,25 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     data?.let { versionData ->
-                        // versionUpdatePop
-                        val split = versionData.version?.split(".")
-                        var netWorkVersion = ""
-                        split?.forEach { version ->
-                            netWorkVersion += version
-                        }
-                        val localVersionSplit = AppUtil.appVersionName.split(".")
-                        var localVersion = ""
-                        localVersionSplit.forEach { version ->
-                            localVersion += version
-                        }
-                        // 判断当前的版本号是否需要升级
-                        kotlin.runCatching {
-                            if (netWorkVersion.toInt() > localVersion.toInt()) {
-                                versionPop?.setData(versionData)
-                                versionUpdatePop.show()
+                        // 强制升级才弹窗
+                        if (versionData.forcedUpdate == "1") {
+                            // versionUpdatePop
+                            val split = versionData.version?.split(".")
+                            var netWorkVersion = ""
+                            split?.forEach { version ->
+                                netWorkVersion += version
+                            }
+                            val localVersionSplit = AppUtil.appVersionName.split(".")
+                            var localVersion = ""
+                            localVersionSplit.forEach { version ->
+                                localVersion += version
+                            }
+                            // 判断当前的版本号是否需要升级
+                            kotlin.runCatching {
+                                if (netWorkVersion.toInt() > localVersion.toInt()) {
+                                    versionPop?.setData(versionData)
+                                    versionUpdatePop.show()
+                                }
                             }
                         }
                     }
@@ -1068,15 +1078,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     var number = 0
                     data?.list?.let { info ->
                         // 这样看内定不行
-                        info.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }?.let {
+                        info.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
+                            ?.let {
+                                val week = it.week?.toInt() ?: 0
                                 when (it.journeyName) {
                                     "Vegetation" -> {
-                                        (if ((data?.week ?: 0) > 4) 4 else data?.week
-                                            ?: 0).also { period -> number = period }
+                                        (if (week > 4) 4 else week
+                                                ).also { period -> number = period }
                                     }
-                                    "Bloom" -> {
-                                        (if ((data?.week ?: 0) > 6) 10 else 4 + (data?.week
-                                            ?: 0)).also { period -> number = period }
+                                    "Flowering" -> {
+                                        (if (week > 6) 10 else 4 + week).also { period ->
+                                            number = period
+                                        }
                                     }
                                     "Flushing" -> {
                                         number = 11
@@ -1329,7 +1342,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             ViewUtils.setGone(binding.pplantNinth.clContinue)
             return
         }
-        logI("changUnReadMessageUI Comeing")
+        logI("changUnReadMessageUI Coming")
 
         // 获取第一个
         val unRead = unReadList.first()
@@ -1376,6 +1389,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 ""
             }.toString()
 
+        // 新的气泡如果需要解锁周期那么就需要显示红点
+        ViewUtils.setVisible(
+            UnReadConstants.plantStatus.contains(unRead.type),
+            binding.pplantNinth.ivNewRed
+        )
+
         // 如果jumpType == none 就不显示按钮
         ViewUtils.setVisible(
             unRead.jumpType != UnReadConstants.JumpType.KEY_NONE,
@@ -1413,15 +1432,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     // 检查固件是否需要升级
     private fun checkOtaUpdateInfo() {
-        mViewMode.checkFirmwareUpdateInfo { upgradeInfoBeans, _ ->
-            upgradeInfoBeans?.firstOrNull { it.type == 9 }?.let {
-                updatePop?.setData(it)
-                XPopup.Builder(context)
-                    .isDestroyOnDismiss(false)
-                    .enableDrag(false)
-                    .dismissOnTouchOutside(false)
-                    .asCustom(updatePop)
-                    .show()
+        mViewMode.checkFirmwareUpdateInfo { upgradeInfoBeans, isShow ->
+            if (isShow) {
+                upgradeInfoBeans?.firstOrNull { it.type == 9 }?.let {
+                    updatePop?.setData(it)
+                    XPopup.Builder(context)
+                        .isDestroyOnDismiss(false)
+                        .enableDrag(false)
+                        .dismissOnTouchOutside(false)
+                        .asCustom(updatePop)
+                        .show()
+                }
             }
         }
     }

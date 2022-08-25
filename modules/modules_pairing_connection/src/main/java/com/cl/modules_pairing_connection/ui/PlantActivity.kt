@@ -4,6 +4,7 @@ import android.content.Intent
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.util.Prefs
@@ -31,7 +32,7 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
                 TuyaHomeSdk.getUserInstance().logout(object : ILogoutCallback {
                     override fun onSuccess() {
                         // 清除缓存数据
-                        Prefs.clear()
+                        Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
                         // 清除上面所有的Activity
                         // 跳转到Login页面
                         ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)

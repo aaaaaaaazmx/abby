@@ -1,21 +1,33 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
 import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
-import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
+import com.lin.cardlib.CardLayoutManager
+import com.lin.cardlib.CardSetting
+import com.lin.cardlib.CardTouchHelperCallback
+import com.lin.cardlib.OnSwipeCardListener
+import com.lin.cardlib.utils.ReItemTouchHelper
 import com.lxj.xpopup.core.BottomPopupView
-import me.yuqirong.cardswipelayout.CardItemTouchHelperCallback
-import me.yuqirong.cardswipelayout.CardLayoutManager
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.delay
+import kotlin.concurrent.thread
 
 
 /**
@@ -59,6 +71,9 @@ class BasePumpWaterPop(
                     R.mipmap.base_start_bg,
                     context.theme
                 ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
+
+                tvAddClockTime.text = if (btnSuccess.isChecked) "Click the button to start draining"
+                else "Click the button to stop draining"
             }
             ivClose.setOnClickListener {
                 dismiss()
@@ -67,13 +82,69 @@ class BasePumpWaterPop(
                 isOpenOrStop(false)
             }
 
+
+            val setting = CardSetting()
+            setting.setSwipeListener(object : OnSwipeCardListener<AdvertisingData?> {
+                override fun onSwiping(
+                    viewHolder: RecyclerView.ViewHolder,
+                    dx: Float,
+                    dy: Float,
+                    direction: Int
+                ) {
+                    when (direction) {
+                        ReItemTouchHelper.DOWN -> Log.e("aaa", "swiping direction=down")
+                        ReItemTouchHelper.UP -> Log.e("aaa", "swiping direction=up")
+                        ReItemTouchHelper.LEFT -> Log.e("aaa", "swiping direction=left")
+                        ReItemTouchHelper.RIGHT -> Log.e("aaa", "swiping direction=right")
+                    }
+                }
+
+                override fun onSwipedOut(
+                    viewHolder: RecyclerView.ViewHolder,
+                    o: AdvertisingData?,
+                    direction: Int
+                ) {
+//                    when (direction) {
+//                        ReItemTouchHelper.DOWN -> Toast.makeText(
+//                            context,
+//                            "swipe down out",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                        ReItemTouchHelper.UP -> Toast.makeText(
+//                            context,
+//                            "swipe up out ",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                        ReItemTouchHelper.LEFT -> Toast.makeText(
+//                            context,
+//                            "swipe left out",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                        ReItemTouchHelper.RIGHT -> Toast.makeText(
+//                            context,
+//                            "swipe right out",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+                }
+
+                override fun onSwipedClear() {
+//                    Toast.makeText(context, "cards are consumed", Toast.LENGTH_SHORT)
+//                        .show()
+                }
+            })
+
             rvAdd.adapter = adapter
-            val cardCallback: CardItemTouchHelperCallback<AdvertisingData> =
-                CardItemTouchHelperCallback<AdvertisingData>(adapter, adapter.data)
-            val touchHelper = ItemTouchHelper(cardCallback)
-            val cardLayoutManager = CardLayoutManager(rvAdd, touchHelper)
-            rvAdd.layoutManager = cardLayoutManager
-            touchHelper.attachToRecyclerView(rvAdd)
+            val helperCallback: CardTouchHelperCallback<AdvertisingData> =
+                CardTouchHelperCallback<AdvertisingData>(rvAdd, adapter.data, setting)
+            val mReItemTouchHelper = ReItemTouchHelper(helperCallback)
+            val layoutManager = CardLayoutManager(mReItemTouchHelper, setting)
+            rvAdd.layoutManager = layoutManager
+
+            // 手动滑动第一张
+            handler.postDelayed(Runnable {
+                mReItemTouchHelper.swipeManually(ReItemTouchHelper.RIGHT)
+            }, 3000)
         }
 
         // 蓝牙状态监听变化

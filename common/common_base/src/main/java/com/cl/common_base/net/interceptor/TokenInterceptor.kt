@@ -3,6 +3,7 @@ package com.cl.common_base.net.interceptor
 import android.content.Intent
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.bean.BaseBean
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
@@ -58,7 +59,7 @@ class TokenInterceptor : Interceptor {
         }.onSuccess {
             if (it?.code == 401) {
                 //token过期 发通知
-                Prefs.clear()
+                Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
                 ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
                     .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     .navigation()

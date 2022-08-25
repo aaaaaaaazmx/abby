@@ -41,6 +41,7 @@ class HomeEnvlrPop(
         DataBindingUtil.bind<HomeEnvlrPopBinding>(popupImplView)?.apply {
             rvList.layoutManager = LinearLayoutManager(context)
             rvList.adapter = adapter
+            ivClose.setOnClickListener { dismiss() }
         }
     }
 }
