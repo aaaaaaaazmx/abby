@@ -1067,24 +1067,25 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 也是需要根据植物的信息来,需要找到当前的周期
                     var number = 0
                     data?.list?.let { info ->
-                        info.first { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }.let {
-                            when (it.journeyName) {
-                                "Vegetation" -> {
-                                    (if ((data?.week ?: 0) > 4) 4 else data?.week
-                                        ?: 0).also { period -> number = period }
-                                }
-                                "Bloom" -> {
-                                    (if ((data?.week ?: 0) > 6) 10 else 4 + (data?.week
-                                        ?: 0)).also { period -> number = period }
-                                }
-                                "Flushing" -> {
-                                    number = 11
-                                }
-                                else -> {
-                                    number = 12
+                        // 这样看内定不行
+                        info.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }?.let {
+                                when (it.journeyName) {
+                                    "Vegetation" -> {
+                                        (if ((data?.week ?: 0) > 4) 4 else data?.week
+                                            ?: 0).also { period -> number = period }
+                                    }
+                                    "Bloom" -> {
+                                        (if ((data?.week ?: 0) > 6) 10 else 4 + (data?.week
+                                            ?: 0)).also { period -> number = period }
+                                    }
+                                    "Flushing" -> {
+                                        number = 11
+                                    }
+                                    else -> {
+                                        number = 12
+                                    }
                                 }
                             }
-                        }
                     }
                     binding.pplantNinth.ivBowl.background = when (number) {
                         1 -> {
@@ -1413,7 +1414,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     // 检查固件是否需要升级
     private fun checkOtaUpdateInfo() {
         mViewMode.checkFirmwareUpdateInfo { upgradeInfoBeans, _ ->
-            upgradeInfoBeans?.first { it.type == 9 }?.let {
+            upgradeInfoBeans?.firstOrNull { it.type == 9 }?.let {
                 updatePop?.setData(it)
                 XPopup.Builder(context)
                     .isDestroyOnDismiss(false)

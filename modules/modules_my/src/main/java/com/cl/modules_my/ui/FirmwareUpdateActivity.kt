@@ -87,7 +87,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
         UpdateSuccessPop(this@FirmwareUpdateActivity) {
             // 需要判断此次升级是否是强制升级，如果是强制升级，需要解除设备，重新绑定。
             mViewModel.upgradeInfoBeans.value?.let {
-                it.first { bean -> bean.type == 9 }.let { upgradeInfoBean ->
+                it.firstOrNull { bean -> bean.type == 9 }?.let { upgradeInfoBean ->
                     //0：App 提醒升级
                     //2：App 强制升级
                     //3：检测升级
@@ -134,7 +134,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
         binding.btnSuccess.setOnClickListener {
             // 弹出升级框
             mViewModel.upgradeInfoBeans.value?.let {
-                it.first { bean -> bean.type == 9 }.let { upgradeInfoBean ->
+                it.firstOrNull { bean -> bean.type == 9 }?.let { upgradeInfoBean ->
                     updatePop.setData(upgradeInfoBean)
                     pop.asCustom(updatePop).show()
                 }
@@ -185,7 +185,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
         mViewModel.checkFirmwareUpdateInfo(
             onOtaInfo = { bean, isShow ->
                 ViewUtils.setVisible(isShow, binding.btnSuccess)
-                bean?.first { it.type == 9 }?.let { data ->
+                bean?.firstOrNull { it.type == 9 }?.let { data ->
                     if (isShow) {
                         binding.tvVersion.text = "v${data.version}"
                         if (data.typeDesc.isNullOrEmpty()) {

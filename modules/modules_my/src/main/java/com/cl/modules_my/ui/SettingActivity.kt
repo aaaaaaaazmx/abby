@@ -377,7 +377,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         mViewModel.userDetail()
         // 当前固件版本号
         mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
-            bean?.first { it.type == 9 }?.let { data ->
+            bean?.firstOrNull { it.type == 9 }?.let { data ->
                 binding.ftCurrentFir.itemValue = data.currentVersion
                 binding.ftCurrentFir.setHideArrow(true)
                 if (isShow) {

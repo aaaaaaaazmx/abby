@@ -31,7 +31,7 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "Abby"
+rootProject.name = "abby"
 include(":app")
 include(":modules:modules_home")
 include(":modules:modules_login")
