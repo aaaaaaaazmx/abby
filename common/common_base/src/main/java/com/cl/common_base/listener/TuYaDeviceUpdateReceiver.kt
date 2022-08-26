@@ -43,6 +43,7 @@ class TuYaDeviceUpdateReceiver : Service() {
              */
             override fun onDpUpdate(devId: String?, dpStr: MutableMap<String, Any>?) {
 
+
                 val json = GSON.toJson(dpStr)
                 logI(
                     """
@@ -53,7 +54,7 @@ class TuYaDeviceUpdateReceiver : Service() {
                 // 直接下发状态
                 LiveEventBus.get()
                     .with(Constants.Tuya.KEY_TUYA_DEVICE_TO_APP, String::class.java)
-                    .postEvent(json.toString())
+                    .postEvent(json)
             }
 
             /**
@@ -62,6 +63,10 @@ class TuYaDeviceUpdateReceiver : Service() {
              * @param devId 设备id
              */
             override fun onRemoved(devId: String?) {
+                logI("""
+                    tuYaOnRemoved:
+                    devId: $devId
+                """.trimIndent())
                 LiveEventBus.get()
                     .with(Constants.Device.KEY_DEVICE_TO_APP, String::class.java)
                     .postEvent(Constants.Device.KEY_DEVICE_REMOVE)
@@ -74,6 +79,11 @@ class TuYaDeviceUpdateReceiver : Service() {
              * @param online 是否在线，在线为 true
              */
             override fun onStatusChanged(devId: String?, online: Boolean) {
+                logI("""
+                    tuYaOnStatusChanged
+                    devId: $devId
+                    online: $online
+                """.trimIndent())
                 LiveEventBus.get()
                     .with(Constants.Device.KEY_DEVICE_TO_APP, String::class.java)
                     .postEvent(if (online) Constants.Device.KEY_DEVICE_ONLINE else Constants.Device.KEY_DEVICE_OFFLINE)

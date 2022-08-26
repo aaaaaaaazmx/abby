@@ -25,7 +25,7 @@
                 android:id="@+id/iv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/home_plant_time_bg" />
+                android:background="@mipmap/home_period_bg" />
 
             <TextView
                 android:textStyle="bold"

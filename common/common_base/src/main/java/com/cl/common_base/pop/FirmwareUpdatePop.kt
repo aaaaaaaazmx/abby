@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.MyFirmwareUpdateBinding
 import com.cl.common_base.ext.dp2px
+import com.cl.common_base.util.ViewUtils
 import com.google.firebase.messaging.CommonNotificationBuilder
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.CenterPopupView
@@ -32,6 +33,7 @@ class FirmwareUpdatePop(
     override fun onCreate() {
         super.onCreate()
         DataBindingUtil.bind<MyFirmwareUpdateBinding>(popupImplView)?.apply {
+            ViewUtils.setVisible(update?.upgradeType != 2, tvCancel)
             update?.let { update ->
                 //0：App 提醒升级
                 //2：App 强制升级

@@ -14,6 +14,8 @@ import com.cl.common_base.adapter.PumpWaterAdapter
 import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
+import com.cl.common_base.ext.logI
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -25,6 +27,9 @@ import com.lin.cardlib.CardTouchHelperCallback
 import com.lin.cardlib.OnSwipeCardListener
 import com.lin.cardlib.utils.ReItemTouchHelper
 import com.lxj.xpopup.core.BottomPopupView
+import com.tuya.smart.home.sdk.TuyaHomeSdk
+import com.tuya.smart.sdk.api.IResultCallback
+import com.tuya.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.delay
 import kotlin.concurrent.thread
@@ -42,6 +47,12 @@ class BasePumpWaterPop(
     private var onWaterFinishedAction: (() -> Unit)? = null,
     private val onCancelAction: (() -> Unit)? = null
 ) : BottomPopupView(context) {
+    // 获取当前设备信息
+    private val tuYaDeviceBean by lazy {
+        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
+        GSON.parseObject(homeData, DeviceBean::class.java)
+    }
+
     override fun getImplLayoutId(): Int {
         return R.layout.base_pump_water_pop
     }
@@ -153,16 +164,44 @@ class BasePumpWaterPop(
                 val map = GSON.parseObject(it, Map::class.java)
                 map?.forEach { (key, value) ->
                     when (key) {
-                        TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED -> {
+                        TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
                             // 涂鸦指令，添加排水功能
-                            isOpenOrStop(false)
+//                            isOpenOrStop(false)
                             // 排水成功
                             onWaterFinishedAction?.invoke()
                             dismiss()
                         }
-                        TuYaDeviceConstants.KAY_PUMP_WATER -> {
+                        //
+                        TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
                             // 涂鸦指令，添加排水功能
-                            isOpenOrStop(value)
+//                            isOpenOrStop(value)
+                            binding?.btnSuccess?.background = if ((value as? Boolean != true)) context.resources.getDrawable(
+                                R.mipmap.base_start_bg,
+                                context.theme
+                            ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
+
+                            binding?.tvAddClockTime?.text = if ((value as? Boolean != true)) "Click the button to start draining"
+                            else "Click the button to stop draining"
+
+                            if ((value as? Boolean == true)) return@observe
+                            TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+                                it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
+                                    IResultCallback {
+                                    override fun onError(code: String?, error: String?) {
+                                        logI(
+                                            """
+                                            KAY_PUMP_WATER_FINISHED: error
+                                            code: $code
+                                            error: $error
+                                        """.trimIndent()
+                                        )
+                                    }
+
+                                    override fun onSuccess() {
+                                        logI("onSuccess")
+                                    }
+                                })
+                            }
                         }
                     }
                 }

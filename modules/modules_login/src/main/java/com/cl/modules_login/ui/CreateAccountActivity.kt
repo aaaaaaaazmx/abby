@@ -19,6 +19,7 @@ import com.cl.modules_login.viewmodel.CreateAccountViewModel
 import com.cl.modules_login.widget.PrivacyPop
 import com.lxj.xpopup.XPopup
 import com.tencent.bugly.proguard.ad
+import com.tuya.bouncycastle.asn1.x509.X509ObjectIdentifiers.countryName
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import javax.inject.Inject
@@ -107,6 +108,8 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                         it.data?.let { list ->
                             if (list.isEmpty()) return@let
                             binding.tvCounttry.text = list.first().countryName
+                            userRegisterBean.country = list.first().countryName
+                            userRegisterBean.countryCode = list.first().countryCode
                         }
                     }
                     is Resource.Loading -> {

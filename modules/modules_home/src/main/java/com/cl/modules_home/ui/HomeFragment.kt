@@ -1,5 +1,6 @@
 package com.cl.modules_home.ui
 
+import android.icu.text.DateIntervalFormat
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +37,9 @@ import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
+import com.cl.modules_home.widget.HomePlantExtendPop.Companion.KEY_NEW_PLANT
 import com.goldentec.android.tools.util.isCanToBigDecimal
+import com.joketng.timelinestepview.TimeLineState
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -85,8 +88,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
         )
-        // 请求未读消息数据，只有在种植之后才会开始有数据返回
-        mViewMode.getUnread()
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -399,7 +400,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      */
     private val plantDrainNext by lazy {
         XPopup.Builder(context)
-            .isDestroyOnDismiss(false)
             .enableDrag(false)
             .maxHeight(dp2px(600f))
             .dismissOnTouchOutside(false)
@@ -720,9 +720,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 context = it,
                 onNextAction = {
                     val unReadList = mViewMode.unreadMessageList.value
-                    if (unReadList.isNullOrEmpty()) {
+                    if (unReadList.isNullOrEmpty() && mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
                         /**
                          * 这个状态是自己自定义的状态，主要用于上报到第几步
+                         * 上报步骤
                          */
                         when (mViewMode.typeStatus.value) {
                             0 -> {
@@ -746,7 +747,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
 
                     // 表示是从极光或者未读消息列表中跳转过来的。
-                    if (UnReadConstants.plantStatus.contains(unReadList.first().type)) {
+                    if (UnReadConstants.plantStatus.contains(unReadList?.first()?.type)) {
                         // 调取解锁接口，
                         // Vegetation	1
                         //  Flowering	2
@@ -754,7 +755,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         //  Drying	5
                         //  Harvest	6
                         //  Curing	7（请求图文时id转换为int）
-                        when (unReadList.first().type) {
+                        when (unReadList?.first()?.type) {
                             UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
                             UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
                             UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
@@ -762,6 +763,29 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
                             UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney("Curing")
                         }
+                        return@HomePlantUsuallyPop
+                    }
+
+                    // 如果是从解锁周期弹窗过来的，
+                    // 这个后期可以优化，就不和上面的状态同一判断了。避免后期优化时忘记
+                    if (!mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
+                        // 调取解锁接口，
+                        // Vegetation	1
+                        //  Flowering	2
+                        //  Flushing	3
+                        //  Drying	5
+                        //  Harvest	6
+                        //  Curing	7（请求图文时id转换为int）
+                        when (mViewMode.popPeriodStatus.value) {
+                            UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
+                            UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
+                            UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
+                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney("Drying")
+                            UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
+                            UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney("Curing")
+                        }
+                        // 搞定之后就清空，避免之后有问题
+                        mViewMode.setPopPeriodStatus(null)
                     }
                 }
             )
@@ -794,8 +818,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val periodPopDelegate by lazy {
         XPopup.Builder(context)
             .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .dismissOnTouchOutside(false)
+            .enableDrag(true)
+            .dismissOnTouchOutside(true)
             .asCustom(periodPop)
 
     }
@@ -803,7 +827,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val periodPop by lazy {
         context?.let {
             HomePeriodPop(
-                it
+                it,
+                unLockAction = { guideId ->
+                    // todo 此处是用于周期弹窗解锁的
+                    guideId?.let { it1 -> mViewMode.setPopPeriodStatus(it1) }
+                }
             )
         }
     }
@@ -814,8 +842,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val envirPopDelete by lazy {
         XPopup.Builder(context)
             .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .dismissOnTouchOutside(false)
+            .enableDrag(true)
+            .dismissOnTouchOutside(true)
             .asCustom(envirPop)
     }
     private val envirPop by lazy {
@@ -867,6 +895,35 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 植物周期数据监听,植物周期弹窗数据
+            periodData.observe(viewLifecycleOwner) {
+                if (it.isNullOrEmpty()) return@observe
+                // 加这位玩意的监听，就是为了加个小红点
+                // 找到onging的状态，然后判断下面一个状态是不是解锁
+                val index =
+                    it.indexOfLast { bean -> "${bean.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
+                if (index == -1) return@observe
+
+                kotlin.runCatching {
+                    ViewUtils.setVisible(
+                        "${it[index + 1].journeyStatus}" == HomePeriodPop.KEY_LOCK_COMPLETED || "${it[index + 1].journeyStatus}" == HomePeriodPop.KEY_ALLOW_UNLOCKING,
+                        binding.pplantNinth.ivNewRed
+                    )
+                }
+            }
+
+            // 周期内解锁，这个状态其实很垃圾，无奈选择为了赶进度
+            popPeriodStatus.observe(viewLifecycleOwner) {
+                if (it.isNullOrEmpty()) return@observe
+                // 获取图文引导，然后解锁。
+                mViewMode.getGuideInfo(it)
+            }
+
+            // 未读消息
+            unreadMessageList.observe(viewLifecycleOwner) {
+                if (it.isNullOrEmpty()) return@observe
+                changUnReadMessageUI()
+            }
             // 是否修复SN问题
             repairSN.observe(viewLifecycleOwner) {
                 if (it == "NG") {
@@ -943,42 +1000,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 // 	设备在线状态(0-不在线，1-在线)
                                 "0" -> {
                                     ViewUtils.setVisible(binding.plantOffLine.root)
-                                    // 设置当前span文字
-                                    binding.plantOffLine.tvSpan.movementMethod =
-                                        LinkMovementMethod.getInstance() // 设置了才能点击
-                                    binding.plantOffLine.tvSpan.highlightColor =
-                                        ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色
-                                            resources,
-                                            com.cl.common_base.R.color.transparent,
-                                            context?.theme
-                                        )
-                                    binding.plantOffLine.tvSpan.text = buildSpannedString {
-                                        appendLine("1.Check if abby is plugged in and turned on")
-                                        appendLine("2.Check your Wi-Fi network connection")
-                                        appendLine("3.Try to power off and restart your abby")
-                                        append("4.If the problem persists, try to ")
-                                        context?.let { context ->
-                                            ContextCompat.getColor(
-                                                context,
-                                                com.cl.common_base.R.color.mainColor
-                                            )
-                                        }
-                                            ?.let { color ->
-                                                color(
-                                                    color
-                                                ) {
-                                                    appendClickable("Reconnect abby") {
-                                                        // 跳转到ReconnectActivity
-                                                        ARouter.getInstance()
-                                                            .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
-                                                            .navigation()
-                                                    }
-                                                }
-                                            }
-                                    }
+                                    offLineTextSpan()
                                 }
                                 "1" -> {
                                     showView()
+                                    // 请求未读消息数据，只有在种植之后才会开始有数据返回
+                                    mViewMode.getUnread()
                                     checkOtaUpdateInfo()
                                 }
                                 else -> {}
@@ -1162,6 +1189,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.list?.let {
                         mViewMode.setPeriodList(it)
                     }
+
+                    // 刷新数据
+                    if (periodPopDelegate.isShow) {
+                        mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
+                    }
                 }
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -1205,9 +1237,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         logI("size: ${data?.size}")
                         data?.let {
                             mViewMode.setUnreadMessageList(it)
-                            // 弹出未读消息的第一个气泡
-                            // 修改气泡UI
-                            changUnReadMessageUI()
                         }
                     }
                 }
@@ -1304,6 +1333,42 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
+        }
+    }
+
+    private fun offLineTextSpan() {
+        // 设置当前span文字
+        binding.plantOffLine.tvSpan.movementMethod =
+            LinkMovementMethod.getInstance() // 设置了才能点击
+        binding.plantOffLine.tvSpan.highlightColor =
+            ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色
+                resources,
+                com.cl.common_base.R.color.transparent,
+                context?.theme
+            )
+        binding.plantOffLine.tvSpan.text = buildSpannedString {
+            appendLine("1.Check if abby is plugged in and turned on")
+            appendLine("2.Check your Wi-Fi network connection")
+            appendLine("3.Try to power off and restart your abby")
+            append("4.If the problem persists, try to ")
+            context?.let { context ->
+                ContextCompat.getColor(
+                    context,
+                    com.cl.common_base.R.color.mainColor
+                )
+            }
+                ?.let { color ->
+                    color(
+                        color
+                    ) {
+                        appendClickable("Reconnect abby") {
+                            // 跳转到ReconnectActivity
+                            ARouter.getInstance()
+                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
+                                .navigation()
+                        }
+                    }
+                }
         }
     }
 
@@ -1435,13 +1500,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         mViewMode.checkFirmwareUpdateInfo { upgradeInfoBeans, isShow ->
             if (isShow) {
                 upgradeInfoBeans?.firstOrNull { it.type == 9 }?.let {
-                    updatePop?.setData(it)
-                    XPopup.Builder(context)
-                        .isDestroyOnDismiss(false)
-                        .enableDrag(false)
-                        .dismissOnTouchOutside(false)
-                        .asCustom(updatePop)
-                        .show()
+                    // 只有提醒升级、强制升级时才会弹窗
+                    if (it.upgradeType == 2 || it.upgradeType == 0) {
+                        updatePop?.setData(it)
+                        XPopup.Builder(context)
+                            .isDestroyOnDismiss(false)
+                            .enableDrag(false)
+                            .dismissOnTouchOutside(false)
+                            .asCustom(updatePop)
+                            .show()
+                    }
                 }
             }
         }
@@ -1455,6 +1523,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         when (status) {
             Constants.Device.KEY_DEVICE_OFFLINE -> {
                 ViewUtils.setVisible(binding.plantOffLine.root)
+                offLineTextSpan()
             }
             Constants.Device.KEY_DEVICE_ONLINE -> {
                 ViewUtils.setGone(binding.plantOffLine.root)

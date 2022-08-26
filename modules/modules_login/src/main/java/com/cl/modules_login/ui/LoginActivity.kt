@@ -210,7 +210,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
         binding.tvForget.setOnClickListener {
             // 跳转到忘记密码界面
-            startActivity(Intent(this, ForgetPasswordActivity::class.java))
+            val intent = Intent(this, ForgetPasswordActivity::class.java)
+            intent.putExtra(ForgetPasswordActivity.KEY_FORGET_NAME, binding.accountEditText.text.toString())
+            startActivity(intent)
         }
 
         binding.rlBtn.setOnClickListener {

@@ -702,4 +702,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 继承之后选择的状态
      */
+
+    /**
+     *  周期弹窗时的状态选择，目前此状态只用于周期弹窗，目的是为了解锁，后期可以优化
+     */
+    private val _popPeriodStatus = MutableLiveData<String?>()
+    val popPeriodStatus: LiveData<String?> = _popPeriodStatus
+    fun setPopPeriodStatus(status: String?) {
+        _popPeriodStatus.value = status
+    }
 }

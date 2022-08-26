@@ -22,9 +22,16 @@ class ForgetPasswordActivity : BaseActivity<ActivityForgetPasswordBinding>() {
     @Inject
     lateinit var mViewModel: ForgetPassWordViewModel
 
+    // 账号名字
+    private val account by lazy {
+        intent.getStringExtra(KEY_FORGET_NAME)
+    }
+
     override fun initView() {
         ARouter.getInstance().inject(this)
         ViewUtils.setEditTextInputSpace(binding.etName)
+        // 带过来的名字
+        binding.etName.setText(account)
     }
 
     override fun observe() {
@@ -34,9 +41,13 @@ class ForgetPasswordActivity : BaseActivity<ActivityForgetPasswordBinding>() {
                 success {
                     hideProgressLoading()
                     // 跳转邮箱验证,传入忘记密码key = false
-                    val intent = Intent(this@ForgetPasswordActivity, VerifyEmailActivity::class.java)
+                    val intent =
+                        Intent(this@ForgetPasswordActivity, VerifyEmailActivity::class.java)
                     intent.putExtra(VerifyEmailActivity.KEY_IS_REGISTER, false)
-                    intent.putExtra(VerifyEmailActivity.KEY_EMAIL_NAME, binding.etName.text.toString())
+                    intent.putExtra(
+                        VerifyEmailActivity.KEY_EMAIL_NAME,
+                        binding.etName.text.toString()
+                    )
                     startActivity(intent)
                     finish()
                 }
@@ -67,4 +78,7 @@ class ForgetPasswordActivity : BaseActivity<ActivityForgetPasswordBinding>() {
         binding.etName.setText(mViewModel.account)
     }
 
+    companion object {
+        const val KEY_FORGET_NAME = "key_forget_name"
+    }
 }

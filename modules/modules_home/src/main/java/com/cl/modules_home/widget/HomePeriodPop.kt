@@ -28,7 +28,8 @@ import com.lxj.xpopup.core.BottomPopupView
  */
 class HomePeriodPop(
     context: Context,
-    private var data: MutableList<PlantInfoData.InfoList>? = null
+    private var data: MutableList<PlantInfoData.InfoList>? = null,
+    val unLockAction: ((guideId: String?) -> Unit)? = null
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_period_pop
@@ -112,6 +113,12 @@ class HomePeriodPop(
                         ivGou.visibility = View.GONE
                         svtWaitUnlock.visibility = View.GONE
                         periodTime.visibility = View.GONE
+
+                        // 解锁
+                        svtUnlock.setOnClickListener {
+                            unLockAction?.invoke(data?.get(position)?.guideId.toString())
+                            dismiss()
+                        }
 
                         // 赋值
                         periodTitle.text =

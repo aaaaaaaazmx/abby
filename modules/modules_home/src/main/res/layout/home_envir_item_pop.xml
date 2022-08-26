@@ -19,6 +19,7 @@
         android:background="@mipmap/home_period_green">
 
         <TextView
+            android:textStyle="bold"
             text="@{data.detectionValue}"
             android:id="@+id/period_title"
             android:layout_width="wrap_content"

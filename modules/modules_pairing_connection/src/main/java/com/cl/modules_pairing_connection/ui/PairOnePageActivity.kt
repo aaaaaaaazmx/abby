@@ -108,8 +108,9 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
         binding.rvList.isNestedScrollingEnabled = false
 
         // 延时任务
+        // 这个延时任务有问题
         job = mViewModel.countDownCoroutines(
-            1000 * 60 * 50,
+            1000 * 60 * 500,
             lifecycleScope,
             onTick = {},
             onStart = {},
