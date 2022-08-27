@@ -14,6 +14,8 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.pop.GuideBlePop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ble.BleUtil
 import com.cl.common_base.util.lcoation.LocationUtil
@@ -25,8 +27,7 @@ import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairScanBleBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
-import com.cl.modules_pairing_connection.widget.GuideBlePop
-import com.cl.modules_pairing_connection.widget.PairLocationPop
+import com.cl.common_base.pop.PairLocationPop
 import com.lxj.xpopup.XPopup
 import com.permissionx.guolindev.PermissionX
 import com.tuya.smart.android.ble.api.BleConfigType
@@ -35,9 +36,8 @@ import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.home.sdk.bean.ConfigProductInfoBean
 import com.tuya.smart.sdk.api.ITuyaDataCallback
 import dagger.hilt.android.AndroidEntryPoint
+import junit.framework.TestResult
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 
@@ -108,22 +108,22 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
         binding.rvList.isNestedScrollingEnabled = false
 
         // 延时任务
-        // 这个延时任务有问题
-        job = mViewModel.countDownCoroutines(
-            1000 * 60 * 500,
-            lifecycleScope,
-            onTick = {},
-            onStart = {},
-            onFinish = {
-                runOnUiThread {
-                    startActivity(
-                        Intent(
-                            this@PairOnePageActivity,
-                            PairBleScanTimeOutActivity::class.java
-                        )
-                    )
-                }
-            })
+        // todo 这个延时任务有问题
+//        job = mViewModel.countDownCoroutines(
+//            1000 * 60 * 500,
+//            lifecycleScope,
+//            onTick = {},
+//            onStart = {},
+//            onFinish = {
+//                runOnUiThread {
+//                    startActivity(
+//                        Intent(
+//                            this@PairOnePageActivity,
+//                            PairBleScanTimeOutActivity::class.java
+//                        )
+//                    )
+//                }
+//            })
     }
 
     override fun observe() {
@@ -180,64 +180,16 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
      * 检查权限以及开启扫描
      */
     private fun checkPermissionAndStartScan() {
-        if (PermissionChecker.hasPermissions(
-                this@PairOnePageActivity,
-                *mViewModel.blePer.value!!
-            )
-        ) {
-            // 权限都同意之后，那么直接开启扫描
-            startScan()
-        } else {
-            // 适配Android12
-            // 首先判断地理位置权限
-            PermissionX.init(this@PairOnePageActivity)
-                .permissions(
-                    *mViewModel.blePer.value!!
-                )
-                .onForwardToSettings { scope, deniedList ->
-                    // 用户点击不再询问时,回调
-                    // 或者点击肯定时,也会回调此方法
-                    scope.showForwardToSettingsDialog(
-                        deniedList,
-                        "You need to allow necessary permissions in Settings manually",
-                        "OK",
-                        "Cancel"
-                    )
+        PermissionHelp().checkConnect(
+            this@PairOnePageActivity,
+            supportFragmentManager,
+            true,
+            object : PermissionHelp.OnCheckResultListener {
+                override fun onResult(result: Boolean) {
+                    if (!result) return
+                    startScan()
                 }
-                .explainReasonBeforeRequest()
-                .onExplainRequestReason { scope, deniedList ->
-                    // 用户单次拒绝权限时,回调
-                    scope.showRequestReasonDialog(
-                        deniedList,
-                        "Core fundamental are based on these permissions",
-                        "OK",
-                        "Cancel"
-                    )
-                }
-                .request { allGranted, grantedList, deniedList ->
-                    if (allGranted) {
-                        logI("These permissions are Granted: $deniedList")
-                        if (LocationUtil.isLocationEnabled(this@PairOnePageActivity)) {
-                            // 判断蓝牙是否打开
-                            if (BleUtil.isBleEnabled()) {
-                                // 调用涂鸦开始扫描
-                                startScan()
-                            } else {
-                                // 没有打开蓝牙
-                                // 底部弹窗开启蓝牙
-                                guideBlePop.show()
-                            }
-                        } else {
-                            // todo 开启定位开关
-                            // Open location service
-                            locationPop.show()
-                        }
-                    } else {
-                        // todo 拒绝的提示
-                        logE("These permissions are denied: $deniedList")
-                    }
-                }
-        }
+            })
     }
 
     /**

@@ -16,7 +16,9 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.pop.GuideBlePop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.ble.BleUtil
@@ -28,7 +30,6 @@ import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairConnectNetworkBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
-import com.cl.modules_pairing_connection.widget.GuideBlePop
 import com.lxj.xpopup.XPopup
 import com.permissionx.guolindev.PermissionX
 import com.tuya.smart.android.ble.api.ConfigErrorBean
@@ -122,7 +123,11 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                         )
                         // 调用 JPush 接口来设置别名。
                         data?.abbyId?.let {
-                            JPushInterface.setAlias(this@PairDistributionWifiActivity, Random.nextInt(100), it)
+                            JPushInterface.setAlias(
+                                this@PairDistributionWifiActivity,
+                                Random.nextInt(100),
+                                it
+                            )
                         }
                     }
                     // 种植检查
@@ -200,59 +205,17 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
          * 开始配网
          */
         binding.btnSuccess.setOnClickListener {
-            //  开始配网
-            if (PermissionChecker.hasPermissions(
-                    this@PairDistributionWifiActivity,
-                    *mViewModel.blePer.value!!
-                )
-            ) {
-                // 权限都同意之后，那么直接开始配网
-                startNetWork()
-            } else {
-                // 适配Android12
-                // 首先判断地理位置权限
-                PermissionX.init(this@PairDistributionWifiActivity)
-                    .permissions(
-                        *mViewModel.blePer.value!!
-                    )
-                    .onForwardToSettings { scope, deniedList ->
-                        // 用户点击不再询问时,回调
-                        // 或者点击肯定时,也会回调此方法
-                        scope.showForwardToSettingsDialog(
-                            deniedList,
-                            "You need to allow necessary permissions in Settings manually",
-                            "OK",
-                            "Cancel"
-                        )
+            PermissionHelp().checkConnect(
+                this@PairDistributionWifiActivity,
+                supportFragmentManager,
+                true,
+                object : PermissionHelp.OnCheckResultListener {
+                    override fun onResult(result: Boolean) {
+                        if (!result) return
+                        // 权限都同意之后，那么直接开始配网
+                        startNetWork()
                     }
-                    .explainReasonBeforeRequest()
-                    .onExplainRequestReason { scope, deniedList ->
-                        // 用户单次拒绝权限时,回调
-                        scope.showRequestReasonDialog(
-                            deniedList,
-                            "Core fundamental are based on these permissions",
-                            "OK",
-                            "Cancel"
-                        )
-                    }
-                    .request { allGranted, grantedList, deniedList ->
-                        if (allGranted) {
-                            logI("These permissions are Granted: $deniedList")
-                            // 判断蓝牙是否打开
-                            if (BleUtil.isBleEnabled()) {
-                                // 调用涂鸦开始配网
-                                startNetWork()
-                            } else {
-                                // 没有打开蓝牙
-                                // 底部弹窗开启蓝牙
-                                guideBlePop.show()
-                            }
-                        } else {
-                            // todo 拒绝的提示
-                            logE("These permissions are denied: $deniedList")
-                        }
-                    }
-            }
+                })
         }
 
         // 跳转wifi设置界面

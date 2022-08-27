@@ -1,13 +1,19 @@
 package com.cl.modules_pairing_connection.ui
 
 import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logE
+import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.pop.PairLocationPop
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.lcoation.LocationUtil
 import com.cl.modules_pairing_connection.databinding.PairPlantHomeBinding
 import com.cl.modules_pairing_connection.widget.PairLoginOutPop
 import com.lxj.xpopup.XPopup
@@ -68,7 +74,23 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
 
         // 跳转到第一页引导
         binding.tvScan.setOnClickListener {
-            startActivity(Intent(this@PlantActivity, PairOnePageActivity::class.java))
+            PermissionHelp().checkConnect(
+                this@PlantActivity,
+                supportFragmentManager,
+                true,
+                object :
+                    PermissionHelp.OnCheckResultListener {
+                    override fun onResult(result: Boolean) {
+                        if (!result) return
+                        // 如果权限都已经同意了,
+                        startActivity(
+                            Intent(
+                                this@PlantActivity,
+                                PairOnePageActivity::class.java
+                            )
+                        )
+                    }
+                })
         }
     }
 }
