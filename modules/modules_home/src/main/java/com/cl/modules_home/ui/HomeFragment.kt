@@ -1273,6 +1273,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    // 又重新请求一次咯.主要是为了消失周期上面的红点,其他没啥作用
+                    mViewMode.plantInfo()
                     // 看看下面还有没有弹窗，有的话，就继续弹出来
                     checkBubble()
                 }

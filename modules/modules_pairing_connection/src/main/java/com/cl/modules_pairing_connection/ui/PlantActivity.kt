@@ -60,7 +60,7 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
     }
 
     override fun initView() {
-        binding.title.setLeftText("Login Out")
+        binding.title.setLeftText("Login out")
             .setTitle("Add Device")
             .setLeftClickListener { // 退出
                 confirm.show()
