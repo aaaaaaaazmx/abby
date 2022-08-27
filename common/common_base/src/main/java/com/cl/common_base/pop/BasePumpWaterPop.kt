@@ -78,13 +78,15 @@ class BasePumpWaterPop(
                 onSuccessAction?.invoke(btnSuccess.isChecked)
                 // true 排水
                 // false 停止
-                it.background = if (btnSuccess.isChecked) context.resources.getDrawable(
-                    R.mipmap.base_start_bg,
-                    context.theme
-                ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
+                synchronized(this) {
+                    it.background = if (btnSuccess.isChecked) context.resources.getDrawable(
+                        R.mipmap.base_start_bg,
+                        context.theme
+                    ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
 
-                tvAddClockTime.text = if (btnSuccess.isChecked) "Click the button to start draining"
-                else "Click the button to stop draining"
+                    tvAddClockTime.text = if (btnSuccess.isChecked) "Click the button to start draining"
+                    else "Click the button to stop draining"
+                }
             }
             ivClose.setOnClickListener {
                 dismiss()
@@ -175,15 +177,20 @@ class BasePumpWaterPop(
                         TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
                             // 涂鸦指令，添加排水功能
 //                            isOpenOrStop(value)
-                            binding?.btnSuccess?.background = if ((value as? Boolean != true)) context.resources.getDrawable(
-                                R.mipmap.base_start_bg,
-                                context.theme
-                            ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
+                            synchronized(this) {
+                                // 加锁的目的是为了
+                                // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
+                                binding?.btnSuccess?.background = if ((value as? Boolean != true)) context.resources.getDrawable(
+                                    R.mipmap.base_start_bg,
+                                    context.theme
+                                ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
 
-                            binding?.tvAddClockTime?.text = if ((value as? Boolean != true)) "Click the button to start draining"
-                            else "Click the button to stop draining"
+                                binding?.tvAddClockTime?.text = if ((value as? Boolean != true)) "Click the button to start draining"
+                                else "Click the button to stop draining"
+                            }
 
                             if ((value as? Boolean == true)) return@observe
+                            // 查询是否排水结束
                             TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
                                 it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
                                     IResultCallback {
