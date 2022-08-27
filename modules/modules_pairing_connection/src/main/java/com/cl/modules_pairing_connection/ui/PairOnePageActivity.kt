@@ -108,22 +108,26 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
         binding.rvList.isNestedScrollingEnabled = false
 
         // 延时任务
-        // todo 这个延时任务有问题
-//        job = mViewModel.countDownCoroutines(
-//            1000 * 60 * 500,
-//            lifecycleScope,
-//            onTick = {},
-//            onStart = {},
-//            onFinish = {
-//                runOnUiThread {
-//                    startActivity(
-//                        Intent(
-//                            this@PairOnePageActivity,
-//                            PairBleScanTimeOutActivity::class.java
-//                        )
-//                    )
-//                }
-//            })
+        //  这个延时任务5分钟
+        job = mViewModel.countDownCoroutines(
+            10 * 6 * 5,
+            lifecycleScope,
+            onTick = {
+                logI("onTick: $it")
+                if (it != 0) return@countDownCoroutines
+                    runOnUiThread {
+                        startActivity(
+                            Intent(
+                                this@PairOnePageActivity,
+                                PairBleScanTimeOutActivity::class.java
+                            )
+                        )
+                    }
+            },
+            onStart = {},
+            onFinish = {
+                // todo 这个finish也指的是当前页面被关闭, 定时任务不能放在这个地方.
+            })
     }
 
     override fun observe() {
@@ -156,24 +160,6 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
         super.onResume()
         adapter.setList(mutableListOf())
         checkPermissionAndStartScan()
-    }
-
-    /**
-     * 定位权限开启弹窗
-     */
-    private val locationPop by lazy {
-        XPopup.Builder(this@PairOnePageActivity)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(true)
-            .asCustom(
-                PairLocationPop(this@PairOnePageActivity) {
-                    val intent =
-                        Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                    startActivity(intent)
-                }
-            )
     }
 
     /**
