@@ -66,7 +66,7 @@ class PermissionHelp {
                     // 或者点击肯定时,也会回调此方法
                     scope.showForwardToSettingsDialog(
                         deniedList,
-                        "Bluetooth connection requires you to enable Bluetooth scanning and connection privileges",
+                        "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
                         "To set",
                         "Cancel"
                     )
@@ -76,7 +76,7 @@ class PermissionHelp {
                     // 用户单次拒绝权限时,回调
                     scope.showRequestReasonDialog(
                         deniedList,
-                        "Bluetooth connection requires you to enable Bluetooth scanning and connection privileges",
+                        "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
                         "Allow",
                         "Cancel"
                     )
@@ -264,7 +264,7 @@ class PermissionHelp {
                         // 或者点击肯定时,也会回调此方法
                         scope.showForwardToSettingsDialog(
                             deniedList,
-                            "Bluetooth connection requires you to enable Bluetooth scanning and connection privileges",
+                            "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
                             "To set",
                             "Cancel"
                         )
@@ -274,7 +274,7 @@ class PermissionHelp {
                         // 用户单次拒绝权限时,回调
                         scope.showRequestReasonDialog(
                             deniedList,
-                            "Bluetooth connection requires you to enable Bluetooth scanning and connection privileges",
+                            "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
                             "Allow",
                             "Cancel"
                         )
