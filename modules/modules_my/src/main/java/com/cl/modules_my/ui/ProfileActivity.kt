@@ -19,6 +19,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
@@ -115,40 +116,18 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                 ChooserOptionPop(
                     context = this@ProfileActivity,
                     onPhotoAction = {
-                        // 拍照 权限
-                        PermissionX.init(this@ProfileActivity)
-                            .permissions(Manifest.permission.CAMERA)
-                            .onForwardToSettings { scope, deniedList ->
-                                // 用户点击不再询问时,回调
-                                // 或者点击肯定时,也会回调此方法
-                                scope.showForwardToSettingsDialog(
-                                    deniedList,
-                                    "You need to allow necessary permissions in Settings manually",
-                                    "OK",
-                                    "Cancel"
-                                )
-                            }
-                            .explainReasonBeforeRequest()
-                            .onExplainRequestReason { scope, deniedList ->
-                                // 用户单次拒绝权限时,回调
-                                scope.showRequestReasonDialog(
-                                    deniedList,
-                                    "Core fundamental are based on these permissions",
-                                    "OK",
-                                    "Cancel"
-                                )
-                            }
-                            .request { allGranted, grantedList, deniedList ->
-                                if (allGranted) {
-                                    logI("These permissions are Granted: $deniedList")
+                        PermissionHelp().applyPermissionHelp(
+                            this@ProfileActivity,
+                            "Need to authorize hey abby to take photos",
+                            object : PermissionHelp.OnCheckResultListener{
+                                override fun onResult(result: Boolean) {
+                                    if (!result) return
                                     //跳转到调用系统相机
                                     gotoCamera()
-                                } else {
-                                    // todo 拒绝的提示
-                                    logE("These permissions are denied: $deniedList")
                                 }
-                            }
-
+                            },
+                            Manifest.permission.CAMERA
+                        )
                     },
                     onLibraryAction = {
                         // 选择照片

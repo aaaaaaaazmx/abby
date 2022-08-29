@@ -6,6 +6,7 @@ import android.os.Build
 import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.widget.doAfterTextChanged
@@ -151,7 +152,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                         data: ${data.toString()}
                     """.trimIndent()
                     )
-                    data?.let { PlantCheckHelp().plantStatusCheck(it, false) }
+                    data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
                     finish()
                 }
 
@@ -240,57 +241,20 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
      */
     private fun getWifiName() {
         if (NetWorkUtil.isWifi(this@PairDistributionWifiActivity)) {
-            if (PermissionChecker.hasPermissions(
-                    this@PairDistributionWifiActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                )
-            ) {
-                // 直接获取wifi名字
-                val wifiName = NetWorkUtil.getConnectWifiSsid(this@PairDistributionWifiActivity)
-                binding.tvWifiName.text = wifiName
-            } else {
-                // 请求权限
-                // 适配Android10
-                // 首先判断地理位置权限
-                PermissionX.init(this@PairDistributionWifiActivity)
-                    .permissions(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                    )
-                    .onForwardToSettings { scope, deniedList ->
-                        // 用户点击不再询问时,回调
-                        // 或者点击肯定时,也会回调此方法
-                        scope.showForwardToSettingsDialog(
-                            deniedList,
-                            "You need to allow necessary permissions in Settings manually",
-                            "OK",
-                            "Cancel"
-                        )
+            PermissionHelp().applyPermissionHelp(
+                this@PairDistributionWifiActivity,
+                "Enable the location permission to get the Wi-Fi name automatically.",
+                object : PermissionHelp.OnCheckResultListener{
+                    override fun onResult(result: Boolean) {
+                        if (!result) return
+                        // 直接获取wifi名字
+                        val wifiName = NetWorkUtil.getConnectWifiSsid(this@PairDistributionWifiActivity)
+                        binding.tvWifiName.text = wifiName
                     }
-                    .explainReasonBeforeRequest()
-                    .onExplainRequestReason { scope, deniedList ->
-                        // 用户单次拒绝权限时,回调
-                        scope.showRequestReasonDialog(
-                            deniedList,
-                            "Core fundamental are based on these permissions",
-                            "OK",
-                            "Cancel"
-                        )
-                    }
-                    .request { allGranted, grantedList, deniedList ->
-                        if (allGranted) {
-                            logI("These permissions are Granted: $deniedList")
-                            //  获取wifi名字
-                            // 直接获取wifi名字
-                            NetWorkUtil.getConnectWifiSsid(this@PairDistributionWifiActivity)
-                        } else {
-                            // todo 拒绝的提示
-                            logE("These permissions are denied: $deniedList")
-                        }
-                    }
-
-            }
+                },
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            )
         }
     }
 

@@ -11,6 +11,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.glide.GlideEngineForScanCode
 import com.cl.common_base.util.permission.PermissionChecker
@@ -95,55 +96,19 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
      * 检查权限以及开启扫描
      */
     private fun checkPermissionAndStartScan() {
-        if (PermissionChecker.hasPermissions(
-                this@PairFrontScanCodeActivity,
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-        ) {
-            // 权限都同意之后，那么直接开启扫描
-            startScanCode()
-        } else {
-            // 适配Android12
-            // 首先判断地理位置权限
-            PermissionX.init(this@PairFrontScanCodeActivity)
-                .permissions(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-                .onForwardToSettings { scope, deniedList ->
-                    // 用户点击不再询问时,回调
-                    // 或者点击肯定时,也会回调此方法
-                    scope.showForwardToSettingsDialog(
-                        deniedList,
-                        "You need to allow necessary permissions in Settings manually",
-                        "OK",
-                        "Cancel"
-                    )
+        PermissionHelp().applyPermissionHelp(
+            this@PairFrontScanCodeActivity,
+            "You need to grant hey abby permission to take photos and also give hey abby access to photos to add recent photos.",
+            object : PermissionHelp.OnCheckResultListener {
+                override fun onResult(result: Boolean) {
+                    if (!result) return
+                    startScanCode()
                 }
-                .explainReasonBeforeRequest()
-                .onExplainRequestReason { scope, deniedList ->
-                    // 用户单次拒绝权限时,回调
-                    scope.showRequestReasonDialog(
-                        deniedList,
-                        "Core fundamental are based on these permissions",
-                        "OK",
-                        "Cancel"
-                    )
-                }
-                .request { allGranted, grantedList, deniedList ->
-                    if (allGranted) {
-                        logI("These permissions are Granted: $deniedList")
-                        startScanCode()
-                    } else {
-                        // todo 拒绝的提示
-                        ToastUtil.shortShow("These permissions are denied: $deniedList")
-                        logE("These permissions are denied: $deniedList")
-                    }
-                }
-        }
+            },
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
     }
 
     private fun startScanCode() {

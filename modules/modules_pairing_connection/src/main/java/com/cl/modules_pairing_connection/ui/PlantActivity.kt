@@ -10,10 +10,12 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logE
+import com.cl.common_base.ext.logI
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.PairLocationPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.lcoation.LocationUtil
+import com.cl.common_base.util.network.NetWorkUtil
 import com.cl.modules_pairing_connection.databinding.PairPlantHomeBinding
 import com.cl.modules_pairing_connection.widget.PairLoginOutPop
 import com.lxj.xpopup.XPopup
@@ -71,26 +73,27 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
     }
 
     override fun initData() {
-
         // 跳转到第一页引导
         binding.tvScan.setOnClickListener {
-            PermissionHelp().checkConnect(
-                this@PlantActivity,
-                supportFragmentManager,
-                true,
-                object :
-                    PermissionHelp.OnCheckResultListener {
-                    override fun onResult(result: Boolean) {
-                        if (!result) return
-                        // 如果权限都已经同意了,
-                        startActivity(
-                            Intent(
-                                this@PlantActivity,
-                                PairOnePageActivity::class.java
-                            )
-                        )
-                    }
-                })
+            checkPer()
         }
+    }
+
+    private fun checkPer() {
+        PermissionHelp().checkConnectForTuYaBle(
+            this@PlantActivity,
+            object :
+                PermissionHelp.OnCheckResultListener {
+                override fun onResult(result: Boolean) {
+                    if (!result) return
+                    // 如果权限都已经同意了,
+                    startActivity(
+                        Intent(
+                            this@PlantActivity,
+                            PairOnePageActivity::class.java
+                        )
+                    )
+                }
+            })
     }
 }
