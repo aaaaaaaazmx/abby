@@ -160,18 +160,9 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
     override fun initData() {
 
         binding.btnSuccess.setOnClickListener {
-            // 跳转到设置密码界面
-            val intent =
-                Intent(this@VerifyEmailActivity, SetPasswordActivity::class.java)
-            intent.putExtra(
-                SetPasswordActivity.KEY_REGISTER_OR_FORGET_PASSWORD,
-                isRegister
-            )
-            // 用户注册的一些必要参数
-            intent.putExtra(CreateAccountActivity.KEY_USER_REGISTER_BEAN, userRegisterBean)
-            intent.putExtra(KEY_EMAIL_NAME, emailName)
-            startActivity(intent)
-            finish()
+            // 验证验证吗
+            if (binding.codeView.code.isNullOrEmpty()) return@setOnClickListener
+            emailName?.let { name -> mViewModel.verifyCode(binding.codeView.code, name) }
         }
 
         // 重新发送验证
@@ -182,11 +173,12 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
     override fun onComplete(code: String?) {
         code?.let {
-            if (it.isNullOrEmpty()) {
+            if (it.isEmpty()) {
                 return@let
             }
+            binding.btnSuccess.isEnabled = true
             // 验证码邮箱是否正确
-            emailName?.let { name -> mViewModel.verifyCode(it.toString(), name) }
+            emailName?.let { name -> mViewModel.verifyCode(it, name) }
         }
     }
 

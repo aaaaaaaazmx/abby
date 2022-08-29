@@ -539,7 +539,7 @@ public class VerificationCodeInputView  extends RelativeLayout {
      *
      * @return 验证码
      */
-    private String getCode() {
+    public String getCode() {
         StringBuilder sb = new StringBuilder();
         for (String code : mCodes) {
             sb.append(code);

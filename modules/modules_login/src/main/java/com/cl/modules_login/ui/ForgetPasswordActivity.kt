@@ -49,7 +49,6 @@ class ForgetPasswordActivity : BaseActivity<ActivityForgetPasswordBinding>() {
                         binding.etName.text.toString()
                     )
                     startActivity(intent)
-                    finish()
                 }
                 error { msg, code ->
                     hideProgressLoading()
