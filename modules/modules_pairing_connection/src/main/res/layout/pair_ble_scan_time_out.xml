@@ -37,12 +37,12 @@
 
                     <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="200dp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginStart="26dp"
                         android:layout_marginTop="40dp"
                         android:layout_marginEnd="26dp"
-                        android:background="@mipmap/pair_time_out" />
+                        android:src="@mipmap/pair_time_out" />
 
                     <TextView
                         android:textStyle="bold"

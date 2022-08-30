@@ -10,6 +10,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -42,6 +43,8 @@ import com.goldentec.android.tools.util.isCanToBigDecimal
 import com.joketng.timelinestepview.TimeLineState
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.thread
@@ -461,7 +464,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      */
     private val plantDrainFinished by lazy {
         XPopup.Builder(context)
-            .isDestroyOnDismiss(true)
+            .isDestroyOnDismiss(false)
             .enableDrag(false)
             .maxHeight(dp2px(600f))
             .dismissOnTouchOutside(false)

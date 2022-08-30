@@ -250,7 +250,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         if (NetWorkUtil.isWifi(this@PairDistributionWifiActivity)) {
             PermissionHelp().applyPermissionHelp(
                 this@PairDistributionWifiActivity,
-                "Enable the location permission to get the Wi-Fi name automatically.",
+                "Granting Hey abby access to your phone's location will be used to generate a Wi-Fi network list.",
                 object : PermissionHelp.OnCheckResultListener{
                     override fun onResult(result: Boolean) {
                         if (!result) return

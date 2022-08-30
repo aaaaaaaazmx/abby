@@ -70,6 +70,18 @@ class BasePumpWaterPop(
         adapter.setList(data)
     }
 
+    override fun onDismiss() {
+        super.onDismiss()
+        // 因为是通过by lazy 添加的， 所以状态需要重置
+        binding?.btnSuccess?.let {
+            it.background = context.resources.getDrawable(
+                R.mipmap.base_start_bg,
+                context.theme
+            )
+            binding?.tvAddClockTime?.text = "Click the button to start draining"
+        }
+    }
+
     var binding: BasePumpWaterPopBinding? = null
     override fun onCreate() {
         super.onCreate()
@@ -84,8 +96,9 @@ class BasePumpWaterPop(
                         context.theme
                     ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
 
-                    tvAddClockTime.text = if (btnSuccess.isChecked) "Click the button to start draining"
-                    else "Click the button to stop draining"
+                    tvAddClockTime.text =
+                        if (btnSuccess.isChecked) "Click the button to start draining"
+                        else "Click the button to stop draining"
                 }
             }
             ivClose.setOnClickListener {
@@ -170,6 +183,7 @@ class BasePumpWaterPop(
                             // 涂鸦指令，添加排水功能
 //                            isOpenOrStop(false)
                             // 排水成功
+                            if ((value as? Boolean == false)) return@observe
                             onWaterFinishedAction?.invoke()
                             dismiss()
                         }
@@ -180,13 +194,18 @@ class BasePumpWaterPop(
                             synchronized(this) {
                                 // 加锁的目的是为了
                                 // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
-                                binding?.btnSuccess?.background = if ((value as? Boolean != true)) context.resources.getDrawable(
-                                    R.mipmap.base_start_bg,
-                                    context.theme
-                                ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
+                                binding?.btnSuccess?.background =
+                                    if ((value as? Boolean != true)) context.resources.getDrawable(
+                                        R.mipmap.base_start_bg,
+                                        context.theme
+                                    ) else context.resources.getDrawable(
+                                        R.mipmap.base_suspend_bg,
+                                        context.theme
+                                    )
 
-                                binding?.tvAddClockTime?.text = if ((value as? Boolean != true)) "Click the button to start draining"
-                                else "Click the button to stop draining"
+                                binding?.tvAddClockTime?.text =
+                                    if ((value as? Boolean != true)) "Click the button to start draining"
+                                    else "Click the button to stop draining"
                             }
 
                             if ((value as? Boolean == true)) return@observe

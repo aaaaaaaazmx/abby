@@ -139,7 +139,7 @@ class PermissionHelp {
                     // 或者点击肯定时,也会回调此方法
                     scope.showForwardToSettingsDialog(
                         deniedList,
-                        "Bluetooth connection requires you to enable location access",
+                        "Location permission is used to search for nearby devices and available WI-FI networks",
                         "To set",
                         "Cancel"
                     )
@@ -149,7 +149,7 @@ class PermissionHelp {
                     // 用户单次拒绝权限时,回调
                     scope.showRequestReasonDialog(
                         deniedList,
-                        "Bluetooth connection requires you to enable location access",
+                        "Location permission is used to search for nearby devices and available WI-FI networks",
                         "Allow",
                         "Cancel"
                     )
@@ -344,7 +344,7 @@ class PermissionHelp {
                         // 或者点击肯定时,也会回调此方法
                         scope.showForwardToSettingsDialog(
                             deniedList,
-                            "Bluetooth connection requires you to enable location access",
+                            "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
                             "To set",
                             "Cancel"
                         )
@@ -354,7 +354,7 @@ class PermissionHelp {
                         // 用户单次拒绝权限时,回调
                         scope.showRequestReasonDialog(
                             deniedList,
-                            "Bluetooth connection requires you to enable location access",
+                            "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
                             "Allow",
                             "Cancel"
                         )
