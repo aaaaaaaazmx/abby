@@ -1,10 +1,17 @@
 package com.cl.modules_pairing_connection.ui
 
 import android.content.Intent
+import android.graphics.Color
+import androidx.core.content.ContextCompat
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
+import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairReconnectBinding
+import com.cl.modules_pairing_connection.widget.ReconnectTipsPop
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.util.XPopupUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -23,17 +30,48 @@ class PairReconnectActivity : BaseActivity<PairReconnectBinding>() {
         intent.getBooleanExtra(KEY_BLE_TIME_OUT_OR_GUIDE_CLICK, false)
     }
 
+    private val tipsPop by lazy {
+        // 弹窗
+        XPopup.Builder(this@PairReconnectActivity)
+            .popupPosition(PopupPosition.Top)
+            .isDestroyOnDismiss(false) //对于只使用一次的弹窗，推荐设置这个
+            .atView(binding.cbBox)
+            .isClickThrough(true)
+            .dismissOnTouchOutside(false)
+            .hasShadowBg(false) // 去掉半透明背景
+            .offsetY(XPopupUtils.dp2px(this@PairReconnectActivity, 6f))
+            .asCustom(
+                ReconnectTipsPop(this@PairReconnectActivity)
+                    .setBubbleBgColor(
+                        ContextCompat.getColor(
+                            this@PairReconnectActivity,
+                            R.color.mainColor
+                        )
+                    ) //气泡背景
+                    .setArrowWidth(XPopupUtils.dp2px(this@PairReconnectActivity, 7f))
+                    .setArrowHeight(
+                        XPopupUtils.dp2px(
+                            this@PairReconnectActivity,
+                            6f
+                        )
+                    )
+                    .setArrowRadius(XPopupUtils.dp2px(this@PairReconnectActivity, 2f))
+            )
+    }
 
     override fun initView() {
-
+        tipsPop.show()
     }
 
     override fun observe() {
     }
 
     override fun initData() {
-        binding.cbBox.setOnCheckedChangeListener { compoundButton, b ->
+        binding.cbBox.setOnCheckedChangeListener { _, b ->
             binding.btnSuccess.isEnabled = b
+            if (b) tipsPop.dismiss() else {
+                if (!tipsPop.isShow) tipsPop.show()
+            }
         }
 
         binding.btnSuccess.setOnClickListener {

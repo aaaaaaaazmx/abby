@@ -38,6 +38,7 @@
                     app:layout_constraintStart_toStartOf="parent">
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tv_one"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -50,6 +51,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tv_two"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -63,6 +65,7 @@
                         tools:text="Tap the dial display 3 times to reconnect." />
 
                     <ImageView
+                        android:layout_marginTop="50dp"
                         android:id="@+id/iv_img"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -71,9 +74,10 @@
                         android:background="@mipmap/pair_reconnect"
                         android:scaleType="centerCrop"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/tv_two" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_two" />
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tv_three"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
