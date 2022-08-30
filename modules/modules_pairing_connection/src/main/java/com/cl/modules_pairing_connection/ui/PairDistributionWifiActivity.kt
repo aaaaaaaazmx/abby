@@ -80,6 +80,13 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             appendLine("Wi-Fi only supports alphanumeric character")
             appendLine("2.Your phone must be connected to the same 2.4G wifi as abby")
         }
+
+        // 默认设置账号密码
+        if (binding.tvWifiName.text == mViewModel.wifiName) {
+            if (mViewModel.wifiPsd.isEmpty()) {
+                binding.etWifiPwd.setText(mViewModel.wifiPsd)
+            }
+        }
     }
 
     private val tuYaUser by lazy {
@@ -328,6 +335,9 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                         it
                                                     )
                                                 }
+                                                // 开始存储账号和密码
+                                                Prefs.putStringAsync(Constants.Pair.KEY_PAIR_WIFI_NAME, binding.tvWifiName.text.toString())
+                                                Prefs.putStringAsync(Constants.Pair.KEY_PAIR_WIFI_PASSWORD, binding.etWifiPwd.text.toString())
                                                 // 调用后台接口绑定
                                                 mViewModel.bindDevice(bean.devId, bean.uuid)
                                             }.onFailure { hideProgressLoading() }

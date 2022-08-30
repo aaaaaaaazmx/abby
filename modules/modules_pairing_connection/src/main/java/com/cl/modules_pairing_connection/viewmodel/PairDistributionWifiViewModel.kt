@@ -11,6 +11,7 @@ import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.util.Prefs
 import com.cl.modules_pairing_connection.repository.PairRepository
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
@@ -25,6 +26,14 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class PairDistributionWifiViewModel @Inject constructor(private val repository: PairRepository) :
     ViewModel() {
+
+    val wifiName by lazy {
+        Prefs.getString(Constants.Pair.KEY_PAIR_WIFI_NAME)
+    }
+
+    val wifiPsd by lazy {
+        Prefs.getString(Constants.Pair.KEY_PAIR_WIFI_PASSWORD)
+    }
 
     private val _passWordState = MutableLiveData<Boolean>(true)
     val passWordState: LiveData<Boolean> = _passWordState

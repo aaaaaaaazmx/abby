@@ -53,6 +53,12 @@ object Constants {
         const val KEY_PRIVACY_POLICY_IS_AGREE = "key_privacy_policy_is_agree"
     }
 
+    // 配对都wifi名字和wifi密码
+    object Pair {
+        const val KEY_PAIR_WIFI_NAME = "key_pair_wifi_name"
+        const val KEY_PAIR_WIFI_PASSWORD = "key_pair_wifi_password"
+    }
+
     // 涂鸦相关
     object Tuya {
         // 用户信息
