@@ -89,6 +89,8 @@ object Version {
     const val firBaseMessgae = "23.0.5"
     const val stepView = "1.0.1"
     const val cardSwip = "1.0.0"
+
+    const val lottieVersion = "5.2.0"
 }
 
 object Deps {
@@ -220,6 +222,9 @@ object Deps {
     const val fcm = "cn.jiguang.sdk.plugin:fcm:${Version.fcm}"
     const val jpushGoogle = "cn.jiguang.sdk:jpush-google:${Version.push}"
     const val jPushCodeGoogle = "cn.jiguang.sdk:jcore-google:${Version.jcore}"
+
+    // lottie
+    const val lottie = "com.airbnb.android:lottie:${Version.lottieVersion}"
 }
 
 fun String.exec(): String =

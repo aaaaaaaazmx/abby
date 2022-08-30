@@ -108,4 +108,6 @@ dependencies {
     // bugly
     api("com.tencent.bugly:crashreport:latest.release")
     api(project(mapOf("path" to ":common:BarcodeScanning")))
+    // lottie
+    api(Deps.lottie)
 }

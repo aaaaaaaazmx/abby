@@ -36,7 +36,7 @@
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <ImageView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="200dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginStart="26dp"
@@ -45,6 +45,7 @@
                         android:background="@mipmap/pair_time_out" />
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tv_one"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -58,6 +59,7 @@
 
 
                     <TextView
+                        android:textStyle="bold"
                         android:id="@+id/tv_two"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

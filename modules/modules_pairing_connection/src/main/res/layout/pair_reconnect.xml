@@ -64,17 +64,23 @@
                         tools:ignore="MissingConstraints"
                         tools:text="Tap the dial display 3 times to reconnect." />
 
-                    <ImageView
-                        android:layout_marginTop="50dp"
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:layout_marginTop="21dp"
                         android:id="@+id/iv_img"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="ab_reset_device_datachongzhi.json"
+                        app:lottie_loop="true"
                         android:layout_marginStart="23dp"
                         android:layout_marginEnd="23dp"
-                        android:background="@mipmap/pair_reconnect"
                         android:scaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_two" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_two"
+                        />
+
+
 
                     <TextView
                         android:textStyle="bold"
