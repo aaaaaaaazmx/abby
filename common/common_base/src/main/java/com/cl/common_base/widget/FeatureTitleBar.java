@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -188,6 +189,19 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
         ViewUtils.setGone(ivLeft);
         ViewUtils.setVisible(tvLeftName);
         tvLeftName.setText(text);
+        return this;
+    }
+
+    /**
+     * 设置左边文案，并且加粗
+     */
+    public FeatureTitleBar setLeftText(String text, boolean isBold) {
+        ViewUtils.setGone(ivLeft);
+        ViewUtils.setVisible(tvLeftName);
+        tvLeftName.setText(text);
+        if (isBold) {
+            tvLeftName.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        }
         return this;
     }
 

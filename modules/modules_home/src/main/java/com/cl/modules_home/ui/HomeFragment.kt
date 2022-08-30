@@ -80,6 +80,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun initView(view: View) {
         ARouter.getInstance().inject(this)
+        binding.plantOffLine.title.setLeftVisible(false)
         // 刷新数据以及token
         mViewMode.refreshToken(
             AutomaticLoginReq(
@@ -1380,6 +1381,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+        // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.systemWindowInsetTop

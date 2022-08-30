@@ -17,46 +17,54 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/cl_root"
+
+            <!--上面这些都需要添加状态栏高度-->
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <include
-                    android:id="@+id/plant_extend_bg"
-                    layout="@layout/home_item_plant_extend"
-                    android:visibility="gone" />
+                <RelativeLayout
+                    android:id="@+id/cl_root"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-                <!--未种植状态-->
-                <include
-                    android:id="@+id/plant_first"
-                    layout="@layout/home_item_plant_one"
-                    android:visibility="gone" />
+                    <include
+                        android:id="@+id/plant_extend_bg"
+                        layout="@layout/home_item_plant_extend"
+                        android:visibility="gone" />
 
-                <!--引导种植加水步骤-->
-                <include
-                    android:id="@+id/plant_add_water"
-                    layout="@layout/home_item_plant_two"
-                    android:visibility="gone" />
+                    <!--未种植状态-->
+                    <include
+                        android:id="@+id/plant_first"
+                        layout="@layout/home_item_plant_one"
+                        android:visibility="gone" />
 
-                <!--引导种植倒数第二步-->
-                <include
-                    android:id="@+id/plant_clone"
-                    layout="@layout/home_item_plant_seven"
-                    android:visibility="gone" />
+                    <!--引导种植加水步骤-->
+                    <include
+                        android:id="@+id/plant_add_water"
+                        layout="@layout/home_item_plant_two"
+                        android:visibility="gone" />
 
-                <!--引导种植最有一步-->
-                <include
-                    android:id="@+id/pplant_ninth"
-                    layout="@layout/home_item_plant_ninth"
-                    android:visibility="gone" />
+                    <!--引导种植倒数第二步-->
+                    <include
+                        android:id="@+id/plant_clone"
+                        layout="@layout/home_item_plant_seven"
+                        android:visibility="gone" />
+
+                    <!--引导种植最后一步-->
+                    <include
+                        android:id="@+id/pplant_ninth"
+                        layout="@layout/home_item_plant_ninth"
+                        android:visibility="gone" />
+                </RelativeLayout>
 
                 <!--设备离线显示图, 这个需要显示在最下面，必须的！-->
                 <include
                     android:id="@+id/plant_off_line"
                     layout="@layout/home_item_off_line"
                     android:visibility="gone" />
-            </RelativeLayout>
+            </FrameLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>
