@@ -160,7 +160,6 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     """.trimIndent()
                     )
                     data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
-                    finish()
                 }
 
                 error { errorMsg, code ->

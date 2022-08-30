@@ -85,6 +85,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         ARouter.getInstance().inject(this)
         binding.plantOffLine.title.setLeftVisible(false)
         // 刷新数据以及token
+        // 一并检查下当前的状态
         mViewMode.refreshToken(
             AutomaticLoginReq(
                 userName = mViewMode.account,
@@ -170,6 +171,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     /**
      * 进入这个页面时，所展示的逻辑
+     * 主要是用来切换当前植物的状态UI方法
      */
     private fun showView() {
         // 根据传过来的flag获取图文引导
@@ -1534,6 +1536,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             Constants.Device.KEY_DEVICE_ONLINE -> {
                 ViewUtils.setGone(binding.plantOffLine.root)
+                // 刷新数据以及token
+                // 一并检查下当前的状态
+                mViewMode.refreshToken(
+                    AutomaticLoginReq(
+                        userName = mViewMode.account,
+                        password = mViewMode.psd,
+                        token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                    )
+                )
             }
             Constants.Device.KEY_DEVICE_REMOVE -> {
                 logI(
