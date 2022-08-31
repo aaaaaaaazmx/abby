@@ -115,18 +115,18 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
             onTick = {
                 logI("onTick: $it")
                 if (it != 0) return@countDownCoroutines
-                    runOnUiThread {
-                        startActivity(
-                            Intent(
-                                this@PairOnePageActivity,
-                                PairBleScanTimeOutActivity::class.java
-                            )
-                        )
-                    }
+                startActivity(
+                    Intent(
+                        this@PairOnePageActivity,
+                        PairBleScanTimeOutActivity::class.java
+                    )
+                )
+                job?.cancel()
             },
             onStart = {},
             onFinish = {
                 // todo 这个finish也指的是当前页面被关闭, 定时任务不能放在这个地方.
+                job?.cancel()
             })
     }
 

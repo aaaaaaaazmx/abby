@@ -1,6 +1,7 @@
 package com.cl.modules_home.response
 
 import androidx.annotation.Keep
+import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.cl.common_base.BaseBean
 
 /**
@@ -19,12 +20,26 @@ data class GuideInfoData(
         var extend: Extend? = null,
         var picture: String? = null,
         var title: String? = null,
-        var isCheck: Boolean? = false
-    ) : BaseBean()
+        var isCheck: Boolean? = false,
+        var isCurrentStatus: Int? = 0
+    ) : BaseBean(), MultiItemEntity {
+        // 返回当前布局状态
+        override val itemType: Int
+            get() = isCurrentStatus!!
+    }
 
 
     data class Extend(
         val width: Int? = null,
         val height: Int? = null,
     ) : BaseBean()
+
+    companion object {
+        // 通常状态
+        const val VALUE_STATUS_NORMAL = 0
+        // Drying状态
+        const val VALUE_STATUS_DRYING = 5
+        // Curing状态
+        const val VALUE_STATUS_CURING = 7
+    }
 }

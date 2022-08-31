@@ -28,6 +28,7 @@
                 android:background="@drawable/bg_round_gray">
 
                 <TextView
+                    android:id="@+id/tv_title"
                     android:text="@{data.title}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

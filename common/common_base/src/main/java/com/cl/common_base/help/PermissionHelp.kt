@@ -39,6 +39,7 @@ class PermissionHelp {
             XPopup.Builder(activity)
                 .isDestroyOnDismiss(false)
                 .asCustom(GuideBlePop(activity))
+                .show()
             return
         }
 
@@ -105,7 +106,7 @@ class PermissionHelp {
                                 Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                             activity.startActivity(intent)
                         }
-                    )
+                    ).show()
                 return
             }
 
@@ -190,6 +191,7 @@ class PermissionHelp {
             XPopup.Builder(activity)
                 .isDestroyOnDismiss(false)
                 .asCustom(GuideBlePop(activity))
+                .show()
             return
         }
 
@@ -205,7 +207,7 @@ class PermissionHelp {
                             Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                         activity.startActivity(intent)
                     }
-                )
+                ).show()
             return
         }
 
@@ -317,7 +319,7 @@ class PermissionHelp {
                             Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                         activity.startActivity(intent)
                     }
-                )
+                ).show()
             listener?.onResult(false)
         } else {
             if (PermissionChecker.hasPermissions(

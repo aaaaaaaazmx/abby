@@ -6,10 +6,11 @@ import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.ext.logI
-import com.cl.modules_home.adapter.PlantInitPopAdapter
+import com.cl.modules_home.adapter.PlantInitMultiplePopAdapter
 import com.cl.modules_home.response.GuideInfoData
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomePlantUsuallyPopBinding
+import com.cl.common_base.constants.UnReadConstants
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.util.SmartGlideImageLoader
@@ -31,8 +32,13 @@ class HomePlantUsuallyPop(
 
     private var binding: HomePlantUsuallyPopBinding? = null
     private val adapter by lazy {
-        PlantInitPopAdapter(mutableListOf())
+        PlantInitMultiplePopAdapter(mutableListOf())
     }
+
+    /**
+     * 当前状态
+     */
+    private var isCurrentStatus: Int? = null
 
     /**
      * 设置数据
@@ -41,12 +47,16 @@ class HomePlantUsuallyPop(
         binding?.btnSuccess?.isEnabled = false
         this.popData = popData?.items
         this.data = popData
+        this.isCurrentStatus = popData?.type
     }
 
     override fun beforeShow() {
         super.beforeShow()
         // 设置数据
         popData?.let {
+            if (isCurrentStatus == GuideInfoData.VALUE_STATUS_DRYING || isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
+                it[it.size -1].isCurrentStatus = isCurrentStatus
+            }
             adapter.setList(it)
         }
     }
@@ -67,7 +77,7 @@ class HomePlantUsuallyPop(
 
             // todo 需要判断是否有checkBox的存在，，如果没有checkBox的存在，那么按钮直接  = true
             // todo 但是目前不知道根据什么来判断是否显示checkBox
-            adapter.addChildClickViewIds(R.id.cl_two, R.id.box, R.id.iv_pic)
+            adapter.addChildClickViewIds(R.id.cl_two, R.id.box, R.id.iv_pic, R.id.cb_box)
             // 按钮点击
             adapter.setOnItemChildClickListener { adapter, view, position ->
                 when (view.id) {

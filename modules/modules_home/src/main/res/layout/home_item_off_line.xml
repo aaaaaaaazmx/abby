@@ -35,7 +35,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="24dp"
-                android:background="@mipmap/home_off_line_bg" />
+                android:src="@mipmap/home_off_line_bg" />
 
             <TextView
                 android:layout_width="wrap_content"

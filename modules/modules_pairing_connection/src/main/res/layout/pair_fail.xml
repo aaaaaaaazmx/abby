@@ -30,7 +30,7 @@
                 android:layout_marginStart="23dp"
                 android:layout_marginTop="83dp"
                 android:layout_marginEnd="23dp"
-                android:background="@mipmap/home_off_line_bg"
+                android:src="@mipmap/home_off_line_bg"
                 android:scaleType="centerCrop"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_two" />
