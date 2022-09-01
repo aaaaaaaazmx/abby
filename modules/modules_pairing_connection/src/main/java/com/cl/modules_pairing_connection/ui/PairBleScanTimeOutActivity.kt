@@ -7,6 +7,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairBleScanTimeOutBinding
@@ -36,7 +37,21 @@ class PairBleScanTimeOutActivity : BaseActivity<PairBleScanTimeOutBinding>() {
             append("3. ")
             color(ContextCompat.getColor(this@PairBleScanTimeOutActivity, R.color.mainColor)) {
                 appendClickable("Reconnect") {
-                    startActivity(Intent(this@PairBleScanTimeOutActivity, PairReconnectActivity::class.java))
+                    // 检查是否有定位权限
+                    PermissionHelp().checkConnectForTuYaBle(
+                        this@PairBleScanTimeOutActivity,
+                        object :
+                            PermissionHelp.OnCheckResultListener {
+                            override fun onResult(result: Boolean) {
+                                if (!result) return
+                                startActivity(
+                                    Intent(
+                                        this@PairBleScanTimeOutActivity,
+                                        PairReconnectActivity::class.java
+                                    )
+                                )
+                            }
+                        })
                 }
             }
             append(" the device.")

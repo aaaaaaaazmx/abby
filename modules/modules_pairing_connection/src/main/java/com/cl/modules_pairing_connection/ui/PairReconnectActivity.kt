@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.help.PermissionHelp
 import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairReconnectBinding
 import com.cl.modules_pairing_connection.widget.ReconnectTipsPop
@@ -75,8 +76,23 @@ class PairReconnectActivity : BaseActivity<PairReconnectBinding>() {
         }
 
         binding.btnSuccess.setOnClickListener {
-            // 具体跳准到哪个页面
-            startActivity(Intent(this, PairOnePageActivity::class.java))
+            PermissionHelp().checkConnectForTuYaBle(
+                this@PairReconnectActivity,
+                object :
+                    PermissionHelp.OnCheckResultListener {
+                    override fun onResult(result: Boolean) {
+                        if (!result) return
+                        // 如果权限都已经同意了,
+                        // 具体跳准到哪个页面
+                        startActivity(
+                            Intent(
+                                this@PairReconnectActivity,
+                                PairOnePageActivity::class.java
+                            )
+                        )
+                    }
+                })
+
         }
     }
 
