@@ -1,13 +1,19 @@
 package com.cl.modules_home.adapter
 
+import android.widget.CheckBox
+import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import com.bbgo.module_home.R
+import com.bbgo.module_home.databinding.HomeItemCuringPopBinding
 import com.bbgo.module_home.databinding.HomeItemEditPopBinding
 import com.bbgo.module_home.databinding.HomeItemPopBinding
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.ext.logI
+import com.cl.common_base.util.ViewUtils
 import com.cl.modules_home.response.GuideInfoData
+import okio.blackholeSink
 
 /**
  * 种植周期，多type布局
@@ -18,7 +24,7 @@ class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
     init {
         addItemType(GuideInfoData.VALUE_STATUS_NORMAL, R.layout.home_item_pop)
         addItemType(GuideInfoData.VALUE_STATUS_DRYING, R.layout.home_item_edit_pop)
-        addItemType(GuideInfoData.VALUE_STATUS_CURING, R.layout.home_item_edit_pop)
+        addItemType(GuideInfoData.VALUE_STATUS_CURING, R.layout.home_item_curing_pop)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -41,7 +47,7 @@ class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
                 }
             }
             GuideInfoData.VALUE_STATUS_CURING -> {
-                val binding = DataBindingUtil.bind<HomeItemEditPopBinding>(holder.itemView)
+                val binding = DataBindingUtil.bind<HomeItemCuringPopBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
                     binding.data = data[position]
@@ -58,21 +64,32 @@ class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
 
             }
             GuideInfoData.VALUE_STATUS_DRYING -> {
-                val binding: HomeItemEditPopBinding? = DataBindingUtil.getBinding(holder.itemView)
-                if (binding != null) {
-                    // 设置数据
-                    binding.data = item
-                    binding.executePendingBindings()
+                val etWeight = holder.getView<EditText>(R.id.et_weight)
+                val typeTwoBox = holder.getView<CheckBox>(R.id.type_two_box)
+                val typeBox = holder.getView<CheckBox>(R.id.type_box)
+                ViewUtils.setEditTextInputSpace(holder.getView(R.id.et_weight))
+                etWeight.addTextChangedListener {
+                    val check = typeTwoBox.isChecked
+                    if (it.isNullOrEmpty()) {
+                        typeBox.isChecked = false
+                        data[holder.layoutPosition].isCheck = false
+                    } else {
+                        if (check) typeTwoBox.isChecked = false
+                    }
                 }
+
             }
             GuideInfoData.VALUE_STATUS_CURING -> {
-                val binding: HomeItemEditPopBinding? = DataBindingUtil.getBinding(holder.itemView)
-                if (binding != null) {
-                    // 设置数据
-                    binding.data = item
-                    binding.executePendingBindings()
+                ViewUtils.setEditTextInputSpace(holder.getView(R.id.curing_et_weight))
+                val etWeight = holder.getView<EditText>(R.id.curing_et_weight)
+                val curingBox = holder.getView<CheckBox>(R.id.curing_box)
+                etWeight.addTextChangedListener {
+                    if (!it.isNullOrEmpty()) {
+                        curingBox.isChecked = false
+                    }
                 }
             }
+
         }
     }
 }

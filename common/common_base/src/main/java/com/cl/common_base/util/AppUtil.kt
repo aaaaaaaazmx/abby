@@ -98,24 +98,6 @@ object AppUtil {
     @SuppressLint("HardwareIds")
     fun getDeviceSerial(): String {
         if (deviceSerial == null) {
-            var deviceId: String? = null
-//            val appChannel = getApplicationMetaData("APP_CHANNEL")
-            kotlin.runCatching {
-                deviceId = Settings.Secure.getString(
-                    BaseApplication.getContext().contentResolver,
-                    Settings.Secure.ANDROID_ID
-                )
-                deviceId?.let {
-                    if (it.length < 255) {
-                        deviceSerial = deviceId
-                        return deviceSerial.toString()
-                    }
-                }
-
-            }.onFailure {
-                logE("get android_id with error: $it" )
-            }
-
             var uuid = Prefs.getString("uuid", "")
             if (uuid.isNotEmpty()) {
                 deviceSerial = uuid

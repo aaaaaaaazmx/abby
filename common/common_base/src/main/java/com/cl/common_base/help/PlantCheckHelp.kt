@@ -84,7 +84,9 @@ class PlantCheckHelp {
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                     .navigation()
             }
-            KEY_PLANTING_COMPLETED -> {}
+            KEY_PLANTING_COMPLETED -> {
+                // todo  种植完成，暂时没有写
+            }
         }
     }
 

@@ -79,8 +79,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 解锁花期
      */
-    fun unlockJourney(name: String): Flow<HttpResult<BaseBean>> {
-        return remoteRepository.unlockJourney(name)
+    fun unlockJourney(name: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.unlockJourney(name, weight)
     }
 
     /**

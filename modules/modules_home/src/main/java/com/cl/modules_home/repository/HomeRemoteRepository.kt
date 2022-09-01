@@ -56,8 +56,8 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getRead(messageId)
     }
 
-    fun unlockJourney(name: String): Flow<HttpResult<BaseBean>> {
-        return service.unlockJourney(name)
+    fun unlockJourney(name: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
+        return service.unlockJourney(name, weight)
     }
 
     fun getAppVersion(): Flow<HttpResult<AppVersionData>> {

@@ -25,7 +25,7 @@ class BasicParamsInterceptor : Interceptor {
         // 添加body参数
         val url = originalHttpUrl.newBuilder().apply {
             addQueryParameter("osType", "1")
-            addQueryParameter("udid", if (privacyPolicy) AppUtil.getDeviceSerial() else null)
+            addQueryParameter("uuid", if (privacyPolicy) AppUtil.getDeviceSerial() else null)
             addQueryParameter("mobileModel", if (privacyPolicy) AppUtil.deviceModel else null)
             addQueryParameter("mobileBrand", if (privacyPolicy) AppUtil.deviceBrand else null)
             addQueryParameter("version", if (privacyPolicy) "${AppUtil.appVersionCode}" else null)

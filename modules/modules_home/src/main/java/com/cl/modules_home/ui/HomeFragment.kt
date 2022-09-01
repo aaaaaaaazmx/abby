@@ -277,45 +277,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 plantDrain.show()
             }
 
-            // 自定义开始种植弹窗
-            tvBtnDesc.setOnClickListener {
-                if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
-                    // 开始种植，首先调用后台接口
-                    // 继承的情况下，只有在那个继承弹窗下才可以继承
-                    mViewMode.startRunning(null, false)
-                    return@setOnClickListener
-                }
-
-                // 未读消息弹窗，获取极光消息弹窗
-                // 极光消息来了，只需要把这个消息添加到当前list就好了。
-                mViewMode.unreadMessageList.value?.let {
-                    // 调用图文信息
-                    if (it.size == 0) return@setOnClickListener
-                    mViewMode.unreadMessageList.value?.first()?.type?.let { type ->
-                        // 目前只处理了种植状态
-                        if (UnReadConstants.plantStatus.contains(type)) {
-                            // 调用图文接口，获取图文并且弹窗
-                            // 种植状态的是调用解锁，并不是调用已读
-                            mViewMode.getGuideInfo(type)
-                        } else {
-                            // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
-                            // todo 设备故障跳转环信
-                            when (type) {
-                                // 换水、加水、加肥。三步
-                                // 这玩意有三步！！！
-                                UnReadConstants.Device.KEY_CHANGING_WATER -> {
-                                    specificStep()
-                                }
-                                // 加水
-                                UnReadConstants.Device.KEY_ADD_WATER -> {
-                                    plantFive.show()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
             // 点击弹出周期弹窗
             clPeroid.setOnClickListener {
                 // 调用接口一次
@@ -724,7 +685,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let {
             HomePlantUsuallyPop(
                 context = it,
-                onNextAction = {
+                onNextAction = { weight ->
                     val unReadList = mViewMode.unreadMessageList.value
                     if (unReadList.isNullOrEmpty() && mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
                         /**
@@ -786,9 +747,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
                             UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
                             UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
-                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney("Drying")
+                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney(
+                                "Drying",
+                                weight
+                            )
                             UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
-                            UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney("Curing")
+                            UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney(
+                                "Curing",
+                                weight
+                            )
                         }
                         // 搞定之后就清空，避免之后有问题
                         mViewMode.setPopPeriodStatus(null)
@@ -901,6 +868,47 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 气泡按钮点击事件
+            bubbleOnClickEvent.observe(viewLifecycleOwner) { clickEvent ->
+                if (clickEvent == false) return@observe
+                // 自定义开始种植弹窗
+                // 判断点击时长
+                if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
+                    // 开始种植，首先调用后台接口
+                    // 继承的情况下，只有在那个继承弹窗下才可以继承
+                    mViewMode.startRunning(null, false)
+                    return@observe
+                }
+
+                // 未读消息弹窗，获取极光消息弹窗
+                // 极光消息来了，只需要把这个消息添加到当前list就好了。
+                mViewMode.unreadMessageList.value?.let {
+                    // 调用图文信息
+                    if (it.size == 0) return@let
+                    mViewMode.unreadMessageList.value?.first()?.type?.let { type ->
+                        // 目前只处理了种植状态
+                        if (UnReadConstants.plantStatus.contains(type)) {
+                            // 调用图文接口，获取图文并且弹窗
+                            // 种植状态的是调用解锁，并不是调用已读
+                            mViewMode.getGuideInfo(type)
+                        } else {
+                            // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
+                            // todo 设备故障跳转环信
+                            when (type) {
+                                // 换水、加水、加肥。三步
+                                // 这玩意有三步！！！
+                                UnReadConstants.Device.KEY_CHANGING_WATER -> {
+                                    specificStep()
+                                }
+                                // 加水
+                                UnReadConstants.Device.KEY_ADD_WATER -> {
+                                    plantFive.show()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             // 植物周期数据监听,植物周期弹窗数据
             periodData.observe(viewLifecycleOwner) {
                 if (it.isNullOrEmpty()) return@observe
@@ -1381,7 +1389,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     override fun HomeBinding.initBinding() {
-
+        binding.viewModel = mViewMode
+        binding.executePendingBindings()
+        binding.executePendingBindings()
     }
 
     override fun onResume() {

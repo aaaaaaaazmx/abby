@@ -422,9 +422,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _unlockJourney = MutableLiveData<Resource<BaseBean>>()
     val unlockJourney: LiveData<Resource<BaseBean>> = _unlockJourney
-    fun unlockJourney(name: String) {
+    fun unlockJourney(name: String, weight: String? = null) {
         viewModelScope.launch {
-            repository.unlockJourney(name)
+            repository.unlockJourney(name, weight)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -705,10 +705,20 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     /**
      *  周期弹窗时的状态选择，目前此状态只用于周期弹窗，目的是为了解锁，后期可以优化
+     *  周期Id
      */
     private val _popPeriodStatus = MutableLiveData<String?>()
     val popPeriodStatus: LiveData<String?> = _popPeriodStatus
     fun setPopPeriodStatus(status: String?) {
         _popPeriodStatus.value = status
+    }
+
+    /**
+     * 气泡的点击事件
+     */
+    private val _bubbleOnClickEvent = MutableLiveData(false)
+    val bubbleOnClickEvent: LiveData<Boolean?> = _bubbleOnClickEvent
+    fun bubbleOnClickEvent() {
+        _bubbleOnClickEvent.value = true
     }
 }

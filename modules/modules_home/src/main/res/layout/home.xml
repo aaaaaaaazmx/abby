@@ -6,6 +6,10 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.cl.modules_home.viewmodel.HomeViewModel" />
+
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -53,6 +57,7 @@
 
                     <!--引导种植最后一步-->
                     <include
+                        app:viewModel="@{viewModel}"
                         android:id="@+id/pplant_ninth"
                         layout="@layout/home_item_plant_ninth"
                         android:visibility="gone" />

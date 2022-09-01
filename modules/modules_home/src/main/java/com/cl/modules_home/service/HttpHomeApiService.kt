@@ -86,7 +86,7 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/unlockJourney")
-    fun unlockJourney(@Field("journeyName") journeyName: String): Flow<HttpResult<BaseBean>>
+    fun unlockJourney(@Field("journeyName") journeyName: String, @Field("weight") weight: String?): Flow<HttpResult<BaseBean>>
 
     /**
      * AppVersionData 更新
