@@ -41,21 +41,33 @@
 
 
     <application>
-        <activity android:name="com.cl.modules_pairing_connection.PlantCheckActivity"/>
         <activity
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_pairing_connection.PlantCheckActivity"/>
+        <activity
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:name="com.cl.modules_pairing_connection.ui.PlantActivity" />
         <activity
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:name="com.cl.modules_pairing_connection.ui.PairOnePageActivity" />
         <activity
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:name="com.cl.modules_pairing_connection.ui.PairReconnectActivity" />
         <activity
+            android:screenOrientation="portrait"
             android:launchMode="singleTask"
             android:name="com.cl.modules_pairing_connection.ui.PairBleScanTimeOutActivity" />
-        <activity android:name="com.cl.modules_pairing_connection.ui.PairDistributionWifiActivity" />
-        <activity android:name="com.cl.modules_pairing_connection.ui.PairFailActivity" />
-        <activity android:name=".ui.PairFrontScanCodeActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_pairing_connection.ui.PairDistributionWifiActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_pairing_connection.ui.PairFailActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".ui.PairFrontScanCodeActivity" />
     </application>
 </manifest>

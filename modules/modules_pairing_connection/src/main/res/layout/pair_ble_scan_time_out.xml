@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="26dp"
                         android:layout_marginTop="38dp"
-                        android:text="You can do the following"
+                        android:text="Try the following"
                         android:textColor="@color/mainColor"
                         android:textSize="24sp"
                         tools:ignore="MissingConstraints"

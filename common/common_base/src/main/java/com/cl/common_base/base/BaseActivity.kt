@@ -2,6 +2,7 @@ package com.cl.common_base.base
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle

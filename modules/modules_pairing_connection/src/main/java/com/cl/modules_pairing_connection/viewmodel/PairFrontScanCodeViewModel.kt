@@ -9,7 +9,14 @@ import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.ext.logI
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.device.TuYaDeviceConstants
+import com.cl.common_base.util.json.GSON
 import com.cl.modules_pairing_connection.repository.PairRepository
+import com.tuya.smart.home.sdk.TuyaHomeSdk
+import com.tuya.smart.sdk.api.IResultCallback
+import com.tuya.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -22,6 +29,12 @@ import javax.inject.Inject
  */
 class PairFrontScanCodeViewModel @Inject constructor(private val repository: PairRepository) :
     ViewModel() {
+
+    // 获取当前设备信息
+    val tuYaDeviceBean by lazy {
+        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
+        GSON.parseObject(homeData, DeviceBean::class.java)
+    }
 
     /**
      * 检查用户SN是否正确
@@ -57,4 +70,29 @@ class PairFrontScanCodeViewModel @Inject constructor(private val repository: Pai
             }
     }
 
+    private val _SN = MutableLiveData<String>()
+    val SN: LiveData<String> = _SN
+    fun setSn(sn: String) {
+        _SN.value = sn
+    }
+
+    fun getActivationStatus() {
+        TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+            it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
+                override fun onError(code: String?, error: String?) {
+                    logI(
+                        """
+                        KEY_DEVICE_REPAIR_REST_STATUS: error
+                        code: $code
+                        error: $error
+                    """.trimIndent()
+                    )
+                }
+
+                override fun onSuccess() {
+                    logI("sdasdas")
+                }
+            })
+        }
+    }
 }

@@ -327,7 +327,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 success {
                     hideProgressLoading()
                     data?.let { plantDrainNextCustomPop.setData(it) }
-                    pop.maxHeight(600)
+                    pop.maxHeight(dp2px(600f))
                         .asCustom(plantDrainNextCustomPop).show()
                 }
             })
@@ -428,7 +428,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     kotlin.runCatching {
                         binding.ftSN.setItemValueWithColor(
                             value.toString().split("#")[1],
-                            "#979797"
+                            "#000000"
                         )
                     }
                 }

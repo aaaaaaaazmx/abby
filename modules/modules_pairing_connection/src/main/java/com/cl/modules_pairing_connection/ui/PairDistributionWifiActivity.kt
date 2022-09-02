@@ -77,15 +77,9 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         binding.tvDescThree.text = buildSpannedString {
             append("1.abby only supports ")
             bold { append("2.4GHz Wi-Fi.") }
+            appendLine("")
             appendLine("Wi-Fi only supports alphanumeric character")
             appendLine("2.Your phone must be connected to the same 2.4G wifi as abby")
-        }
-
-        // 默认设置账号密码
-        if (binding.tvWifiName.text == mViewModel.wifiName) {
-            if (mViewModel.wifiPsd.isEmpty()) {
-                binding.etWifiPwd.setText(mViewModel.wifiPsd)
-            }
         }
     }
 
@@ -170,6 +164,21 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     showProgressLoading()
                 }
             })
+
+            /**
+             * 明文
+             */
+            passWordState.observe(this@PairDistributionWifiActivity) {
+                if (it == false) {
+                    // 明文
+                    binding.etWifiPwd.inputType =
+                        InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                } else {
+                    // 密码
+                    binding.etWifiPwd.inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                }
+            }
         }
     }
 
@@ -256,6 +265,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                         // 直接获取wifi名字
                         val wifiName = NetWorkUtil.getConnectWifiSsid(this@PairDistributionWifiActivity)
                         binding.tvWifiName.text = wifiName
+                        // 默认设置账号密码
+                        if (wifiName == mViewModel.wifiName) {
+                            if (mViewModel.wifiPsd.isNotEmpty()) {
+                                binding.etWifiPwd.setText(mViewModel.wifiPsd)
+                            }
+                        }
                     }
                 },
                 Manifest.permission.ACCESS_FINE_LOCATION,

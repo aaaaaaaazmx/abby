@@ -27,6 +27,7 @@
             android:background="@mipmap/iv_close" />
 
         <TextView
+            android:textStyle="bold"
             android:id="@+id/tv_dec"
             android:layout_below="@+id/iv_close"
             android:layout_width="wrap_content"
@@ -40,13 +41,13 @@
 
         <ImageView
             android:id="@+id/iv_add"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_below="@+id/tv_dec"
-            android:background="@mipmap/home_five_bg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_dec"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@mipmap/home_five_bg" />
 
 
         <Button

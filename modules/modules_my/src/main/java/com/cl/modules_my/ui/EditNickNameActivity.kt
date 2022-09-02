@@ -16,12 +16,19 @@ class EditNickNameActivity : BaseActivity<MyEditNickNameBinding>() {
     @Inject
     lateinit var mViewModel: ProfileViewModel
 
+    private val nickName by lazy {
+        intent.getStringExtra(ProfileActivity.KEY_NICK_NAME)
+    }
+
     private val modifyUserDetailReq by lazy {
         ModifyUserDetailReq()
     }
 
     override fun initView() {
         ARouter.getInstance().inject(this)
+        if (!nickName.isNullOrEmpty()) {
+            binding.etName.setText(nickName)
+        }
     }
 
     override fun observe() {

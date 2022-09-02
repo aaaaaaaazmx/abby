@@ -34,6 +34,8 @@ object Constants {
         const val FORMAL_URL = "https://www.beheyabby.com:9330/"
         // 开发
         const val DEVELOPMENT_URL = "http://192.168.3.101:9330/"
+        // 外网
+        const val OUTER_ANG_URL = "https://5c8730c912.oicp.vip/"
     }
 
     // Login信息相关
@@ -113,6 +115,8 @@ object Constants {
         const val KEY_GLOBAL_PLANT_PLANT_STATE = "key_global_plant_plant_state"
         // 当前是否是离线状态
         const val KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE = "key_global_plant_device_is_off_line"
+        // 固件升级是否是强制升级
+        const val KEY_GLOBAL_MANDATORY_UPGRADE = "key_mandatory_upgrade"
     }
 
     /**

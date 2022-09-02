@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
+            android:textStyle="bold"
             android:text="Open the water tank  cover and add 3 gallons of water."
             android:textColor="#161B19"
             android:textSize="15sp" />

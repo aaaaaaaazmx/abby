@@ -64,9 +64,11 @@ object UnReadConstants {
         const val KEY_SWATER_PUMP_FAULT = "water_pump_fault"
         const val KEY_GAS_PUMP_FAULT = "gas_pump_fault"
         const val KEY_SENSOR_HEIGHT_FAULT = "sensor_height_fault"
+        // 异常
         const val KEY_ENVIRONMENT_FAULT = "environment_fault"
         const val KEY_WATER_FAULT = "water_fault"
         const val KEY_HUMIDITY_FAULT = "humidity_fault"
+
         const val KEY_USER_DEFINED = "user_defined"
         const val KEY_CHILD_LOCK = "child_lock"
         const val KEY_ACTIVITY_IN_TREND = "activity_in_trend"
@@ -131,5 +133,17 @@ object UnReadConstants {
         Device.KEY_ADD_WATER,
         Device.KEY_ADD_MANURE,
         Device.KEY_ACTIVITY_IN_TREND
+    )
+
+    // 故障列表
+    val malfunction = mutableListOf(
+        Device.KEY_FAN_IN_FAULT,
+        Device.KEY_FAN_OUT_FAULT,
+        Device.KEY_SENSOR_RH_FAULT,
+        Device.KEY_SENSOR_WATER_FAULT,
+        Device.KEY_SENSOR_LEVEL_FAULT,
+        Device.KEY_SWATER_PUMP_FAULT,
+        Device.KEY_GAS_PUMP_FAULT,
+        Device.KEY_SENSOR_HEIGHT_FAULT,
     )
 }

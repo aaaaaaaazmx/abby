@@ -33,6 +33,7 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
+            android:textStyle="bold"
             android:text="Please place the clone in the basket"
             android:textColor="#161B19"
             android:textSize="15sp" />

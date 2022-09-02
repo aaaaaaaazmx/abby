@@ -9,7 +9,7 @@ import com.cl.common_base.BaseBean
  */
 data class PlantInfoData(
     var day: Int? = null,
-    var flushingWeight: Int? = null,
+    var flushingWeight: Int? = null, // 称重重量
     var healthStatus: String? = null,
     var name: String? = null,
     var heigh: Int? = null,

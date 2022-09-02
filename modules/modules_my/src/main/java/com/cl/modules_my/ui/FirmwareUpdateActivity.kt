@@ -2,10 +2,11 @@ package com.cl.modules_my.ui
 
 import android.content.Intent
 import androidx.core.text.buildSpannedString
-import androidx.lifecycle.lifecycleScope
+import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -14,11 +15,8 @@ import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyUpdateFirmwareBinding
 import com.cl.modules_my.viewmodel.FirmwareUpdateViewModel
-import com.google.gson.annotations.Until
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -30,6 +28,12 @@ import javax.inject.Inject
 class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
     @Inject
     lateinit var mViewModel: FirmwareUpdateViewModel
+
+    // 是否是强制升级
+    @Autowired(name = Constants.Global.KEY_GLOBAL_MANDATORY_UPGRADE)
+    @JvmField
+    var isMandatoryUpgrade = false
+
 
     // 统一xPopUp
     private val pop by lazy {
@@ -106,6 +110,11 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
     }
 
     override fun initView() {
+        ARouter.getInstance().inject(this)
+
+        if (isMandatoryUpgrade) {
+            binding.title.setLeftVisible(false)
+        }
     }
 
     override fun observe() {
@@ -203,5 +212,10 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
                 }
             }
         )
+
+    override fun onBackPressed() {
+        if (isMandatoryUpgrade) return
+        super.onBackPressed()
+    }
 
 }

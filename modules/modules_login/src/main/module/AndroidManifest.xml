@@ -52,14 +52,24 @@
 
     <application>
         <activity
+            android:screenOrientation="portrait"
             android:name="com.cl.modules_login.ui.LoginActivity"
             android:launchMode="singleTask" />
-        <activity android:name="com.cl.modules_login.ui.CreateAccountActivity" />
-        <activity android:name="com.cl.modules_login.ui.SelectCountryActivity" />
-        <activity android:name="com.cl.modules_login.ui.VerifyEmailActivity" />
         <activity
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_login.ui.CreateAccountActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_login.ui.SelectCountryActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_login.ui.VerifyEmailActivity" />
+        <activity
+            android:screenOrientation="portrait"
             android:name="com.cl.modules_login.ui.ForgetPasswordActivity"
             android:launchMode="singleTask" />
-        <activity android:name="com.cl.modules_login.ui.SetPasswordActivity" />
+        <activity
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_login.ui.SetPasswordActivity" />
     </application>
 </manifest>

@@ -147,9 +147,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="17dp"
-                        android:text="Congratulations, Everything's ready, let’s enjoy the planting journey together！together"
+                        android:text="Congrats—everything is ready to go. Let’s get started! "
                         android:textColor="#161B19"
                         android:textSize="15sp"
                         android:textStyle="bold"
@@ -158,6 +159,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.cl.common_base.widget.SvTextView
+                        android:textStyle="bold"
                         onSingleClick="@{()-> viewModel.bubbleOnClickEvent()}"
                         android:id="@+id/tv_btn_desc"
                         android:layout_width="wrap_content"
@@ -222,7 +224,7 @@
                     android:id="@+id/tv_period"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+                    android:layout_marginStart="4dp"
                     android:text="Period"
                     android:textColor="@color/mainColor"
                     android:textSize="12sp"
@@ -274,6 +276,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_height="112dp"
                 android:layout_marginEnd="12dp"
@@ -367,14 +370,13 @@ Day1" />
                     android:id="@+id/tv_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="2dp"
+                    android:layout_marginStart="4dp"
                     android:text="ENVIR"
                     android:textColor="@color/mainColor"
                     android:textSize="12sp"
                     android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/iv_temperature_bg"
                     app:layout_constraintBottom_toBottomOf="@id/iv_temperature_bg"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/iv_temperature_bg" />
 
                 <ImageView

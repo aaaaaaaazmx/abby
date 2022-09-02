@@ -67,7 +67,18 @@ class BasePumpWaterPop(
 
     override fun beforeShow() {
         super.beforeShow()
-        adapter.setList(data)
+        if (data?.size == 0) return
+        kotlin.runCatching {
+            // 卡片布局需要展示3张，所以需要多添加几张
+            if ((data?.size ?: 0) == 1) {
+                data?.get(0)?.let { data?.add(it) }
+            }
+            if ((data?.size ?: 0) == 2) {
+                data?.get(0)?.let { data?.add(it) }
+                data?.get(1)?.let { data?.add(it) }
+            }
+            adapter.setList(data)
+        }
     }
 
     override fun onDismiss() {

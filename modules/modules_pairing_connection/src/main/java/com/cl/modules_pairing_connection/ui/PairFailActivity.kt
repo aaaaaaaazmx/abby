@@ -28,8 +28,9 @@ class PairFailActivity : BaseActivity<PairFailBinding>() {
                 }
             }
             append(" abby and try reconnecting.")
+            appendLine()
             appendLine("4. Try unplugging abby and plugging it back in.")
-            appendLine("5. Try restarting the iOS device that needs to be paired with abby and try pairing again.")
+            appendLine("5. Try restarting the Android device that needs to be paired with abby and try pairing again.")
         }
         binding.tvSpan.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击
         binding.tvSpan.highlightColor = ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色

@@ -93,6 +93,7 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="gone"
             android:id="@+id/cl_messgae"
             android:background="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/cl_head"
@@ -142,7 +143,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="8dp"
             android:id="@+id/cl_setting"
             android:background="@color/white"
             app:layout_constraintTop_toBottomOf="@+id/cl_messgae"

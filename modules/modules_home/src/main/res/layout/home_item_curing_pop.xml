@@ -30,13 +30,13 @@
                 android:background="@drawable/bg_round_gray">
 
                 <TextView
+                    android:textStyle="bold"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:text="@{data.title}"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/curing_box"
                     app:layout_constraintStart_toStartOf="parent"

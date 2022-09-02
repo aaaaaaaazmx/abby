@@ -63,6 +63,7 @@
                     app:itemTitle="Firmware upgrade" />
 
                 <com.cl.common_base.widget.FeatureItemView
+                    android:visibility="gone"
                     isOffline="@{data.isOffLine()}"
                     android:id="@+id/ft_water_tank"
                     android:layout_width="match_parent"
@@ -71,6 +72,7 @@
                     app:itemTitle="Empty water tank" />
 
                 <View
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height=".5dp"
                     android:layout_marginStart="20dp"
@@ -78,6 +80,7 @@
                     android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
+                    android:layout_marginTop="7dp"
                     android:id="@+id/ft_replant"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

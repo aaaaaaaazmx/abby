@@ -14,7 +14,7 @@ import com.lxj.xpopup.core.BottomPopupView
  */
 class HomePlantFourPop(
     context: Context,
-    private val onNextAction: (() -> Unit)? = null
+    private val onNextAction: (() -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_plant_four_pop

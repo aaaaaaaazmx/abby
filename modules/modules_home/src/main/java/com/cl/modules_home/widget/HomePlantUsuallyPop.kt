@@ -75,13 +75,13 @@ class HomePlantUsuallyPop(
     override fun dismiss() {
         super.dismiss()
         if (isCurrentStatus == GuideInfoData.VALUE_STATUS_DRYING) {
-            // 这个position目前时固定写死的
+            //  todo 这个position目前时固定写死的，有可能会有问题
             val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
             etWeight?.setText("")
         }
 
         if (isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
-            // 这个position目前时固定写死的
+            // todo 这个position目前时固定写死的,有可能会有问题
             val etWeight = adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText
             etWeight?.setText("")
         }

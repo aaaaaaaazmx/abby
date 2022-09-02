@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 object ServiceCreators {
 
     // 服务器地址
-    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
+    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.OUTER_ANG_URL else HttpsUrl.PRODUCTION_URL
 
     private const val MAX_CACHE_SIZE: Long = 1024 * 1024 * 50 // 50M 的缓存大小
 
@@ -86,6 +86,7 @@ object ServiceCreators {
         const val TEST_URL = Constants.HttpUrl.TEST_URL
         const val PRODUCTION_URL = Constants.HttpUrl.FORMAL_URL
         const val DEVELOPMENT_URL = Constants.HttpUrl.DEVELOPMENT_URL
+        const val OUTER_ANG_URL = Constants.HttpUrl.OUTER_ANG_URL
     }
 
 }

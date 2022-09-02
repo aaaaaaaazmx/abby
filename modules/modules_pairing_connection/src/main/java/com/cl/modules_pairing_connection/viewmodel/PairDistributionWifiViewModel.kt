@@ -35,7 +35,7 @@ class PairDistributionWifiViewModel @Inject constructor(private val repository: 
         Prefs.getString(Constants.Pair.KEY_PAIR_WIFI_PASSWORD)
     }
 
-    private val _passWordState = MutableLiveData<Boolean>(true)
+    private val _passWordState = MutableLiveData<Boolean>(false)
     val passWordState: LiveData<Boolean> = _passWordState
 
     fun setPassWordState(state: Boolean) {

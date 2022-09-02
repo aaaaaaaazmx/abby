@@ -20,7 +20,7 @@ import com.tuya.smart.android.device.bean.UpgradeInfoBean
 class FirmwareUpdatePop(
     context: Context,
     var update: UpgradeInfoBean? = null,
-    val onConfirmAction: (()->Unit)? = null
+    val onConfirmAction: ((compulsion: Boolean)->Unit)? = null
 ) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.my_firmware_update
@@ -61,7 +61,7 @@ class FirmwareUpdatePop(
             }
 
             tvConfirm.setOnClickListener {
-                onConfirmAction?.invoke()
+                onConfirmAction?.invoke(update?.upgradeType == 2)
                 dismiss()
             }
             tvCancel.setOnClickListener { dismiss() }

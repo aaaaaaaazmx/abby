@@ -92,7 +92,7 @@ public class ViewUtils {
     public static <V extends View> void setVisible(final V... views) {
         if (views != null) {
             for (View view : views) {
-                if (view == null) {
+                if (view == null){
                     continue;
                 }
                 if (View.VISIBLE != view.getVisibility()) {

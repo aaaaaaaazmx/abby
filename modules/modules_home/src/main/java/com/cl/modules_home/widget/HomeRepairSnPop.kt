@@ -25,6 +25,7 @@ class HomeRepairSnPop(
         DataBindingUtil.bind<HomeRerepairBinding>(popupImplView)?.apply {
             tvConfirm.setOnClickListener {
                 onConfirmAction?.invoke()
+                dismiss()
             }
         }
     }

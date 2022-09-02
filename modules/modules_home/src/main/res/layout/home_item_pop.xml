@@ -28,6 +28,7 @@
                 android:background="@drawable/bg_round_gray">
 
                 <TextView
+                    android:textStyle="bold"
                     android:id="@+id/tv_title"
                     android:text="@{data.title}"
                     android:layout_width="0dp"
@@ -36,7 +37,6 @@
                     tools:text="At least 3 gallons of pure water"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/box"
                     app:layout_constraintStart_toStartOf="parent"

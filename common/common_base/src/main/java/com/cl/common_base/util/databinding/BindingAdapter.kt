@@ -14,6 +14,7 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.cl.common_base.R
 
 /**
  * BindingAdapter extensions.
@@ -88,11 +89,11 @@ fun setImageUrlNoPlaceholder(imageView: ImageView, url: String?) {
 @BindingAdapter(value = ["url"], requireAll = false)
 fun setImageUrl(imageView: ImageView, url: String?) {
     var requestOptions = RequestOptions()
-//    requestOptions.placeholder(R.drawable.bitmap_occupation_tview)
-//    requestOptions.error(R.drawable.bitmap_occupation_tview)
+    requestOptions.placeholder(R.mipmap.placeholder)
+    requestOptions.error(R.mipmap.errorholder)
     Glide.with(imageView.context).load(url)
-            .apply(requestOptions)
-            .into(imageView)
+        .apply(requestOptions)
+        .into(imageView)
 }
 
 
@@ -106,8 +107,8 @@ fun setImageUrl(imageView: ImageView, resID: Int?) {
 //    requestOptions.placeholder(R.drawable.bitmap_occupation_tview)
 //    requestOptions.error(R.drawable.bitmap_occupation_tview)
     Glide.with(imageView.context).load(resID)
-            .apply(requestOptions)
-            .into(imageView)
+        .apply(requestOptions)
+        .into(imageView)
 }
 
 // 设置圆形图片
@@ -117,8 +118,8 @@ fun setCircleImageUrl(imageView: ImageView, src: String?) {
 //    requestOptions.placeholder(R.drawable.bitmap_occupation_tview)
 //    requestOptions.error(R.drawable.bitmap_occupation_tview)
     Glide.with(imageView.context).load(src)
-            .apply(RequestOptions.circleCropTransform())
-            .into(imageView)
+        .apply(RequestOptions.circleCropTransform())
+        .into(imageView)
 }
 
 // 设置圆角图片
@@ -130,8 +131,8 @@ fun setCircleCornerImageUrl(imageView: ImageView, src: String?) {
 //    circleCornerOptions.placeholder(R.drawable.bitmap_occupation_tview)
 //    circleCornerOptions.error(R.drawable.bitmap_occupation_tview)
     Glide.with(imageView.context).load(src)
-            .apply(circleCornerOptions)
-            .into(imageView)
+        .apply(circleCornerOptions)
+        .into(imageView)
 }
 
 
@@ -174,8 +175,10 @@ fun setVisible(view: View, visible: Boolean) {
 @BindingAdapter("layout_marginTop")
 fun setTopMargin(view: View, topMargin: Float) {
     val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
-    layoutParams.setMargins(layoutParams.leftMargin, topMargin.toInt(),
-            layoutParams.rightMargin, layoutParams.bottomMargin)
+    layoutParams.setMargins(
+        layoutParams.leftMargin, topMargin.toInt(),
+        layoutParams.rightMargin, layoutParams.bottomMargin
+    )
     view.layoutParams = layoutParams
 }
 

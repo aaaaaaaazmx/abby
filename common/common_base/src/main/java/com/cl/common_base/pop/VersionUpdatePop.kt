@@ -13,7 +13,7 @@ import com.lxj.xpopup.core.CenterPopupView
 
 
 /**
- * 升级弹窗pop
+ * app升级弹窗pop
  * @author 李志军 2022-08-16 15:55
  */
 class VersionUpdatePop(
@@ -40,11 +40,13 @@ class VersionUpdatePop(
                 onConfirmAction?.invoke()
                 // 跳转到谷歌市场
                 startGooglePlay()
-                dismiss()
+                // 强制升级才可以取消弹窗
+                if (appVersionData?.forcedUpdate == "1")dismiss()
             }
             tvCancel.setOnClickListener {
                 onCancelAction?.invoke()
-                dismiss()
+                // 强制升级才可以取消弹窗
+                if (appVersionData?.forcedUpdate == "1")dismiss()
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
+import android.app.PictureInPictureUiState
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -38,7 +39,9 @@ import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.language.LanguageConfig
+import com.luck.picture.lib.style.BottomNavBarStyle
 import com.luck.picture.lib.style.PictureSelectorStyle
+import com.luck.picture.lib.style.SelectMainStyle
 import com.luck.picture.lib.utils.MediaUtils
 import com.luck.picture.lib.utils.PictureFileUtils
 import com.lxj.xpopup.XPopup
@@ -131,19 +134,24 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                     },
                     onLibraryAction = {
                         // 选择照片
+                        // 选择照片，不显示角标
+                        val style = PictureSelectorStyle()
+                        val ss = BottomNavBarStyle()
+                        ss.isCompleteCountTips = false
+                        style.bottomBarStyle = ss
                         PictureSelector.create(this@ProfileActivity)
                             .openGallery(SelectMimeType.ofImage())
-                            .setSelectorUIStyle(PictureSelectorStyle())
                             .setImageEngine(GlideEngine.createGlideEngine())
 //                            .setCompressEngine(ImageFileCompressEngine()) //是否压缩
                             .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
-                            .isOriginalControl(true)// 原图功能
+                            .isOriginalControl(false)// 原图功能
                             .isDisplayTimeAxis(true)// 资源轴
                             .setEditMediaInterceptListener(null)// 是否开启图片编辑功能
                             .isMaxSelectEnabledMask(true) // 是否显示蒙层
                             .isDisplayCamera(false)//是否显示摄像
                             .setLanguage(LanguageConfig.ENGLISH) //显示英语
                             .setMaxSelectNum(1)
+                            .setSelectorUIStyle(style)
                             .forResult(PictureConfig.CHOOSE_REQUEST)
                     })
             )
@@ -152,7 +160,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
     override fun initView() {
         ARouter.getInstance().inject(this)
         // 设置nikeName
-        binding.ftNickName.setItemValueWithColor(userInfo?.nickName, "#C9C9C9")
+        binding.ftNickName.setItemValueWithColor(userInfo?.nickName, "#000000")
         // 设置abbyID
         binding.ftId.itemValue = userInfo?.abbyId
         binding.ftId.setHideArrow(true)
@@ -224,7 +232,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                 success {
                     hideProgressLoading()
                     // 设置nikeName
-                    binding.ftNickName.setItemValueWithColor(data?.nickName, "#C9C9C9")
+                    binding.ftNickName.setItemValueWithColor(data?.nickName, "#000000")
                     // 设置头像
                     val headUrl = data?.avatarPicture ?: ""
                     if (headUrl.isNullOrEmpty()) {
@@ -259,7 +267,9 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         }
 
         binding.ftNickName.setOnClickListener {
-            startActivity(Intent(this@ProfileActivity, EditNickNameActivity::class.java))
+            val intent = Intent(this@ProfileActivity, EditNickNameActivity::class.java)
+            intent.putExtra(KEY_NICK_NAME, binding.ftNickName.itemValue)
+            startActivity(intent)
         }
     }
 
@@ -510,6 +520,9 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
 
         // 裁剪之后返回
         private const val REQUEST_CROP_PHOTO = 102
+
+        // 传递nickName
+        const val KEY_NICK_NAME = "key_nick_name"
     }
 
 }

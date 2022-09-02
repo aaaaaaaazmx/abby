@@ -76,6 +76,7 @@
             app:layout_constraintTop_toBottomOf="@+id/vv_view">
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:id="@+id/et_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

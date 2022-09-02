@@ -1,6 +1,6 @@
 package com.cl.modules_home.ui
 
-import android.icu.text.DateIntervalFormat
+import android.content.Intent
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +9,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import androidx.lifecycle.lifecycleScope
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -38,16 +38,9 @@ import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
-import com.cl.modules_home.widget.HomePlantExtendPop.Companion.KEY_NEW_PLANT
-import com.goldentec.android.tools.util.isCanToBigDecimal
-import com.joketng.timelinestepview.TimeLineState
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
-import kotlin.concurrent.thread
 import kotlin.random.Random
 
 /**
@@ -173,16 +166,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 进入这个页面时，所展示的逻辑
      * 主要是用来切换当前植物的状态UI方法
      */
-    private fun showView() {
+    private fun showView(viewPlantFlag: String, viewPlantGuideFlag: String) {
         // 根据传过来的flag获取图文引导
         logI(
             """ 
-            plantFlag： $plantFlag
-            plantGuideFlag: $plantGuideFlag
+            plantFlag： $viewPlantFlag
+            plantGuideFlag: $viewPlantGuideFlag
         """.trimIndent()
         )
         // 判断当前植物存在状态
-        when (plantFlag) {
+        when (viewPlantFlag) {
             // 从来没有种植过
             KEY_NEW_PLANT -> {
                 // 未种植
@@ -194,7 +187,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 plant6后记“3”，89打断后回7
                 plant9后记“4”，没有start running则停abby#1
                  */
-                when (plantGuideFlag) {
+                when (viewPlantGuideFlag) {
                     "0" -> {
                         // 这是默认进入的，也就是Flag = null 的情况下
                         ViewUtils.setVisible(binding.plantFirst.root)
@@ -219,7 +212,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             KEY_PLANTED -> {
                 // 显示布局
                 ViewUtils.setVisible(binding.pplantNinth.root)
-                // 隐藏弹窗
+                //  todo 这个显示有问题，会重复隐藏
                 ViewUtils.setGone(binding.pplantNinth.clContinue)
                 mViewMode.plantInfo()
             }
@@ -257,6 +250,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             ivAddWater.setOnClickListener {
                 plantFour.show()
             }
+            svContinue.setOnClickListener {
+                plantSix.show()
+            }
         }
 
 
@@ -287,6 +283,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 点击环境弹窗
             clEnvir.setOnClickListener {
+                // 刷新植物信息以及环境信息
+                mViewMode.plantInfo()
                 // 每次都获取到了信息
                 mViewMode.tuyaDeviceBean?.devId?.let { devId -> mViewMode.environmentInfo(devId) }
             }
@@ -345,7 +343,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 涂鸦指令，添加化肥
                         DeviceControl.get()
                             .success {
-
+                                // 加肥气泡
+                                if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_MANURE) {
+                                    mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                                    return@success
+                                }
                             }
                             .error { code, error ->
                                 ToastUtil.shortShow(
@@ -470,6 +472,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 ViewUtils.setGone(binding.plantExtendBg.root)
                                 ViewUtils.setGone(binding.plantFirst.root)
                                 ViewUtils.setVisible(binding.pplantNinth.root)
+                                ViewUtils.setGone(binding.pplantNinth.clContinue)
                                 mViewMode.startRunning(null, true)
                             }
                         }
@@ -482,10 +485,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     // 升级弹窗
     private val updatePop by lazy {
         context?.let {
-            FirmwareUpdatePop(it, onConfirmAction = {
+            FirmwareUpdatePop(it, onConfirmAction = { isBoolean ->
                 // 跳转到固件升级界面
                 ARouter.getInstance()
                     .build(RouterPath.My.PAGE_MY_FIRMWARE_UPDATE)
+                    .withBoolean(Constants.Global.KEY_GLOBAL_MANDATORY_UPGRADE, isBoolean)
                     .navigation()
             })
         }
@@ -521,6 +525,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             .asCustom(context?.let {
                 HomePlantFivePop(
                     context = it,
+                    onCancelAction = {
+                        // 在执行未读消息时，不需要showView
+                        if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                            || mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_WATER
+                        ) {
+                            return@HomePlantFivePop
+                        }
+
+                        // 种植引导时，点击取消弹窗时，处理得事。
+                        // 状态改为2，然后
+                        // 当作 plantGuideFlag = 2 来处理
+                        showView(plantFlag, "2")
+                    },
                     onNextAction = {
                         // 如果是在换水的三步当中
                         if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
@@ -612,7 +629,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 需要先发送指令喂食
                         DeviceControl.get()
                             .success {
-
                                 // 如果是在换水的三步当中的最后一步，加肥
                                 if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
                                     // 点击按钮就表示已读，已读会自动查看有没有下一条
@@ -726,12 +742,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
                             UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
                             UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
-                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney("Drying")
+                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney(
+                                "Drying",
+                                weight
+                            )
                             UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
-                            UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney("Curing")
+                            UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney(
+                                "Curing",
+                                weight
+                            )
                         }
                         return@HomePlantUsuallyPop
                     }
+
+                    // 其实上面和下面，可以优化为同一种类型，但是需要判断对极光消息的处理，还是分开的好，但是处理逻辑可以写在一起
 
                     // 如果是从解锁周期弹窗过来的，
                     // 这个后期可以优化，就不和上面的状态同一判断了。避免后期优化时忘记
@@ -803,6 +827,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 it,
                 unLockAction = { guideId ->
                     // todo 此处是用于周期弹窗解锁的
+                    // todo 需要判断当前是否需要称重 判断当前是周期 CURING 7，然后需要判断 flushingWeight == null 或者直接跳转
+                    if (guideId == UnReadConstants.Plant.KEY_CURING) {
+                        // 如果在解锁During周期的时候。填入了weight，那么在解锁curing时，这个字段不会为null
+                        mViewMode.plantInfo.value?.data?.flushingWeight?.let {
+                            // 直接解锁
+                            mViewMode.unlockJourney("Curing")
+                        }
+                        return@HomePeriodPop
+                    }
                     guideId?.let { it1 -> mViewMode.setPopPeriodStatus(it1) }
                 }
             )
@@ -902,7 +935,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 }
                                 // 加水
                                 UnReadConstants.Device.KEY_ADD_WATER -> {
-                                    plantFive.show()
+                                    plantFour.show()
+                                }
+                                // 加肥
+                                UnReadConstants.Device.KEY_ADD_MANURE -> {
+                                    plantFeed.show()
                                 }
                             }
                         }
@@ -913,7 +950,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             periodData.observe(viewLifecycleOwner) {
                 if (it.isNullOrEmpty()) return@observe
                 // 加这位玩意的监听，就是为了加个小红点
-                // 找到onging的状态，然后判断下面一个状态是不是解锁
+                // 找到onging的状态，然后判断下面一个状态是不是解锁, 不是解锁就不需要显示小红点
                 val index =
                     it.indexOfLast { bean -> "${bean.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
                 if (index == -1) return@observe
@@ -1007,6 +1044,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                     /**
                      * 当有设备的时候，判断当前设备是否在线
+                     *
+                     * 1- 绑定状态
+                     * 2- 解绑状态
                      */
                     if (data?.deviceStatus == "1") {
                         data?.deviceOnlineStatus?.let {
@@ -1017,7 +1057,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     offLineTextSpan()
                                 }
                                 "1" -> {
-                                    showView()
+                                    showView(plantFlag, plantGuideFlag)
                                     // 请求未读消息数据，只有在种植之后才会开始有数据返回
                                     mViewMode.getUnread()
                                     checkOtaUpdateInfo()
@@ -1025,6 +1065,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 else -> {}
                             }
                         }
+                    } else {
+                        // 跳转到绑定设备界面，
+                        // 跳转绑定界面
+                        ARouter.getInstance()
+                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                            .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .navigation()
                     }
                 }
                 error { msg, code ->
@@ -1319,7 +1366,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
                                 )
                             }
-                            plantFive.show()
+                            plantFour.show()
                         }
                         else -> {
                             mViewMode.unreadMessageList.value?.first()?.let {
@@ -1448,15 +1495,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
 
         // 不限时气泡，显示弹窗
-        if (unRead.type == UnReadConstants.Device.KEY_FAN_IN_FAULT || unRead.type == UnReadConstants.Device.KEY_FAN_OUT_FAULT) {
+        // 故障 显示弹窗
+        if (UnReadConstants.malfunction.contains(unRead.type)) {
             customFanFailPop?.setData(unRead.title)
             fanFailPop.show()
             ViewUtils.setGone(binding.pplantNinth.clContinue)
             return
         }
 
+
         // 显示气泡
         ViewUtils.setVisible(binding.pplantNinth.clContinue)
+
         // 按钮
         binding.pplantNinth.tvBtnDesc.text =
             if (UnReadConstants.plantStatus.contains(unRead.type)) {
@@ -1590,7 +1640,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 when (mViewMode.getWaterVolume.value) {
                     "0L" -> {
                         // 加水弹窗
-                        plantFive.show()
+                        plantFour.show()
                     }
                     else -> {
                         // 加肥的弹窗
@@ -1626,9 +1676,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // SN修复的通知
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
                     logI("KEY_DEVICE_REPAIR_SN： $value")
-                    mViewMode.setRepairSN(value.toString())
                 }
-
             }
         }
     }
