@@ -1,31 +1,33 @@
 package com.cl.modules_home.widget
 
 import android.content.Context
-import android.graphics.Color
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.bbgo.module_home.R
+import com.bbgo.module_home.databinding.HomeCuringUnlockBinding
 import com.bbgo.module_home.databinding.HomeCuringUnlockPopBinding
-import com.cl.common_base.databinding.BaseUpdateSuccessPopBinding
 import com.lxj.xpopup.core.CenterPopupView
 
 /**
- * 解锁Curing周期的弹窗 ASK点击问号的弹窗
+ * 最后一个周期解锁弹窗
  */
-class HomeCuringUnlockPop(
+class HomeUnlockCuringPop(
     context: Context,
     private val onConfirmAction: (() -> Unit)? = null
 ) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
-        return R.layout.home_curing_unlock_pop
+        return R.layout.home_curing_unlock
     }
 
     override fun onCreate() {
         super.onCreate()
-        DataBindingUtil.bind<HomeCuringUnlockPopBinding>(popupImplView)?.apply {
+        DataBindingUtil.bind<HomeCuringUnlockBinding>(popupImplView)?.apply {
             tvConfirm.setOnClickListener {
                 dismiss()
                 onConfirmAction?.invoke()
+            }
+
+            tvCancel.setOnClickListener{
+                dismiss()
             }
         }
     }

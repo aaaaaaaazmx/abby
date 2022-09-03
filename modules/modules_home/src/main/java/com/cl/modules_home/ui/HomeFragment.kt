@@ -38,6 +38,7 @@ import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -730,30 +731,32 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
 
                     // 表示是从极光或者未读消息列表中跳转过来的。
-                    if (UnReadConstants.plantStatus.contains(unReadList?.first()?.type)) {
-                        // 调取解锁接口，
-                        // Vegetation	1
-                        //  Flowering	2
-                        //  Flushing	3
-                        //  Drying	5
-                        //  Harvest	6
-                        //  Curing	7（请求图文时id转换为int）
-                        when (unReadList?.first()?.type) {
-                            UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
-                            UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
-                            UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
-                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney(
-                                "Drying",
-                                weight
-                            )
-                            UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
-                            UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney(
-                                "Curing",
-                                weight
-                            )
-                        }
-                        return@HomePlantUsuallyPop
-                    }
+//                    if (UnReadConstants.plantStatus.contains(unReadList?.first()?.type)) {
+//                        // 调取解锁接口，
+//                        // Vegetation	1
+//                        //  Flowering	2
+//                        //  Flushing	3
+//                        //  Drying	5
+//                        //  Harvest	6
+//                        //  Curing	7（请求图文时id转换为int）
+//                        when (unReadList?.first()?.type) {
+//                            UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
+//                            UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
+//                            UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
+//                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney(
+//                                "Drying",
+//                                weight
+//                            )
+//                            UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
+//                            UnReadConstants.Plant.KEY_CURING -> {
+//                                mViewMode.unlockJourney(
+//                                    "Curing",
+//                                    weight
+//                                )
+//                            }
+//                        }
+//                        return@HomePlantUsuallyPop
+//                    }
 
                     // 其实上面和下面，可以优化为同一种类型，但是需要判断对极光消息的处理，还是分开的好，但是处理逻辑可以写在一起
 
@@ -776,13 +779,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 weight
                             )
                             UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
-                            UnReadConstants.Plant.KEY_CURING -> mViewMode.unlockJourney(
-                                "Curing",
-                                weight
-                            )
+                            UnReadConstants.Plant.KEY_CURING -> {
+                                mViewMode.unlockJourney(
+                                    "Curing",
+                                    weight
+                                )
+                            }
                         }
-                        // 搞定之后就清空，避免之后有问题
-                        mViewMode.setPopPeriodStatus(null)
                     }
                 }
             )
@@ -821,24 +824,32 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     }
 
+    // 这是周期弹窗解锁周期的
     private val periodPop by lazy {
         context?.let {
             HomePeriodPop(
                 it,
                 unLockAction = { guideId ->
                     // todo 此处是用于周期弹窗解锁的
-                    // todo 需要判断当前是否需要称重 判断当前是周期 CURING 7，然后需要判断 flushingWeight == null 或者直接跳转
-                    if (guideId == UnReadConstants.Plant.KEY_CURING) {
-                        // 如果在解锁During周期的时候。填入了weight，那么在解锁curing时，这个字段不会为null
-                        mViewMode.plantInfo.value?.data?.flushingWeight?.let {
-                            // 直接解锁
-                            mViewMode.unlockJourney("Curing")
-                        }
-                        return@HomePeriodPop
-                    }
                     guideId?.let { it1 -> mViewMode.setPopPeriodStatus(it1) }
                 }
             )
+        }
+    }
+
+    private val pop by lazy {
+        XPopup.Builder(context)
+    }
+
+    /**
+     * 解锁Curing周期的弹窗
+     */
+    private val unlockCuringPop by lazy {
+        context?.let {
+            HomeUnlockCuringPop(it) {
+                // 直接解锁
+                mViewMode.unlockJourney("Curing")
+            }
         }
     }
 
@@ -923,7 +934,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         if (UnReadConstants.plantStatus.contains(type)) {
                             // 调用图文接口，获取图文并且弹窗
                             // 种植状态的是调用解锁，并不是调用已读
-                            mViewMode.getGuideInfo(type)
+                            mViewMode.setPopPeriodStatus(type)
                         } else {
                             // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
                             // todo 设备故障跳转环信
@@ -1086,6 +1097,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 获取图文引导
             getGuideInfo.observe(viewLifecycleOwner, resourceObserver {
                 success {
+                    // 需要判断当前是什么状态,从而显示是否展示图文通用弹窗
+                    // 需要判断当前是否需要称重 判断当前是周期 CURING 7，然后需要判断 flushingWeight == null 或者直接跳转
+                    if (mViewMode.popPeriodStatus.value == UnReadConstants.Plant.KEY_CURING) {
+                        // 如果在解锁During周期的时候。填入了weight，那么在解锁curing时，这个字段不会为null
+                        mViewMode.plantInfo.value?.data?.flushingWeight?.let {
+                            // 弹出解锁弹窗，然后直接跳转种植完成界面
+                            pop.asCustom(unlockCuringPop).show()
+                        }
+                        return@success
+                    }
+
                     hideProgressLoading()
                     // 给弹窗赋值
                     custom?.setData(data)
@@ -1333,6 +1355,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     errorMsg?.let { ToastUtil.shortShow(it) }
                 }
                 success {
+                    if (mViewMode.popPeriodStatus.value == UnReadConstants.Plant.KEY_CURING) {
+                        // 跳转解锁完成界面
+//                        adasdad
+                        return@success
+                    }
+                    // 解锁周期之后，清空保存的周期状态
+                    mViewMode.setPopPeriodStatus(null)
+
                     hideProgressLoading()
                     // 又重新请求一次咯.主要是为了消失周期上面的红点,其他没啥作用
                     mViewMode.plantInfo()
