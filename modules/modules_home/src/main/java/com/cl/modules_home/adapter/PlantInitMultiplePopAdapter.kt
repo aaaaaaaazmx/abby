@@ -70,12 +70,9 @@ class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
                 ViewUtils.setEditTextInputSpace(holder.getView(R.id.et_weight))
                 etWeight.addTextChangedListener {
                     val check = typeTwoBox.isChecked
-                    if (it.isNullOrEmpty()) {
-                        typeBox.isChecked = false
-                        data[holder.layoutPosition].isCheck = false
-                    } else {
-                        if (check) typeTwoBox.isChecked = false
-                    }
+                    if (check) typeTwoBox.isChecked = !it.isNullOrEmpty()
+                    typeBox.isChecked = it.isNullOrEmpty() == false
+                    data[holder.layoutPosition].isCheck = it.isNullOrEmpty() == false
                 }
             }
             GuideInfoData.VALUE_STATUS_CURING -> {
