@@ -77,7 +77,6 @@ class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
                         if (check) typeTwoBox.isChecked = false
                     }
                 }
-
             }
             GuideInfoData.VALUE_STATUS_CURING -> {
                 ViewUtils.setEditTextInputSpace(holder.getView(R.id.curing_et_weight))

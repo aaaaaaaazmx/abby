@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round"
+        android:orientation="vertical"
+        android:paddingTop="16dp">
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Instruction"
+            android:textColor="@color/mainColor"
+            android:textSize="17sp" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/iv_pic"
+            android:background="@mipmap/base_gou_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <TextView
+            android:gravity="center"
+            android:id="@+id/tv_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="14dp"
+            android:paddingTop="15dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="5dp"
+            android:text="@string/curing_unlock_tips"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/et_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/_xpopup_content_color"
+            android:textColorHint="#999999"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/xpopup_divider1"
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/_xpopup_list_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="Cancel"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+
+            <View
+                android:visibility="gone"
+                android:id="@+id/xpopup_divider2"
+                android:layout_width=".5dp"
+                android:layout_height="match_parent"
+                android:background="@color/_xpopup_list_divider" />
+
+            <TextView
+                android:id="@+id/tv_confirm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:text="OK"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

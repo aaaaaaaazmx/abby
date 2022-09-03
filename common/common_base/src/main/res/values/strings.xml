@@ -12,4 +12,5 @@
     <!--以后需要翻译都文字-->
     <string name="pair_please_confirm_your_selection">Please confirm your selection</string>
     <string name="my_solo">1 on 1 Support</string>
+    <string name="curing_unlock_tips">During the drying period, we can use the wet weight as a reference to help us determine when we've satisfied the drying requirements.</string>
 </resources>

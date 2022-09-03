@@ -132,6 +132,7 @@ class HomePlantUsuallyPop(
                 R.id.type_box,
                 R.id.cl_type,
                 R.id.cl_type_skip,
+                R.id.type_ask,
                 R.id.iv_delete,
                 R.id.type_ask,
                 R.id.cl_curing_type,
@@ -182,6 +183,12 @@ class HomePlantUsuallyPop(
                     }
 
                     // 这是during周期时点击事件产生的事情
+                    R.id.type_ask -> {
+                        XPopup.Builder(context)
+                            .asCustom(HomeCuringUnlockPop(context) {
+
+                            }).show()
+                    }
                     R.id.cl_type -> {
                         // 勾选这个弹窗，需要判断当前是否输入重量了
                         val etWeight =
@@ -353,7 +360,7 @@ class HomePlantUsuallyPop(
                             cbBox?.isChecked = check == false
                             isCheck = check == false
                         }
-                        
+
                         btnSuccess.isEnabled =
                             (adapter.data as? MutableList<GuideInfoData.PlantInfo>)?.filter { it.isCheck == true }?.size == adapter.data.size
                     }
@@ -361,7 +368,7 @@ class HomePlantUsuallyPop(
                         val etWeight =
                             adapter.getViewByPosition(position, R.id.curing_et_weight) as? EditText
                         val weight = etWeight?.text.toString()
-                        
+
                         val cbBox = ((view as? CheckBox))
                         // 如果是没有输入重量的话，是不允许勾选的
                         if (weight.isEmpty()) {
