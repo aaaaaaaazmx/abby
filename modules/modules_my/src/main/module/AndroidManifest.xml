@@ -68,5 +68,15 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".ui.AboutUsActivity" />
+
+
+
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SEND" />
+            <data android:mimeType="image/jpeg" />
+        </intent>
+    </queries>
 </manifest>

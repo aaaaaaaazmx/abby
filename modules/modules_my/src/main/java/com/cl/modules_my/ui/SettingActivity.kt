@@ -1,6 +1,8 @@
 package com.cl.modules_my.ui
 
-import android.content.Intent
+import android.content.*
+import android.content.Intent.*
+import android.net.Uri
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
@@ -11,14 +13,11 @@ import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
-import com.cl.common_base.pop.BasePumpWaterFinishedPop
-import com.cl.common_base.pop.BasePumpWaterPop
-import com.cl.common_base.pop.HomePlantDrainPop
-import com.cl.common_base.pop.VersionUpdatePop
+import com.cl.common_base.pop.*
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MySettingBinding
@@ -339,6 +338,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftReplant.setOnClickListener {
             rePlantPop.show()
         }
+        // 1v1
+        binding.ftSolo.setOnClickListener {
+            sendEmail()
+        }
         // 删除设备
         binding.dtDeleteDevice.setOnClickListener {
             // 删除设备、弹出提示框
@@ -445,6 +448,39 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
     }
 
+    /**
+     * 发送支持邮件
+     */
+    private fun sendEmail() {
+        val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
+        val uri = Uri.parse(uriText)
+        val sendIntent = Intent(ACTION_SENDTO)
+        sendIntent.data = uri
+        val pm = this.packageManager
+        // 根据意图查找包
+        val activityList = pm.queryIntentActivities(sendIntent, 0)
+        if (activityList.size == 0) {
+            // 弹出框框
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
+            val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
+            // 把数据集设置（复制）到剪贴板
+            clipboard.setPrimaryClip(clipData)
+            XPopup.Builder(this@SettingActivity)
+                .isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(true)
+                .asCustom(SendEmailTipsPop(this@SettingActivity) { null }).show()
+            return
+        }
+        try {
+            startActivity(createChooser(sendIntent, "Send email"))
+        } catch (ex: ActivityNotFoundException) {
+            XPopup.Builder(this@SettingActivity)
+                .isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(true)
+                .asCustom(SendEmailTipsPop(this@SettingActivity) { null }).show()
+        }
+    }
 
 }
 

@@ -159,10 +159,14 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
                             return
                         }
 
-                        if (value.length == 10 || value.length == 18) {
-                            // 1、先检查这个扫出来的结果是否有效
-                            mViewModel.setSn(value)
-                            mViewModel.checkSN(value)
+                        if (value.startsWith("AbbyAAYA", true)) {
+                            if (value.length == 10 || value.length == 18) {
+                                // 1、先检查这个扫出来的结果是否有效
+                                mViewModel.setSn(value)
+                                mViewModel.checkSN(value)
+                            } else {
+                                pop.asCustom(failPop).show()
+                            }
                         } else {
                             pop.asCustom(failPop).show()
                         }
@@ -185,9 +189,17 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
                     // 修复SN的监听
                     if (value == "OK") {
                         // 上报成功，那么啥也不管了，
-                        pop.asCustom(ActivationSucceededPop(this@PairFrontScanCodeActivity) {
-                            finish()
-                        }).show()
+                        val asCustom =
+                            pop.asCustom(ActivationSucceededPop(this@PairFrontScanCodeActivity) {
+                                finish()
+                            })
+                        if (asCustom.isShow) return
+                        asCustom.show()
+                    }
+                    if (value == "NG") {
+                        val asCustom = pop.asCustom(failPop)
+                        if (asCustom.isShow) return
+                        asCustom.show()
                     }
                 }
             }

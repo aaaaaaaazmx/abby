@@ -1,8 +1,15 @@
 package com.cl.common_base.util.uri;
 
+import static com.cl.common_base.ext.LogKt.logE;
+
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -10,9 +17,18 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 
+import com.cl.common_base.BaseApplication;
+import com.cl.common_base.pop.SendEmailTipsPop;
+import com.lxj.xpopup.XPopup;
+
 import java.io.File;
+import java.util.List;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 public class UriUtil {
 
@@ -165,5 +181,48 @@ public class UriUtil {
         return uri;
     }
 
+
+    // 发送Email.
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+    public void sendEmail(Context context) {
+        // +  "&body=" + Uri.encode("some text here");
+//        String uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support");
+        String uriText =
+                "mailto:youremail@gmail.com" +
+                        "?subject=" + Uri.encode("some subject text here") +
+                        "&body=" + Uri.encode("some text here");
+
+        Uri uri = Uri.parse(uriText);
+
+        Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+        sendIntent.setData(uri);
+        PackageManager pm = BaseApplication.Companion.getContext().getPackageManager();
+        // 根据意图查找包
+        List<ResolveInfo> activityList = pm.queryIntentActivities(sendIntent, 0);
+        if (null == activityList || activityList.size() == 0) {
+            // 弹出框框
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
+            ClipData clipData = ClipData.newPlainText(null, "growsupport@heyabby.com");
+            // 把数据集设置（复制）到剪贴板
+            clipboard.setPrimaryClip(clipData);
+            new XPopup.Builder(context)
+                    .isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(true)
+                    .asCustom(new SendEmailTipsPop(context, new Function0<Unit>() {
+                        @Override
+                        public Unit invoke() {
+                            return null;
+                        }
+                    })).show();
+            return;
+        }
+        try {
+            Intent send_email = Intent.createChooser(sendIntent, "Send email");
+            context.startActivity(send_email);
+        } catch (android.content.ActivityNotFoundException ex) {
+            logE(ex.toString());
+        }
+    }
 
 }

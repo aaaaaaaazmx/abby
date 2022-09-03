@@ -103,6 +103,20 @@
 
                 <com.cl.common_base.widget.FeatureItemView
                     app:hideArrow="true"
+                    android:id="@+id/ft_solo"
+                    app:itemTitle="@string/my_solo"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    app:hideArrow="true"
                     android:id="@+id/ft_SN"
                     app:itemTitle="SN"
                     android:layout_width="match_parent"
