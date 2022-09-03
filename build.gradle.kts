@@ -16,6 +16,7 @@ buildscript {
         classpath(Deps.ClassPath.hiltPlugin)
         classpath(Deps.ClassPath.arouterPlugin)
         classpath(Deps.ClassPath.googleService)
+        classpath(Deps.ClassPath.uploadPlugin)
     }
 }
 

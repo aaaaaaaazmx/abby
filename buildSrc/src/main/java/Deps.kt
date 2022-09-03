@@ -108,6 +108,9 @@ object Deps {
             "com.alibaba:arouter-register:${Version.ClassPathVersion.arouterPluginVersion}"
 
         const val googleService = "com.google.gms:google-services:${Version.ClassPathVersion.googleServicePluginVersion}"
+
+        // 打包
+        const val uploadPlugin = "com.github.centerzx:UploadApkPlugin:1.0.5"
     }
 
     object ComposeDependency {

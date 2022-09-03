@@ -307,6 +307,31 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.plantOffLine.apply {
 
         }
+
+        // 解锁完成界面点击事件相关
+        binding.plantComplete.apply {
+
+            // 重新种植
+            completeStart.setOnClickListener {
+                ARouter.getInstance()
+                    .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                    .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    .navigation()
+            }
+
+            // 如何使用花蕾
+            completeCureBuds.setOnClickListener {
+                // todo
+            }
+            // 如何保存花蕾
+            completeStoreBuds.setOnClickListener {
+                // todo
+            }
+            // 分享
+            completeIvShare.setOnClickListener {
+                // todo
+            }
+        }
     }
 
     /**
