@@ -85,7 +85,24 @@ class PlantCheckHelp {
                     .navigation()
             }
             KEY_PLANTING_COMPLETED -> {
-                // todo  种植完成，暂时没有写
+                //  种植完成
+                // 跳转回主页
+                // 已种植
+                ARouter.getInstance().build(RouterPath.Main.PAGE_MAIN)
+                    .withString(
+                        Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
+                        data.plantGuideFlag
+                    )
+                    .withString(
+                        Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
+                        data.plantExistingStatus
+                    )
+                    .withString(
+                        Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
+                        userinfoBean?.deviceOnlineStatus
+                    )
+                    .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
+                    .navigation()
             }
         }
     }

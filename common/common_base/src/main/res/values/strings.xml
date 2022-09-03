@@ -14,4 +14,9 @@
     <string name="my_solo">1 on 1 Support</string>
     <string name="curing_unlock_tips">During the drying period, we can use the wet weight as a reference to help us determine when we\'ve satisfied the drying requirements.</string>
     <string name="unlock_curing">Are you sure to unclock curing?</string>
+    <string name="plant_complete_tips">Great job on your successful harvest! </string>
+    <string name="cure_buds">How to cure buds</string>
+    <string name="store_buds">How to store buds</string>
+    <string name="start_growing">Start your next growing journey</string>
+
 </resources>

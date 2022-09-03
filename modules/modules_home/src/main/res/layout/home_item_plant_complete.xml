@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/lineBg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/plant_complete_tips"
+            android:textColor="@color/black"
+            android:textSize="21sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageView
+            android:id="@+id/iv_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="33dp"
+            android:layout_marginEnd="16dp"
+            android:src="@mipmap/home_plant_complete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tv_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/background_white_r6"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_complete">
+
+
+            <com.cl.common_base.widget.FeatureItemView
+                app:itemTitle="@string/cure_buds"
+                android:id="@+id/complete_cure_buds"
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
+
+            <com.cl.common_base.widget.FeatureItemView
+                app:itemTitle="@string/store_buds"
+                android:id="@+id/complete_store_buds"
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
+
+            <com.cl.common_base.widget.FeatureItemView
+                app:hideArrow="true"
+                app:itemTitleColor="@color/mainColor"
+                app:itemTitle="@string/start_growing"
+                android:id="@+id/complete_start"
+                android:layout_width="match_parent"
+                android:layout_height="60dp" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,6 +1,7 @@
 package com.cl.modules_home.ui
 
 import android.content.Intent
+import android.icu.text.RelativeDateTimeFormatter
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
@@ -219,16 +220,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             // 继承
             KEY_EXTEND_PLANT -> {
-                // 未种植，且存在旧种植记录, 需要继承
-                // 也就是需要继承到第几步骤了。
-                // 首先需要弹窗判断当前植物是否继承
-                // todo 弹出继承或者重新种植的的窗口
+                // 弹出继承或者重新种植的的窗口
                 ViewUtils.setVisible(binding.plantExtendBg.root)
+                // todo 由于涂鸦下发的onLine会重新刷新这个，所以需要判断一下
+                if (plantExtendPop.isShow) return
                 plantExtendPop.show()
             }
             // 种植完成过
             KEY_PLANTING_COMPLETED -> {
-                // todo: 种植完成过，不知道跳转到那个步骤
+                // 种植完成过，不知道跳转到那个步骤
+                ViewUtils.setVisible(binding.plantComplete.root)
             }
         }
     }
@@ -1357,7 +1358,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     if (mViewMode.popPeriodStatus.value == UnReadConstants.Plant.KEY_CURING) {
                         // 跳转解锁完成界面
-//                        adasdad
+                        ViewUtils.setGone(binding.pplantNinth.root)
+                        ViewUtils.setVisible(binding.plantComplete.root)
+                        // 解锁周期之后，清空保存的周期状态
+                        mViewMode.setPopPeriodStatus(null)
                         return@success
                     }
                     // 解锁周期之后，清空保存的周期状态

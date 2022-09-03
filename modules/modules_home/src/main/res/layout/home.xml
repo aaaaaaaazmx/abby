@@ -57,9 +57,15 @@
 
                     <!--引导种植最后一步-->
                     <include
-                        app:viewModel="@{viewModel}"
                         android:id="@+id/pplant_ninth"
                         layout="@layout/home_item_plant_ninth"
+                        android:visibility="gone"
+                        app:viewModel="@{viewModel}" />
+
+                    <!--种植完成-->
+                    <include
+                        android:id="@+id/plant_complete"
+                        layout="@layout/home_item_plant_complete"
                         android:visibility="gone" />
                 </RelativeLayout>
 
