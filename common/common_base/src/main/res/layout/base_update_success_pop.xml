@@ -41,7 +41,7 @@
             android:paddingTop="15dp"
             android:paddingEnd="14dp"
             android:paddingBottom="5dp"
-            android:text="Update Successed"
+            android:text="@string/setting_update_success"
             android:textColor="@color/mainColor"
             android:textSize="16sp" />
 
@@ -97,7 +97,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="OK"
+                android:text="@string/base_ok"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
         </LinearLayout>

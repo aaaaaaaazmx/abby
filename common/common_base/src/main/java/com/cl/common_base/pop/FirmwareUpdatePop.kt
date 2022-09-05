@@ -48,8 +48,7 @@ class FirmwareUpdatePop(
                     2 -> {
                         ivImg.background =
                             ContextCompat.getDrawable(context, R.mipmap.my_force_update)
-                        tvContent.text =
-                            "Ensure a better user experience, please upgrade the firmware immediately."
+                        tvContent.text = context.getString(R.string.firmware_update_compulsion)
                     }
                     3 -> {
                         ivImg.background =

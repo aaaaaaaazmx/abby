@@ -27,7 +27,7 @@ class MyRePlantPop(
         super.onCreate()
         DataBindingUtil.bind<MyRePlantPopBinding>(popupImplView)?.apply {
             tvDec.text = buildSpannedString {
-                append("After clicking Replant, the device will switch to the planting mode of the first week. ")
+                append(context.getString(com.cl.common_base.R.string.setting_replant_tips))
                 color( ResourcesCompat.getColor(
                     resources,
                     com.cl.common_base.R.color.textRed,

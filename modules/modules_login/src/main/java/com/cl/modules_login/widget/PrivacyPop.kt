@@ -37,14 +37,14 @@ class PrivacyPop(
         bind?.executePendingBindings()
 
         bind?.tvContent?.text = buildSpannedString {
-            append("Privacy is very important. We have updated our privacy policy to let you fully understand the situation. Before you agree to use our services, please read carefully and understand the content we provide to you. Please check ")
+            append(context.getString(com.cl.common_base.R.string.private_policy))
             color(
                 ResourcesCompat.getColor(
                     resources,
                     com.cl.common_base.R.color.mainColor,
                     context.theme
                 )
-            ) { appendClickable("《 Terms of Use 》", isUnderlineText = false) {
+            ) { appendClickable(context.getString(com.cl.common_base.R.string.terms_us), isUnderlineText = false) {
                 // 跳转到使用条款H5
                 onTermUsAction?.invoke()
             } }
@@ -55,7 +55,7 @@ class PrivacyPop(
                     com.cl.common_base.R.color.mainColor,
                     context.theme
                 )
-            ) { appendClickable("《 Privacy Policy 》", isUnderlineText = false){
+            ) { appendClickable(context.getString(com.cl.common_base.R.string.policy), isUnderlineText = false){
                 // 跳转到隐私协议H5
                 onPrivacyAction?.invoke()
             } }

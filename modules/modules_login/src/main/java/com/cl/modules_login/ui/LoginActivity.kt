@@ -21,6 +21,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.BuildConfig
+import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivityLoginBinding
 import com.cl.modules_login.response.LoginData
 import com.cl.modules_login.viewmodel.LoginViewModel
@@ -221,11 +222,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             val password = binding.passwordEditText.text.toString()
             // 直接劝退
             if (account.isNullOrEmpty()) {
-                ToastUtil.shortShow("Account cannot be empty")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.login_account_empty))
                 return@setOnClickListener
             }
             if (password.isNullOrEmpty()) {
-                ToastUtil.shortShow("Password cannot be empty")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.login_password_empty))
                 return@setOnClickListener
             }
 

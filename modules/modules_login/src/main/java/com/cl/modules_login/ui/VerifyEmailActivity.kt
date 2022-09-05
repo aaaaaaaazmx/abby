@@ -10,6 +10,7 @@ import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.widget.code.VerificationCodeInputView
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivityVerifyEmailBinding
 import com.cl.modules_login.request.UserRegisterReq
 import com.cl.modules_login.viewmodel.VerifyEmailViewModel
@@ -79,7 +80,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
         binding.tvDesc.text =
             if (isRegister) {
                 buildSpannedString {
-                    append("We sent an email to ")
+                    append(getString(com.cl.common_base.R.string.send_email))
                     color(
                         ResourcesCompat.getColor(
                             resources,
@@ -91,11 +92,11 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                             emailName
                         )
                     }
-                    append(" Enter the verification code sent to your email address.")
+                    append(getString(com.cl.common_base.R.string.send_email_register))
                 }
             } else {
                 buildSpannedString {
-                    append("We sent an email to ")
+                    append(getString(com.cl.common_base.R.string.send_email))
                     color(
                         ResourcesCompat.getColor(
                             resources,
@@ -107,7 +108,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                             emailName
                         )
                     }
-                    append(" enter the verification code sent to your email address，and you can reset you password.")
+                    append(getString(com.cl.common_base.R.string.register_email_tips))
                 }
             }
 

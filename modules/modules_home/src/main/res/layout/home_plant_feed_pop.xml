@@ -33,7 +33,7 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="The tank is filled, now put fertilizer as instructed"
+            android:text="@string/home_fattening"
             android:textColor="#161B19"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="Confirm selection"
+                android:text="@string/home_done"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"

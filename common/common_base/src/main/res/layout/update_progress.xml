@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="19dp"
             android:layout_marginBottom="38dp"
-            android:text="Please wait for a while.."
+            android:text="@string/update_wait"
             android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"

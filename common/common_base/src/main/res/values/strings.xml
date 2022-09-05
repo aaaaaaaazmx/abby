@@ -17,17 +17,37 @@
     <string name="start_growing">Start your next growing journey</string>
     <string name="complete_desc">Harvest #%s Complete</string>
     <string name="profile_photo">Profile Photo</string>
-    <string name="profile_name">Nick Name</string>
+    <string name="profile_name">Nickname</string>
     <string name="profile_abby_id">Abby ID</string>
     <string name="profile_edit_nickname">Enter your nickname</string>
     <string name="base_ok">OK</string>
     <string name="setting_sub_desc">The subscription starts from the activation time (or when the subscription package is purchased); the activation time is when abby is connected to the internet for the first time</string>
     <string name="about_learn">Learn about “heyabby”</string>
-    <string name="about_rate">Rate</string>
+    <string name="about_rate">Leave a review</string>
     <string name="about_terms">Terms of Use</string>
     <string name="about_policy">Privacy Policy</string>
     <string name="setting_sub_time">No subscription</string>
     <string name="home_great_tips">Great! Now that the preparations have been made, let’s put the clone in the Grow Box. </string>
     <string name="home_start">Start</string>
+    <string name="setting_delete_device">After selecting \'Delete Device\', this device will no longer be associated with your account and it will be restored to factory settings. Your plant records will not be deleted.</string>
+    <string name="setting_replant_tips">After clicking \'Replant\', the device will switch to first week planting mode.</string>
+    <string name="firmware_update_compulsion">Please update your firmware to ensure the best user experience</string>
+    <string name="setting_update_success">Update Successful</string>
+    <string name="update_wait">Please wait…</string>
+    <string name="profile_request_camera">Authorize hey abby to access your camera</string>
+    <string name="private_policy">Your privacy is important to us. By continuing to use our product and services, you are confirming that you have read and accepted our</string>
+    <string name="terms_us">Terms of Use</string>
+    <string name="policy">Privacy Policy</string>
+    <string name="send_email">We sent an email to </string>
+    <string name="send_email_register"> Enter the verification code sent to your email address.</string>
+    <string name="register_email_tips"> Enter the verification code sent to your email address. Then reset your password. </string>
+    <string name="register_email_dont_tips">Didn‘t receive an email?</string>
+    <string name="login_account_empty">Please enter username</string>
+    <string name="login_password_empty">Please enter password</string>
+    <string name="home_fattening">The tank is filled, now put fertilizer as instructed</string>
+    <string name="home_done">Done</string>
+    <string name="deivce_can_not_find">Cannot find your device</string>
+    <string name="device_try">You can try the following:</string>
+
 
 </resources>

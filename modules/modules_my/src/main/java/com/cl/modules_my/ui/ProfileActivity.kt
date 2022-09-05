@@ -122,7 +122,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                     onPhotoAction = {
                         PermissionHelp().applyPermissionHelp(
                             this@ProfileActivity,
-                            "Need to authorize hey abby to take photos",
+                            getString(com.cl.common_base.R.string.profile_request_camera),
                             object : PermissionHelp.OnCheckResultListener{
                                 override fun onResult(result: Boolean) {
                                     if (!result) return

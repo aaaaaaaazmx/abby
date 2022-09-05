@@ -34,7 +34,7 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="After deleting the device, the device will no longer be associated with your account, and the device will restore to factory settings .Rest assured, your planting records will not be deleted after deleting the device."
+            android:text="@string/setting_delete_device"
             android:textColor="#161B19"
             android:textSize="15sp" />
 

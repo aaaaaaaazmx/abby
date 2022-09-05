@@ -32,9 +32,9 @@ class PairBleScanTimeOutActivity : BaseActivity<PairBleScanTimeOutBinding>() {
         3.Reconnect the device.
          */
         binding.tvFour.text = buildSpannedString {
-            appendLine("1. Make sure your phone's Bluetooth is turned on")
-            appendLine("2. Place the phone close to the device ")
-            append("3. Try to ")
+            appendLine("1. Make sure your phone's Bluetooth is on")
+            appendLine("2. Place the phone close to the device and try to pair again")
+            append("3. ")
             color(ContextCompat.getColor(this@PairBleScanTimeOutActivity, R.color.mainColor)) {
                 appendClickable("Reconnect") {
                     // 检查是否有定位权限
@@ -54,7 +54,7 @@ class PairBleScanTimeOutActivity : BaseActivity<PairBleScanTimeOutBinding>() {
                         })
                 }
             }
-            append(" (hyperlink)")
+            append(" the device")
         }
 
         binding.tvFour.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击

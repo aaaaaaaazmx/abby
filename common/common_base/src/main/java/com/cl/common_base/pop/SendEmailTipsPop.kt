@@ -21,7 +21,7 @@ class SendEmailTipsPop(
         DataBindingUtil.bind<BaseUpdateSuccessPopBinding>(popupImplView)?.apply {
             ivPic.visibility = View.GONE
             tvContent.setTextColor(Color.parseColor("#000000"))
-            tvContent.text = "请发送邮件至 growsupport@heyabby.com，已复制到粘贴板"
+            tvContent.text = "Please email us at growsupport@heyabby.com. The email is already copied to your clipboard."
             tvConfirm.setOnClickListener {
                 dismiss()
                 onConfirmAction?.invoke()

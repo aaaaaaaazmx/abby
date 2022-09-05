@@ -88,7 +88,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="19dp"
-                        android:text="Confirm selection"
+                        android:text="@string/home_done"
                         android:textColor="#161B19"
                         android:textSize="15sp"
                         app:layout_constraintStart_toStartOf="@+id/iv_img"

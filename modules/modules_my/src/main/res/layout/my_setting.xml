@@ -159,7 +159,7 @@
                     android:layout_marginTop="8dp"
                     android:background="@color/white"
                     app:hideArrow="true"
-                    app:itemTitle="Vision" />
+                    app:itemTitle="Version" />
 
                 <View
                     android:layout_width="match_parent"

@@ -51,7 +51,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="26dp"
                         android:layout_marginTop="20dp"
-                        android:text="Can't find your device currently"
+                        android:text="@string/deivce_can_not_find"
                         android:textColor="#161B19"
                         android:textSize="15sp"
                         tools:ignore="MissingConstraints"
@@ -65,11 +65,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="26dp"
                         android:layout_marginTop="38dp"
-                        android:text="Try the following"
+                        android:text="@string/device_try"
                         android:textColor="@color/mainColor"
                         android:textSize="24sp"
                         tools:ignore="MissingConstraints"
-                        tools:text="You can do the following" />
+                        />
 
 
                     <TextView
