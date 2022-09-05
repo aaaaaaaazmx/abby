@@ -80,6 +80,7 @@
                     android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
+                    isOffline="@{data.isOffLine()}"
                     android:layout_marginTop="7dp"
                     android:id="@+id/ft_replant"
                     android:layout_width="match_parent"
