@@ -25,6 +25,7 @@ import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.cl.modules_my.widget.MyRePlantPop
+import com.cl.modules_my.widget.SubPop
 import com.lxj.xpopup.XPopup
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -207,6 +208,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     override fun initView() {
         // 当前版本号
         binding.ftVision.itemValue = AppUtil.appVersionName
+        binding.ftSub.setTitleValueEndDrawable(null)
+            .setPointClickListener {
+                pop.asCustom(SubPop(this@SettingActivity)).show()
+            }
     }
 
     override fun observe() {

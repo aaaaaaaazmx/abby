@@ -30,7 +30,7 @@ import com.bumptech.glide.request.RequestOptions;
 /**
  * 功能设置项
  */
-public class FeatureItemView extends FrameLayout {
+public class FeatureItemView extends FrameLayout implements View.OnClickListener {
 
     private ImageView ivItemIcon;
     private ImageView ivItemImage, itemValueEndDrawable;
@@ -70,6 +70,7 @@ public class FeatureItemView extends FrameLayout {
         ivItemIcon = itemView.findViewById(R.id.fiv_item_icon);
         ivItemImage = itemView.findViewById(R.id.fiv_item_img);
         itemValueEndDrawable = itemView.findViewById(R.id.item_value_end_drawable);
+        itemValueEndDrawable.setOnClickListener(this);
         tvItemImage = itemView.findViewById(R.id.nohead_show);
         tvItemTitle = itemView.findViewById(R.id.fiv_item_title);
         tvItemHint = itemView.findViewById(R.id.fiv_item_hint);
@@ -340,5 +341,21 @@ public class FeatureItemView extends FrameLayout {
 
     public void setItemBackgroundColor(int colorRes) {
         setBackgroundColor(colorRes);
+    }
+
+    private OnClickListener pointClickListener;
+
+    public FeatureItemView setPointClickListener(OnClickListener onClickListener) {
+        this.pointClickListener = onClickListener;
+        return this;
+    }
+
+    @Override
+    public void onClick(View view) {
+       if (view.getId() == R.id.item_value_end_drawable) {
+           if (pointClickListener != null) {
+               pointClickListener.onClick(view);
+           }
+       }
     }
 }

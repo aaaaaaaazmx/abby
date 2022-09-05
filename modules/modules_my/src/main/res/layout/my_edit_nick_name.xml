@@ -83,7 +83,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:background="@null"
-                android:hint="Enter your Nick Name"
+                android:hint="@string/profile_edit_nickname"
                 android:textColorHint="#E5E5E5"
                 android:textSize="15sp"
                 app:layout_constraintEnd_toStartOf="@+id/fl_close"
