@@ -956,6 +956,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 success {
+                    // 删除未读消息
+                    mViewMode.removeFirstUnreadMessage()
+                    // 清空气泡状态
+                    mViewMode.setPopPeriodStatus(null)
+
                     // 是否种植过
                     data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
                 }

@@ -690,6 +690,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+    // 删除所有未读消息
+    fun removeUnreadMessage() {
+        _unreadMessageList.value?.clear()
+    }
+
     // 固件信息
     // 获取当前设备信息
     private val tuYaDeviceBean by lazy {
