@@ -27,5 +27,7 @@
     <string name="about_terms">Terms of Use</string>
     <string name="about_policy">Privacy Policy</string>
     <string name="setting_sub_time">No subscription</string>
+    <string name="home_great_tips">Great! Now that the preparations have been made, let’s put the clone in the Grow Box. </string>
+    <string name="home_start">Start</string>
 
 </resources>

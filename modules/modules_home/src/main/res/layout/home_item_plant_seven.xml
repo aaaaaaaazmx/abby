@@ -52,23 +52,82 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <ImageView
-                android:id="@+id/iv_clone"
-                android:layout_marginBottom="32dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_continue"
+                android:layout_width="261dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="22dp"
+                android:orientation="vertical"
+                android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
-                android:background="@mipmap/home_seven_dialog_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-            <ImageView
-                app:layout_constraintTop_toBottomOf="@+id/iv_clone"
-                app:layout_constraintEnd_toEndOf="@+id/iv_clone"
-                app:layout_constraintStart_toStartOf="@+id/iv_clone"
-                android:background="@mipmap/home_down_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:id="@+id/ll_root"
+                    android:layout_width="261dp"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/home_pair_bg"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <ImageView
+                        android:visibility="gone"
+                        android:id="@+id/iv_close"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@mipmap/iv_close" />
+
+                    <TextView
+                        android:id="@+id/tv_pop_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="12dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="17dp"
+                        android:text="@string/home_great_tips"
+                        android:textColor="#161B19"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.cl.common_base.widget.SvTextView
+                        android:textStyle="bold"
+                        android:id="@+id/tv_btn_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_gravity="right"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_marginBottom="19dp"
+                        android:gravity="center"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:text="@string/home_start"
+                        android:textColor="@color/white"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:svRadius="16dp"
+                        app:svSolidColor="#008961"
+                        app:svSolidType="solid" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/home_down_bg"
+                    app:layout_constraintEnd_toEndOf="@id/ll_root"
+                    app:layout_constraintStart_toStartOf="@id/ll_root"
+                    app:layout_constraintTop_toBottomOf="@+id/ll_root" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
