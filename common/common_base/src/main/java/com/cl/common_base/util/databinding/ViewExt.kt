@@ -8,7 +8,7 @@ import android.view.View
  * @param duration 点击时间间隔
  * @param onSingleClick 点击事件回调，快速连续点击将被忽略掉
  */
-fun View.setOnSingleClickListener(duration: Int = 400, onSingleClick: (view: View) -> Unit) {
+fun View.setOnSingleClickListener(duration: Int = 2000, onSingleClick: (view: View) -> Unit) {
     setOnClickListener(object: OnSingleClickListener(duration) {
         override fun onSingleClick(view: View) {
             onSingleClick.invoke(view)
