@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
-            android:text="@string/plant_complete_tips"
             android:textColor="@color/black"
             android:textSize="21sp"
             android:textStyle="bold"
@@ -28,15 +27,28 @@
 
 
         <ImageView
+            android:background="@mipmap/home_plant_complete_bgf"
             android:id="@+id/iv_complete"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="33dp"
             android:layout_marginEnd="16dp"
-            android:src="@mipmap/home_plant_complete"
+            android:layout_marginStart="16dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+        <TextView
+            android:id="@+id/tv_complete_desc"
+            android:layout_marginBottom="39dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_complete"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Harvest #28 Complete  "
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <ImageView
             android:id="@+id/complete_iv_share"
@@ -59,20 +71,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/iv_complete">
 
-
-            <com.cl.common_base.widget.FeatureItemView
-                app:itemTitle="@string/cure_buds"
-                android:id="@+id/complete_cure_buds"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_finish_guide"
                 android:layout_width="match_parent"
-                android:layout_height="60dp" />
+                android:layout_height="wrap_content"/>
 
             <com.cl.common_base.widget.FeatureItemView
-                app:itemTitle="@string/store_buds"
-                android:id="@+id/complete_store_buds"
-                android:layout_width="match_parent"
-                android:layout_height="60dp" />
-
-            <com.cl.common_base.widget.FeatureItemView
+                android:layout_marginBottom="4dp"
                 app:hideArrow="true"
                 app:itemTitleColor="@color/mainColor"
                 app:itemTitle="@string/start_growing"

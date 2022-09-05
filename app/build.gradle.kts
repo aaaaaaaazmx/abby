@@ -1,3 +1,7 @@
+import java.io.DataInputStream
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -5,7 +9,40 @@ plugins {
     id("dagger.hilt.android.plugin")
     id("com.google.gms.google-services")
     //    id("kotlin-parcelize")
+        id("center.uploadpgy.plugin")
 }
+
+uploadPgyParams {
+     apiKey = readProperties("PgyApiKey")
+    //暂时无用
+    appName = "TestGradlePlugin"
+    buildTypeName = "Release"
+    buildInstallType = 1
+    buildPassword = "zx"
+}
+
+buildFeiShuParams {
+     webHookHostUrl = readProperties("FeiShuWebHookHostUrl")
+    contentTitle = "测试包"
+    contentText = "最新开发测试包已经上传至蒲公英, 可以下载使用了"
+    //富文本消息（post）、消息卡片（interactive），默认post
+    msgtype = "post"
+    //是否@全体群人员，默认false：isAtAll = true
+    isAtAll = true
+    clickTxt = "点击进行下载"
+    //是否单独支持发送Git记录数据，在配置了buildGitLogParams前提下有效，默认为true
+    isSupportGitLog = true
+}
+
+buildGitLogParams {
+    //是否发送消息是携带Git记录日志，如果配置了这块参数才会携带Git记录，消息里面可以单独设置是否携带Git日志数据
+
+    //获取以当前时间为基准至N天之前的Git记录（限定时间范围），不填或小于等于0为全部记录，会结合数量进行获取
+    gitLogHistoryDayTime = 1
+    //显示Git记录的最大数量，值范围1~50，不填默认是10条，最大数量50条
+    gitLogMaxCount = 10
+}
+
 
 android {
     compileSdk = Version.compileSdk
@@ -126,4 +163,17 @@ dependencies {
     implementation(Deps.hiltAndroid)
     kapt(Deps.kaptHiltAndroidCompiler)
     kapt(Deps.kaptHiltCompiler)
+}
+
+fun readProperties(key: String): String? {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        val inputStream = DataInputStream(FileInputStream(file))
+        val properties = Properties()
+        properties.load(inputStream)
+        if (properties.containsKey(key)) {
+            return properties.getProperty(key)
+        }
+    }
+    return ""
 }

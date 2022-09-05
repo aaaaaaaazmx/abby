@@ -110,7 +110,7 @@ object Deps {
         const val googleService = "com.google.gms:google-services:${Version.ClassPathVersion.googleServicePluginVersion}"
 
         // 打包
-        const val uploadPlugin = "com.github.centerzx:UploadApkPlugin:1.0.5"
+        const val uploadPlugin = "com.github.centerzx:UploadApkPlugin:v1.0.6"
     }
 
     object ComposeDependency {

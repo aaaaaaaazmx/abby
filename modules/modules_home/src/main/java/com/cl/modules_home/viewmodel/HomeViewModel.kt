@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
-import com.cl.common_base.bean.AdvertisingData
-import com.cl.common_base.bean.AppVersionData
-import com.cl.common_base.bean.EnvironmentInfoData
-import com.cl.common_base.bean.UnreadMessageData
+import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -19,6 +16,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
+import com.cl.modules_home.response.DetailByLearnMoreIdData
 import com.cl.modules_home.response.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
@@ -266,6 +264,42 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 }.collectLatest {
                     _plantInfo.value = it
+                }
+        }
+    }
+
+    /**
+     * 获取图文广告
+     */
+    private val _getDetailByLearnMoreId = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
+    val getDetailByLearnMoreId: LiveData<Resource<DetailByLearnMoreIdData>> = _getDetailByLearnMoreId
+    fun getDetailByLearnMoreId(type: String) {
+        viewModelScope.launch {
+            repository.getDetailByLearnMoreId(type)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _getDetailByLearnMoreId.value = it
                 }
         }
     }
@@ -691,6 +725,44 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         })
     }
 
+
+    /**
+     * 获取种植完成界面参数
+     */
+    private val _getFinishPage = MutableLiveData<Resource<FinishPageData>>()
+    val getFinishPage: LiveData<Resource<FinishPageData>> = _getFinishPage
+    fun getFinishPage() {
+        viewModelScope.launch {
+            repository.getFinishPage()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _getFinishPage.value = it
+                }
+        }
+    }
+
+
     /**
      * 检查固件是否可以升级
      */
@@ -721,4 +793,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun bubbleOnClickEvent() {
         _bubbleOnClickEvent.value = true
     }
+
+    /**
+     * 种植完成的图文ID保存
+     */
+
 }

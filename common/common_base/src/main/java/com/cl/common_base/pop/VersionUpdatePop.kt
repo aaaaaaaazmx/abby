@@ -41,12 +41,12 @@ class VersionUpdatePop(
                 // 跳转到谷歌市场
                 startGooglePlay()
                 // 强制升级才可以取消弹窗
-                if (appVersionData?.forcedUpdate == "1")dismiss()
+                if (appVersionData?.forcedUpdate == "0")dismiss()
             }
             tvCancel.setOnClickListener {
                 onCancelAction?.invoke()
                 // 强制升级才可以取消弹窗
-                if (appVersionData?.forcedUpdate == "1")dismiss()
+                if (appVersionData?.forcedUpdate == "0")dismiss()
             }
         }
     }

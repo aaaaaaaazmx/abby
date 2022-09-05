@@ -1,7 +1,6 @@
 package com.cl.modules_home.ui
 
 import android.content.Intent
-import android.icu.text.RelativeDateTimeFormatter
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +9,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -31,6 +30,10 @@ import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
 import com.bbgo.module_home.databinding.HomeBinding
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
+import com.cl.common_base.bean.FinishPageData
 import com.cl.common_base.bean.JpushMessageData
 import com.cl.common_base.bean.UnreadMessageData
 import com.cl.common_base.constants.UnReadConstants
@@ -39,7 +42,7 @@ import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
-import com.google.android.material.behavior.HideBottomViewOnScrollBehavior
+import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -228,7 +231,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             // 种植完成过
             KEY_PLANTING_COMPLETED -> {
-                // 种植完成过，不知道跳转到那个步骤
+                // 种植完成过
+                mViewMode.getFinishPage()
                 ViewUtils.setVisible(binding.plantComplete.root)
             }
         }
@@ -317,15 +321,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
                     .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                     .navigation()
-            }
-
-            // 如何使用花蕾
-            completeCureBuds.setOnClickListener {
-                // todo
-            }
-            // 如何保存花蕾
-            completeStoreBuds.setOnClickListener {
-                // todo
             }
             // 分享
             completeIvShare.setOnClickListener {
@@ -935,9 +930,89 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
     }
 
+    /**
+     * 种植完成，条目适配器
+     */
+    private val plantCompleteItemAdapter by lazy {
+        HomeFinishItemAdapter(mutableListOf())
+    }
+
+    /**
+     * 种植完成图文弹窗
+     */
+    private val plantFinishUsuallyPop by lazy {
+        context?.let { HomeFinishGuidePop(it) }
+    }
 
     override fun observe() {
         mViewMode.apply {
+            // 获取通用图文信息接口
+            getDetailByLearnMoreId.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, _ ->
+                    hideProgressLoading()
+                    errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+                success {
+                    hideProgressLoading()
+                    // 如果是种植完成调用了这个接口
+                    // 那么getFinishPager这个接口返回的数据就不会为空
+                    if (mViewMode.getFinishPage.value?.data?.list?.isNotEmpty() == true) {
+                        // 跳转种植完成图文弹窗
+                        plantFinishUsuallyPop?.setData(data)
+                        pop
+                            .isDestroyOnDismiss(false)
+                            .enableDrag(true)
+                            .maxHeight(dp2px(700f))
+                            .dismissOnTouchOutside(false)
+                            .asCustom(plantFinishUsuallyPop).show()
+                        return@success
+                    }
+                }
+            })
+            // 种植完成参数获取
+            getFinishPage.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+                success {
+                    hideProgressLoading()
+                    data?.let {
+                        binding.plantComplete.tvTitle.text = it.title
+                        val requestOptions = RequestOptions()
+                        requestOptions.placeholder(com.cl.common_base.R.mipmap.placeholder)
+                        requestOptions.error(com.cl.common_base.R.mipmap.errorholder)
+//                        Glide.with(this@HomeFragment)
+//                            .load(it.imageUrl)
+//                            .apply(requestOptions)
+//                            .into(binding.plantComplete.ivComplete)
+                        binding.plantComplete.tvCompleteDesc.text = getString(com.cl.common_base.R.string.complete_desc, it.harvestComplete)
+
+                        val listBean = it.list
+                        if (listBean.isEmpty()) return@success
+                        binding.plantComplete.rvFinishGuide.layoutManager =
+                            LinearLayoutManager(context)
+                        binding.plantComplete.rvFinishGuide.adapter = plantCompleteItemAdapter
+                        plantCompleteItemAdapter.setList(listBean)
+                        // 设置点击事件
+                        plantCompleteItemAdapter.addChildClickViewIds(R.id.ll_title)
+                        plantCompleteItemAdapter.setOnItemChildClickListener { adapter, view, position ->
+                            val data = adapter.data[position] as? FinishPageData.ListBean
+                            when(view.id) {
+                                R.id.ll_title -> {
+                                    data?.learnMoreId?.let { it1 ->
+                                        mViewMode.getDetailByLearnMoreId(
+                                            it1
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
             // 气泡按钮点击事件
             bubbleOnClickEvent.observe(viewLifecycleOwner) { clickEvent ->
                 if (clickEvent == false) return@observe
@@ -1387,6 +1462,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         ViewUtils.setVisible(binding.plantComplete.root)
                         // 解锁周期之后，清空保存的周期状态
                         mViewMode.setPopPeriodStatus(null)
+                        // 种植完成获取参数
+                        mViewMode.getFinishPage()
                         return@success
                     }
                     // 解锁周期之后，清空保存的周期状态

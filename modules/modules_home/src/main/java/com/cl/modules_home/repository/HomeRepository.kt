@@ -4,6 +4,7 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
+import com.cl.modules_home.response.DetailByLearnMoreIdData
 import com.cl.modules_home.response.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -109,5 +110,19 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
      */
     fun deviceOperateFinish(type: String): Flow<HttpResult<BaseBean>> {
         return remoteRepository.deviceOperateFinish(type)
+    }
+
+    /**
+     * 获取完成界面配置
+     */
+    fun getFinishPage(): Flow<HttpResult<FinishPageData>> {
+        return remoteRepository.getFinishPage()
+    }
+
+    /**
+     * 获取图文详情
+     */
+    fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
+        return remoteRepository.getDetailByLearnMoreId(learnMoreId)
     }
 }

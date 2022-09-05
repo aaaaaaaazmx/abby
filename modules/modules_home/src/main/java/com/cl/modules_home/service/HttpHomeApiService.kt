@@ -4,6 +4,7 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
+import com.cl.modules_home.response.DetailByLearnMoreIdData
 import com.cl.modules_home.response.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
 import kotlinx.coroutines.flow.Flow
@@ -58,7 +59,7 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/advertising/advertising")
-    fun advertising(@Field("type") type: String? = "0"): Flow<HttpResult<MutableList<AdvertisingData>>>
+    fun advertising(@Field("type") type: String): Flow<HttpResult<MutableList<AdvertisingData>>>
 
     /**
      * 获取环境信息
@@ -113,6 +114,19 @@ interface HttpHomeApiService {
      * 设备操作完成
      */
     @FormUrlEncoded
-    @POST("/abby/deviceOperate/finish")
+    @POST("abby/deviceOperate/finish")
     fun deviceOperateFinish(@Field("type")type: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取完成界面配置参数
+     */
+    @POST("abby/plant/getFinishPage")
+    fun getFinishPage(): Flow<HttpResult<FinishPageData>>
+
+    /**
+     * 图文获取
+     */
+    @FormUrlEncoded
+    @POST("abby/moments/getDetailByLearnMoreId")
+    fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String):Flow<HttpResult<DetailByLearnMoreIdData>>
 }
