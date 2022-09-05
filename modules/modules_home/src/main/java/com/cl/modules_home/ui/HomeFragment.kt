@@ -1748,13 +1748,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 ViewUtils.setGone(binding.plantOffLine.root)
                 // 刷新数据以及token
                 // 一并检查下当前的状态
-                mViewMode.refreshToken(
-                    AutomaticLoginReq(
-                        userName = mViewMode.account,
-                        password = mViewMode.psd,
-                        token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-                    )
-                )
+//                mViewMode.refreshToken(
+//                    AutomaticLoginReq(
+//                        userName = mViewMode.account,
+//                        password = mViewMode.psd,
+//                        token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+//                    )
+//                )
             }
             Constants.Device.KEY_DEVICE_REMOVE -> {
                 logI(
