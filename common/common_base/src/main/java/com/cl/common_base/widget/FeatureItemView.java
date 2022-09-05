@@ -230,6 +230,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
     public FeatureItemView setSvText(String itemValue) {
         svtText.setText(itemValue);
         ViewUtils.setVisible(svtText);
+        ViewUtils.setGone(tvItemValue);
         ViewUtils.setGone(ivItemArrow);
         return this;
     }

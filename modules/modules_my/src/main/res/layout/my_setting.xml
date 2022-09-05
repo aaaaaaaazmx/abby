@@ -88,6 +88,7 @@
                     app:itemTitle="Replant" />
 
                 <com.cl.common_base.widget.FeatureItemView
+                    app:itemValue="@string/setting_sub_time"
                     app:hideArrow="true"
                     android:id="@+id/ft_sub"
                     android:layout_marginTop="7dp"

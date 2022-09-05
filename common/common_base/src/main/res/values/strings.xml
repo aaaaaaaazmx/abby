@@ -26,5 +26,6 @@
     <string name="about_rate">Rate</string>
     <string name="about_terms">Terms of Use</string>
     <string name="about_policy">Privacy Policy</string>
+    <string name="setting_sub_time">No subscription</string>
 
 </resources>
