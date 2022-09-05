@@ -84,4 +84,16 @@ class HomeRemoteRepository @Inject constructor() {
     fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
         return service.getDetailByLearnMoreId(learnMoreId)
     }
+
+    fun plantDelete(uuid: String): Flow<HttpResult<Boolean>> {
+        return service.plantDelete(uuid)
+    }
+
+    fun checkPlant(uuid: String): Flow<HttpResult<CheckPlantData>> {
+        return service.checkPlant(uuid)
+    }
+
+    fun plantFinish(botanyId: String): Flow<HttpResult<BaseBean>> {
+        return service.plantFinish(botanyId)
+    }
 }

@@ -98,7 +98,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
      * iTuyaOta.onDestory();
      */
     fun stopOta() {
-        tuYaHomeSdk.onDestroy()
+//        tuYaHomeSdk.onDestroy()
     }
 
     /**

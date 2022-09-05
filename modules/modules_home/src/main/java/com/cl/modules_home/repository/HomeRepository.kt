@@ -125,4 +125,26 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
         return remoteRepository.getDetailByLearnMoreId(learnMoreId)
     }
+
+    /**
+     * 删除植物、重新种植
+     */
+    fun plantDelete(uuid: String): Flow<HttpResult<Boolean>> {
+        return remoteRepository.plantDelete(uuid)
+    }
+
+    /**
+     * 检查是否种植过
+     */
+    fun checkPlant(uuid: String): Flow<HttpResult<CheckPlantData>> {
+        return remoteRepository.checkPlant(uuid)
+    }
+
+
+    /**
+     * 种植完成
+     */
+    fun plantFinish(botanyId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.plantFinish(botanyId)
+    }
 }

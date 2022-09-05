@@ -154,6 +154,8 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
         mViewModel.setOtaListener(
             onSuccess = {
                 runOnUiThread {
+                    // 升级成功允许返回
+                    isMandatoryUpgrade = false
                     // 消失进度条
                     updateProgressPop.dismiss()
                     pop.asCustom(updateSuccessPop).show()
@@ -216,6 +218,11 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
     override fun onBackPressed() {
         if (isMandatoryUpgrade) return
         super.onBackPressed()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mViewModel.stopOta()
     }
 
 }

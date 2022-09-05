@@ -37,6 +37,7 @@ import com.cl.common_base.bean.FinishPageData
 import com.cl.common_base.bean.JpushMessageData
 import com.cl.common_base.bean.UnreadMessageData
 import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
@@ -317,10 +318,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 重新种植
             completeStart.setOnClickListener {
-                ARouter.getInstance()
-                    .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                    .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .navigation()
+                mViewMode.plantFinish("")
             }
             // 分享
             completeIvShare.setOnClickListener {
@@ -725,10 +723,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 context = it,
                 onNextAction = { weight ->
                     val unReadList = mViewMode.unreadMessageList.value
+                    // 应该是判断当前的种植周期。
+                    // 这个是引导阶段
                     if (unReadList.isNullOrEmpty() && mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
                         /**
                          * 这个状态是自己自定义的状态，主要用于上报到第几步
                          * 上报步骤
+                         * 引导阶段
                          */
                         when (mViewMode.typeStatus.value) {
                             0 -> {
@@ -946,6 +947,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 检查是否种植过
+            // 检查植物
+            checkPlant.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+
+                success {
+                    // 是否种植过
+                    data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
+                }
+            })
             // 获取通用图文信息接口
             getDetailByLearnMoreId.observe(viewLifecycleOwner, resourceObserver {
                 loading { showProgressLoading() }

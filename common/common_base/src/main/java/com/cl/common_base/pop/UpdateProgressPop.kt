@@ -26,8 +26,8 @@ class UpdateProgressPop(
         binding?.circleBar?.value = progress.toFloat()
     }
 
-    override fun beforeShow() {
-        super.beforeShow()
+    override fun onDismiss() {
+        super.onDismiss()
         binding?.circleBar?.reset()
     }
 

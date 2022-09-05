@@ -20,6 +20,7 @@ import com.cl.modules_home.response.DetailByLearnMoreIdData
 import com.cl.modules_home.response.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
+import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IGetOtaInfoCallback
 import com.tuya.smart.sdk.bean.DeviceBean
@@ -40,6 +41,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     // 密码
     val psd by lazy {
         Prefs.getString(Constants.Login.KEY_LOGIN_PSD)
+    }
+
+    val tuYaUser by lazy {
+        val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
+        GSON.parseObject(bean, User::class.java)
     }
 
     /**
@@ -762,6 +768,76 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+    /**
+     * 删除植物
+     */
+    private val _plantFinish = MutableLiveData<Resource<BaseBean>>()
+    val plantFinish: LiveData<Resource<BaseBean>> = _plantFinish
+    fun plantFinish(botanyId: String) = viewModelScope.launch {
+        repository.plantFinish(botanyId)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    // 检查是否种植过
+                    tuYaUser?.uid?.let {uid -> checkPlant(uid) }
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                _plantFinish.value = it
+            }
+    }
+
+    /**
+     * 检查是否种植过植物
+     */
+    private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
+    val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
+    private fun checkPlant(uuid: String) = viewModelScope.launch {
+        repository.checkPlant(uuid)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                _checkPlant.value = it
+            }
+    }
+
 
     /**
      * 检查固件是否可以升级
@@ -793,9 +869,4 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun bubbleOnClickEvent() {
         _bubbleOnClickEvent.value = true
     }
-
-    /**
-     * 种植完成的图文ID保存
-     */
-
 }

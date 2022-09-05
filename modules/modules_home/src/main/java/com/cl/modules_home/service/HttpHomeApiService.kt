@@ -129,4 +129,22 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/moments/getDetailByLearnMoreId")
     fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String):Flow<HttpResult<DetailByLearnMoreIdData>>
+
+    /**
+     * 删除植物
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/delete")
+    fun plantDelete(@Field("deviceUuid")deviceUuid: String): Flow<HttpResult<Boolean>>
+
+    /**
+     * 是否种植
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/check")
+    fun checkPlant(@Field("deviceUuid") body: String): Flow<HttpResult<CheckPlantData>>
+
+    @FormUrlEncoded
+    @POST("abby/plant/plantFinish")
+    fun plantFinish(@Field("botanyId") botanyId: String): Flow<HttpResult<BaseBean>>
 }

@@ -248,17 +248,13 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
-    private val tuYaHomeSdk by lazy {
-        TuyaHomeSdk.newOTAInstance(tuYaDeviceBean?.devId)
-    }
-
     /**
      * 查询固件升级信息
      */
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuYaHomeSdk.getOtaInfo(object : IGetOtaInfoCallback {
+        TuyaHomeSdk.newOTAInstance(tuYaDeviceBean?.devId).getOtaInfo(object : IGetOtaInfoCallback {
             override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                 logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
                 // 如果可以升级

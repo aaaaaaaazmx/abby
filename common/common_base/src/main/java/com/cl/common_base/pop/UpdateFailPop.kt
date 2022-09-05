@@ -23,7 +23,7 @@ class UpdateFailPop(
     var binding: BaseUpdateFailPopBinding? = null
     override fun onCreate() {
         binding = DataBindingUtil.bind<BaseUpdateFailPopBinding>(popupImplView)?.apply {
-            tvContent.setOnClickListener {
+            tvConfirm.setOnClickListener {
                 dismiss()
                 onRetryAction?.invoke()
             }
@@ -34,8 +34,14 @@ class UpdateFailPop(
         }
     }
 
+    var text: String? = null
     // 失败内容赋值
     fun setFailtext(text: String) {
+        this.text = text
+    }
+
+    override fun beforeShow() {
+        super.beforeShow()
         binding?.tvContent?.text = text
     }
 }
