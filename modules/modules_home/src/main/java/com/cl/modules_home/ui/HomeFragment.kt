@@ -1746,10 +1746,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onDeviceChange(status)
         when (status) {
             Constants.Device.KEY_DEVICE_OFFLINE -> {
+                logI("""
+                    deviceStatus: Constants.Device.KEY_DEVICE_OFFLINE
+                """.trimIndent())
                 ViewUtils.setVisible(binding.plantOffLine.root)
                 offLineTextSpan()
             }
             Constants.Device.KEY_DEVICE_ONLINE -> {
+                logI("""
+                    deviceStatus: Constants.Device.KEY_DEVICE_ONLINE
+                """.trimIndent())
                 ViewUtils.setGone(binding.plantOffLine.root)
                 // 刷新数据以及token
                 // 一并检查下当前的状态
