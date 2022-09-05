@@ -145,7 +145,6 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         )
                         intent.putExtra(KEY_EMAIL_NAME, emailName)
                         startActivity(intent)
-                        finish()
                     }
                     is Resource.Loading -> {
                         showProgressLoading()
