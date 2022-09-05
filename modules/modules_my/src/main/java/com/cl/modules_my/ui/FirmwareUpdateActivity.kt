@@ -143,9 +143,9 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
         binding.btnSuccess.setOnClickListener {
             // 弹出升级框
             mViewModel.upgradeInfoBeans.value?.let {
-                it.firstOrNull { bean -> bean.type == 9 }?.let { upgradeInfoBean ->
-                    updatePop.setData(upgradeInfoBean)
-                    pop.asCustom(updatePop).show()
+                it.firstOrNull { bean -> bean.type == 9 }?.let {
+                    // 跳转到友情提示界面
+                    pop.asCustom(upDateTipsPop).show()
                 }
             }
         }
