@@ -134,7 +134,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                aandroid:text="@string/home_done"
+                android:text="@string/home_done"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"

@@ -99,7 +99,7 @@
 
                     <com.cl.common_base.widget.SvTextView
                         android:textStyle="bold"
-                        android:id="@+id/tv_btn_desc"
+                        android:id="@+id/start"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:layout_gravity="right"

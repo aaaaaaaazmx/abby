@@ -290,7 +290,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // clone步骤
         binding.plantClone.apply {
-            ivClone.setOnClickListener {
+            start.setOnClickListener {
                 plantEight.show()
             }
         }
