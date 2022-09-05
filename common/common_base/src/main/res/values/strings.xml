@@ -16,4 +16,7 @@
     <string name="unlock_curing">Are you sure to unclock curing?</string>
     <string name="start_growing">Start your next growing journey</string>
     <string name="complete_desc">Harvest #%s Complete</string>
+    <string name="profile_photo">Profile Photo</string>
+    <string name="profile_name">Nick Name</string>
+    <string name="profile_abby_id">Abby ID</string>
 </resources>

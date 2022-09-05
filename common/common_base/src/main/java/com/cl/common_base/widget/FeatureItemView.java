@@ -3,6 +3,7 @@ package com.cl.common_base.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -191,6 +192,17 @@ public class FeatureItemView extends FrameLayout {
 
     public FeatureItemView setItemTitle(String title) {
         tvItemTitle.setText(title);
+        return this;
+    }
+
+    /**
+     * 设置左边文案，并且加粗
+     */
+    public FeatureItemView setItemTitle(String title, boolean isBold) {
+        tvItemTitle.setText(title);
+        if (isBold) {
+            tvItemTitle.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        }
         return this;
     }
 

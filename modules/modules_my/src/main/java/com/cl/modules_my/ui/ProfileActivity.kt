@@ -28,6 +28,7 @@ import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyProfileActivityBinding
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.ProfileViewModel
@@ -172,6 +173,10 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         } else {
             binding.ftHead.setImageForUrl(headUrl, true)
         }
+        // 文字加粗
+        binding.ftHead.setItemTitle(getString(com.cl.common_base.R.string.profile_photo), true)
+        binding.ftNickName.setItemTitle(getString(com.cl.common_base.R.string.profile_name), true)
+        binding.ftId.setItemTitle(getString(com.cl.common_base.R.string.profile_abby_id), true)
     }
 
     override fun observe() {

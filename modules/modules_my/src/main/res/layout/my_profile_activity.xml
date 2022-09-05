@@ -33,7 +33,7 @@
                 android:id="@+id/ft_head"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                app:itemTitle="Profile Photo" />
+                 />
 
             <View
                 android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                 android:id="@+id/ft_nick_name"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                app:itemTitle="Nick Name" />
+                />
 
             <View
                 android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                 android:id="@+id/ft_id"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
-                app:itemTitle="Abby ID" />
+                />
         </LinearLayout>
 
 
