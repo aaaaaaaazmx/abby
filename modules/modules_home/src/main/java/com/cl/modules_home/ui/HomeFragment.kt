@@ -1216,11 +1216,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 需要判断当前是否需要称重 判断当前是周期 CURING 7，然后需要判断 flushingWeight == null 或者直接跳转
                     if (mViewMode.popPeriodStatus.value == UnReadConstants.Plant.KEY_CURING) {
                         // 如果在解锁During周期的时候。填入了weight，那么在解锁curing时，这个字段不会为null
-                        mViewMode.plantInfo.value?.data?.flushingWeight?.let {
+                        if (mViewMode.plantInfo.value?.data?.flushingWeight == null) {
                             // 弹出解锁弹窗，然后直接跳转种植完成界面
                             pop.asCustom(unlockCuringPop).show()
+                            return@success
                         }
-                        return@success
                     }
 
                     hideProgressLoading()

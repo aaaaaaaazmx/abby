@@ -104,7 +104,7 @@ class HomePlantUsuallyPop(
                     onNextAction?.invoke(etWeight?.text.toString())
                 } else if (isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
                     // todo VALUE_STATUS_CURING
-                    val etWeight = adapter.getViewByPosition(0, R.id.et_weight) as? EditText
+                    val etWeight = adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText
                     logI(
                         """
                         etWeight: ${etWeight?.text.toString()}
