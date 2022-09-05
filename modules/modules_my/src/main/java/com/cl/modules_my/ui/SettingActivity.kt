@@ -354,7 +354,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
         // 检查更新
         binding.ftNewVision.setOnClickListener {
-            mViewModel.getAppVersion()
+            // 直接跳转GooglePlay
+            startGooglePlay()
         }
         // 关闭还是打开推送
         binding.ftNotif.setSwitchCheckedChangeListener { compoundButton, b ->
@@ -481,6 +482,24 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
                 .asCustom(SendEmailTipsPop(this@SettingActivity) { null }).show()
+        }
+    }
+
+    private fun startGooglePlay() {
+        val playPackage = AppUtil.appPackage
+        try {
+            val currentPackageUri: Uri = Uri.parse("market://details?id=" + AppUtil.appPackage)
+            val intent = Intent(Intent.ACTION_VIEW, currentPackageUri)
+            intent.setPackage(playPackage)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            val currentPackageUri: Uri =
+                Uri.parse(VersionUpdatePop.KEY_GOOGLE_PLAY_URL + AppUtil.appPackage)
+            val intent = Intent(Intent.ACTION_VIEW, currentPackageUri)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
     }
 

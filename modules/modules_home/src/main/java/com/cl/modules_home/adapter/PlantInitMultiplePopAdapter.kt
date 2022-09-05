@@ -1,5 +1,6 @@
 package com.cl.modules_home.adapter
 
+import android.text.Editable
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
@@ -13,12 +14,17 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.ViewUtils
 import com.cl.modules_home.response.GuideInfoData
+import com.google.gson.annotations.Until
 import okio.blackholeSink
 
 /**
  * 种植周期，多type布局
  */
-class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
+class PlantInitMultiplePopAdapter(
+    data: MutableList<GuideInfoData.PlantInfo>?,
+    private val dryingEtWeightChange: ((ed:Editable?, position: Int, etView: EditText, typeTwoBox: CheckBox, typeBox: CheckBox, bean: GuideInfoData.PlantInfo, dataList: MutableList<GuideInfoData.PlantInfo>) -> Unit)? = null,
+    private val curingEtWeightChange: ((ed:Editable?, position: Int, etView: EditText, typeBox: CheckBox, bean: GuideInfoData.PlantInfo, dataList: MutableList<GuideInfoData.PlantInfo>) -> Unit)? = null
+) :
     BaseMultiItemQuickAdapter<GuideInfoData.PlantInfo, BaseViewHolder>(data) {
 
     init {
@@ -70,9 +76,10 @@ class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
                 ViewUtils.setEditTextInputSpace(holder.getView(R.id.et_weight))
                 etWeight.addTextChangedListener {
                     val check = typeTwoBox.isChecked
-                    if (check) typeTwoBox.isChecked = !it.isNullOrEmpty()
+                    if (check) typeTwoBox.isChecked = false
                     typeBox.isChecked = it.isNullOrEmpty() == false
                     data[holder.layoutPosition].isCheck = it.isNullOrEmpty() == false
+                    dryingEtWeightChange?.invoke(it,holder.layoutPosition, etWeight, typeTwoBox, typeBox, data[holder.layoutPosition], data)
                 }
             }
             GuideInfoData.VALUE_STATUS_CURING -> {
@@ -80,9 +87,8 @@ class PlantInitMultiplePopAdapter(data: MutableList<GuideInfoData.PlantInfo>?) :
                 val etWeight = holder.getView<EditText>(R.id.curing_et_weight)
                 val curingBox = holder.getView<CheckBox>(R.id.curing_box)
                 etWeight.addTextChangedListener {
-                    if (!it.isNullOrEmpty()) {
-                        curingBox.isChecked = false
-                    }
+                    curingBox.isChecked = !it.isNullOrEmpty()
+                    curingEtWeightChange?.invoke(it,holder.layoutPosition, etWeight, curingBox, data[holder.layoutPosition], data)
                 }
             }
 
