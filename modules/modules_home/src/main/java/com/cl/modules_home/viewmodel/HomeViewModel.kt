@@ -25,9 +25,8 @@ import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IGetOtaInfoCallback
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -278,7 +277,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 获取图文广告
      */
     private val _getDetailByLearnMoreId = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
-    val getDetailByLearnMoreId: LiveData<Resource<DetailByLearnMoreIdData>> = _getDetailByLearnMoreId
+    val getDetailByLearnMoreId: LiveData<Resource<DetailByLearnMoreIdData>> =
+        _getDetailByLearnMoreId
+
     fun getDetailByLearnMoreId(type: String) {
         viewModelScope.launch {
             repository.getDetailByLearnMoreId(type)
@@ -788,7 +789,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 } else {
                     // 检查是否种植过
-                    tuYaUser?.uid?.let {uid -> checkPlant(uid) }
+                    tuYaUser?.uid?.let { uid -> checkPlant(uid) }
                     Resource.Success(it.data)
                 }
             }
@@ -873,5 +874,28 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val bubbleOnClickEvent: LiveData<Boolean?> = _bubbleOnClickEvent
     fun bubbleOnClickEvent() {
         _bubbleOnClickEvent.value = true
+    }
+
+
+    /**
+     * 定时器
+     */
+    fun countDownCoroutines(
+        total: Int,
+        scope: CoroutineScope,
+        onTick: (Int) -> Unit,
+        onStart: (() -> Unit)? = null,
+        onFinish: (() -> Unit)? = null,
+    ): Job {
+        return flow {
+            for (i in total downTo 0) {
+                emit(i)
+                delay(1000)
+            }
+        }.flowOn(Dispatchers.Main)
+            .onStart { onStart?.invoke() }
+            .onCompletion { onFinish?.invoke() }
+            .onEach { onTick.invoke(it) }
+            .launchIn(scope)
     }
 }

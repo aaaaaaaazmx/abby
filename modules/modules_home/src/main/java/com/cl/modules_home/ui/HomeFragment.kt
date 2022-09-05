@@ -10,6 +10,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -46,6 +47,7 @@ import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -59,6 +61,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     @Inject
     lateinit var mViewMode: HomeViewModel
+
+    // 倒计时携程任务
+    private var job: Job? = null
 
     // 引导状态，也就是到第几步
     // 默认为null，也就是默认为0，也就是从plant1开始走
@@ -118,6 +123,26 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     changUnReadMessageUI()
                 }
             }
+
+        // 开启定时器，每次20秒刷新未读气泡消息
+        job = mViewMode.countDownCoroutines(
+            10 * 6 * 500000,
+            lifecycleScope,
+            onTick = {
+                logI("onTick: $it")
+                if (it % 20 == 0) {
+                    // 表示过了20秒
+                    mViewMode.getUnread()
+                }
+                if (it == 0) {
+                    job?.cancel()
+                }
+            },
+            onStart = {},
+            onFinish = {
+                // todo 这个finish也指的是当前页面被关闭, 定时任务不能放在这个地方.
+                job?.cancel()
+            })
     }
 
     /**
@@ -1007,7 +1032,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 //                            .load(it.imageUrl)
 //                            .apply(requestOptions)
 //                            .into(binding.plantComplete.ivComplete)
-                        binding.plantComplete.tvCompleteDesc.text = getString(com.cl.common_base.R.string.complete_desc, it.harvestComplete)
+                        binding.plantComplete.tvCompleteDesc.text =
+                            getString(com.cl.common_base.R.string.complete_desc, it.harvestComplete)
 
                         val listBean = it.list
                         if (listBean.isEmpty()) return@success
@@ -1019,7 +1045,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         plantCompleteItemAdapter.addChildClickViewIds(R.id.ll_title)
                         plantCompleteItemAdapter.setOnItemChildClickListener { adapter, view, position ->
                             val data = adapter.data[position] as? FinishPageData.ListBean
-                            when(view.id) {
+                            when (view.id) {
                                 R.id.ll_title -> {
                                     data?.learnMoreId?.let { it1 ->
                                         mViewMode.getDetailByLearnMoreId(
@@ -1746,16 +1772,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onDeviceChange(status)
         when (status) {
             Constants.Device.KEY_DEVICE_OFFLINE -> {
-                logI("""
+                logI(
+                    """
                     deviceStatus: Constants.Device.KEY_DEVICE_OFFLINE
-                """.trimIndent())
+                """.trimIndent()
+                )
                 ViewUtils.setVisible(binding.plantOffLine.root)
                 offLineTextSpan()
             }
             Constants.Device.KEY_DEVICE_ONLINE -> {
-                logI("""
+                logI(
+                    """
                     deviceStatus: Constants.Device.KEY_DEVICE_ONLINE
-                """.trimIndent())
+                """.trimIndent()
+                )
                 ViewUtils.setGone(binding.plantOffLine.root)
                 // 刷新数据以及token
                 // 一并检查下当前的状态
@@ -1840,6 +1870,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 销毁job倒计时任务
+        job?.cancel()
     }
 
     companion object {
