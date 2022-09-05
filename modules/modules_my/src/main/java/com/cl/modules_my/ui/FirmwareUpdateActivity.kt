@@ -197,13 +197,13 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
                 bean?.firstOrNull { it.type == 9 }?.let { data ->
                     if (isShow) {
                         binding.tvVersion.text = "v${data.version}"
-                        if (data.typeDesc.isNullOrEmpty()) {
+                        if (data.desc.isNullOrEmpty()) {
                             binding.tvMs.text = buildSpannedString {
                                 appendLine("1.Follow the APP instruction, change")
                                 appendLine("2.open the front door of the device, put the pipe into the bucket, operate on APP to start the pumping water; In the meantime, turn the water tank cover over to observe the situation of Root; after the pumping, check whether there are dead roots or trash on the pipe filter. If so, clean it up, and then place the tube back to the fixed position at the bottom of the tank;")
                             }
                         } else {
-                            binding.tvMs.text = data.typeDesc
+                            binding.tvMs.text = data.desc
                         }
                     } else {
                         binding.tvVersion.text = "v${data.currentVersion}"
