@@ -2,10 +2,8 @@ package com.cl.modules_my.ui
 
 import android.content.Intent
 import android.net.Uri
-import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.pop.VersionUpdatePop
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.web.WebActivity
@@ -20,7 +18,11 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class AboutUsActivity: BaseActivity<MyAboutUsBinding>() {
     override fun initView() {
-
+        // 文字加粗
+        binding.ftLearn.setItemTitle(getString(com.cl.common_base.R.string.about_learn), true)
+        binding.ftRate.setItemTitle(getString(com.cl.common_base.R.string.about_rate), true)
+        binding.ftTermUse.setItemTitle(getString(com.cl.common_base.R.string.about_terms), true)
+        binding.ftPrivacy.setItemTitle(getString(com.cl.common_base.R.string.about_policy), true)
     }
 
     override fun observe() {
