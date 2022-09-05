@@ -1777,7 +1777,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     deviceStatus: Constants.Device.KEY_DEVICE_OFFLINE
                 """.trimIndent()
                 )
-                ViewUtils.setVisible(binding.plantOffLine.root)
+                if (binding.plantOffLine.root.visibility == View.GONE) {
+                    ViewUtils.setVisible(binding.plantOffLine.root)
+                }
                 offLineTextSpan()
             }
             Constants.Device.KEY_DEVICE_ONLINE -> {
@@ -1787,6 +1789,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 """.trimIndent()
                 )
                 ViewUtils.setGone(binding.plantOffLine.root)
+                // todo 其实这个时需要添加的。
                 // 刷新数据以及token
                 // 一并检查下当前的状态
 //                mViewMode.refreshToken(

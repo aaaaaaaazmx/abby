@@ -28,7 +28,6 @@ abstract class OnSingleClickListener(val duration: Int) : View.OnClickListener {
             if (now - lastClickTime > duration) {
                 onSingleClick(view)
             }
-
             now
         }
     }
