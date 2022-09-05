@@ -388,10 +388,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             bean?.firstOrNull { it.type == 9 }?.let { data ->
                 binding.ftCurrentFir.itemValue = data.currentVersion
                 binding.ftCurrentFir.setHideArrow(true)
-                if (isShow) {
-                    // 显示小红点
-                    binding.ftFirUpdate.setShowRedDot(true)
-                }
+                binding.ftFirUpdate.setShowRedDot(isShow)
             }
         }
         // 获取SN & 并且判断是否是修复了SN的
