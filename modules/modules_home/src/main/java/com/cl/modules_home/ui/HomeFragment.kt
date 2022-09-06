@@ -1837,16 +1837,26 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 """.trimIndent()
                 )
                 ViewUtils.setGone(binding.plantOffLine.root)
+                // 刷新数据
+                mViewMode.refreshToken.value?.data?.let { data ->
+                    // 如果时绑定状态，并且是离线，表示是第一次进来，设备就是离线的。
+                    // 当他在线时，就需要刷新状态
+                    if (data.deviceStatus == "1") {
+                        if (data.deviceOnlineStatus == "0") {
+                            mViewMode.refreshToken(
+                                AutomaticLoginReq(
+                                    userName = mViewMode.account,
+                                    password = mViewMode.psd,
+                                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                                )
+                            )
+                        }
+                    }
+                }
+
                 // todo 其实这个时需要添加的。
                 // 刷新数据以及token
                 // 一并检查下当前的状态
-//                mViewMode.refreshToken(
-//                    AutomaticLoginReq(
-//                        userName = mViewMode.account,
-//                        password = mViewMode.psd,
-//                        token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-//                    )
-//                )
             }
             Constants.Device.KEY_DEVICE_REMOVE -> {
                 logI(
