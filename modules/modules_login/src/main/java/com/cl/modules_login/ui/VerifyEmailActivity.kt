@@ -89,7 +89,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         )
                     ) {
                         append(
-                            emailName
+                            " $emailName "
                         )
                     }
                     append(getString(com.cl.common_base.R.string.send_email_register))
@@ -105,7 +105,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         )
                     ) {
                         append(
-                            emailName
+                            " $emailName "
                         )
                     }
                     append(getString(com.cl.common_base.R.string.register_email_tips))

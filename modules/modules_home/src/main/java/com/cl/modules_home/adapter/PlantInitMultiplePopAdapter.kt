@@ -81,6 +81,8 @@ class PlantInitMultiplePopAdapter(
                         data[holder.layoutPosition].isCheck = false
                     } else {
                         if (check) typeTwoBox.isChecked = false
+                        typeBox.isChecked = true
+                        data[holder.layoutPosition].isCheck = true
                     }
                     dryingEtWeightChange?.invoke(it,holder.layoutPosition, etWeight, typeTwoBox, typeBox, data[holder.layoutPosition], data)
                 }
@@ -91,6 +93,7 @@ class PlantInitMultiplePopAdapter(
                 val curingBox = holder.getView<CheckBox>(R.id.curing_box)
                 etWeight.addTextChangedListener {
                     curingBox.isChecked = !it.isNullOrEmpty()
+                    data[holder.layoutPosition].isCheck = !it.isNullOrEmpty()
 //                    if (!it.isNullOrEmpty()) {
 //                        curingBox.isChecked = false
 //                    }

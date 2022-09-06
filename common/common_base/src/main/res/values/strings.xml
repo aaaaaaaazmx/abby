@@ -13,7 +13,7 @@
     <string name="pair_please_confirm_your_selection">Please confirm your selection</string>
     <string name="my_solo">1 on 1 Support</string>
     <string name="curing_unlock_tips">During the drying period, we can use the wet weight as a reference to help us determine when we\'ve satisfied the drying requirements.</string>
-    <string name="unlock_curing">Are you sure to unclock curing?</string>
+    <string name="unlock_curing">You\'re about to unlock curing </string>
     <string name="start_growing">Start your next growing journey</string>
     <string name="complete_desc">Harvest #%s Complete</string>
     <string name="profile_photo">Profile Photo</string>
@@ -57,7 +57,9 @@
     <string name="profile_nickname_tips">Must be between 4 and 24 characters</string>
     <string name="curing_plant_weight">Enter the total weight (g)</string>
     <string name="password_tips">Your password must contain</string>
-    <string name="turn_on_bluetooth">turn on Bluetooth</string>
+    <string name="turn_on_bluetooth">Turn on Bluetooth</string>
+    <string name="my_nickname">Nickname</string>
+    <string name="pair_select_wi_fi_network">Select Wi-Fi Network</string>
 
 
 </resources>

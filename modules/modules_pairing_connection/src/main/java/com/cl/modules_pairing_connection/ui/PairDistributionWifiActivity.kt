@@ -81,6 +81,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             bold { append("2.4GHz Wi-Fi networks.") }
             appendLine("\n")
             appendLine("2. Network names must be comprised of alpahnumeric characters only")
+            appendLine("\n")
             appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
         }
     }

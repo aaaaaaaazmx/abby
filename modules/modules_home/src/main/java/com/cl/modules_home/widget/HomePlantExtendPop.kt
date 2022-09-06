@@ -39,12 +39,14 @@ class HomePlantExtendPop(
             cbOne.setOnCheckedChangeListener { _, b ->
                 if (b) {
                     cbTwo.isChecked = false
+                    btnSuccess.isEnabled = (cbOne.isChecked || cbTwo.isChecked) && b
                 }
             }
 
             cbTwo.setOnCheckedChangeListener { _, b ->
                 if (b) {
                     cbOne.isChecked = false
+                    btnSuccess.isEnabled = (cbOne.isChecked || cbTwo.isChecked) && b
                 }
             }
 
