@@ -23,7 +23,7 @@ class PairLocationPop(
         super.onCreate()
         DataBindingUtil.bind<BaseLocationEnableBinding>(popupImplView)?.apply {
             executePendingBindings()
-            tvContent.text = "Enable the location permission to get the Wi-Fi name automatically."
+            tvContent.text = context.getString(R.string.permission_location_tips)
             tvConfirm.setOnClickListener {
                 dismiss()
                 onConFirmAction?.invoke()

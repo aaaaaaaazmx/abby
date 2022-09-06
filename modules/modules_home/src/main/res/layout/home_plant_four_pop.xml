@@ -28,15 +28,15 @@
 
         <TextView
             android:id="@+id/tv_dec"
-            android:layout_below="@+id/iv_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:textStyle="bold"
             android:text="Open the water tank  cover and add 3 gallons of water."
             android:textColor="#161B19"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
 
         <ImageView

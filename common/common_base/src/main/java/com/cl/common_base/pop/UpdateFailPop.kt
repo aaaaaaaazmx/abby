@@ -42,6 +42,6 @@ class UpdateFailPop(
 
     override fun beforeShow() {
         super.beforeShow()
-        binding?.tvContent?.text = text
+        binding?.tvContent?.text = context.getString(R.string.pair_fail)
     }
 }

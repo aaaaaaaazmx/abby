@@ -581,7 +581,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 种植引导时，点击取消弹窗时，处理得事。
                         // 状态改为2，然后
                         // 当作 plantGuideFlag = 2 来处理
-                        showView(plantFlag, "2")
+//                        showView(plantFlag, "2")
                     },
                     onNextAction = {
                         // 如果是在换水的三步当中
@@ -1694,11 +1694,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 "Unlock"
             } else if (unRead.jumpType == UnReadConstants.JumpType.KEY_TREND) {
                 "View"
-            } else if (UnReadConstants.noCancel.contains(unRead.type)) {
+            } else if (UnReadConstants.noCancel.contains(unRead.type) && unRead.extension.isNullOrEmpty()) {
                 "Start"
             } else if (unRead.jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
                 "Learn More"
-            } else if (unRead.extension?.contains(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
+            } else if (unRead.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
                 "Continue"
             } else {
                 ""

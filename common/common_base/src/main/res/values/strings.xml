@@ -27,7 +27,7 @@
     <string name="about_terms">Terms of Use</string>
     <string name="about_policy">Privacy Policy</string>
     <string name="setting_sub_time">No subscription</string>
-    <string name="home_great_tips">Great! Now that the preparations have been made, let’s put the clone in the Grow Box. </string>
+    <string name="home_great_tips">Great! Now that you\'re prepared, let‘s put the clone in the grow box. </string>
     <string name="home_start">Start</string>
     <string name="setting_delete_device">After selecting \'Delete Device\', this device will no longer be associated with your account and it will be restored to factory settings. Your plant records will not be deleted.</string>
     <string name="setting_replant_tips">After clicking \'Replant\', the device will switch to first week planting mode.</string>
@@ -48,6 +48,10 @@
     <string name="home_done">Done</string>
     <string name="deivce_can_not_find">Cannot find your device</string>
     <string name="device_try">You can try the following:</string>
+    <string name="permission_location_tips">Enable location permission to view nearby Wi-Fi networks</string>
+    <string name="pair_fail_title">Network Connection Error</string>
+    <string name="pair_try">Please try the following:</string>
+    <string name="pair_fail">Please try again. This may take a few minutes, and your device will not work during the upgrade process. Please do not power off or reset during the update</string>
 
 
 </resources>
