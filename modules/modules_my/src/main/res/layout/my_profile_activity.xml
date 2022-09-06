@@ -72,11 +72,12 @@
             android:layout_height="60dp">
 
             <TextView
+                android:textStyle="bold"
                 android:id="@+id/tv_login_out"
                 android:layout_gravity="center"
-                android:text="Sign out of account"
+                android:text="@string/profile_sign_out"
                 android:gravity="center"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="#D61744"
                 android:textSize="15sp" />

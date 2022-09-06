@@ -77,11 +77,11 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         // Hey abby only supports 2.4G Wi-Fi networks.
         // Network names must be comprised of alpahnumeric characters only.
         binding.tvDescThree.text = buildSpannedString {
-            append("Hey abby only supports ")
+            append("1. Hey abby only supports ")
             bold { append("2.4GHz Wi-Fi networks.") }
-            appendLine("")
-            appendLine("Network names must be comprised of alpahnumeric characters only")
-            appendLine("Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+            appendLine("\n")
+            appendLine("2. Network names must be comprised of alpahnumeric characters only")
+            appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
         }
     }
 

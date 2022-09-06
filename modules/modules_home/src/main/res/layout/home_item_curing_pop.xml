@@ -72,7 +72,7 @@
                     android:layout_marginEnd="5dp"
                     android:background="@null"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:hint="Enter the plant weight (g)"
+                    android:hint="@string/curing_plant_weight"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/curing_delete"
                     app:layout_constraintTop_toTopOf="parent" />

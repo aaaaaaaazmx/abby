@@ -5,6 +5,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyEditNickNameBinding
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.ProfileViewModel
@@ -58,7 +59,10 @@ class EditNickNameActivity : BaseActivity<MyEditNickNameBinding>() {
 
         binding.tvSave.setOnClickListener {
             val name = binding.etName.text.toString()
-            if (name.isNullOrEmpty()) return@setOnClickListener
+            if (name.isNullOrEmpty() || name.length < 4) {
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.profile_nickname_tips))
+                return@setOnClickListener
+            }
             modifyUserDetailReq.nickName = name
             mViewModel.modifyUserDetail(modifyUserDetailReq)
         }

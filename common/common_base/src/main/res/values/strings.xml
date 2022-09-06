@@ -53,6 +53,11 @@
     <string name="pair_try">Please try the following:</string>
     <string name="pair_fail">Please try again. This may take a few minutes, and your device will not work during the upgrade process. Please do not power off or reset during the update</string>
     <string name="guide_tips">You have Job to do.</string>
+    <string name="profile_sign_out">Sign out of account</string>
+    <string name="profile_nickname_tips">Must be between 4 and 24 characters</string>
+    <string name="curing_plant_weight">Enter the total weight (g)</string>
+    <string name="password_tips">Your password must contain</string>
+    <string name="turn_on_bluetooth">turn on Bluetooth</string>
 
 
 </resources>
