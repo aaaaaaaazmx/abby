@@ -1309,6 +1309,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
+                    ViewUtils.setGone(binding.pplantNinth.clContinue)
                     // 获取植物基本信息
                     mViewMode.plantInfo()
                 }
