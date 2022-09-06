@@ -1,9 +1,14 @@
 package com.cl.modules_home.ui
 
+import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
+import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
@@ -730,6 +735,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // todo 风扇故障，跳转环信客服
                 // 并且表示已读
                 mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                // todo 暂时不跳环信，跳转邮件转发
+                sendEmail()
             }, {
                 // 并且表示已读
                 mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
@@ -1288,6 +1295,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         2 -> {
                             // 同意plant5之后的弹窗
                             // plant5后记“2”
+                            ViewUtils.setVisible(binding.plantAddWater.clContinue)
+                            ViewUtils.setGone(binding.plantAddWater.ivAddWater)
                             plantSix.show()
                         }
                         3 -> {
@@ -1309,7 +1318,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    ViewUtils.setGone(binding.pplantNinth.clContinue)
+//                    ViewUtils.setGone(binding.pplantNinth.clContinue)
                     // 获取植物基本信息
                     mViewMode.plantInfo()
                 }
@@ -1326,8 +1335,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     hideProgressLoading()
                     // 植物信息数据显示
                     binding.pplantNinth.tvWeekDay.text = """
-                        Week${data?.week}
-                        Day${data?.day}
+                        Week ${data?.week ?: "-"}
+                        Day ${data?.day ?: "-"}
                     """.trimIndent()
 
                     // 树苗的状态
@@ -1410,10 +1419,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
 
                     // 植物的氧气
-                    binding.pplantNinth.tvOxy.text = "${data?.oxygen}"
+                    binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
 
                     // 植物的干燥程度
-                    binding.pplantNinth.tvHealthStatus.text = data?.healthStatus
+                    binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
 
                     // 植物的period 周期
                     data?.list?.let {
@@ -1880,6 +1889,40 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onDestroy()
         // 销毁job倒计时任务
         job?.cancel()
+    }
+
+    /**
+     * 发送支持邮件
+     */
+    private fun sendEmail() {
+        val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
+        val uri = Uri.parse(uriText)
+        val sendIntent = Intent(Intent.ACTION_SENDTO)
+        sendIntent.data = uri
+        val pm = context?.packageManager
+        // 根据意图查找包
+        val activityList = pm?.queryIntentActivities(sendIntent, 0)
+        if (activityList?.size == 0) {
+            // 弹出框框
+            val clipboard = context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
+            // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
+            val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
+            // 把数据集设置（复制）到剪贴板
+            clipboard.setPrimaryClip(clipData)
+            XPopup.Builder(context)
+                .isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(true)
+                .asCustom(SendEmailTipsPop(context!!) { null }).show()
+            return
+        }
+        try {
+            startActivity(Intent.createChooser(sendIntent, "Send email"))
+        } catch (ex: ActivityNotFoundException) {
+            XPopup.Builder(context)
+                .isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(true)
+                .asCustom(context?.let { SendEmailTipsPop(it) { null } }).show()
+        }
     }
 
     companion object {

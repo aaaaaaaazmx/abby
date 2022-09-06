@@ -264,7 +264,7 @@
                     android:layout_marginTop="22dp"
                     android:layout_marginBottom="39dp"
                     android:gravity="start"
-                    android:text="Week-\nDay-"
+                    android:text="Week -\nDay -"
                     android:textColor="#161B19"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"

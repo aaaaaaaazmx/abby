@@ -52,6 +52,7 @@
     <string name="pair_fail_title">Network Connection Error</string>
     <string name="pair_try">Please try the following:</string>
     <string name="pair_fail">Please try again. This may take a few minutes, and your device will not work during the upgrade process. Please do not power off or reset during the update</string>
+    <string name="guide_tips">You have Job to do.</string>
 
 
 </resources>
