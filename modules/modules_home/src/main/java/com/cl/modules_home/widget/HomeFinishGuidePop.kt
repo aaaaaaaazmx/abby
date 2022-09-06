@@ -17,7 +17,8 @@ import com.lxj.xpopup.core.BottomPopupView
  */
 class HomeFinishGuidePop(
     context: Context,
-    var list: MutableList<DetailByLearnMoreIdData.ItemBean>? = null
+    var list: MutableList<DetailByLearnMoreIdData.ItemBean>? = null,
+    var datas: DetailByLearnMoreIdData? = null
 ) : BottomPopupView(context) {
     private val adapter by lazy {
         PlantFinishPopAdapter(mutableListOf())
@@ -28,12 +29,15 @@ class HomeFinishGuidePop(
     }
 
     fun setData(data: DetailByLearnMoreIdData?) {
+        datas = data
         list = data?.items
+        binding?.tvTitle?.text = data?.title
     }
 
     override fun beforeShow() {
         super.beforeShow()
         adapter.setList(list)
+        binding?.tvTitle?.text = datas?.title
     }
 
     var binding: HomeFinishGuideBinding? = null

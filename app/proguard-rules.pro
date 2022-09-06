@@ -21,6 +21,27 @@
 #-renamesourcefileattribute SourceFile
 
 ###########################通用配置start#########################################
+#保持bean类不被混淆
+-keep public class cn.mtjsoft.barcodescanning.**{*;}
+
+-keep public class com.cl.common_base.bean.**{*;}
+
+-keep public class com.cl.modules_contact.request.**{*;}
+-keep public class com.cl.modules_contact.response.**{*;}
+
+-keep public class com.cl.modules_home.request.**{*;}
+-keep public class com.cl.modules_home.response.**{*;}
+
+-keep public class com.cl.modules_login.request.**{*;}
+-keep public class com.cl.modules_login.response.**{*;}
+
+-keep public class com.cl.modules_my.request.**{*;}
+-keep public class com.cl.modules_my.response.**{*;}
+
+-keep public class com.cl.modules_pairing_connection.request.**{*;}
+-keep public class com.cl.modules_pairing_connection.response.**{*;}
+
+
 #1.基本指令区
 # 代码混淆压缩比，在0~7之间，默认为5，一般不做修改
 -optimizationpasses 5
@@ -257,5 +278,40 @@
 #bugly
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
+
+#xpopUp
+-dontwarn com.lxj.xpopup.widget.**
+-keep class com.lxj.xpopup.widget.**{*;}
+
+#lottil
+-keep class com.squareup.wire.** { *; }
+-keep class com.opensource.svgaplayer.proto.** { *; }
+
+##-----------   ----Begin: proguard configuration for Gson  ----------
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
+-keepattributes Signature
+
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+
+# Gson specific classes
+-dontwarn sun.misc.**
+#-keep class com.google.gson.stream.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.google.gson.examples.android.model.** { <fields>; }
+
+# Prevent proguard from stripping interface information from TypeAdapterFactory,
+# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+# Prevent R8 from leaving Data object members always null
+-keepclassmembers,allowobfuscation class * {
+  @com.google.gson.annotations.SerializedName <fields>;
+}
+##---------------End: proguard configuration for Gson  ----------
 
 ###########################第三方库end#########################################

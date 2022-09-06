@@ -279,7 +279,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getDetailByLearnMoreId = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
     val getDetailByLearnMoreId: LiveData<Resource<DetailByLearnMoreIdData>> =
         _getDetailByLearnMoreId
-
     fun getDetailByLearnMoreId(type: String) {
         viewModelScope.launch {
             repository.getDetailByLearnMoreId(type)
@@ -307,6 +306,44 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 }.collectLatest {
                     _getDetailByLearnMoreId.value = it
+                }
+        }
+    }
+
+
+    /**
+     * 获取图文广告
+     */
+    private val _getMessageDetail = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
+    val getMessageDetail: LiveData<Resource<DetailByLearnMoreIdData>> =
+        _getMessageDetail
+    fun getMessageDetail(type: String) {
+        viewModelScope.launch {
+            repository.getMessageDetail(type)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _getMessageDetail.value = it
                 }
         }
     }
@@ -390,7 +427,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getUnread = MutableLiveData<Resource<MutableList<UnreadMessageData>>>()
     val getUnread: LiveData<Resource<MutableList<UnreadMessageData>>> = _getUnread
     fun getUnread() {
-        viewModelScope.launch {
+        viewModelScope.launch {getUnread
             repository.getUnread()
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {

@@ -147,4 +147,11 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun plantFinish(botanyId: String): Flow<HttpResult<BaseBean>> {
         return remoteRepository.plantFinish(botanyId)
     }
+
+    /**
+     * 获取图文详情
+     */
+    fun getMessageDetail(messageId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
+        return remoteRepository.getMessageDetail(messageId)
+    }
 }

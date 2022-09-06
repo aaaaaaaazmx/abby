@@ -15,6 +15,7 @@ data class GuideInfoData(
     var title: String? = null,  //	标题
     var type: Int? = null, // 引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植
 ) : BaseBean() {
+    @Keep
     data class PlantInfo(
         var explain: String? = null,
         var extend: Extend? = null,
@@ -28,7 +29,7 @@ data class GuideInfoData(
             get() = isCurrentStatus!!
     }
 
-
+    @Keep
     data class Extend(
         val width: Int? = null,
         val height: Int? = null,

@@ -147,4 +147,12 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/plant/plantFinish")
     fun plantFinish(@Field("botanyId") botanyId: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 图文获取
+     */
+    @FormUrlEncoded
+    @POST("abby/userMessage/getMessageDetail")
+    fun getMessageDetail(@Field("messageId") messageId: String): Flow<HttpResult<DetailByLearnMoreIdData>>
+
 }

@@ -104,7 +104,7 @@ android {
             isShrinkResources = true // 移除无用的resource文件
             isZipAlignEnabled = true
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
+                getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro"
             )
             // 签名

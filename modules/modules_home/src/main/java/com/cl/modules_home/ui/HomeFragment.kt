@@ -1,5 +1,6 @@
 package com.cl.modules_home.ui
 
+import android.animation.TypeEvaluator
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -1021,6 +1022,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                 }
             })
+
+            // 气泡消息获取通用图文接口
+            getMessageDetail.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, _ ->
+                    hideProgressLoading()
+                    errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+                success {
+                    hideProgressLoading()
+                    // 跳转种植完成图文弹窗
+                    plantFinishUsuallyPop?.setData(data)
+                    pop
+                        .isDestroyOnDismiss(false)
+                        .enableDrag(true)
+                        .maxHeight(dp2px(700f))
+                        .dismissOnTouchOutside(false)
+                        .asCustom(plantFinishUsuallyPop).show()
+                }
+            })
+
             // 种植完成参数获取
             getFinishPage.observe(viewLifecycleOwner, resourceObserver {
                 loading { showProgressLoading() }
@@ -1105,7 +1127,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 UnReadConstants.Device.KEY_ADD_MANURE -> {
                                     plantFeed.show()
                                 }
+                                else -> {}
                             }
+                        }
+                    }
+                    // How to do LTS
+                    mViewMode.unreadMessageList.value?.first()?.jumpType?.let { jumpType ->
+                        if (jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
+                            // 单独处理， 弹窗
+                            mViewMode.getMessageDetail("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                            mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
                         }
                     }
                 }
@@ -1556,6 +1587,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     "${it.messageId}",
                                     UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
                                 )
+                                // 手动修改状态
+                                it.extension = UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_TWO
+                                it.type = UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
                             }
                             plantFour.show()
                         }
@@ -1574,6 +1608,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
                                 )
 
+                                // 手动修改状态
+                                it.extension =
+                                    UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE
+                                it.type = UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
                             }
                             // 加肥的弹窗
                             plantSix.show()
@@ -1904,7 +1942,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         val activityList = pm?.queryIntentActivities(sendIntent, 0)
         if (activityList?.size == 0) {
             // 弹出框框
-            val clipboard = context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard =
+                context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
             // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
             val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
             // 把数据集设置（复制）到剪贴板
