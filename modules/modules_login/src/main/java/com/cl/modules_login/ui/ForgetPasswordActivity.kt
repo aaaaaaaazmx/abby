@@ -32,6 +32,7 @@ class ForgetPasswordActivity : BaseActivity<ActivityForgetPasswordBinding>() {
         ViewUtils.setEditTextInputSpace(binding.etName)
         // 带过来的名字
         binding.etName.setText(account)
+        binding.btnSuccess.isEnabled = EmailUtil.isEmail(binding.etName.text.toString())
     }
 
     override fun observe() {
