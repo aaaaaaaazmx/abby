@@ -418,54 +418,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     /**
-     * 添加下一步弹窗
-     */
-    private val plantDrainNext by lazy {
-        XPopup.Builder(context)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(false)
-            .asCustom(plantDrainNextCustomPop)
-    }
-
-    private val plantDrainNextCustomPop by lazy {
-        context?.let {
-            BasePumpWaterPop(
-                it,
-                { status ->
-                    // 涂鸦指令，添加排水功能
-                    DeviceControl.get()
-                        .success {
-                            // 气泡任务和右边手动点击通用一个XPopup
-                            // 气泡任务为：
-                            if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
-                                mViewMode.deviceOperateStart(
-                                    business = "${mViewMode.unreadMessageList.value?.first()?.messageId}",
-                                    type = UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER
-                                )
-                                return@success
-                            }
-                        }
-                        .error { code, error ->
-                            ToastUtil.shortShow(
-                                """
-                                    pumpWater: 
-                                    code-> $code
-                                    errorMsg-> $error
-                                """.trimIndent()
-                            )
-                        }
-                        .pumpWater(status)
-                },
-                onWaterFinishedAction = {
-                    // 排水结束，那么直接弹出
-                    plantDrainFinished.show()
-                }
-            )
-        }
-    }
-
-    /**
      * 添加排水弹窗
      */
     private val plantDrain by lazy {
@@ -1482,8 +1434,47 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 success {
-                    data?.let { plantDrainNextCustomPop?.setData(it) }
-                    plantDrainNext.show()
+                    context?.let {
+                        XPopup.Builder(context)
+                            .enableDrag(false)
+                            .maxHeight(dp2px(600f))
+                            .dismissOnTouchOutside(false)
+                            .asCustom(
+                                BasePumpWaterPop(
+                                    it,
+                                    { status ->
+                                        // 涂鸦指令，添加排水功能
+                                        DeviceControl.get()
+                                            .success {
+                                                // 气泡任务和右边手动点击通用一个XPopup
+                                                // 气泡任务为：
+                                                if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                                    mViewMode.deviceOperateStart(
+                                                        business = "${mViewMode.unreadMessageList.value?.first()?.messageId}",
+                                                        type = UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER
+                                                    )
+                                                    return@success
+                                                }
+                                            }
+                                            .error { code, error ->
+                                                ToastUtil.shortShow(
+                                                    """
+                                    pumpWater: 
+                                    code-> $code
+                                    errorMsg-> $error
+                                """.trimIndent()
+                                                )
+                                            }
+                                            .pumpWater(status)
+                                    },
+                                    onWaterFinishedAction = {
+                                        // 排水结束，那么直接弹出
+                                        plantDrainFinished.show()
+                                    },
+                                    data = this.data,
+                                )
+                            ).show()
+                    }
                 }
             })
 

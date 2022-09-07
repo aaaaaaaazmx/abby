@@ -82,8 +82,10 @@ class BasePumpWaterPop(
     }
 
     override fun onDismiss() {
-        super.onDismiss()
+        // 涂鸦指令，添加排水功能
+        isOpenOrStop(false)
         // 因为是通过by lazy 添加的， 所以状态需要重置
+        binding?.btnSuccess?.isChecked = true
         binding?.btnSuccess?.let {
             it.background = context.resources.getDrawable(
                 R.mipmap.base_start_bg,
@@ -91,8 +93,7 @@ class BasePumpWaterPop(
             )
             binding?.tvAddClockTime?.text = "Click the button to start draining"
         }
-        // 涂鸦指令，添加排水功能
-        isOpenOrStop(false)
+        super.onDismiss()
     }
 
     var binding: BasePumpWaterPopBinding? = null
@@ -117,8 +118,6 @@ class BasePumpWaterPop(
             ivClose.setOnClickListener {
                 dismiss()
                 onCancelAction?.invoke()
-                // 涂鸦指令，添加排水功能
-                isOpenOrStop(false)
             }
 
 

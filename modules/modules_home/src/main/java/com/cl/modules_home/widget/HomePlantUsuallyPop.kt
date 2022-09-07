@@ -89,6 +89,8 @@ class HomePlantUsuallyPop(
             //  todo 这个position目前时固定写死的，有可能会有问题
             val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
             etWeight?.setText("")
+
+            (adapter.getViewByPosition(2, R.id.type_two_box) as? CheckBox)?.isChecked = false
         }
 
         if (isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
