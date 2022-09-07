@@ -913,6 +913,19 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _bubbleOnClickEvent.value = true
     }
 
+    /**
+     * 已读全部消息
+     *
+     * 后台没有做这个操作
+     */
+    fun unReadAll() {
+        if (unreadMessageList.value?.isNotEmpty() == true) {
+            unreadMessageList.value?.forEach {
+                getRead("${it.messageId}")
+            }
+        }
+    }
+
 
     /**
      * 定时器

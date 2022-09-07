@@ -88,12 +88,14 @@ fun setImageUrlNoPlaceholder(imageView: ImageView, url: String?) {
  */
 @BindingAdapter(value = ["url"], requireAll = false)
 fun setImageUrl(imageView: ImageView, url: String?) {
-    var requestOptions = RequestOptions()
-    requestOptions.placeholder(R.mipmap.placeholder)
-    requestOptions.error(R.mipmap.errorholder)
-    Glide.with(imageView.context).load(url)
-        .apply(requestOptions)
-        .into(imageView)
+    url?.let {
+        var requestOptions = RequestOptions()
+        requestOptions.placeholder(R.mipmap.placeholder)
+        requestOptions.error(R.mipmap.errorholder)
+        Glide.with(imageView.context).load(url)
+            .apply(requestOptions)
+            .into(imageView)
+    }
 }
 
 

@@ -51,6 +51,7 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
+import com.luck.picture.lib.magical.MagicalViewWrapper
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -346,9 +347,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 解锁完成界面点击事件相关
         binding.plantComplete.apply {
-
             // 重新种植
             completeStart.setOnClickListener {
+                // 已读全部消息
+                mViewMode.unReadAll()
+                // 种植完成
                 mViewMode.plantFinish("")
             }
             // 分享
@@ -1349,7 +1352,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-//                    ViewUtils.setGone(binding.pplantNinth.clContinue)
+                    if (mViewMode.unreadMessageList.value?.isEmpty() == true) {
+                        ViewUtils.setGone(binding.pplantNinth.clContinue)
+                    }
                     // 获取植物基本信息
                     mViewMode.plantInfo()
                 }

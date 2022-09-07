@@ -91,6 +91,8 @@ class BasePumpWaterPop(
             )
             binding?.tvAddClockTime?.text = "Click the button to start draining"
         }
+        // 涂鸦指令，添加排水功能
+        isOpenOrStop(false)
     }
 
     var binding: BasePumpWaterPopBinding? = null
