@@ -76,16 +76,20 @@ class HomePlantFivePop(
                 // Fill the water tank弹窗，Next按钮无当前水箱水位判断逻辑（水箱水位等于0时置灰按钮，点击按钮后弹出The current water level is too low. Add more water提示信息；
                 // 水箱水位大于0时点亮按钮，点击后进入下一步）
                 logI("getWaterVolume: ${getWaterVolume.value}")
-                when (getWaterVolume.value) {
-                    "0L" -> {
-                        ToastUtil.shortShow("The current water level is too low. Add more water")
-                        return@setOnClickListener
-                    }
-                    else -> {
-                        onNextAction?.invoke()
-                        dismiss()
-                    }
-                }
+                // todo 加水时不判断当前水箱水位了。
+                onNextAction?.invoke()
+                dismiss()
+//                when (getWaterVolume.value) {
+//                    "0L" -> {
+//                        ToastUtil.shortShow("The current water level is too low. Add more water")
+//                        return@setOnClickListener
+//                    }
+//                    else -> {
+//                        onNextAction?.invoke()
+//                        dismiss()
+//                    }
+//                }
+
             }
         }
 

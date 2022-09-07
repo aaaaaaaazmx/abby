@@ -136,7 +136,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             10 * 6 * 500000,
             lifecycleScope,
             onTick = {
-                logI("onTick: $it")
                 if (it % 20 == 0) {
                     // 表示过了20秒
                     mViewMode.getUnread()
