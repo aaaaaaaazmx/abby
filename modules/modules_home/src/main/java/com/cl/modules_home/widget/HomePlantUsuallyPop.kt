@@ -80,6 +80,9 @@ class HomePlantUsuallyPop(
         if (isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
             // 按钮显示不一致
             binding?.btnSuccess?.text = "Planting Complete"
+        } else {
+            // 按钮显示不一致
+            binding?.btnSuccess?.text = "Next"
         }
     }
 

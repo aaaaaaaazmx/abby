@@ -19,6 +19,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.GuideBlePop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -104,6 +105,10 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         mViewModel.apply {
             bindDevice.observe(this@PairDistributionWifiActivity, resourceObserver {
                 success {
+                    // 开启服务
+                    val intent =
+                        Intent(this@PairDistributionWifiActivity, TuYaDeviceUpdateReceiver::class.java)
+                    startService(intent)
                     mViewModel.userDetail()
                 }
                 error { errorMsg, code ->
@@ -262,11 +267,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             PermissionHelp().applyPermissionHelp(
                 this@PairDistributionWifiActivity,
                 "Granting Hey abby access to your phone's location will be used to generate a Wi-Fi network list.",
-                object : PermissionHelp.OnCheckResultListener{
+                object : PermissionHelp.OnCheckResultListener {
                     override fun onResult(result: Boolean) {
                         if (!result) return
                         // 直接获取wifi名字
-                        val wifiName = NetWorkUtil.getConnectWifiSsid(this@PairDistributionWifiActivity)
+                        val wifiName =
+                            NetWorkUtil.getConnectWifiSsid(this@PairDistributionWifiActivity)
                         binding.tvWifiName.text = wifiName
                         // 默认设置账号密码
                         if (wifiName == mViewModel.wifiName) {
@@ -302,7 +308,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         val psd = binding.etWifiPwd.text.toString()
 
         // 首先获取配网token
-        showProgressLoading()
+        showProgressLoading(cancelable = false)
         TuyaHomeSdk.getActivatorInstance().getActivatorToken(homeId,
             object : ITuyaActivatorGetToken {
                 override fun onSuccess(token: String) {
@@ -353,8 +359,14 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                     )
                                                 }
                                                 // 开始存储账号和密码
-                                                Prefs.putStringAsync(Constants.Pair.KEY_PAIR_WIFI_NAME, binding.tvWifiName.text.toString())
-                                                Prefs.putStringAsync(Constants.Pair.KEY_PAIR_WIFI_PASSWORD, binding.etWifiPwd.text.toString())
+                                                Prefs.putStringAsync(
+                                                    Constants.Pair.KEY_PAIR_WIFI_NAME,
+                                                    binding.tvWifiName.text.toString()
+                                                )
+                                                Prefs.putStringAsync(
+                                                    Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
+                                                    binding.etWifiPwd.text.toString()
+                                                )
                                                 // 调用后台接口绑定
                                                 mViewModel.bindDevice(bean.devId, bean.uuid)
                                             }.onFailure { hideProgressLoading() }
@@ -381,17 +393,23 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 // 3 密码错误 4 路由器连接失败（大概率是密码错误）
                                 runOnUiThread {
                                     hideProgressLoading()
-                                    if (code == 3 || code == 4) {
-                                        // wifi 密码错误
-                                        binding.error.visibility = View.VISIBLE
-                                    } else {
-                                        // 配网失败跳转失败界面
-                                        startActivity(
-                                            Intent(
-                                                this@PairDistributionWifiActivity,
-                                                PairFailActivity::class.java
+                                    when (code) {
+                                        3 -> {  // wifi 密码错误
+                                            binding.error.visibility = View.VISIBLE}
+                                        4 -> {  // wifi 密码错误
+                                            binding.error.visibility = View.VISIBLE}
+                                        207006 -> {
+                                            // msg = Doing 不用处理
+                                        }
+                                        else -> {
+                                            // 配网失败跳转失败界面
+                                            startActivity(
+                                                Intent(
+                                                    this@PairDistributionWifiActivity,
+                                                    PairFailActivity::class.java
+                                                )
                                             )
-                                        )
+                                        }
                                     }
                                 }
                             }

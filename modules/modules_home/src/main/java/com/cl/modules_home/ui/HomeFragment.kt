@@ -433,25 +433,25 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 排水完成弹窗
      */
     private val plantDrainFinished by lazy {
-        XPopup.Builder(context)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(false)
-            .asCustom(context?.let {
-                BasePumpWaterFinishedPop(it, onSuccessAction = {
-                    // 排水成功弹窗，点击OK按钮
-                    mViewMode.unreadMessageList.value?.first()?.let { bean ->
-                        // 如果正好是第一步排水
-                        if (bean.extension.isNullOrEmpty() || bean.extension == UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_ONE) {
-                            mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
+        context?.let {
+            XPopup.Builder(it)
+                .isDestroyOnDismiss(false)
+                .enableDrag(false)
+                .maxHeight(dp2px(600f))
+                .dismissOnTouchOutside(false)
+                .asCustom(context?.let {
+                    BasePumpWaterFinishedPop(it, onSuccessAction = {
+                        // 排水成功弹窗，点击OK按钮
+                        mViewMode.unreadMessageList.value?.first()?.let { bean ->
+                            // 如果正好是第一步排水
+                            if (bean.extension.isNullOrEmpty() || bean.extension == UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_ONE) {
+                                mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
+                            }
+                            return@BasePumpWaterFinishedPop
                         }
-                        return@BasePumpWaterFinishedPop
-                    }
-
-
+                    })
                 })
-            })
+        }
     }
 
     /**
@@ -1469,7 +1469,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     },
                                     onWaterFinishedAction = {
                                         // 排水结束，那么直接弹出
-                                        plantDrainFinished.show()
+                                        if (plantDrainFinished?.isShow == false) {
+                                            plantDrainFinished?.show()
+                                        }
                                     },
                                     data = this.data,
                                 )

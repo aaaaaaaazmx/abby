@@ -25,13 +25,11 @@ class TuYaDeviceUpdateReceiver : Service() {
         return null
     }
 
-    private val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
-    override fun onCreate() {
-        super.onCreate()
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val tuyaHomeBean = GSON.parseObject(
+            Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA),
+            DeviceBean::class.java
+        )
         val devId = tuyaHomeBean?.devId
         logI("TuYaDeviceUpdateReceiver devId : $devId")
         TuyaHomeSdk.newDeviceInstance(devId).registerDeviceListener(object : IDeviceListener {
@@ -63,10 +61,12 @@ class TuYaDeviceUpdateReceiver : Service() {
              * @param devId 设备id
              */
             override fun onRemoved(devId: String?) {
-                logI("""
+                logI(
+                    """
                     tuYaOnRemoved:
                     devId: $devId
-                """.trimIndent())
+                """.trimIndent()
+                )
                 LiveEventBus.get()
                     .with(Constants.Device.KEY_DEVICE_TO_APP, String::class.java)
                     .postEvent(Constants.Device.KEY_DEVICE_REMOVE)
@@ -79,11 +79,13 @@ class TuYaDeviceUpdateReceiver : Service() {
              * @param online 是否在线，在线为 true
              */
             override fun onStatusChanged(devId: String?, online: Boolean) {
-                logI("""
+                logI(
+                    """
                     tuYaOnStatusChanged
                     devId: $devId
                     online: $online
-                """.trimIndent())
+                """.trimIndent()
+                )
                 LiveEventBus.get()
                     .with(Constants.Device.KEY_DEVICE_TO_APP, String::class.java)
                     .postEvent(if (online) Constants.Device.KEY_DEVICE_ONLINE else Constants.Device.KEY_DEVICE_OFFLINE)
@@ -106,5 +108,6 @@ class TuYaDeviceUpdateReceiver : Service() {
             override fun onDevInfoUpdate(devId: String?) {
             }
         })
+        return super.onStartCommand(intent, flags, startId)
     }
 }

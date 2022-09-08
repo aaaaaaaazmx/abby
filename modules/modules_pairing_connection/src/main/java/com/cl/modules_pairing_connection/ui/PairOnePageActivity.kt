@@ -113,7 +113,6 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
             10 * 6 * 5,
             lifecycleScope,
             onTick = {
-                logI("onTick: $it")
                 if (it != 0) return@countDownCoroutines
                 startActivity(
                     Intent(

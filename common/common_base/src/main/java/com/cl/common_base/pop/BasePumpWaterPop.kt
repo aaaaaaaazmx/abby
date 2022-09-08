@@ -220,7 +220,7 @@ class BasePumpWaterPop(
                                     else "Click the button to stop draining"
                             }
 
-                            if ((value as? Boolean == true)) return@observe
+                            if ((value as? Boolean == false)) return@observe
                             // 查询是否排水结束
                             TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
                                 it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
