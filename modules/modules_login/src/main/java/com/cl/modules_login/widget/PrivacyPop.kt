@@ -11,6 +11,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.util.NoUnderlineClickSpan
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.span.appendClickable
+import com.cl.common_base.util.span.appendSpace
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.PopPrivacyBinding
 import com.lxj.xpopup.core.CenterPopupView
@@ -37,7 +38,7 @@ class PrivacyPop(
         bind?.executePendingBindings()
 
         bind?.tvContent?.text = buildSpannedString {
-            append(context.getString(com.cl.common_base.R.string.private_policy))
+            append(context.getString(com.cl.common_base.R.string.private_policy) + " ")
             color(
                 ResourcesCompat.getColor(
                     resources,
