@@ -61,7 +61,7 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
 
         // How to
         binding.clHow.setOnClickListener {
-
+            startActivity(Intent(context, MyHowToActivity::class.java))
         }
     }
 

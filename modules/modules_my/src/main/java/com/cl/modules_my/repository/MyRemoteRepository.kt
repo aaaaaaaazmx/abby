@@ -53,6 +53,10 @@ class MyRemoteRepository @Inject constructor() {
         return service.troubleShooting()
     }
 
+    fun howTo(): Flow<HttpResult<MutableList<MyTroubleData.Bean>>> {
+        return service.howTo()
+    }
+
     fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
         return service.getDetailByLearnMoreId(learnMoreId)
     }

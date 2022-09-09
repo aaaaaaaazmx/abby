@@ -81,4 +81,10 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/moments/getDetailByLearnMoreId")
     fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String):Flow<HttpResult<DetailByLearnMoreIdData>>
+
+    /**
+     * HowTo
+     */
+    @POST("abby/base/howTo")
+    fun howTo() :Flow<HttpResult<MutableList<MyTroubleData.Bean>>>
 }

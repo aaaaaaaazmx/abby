@@ -82,4 +82,11 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
         return remoteRepository.getDetailByLearnMoreId(learnMoreId)
     }
+
+    /**
+     * HowTo
+     */
+    fun howTo(): Flow<HttpResult<MutableList<MyTroubleData.Bean>>> {
+        return remoteRepository.howTo()
+    }
 }
