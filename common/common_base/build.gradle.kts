@@ -110,4 +110,5 @@ dependencies {
     api(project(mapOf("path" to ":common:BarcodeScanning")))
     // lottie
     api(Deps.lottie)
+    api("com.github.hackware1993:MagicIndicator:1.7.0")
 }

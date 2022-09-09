@@ -1,6 +1,5 @@
 package com.cl.modules_home.ui
 
-import android.animation.TypeEvaluator
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -37,8 +36,6 @@ import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
 import com.bbgo.module_home.databinding.HomeBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.bean.FinishPageData
 import com.cl.common_base.bean.JpushMessageData
@@ -51,7 +48,6 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
-import com.luck.picture.lib.magical.MagicalViewWrapper
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -128,6 +124,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.setUnreadMessageList(unReadList)
                     // 更改气泡内容
                     changUnReadMessageUI()
+                    // 刷新信息
+                    mViewMode.plantInfo()
                 }
             }
 
@@ -303,6 +301,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 开始种植
         binding.pplantNinth.apply {
+            // 客服支持
+            ivSupport.setOnClickListener {
+                // todo 客服支持
+            }
+
             tvFeef.setOnClickListener {
                 plantFeed.show()
             }
@@ -929,7 +932,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 种植完成图文弹窗
      */
     private val plantFinishUsuallyPop by lazy {
-        context?.let { HomeFinishGuidePop(it) }
+        context?.let { LearnIdGuidePop(it) }
     }
 
     override fun observe() {
@@ -1303,7 +1306,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    if (mViewMode.unreadMessageList.value?.isEmpty() == true) {
+                    if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
                         ViewUtils.setGone(binding.pplantNinth.clContinue)
                     }
                     // 获取植物基本信息
@@ -1662,8 +1665,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     override fun HomeBinding.initBinding() {
+        binding.lifecycleOwner = this@HomeFragment
         binding.viewModel = mViewMode
-        binding.executePendingBindings()
         binding.executePendingBindings()
     }
 

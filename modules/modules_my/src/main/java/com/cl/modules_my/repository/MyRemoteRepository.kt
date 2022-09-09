@@ -48,4 +48,12 @@ class MyRemoteRepository @Inject constructor() {
     fun advertising(type: String): Flow<HttpResult<MutableList<AdvertisingData>>> {
         return service.advertising(type)
     }
+
+    fun troubleShooting(): Flow<HttpResult<MyTroubleData>> {
+        return service.troubleShooting()
+    }
+
+    fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
+        return service.getDetailByLearnMoreId(learnMoreId)
+    }
 }

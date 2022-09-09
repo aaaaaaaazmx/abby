@@ -1,27 +1,24 @@
-package com.cl.modules_home.widget
+package com.cl.common_base.pop
 
 import android.content.Context
-import androidx.databinding.Bindable
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeFinishGuideBinding
-import com.cl.common_base.bean.AdvertisingData
-import com.cl.common_base.bean.FinishPageData
-import com.cl.modules_home.adapter.PlantFinishPopAdapter
-import com.cl.modules_home.response.DetailByLearnMoreIdData
+import com.cl.common_base.R
+import com.cl.common_base.adapter.LearnFinishPopAdapter
+import com.cl.common_base.bean.DetailByLearnMoreIdData
+import com.cl.common_base.databinding.HomeFinishGuideBinding
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
  * 种植完成之后的通用弹窗
  */
-class HomeFinishGuidePop(
+class LearnIdGuidePop(
     context: Context,
     var list: MutableList<DetailByLearnMoreIdData.ItemBean>? = null,
     var datas: DetailByLearnMoreIdData? = null
 ) : BottomPopupView(context) {
     private val adapter by lazy {
-        PlantFinishPopAdapter(mutableListOf())
+        LearnFinishPopAdapter(mutableListOf())
     }
 
     override fun getImplLayoutId(): Int {

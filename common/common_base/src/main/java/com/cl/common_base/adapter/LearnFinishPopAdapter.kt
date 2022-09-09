@@ -1,22 +1,20 @@
-package com.cl.modules_home.adapter
+package com.cl.common_base.adapter
 
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeFinishGuideItemBinding
-import com.bbgo.module_home.databinding.HomeFinishGuideTextItemBinding
-import com.bbgo.module_home.databinding.HomeItemPopBinding
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.cl.modules_home.response.DetailByLearnMoreIdData
-import com.cl.modules_home.response.GuideInfoData
+import com.cl.common_base.R
+import com.cl.common_base.bean.DetailByLearnMoreIdData
+import com.cl.common_base.databinding.HomeFinishGuideItemBinding
+import com.cl.common_base.databinding.HomeFinishGuideTextItemBinding
 
 /**
- * 种植完成通用图文界面
+ * 通用图文界面
  *
  * @author 李志军 2022-08-06 18:44
  */
-class PlantFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?) :
+class LearnFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?) :
     BaseMultiItemQuickAdapter<DetailByLearnMoreIdData.ItemBean, BaseViewHolder>(data){
 
     init {

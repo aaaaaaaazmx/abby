@@ -8,7 +8,7 @@
 
         <variable
             name="data"
-            type="com.cl.modules_home.response.DetailByLearnMoreIdData.ItemBean" />
+            type="com.cl.common_base.bean.DetailByLearnMoreIdData.ItemBean" />
 
         <import type="android.view.View" />
     </data>
@@ -23,6 +23,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:visibility='@{data.type == "string" ? View.GONE : View.VISIBLE}'
-            tools:background="@mipmap/home_two_water_bg" />
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

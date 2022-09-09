@@ -68,7 +68,9 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".ui.AboutUsActivity" />
-
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".ui.MyTroubleShootingActivity" />
 
 
     </application>

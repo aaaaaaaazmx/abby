@@ -14,6 +14,7 @@
     <attr name="itemBackgroundColor" format="color|reference" />
     <attr name="hideArrow" format="boolean" />
     <attr name="itemChecked" format="boolean" />
+    <attr name="itemTitleBold" format="boolean"/>
 
     <declare-styleable name="FeatureItemView">
         <attr name="itemIcon" />
@@ -28,6 +29,7 @@
         <attr name="itemValueSize" />
         <attr name="hideArrow" />
         <attr name="itemBackgroundColor" />
+        <attr name="itemTitleBold"/>
     </declare-styleable>
 
     <declare-styleable name="FeatureItemTimeView">

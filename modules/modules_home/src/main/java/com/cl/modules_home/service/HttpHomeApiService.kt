@@ -4,7 +4,6 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
-import com.cl.modules_home.response.DetailByLearnMoreIdData
 import com.cl.modules_home.response.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
 import kotlinx.coroutines.flow.Flow

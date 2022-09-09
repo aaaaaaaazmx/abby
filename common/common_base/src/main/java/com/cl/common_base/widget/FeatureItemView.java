@@ -64,6 +64,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         int itemBackgroundColor = typedArray.getColor(R.styleable.FeatureItemView_itemBackgroundColor, Color.WHITE);
         float itemContentSize = typedArray.getDimension(R.styleable.FeatureItemView_itemValueSize, 0);
         boolean hideArrow = typedArray.getBoolean(R.styleable.FeatureItemView_hideArrow, false);
+        boolean isItemTitleBold = typedArray.getBoolean(R.styleable.FeatureItemView_itemTitleBold, false);
         typedArray.recycle();
 
         View itemView = LayoutInflater.from(context).inflate(R.layout.layout_item_view, null);
@@ -93,6 +94,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         setItemValueColor(itemContentColor);
         setItemValueSize(itemContentSize);
         setHideArrow(hideArrow);
+        setItemTitleBold(isItemTitleBold);
         setItemBackgroundColor(itemBackgroundColor);
     }
 
@@ -295,6 +297,13 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
 
     public FeatureItemView setHideArrow(boolean hide) {
         ivItemArrow.setVisibility(hide ? GONE : VISIBLE);
+        return this;
+    }
+
+    public FeatureItemView setItemTitleBold(boolean isBold) {
+        if (isBold) {
+            tvItemTitle.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        }
         return this;
     }
 

@@ -67,4 +67,19 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun advertising(type: String): Flow<HttpResult<MutableList<AdvertisingData>>> {
         return remoteRepository.advertising(type)
     }
+
+
+    /**
+     * 获取疑问信息
+     */
+    fun troubleShooting(): Flow<HttpResult<MyTroubleData>> {
+        return remoteRepository.troubleShooting()
+    }
+
+    /**
+     * 获取图文接口
+     */
+    fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
+        return remoteRepository.getDetailByLearnMoreId(learnMoreId)
+    }
 }

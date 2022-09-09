@@ -60,6 +60,10 @@
     <string name="turn_on_bluetooth">Turn on Bluetooth</string>
     <string name="my_nickname">Nickname</string>
     <string name="pair_select_wi_fi_network">Select Wi-Fi Network</string>
+    <string name="my_trouble">Trouble Shooting</string>
+    <string name="my_how">How to</string>
+    <string name="my_settings">Settings</string>
+    <string name="my_about">About us</string>
 
 
 </resources>

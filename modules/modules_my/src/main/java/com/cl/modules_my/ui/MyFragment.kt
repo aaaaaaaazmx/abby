@@ -53,12 +53,22 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
         binding.clAbout.setOnClickListener {
             startActivity(Intent(context, AboutUsActivity::class.java))
         }
+
+        // 解答疑问
+        binding.clTrouble.setOnClickListener {
+            startActivity(Intent(context, MyTroubleShootingActivity::class.java))
+        }
+
+        // How to
+        binding.clHow.setOnClickListener {
+
+        }
     }
 
     override fun observe() {
         mViewMode.apply {
             userDetail.observe(viewLifecycleOwner, resourceObserver {
-                loading {  }
+                loading { }
                 error { errorMsg, code ->
                     errorMsg?.let {
                         ToastUtil.shortShow(it)
@@ -71,7 +81,8 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
 
                         // 头像的显示与隐藏
                         ViewUtils.setVisible(headUrl.isNullOrEmpty(), binding.noheadShow)
-                        binding.ivHead.visibility = if (headUrl.isNullOrEmpty()) View.INVISIBLE else View.VISIBLE
+                        binding.ivHead.visibility =
+                            if (headUrl.isNullOrEmpty()) View.INVISIBLE else View.VISIBLE
 
                         // todo 设置头像没有添加占位图
                         Glide.with(this@MyFragment)

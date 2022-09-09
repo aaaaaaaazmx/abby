@@ -2,6 +2,8 @@ package com.cl.modules_my.service
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
+import com.cl.common_base.bean.DetailByLearnMoreIdData
+import com.cl.modules_my.repository.MyTroubleData
 import com.cl.modules_my.request.ModifyUserDetailReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -66,4 +68,17 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/advertising/advertising")
     fun advertising(@Field("type") type: String? = "0"): Flow<HttpResult<MutableList<AdvertisingData>>>
+
+    /**
+     * 获取疑问列表
+     */
+    @POST("abby/base/troubleShooting")
+    fun troubleShooting(): Flow<HttpResult<MyTroubleData>>
+
+    /**
+     * 图文获取
+     */
+    @FormUrlEncoded
+    @POST("abby/moments/getDetailByLearnMoreId")
+    fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String):Flow<HttpResult<DetailByLearnMoreIdData>>
 }

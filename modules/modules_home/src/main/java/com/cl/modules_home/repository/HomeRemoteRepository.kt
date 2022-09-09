@@ -5,11 +5,9 @@ import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
-import com.cl.modules_home.response.DetailByLearnMoreIdData
 import com.cl.modules_home.response.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
 import com.cl.modules_home.service.HttpHomeApiService
-import com.google.api.Http
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
