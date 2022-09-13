@@ -105,10 +105,16 @@ class BasePumpWaterPop(
                 // true 排水
                 // false 停止
                 synchronized(this) {
-                    it.background = if (btnSuccess.isChecked) context.resources.getDrawable(
-                        R.mipmap.base_start_bg,
-                        context.theme
-                    ) else context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
+                    it.background = if (btnSuccess.isChecked) {
+                        wv.onPause()
+                        context.resources.getDrawable(
+                            R.mipmap.base_start_bg,
+                            context.theme
+                        )
+                    } else {
+                        wv.onStart(this@BasePumpWaterPop)
+                        context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
+                    }
 
                     tvAddClockTime.text =
                         if (btnSuccess.isChecked) "Click the button to start draining"
@@ -207,13 +213,19 @@ class BasePumpWaterPop(
                                 // 加锁的目的是为了
                                 // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
                                 binding?.btnSuccess?.background =
-                                    if ((value as? Boolean != true)) context.resources.getDrawable(
-                                        R.mipmap.base_start_bg,
-                                        context.theme
-                                    ) else context.resources.getDrawable(
-                                        R.mipmap.base_suspend_bg,
-                                        context.theme
-                                    )
+                                    if ((value as? Boolean != true)) {
+                                        binding?.wv?.onPause()
+                                        context.resources.getDrawable(
+                                            R.mipmap.base_start_bg,
+                                            context.theme
+                                        )
+                                    } else {
+                                        binding?.wv?.onStart(this@BasePumpWaterPop)
+                                        context.resources.getDrawable(
+                                            R.mipmap.base_suspend_bg,
+                                            context.theme
+                                        )
+                                    }
 
                                 binding?.tvAddClockTime?.text =
                                     if ((value as? Boolean != true)) "Click the button to start draining"

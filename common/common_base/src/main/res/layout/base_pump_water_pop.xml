@@ -52,21 +52,44 @@
                 android:textStyle="bold" />
 
 
-            <CheckBox
+            <RelativeLayout
                 android:layout_gravity="center"
-                android:id="@+id/btn_success"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_below="@+id/tv_add_clock_time"
+                android:gravity="center"
                 android:layout_centerInParent="true"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="30dp"
                 android:layout_marginEnd="24dp"
-                android:background="@mipmap/base_start_bg"
-                android:button="@null"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:layout_below="@+id/tv_add_clock_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.cl.common_base.widget.ripple.RippleView
+                    app:ripple_circle_color="@color/mainColor"
+                    app:ripple_circle_count="3"
+                    app:ripple_circle_min_radius="10dp"
+                    app:ripple_circle_style="FILL"
+                    app:ripple_speed="1"
+                    android:id="@+id/wv"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="center"
+                    android:button="@null"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    />
+
+                <CheckBox
+                    android:id="@+id/btn_success"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:background="@mipmap/base_start_bg"
+                    android:button="@null"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </RelativeLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

@@ -146,4 +146,17 @@
         <!--输入框下划线是否展示-->
         <attr name="vciv_et_underline_show" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="RippleView">
+        <attr name="ripple_circle_color" format="color" />
+        <attr name="ripple_circle_min_radius" format="dimension" />
+        <attr name="ripple_circle_count" format="integer" />
+        <attr name="ripple_circle_style" format="enum">
+            <enum name="FILL" value="0" />
+            <enum name="STROKE" value="1" />
+        </attr>
+        <attr name="ripple_speed" format="float" />
+        <attr name="ripple_circle_stroke_width" format="dimension" />
+        <attr name="ripple_circle_start" format="boolean" />
+    </declare-styleable>
 </resources>
