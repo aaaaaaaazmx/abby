@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="data"
+            type="com.cl.common_base.util.calendar.Calendar" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/ll_root"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:background="@{data.currentDay ? @drawable/base_choose_main_color : data.chooser ? @drawable/base_dot_main_color : null}"
+            android:id="@+id/tv_content_day"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp">
+
+
+            <com.cl.common_base.widget.AbTextViewCalendar
+                android:id="@+id/text_date_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@{String.valueOf(data.day)}"
+                android:textSize="15sp"
+                tools:text="10" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_gravity="center_horizontal|bottom"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_marginTop="5dp"
+                android:background="@mipmap/my_calendar_circle_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@mipmap/my_calendar_circle_two_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@mipmap/my_calendar_circle_three_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

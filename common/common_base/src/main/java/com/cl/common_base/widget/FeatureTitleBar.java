@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.cl.common_base.R;
 import com.cl.common_base.util.ViewUtils;
@@ -155,6 +156,11 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
      */
     public FeatureTitleBar setTitle(String title) {
         tvTitle.setText(title);
+        return this;
+    }
+
+    public FeatureTitleBar setTitleColor(int colors) {
+        tvTitle.setTextColor(ContextCompat.getColor(getContext(), colors));
         return this;
     }
 
