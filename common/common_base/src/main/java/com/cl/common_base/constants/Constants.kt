@@ -117,6 +117,8 @@ object Constants {
         const val KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE = "key_global_plant_device_is_off_line"
         // 固件升级是否是强制升级
         const val KEY_GLOBAL_MANDATORY_UPGRADE = "key_mandatory_upgrade"
+        // 是否选择了继承
+        const val KEY_IS_CHOOSE_CLONE = "key_is_choose_clone"
     }
 
     /**

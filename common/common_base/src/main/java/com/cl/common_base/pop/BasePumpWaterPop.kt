@@ -16,6 +16,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -30,8 +31,8 @@ import com.lxj.xpopup.core.BottomPopupView
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import kotlin.concurrent.thread
 
 
@@ -52,6 +53,8 @@ class BasePumpWaterPop(
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
+
+    private var count = 1
 
     override fun getImplLayoutId(): Int {
         return R.layout.base_pump_water_pop
@@ -91,7 +94,10 @@ class BasePumpWaterPop(
                 R.mipmap.base_start_bg,
                 context.theme
             )
-            binding?.tvAddClockTime?.text = "Click the button to start draining"
+            count++
+            ViewUtils.setGone(binding?.circleBar)
+            binding?.circleBar?.stopAnimator()
+            binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
         }
         super.onDismiss()
     }
@@ -105,20 +111,22 @@ class BasePumpWaterPop(
                 // true 排水
                 // false 停止
                 synchronized(this) {
+                    ViewUtils.setVisible(btnSuccess.isChecked, binding?.circleBar)
                     it.background = if (btnSuccess.isChecked) {
-                        wv.onPause()
+                        downTime()
                         context.resources.getDrawable(
                             R.mipmap.base_start_bg,
                             context.theme
                         )
                     } else {
-                        wv.onStart(this@BasePumpWaterPop)
+                        count++
+                        circleBar.stopAnimator()
                         context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
                     }
 
                     tvAddClockTime.text =
-                        if (btnSuccess.isChecked) "Click the button to start draining"
-                        else "Click the button to stop draining"
+                        if (btnSuccess.isChecked) context.getString(R.string.base_pump_start_desc)
+                        else context.getString(R.string.base_pump_stop_dec)
                 }
             }
             ivClose.setOnClickListener {
@@ -210,17 +218,20 @@ class BasePumpWaterPop(
                             // 涂鸦指令，添加排水功能
 //                            isOpenOrStop(value)
                             synchronized(this) {
+                                ViewUtils.setVisible(
+                                    (value as? Boolean == true), binding?.circleBar
+                                )
                                 // 加锁的目的是为了
                                 // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
                                 binding?.btnSuccess?.background =
                                     if ((value as? Boolean != true)) {
-                                        binding?.wv?.onPause()
+                                        binding?.circleBar?.stopAnimator()
                                         context.resources.getDrawable(
                                             R.mipmap.base_start_bg,
                                             context.theme
                                         )
                                     } else {
-                                        binding?.wv?.onStart(this@BasePumpWaterPop)
+                                        downTime()
                                         context.resources.getDrawable(
                                             R.mipmap.base_suspend_bg,
                                             context.theme
@@ -228,8 +239,8 @@ class BasePumpWaterPop(
                                     }
 
                                 binding?.tvAddClockTime?.text =
-                                    if ((value as? Boolean != true)) "Click the button to start draining"
-                                    else "Click the button to stop draining"
+                                    if ((value as? Boolean != true)) context.getString(R.string.base_pump_start_desc)
+                                    else context.getString(R.string.base_pump_stop_dec)
                             }
 
                             if ((value as? Boolean == false)) return@observe
@@ -273,5 +284,55 @@ class BasePumpWaterPop(
                 )
             }
             .pumpWater((value as? Boolean == true))
+    }
+
+    /**
+     * 定时器
+     */
+    private fun countDownCoroutines(
+        total: Int,
+        scope: CoroutineScope,
+        onTick: (Int) -> Unit,
+        onStart: (() -> Unit)? = null,
+        onFinish: (() -> Unit)? = null,
+    ): Job {
+        return flow {
+            for (i in total downTo 0) {
+                emit(i)
+                delay(1000)
+            }
+        }.flowOn(Dispatchers.Main)
+            .onStart { onStart?.invoke() }
+            .onCompletion { onFinish?.invoke() }
+            .onEach { onTick.invoke(it) }
+            .launchIn(scope)
+    }
+
+    private fun downTime() {
+        countDownCoroutines(120,
+            lifecycleScope,
+            onTick = {
+                if (it == 0) {
+                    binding?.circleBar?.stopAnimator()
+                    return@countDownCoroutines
+                }
+                val value = 0.2775f * (120 - it)
+                when (count) {
+                    // 三次加水
+                    1 -> {
+                        binding?.circleBar?.setValue(value)
+                    }
+                    2 -> {
+                        binding?.circleBar?.setValue(33.3f + value)
+                    }
+                    3 -> {
+                        binding?.circleBar?.setValue(66.6f+ value)
+                    }
+                }
+            }, onStart = {
+
+            }, onFinish = {
+                binding?.circleBar?.stopAnimator()
+            })
     }
 }

@@ -65,6 +65,18 @@
     <string name="my_settings">Settings</string>
     <string name="my_about">About us</string>
     <string name="my_calendar">Calendar</string>
+    <string name="my_clone_desc">Start your planting journey from seed or clone?</string>
+    <string name="my_next">Next</string>
+    <string name="my_seed_desc">In order to develop a planting plan more suitable for your strain, please select a type.</string>
+    <string name="my_sedd_photo">Photo （Recommended）</string>
+    <string name="my_auto">Auto</string>
+    <string name="mt_about_desc">Have no idea about this?</string>
+    <string name="my_strain_name">Strain Name</string>
+    <string name="my_hint_strain_name">eg. OG Kush..</string>
+    <string name="my_strain_how">Have no idea about the strain?</string>
+    <string name="my_not_know">I don’t know</string>
+    <string name="base_pump_start_desc">Click the button to start draining\n\nThe water will drain and pause 1 Gallon By 1 Gallon in case of overflow. Long Press To drain 3 gallon at one time</string>
+    <string name="base_pump_stop_dec">Click the button to stop draining</string>
 
 
 </resources>

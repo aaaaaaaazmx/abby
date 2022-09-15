@@ -37,12 +37,12 @@ class HomePlantUsuallyPop(
     private val adapter by lazy {
         PlantInitMultiplePopAdapter(
             mutableListOf(),
-            dryingEtWeightChange = { _, _, etWeight, typeTwoBox, typeBox, bean, adapterData->
+            dryingEtWeightChange = { _, _, _, _, _, _, adapterData->
                 // 按钮是否可点击啊
                 binding?.btnSuccess?.isEnabled =
                     adapterData.filter { it.isCheck == true }.size == adapterData.size
             },
-            curingEtWeightChange = { _, _, etWeight, cbBox, bean, adapterData->
+            curingEtWeightChange = { _, _, _, _, _, adapterData->
                 // 按钮是否可点击
                 binding?.btnSuccess?.isEnabled =
                     adapterData.filter { it.isCheck == true }.size == adapterData.size

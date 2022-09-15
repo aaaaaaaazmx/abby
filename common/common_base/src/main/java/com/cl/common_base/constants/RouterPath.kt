@@ -81,6 +81,7 @@ class RouterPath {
         private const val MY = "modules_my"
         const val PAGE_MY = "/my/$MY"
         const val PAGE_MY_FIRMWARE_UPDATE = "/firmwareUpdate/$MY"
+        const val PAGE_MT_CLONE_SEED = "/cloneSeed/$MY"
     }
 
     /**

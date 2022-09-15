@@ -42,5 +42,7 @@ data class GuideInfoData(
         const val VALUE_STATUS_DRYING = 5
         // Curing状态
         const val VALUE_STATUS_CURING = 7
+        // 种子孵化阶段
+        const val VALUE_STATUS_INCUBATION = 6
     }
 }

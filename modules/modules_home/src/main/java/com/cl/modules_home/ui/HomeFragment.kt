@@ -256,8 +256,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 弹出继承或者重新种植的的窗口
                 ViewUtils.setVisible(binding.plantExtendBg.root)
                 // todo 由于涂鸦下发的onLine会重新刷新这个，所以需要判断一下
-                if (plantExtendPop.isShow) return
-                plantExtendPop.show()
+//                if (plantExtendPop.isShow) return
+//                plantExtendPop.show()
+                // todo 现在不走这个继承弹窗了，直接走页面了
+                // 继承弹窗的东西需要直接删除了
+                ARouter.getInstance()
+                    .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                    .navigation(activity, KEY_FOR_CLONE_RESULT)
+
             }
             // 种植完成过
             KEY_PLANTING_COMPLETED -> {
@@ -1974,10 +1980,42 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
     }
 
+
+    /**
+     * 跳转选择种子还是继承界面回调
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == AppCompatActivity.RESULT_OK) {
+            when (requestCode) {
+                KEY_FOR_CLONE_RESULT -> {
+                    // 是否选择了继承
+                    val isChooserClone =
+                        data?.getBooleanExtra(Constants.Global.KEY_IS_CHOOSE_CLONE, false)
+                    if (isChooserClone == false) {
+                        activity?.finish()
+                        return
+                    }
+                    // 如果是继承，那么还是延续之前老一套的继承
+                    ViewUtils.setGone(binding.plantExtendBg.root)
+                    ViewUtils.setGone(binding.plantFirst.root)
+                    ViewUtils.setVisible(binding.pplantNinth.root)
+                    ViewUtils.setGone(binding.pplantNinth.clContinue)
+                    mViewMode.startRunning(null, true)
+                }
+            }
+        }
+
+    }
+
     companion object {
         const val KEY_NEW_PLANT = "0"
         const val KEY_PLANTED = "1"
         const val KEY_EXTEND_PLANT = "2"
         const val KEY_PLANTING_COMPLETED = "3"
+
+        // 跳转继承界面的回调
+        const val KEY_FOR_CLONE_RESULT = 66
+        const val KEY_IS_CHOOSE_CLONE = "key_is_choose_clone"
     }
 }

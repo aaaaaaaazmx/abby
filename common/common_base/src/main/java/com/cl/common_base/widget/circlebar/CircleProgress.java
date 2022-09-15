@@ -54,7 +54,7 @@ public class CircleProgress extends View {
 
     //绘制数值
     private TextPaint mValuePaint;
-    private float mValue;
+    private float mCurrentValue;
     private float mMaxValue;
     private float mValueOffset;
     private int mPrecision;
@@ -103,7 +103,7 @@ public class CircleProgress extends View {
         mCenterPoint = new Point();
         initAttrs(attrs);
         initPaint();
-        setValue(mValue);
+        setValue(mCurrentValue);
     }
 
     private void initAttrs(AttributeSet attrs) {
@@ -115,7 +115,7 @@ public class CircleProgress extends View {
         mHintColor = typedArray.getColor(R.styleable.CircleProgressBar_hintColor, Color.BLACK);
         mHintSize = typedArray.getDimension(R.styleable.CircleProgressBar_hintSize, 15);
 
-        mValue = typedArray.getFloat(R.styleable.CircleProgressBar_value, 50);
+        mCurrentValue = typedArray.getFloat(R.styleable.CircleProgressBar_value, 50);
         mMaxValue = typedArray.getFloat(R.styleable.CircleProgressBar_maxValue, 100);
         //内容数值精度格式
         mPrecision = typedArray.getInt(R.styleable.CircleProgressBar_precision, 0);
@@ -264,7 +264,7 @@ public class CircleProgress extends View {
         // 计算文字宽度，由于Paint已设置为居中绘制，故此处不需要重新计算
         // float textWidth = mValuePaint.measureText(mValue.toString());
         // float x = mCenterPoint.x - textWidth / 2;
-        canvas.drawText(String.format(mPrecisionFormat, mValue), mCenterPoint.x, mValueOffset, mValuePaint);
+        canvas.drawText(String.format(mPrecisionFormat, mCurrentValue), mCenterPoint.x, mValueOffset, mValuePaint);
 
         if (mHint != null) {
             canvas.drawText(mHint.toString(), mCenterPoint.x, mHintOffset, mHintPaint);
@@ -274,7 +274,7 @@ public class CircleProgress extends View {
             Rect rect = new Rect(); // 文字所在区域的矩形
             mValuePaint.getTextBounds(mPrecisionFormat, 0, mPrecisionFormat.length(), rect);
             canvas.drawText(mUnit.toString(),
-                    mValue < 10 ? mCenterPoint.x + rect.width() / 4 + dipToPx(getContext(), 2)
+                    mCurrentValue < 10 ? mCenterPoint.x + rect.width() / 4 + dipToPx(getContext(), 2)
                             :
                             mCenterPoint.x + rect.width() / 3 + dipToPx(getContext(), 5), mValueOffset, mUnitPaint);
         }
@@ -325,8 +325,12 @@ public class CircleProgress extends View {
         mUnit = unit;
     }
 
-    public float getValue() {
-        return mValue;
+    public float getmCurrentValue() {
+        return mCurrentValue;
+    }
+
+    public void setmCurrentValue(float mCurrentValue) {
+        this.mCurrentValue = mCurrentValue;
     }
 
     /**
@@ -339,6 +343,7 @@ public class CircleProgress extends View {
         if (value > mMaxValue) {
             value = mMaxValue;
         }
+        mCurrentValue = value;
         float start = mPercent;
         float end = value / mMaxValue;
         startAnimator(start, end, mAnimTime);
@@ -352,16 +357,23 @@ public class CircleProgress extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mPercent = (float) animation.getAnimatedValue();
-                mValue = mPercent * mMaxValue;
+                mCurrentValue = mPercent * mMaxValue;
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
                             + ";currentAngle = " + (mSweepAngle * mPercent)
-                            + ";value = " + mValue);
+                            + ";value = " + mCurrentValue);
                 }
                 invalidate();
             }
         });
         mAnimator.start();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void stopAnimator() {
+        if (mAnimator != null) {
+            mAnimator.pause();
+        }
     }
 
     /**
