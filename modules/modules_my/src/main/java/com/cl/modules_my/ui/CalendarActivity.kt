@@ -1,20 +1,36 @@
 package com.cl.modules_my.ui
 
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.ext.dp2px
+import com.cl.common_base.ext.height
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.width
 import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
+import com.cl.modules_my.repository.AllProgressBean
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
+import com.joketng.timelinestepview.LayoutType
+import com.joketng.timelinestepview.OrientationShowType
+import com.joketng.timelinestepview.TimeLineState
+import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
+import com.joketng.timelinestepview.view.TimeLineStepView
 import java.lang.reflect.Field
 import java.util.*
 
@@ -61,6 +77,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
         // 设置滑动速度
         setMaxFlingVelocity(binding.rvList, 5000)
+
+        initTime()
     }
 
     override fun observe() {
@@ -181,11 +199,17 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         mCurrentDate.month = CalendarUtil.getDate("MM", d)
                         mCurrentDate.day = CalendarUtil.getDate("dd", d)
                         mCurrentDate.isCurrentDay = true
-                        val list: MutableList<com.cl.common_base.util.calendar.Calendar> = mutableListOf()
+                        val list: MutableList<com.cl.common_base.util.calendar.Calendar> =
+                            mutableListOf()
                         // 如果是小于等于6，那么上一年
                         if (data.month <= 4) {
                             for (i in 1..12) {
-                                list += CalendarUtil.initCalendarForMonthView(data.year - 1, i, mCurrentDate, Calendar.SUNDAY)
+                                list += CalendarUtil.initCalendarForMonthView(
+                                    data.year - 1,
+                                    i,
+                                    mCurrentDate,
+                                    Calendar.SUNDAY
+                                )
                             }
                             adapter.addData(0, list)
                             list.clear()
@@ -193,7 +217,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         if (data.month >= 8) {
                             // 加载下一年
                             for (i in 1..12) {
-                                list += CalendarUtil.initCalendarForMonthView(data.year + 1, i, mCurrentDate, Calendar.SUNDAY)
+                                list += CalendarUtil.initCalendarForMonthView(
+                                    data.year + 1,
+                                    i,
+                                    mCurrentDate,
+                                    Calendar.SUNDAY
+                                )
                             }
                             adapter.addData(list)
                             list.clear()
@@ -240,5 +269,91 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    /**
+     * 初始化时间轴
+     */
+    private val listContent = mutableListOf<AllProgressBean>()
+    fun initTime() {
+        repeat(7) {
+            val bean = AllProgressBean("item$it")
+
+            if (it == 3) {
+//                bean.rightTitle = "说的就是看到就隆盛科技发我我积分为弗兰克健康检查绿茶女名称v女村民们处女吗没VM从VM你十多分十分时分我去问而我认为"
+                bean.timeLineState = TimeLineState.CURRENT
+            }
+            if (it > 3) {
+//                bean.rightTitle = "所得到的多多多多多item$it"
+                bean.timeLineState = TimeLineState.INACTIVE
+            }
+            listContent.add(bean)
+        }
+        binding.timeLine.initData(
+            listContent,
+            OrientationShowType.CENTER_VERTICAL,
+            object : TimeLineStepView.OnInitDataCallBack {
+                override fun onBindDataViewHolder(
+                    holder: TimeLineStepAdapter.CustomViewHolder,
+                    position: Int
+                ) {
+                    if (position == 0) {
+                        holder.rightLayout.visibility = View.GONE
+                        holder.leftLayout.visibility = View.GONE
+                        val layoutParams = holder.imgMark.layoutParams as LinearLayout.LayoutParams
+                        layoutParams.width = dp2px(0f)
+                        layoutParams.height = dp2px(0f)
+                        holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
+//                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
+//                val drawable = RoundedBitmapDrawableFactory.create(resources,
+//                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+//                drawable.isCircular = true
+                        if (position == 0) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
+                            ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
+                        )
+//                        holder.itemView.width(LinearLayout.LayoutParams.WRAP_CONTENT)
+//                        holder.itemView.height(LinearLayout.LayoutParams.WRAP_CONTENT)
+//                        holder.llLine.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
+                        return
+                    }
+                    val layoutParams = holder.imgMark.layoutParams as LinearLayout.LayoutParams
+                    layoutParams.width = dp2px(30f)
+                    layoutParams.height = dp2px(30f)
+                    holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
+//                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
+//                val drawable = RoundedBitmapDrawableFactory.create(resources,
+//                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+//                drawable.isCircular = true
+                    if (position == 0) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
+                        ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
+                    )
+//                holder.imgMark.setPadding(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
+                    holder.imgMark.scaleType = ImageView.ScaleType.CENTER_CROP
+//                holder.imgMark.background = ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
+
+
+                    // 加载右边布局
+//                val drawable2 = RoundedBitmapDrawableFactory.create(resources,BitmapFactory.decodeResource(resources, R.mipmap.my_about_us))
+//                drawable2.cornerRadius = dp2px(6f).toFloat()
+//                holder.itemView.img_one.setImageDrawable(drawable2)
+//                holder.itemView.img_two.setImageDrawable(drawable2)
+//                holder.itemView.img_three.setImageDrawable(drawable2)
+//                if(position % 3 == 0){
+//                    holder.itemView.img_two.visibility = View.VISIBLE
+//                } else {
+//                    holder.itemView.img_two.visibility = View.GONE
+//                }
+                }
+
+                override fun createCustomView(
+                    leftLayout: ViewGroup,
+                    rightLayout: ViewGroup,
+                    holder: TimeLineStepAdapter.CustomViewHolder
+                ) {
+                    LayoutInflater.from(this@CalendarActivity)
+                        .inflate(R.layout.my_item_custom, rightLayout, true)
+                }
+
+            })
     }
 }
