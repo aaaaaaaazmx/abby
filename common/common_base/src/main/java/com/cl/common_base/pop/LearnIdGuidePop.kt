@@ -61,7 +61,7 @@ class LearnIdGuidePop(
                     R.id.tv_html -> {
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, data?.content)
-                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, data?.title)
+                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, data?.extend?.title)
                         context?.startActivity(intent)
                     }
                 }

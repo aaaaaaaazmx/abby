@@ -93,7 +93,7 @@ class LearnFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?
                 val tvHtml = helper.itemView.findViewById<TextView>(R.id.tv_html)
                 tvHtml.text = buildSpannedString {
                     color(context.getColor(R.color.mainColor)) {
-                        append(item.content)
+                        append(item.extend?.title)
                     }
                 }
             }

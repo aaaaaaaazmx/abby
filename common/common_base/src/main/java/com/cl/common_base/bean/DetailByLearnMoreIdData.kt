@@ -11,7 +11,7 @@ data class DetailByLearnMoreIdData(
     class ItemBean(
         val content: String?,
         val createTime: String?,
-        val extend: BaseBean?,
+        val extend: Extends?,
         val messageId: String?,
         val title: String?,
         val type: String?,
@@ -23,6 +23,8 @@ data class DetailByLearnMoreIdData(
                 "url" -> KEY_URL_TYPE
                 else -> KEY_TEXT_TYPE
             }
+
+        data class Extends(val title: String? = null): BaseBean()
     }
 
     companion object {

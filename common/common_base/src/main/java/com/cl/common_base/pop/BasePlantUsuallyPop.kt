@@ -1,6 +1,7 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.content.Intent
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
@@ -12,10 +13,12 @@ import com.cl.common_base.R
 import com.cl.common_base.adapter.PlantInitMultiplePopAdapter
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.HomePlantUsuallyPopBinding
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.util.SmartGlideImageLoader
+import java.net.URL
 
 /**
  * 种植引导从后台拉取的数据POP
@@ -78,7 +81,11 @@ class BasePlantUsuallyPop(
                 // 设置当前type = 种子孵化阶段
                 UnReadConstants.Plant.KEY_INCUBATION -> {
                     it.forEach { bean ->
-                         bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
+                        if (bean.url.isNullOrEmpty()) {
+                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
+                        } else {
+                            bean.isCurrentStatus = GuideInfoData.KEY_URL_TYPE
+                        }
                     }
                     // 这个没有勾选框，默认为可选状态
                     binding?.btnSuccess?.isEnabled = true
@@ -174,10 +181,12 @@ class BasePlantUsuallyPop(
                 R.id.type_ask,
                 R.id.cl_curing_type,
                 R.id.curing_box,
-                R.id.curing_delete
+                R.id.curing_delete,
+                R.id.tv_html
             )
             // 按钮点击
             adapter.setOnItemChildClickListener { adapter, view, position ->
+               val data =  adapter.data[position] as? GuideInfoData.PlantInfo
                 when (view.id) {
                     R.id.cl_two -> {
                         val cb = if (view.id == R.id.cl_two) {
@@ -428,6 +437,13 @@ class BasePlantUsuallyPop(
                         etWeight?.setText("")
                     }
 
+                    // 超链接
+                    R.id.tv_html -> {
+                        val intent = Intent(context, WebActivity::class.java)
+                        intent.putExtra(WebActivity.KEY_WEB_URL, data?.url)
+                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, data?.title)
+                        context?.startActivity(intent)
+                    }
                 }
             }
         }

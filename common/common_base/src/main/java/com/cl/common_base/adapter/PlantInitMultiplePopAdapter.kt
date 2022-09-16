@@ -3,6 +3,9 @@ package com.cl.common_base.adapter
 import android.text.Editable
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.TextView
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
@@ -11,10 +14,7 @@ import com.cl.common_base.R
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.databinding.HomeItemCuringPopBinding
-import com.cl.common_base.databinding.HomeItemEditPopBinding
-import com.cl.common_base.databinding.HomeItemIncubationPopBinding
-import com.cl.common_base.databinding.HomeItemPopBinding
+import com.cl.common_base.databinding.*
 
 /**
  * 种植周期，多type布局
@@ -31,6 +31,7 @@ class PlantInitMultiplePopAdapter(
         addItemType(UnReadConstants.Plant.KEY_DRYING.toInt(), R.layout.home_item_edit_pop)
         addItemType(UnReadConstants.Plant.KEY_CURING.toInt(), R.layout.home_item_curing_pop)
         addItemType(UnReadConstants.Plant.KEY_INCUBATION.toInt(), R.layout.home_item_incubation_pop)
+        addItemType(GuideInfoData.KEY_URL_TYPE,R.layout.home_finish_guide_url_item)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -65,6 +66,11 @@ class PlantInitMultiplePopAdapter(
                 if (binding!= null) {
                     binding.data = data[position]
                     binding.executePendingBindings()
+                }
+            }
+            GuideInfoData.KEY_URL_TYPE.toString() -> {
+                DataBindingUtil.bind<HomeFinishGuideUrlItemBinding>(holder.itemView)?.let {
+                    it.executePendingBindings()
                 }
             }
         }
@@ -102,6 +108,15 @@ class PlantInitMultiplePopAdapter(
                     curingBox.isChecked = !it.isNullOrEmpty()
                     data[holder.layoutPosition].isCheck = !it.isNullOrEmpty()
                     curingEtWeightChange?.invoke(it,holder.layoutPosition, etWeight, curingBox, data[holder.layoutPosition], data)
+                }
+            }
+
+            GuideInfoData.KEY_URL_TYPE.toString() -> {
+                val tvHtml = holder.itemView.findViewById<TextView>(R.id.tv_html)
+                tvHtml.text = buildSpannedString {
+                    color(context.getColor(R.color.mainColor)) {
+                        append(item.title)
+                    }
                 }
             }
 

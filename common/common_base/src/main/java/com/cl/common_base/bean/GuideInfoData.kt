@@ -22,6 +22,7 @@ data class GuideInfoData(
         var picture: String? = null,
         var title: String? = null,
         var isCheck: Boolean? = false,
+        var url: String? = null,
         var isCurrentStatus: Int? = 0
     ) : BaseBean(), MultiItemEntity {
         // 返回当前布局状态
@@ -34,4 +35,9 @@ data class GuideInfoData(
         val width: Int? = null,
         val height: Int? = null,
     ) : BaseBean()
+
+
+    companion object {
+        const val KEY_URL_TYPE = 3
+    }
 }
