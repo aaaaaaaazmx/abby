@@ -10,6 +10,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PlantInitMultiplePopAdapter
+import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.HomePlantUsuallyPopBinding
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
@@ -68,16 +69,16 @@ class BasePlantUsuallyPop(
         // 设置数据
         popData?.let {
             if (it.size == 0) return
-            when (isCurrentStatus) {
+            when ("$isCurrentStatus") {
                 // 设置最后一个Bean类为当前周期状态
-                GuideInfoData.VALUE_STATUS_CURING,
-                GuideInfoData.VALUE_STATUS_DRYING -> {
+                UnReadConstants.Plant.KEY_CURING,
+                UnReadConstants.Plant.KEY_DRYING -> {
                     it[it.size - 1].isCurrentStatus = isCurrentStatus
                 }
                 // 设置当前type = 种子孵化阶段
-                GuideInfoData.VALUE_STATUS_INCUBATION -> {
+                UnReadConstants.Plant.KEY_INCUBATION -> {
                     it.forEach { bean ->
-                         bean.isCurrentStatus = GuideInfoData.VALUE_STATUS_INCUBATION
+                         bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
                     }
                     // 这个没有勾选框，默认为可选状态
                     binding?.btnSuccess?.isEnabled = true
@@ -86,12 +87,12 @@ class BasePlantUsuallyPop(
             adapter.setList(it)
         }
 
-        when (isCurrentStatus) {
-            GuideInfoData.VALUE_STATUS_CURING -> {
+        when ("$isCurrentStatus") {
+            UnReadConstants.Plant.KEY_CURING -> {
                 // 按钮显示不一致
                 binding?.btnSuccess?.text = context.getString(R.string.base_complete)
             }
-            GuideInfoData.VALUE_STATUS_INCUBATION -> {
+            UnReadConstants.Plant.KEY_INCUBATION -> {
                 binding?.btnSuccess?.text = context.getString(R.string.base_done)
             }
             else -> {
@@ -103,7 +104,7 @@ class BasePlantUsuallyPop(
 
     override fun dismiss() {
         super.dismiss()
-        if (isCurrentStatus == GuideInfoData.VALUE_STATUS_DRYING) {
+        if (isCurrentStatus == UnReadConstants.Plant.KEY_DRYING.toInt()) {
             //  todo 这个position目前时固定写死的，有可能会有问题
             val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
             etWeight?.setText("")
@@ -111,7 +112,7 @@ class BasePlantUsuallyPop(
             (adapter.getViewByPosition(2, R.id.type_two_box) as? CheckBox)?.isChecked = false
         }
 
-        if (isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
+        if (isCurrentStatus == UnReadConstants.Plant.KEY_CURING.toInt()) {
             // todo 这个position目前时固定写死的,有可能会有问题
             val etWeight = adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText
             etWeight?.setText("")
@@ -125,8 +126,8 @@ class BasePlantUsuallyPop(
             ivClose.setOnClickListener { dismiss() }
             btnSuccess.setOnClickListener {
                 // 需要判断当前是否有需要称重的周期，
-                when (isCurrentStatus) {
-                    GuideInfoData.VALUE_STATUS_DRYING -> {
+                when ("$isCurrentStatus") {
+                    UnReadConstants.Plant.KEY_DRYING -> {
                         val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
                         logI(
                             """
@@ -135,7 +136,7 @@ class BasePlantUsuallyPop(
                         )
                         onNextAction?.invoke(etWeight?.text.toString())
                     }
-                    GuideInfoData.VALUE_STATUS_CURING -> {
+                    UnReadConstants.Plant.KEY_CURING -> {
                         // todo VALUE_STATUS_CURING
                         val etWeight =
                             adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText

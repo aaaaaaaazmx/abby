@@ -157,7 +157,7 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 开始种植
      */
-    fun start(): Flow<HttpResult<BaseBean>> {
+    fun start(): Flow<HttpResult<String>> {
         return remoteRepository.start()
     }
 }

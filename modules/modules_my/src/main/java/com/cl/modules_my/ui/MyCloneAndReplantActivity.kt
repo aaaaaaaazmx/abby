@@ -6,6 +6,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants.Global.KEY_IS_CHOOSE_CLONE
 import com.cl.common_base.constants.Constants.Global.KEY_IS_CHOOSE_SEED
+import com.cl.common_base.constants.Constants.Global.KEY_PLANT_ID
 import com.cl.common_base.constants.Constants.Global.KEY_REFRESH_PLANT_INFO
 import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_ATTRIBUTE
 import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_STRAIN_NAME
@@ -46,6 +47,10 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
         intent.getBooleanExtra(KEY_USER_NO_ATTRIBUTE, false)
     }
 
+    private val plantId by lazy {
+        intent.getStringExtra(KEY_PLANT_ID)
+    }
+
     /**
      * 通用弹窗
      * 网络请求
@@ -67,6 +72,12 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
         binding.title.setLeftClickListener {
             setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, false))
             finish()
+        }
+
+        plantId?.let {
+            kotlin.runCatching {
+                mViewModel.upPlantInfoReq.value?.id = it.toInt()
+            }
         }
 
         if (isNoAttribute) {

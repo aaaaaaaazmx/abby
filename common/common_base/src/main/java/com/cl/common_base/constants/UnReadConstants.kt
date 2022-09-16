@@ -45,6 +45,7 @@ object UnReadConstants {
         const val KEY_DRYING = "5"
         const val KEY_HARVEST = "6"
         const val KEY_CURING = "7"
+        const val KEY_INCUBATION = "8"
     }
 
     /**

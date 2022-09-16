@@ -10,6 +10,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.R
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.bean.GuideInfoData
+import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.HomeItemCuringPopBinding
 import com.cl.common_base.databinding.HomeItemEditPopBinding
 import com.cl.common_base.databinding.HomeItemIncubationPopBinding
@@ -26,16 +27,16 @@ class PlantInitMultiplePopAdapter(
     BaseMultiItemQuickAdapter<GuideInfoData.PlantInfo, BaseViewHolder>(data) {
 
     init {
-        addItemType(GuideInfoData.VALUE_STATUS_NORMAL, R.layout.home_item_pop)
-        addItemType(GuideInfoData.VALUE_STATUS_DRYING, R.layout.home_item_edit_pop)
-        addItemType(GuideInfoData.VALUE_STATUS_CURING, R.layout.home_item_curing_pop)
-        addItemType(GuideInfoData.VALUE_STATUS_INCUBATION, R.layout.home_item_incubation_pop)
+        addItemType(UnReadConstants.Plant.KEY_PLANT.toInt(), R.layout.home_item_pop)
+        addItemType(UnReadConstants.Plant.KEY_DRYING.toInt(), R.layout.home_item_edit_pop)
+        addItemType(UnReadConstants.Plant.KEY_CURING.toInt(), R.layout.home_item_curing_pop)
+        addItemType(UnReadConstants.Plant.KEY_INCUBATION.toInt(), R.layout.home_item_incubation_pop)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        when (holder.itemViewType) {
-            GuideInfoData.VALUE_STATUS_NORMAL -> {
+        when ("$holder.itemViewType") {
+            UnReadConstants.Plant.KEY_PLANT -> {
                 val binding = DataBindingUtil.bind<HomeItemPopBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
@@ -43,7 +44,7 @@ class PlantInitMultiplePopAdapter(
                     binding.executePendingBindings()
                 }
             }
-            GuideInfoData.VALUE_STATUS_DRYING -> {
+            UnReadConstants.Plant.KEY_DRYING -> {
                 val binding = DataBindingUtil.bind<HomeItemEditPopBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
@@ -51,7 +52,7 @@ class PlantInitMultiplePopAdapter(
                     binding.executePendingBindings()
                 }
             }
-            GuideInfoData.VALUE_STATUS_CURING -> {
+            UnReadConstants.Plant.KEY_CURING -> {
                 val binding = DataBindingUtil.bind<HomeItemCuringPopBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
@@ -59,7 +60,7 @@ class PlantInitMultiplePopAdapter(
                     binding.executePendingBindings()
                 }
             }
-            GuideInfoData.VALUE_STATUS_INCUBATION -> {
+            UnReadConstants.Plant.KEY_INCUBATION -> {
                 val binding = DataBindingUtil.bind<HomeItemIncubationPopBinding>(holder.itemView)
                 if (binding!= null) {
                     binding.data = data[position]
@@ -71,11 +72,11 @@ class PlantInitMultiplePopAdapter(
 
     override fun convert(holder: BaseViewHolder, item: GuideInfoData.PlantInfo) {
         // 获取 Binding
-        when (item.isCurrentStatus) {
-            GuideInfoData.VALUE_STATUS_NORMAL -> {
+        when ("${item.isCurrentStatus}") {
+            UnReadConstants.Plant.KEY_PLANT -> {
 
             }
-            GuideInfoData.VALUE_STATUS_DRYING -> {
+            UnReadConstants.Plant.KEY_DRYING -> {
                 val etWeight = holder.getView<EditText>(R.id.et_weight)
                 val typeTwoBox = holder.getView<CheckBox>(R.id.type_two_box)
                 val typeBox = holder.getView<CheckBox>(R.id.type_box)
@@ -93,7 +94,7 @@ class PlantInitMultiplePopAdapter(
                     dryingEtWeightChange?.invoke(it,holder.layoutPosition, etWeight, typeTwoBox, typeBox, data[holder.layoutPosition], data)
                 }
             }
-            GuideInfoData.VALUE_STATUS_CURING -> {
+            UnReadConstants.Plant.KEY_CURING -> {
                 ViewUtils.setEditTextInputSpace(holder.getView(R.id.curing_et_weight))
                 val etWeight = holder.getView<EditText>(R.id.curing_et_weight)
                 val curingBox = holder.getView<CheckBox>(R.id.curing_box)

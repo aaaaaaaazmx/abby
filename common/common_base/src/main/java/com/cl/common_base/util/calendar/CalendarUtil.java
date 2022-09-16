@@ -277,7 +277,7 @@ public final class CalendarUtil {
      * 格式化月份，根据地区
      */
     public static String getMonthFromLocation(long time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
         return sdf.format(time);
     }
 

@@ -72,6 +72,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         // 设置标题颜色以及标题文案
         binding.title.setTitle(getString(com.cl.common_base.R.string.my_calendar))
             .setTitleColor(com.cl.common_base.R.color.mainColor)
+            .setQuickClickListener {
+                // 会滚到当前日期
+                val data = adapter.data
+                if (data.isEmpty()) return@setQuickClickListener
+                binding.rvList.scrollToPosition(data.indexOfFirst { it.isCurrentDay })
+            }
         // 初始化当月
         binding.abMonth.text = CalendarUtil.getMonthFromLocation(Date().time)
 

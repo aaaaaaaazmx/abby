@@ -99,7 +99,7 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getMessageDetail(messageId)
     }
 
-    fun start(): Flow<HttpResult<BaseBean>> {
+    fun start(): Flow<HttpResult<String>> {
         return service.start()
     }
 }

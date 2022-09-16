@@ -42,6 +42,7 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
     private ConstraintLayout clTitle;
     private OnClickListener leftClickListener;
     private OnClickListener rightClickListener;
+    private OnClickListener quickClickListener;
 
     public FeatureTitleBar(Context context) {
         this(context, null);
@@ -65,6 +66,7 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
         tvLeftName = view.findViewById(R.id.tv_left_name);
         tvLeftName.setOnClickListener(this);
         ivLeft.setOnClickListener(this);
+        clTitle.setOnClickListener(this);
         tvRight.setOnClickListener(this);
         ivRight.setOnClickListener(this);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -95,7 +97,27 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
             if (rightClickListener != null) {
                 rightClickListener.onClick(v);
             }
+        } else if (v.getId() == R.id.cl_title) {
+            // 快速点击
+            if (quickClickListener != null && isFastClick()) {
+                quickClickListener.onClick(v);
+            }
         }
+    }
+
+    /**
+     * 快速点击
+     */
+    private static final int MIN_DELAY_TIME= 9000;  // 两次点击间隔不能少于1000ms
+    private static long lastClickTime;
+    public static boolean isFastClick() {
+        boolean flag = false;
+        long currentClickTime = System.currentTimeMillis();
+        if ((currentClickTime - lastClickTime) <= MIN_DELAY_TIME) {
+            flag = true;
+        }
+        lastClickTime = currentClickTime;
+        return flag;
     }
 
 
@@ -289,6 +311,14 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
      */
     public FeatureTitleBar setRightClickListener(OnClickListener onClickListener) {
         this.rightClickListener = onClickListener;
+        return this;
+    }
+
+    /**
+     * 快速点击
+     */
+    public FeatureTitleBar setQuickClickListener(OnClickListener onClickListener) {
+        this.quickClickListener = onClickListener;
         return this;
     }
 

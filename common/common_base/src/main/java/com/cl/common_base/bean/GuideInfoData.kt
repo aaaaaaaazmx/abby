@@ -34,15 +34,4 @@ data class GuideInfoData(
         val width: Int? = null,
         val height: Int? = null,
     ) : BaseBean()
-
-    companion object {
-        // 通常状态
-        const val VALUE_STATUS_NORMAL = 0
-        // Drying状态
-        const val VALUE_STATUS_DRYING = 5
-        // Curing状态
-        const val VALUE_STATUS_CURING = 7
-        // 种子孵化阶段、seed
-        const val VALUE_STATUS_INCUBATION = 8
-    }
 }

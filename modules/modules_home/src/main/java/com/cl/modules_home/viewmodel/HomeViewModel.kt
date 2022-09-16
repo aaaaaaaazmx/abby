@@ -239,8 +239,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 开始种植植物
      */
-    private val _start = MutableLiveData<Resource<BaseBean>>()
-    val start: LiveData<Resource<BaseBean>> = _start
+    private val _start = MutableLiveData<Resource<String>>()
+    val start: LiveData<Resource<String>> = _start
     fun start() {
         viewModelScope.launch {
             repository.start()

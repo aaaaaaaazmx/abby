@@ -158,6 +158,6 @@ interface HttpHomeApiService {
      * 新的开始种植
      */
     @POST("abby/plant/start")
-    fun start(): Flow<HttpResult<BaseBean>>
+    fun start(): Flow<HttpResult<String>>
 
 }

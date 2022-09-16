@@ -1341,6 +1341,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // seed or clone
                     ARouter.getInstance()
                         .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                        .withString(Constants.Global.KEY_PLANT_ID, data)
                         .navigation(activity, KEY_FOR_CLONE_RESULT)
                 }
             })
@@ -1351,14 +1352,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     hideProgressLoading()
 
-                    // 属性名优先，IOS说不弹
-//                    if (data?.attribute.isNullOrEmpty()) {
-//                        ARouter.getInstance()
-//                            .build(RouterPath.My.PAGE_MT_CLONE_SEED)
-//                            .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
-//                            .navigation(activity, KEY_FOR_USER_NAME)
-//                        return@success
-//                    }
+                    // 属性名优先
+                    if (data?.attribute.isNullOrEmpty()) {
+                        ARouter.getInstance()
+                            .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                            .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
+                            .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
+                            .navigation(activity, KEY_FOR_USER_NAME)
+                        return@success
+                    }
 
                     // 用来判断当前用户是否拥有名字 or 属性名，如果没有拥有名字，那么直接需要选择
                     if (data?.strainName.isNullOrEmpty()) {
@@ -1368,12 +1370,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 BaseCenterPop(it, onConfirmAction = {
                                     ARouter.getInstance()
                                         .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                                        .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
                                         .withBoolean(Constants.Global.KEY_USER_NO_STRAIN_NAME, true)
                                         .navigation(activity, KEY_FOR_USER_NAME)
                                 })
                             }).show()
                         return@success
                     }
+                    
+                    //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
 
                     // 植物信息数据显示
                     binding.pplantNinth.tvWeekDay.text = """
@@ -2042,7 +2047,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         data?.getBooleanExtra(Constants.Global.KEY_IS_CHOOSE_SEED, false)
                     // 表示啥也没选
                     if (isChooserClone == false && isChooserSeed == false) {
-                        activity?.finish()
                         return
                     }
                     if (isChooserClone == true) {
