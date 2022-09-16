@@ -119,6 +119,12 @@ object Constants {
         const val KEY_GLOBAL_MANDATORY_UPGRADE = "key_mandatory_upgrade"
         // 是否选择了继承
         const val KEY_IS_CHOOSE_CLONE = "key_is_choose_clone"
+        // 是否选择了Seed
+        const val KEY_IS_CHOOSE_SEED = "key_is_choose_seed"
+        // 跳转选择界面师傅哦直接弹窗
+        const val KEY_USER_NO_STRAIN_NAME = "key_user_no_strain_name"
+        const val KEY_USER_NO_ATTRIBUTE = "key_user_no_attribute"
+        const val KEY_REFRESH_PLANT_INFO = "key_refresh_plant_info"
     }
 
     /**

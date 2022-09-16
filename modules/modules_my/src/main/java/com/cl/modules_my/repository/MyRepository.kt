@@ -26,6 +26,13 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     }
 
     /**
+     * 更新植物信息
+     */
+    fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updatePlantInfo(body)
+    }
+
+    /**
      * 获取用户信息
      */
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
@@ -66,6 +73,13 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
      */
     fun advertising(type: String): Flow<HttpResult<MutableList<AdvertisingData>>> {
         return remoteRepository.advertising(type)
+    }
+
+    /**
+     * 换水获取图文
+     */
+    fun getGuideInfo(type: String): Flow<HttpResult<GuideInfoData>> {
+        return remoteRepository.getGuideInfo(type)
     }
 
 

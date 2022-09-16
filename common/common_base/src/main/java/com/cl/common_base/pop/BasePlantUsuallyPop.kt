@@ -1,4 +1,4 @@
-package com.cl.modules_home.widget
+package com.cl.common_base.pop
 
 import android.content.Context
 import android.widget.CheckBox
@@ -7,13 +7,11 @@ import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.ext.logI
-import com.cl.modules_home.adapter.PlantInitMultiplePopAdapter
-import com.cl.modules_home.response.GuideInfoData
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePlantUsuallyPopBinding
-import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.bean.GuideInfoData
+import com.cl.common_base.R
+import com.cl.common_base.adapter.PlantInitMultiplePopAdapter
+import com.cl.common_base.databinding.HomePlantUsuallyPopBinding
 import com.cl.common_base.widget.toast.ToastUtil
-import com.luck.picture.lib.utils.ToastUtils
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.util.SmartGlideImageLoader
@@ -23,7 +21,7 @@ import com.lxj.xpopup.util.SmartGlideImageLoader
  *
  * @author 李志军 2022-08-08 13:46
  */
-class HomePlantUsuallyPop(
+class BasePlantUsuallyPop(
     context: Context,
     private val onNextAction: ((weight: String?) -> Unit)? = null,
     private var popData: MutableList<GuideInfoData.PlantInfo>? = null,
@@ -37,12 +35,12 @@ class HomePlantUsuallyPop(
     private val adapter by lazy {
         PlantInitMultiplePopAdapter(
             mutableListOf(),
-            dryingEtWeightChange = { _, _, _, _, _, _, adapterData->
+            dryingEtWeightChange = { _, _, _, _, _, _, adapterData ->
                 // 按钮是否可点击啊
                 binding?.btnSuccess?.isEnabled =
                     adapterData.filter { it.isCheck == true }.size == adapterData.size
             },
-            curingEtWeightChange = { _, _, _, _, _, adapterData->
+            curingEtWeightChange = { _, _, _, _, _, adapterData ->
                 // 按钮是否可点击
                 binding?.btnSuccess?.isEnabled =
                     adapterData.filter { it.isCheck == true }.size == adapterData.size
@@ -70,19 +68,36 @@ class HomePlantUsuallyPop(
         // 设置数据
         popData?.let {
             if (it.size == 0) return
-            // 设置最后一个Bean类为当前周期状态
-            if (isCurrentStatus == GuideInfoData.VALUE_STATUS_DRYING || isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
-                it[it.size - 1].isCurrentStatus = isCurrentStatus
+            when (isCurrentStatus) {
+                // 设置最后一个Bean类为当前周期状态
+                GuideInfoData.VALUE_STATUS_CURING,
+                GuideInfoData.VALUE_STATUS_DRYING -> {
+                    it[it.size - 1].isCurrentStatus = isCurrentStatus
+                }
+                // 设置当前type = 种子孵化阶段
+                GuideInfoData.VALUE_STATUS_INCUBATION -> {
+                    it.forEach { bean ->
+                         bean.isCurrentStatus = GuideInfoData.VALUE_STATUS_INCUBATION
+                    }
+                    // 这个没有勾选框，默认为可选状态
+                    binding?.btnSuccess?.isEnabled = true
+                }
             }
             adapter.setList(it)
         }
 
-        if (isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
-            // 按钮显示不一致
-            binding?.btnSuccess?.text = "Planting Complete"
-        } else {
-            // 按钮显示不一致
-            binding?.btnSuccess?.text = "Next"
+        when (isCurrentStatus) {
+            GuideInfoData.VALUE_STATUS_CURING -> {
+                // 按钮显示不一致
+                binding?.btnSuccess?.text = context.getString(R.string.base_complete)
+            }
+            GuideInfoData.VALUE_STATUS_INCUBATION -> {
+                binding?.btnSuccess?.text = context.getString(R.string.base_done)
+            }
+            else -> {
+                // 按钮显示不一致
+                binding?.btnSuccess?.text = context.getString(R.string.my_next)
+            }
         }
     }
 
@@ -110,25 +125,30 @@ class HomePlantUsuallyPop(
             ivClose.setOnClickListener { dismiss() }
             btnSuccess.setOnClickListener {
                 // 需要判断当前是否有需要称重的周期，
-                if (isCurrentStatus == GuideInfoData.VALUE_STATUS_DRYING) {
-                    val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
-                    logI(
-                        """
-                        etWeight: ${etWeight?.text.toString()}
-                    """.trimIndent()
-                    )
-                    onNextAction?.invoke(etWeight?.text.toString())
-                } else if (isCurrentStatus == GuideInfoData.VALUE_STATUS_CURING) {
-                    // todo VALUE_STATUS_CURING
-                    val etWeight = adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText
-                    logI(
-                        """
-                        etWeight: ${etWeight?.text.toString()}
-                    """.trimIndent()
-                    )
-                    onNextAction?.invoke(etWeight?.text.toString())
-                } else {
-                    onNextAction?.invoke(null)
+                when (isCurrentStatus) {
+                    GuideInfoData.VALUE_STATUS_DRYING -> {
+                        val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
+                        logI(
+                            """
+                                    etWeight: ${etWeight?.text.toString()}
+                                """.trimIndent()
+                        )
+                        onNextAction?.invoke(etWeight?.text.toString())
+                    }
+                    GuideInfoData.VALUE_STATUS_CURING -> {
+                        // todo VALUE_STATUS_CURING
+                        val etWeight =
+                            adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText
+                        logI(
+                            """
+                                    etWeight: ${etWeight?.text.toString()}
+                                """.trimIndent()
+                        )
+                        onNextAction?.invoke(etWeight?.text.toString())
+                    }
+                    else -> {
+                        onNextAction?.invoke(null)
+                    }
                 }
                 dismiss()
             }

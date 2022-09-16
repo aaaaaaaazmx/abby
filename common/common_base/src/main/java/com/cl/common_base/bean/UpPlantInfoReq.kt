@@ -1,13 +1,8 @@
-package com.cl.modules_home.response
+package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
 
-/**
- * 获取植物基本信息
- *
- * @author 李志军 2022-08-08 16:23
- */
-data class PlantInfoData(
+data class UpPlantInfoReq(
     var attribute: String? = null, // 种植属性(Photo、Auto)
     var strainName: String? = null, // 种植名字
     var plantWay: String? = null, // 种植方式

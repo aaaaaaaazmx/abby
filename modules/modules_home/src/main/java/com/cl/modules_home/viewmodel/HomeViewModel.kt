@@ -16,7 +16,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
-import com.cl.modules_home.response.GuideInfoData
+import com.cl.common_base.bean.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
@@ -200,7 +200,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
-     * 开始种植植物
+     * 旧的开始种植植物
      */
     private val _startRunning = MutableLiveData<Resource<Boolean>>()
     val startRunning: LiveData<Resource<Boolean>> = _startRunning
@@ -231,6 +231,43 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 }.collectLatest {
                     _startRunning.value = it
+                }
+        }
+    }
+
+
+    /**
+     * 开始种植植物
+     */
+    private val _start = MutableLiveData<Resource<BaseBean>>()
+    val start: LiveData<Resource<BaseBean>> = _start
+    fun start() {
+        viewModelScope.launch {
+            repository.start()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _start.value = it
                 }
         }
     }

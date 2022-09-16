@@ -25,6 +25,10 @@ class MyRemoteRepository @Inject constructor() {
         return service.modifyUserDetail(body)
     }
 
+    fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
+        return service.updatePlantInfo(body)
+    }
+
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
         return service.userDetail()
     }
@@ -47,6 +51,10 @@ class MyRemoteRepository @Inject constructor() {
 
     fun advertising(type: String): Flow<HttpResult<MutableList<AdvertisingData>>> {
         return service.advertising(type)
+    }
+
+    fun getGuideInfo(type: String): Flow<HttpResult<GuideInfoData>> {
+        return service.getGuideInfo(type)
     }
 
     fun troubleShooting(): Flow<HttpResult<MyTroubleData>> {

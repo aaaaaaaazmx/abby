@@ -254,16 +254,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 继承
             KEY_EXTEND_PLANT -> {
                 // 弹出继承或者重新种植的的窗口
-                ViewUtils.setVisible(binding.plantExtendBg.root)
+//                ViewUtils.setVisible(binding.plantExtendBg.root)
                 // todo 由于涂鸦下发的onLine会重新刷新这个，所以需要判断一下
 //                if (plantExtendPop.isShow) return
 //                plantExtendPop.show()
                 // todo 现在不走这个继承弹窗了，直接走页面了
-                // 继承弹窗的东西需要直接删除了
-                ARouter.getInstance()
-                    .build(RouterPath.My.PAGE_MT_CLONE_SEED)
-                    .navigation(activity, KEY_FOR_CLONE_RESULT)
-
+                // 继承弹窗需要直接删除了
+                ViewUtils.setGone(binding.plantExtendBg.root)
+                ViewUtils.setVisible(binding.plantFirst.root)
             }
             // 种植完成过
             KEY_PLANTING_COMPLETED -> {
@@ -282,7 +280,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.plantFirst.apply {
             // 跳跳转plant2
             ivStart.setOnClickListener {
-                startGuidePage()
+                mViewMode.start()
             }
 
         }
@@ -465,6 +463,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     /**
      *  继承弹窗
+     *  暂时不需要
      */
     private val plantExtendPop by lazy {
         XPopup.Builder(context)
@@ -487,7 +486,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 ViewUtils.setGone(binding.plantFirst.root)
                                 ViewUtils.setVisible(binding.pplantNinth.root)
                                 ViewUtils.setGone(binding.pplantNinth.clContinue)
-                                mViewMode.startRunning(null, true)
+                                // mViewMode.startRunning(null, true)
                             }
                         }
                     }
@@ -715,13 +714,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      */
     private val custom by lazy {
         context?.let {
-            HomePlantUsuallyPop(
+            BasePlantUsuallyPop(
                 context = it,
                 onNextAction = { weight ->
                     val unReadList = mViewMode.unreadMessageList.value
                     // 应该是判断当前的种植周期。
                     // 这个是引导阶段
                     if (unReadList.isNullOrEmpty() && mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
+                        /**
+                         * 这个状态是自己自定义的状态，主要用于上报到第几步
+                         * 上报步骤
+                         * 引导阶段
+                         */
                         /**
                          * 这个状态是自己自定义的状态，主要用于上报到第几步
                          * 上报步骤
@@ -745,7 +749,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             5 -> {}
                             6 -> {}
                         }
-                        return@HomePlantUsuallyPop
+                        return@BasePlantUsuallyPop
                     }
 
                     // 表示是从极光或者未读消息列表中跳转过来的。
@@ -1056,9 +1060,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 自定义开始种植弹窗
                 // 判断点击时长
                 if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
-                    // 开始种植，首先调用后台接口
-                    // 继承的情况下，只有在那个继承弹窗下才可以继承
-                    mViewMode.startRunning(null, false)
+                    // 解锁第一个周期
+                    // 显示startRunning气泡的时候，必定是发芽了的
+                    mViewMode.unlockJourney("Vegetation")
                     return@observe
                 }
 
@@ -1324,11 +1328,53 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
+            // 开始种植
+            start.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    errorMsg?.let { ToastUtil.show(it) }
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 优先跳转选择种子还是继承界面
+                    // seed or clone
+                    ARouter.getInstance()
+                        .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                        .navigation(activity, KEY_FOR_CLONE_RESULT)
+                }
+            })
+
             // 获取植物基本信息
             plantInfo.observe(viewLifecycleOwner, resourceObserver {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
+
+                    // 属性名优先，IOS说不弹
+//                    if (data?.attribute.isNullOrEmpty()) {
+//                        ARouter.getInstance()
+//                            .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+//                            .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
+//                            .navigation(activity, KEY_FOR_USER_NAME)
+//                        return@success
+//                    }
+
+                    // 用来判断当前用户是否拥有名字 or 属性名，如果没有拥有名字，那么直接需要选择
+                    if (data?.strainName.isNullOrEmpty()) {
+                        pop.isDestroyOnDismiss(false)
+                            .isDestroyOnDismiss(false)
+                            .asCustom(context?.let {
+                                BaseCenterPop(it, onConfirmAction = {
+                                    ARouter.getInstance()
+                                        .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                                        .withBoolean(Constants.Global.KEY_USER_NO_STRAIN_NAME, true)
+                                        .navigation(activity, KEY_FOR_USER_NAME)
+                                })
+                            }).show()
+                        return@success
+                    }
+
                     // 植物信息数据显示
                     binding.pplantNinth.tvWeekDay.text = """
                         Week ${data?.week ?: "-"}
@@ -1992,17 +2038,37 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 是否选择了继承
                     val isChooserClone =
                         data?.getBooleanExtra(Constants.Global.KEY_IS_CHOOSE_CLONE, false)
-                    if (isChooserClone == false) {
+                    val isChooserSeed =
+                        data?.getBooleanExtra(Constants.Global.KEY_IS_CHOOSE_SEED, false)
+                    // 表示啥也没选
+                    if (isChooserClone == false && isChooserSeed == false) {
                         activity?.finish()
                         return
                     }
-                    // 如果是继承，那么还是延续之前老一套的继承
-                    ViewUtils.setGone(binding.plantExtendBg.root)
-                    ViewUtils.setGone(binding.plantFirst.root)
-                    ViewUtils.setVisible(binding.pplantNinth.root)
-                    ViewUtils.setGone(binding.pplantNinth.clContinue)
-                    mViewMode.startRunning(null, true)
+                    if (isChooserClone == true) {
+                        // 如果是
+                        // 弹出引导图
+                        startGuidePage()
+                        return
+                    }
+
+                    if (isChooserSeed == true) {
+                        // 解锁Seed周期
+                        mViewMode.unlockJourney("Seed")
+                        return
+                    }
+
                 }
+
+                KEY_FOR_USER_NAME -> {
+                    // 刷新接口
+                    val isRefresh =
+                        data?.getBooleanExtra(Constants.Global.KEY_REFRESH_PLANT_INFO, false)
+                    if (isRefresh == true) {
+                        mViewMode.plantInfo()
+                    }
+                }
+
             }
         }
 
@@ -2016,6 +2082,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 跳转继承界面的回调
         const val KEY_FOR_CLONE_RESULT = 66
-        const val KEY_IS_CHOOSE_CLONE = "key_is_choose_clone"
+
+        // 跳转继承界面为了老用户输入属性或者名字
+        const val KEY_FOR_USER_NAME = 77
     }
 }

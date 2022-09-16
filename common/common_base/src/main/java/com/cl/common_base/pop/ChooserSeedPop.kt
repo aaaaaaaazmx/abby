@@ -1,6 +1,8 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.graphics.Typeface
+import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.ChooseSeedPopBinding
@@ -12,7 +14,8 @@ import com.lxj.xpopup.core.BottomPopupView
  */
 class ChooserSeedPop(
     context: Context,
-    private val onConfirmAction: ((type: String) -> Unit)? = null
+    private val onConfirmAction: ((type: String) -> Unit)? = null,
+    private val onCancelAction: (() -> Unit)? = null
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.choose_seed_pop
@@ -22,6 +25,8 @@ class ChooserSeedPop(
         super.onCreate()
 
         DataBindingUtil.bind<ChooseSeedPopBinding>(popupImplView)?.apply {
+            tvHow.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC)
+
             clTwo.setOnClickListener {
                 clTwoBox.isChecked = !clTwoBox.isChecked
                 if (autoBox.isChecked) {
@@ -36,6 +41,21 @@ class ChooserSeedPop(
                 }
                 btnSuccess.isEnabled = clTwoBox.isChecked || autoBox.isChecked
             }
+
+            clTwoBox.setOnCheckedChangeListener { p0, p1 ->
+                if (autoBox.isChecked) {
+                    autoBox.isChecked = !p1
+                }
+                btnSuccess.isEnabled = autoBox.isChecked || p1
+            }
+
+            autoBox.setOnCheckedChangeListener { p0, p1 ->
+                if (clTwoBox.isChecked) {
+                    clTwoBox.isChecked = !p1
+                }
+                btnSuccess.isEnabled = clTwoBox.isChecked || p1
+            }
+
             // 点击确定
             btnSuccess.setOnClickListener {
                 onConfirmAction?.invoke(
@@ -49,14 +69,20 @@ class ChooserSeedPop(
             }
 
             ivClose.setOnClickListener {
+                onCancelAction?.invoke()
                 dismiss()
             }
 
         }
     }
 
+    override fun onDismiss() {
+        onCancelAction?.invoke()
+        super.onDismiss()
+    }
+
     companion object {
-        const val KEY_PHOTO = "key_photo"
-        const val KEY_AUTO = "key_photo"
+        const val KEY_PHOTO = "Photo"
+        const val KEY_AUTO = "Auto"
     }
 }

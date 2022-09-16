@@ -8,7 +8,7 @@
 
         <variable
             name="datas"
-            type="com.cl.modules_home.response.GuideInfoData" />
+            type="com.cl.common_base.bean.GuideInfoData" />
 
     </data>
 

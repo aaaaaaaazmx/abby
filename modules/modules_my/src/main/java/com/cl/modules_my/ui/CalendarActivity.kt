@@ -170,9 +170,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 //                            """.trimIndent()
 //                        )
 
-                        // 查看当前第三行。
+                        // 查看当前第三行的中间。
                         val thirdLineFirst =
-                            layoutManager.findFirstCompletelyVisibleItemPosition() + 14
+                            layoutManager.findFirstCompletelyVisibleItemPosition() + 17
                         if (adapter.data.isEmpty()) return
                         // 格式化时间戳
                         binding.abMonth.text =

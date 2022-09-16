@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
-import com.cl.common_base.bean.AdvertisingData
-import com.cl.common_base.bean.AppVersionData
-import com.cl.common_base.bean.CheckPlantData
-import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -37,6 +34,51 @@ class CloneAndReplantViewModel @Inject constructor(private val repository: MyRep
     val tuYaUser by lazy {
         val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
         GSON.parseObject(bean, User::class.java)
+    }
+
+    /**
+     * 更新植物信息Bean类
+     */
+    private val _upPlantInfoReq = MutableLiveData<UpPlantInfoReq>(UpPlantInfoReq())
+    val upPlantInfoReq: LiveData<UpPlantInfoReq> = _upPlantInfoReq
+
+
+    /**
+     * 获取图文引导
+     *
+     * 引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植、8-seed阶段
+     */
+    private val _getGuideInfo = MutableLiveData<Resource<GuideInfoData>>()
+    val getGuideInfo: LiveData<Resource<GuideInfoData>> = _getGuideInfo
+    fun getGuideInfo(req: String) {
+        viewModelScope.launch {
+            repository.getGuideInfo(req)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _getGuideInfo.value = it
+                }
+        }
     }
 
     /**
@@ -244,6 +286,40 @@ class CloneAndReplantViewModel @Inject constructor(private val repository: MyRep
                 )
             }.collectLatest {
                 _userDetail.value = it
+            }
+    }
+
+    /**
+     * 更新植物信息
+     */
+    private val _updatePlantInfo = MutableLiveData<Resource<BaseBean>>()
+    val updatePlantInfo: LiveData<Resource<BaseBean>> = _updatePlantInfo
+    fun updatePlantInfo(body: UpPlantInfoReq) = viewModelScope.launch {
+        repository.updatePlantInfo(body)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                _updatePlantInfo.value = it
             }
     }
 

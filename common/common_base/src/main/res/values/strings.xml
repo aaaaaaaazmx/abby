@@ -77,6 +77,10 @@
     <string name="my_not_know">I don’t know</string>
     <string name="base_pump_start_desc">Click the button to start draining\n\nThe water will drain and pause 1 Gallon By 1 Gallon in case of overflow. Long Press To drain 3 gallon at one time</string>
     <string name="base_pump_stop_dec">Click the button to stop draining</string>
+    <string name="strain_name_desc">Please enter a strain name within 24 bytes</string>
+    <string name="base_done">I am Done~</string>
+    <string name="base_complete">Planting Complete</string>
+    <string name="base_no_starin_name_desc">In order to develop a further planting plan more suitable for your strain, please select a type. Which Does not affect your current planting progress</string>
 
 
 </resources>

@@ -1,5 +1,6 @@
 package com.cl.abby
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.viewModels
@@ -201,5 +202,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onBleChange(status: String) {
         logI(status)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        homeFragment?.onActivityResult(requestCode, resultCode, data)
     }
 }

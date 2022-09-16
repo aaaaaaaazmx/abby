@@ -54,7 +54,7 @@
                         android:layout_marginEnd="5dp"
                         android:background="@null"
                         android:hint="@string/my_strain_how"
-                        android:inputType="number"
+                        android:inputType="text"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/curing_delete"
                         app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +86,7 @@
                         android:text="@string/mt_about_desc"
                         android:textColor="@color/black"
                         android:textSize="16sp"
-                        android:textStyle="bold" />
+                         />
 
                     <View
                         android:layout_width="0dp"
@@ -99,7 +99,7 @@
 
 
                 <Button
-                    android:layout_marginTop="312dp"
+                    android:layout_marginTop="212dp"
                     android:id="@+id/btn_success"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

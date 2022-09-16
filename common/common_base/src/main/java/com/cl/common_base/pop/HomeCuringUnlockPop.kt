@@ -1,12 +1,9 @@
-package com.cl.modules_home.widget
+package com.cl.common_base.pop
 
 import android.content.Context
-import android.graphics.Color
-import android.view.View
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeCuringUnlockPopBinding
-import com.cl.common_base.databinding.BaseUpdateSuccessPopBinding
+import com.cl.common_base.R
+import com.cl.common_base.databinding.HomeCuringUnlockPopBinding
 import com.lxj.xpopup.core.CenterPopupView
 
 /**

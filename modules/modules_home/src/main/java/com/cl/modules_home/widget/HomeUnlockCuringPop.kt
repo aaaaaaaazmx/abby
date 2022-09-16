@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.databinding.DataBindingUtil
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeCuringUnlockBinding
-import com.bbgo.module_home.databinding.HomeCuringUnlockPopBinding
 import com.lxj.xpopup.core.CenterPopupView
 
 /**

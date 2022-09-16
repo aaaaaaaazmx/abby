@@ -45,7 +45,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/delete")
-    fun plantDelete(@Field("deviceUuid")deviceUuid: String): Flow<HttpResult<Boolean>>
+    fun plantDelete(@Field("deviceUuid") deviceUuid: String): Flow<HttpResult<Boolean>>
 
     /**
      * 是否种植
@@ -70,6 +70,13 @@ interface HttpMyApiService {
     fun advertising(@Field("type") type: String? = "0"): Flow<HttpResult<MutableList<AdvertisingData>>>
 
     /**
+     * 种植引导图文获取
+     */
+    @FormUrlEncoded
+    @POST("abby/guide/getGuideInfo")
+    fun getGuideInfo(@Field("type") type: String): Flow<HttpResult<GuideInfoData>>
+
+    /**
      * 获取疑问列表
      */
     @POST("abby/base/troubleShooting")
@@ -80,11 +87,19 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/moments/getDetailByLearnMoreId")
-    fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String):Flow<HttpResult<DetailByLearnMoreIdData>>
+    fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>>
 
     /**
      * HowTo
      */
     @POST("abby/base/howTo")
-    fun howTo() :Flow<HttpResult<MutableList<MyTroubleData.Bean>>>
+    fun howTo(): Flow<HttpResult<MutableList<MyTroubleData.Bean>>>
+
+    /**
+     * 修改植物信息
+     */
+    @POST("abby/plant/updatePlantInfo")
+    fun updatePlantInfo(
+        @Body body: UpPlantInfoReq
+    ): Flow<HttpResult<BaseBean>>
 }

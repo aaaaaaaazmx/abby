@@ -1,12 +1,18 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.content.Intent
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.R
 import com.cl.common_base.adapter.LearnFinishPopAdapter
 import com.cl.common_base.bean.DetailByLearnMoreIdData
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.HomeFinishGuideBinding
+import com.cl.common_base.web.WebActivity
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
@@ -45,6 +51,21 @@ class LearnIdGuidePop(
             rvList.adapter = adapter
 
             ivClose.setOnClickListener { dismiss() }
+
+
+            adapter.addChildClickViewIds(R.id.tv_html)
+            adapter.setOnItemChildClickListener { adapter, view, position ->
+                val data = adapter.data[position] as? DetailByLearnMoreIdData.ItemBean
+                when (view.id) {
+                    // 跳转网络链接
+                    R.id.tv_html -> {
+                        val intent = Intent(context, WebActivity::class.java)
+                        intent.putExtra(WebActivity.KEY_WEB_URL, data?.content)
+                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, data?.title)
+                        context?.startActivity(intent)
+                    }
+                }
+            }
         }
     }
 }

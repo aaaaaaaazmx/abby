@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.cl.modules_home.response.GuideInfoData.PlantInfo" />
+            type="com.cl.common_base.bean.GuideInfoData.PlantInfo" />
 
     </data>
 
@@ -23,9 +23,9 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_two"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="13dp"
-                android:background="@drawable/bg_round_gray">
+                >
 
                 <TextView
                     android:textStyle="bold"
@@ -33,32 +33,18 @@
                     android:text="@{data.title}"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    tools:text="At least 3 gallons of pure water"
+                    tools:text="At least 3 gallons of pure waterAt least 3 gallons of pure waterAt least 3 gallons of pure waterAt least 3 gallons of pure waterAt least 3 gallons of pure waterAt least 3 gallons of pure water"
                     android:textColor="@color/black"
                     android:textSize="16sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/box"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <CheckBox
-                    android:checked="@{data.isCheck()}"
-                    android:background="@drawable/create_state_checkbox"
-                    android:id="@+id/box"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:button="@null"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
                 android:id="@+id/iv_pic"
-                tools:background="@mipmap/home_two_water_bg"
                 url="@{data.picture}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

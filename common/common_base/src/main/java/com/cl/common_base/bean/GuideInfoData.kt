@@ -1,4 +1,4 @@
-package com.cl.modules_home.response
+package com.cl.common_base.bean
 
 import androidx.annotation.Keep
 import com.chad.library.adapter.base.entity.MultiItemEntity
@@ -13,7 +13,7 @@ import com.cl.common_base.BaseBean
 data class GuideInfoData(
     var items: MutableList<PlantInfo>? = null,  // 引导描述详情
     var title: String? = null,  //	标题
-    var type: Int? = null, // 引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植
+    var type: Int? = null, // 引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植、8-seed
 ) : BaseBean() {
     @Keep
     data class PlantInfo(
@@ -42,7 +42,7 @@ data class GuideInfoData(
         const val VALUE_STATUS_DRYING = 5
         // Curing状态
         const val VALUE_STATUS_CURING = 7
-        // 种子孵化阶段
-        const val VALUE_STATUS_INCUBATION = 6
+        // 种子孵化阶段、seed
+        const val VALUE_STATUS_INCUBATION = 8
     }
 }

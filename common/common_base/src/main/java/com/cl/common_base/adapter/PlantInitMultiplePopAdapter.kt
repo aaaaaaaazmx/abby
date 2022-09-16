@@ -1,21 +1,19 @@
-package com.cl.modules_home.adapter
+package com.cl.common_base.adapter
 
 import android.text.Editable
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeItemCuringPopBinding
-import com.bbgo.module_home.databinding.HomeItemEditPopBinding
-import com.bbgo.module_home.databinding.HomeItemPopBinding
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.cl.common_base.ext.logI
+import com.cl.common_base.R
 import com.cl.common_base.util.ViewUtils
-import com.cl.modules_home.response.GuideInfoData
-import com.google.gson.annotations.Until
-import okio.blackholeSink
+import com.cl.common_base.bean.GuideInfoData
+import com.cl.common_base.databinding.HomeItemCuringPopBinding
+import com.cl.common_base.databinding.HomeItemEditPopBinding
+import com.cl.common_base.databinding.HomeItemIncubationPopBinding
+import com.cl.common_base.databinding.HomeItemPopBinding
 
 /**
  * 种植周期，多type布局
@@ -31,6 +29,7 @@ class PlantInitMultiplePopAdapter(
         addItemType(GuideInfoData.VALUE_STATUS_NORMAL, R.layout.home_item_pop)
         addItemType(GuideInfoData.VALUE_STATUS_DRYING, R.layout.home_item_edit_pop)
         addItemType(GuideInfoData.VALUE_STATUS_CURING, R.layout.home_item_curing_pop)
+        addItemType(GuideInfoData.VALUE_STATUS_INCUBATION, R.layout.home_item_incubation_pop)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -56,6 +55,13 @@ class PlantInitMultiplePopAdapter(
                 val binding = DataBindingUtil.bind<HomeItemCuringPopBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+            GuideInfoData.VALUE_STATUS_INCUBATION -> {
+                val binding = DataBindingUtil.bind<HomeItemIncubationPopBinding>(holder.itemView)
+                if (binding!= null) {
                     binding.data = data[position]
                     binding.executePendingBindings()
                 }
@@ -94,9 +100,6 @@ class PlantInitMultiplePopAdapter(
                 etWeight.addTextChangedListener {
                     curingBox.isChecked = !it.isNullOrEmpty()
                     data[holder.layoutPosition].isCheck = !it.isNullOrEmpty()
-//                    if (!it.isNullOrEmpty()) {
-//                        curingBox.isChecked = false
-//                    }
                     curingEtWeightChange?.invoke(it,holder.layoutPosition, etWeight, curingBox, data[holder.layoutPosition], data)
                 }
             }
