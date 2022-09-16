@@ -6,6 +6,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.core.text.underline
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
@@ -36,7 +37,7 @@ class PlantInitMultiplePopAdapter(
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
-        when ("$holder.itemViewType") {
+        when ("${holder.itemViewType}") {
             UnReadConstants.Plant.KEY_PLANT -> {
                 val binding = DataBindingUtil.bind<HomeItemPopBinding>(holder.itemView)
                 if (binding != null) {
@@ -115,7 +116,7 @@ class PlantInitMultiplePopAdapter(
                 val tvHtml = holder.itemView.findViewById<TextView>(R.id.tv_html)
                 tvHtml.text = buildSpannedString {
                     color(context.getColor(R.color.mainColor)) {
-                        append(item.title)
+                        underline { appendLine(item.title) }
                     }
                 }
             }

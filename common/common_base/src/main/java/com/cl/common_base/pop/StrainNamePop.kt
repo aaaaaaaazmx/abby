@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.StrainNameBinding
 import com.cl.common_base.widget.toast.ToastUtil
+import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
@@ -46,7 +47,11 @@ class StrainNamePop(
             }
 
             tvHow.setOnClickListener {
-                // todo 跳转固定的图文介绍界面
+                XPopup.Builder(context)
+                    .isDestroyOnDismiss(false)
+                    .isDestroyOnDismiss(false)
+                    .asCustom(BaseCenterPop(context, content = context.getString(R.string.seed_strain_name), isShowCancelButton = false))
+                    .show()
             }
 
             clNotKnow.setOnClickListener {

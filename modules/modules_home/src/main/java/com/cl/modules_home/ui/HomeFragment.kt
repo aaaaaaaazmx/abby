@@ -1367,17 +1367,29 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         pop.isDestroyOnDismiss(false)
                             .isDestroyOnDismiss(false)
                             .asCustom(context?.let {
-                                BaseCenterPop(it, onConfirmAction = {
-                                    ARouter.getInstance()
-                                        .build(RouterPath.My.PAGE_MT_CLONE_SEED)
-                                        .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
-                                        .withBoolean(Constants.Global.KEY_USER_NO_STRAIN_NAME, true)
-                                        .navigation(activity, KEY_FOR_USER_NAME)
-                                })
+                                // 显示居中弹窗文案
+                                BaseCenterPop(
+                                    it,
+                                    onConfirmAction = {
+                                        ARouter.getInstance()
+                                            .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                                            .withString(
+                                                Constants.Global.KEY_PLANT_ID,
+                                                data?.id.toString()
+                                            )
+                                            .withBoolean(
+                                                Constants.Global.KEY_USER_NO_STRAIN_NAME,
+                                                true
+                                            )
+                                            .navigation(activity, KEY_FOR_USER_NAME)
+                                    },
+                                    content = getString(com.cl.common_base.R.string.base_no_starin_name_desc),
+                                    isShowCancelButton = false
+                                )
                             }).show()
                         return@success
                     }
-                    
+
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
 
                     // 植物信息数据显示

@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.ChooseSeedPopBinding
 import com.google.gson.annotations.Until
+import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
@@ -65,7 +66,11 @@ class ChooserSeedPop(
 
             // 跳转图文链接Pop
             tvHow.setOnClickListener {
-                // todo 跳转到固定的图文链接模块
+                XPopup.Builder(context)
+                    .isDestroyOnDismiss(false)
+                    .isDestroyOnDismiss(false)
+                    .asCustom(BaseCenterPop(context, content = context.getString(R.string.seed_attribute), isShowCancelButton = false))
+                    .show()
             }
 
             ivClose.setOnClickListener {

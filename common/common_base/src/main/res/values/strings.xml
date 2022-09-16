@@ -81,6 +81,8 @@
     <string name="base_done">I am Done~</string>
     <string name="base_complete">Planting Complete</string>
     <string name="base_no_starin_name_desc">In order to develop a further planting plan more suitable for your strain, please select a type. Which Does not affect your current planting progress</string>
+    <string name="seed_attribute">\"Photo seeds will produce higher yields, while auto seeds can be harvested sooner. Most of our abby growers choose photo seeds. For more details, please contact your local seed distributor. \"</string>
+    <string name="seed_strain_name">Strains are variations of the same plant species. You can learn more about different strains from your local clone distributor. The information collected here is only for our records. In this version, it will not affect your planting schedule.</string>
 
 
 </resources>
