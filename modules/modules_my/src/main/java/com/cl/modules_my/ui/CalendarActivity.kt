@@ -80,6 +80,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }
         // 初始化当月
         binding.abMonth.text = CalendarUtil.getMonthFromLocation(Date().time)
+        binding.tvTodayDate.text = CalendarUtil.getYMDFromLocation(Date().time)
 
         // 设置滑动速度
         setMaxFlingVelocity(binding.rvList, 5000)
@@ -92,21 +93,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun initData() {
         adapter.setOnItemChildClickListener { adapter, view, position ->
+            val list = adapter.data as? MutableList<com.cl.common_base.util.calendar.Calendar>
             val data = adapter.data[position] as? com.cl.common_base.util.calendar.Calendar
             when (view.id) {
                 R.id.tv_content_day -> {
+                    if (list.isNullOrEmpty()) return@setOnItemChildClickListener
                     // 找到之前的，清除之前的isChoose、然后改为true
-                    val list =
-                        adapter.data as? MutableList<com.cl.common_base.util.calendar.Calendar>
+
                     // 设置为true
                     // 判断点击的是否是今日
                     if (data?.isCurrentDay == true) {
-//                        view.background = ContextCompat.getDrawable(
-//                            this@CalendarActivity,
-//                            com.cl.common_base.R.drawable.base_dot_main_color
-//                        )
                     } else {
-                        list?.indexOfFirst { it.isChooser }?.let {
+                        list.indexOfFirst { it.isChooser }.let {
                             if (it != -1) {
                                 list[it].isChooser = false
                                 adapter.notifyItemChanged(it)
@@ -129,6 +127,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         animation.repeatCount = 1 //重复执行动画
                         animation.repeatMode = Animation.REVERSE //重复 缩小和放大效果
                         view.startAnimation(animation) //使用View启动动画
+
+                        // todo 时间转换，并且需要请求接口
+                        data?.timeInMillis?.let {
+                            binding.tvTodayDate.text = CalendarUtil.getYMDFromLocation(it)
+                        }
                     }
                 }
 
@@ -310,45 +313,47 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         layoutParams.width = dp2px(0f)
                         layoutParams.height = dp2px(0f)
                         holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-//                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
-//                val drawable = RoundedBitmapDrawableFactory.create(resources,
-//                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-//                drawable.isCircular = true
+    //                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
+    //                val drawable = RoundedBitmapDrawableFactory.create(resources,
+    //                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+    //                drawable.isCircular = true
                         if (position == 0) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
-                            ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
+                            ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_iv_red_circle)
                         )
-//                        holder.itemView.width(LinearLayout.LayoutParams.WRAP_CONTENT)
-//                        holder.itemView.height(LinearLayout.LayoutParams.WRAP_CONTENT)
-//                        holder.llLine.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
+    //                        holder.itemView.width(LinearLayout.LayoutParams.WRAP_CONTENT)
+    //                        holder.itemView.height(LinearLayout.LayoutParams.WRAP_CONTENT)
+    //                        holder.llLine.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
                         return
                     }
                     val layoutParams = holder.imgMark.layoutParams as LinearLayout.LayoutParams
-                    layoutParams.width = dp2px(30f)
-                    layoutParams.height = dp2px(30f)
-                    holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-//                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
-//                val drawable = RoundedBitmapDrawableFactory.create(resources,
-//                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-//                drawable.isCircular = true
+    //                    layoutParams.width = dp2px(10f)
+    //                    layoutParams.height = dp2px(10f)
+                        holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
+                        holder.imgLineEnd.layoutParams.width = dp2px(0.8f)
+                        holder.imgLineStart.layoutParams.width = dp2px(0.8f)
+    //                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
+    //                val drawable = RoundedBitmapDrawableFactory.create(resources,
+    //                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
+    //                drawable.isCircular = true
                     if (position == 0) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
-                        ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
+                        ContextCompat.getDrawable(this@CalendarActivity, R.drawable.my_head_bg)
                     )
-//                holder.imgMark.setPadding(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
+    //                holder.imgMark.setPadding(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
                     holder.imgMark.scaleType = ImageView.ScaleType.CENTER_CROP
-//                holder.imgMark.background = ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
+    //                holder.imgMark.background = ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
 
 
                     // 加载右边布局
-//                val drawable2 = RoundedBitmapDrawableFactory.create(resources,BitmapFactory.decodeResource(resources, R.mipmap.my_about_us))
-//                drawable2.cornerRadius = dp2px(6f).toFloat()
-//                holder.itemView.img_one.setImageDrawable(drawable2)
-//                holder.itemView.img_two.setImageDrawable(drawable2)
-//                holder.itemView.img_three.setImageDrawable(drawable2)
-//                if(position % 3 == 0){
-//                    holder.itemView.img_two.visibility = View.VISIBLE
-//                } else {
-//                    holder.itemView.img_two.visibility = View.GONE
-//                }
+    //                val drawable2 = RoundedBitmapDrawableFactory.create(resources,BitmapFactory.decodeResource(resources, R.mipmap.my_about_us))
+    //                drawable2.cornerRadius = dp2px(6f).toFloat()
+    //                holder.itemView.img_one.setImageDrawable(drawable2)
+    //                holder.itemView.img_two.setImageDrawable(drawable2)
+    //                holder.itemView.img_three.setImageDrawable(drawable2)
+    //                if(position % 3 == 0){
+    //                    holder.itemView.img_two.visibility = View.VISIBLE
+    //                } else {
+    //                    holder.itemView.img_two.visibility = View.GONE
+    //                }
                 }
 
                 override fun createCustomView(
@@ -358,8 +363,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 ) {
                     LayoutInflater.from(this@CalendarActivity)
                         .inflate(R.layout.my_item_custom, rightLayout, true)
+
+                    LayoutInflater.from(this@CalendarActivity)
+                        .inflate(R.layout.my_item_lef_custom, leftLayout, true)
                 }
 
-            })
+            }).setLayoutType(LayoutType.ALL)
+            .setIsCustom(true)
     }
 }

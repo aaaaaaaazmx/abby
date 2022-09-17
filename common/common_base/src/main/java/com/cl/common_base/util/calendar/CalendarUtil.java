@@ -281,4 +281,12 @@ public final class CalendarUtil {
         return sdf.format(time);
     }
 
+    /**
+     * 格式化年月日
+     */
+    public static String getYMDFromLocation(long time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy", Locale.getDefault());
+        return sdf.format(time);
+    }
+
 }

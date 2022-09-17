@@ -55,8 +55,7 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
 
         // 解答疑问
         binding.clTrouble.setOnClickListener {
-//            startActivity(Intent(context, MyTroubleShootingActivity::class.java))
-            startActivity(Intent(context, CalendarActivity::class.java))
+            startActivity(Intent(context, MyTroubleShootingActivity::class.java))
         }
 
         // How to

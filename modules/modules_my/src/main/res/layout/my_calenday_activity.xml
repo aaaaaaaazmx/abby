@@ -25,7 +25,7 @@
             android:layout_marginStart="11dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="11dp"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="5dp">
 
             <com.cl.common_base.widget.AbTextViewCalendar
                 android:id="@+id/ab_month"
@@ -59,6 +59,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="S"
+                android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
             <com.cl.common_base.widget.AbTextViewCalendar
@@ -67,6 +68,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="M"
+                android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
             <com.cl.common_base.widget.AbTextViewCalendar
@@ -75,6 +77,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="T"
+                android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
             <com.cl.common_base.widget.AbTextViewCalendar
@@ -83,6 +86,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="W"
+                android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
             <com.cl.common_base.widget.AbTextViewCalendar
@@ -91,6 +95,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="T"
+                android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
             <com.cl.common_base.widget.AbTextViewCalendar
@@ -99,6 +104,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="F"
+                android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
             <com.cl.common_base.widget.AbTextViewCalendar
@@ -107,6 +113,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="S"
+                android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
         </LinearLayout>
@@ -114,7 +121,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="250dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_title"
@@ -126,32 +133,96 @@
             android:background="@mipmap/my_calendar_shadow_bg"
             android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="34dp"
+                android:background="@color/white"
+                android:orientation="vertical">
 
-                <View
-                    android:id="@+id/vv"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp"
-                    android:layout_marginTop="50dp"
-                    android:background="#000000"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <com.joketng.timelinestepview.view.TimeLineStepView
-                    app:layout_constraintTop_toBottomOf="@+id/vv"
-                    android:id="@+id/time_line"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="50dp"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"
-                    app:lineActiveColor="@color/mainColor"
-                    app:lineInActiveColor="@color/lineBg"
-                    app:lineWidth="6dp" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:layout_marginStart="18dp"
+                    android:layout_marginEnd="18dp">
+
+                    <com.cl.common_base.widget.AbTextViewCalendar
+                        android:id="@+id/tv_today_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/mainColor"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="2022-09-09" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_today_date"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/tv_today_date">
+
+                        <com.cl.common_base.widget.AbTextViewCalendar
+                            android:id="@+id/tv_cycle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_marginEnd="14dp"
+                            android:textColor="@color/mainColor"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            tools:text="Flowing" />
+
+                        <ImageView
+                            android:id="@+id/iv_ask"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:background="@mipmap/my_calendar_ask" />
+                    </RelativeLayout>
+
+                    <com.cl.common_base.widget.AbTextViewCalendar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/black"
+                        android:textSize="13sp"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_today_date"
+                        tools:text="Day 1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="25dp">
+
+                    <View
+                        android:id="@+id/vv"
+                        android:layout_width="match_parent"
+                        android:layout_height="0.81dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginEnd="20dp"
+                        android:background="#E5E5E5"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.joketng.timelinestepview.view.TimeLineStepView
+                        android:id="@+id/time_line"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="50dp"
+                        android:background="@color/white"
+                        android:paddingStart="24dp"
+                        android:paddingEnd="24dp"
+                        app:layout_constraintTop_toBottomOf="@+id/vv"
+                        app:lineActiveColor="@color/mainGray"
+                        app:lineInActiveColor="@color/mainGray"
+                        app:lineWidth="80dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

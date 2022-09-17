@@ -18,8 +18,8 @@
         <RelativeLayout
             android:background="@{data.currentDay ? @drawable/base_choose_main_color : data.chooser ? @drawable/base_dot_main_color : null}"
             android:id="@+id/tv_content_day"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_gravity="center"
             android:layout_marginStart="2dp"
             android:layout_marginEnd="2dp">
