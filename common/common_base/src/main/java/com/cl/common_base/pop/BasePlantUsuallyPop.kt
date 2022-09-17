@@ -7,18 +7,23 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cl.common_base.ext.logI
-import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PlantInitMultiplePopAdapter
+import com.cl.common_base.bean.GuideInfoData
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.HomePlantUsuallyPopBinding
+import com.cl.common_base.ext.logI
+import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
+import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnExternalPreviewEventListener
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.util.SmartGlideImageLoader
-import java.net.URL
+
 
 /**
  * 种植引导从后台拉取的数据POP
@@ -186,7 +191,7 @@ class BasePlantUsuallyPop(
             )
             // 按钮点击
             adapter.setOnItemChildClickListener { adapter, view, position ->
-               val data =  adapter.data[position] as? GuideInfoData.PlantInfo
+                val data = adapter.data[position] as? GuideInfoData.PlantInfo
                 when (view.id) {
                     R.id.cl_two -> {
                         val cb = if (view.id == R.id.cl_two) {
@@ -439,6 +444,22 @@ class BasePlantUsuallyPop(
 
                     // 超链接
                     R.id.tv_html -> {
+                        // 主要是判断当前后缀是否是视频
+                        if (data?.url?.let { Constants.videoList.contains(it) } == true) {
+                            // 视频播放
+                            val showImgList: ArrayList<LocalMedia> = ArrayList()
+                            val media = LocalMedia()
+                            media.path = data.url    // this就是网络视频地址 ， https 开头的，阿里云链接视频可直接播放
+                            showImgList.add(media)
+                            PictureSelector.create(context)
+                                .openPreview()
+                                .setImageEngine(GlideEngine.createGlideEngine())
+                                .isAutoVideoPlay(true)
+                                .isLoopAutoVideoPlay(true)
+                                .isVideoPauseResumePlay(true)
+                                .startActivityPreview(0, false, showImgList)
+                            return@setOnItemChildClickListener
+                        }
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, data?.url)
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, data?.title)

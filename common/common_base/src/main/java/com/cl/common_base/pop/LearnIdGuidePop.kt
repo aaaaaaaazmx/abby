@@ -12,7 +12,10 @@ import com.cl.common_base.adapter.LearnFinishPopAdapter
 import com.cl.common_base.bean.DetailByLearnMoreIdData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.HomeFinishGuideBinding
+import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.web.WebActivity
+import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.entity.LocalMedia
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
@@ -59,6 +62,22 @@ class LearnIdGuidePop(
                 when (view.id) {
                     // 跳转网络链接
                     R.id.tv_html -> {
+                        if (data?.content?.let { Constants.videoList.contains(it) } == true) {
+                            // 视频播放
+                            val showImgList: ArrayList<LocalMedia> = ArrayList()
+                            val media = LocalMedia()
+                            media.path = data.content    // this就是网络视频地址 ， https 开头的，阿里云链接视频可直接播放
+                            showImgList.add(media)
+                            PictureSelector.create(context)
+                                .openPreview()
+                                .setImageEngine(GlideEngine.createGlideEngine())
+                                .isAutoVideoPlay(true)
+                                .isLoopAutoVideoPlay(true)
+                                .isVideoPauseResumePlay(true)
+                                .startActivityPreview(0, false, showImgList)
+                            return@setOnItemChildClickListener
+                        }
+                        
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, data?.content)
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, data?.extend?.title)
