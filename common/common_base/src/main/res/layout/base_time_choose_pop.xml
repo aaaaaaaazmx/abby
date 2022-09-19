@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/white"
+        tools:ignore="MissingConstraints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        
+        
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <com.cl.common_base.widget.wheel.time.HourPicker
+                android:id="@+id/hourPicker_layout_time"
+                app:fontTypeface="fonts/Gilroy-Medium.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                app:wheelCurtainBorder="true"
+                app:itemHeightSpace="5dp"
+                app:selectedTextSize="21dp"
+                app:itemTextSize="18sp"
+                app:itemTextColor="#979797"
+                app:wheelCurtainBorderColor="@color/mainColor"
+                app:halfVisibleItemCount="2"
+                app:wheelCyclic="false" />
+
+            <com.cl.common_base.widget.wheel.time.MinutePicker
+                app:fontTypeface="fonts/Gilroy-Medium.ttf"
+                app:indicatorTextSize="16sp"
+                android:id="@+id/minutePicker_layout_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                app:itemHeightSpace="5dp"
+                app:itemTextSize="18sp"
+                app:selectedTextSize="21dp"
+                app:itemTextColor="#979797"
+                app:selectedTextColor="@color/black"
+                app:halfVisibleItemCount="2"
+                app:wheelCurtainBorderColor="@color/mainColor"
+                app:wheelCurtainBorder="true"
+                app:wheelCyclic="false" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -10,7 +10,9 @@ import com.lxj.xpopup.core.CenterPopupView
 class BaseCenterPop(
     context: Context,
     private val onConfirmAction: (() -> Unit)? = null,
-    val content: String? = null,
+    private val content: String? = null,
+    private val confirmText: String? = context.getString(R.string.my_confirm),
+    private val cancelText: String? = context.getString(R.string.my_cancel),
     private val isShowCancelButton: Boolean = true
 ) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
@@ -29,6 +31,9 @@ class BaseCenterPop(
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<BaseCenterBinding>(popupImplView)?.apply {
+            tvConfirm.text = confirmText
+            tvCancel.text = cancelText
+
             // 是否显示和隐藏按钮
             ViewUtils.setVisible(isShowCancelButton, tvCancel, xpopupDivider2)
 

@@ -29,6 +29,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.viewmodel.LoginViewModel
+import com.cl.modules_my.ui.CalendarActivity
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -62,6 +63,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             splashScreen?.setKeepOnScreenCondition { false }
         }
         redirectTo()
+
         //渐变展示启动屏
 //        alphaAnimation = AlphaAnimation(0.3f, 1.0f)
 //        alphaAnimation?.duration = 500

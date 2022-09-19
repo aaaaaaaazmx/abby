@@ -2,9 +2,12 @@ package com.cl.common_base.pop
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.webkit.MimeTypeMap
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.R
@@ -18,8 +21,8 @@ import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
-import com.luck.picture.lib.interfaces.OnExternalPreviewEventListener
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.util.SmartGlideImageLoader
@@ -444,21 +447,13 @@ class BasePlantUsuallyPop(
 
                     // 超链接
                     R.id.tv_html -> {
-                        // 主要是判断当前后缀是否是视频
-                        if (data?.url?.let { Constants.videoList.contains(it) } == true) {
-                            // 视频播放
-                            val showImgList: ArrayList<LocalMedia> = ArrayList()
-                            val media = LocalMedia()
-                            media.path = data.url    // this就是网络视频地址 ， https 开头的，阿里云链接视频可直接播放
-                            showImgList.add(media)
-                            PictureSelector.create(context)
-                                .openPreview()
-                                .setImageEngine(GlideEngine.createGlideEngine())
-                                .isAutoVideoPlay(true)
-                                .isLoopAutoVideoPlay(true)
-                                .isVideoPauseResumePlay(true)
-                                .startActivityPreview(0, false, showImgList)
-                            return@setOnItemChildClickListener
+                        Constants.videoList.forEach {
+                            if (data?.url?.endsWith(it) == true) {
+                                val mediaIntent = Intent(Intent.ACTION_VIEW)
+                                mediaIntent.setDataAndType(Uri.parse(data.url), "video/*")
+                                context?.startActivity(mediaIntent)
+                                return@setOnItemChildClickListener
+                            }
                         }
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, data?.url)

@@ -83,6 +83,20 @@
     <string name="base_no_starin_name_desc">In order to develop a further planting plan more suitable for your strain, please select a type. Which Does not affect your current planting progress</string>
     <string name="seed_attribute">\"Photo seeds will produce higher yields, while auto seeds can be harvested sooner. Most of our abby growers choose photo seeds. For more details, please contact your local seed distributor. \"</string>
     <string name="seed_strain_name">Strains are variations of the same plant species. You can learn more about different strains from your local clone distributor. The information collected here is only for our records. In this version, it will not affect your planting schedule.</string>
+    <string name="my_confirm">Confirm</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="my_to_do">do you wanna go to change water now?</string>
+    <string name="my_go">Go</string>
+    <string name="my_remind_me">Remind Me</string>
+    <string name="my_cancel">Cancel</string>
+    <string name="my_calendar_permisson">To use reminders for the first time, you need to authorize abby to access your calendar in order to create task reminders</string>
 
 
 </resources>

@@ -77,7 +77,7 @@ object Version {
 
     const val permission = "1.6.4"
 
-    const val choosePhoto = "v3.10.5"
+    const val choosePhoto = "v3.10.6"
 
     const val luban = "1.1.8"
 
