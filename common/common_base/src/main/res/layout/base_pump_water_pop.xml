@@ -80,10 +80,24 @@
                     android:textSize="18sp"
                     />
 
+
+                <CheckBox
+                    android:visibility="gone"
+                    android:id="@+id/cb_bg"
+                    android:layout_width="78dp"
+                    android:layout_height="78dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:background="@mipmap/home_water_bg"
+                    android:button="@null"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+
                 <com.cl.common_base.widget.circlebar.CircleProgress
                     android:visibility="gone"
-                    android:layout_width="154dp"
-                    android:layout_height="154dp"
+                    android:layout_width="78dp"
+                    android:layout_height="78dp"
                     android:layout_centerInParent="true"
                     android:layout_gravity="center"
                     android:button="@null"
@@ -97,19 +111,20 @@
                     android:id="@+id/circle_bar"
                     app:antiAlias="true"
                     app:arcWidth="10dp"
-                    app:bgArcColor="@color/mainGray"
+                    app:bgArcColor="@color/transparent"
                     app:bgArcWidth="10dp"
                     app:hint=""
                     app:hintSize="25sp"
                     app:maxValue="100"
-                    app:startAngle="270"
+                    app:startAngle="275"
                     app:sweepAngle="360"
-                    app:unit="%"
-                    app:unitSize="15sp"
+                    app:unit=""
+                    app:arcColors="#53CF8D"
+                    app:unitSize="10sp"
                     app:unitColor="#53CF8D"
                     app:valueColor="#53CF8D"
                     app:value="0"
-                    app:valueSize="36sp" />
+                    app:valueSize="10sp" />
 
                 <CheckBox
                     android:id="@+id/btn_success"

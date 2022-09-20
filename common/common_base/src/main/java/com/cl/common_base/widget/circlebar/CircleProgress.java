@@ -32,6 +32,7 @@ import com.cl.common_base.R;
 public class CircleProgress extends View {
 
     private static final String TAG = CircleProgress.class.getSimpleName();
+    private boolean isRectangle;
     private Context mContext;
 
     //默认大小
@@ -69,7 +70,7 @@ public class CircleProgress extends View {
     private RectF mRectF;
     //渐变的颜色是360度，如果只显示270，那么则会缺失部分颜色
     private SweepGradient mSweepGradient;
-    //    private int[] mGradientColors = {Color.GREEN, Color.YELLOW, Color.RED};
+//        private int[] mGradientColors = {};
     private int[] mGradientColors = {ContextCompat.getColor(getContext(), R.color.mainColor), ContextCompat.getColor(getContext(), R.color.mainColor)};
     //当前进度，[0.0f,1.0f]
     private float mPercent;
@@ -141,7 +142,8 @@ public class CircleProgress extends View {
         int gradientArcColors = typedArray.getResourceId(R.styleable.CircleProgressBar_arcColors, 0);
         if (gradientArcColors != 0) {
             try {
-                int[] gradientColors = getResources().getIntArray(gradientArcColors);
+//                int[] gradientColors = getResources().getIntArray(gradientArcColors);
+                int[] gradientColors = getGradientColors();
                 if (gradientColors.length == 0) {//如果渐变色为数组为0，则尝试以单色读取色值
                     int color = getResources().getColor(gradientArcColors);
                     mGradientColors = new int[2];
@@ -302,6 +304,11 @@ public class CircleProgress extends View {
     private void updateArcPaint() {
         // 设置渐变
         mSweepGradient = new SweepGradient(mCenterPoint.x, mCenterPoint.y, mGradientColors, null);
+        if (isRectangle) {
+            mArcPaint.setStrokeCap(Paint.Cap.SQUARE);
+        } else {
+            mArcPaint.setStrokeCap(Paint.Cap.ROUND);
+        }
         mArcPaint.setShader(mSweepGradient);
     }
 
@@ -420,6 +427,12 @@ public class CircleProgress extends View {
     public void setGradientColors(int[] gradientColors) {
         mGradientColors = gradientColors;
         updateArcPaint();
+    }
+    /**
+     * 显示矩形进度条
+     */
+    public void setRectangle(boolean isBoolean) {
+        isRectangle = isBoolean;
     }
 
     public long getAnimTime() {

@@ -236,5 +236,8 @@ class HomePeriodPop(
         const val KEY_ON_GOING = "2"
         const val KEY_ALLOW_UNLOCKING = "3"
         const val KEY_LOCK_COMPLETED = "4"
+
+
+        const val KEY_SEED = "Seed"
     }
 }

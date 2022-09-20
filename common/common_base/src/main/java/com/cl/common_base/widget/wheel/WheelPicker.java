@@ -430,7 +430,7 @@ public class WheelPicker<T> extends View {
             mPaint.setColor(mCurtainBorderColor);
             //   mSelectedItemRect.set(getPaddingLeft(), mItemHeight * mHalfVisibleItemCount,
             //                getWidth() - getPaddingRight(), mItemHeight + mItemHeight * mHalfVisibleItemCount);
-            canvas.drawLine(0, mItemHeight * mHalfVisibleItemCount - mItemHeight / 3, getWidth(), mItemHeight * mHalfVisibleItemCount - mItemHeight / 3, mPaint);
+            canvas.drawLine(0, mItemHeight * mHalfVisibleItemCount - (mItemHeight / 3.8f), getWidth(), mItemHeight * mHalfVisibleItemCount - (mItemHeight / 3.8f), mPaint);
             canvas.drawLine(0, mItemHeight + mItemHeight * mHalfVisibleItemCount, getWidth(), mItemHeight + mItemHeight * mHalfVisibleItemCount, mPaint);
 //            canvas.drawRect(mSelectedItemRect, mPaint);
 //            canvas.drawRect(mDrawnRect, mPaint);

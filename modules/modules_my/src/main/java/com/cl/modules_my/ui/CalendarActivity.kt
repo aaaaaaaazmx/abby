@@ -16,7 +16,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.height
 import com.cl.common_base.ext.logI
@@ -25,6 +27,7 @@ import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.pop.BaseTimeChoosePop
+import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
@@ -37,10 +40,13 @@ import com.joketng.timelinestepview.TimeLineState
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
 import com.joketng.timelinestepview.view.TimeLineStepView
 import com.lxj.xpopup.XPopup
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.reflect.Field
 import java.util.*
 
 
+@Route(path = RouterPath.My.PAGE_MY_CALENDAR)
+@AndroidEntryPoint
 class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     private val adapter by lazy {
         MyCalendarAdapter(mutableListOf())
@@ -70,6 +76,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 Calendar.SUNDAY
             )
         }
+
         // 添加数据
         adapter.setList(
             list
@@ -313,7 +320,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         override fun onResult(result: Boolean) {
                                             if (!result) return
                                             // 跳转选择事件弹窗
-                                            pop.asCustom(BaseTimeChoosePop(this@CalendarActivity)).show()
+                                            pop.asCustom(
+                                                BaseTimeChoosePop(
+                                                    this@CalendarActivity,
+                                                    onConfirmAction = {time, timeMis ->
+                                                        // 时间
+                                                        // 传给后台 & 上报给手机本地日历
+                                                        // todo 传给后台
+                                                        // todo 上报给手机本地日历
+                                                        CalendarEventUtil.addCalendarEvent(this@CalendarActivity,
+                                                            "吃饭睡觉，打豆豆",
+                                                            "打豆豆",
+                                                            timeMis,2
+                                                        )
+                                                    })
+                                            ).show()
                                         }
                                     },
                                     Manifest.permission.READ_CALENDAR,

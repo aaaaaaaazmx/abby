@@ -1,13 +1,12 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
-import android.widget.Toast
+import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
@@ -33,7 +32,6 @@ import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlin.concurrent.thread
 
 
 /**
@@ -99,6 +97,8 @@ class BasePumpWaterPop(
             binding?.circleBar?.stopAnimator()
             binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
         }
+        job?.cancel()
+        count = 0
         super.onDismiss()
     }
 
@@ -106,12 +106,17 @@ class BasePumpWaterPop(
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<BasePumpWaterPopBinding>(popupImplView)?.apply {
+            circleBar.gradientColors = intArrayOf(
+                Color.parseColor("#8053CF8D"),
+                Color.parseColor("#8053CF8D"),
+            )
+            circleBar.setRectangle(true)
             btnSuccess.setOnClickListener {
                 onSuccessAction?.invoke(btnSuccess.isChecked)
                 // true 排水
                 // false 停止
                 synchronized(this) {
-                    ViewUtils.setVisible(btnSuccess.isChecked, binding?.circleBar)
+                    ViewUtils.setVisible(btnSuccess.isChecked, binding?.circleBar, binding?.cbBg)
                     it.background = if (btnSuccess.isChecked) {
                         downTime()
                         context.resources.getDrawable(
@@ -119,7 +124,10 @@ class BasePumpWaterPop(
                             context.theme
                         )
                     } else {
+                        job?.cancel()
+                        circleBar.reset()
                         count++
+
                         circleBar.stopAnimator()
                         context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
                     }
@@ -219,12 +227,14 @@ class BasePumpWaterPop(
 //                            isOpenOrStop(value)
                             synchronized(this) {
                                 ViewUtils.setVisible(
-                                    (value as? Boolean == true), binding?.circleBar
+                                    (value as? Boolean == true), binding?.circleBar, binding?.cbBg
                                 )
                                 // 加锁的目的是为了
                                 // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
                                 binding?.btnSuccess?.background =
                                     if ((value as? Boolean != true)) {
+                                        job?.cancel()
+                                        binding?.circleBar?.reset()
                                         binding?.circleBar?.stopAnimator()
                                         context.resources.getDrawable(
                                             R.mipmap.base_start_bg,
@@ -308,28 +318,50 @@ class BasePumpWaterPop(
             .launchIn(scope)
     }
 
+    private var job: Job? = null
     private fun downTime() {
-        countDownCoroutines(120,
+        if (count >= 4) {
+            job?.cancel()
+            binding?.circleBar?.reset()
+            binding?.circleBar?.visibility = View.GONE
+            return
+        }
+        job?.cancel()
+        job = countDownCoroutines(120,
             lifecycleScope,
             onTick = {
                 if (it == 0) {
                     binding?.circleBar?.stopAnimator()
                     return@countDownCoroutines
                 }
-                val value = 0.2775f * (120 - it)
+                var value = 0.2775f * (120 - it)
                 when (count) {
                     // 三次加水
                     1 -> {
                         binding?.circleBar?.setValue(value)
                     }
                     2 -> {
-                        binding?.circleBar?.setValue(33.3f + value)
+                        value += 33f
+                        binding?.circleBar?.setValue(value)
                     }
                     3 -> {
-                        binding?.circleBar?.setValue(66.6f+ value)
+                        value += 66f
+                        binding?.circleBar?.setValue(value)
                     }
                 }
             }, onStart = {
+                when (count) {
+                    // 三次加水
+                    1 -> {
+                        binding?.circleBar?.setValue(1f)
+                    }
+                    2 -> {
+                        binding?.circleBar?.setValue(33f)
+                    }
+                    3 -> {
+                        binding?.circleBar?.setValue(66f)
+                    }
+                }
 
             }, onFinish = {
                 binding?.circleBar?.stopAnimator()

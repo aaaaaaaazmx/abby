@@ -30,7 +30,7 @@ class BasicParamsInterceptor : Interceptor {
             addQueryParameter("mobileBrand", if (privacyPolicy) AppUtil.deviceBrand else null)
             addQueryParameter("version", if (privacyPolicy) "${AppUtil.appVersionCode}" else null)
             addQueryParameter("system_version_code", "${Build.VERSION.SDK_INT}")
-            addQueryParameter("timeZone", "${DateHelper.getTimeDifference()}")
+            addQueryParameter("timeZone", "${DateHelper.getTimeZOneNumber()}")
 //            addQueryParameter("token", Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
         }.build()
         val request = originalRequest.newBuilder().url(url).method(

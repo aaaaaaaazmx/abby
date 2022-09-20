@@ -305,6 +305,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 开始种植
         binding.pplantNinth.apply {
+            // 选中日历
+            ivCalendar.setOnClickListener{
+                // 如果是订阅用户
+                if (mViewMode.refreshToken.value?.data?.isVip == 1) {
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation()
+                } else {
+                    // todo 如果不是订阅用户，那么直接弹窗
+                }
+            }
+
             // 客服支持
             ivSupport.setOnClickListener {
                 // todo 客服支持
@@ -1391,6 +1401,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
 
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
+                    data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }?.let {
+                        if (it.journeyName == HomePeriodPop.KEY_SEED) {
+                            // 那么直接显示
+                            // 显示布局
+                            ViewUtils.setVisible(binding.pplantNinth.root)
+                            //  todo 这个显示有问题，会重复隐藏
+                            ViewUtils.setGone(binding.pplantNinth.clContinue)
+                        }
+                    }
 
                     // 植物信息数据显示
                     binding.pplantNinth.tvWeekDay.text = """

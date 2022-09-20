@@ -41,7 +41,7 @@ object Version {
 
     // 网络
     const val retrofitVersion = "2.9.0"
-    const val okHttp3Version = "4.9.3"
+    const val okHttp3Version = "4.10.0"
     const val gsonVersion = "2.9.0"
     const val frescoVersion = "2.6.0"
 

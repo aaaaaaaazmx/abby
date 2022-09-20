@@ -22,6 +22,7 @@ public class HourPicker extends WheelPicker<Integer> {
 
     private boolean force12HourMode;
     private boolean normal12HourMode;
+    private boolean isAbbyCalendar;
     private OnHourSelectedListener mOnHourSelectedListener;
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
@@ -71,16 +72,9 @@ public class HourPicker extends WheelPicker<Integer> {
 
     private void updateHour() {
         List<Integer> list = new ArrayList<>();
-        if (is12HourMode()) {
-            for (int i = 1; i < 13; i++) {
-                list.add(i);
-            }
-        } else {
-            for (int i = 0; i < 24; i++) {
-                list.add(i);
-            }
+        for (int i = 0; i < 24; i++) {
+            list.add(i);
         }
-
         setDataList(list);
     }
 
@@ -97,7 +91,7 @@ public class HourPicker extends WheelPicker<Integer> {
             }
         }
         for (int i = 0; i < getDataList().size(); i++) {
-            if (getDataList().get(i) == hour) {
+            if (getDataList().get(i).equals(hour + "")) {
                 setCurrentPosition(i, smoothScroll);
                 break;
             }
@@ -109,6 +103,6 @@ public class HourPicker extends WheelPicker<Integer> {
     }
 
     public interface OnHourSelectedListener {
-        void onHourSelected(int hour);
+        void onHourSelected(Integer hour);
     }
 }

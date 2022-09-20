@@ -51,25 +51,9 @@ public class MinutePicker extends WheelPicker<Integer> {
 
     private void updateMinute() {
         List<Integer> list = new ArrayList<>();
-//        for (int i = 0; i < 60; i++) {
-//            list.add(i);
-//        }
-
-        // 变成了0 12 30 45 的叠加
-        for (int i = 0; i < 4; i ++) {
-            switch (i) {
-                case 0 :
-                    list.add(0);
-                    break;
-                case 1 :
-                    list.add(15);
-                    break;
-                case 2 :
-                    list.add(30);
-                    break;
-                case 3 :
-                    list.add(45);
-                    break;
+        for (int i = 0; i < 60; i++) {
+            if (i % 5 == 0) {
+                list.add(i);
             }
         }
         setDataList(list);

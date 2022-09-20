@@ -8,7 +8,9 @@ import com.cl.common_base.net.adapter.GsonTypeAdapterFactory
 import com.cl.common_base.net.interceptor.*
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -35,9 +37,9 @@ object ServiceCreators {
 //    )
 
     private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(20, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(100, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
         .addInterceptor(TokenInterceptor())
         .addInterceptor(MultiBaseUrlInterceptor())
@@ -47,6 +49,8 @@ object ServiceCreators {
         .cache(cache)
         .addInterceptor(AddHeadInterceptor())
         .addInterceptor(BasicParamsInterceptor())
+        .connectionPool(ConnectionPool(32, 5, TimeUnit.MINUTES))
+        .protocols(listOf(Protocol.HTTP_1_1))
         .build()
 
     private val builder = Retrofit.Builder()

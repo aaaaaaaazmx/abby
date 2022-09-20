@@ -135,6 +135,32 @@ public final class Calendar implements Serializable, Comparable<Calendar>, Multi
      */
     private int flag = KEY_CONTENT;
 
+    /**
+     * 周期的开始日期
+     */
+    private long startDay;
+
+    /**
+     * 周期的结束日期
+     */
+    private long endDay;
+
+    public long getStartDay() {
+        return startDay;
+    }
+
+    public void setStartDay(long startDay) {
+        this.startDay = startDay;
+    }
+
+    public long getEndDay() {
+        return endDay;
+    }
+
+    public void setEndDay(long endDay) {
+        this.endDay = endDay;
+    }
+
     public boolean isChooser() {
         return isChooser;
     }

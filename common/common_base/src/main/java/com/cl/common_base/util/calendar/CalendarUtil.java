@@ -18,6 +18,7 @@ package com.cl.common_base.util.calendar;
 import static com.cl.common_base.ext.LogKt.logI;
 
 import android.annotation.SuppressLint;
+import android.net.vcn.VcnManager;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public final class CalendarUtil {
     @SuppressLint("SimpleDateFormat")
     @JvmStatic
     public static int getDate(String formatStr, Date date) {
-        SimpleDateFormat format = new SimpleDateFormat(formatStr);
+        SimpleDateFormat format = new SimpleDateFormat(formatStr, Locale.getDefault());
         return Integer.parseInt(format.format(date));
     }
 
@@ -55,15 +56,37 @@ public final class CalendarUtil {
 //    }
 
     /**
+     * 是否是周日
+     * @param calendar
+     * @return
+     */
+    public static boolean isSunday(com.cl.common_base.util.calendar.Calendar calendar) {
+        int week = getWeekFormCalendar(calendar);
+        return week == Calendar.SUNDAY - 1;
+    }
+
+    /**
+     * 是否是周六
+     * @param calendar
+     * @return
+     */
+    public static boolean isSaturday(com.cl.common_base.util.calendar.Calendar calendar) {
+        int week = getWeekFormCalendar(calendar);
+        return week == Calendar.SATURDAY - 1;
+    }
+
+
+
+    /**
      * 获取某个日期是星期几
      * 测试通过
      *
      * @param calendar 某个日期
      * @return 返回某个日期是星期几
      */
-    static int getWeekFormCalendar(Calendar calendar, int year, int month, int day) {
+    static int getWeekFormCalendar(com.cl.common_base.util.calendar.Calendar calendar) {
         Calendar date = Calendar.getInstance();
-        date.set(year, month - 1, day);
+        date.set(calendar.getYear(), calendar.getMonth() - 1, calendar.getDay());
         return date.get(Calendar.DAY_OF_WEEK) - 1;
     }
 
@@ -287,6 +310,96 @@ public final class CalendarUtil {
     public static String getYMDFromLocation(long time) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy", Locale.getDefault());
         return sdf.format(time);
+    }
+
+
+    /**
+     * 获取之前的日期
+     * @param num  -7 表示之前7天的日期、 7表示后面7天的日期
+     * @param currentTime 当前日期
+     * @return 日期
+     */
+    public static Date getBeforeDayStr(int num, Date currentTime) {
+        Calendar instance = Calendar.getInstance();
+        instance.setTime(currentTime);
+        instance.add(Calendar.DATE, num);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String format = simpleDateFormat.format(instance.getTime());
+        return instance.getTime();
+    }
+
+    /**
+     * 获取1-31天的后缀
+     * *1st ,First
+     * *2nd, Second
+
+     * 24th,Twenty-fourth
+     * 25th,Twenty-fifth
+     * 26th,twenty-sixth
+     * 27th,Twenty-seventh
+     * 28th,twenty-eighth
+     * 29th,twenty-ninth
+     * 30th,Thirtieth
+     * 31st,Thirty-first
+     */
+    public static String getDaySuffix(Date date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd", Locale.getDefault());
+        try {
+            int format = Integer.parseInt(simpleDateFormat.format(date.getTime()));
+            switch (format) {
+                case 1 :
+                    return "st";
+                case 2 :
+                    return "nd";
+                case 3 :
+                    return "rd";
+                case 4 :
+                case 5 :
+                case 6 :
+                case 7 :
+                case 8 :
+                case 9 :
+                case 10 :
+                case 11 :
+                case 12 :
+                case 13 :
+                case 14 :
+                case 15 :
+                case 16 :
+                case 17 :
+                case 18 :
+                case 19 :
+                case 20 :
+                case 24 :
+                case 25 :
+                case 26 :
+                case 27 :
+                case 28 :
+                case 29 :
+                case 30 :
+                    return "th";
+                case 21 :
+                    return "st";
+                case 22 :
+                    return "nd";
+                case 23 :
+                    return "rd";
+                case 31 :
+                    return "st";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+        return "";
+    }
+
+    /**
+     * 获取统一的simpleDateFormat
+     * @param format
+     * @return
+     */
+    public static SimpleDateFormat getFormat(String format) {
+        return new SimpleDateFormat(format, Locale.getDefault());
     }
 
 }

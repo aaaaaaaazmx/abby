@@ -1,6 +1,7 @@
 package com.cl.modules_login.request
 
 import androidx.annotation.Keep
+import com.cl.common_base.ext.DateHelper
 import java.io.Serializable
 
 @Keep
@@ -15,7 +16,7 @@ data class LoginReq(
     var mobileModel: String? = null,
     var osType: String? = null,
     var password: String? = null,
-    var timeZone: String? = null,
+    var timeZone: String? = DateHelper.getTimeZOneNumber().toString(),
     var token: String? = null,
     var userName: String? = null,
     var version: String? = null,
