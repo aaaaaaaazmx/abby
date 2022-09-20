@@ -4,6 +4,7 @@ import android.Manifest
 import androidx.test.espresso.ViewInteractionModule_ProvideRemoteInteractionFactory
 import cn.mtjsoft.barcodescanning.ScanningManager
 import cn.mtjsoft.barcodescanning.config.Config
+import cn.mtjsoft.barcodescanning.config.ScanType.Companion.CODE_BAR
 import cn.mtjsoft.barcodescanning.config.ScanType.Companion.QR_CODE
 import cn.mtjsoft.barcodescanning.interfaces.ScanResultListener
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -128,7 +129,7 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
             this,
             Config(
                 true,
-                QR_CODE,
+                CODE_BAR,
                 GlideEngineForScanCode.createGlideEngine(),
                 object : ScanResultListener {
                     override fun onSuccessListener(value: String?) {
