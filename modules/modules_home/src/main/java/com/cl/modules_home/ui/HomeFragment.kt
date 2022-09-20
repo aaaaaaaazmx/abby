@@ -2088,6 +2088,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
 
                     if (isChooserSeed == true) {
+                        // 跳转到向导界面、并且展示
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_GUIDE_SEED).navigation()
                         // 解锁Seed周期
                         mViewMode.unlockJourney("Seed")
                         return

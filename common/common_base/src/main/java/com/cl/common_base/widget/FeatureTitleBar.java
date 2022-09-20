@@ -108,7 +108,7 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
     /**
      * 快速点击
      */
-    private static final int MIN_DELAY_TIME= 9000;  // 两次点击间隔不能少于1000ms
+    private static final int MIN_DELAY_TIME= 2000;  // 两次点击间隔不能少于1000ms
     private static long lastClickTime;
     public static boolean isFastClick() {
         boolean flag = false;

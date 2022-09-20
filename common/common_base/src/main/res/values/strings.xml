@@ -97,6 +97,7 @@
     <string name="my_remind_me">Remind Me</string>
     <string name="my_cancel">Cancel</string>
     <string name="my_calendar_permisson">To use reminders for the first time, you need to authorize abby to access your calendar in order to create task reminders</string>
+    <string name="my_guide_seed_desc">You have finished the set up process. \n\nIn the following days, follow the task reminders in the app calendar as well as complete tasks such as water changes on time, and your seeds will germinate smoothly!</string>
 
 
 </resources>

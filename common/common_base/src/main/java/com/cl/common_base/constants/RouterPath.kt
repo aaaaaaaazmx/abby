@@ -83,6 +83,7 @@ class RouterPath {
         const val PAGE_MY_FIRMWARE_UPDATE = "/firmwareUpdate/$MY"
         const val PAGE_MT_CLONE_SEED = "/cloneSeed/$MY"
         const val PAGE_MY_CALENDAR = "/calendar/$MY"
+        const val PAGE_MY_GUIDE_SEED = "/guideSeed/$MY"
     }
 
     /**

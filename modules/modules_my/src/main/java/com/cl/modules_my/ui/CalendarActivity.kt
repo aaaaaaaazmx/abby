@@ -13,16 +13,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.dp2px
-import com.cl.common_base.ext.height
 import com.cl.common_base.ext.logI
-import com.cl.common_base.ext.width
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
@@ -33,6 +30,7 @@ import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.repository.AllProgressBean
+import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
@@ -43,11 +41,17 @@ import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import java.lang.reflect.Field
 import java.util.*
+import javax.inject.Inject
 
 
 @Route(path = RouterPath.My.PAGE_MY_CALENDAR)
 @AndroidEntryPoint
 class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
+
+    @Inject
+    lateinit var mViewMode: CalendarViewModel
+
+
     private val adapter by lazy {
         MyCalendarAdapter(mutableListOf())
     }
@@ -83,7 +87,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         )
         // 滚到到当前日期到上一行
         binding.rvList.scrollToPosition(list.indexOf(mCurrentDate) - 7)
-        adapter.addChildClickViewIds(R.id.tv_content_day)
+        adapter.addChildClickViewIds(R.id.tv_content_day, R.id.rl_root)
         // help
         val snapHelper = GravitySnapHelper(Gravity.TOP)
         snapHelper.attachToRecyclerView(binding.rvList)
@@ -95,11 +99,20 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 // 会滚到当前日期
                 val data = adapter.data
                 if (data.isEmpty()) return@setQuickClickListener
-                binding.rvList.scrollToPosition(data.indexOfFirst { it.isCurrentDay })
+                val layoutManager = binding.rvList.layoutManager as GridLayoutManager
+                val findFirstVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+                val currentPosition = data.indexOfFirst { it.isCurrentDay }
+                if (currentPosition > findFirstVisibleItemPosition) {
+                    // 表示在后面
+                    binding.rvList.scrollToPosition(currentPosition + 7 * 6)
+                } else if (currentPosition < findFirstVisibleItemPosition) {
+                    binding.rvList.scrollToPosition(currentPosition - 7)
+                }
+//                binding.rvList.scrollToPosition()
             }
         // 初始化当月
         binding.abMonth.text = CalendarUtil.getMonthFromLocation(Date().time)
-        binding.tvTodayDate.text = CalendarUtil.getYMDFromLocation(Date().time)
+        binding.tvTodayDate.text = mViewMode.getYmdForEn(Date())
 
         // 设置滑动速度
         setMaxFlingVelocity(binding.rvList, 5000)
@@ -121,36 +134,33 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                     // 设置为true
                     // 判断点击的是否是今日
-                    if (data?.isCurrentDay == true) {
-                    } else {
-                        list.indexOfFirst { it.isChooser }.let {
-                            if (it != -1) {
-                                list[it].isChooser = false
-                                adapter.notifyItemChanged(it)
-                            }
+                    list.indexOfFirst { it.isChooser }.let {
+                        if (it != -1) {
+                            list[it].isChooser = false
+                            adapter.notifyItemChanged(it)
                         }
-                        data?.isChooser = true
-                        view.background = ContextCompat.getDrawable(
-                            this@CalendarActivity,
-                            com.cl.common_base.R.drawable.base_dot_main_color
-                        )
-                        // 设置选中文字效果
-                        view.findViewById<TextView>(R.id.text_date_day).setTextColor(Color.WHITE)
-                        // 设置选中动效
-                        //缩小
-                        val animation = ScaleAnimation(
-                            1.0f, 0.5f, 1.0f, 0.5f,
-                            Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
-                        )
-                        animation.duration = 200 //执行时间
-                        animation.repeatCount = 1 //重复执行动画
-                        animation.repeatMode = Animation.REVERSE //重复 缩小和放大效果
-                        view.startAnimation(animation) //使用View启动动画
+                    }
+                    data?.isChooser = true
+                    view.background = ContextCompat.getDrawable(
+                        this@CalendarActivity,
+                        com.cl.common_base.R.drawable.base_dot_main_color
+                    )
+                    // 设置选中文字效果
+                    view.findViewById<TextView>(R.id.text_date_day).setTextColor(Color.WHITE)
+                    // 设置选中动效
+                    //缩小
+                    val animation = ScaleAnimation(
+                        1.0f, 0.5f, 1.0f, 0.5f,
+                        Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
+                    )
+                    animation.duration = 200 //执行时间
+                    animation.repeatCount = 1 //重复执行动画
+                    animation.repeatMode = Animation.REVERSE //重复 缩小和放大效果
+                    view.startAnimation(animation) //使用View启动动画
 
-                        // todo 时间转换，并且需要请求接口
-                        data?.timeInMillis?.let {
-                            binding.tvTodayDate.text = CalendarUtil.getYMDFromLocation(it)
-                        }
+                    // todo 时间转换，并且需要请求接口
+                    data?.timeInMillis?.let {
+                        binding.tvTodayDate.text = mViewMode.getYmdForEn(time = it)
                     }
                 }
 
@@ -267,6 +277,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 //                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
 //                        """.trimIndent()
 //                        )
+
+
                     }
                 }
 
@@ -283,6 +295,17 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
              */
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                // todo 这样加载太暴力了。
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+//                logI(
+//                    """
+//                            onScrolled:
+//                            ${layoutManager.findFirstVisibleItemPosition()}
+//                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
+//                               ${layoutManager.findLastVisibleItemPosition()}
+//                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
+//                        """.trimIndent()
+//                )
             }
         })
 
@@ -323,15 +346,16 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             pop.asCustom(
                                                 BaseTimeChoosePop(
                                                     this@CalendarActivity,
-                                                    onConfirmAction = {time, timeMis ->
+                                                    onConfirmAction = { time, timeMis ->
                                                         // 时间
                                                         // 传给后台 & 上报给手机本地日历
                                                         // todo 传给后台
                                                         // todo 上报给手机本地日历
-                                                        CalendarEventUtil.addCalendarEvent(this@CalendarActivity,
+                                                        CalendarEventUtil.addCalendarEvent(
+                                                            this@CalendarActivity,
                                                             "吃饭睡觉，打豆豆",
                                                             "打豆豆",
-                                                            timeMis,2
+                                                            timeMis, 2
                                                         )
                                                     })
                                             ).show()

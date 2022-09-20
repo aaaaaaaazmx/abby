@@ -84,6 +84,10 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".ui.MyCloneAndReplantActivity" />
+        
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".ui.MySeedGuideActivity" />
 
 
     </application>
