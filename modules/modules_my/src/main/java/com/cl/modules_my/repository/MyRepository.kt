@@ -103,4 +103,18 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun howTo(): Flow<HttpResult<MutableList<MyTroubleData.Bean>>> {
         return remoteRepository.howTo()
     }
+
+    /**
+     *  获取日历任务
+     */
+    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<CalendarData>> {
+        return remoteRepository.getCalendar(startDate, endDate)
+    }
+
+    /**
+     * 更新日历任务
+     */
+    fun updateTask(body: UpdateReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateTask(body)
+    }
 }

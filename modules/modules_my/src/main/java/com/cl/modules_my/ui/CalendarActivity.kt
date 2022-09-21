@@ -17,15 +17,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.pop.BaseTimeChoosePop
 import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
@@ -100,15 +104,17 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 val data = adapter.data
                 if (data.isEmpty()) return@setQuickClickListener
                 val layoutManager = binding.rvList.layoutManager as GridLayoutManager
-                val findFirstVisibleItemPosition = layoutManager.findFirstCompletelyVisibleItemPosition()
+                val findFirstVisibleItemPosition =
+                    layoutManager.findFirstCompletelyVisibleItemPosition()
                 val currentPosition = data.indexOfFirst { it.isCurrentDay }
                 if (currentPosition > findFirstVisibleItemPosition) {
                     // 表示在后面
-                    binding.rvList.scrollToPosition(currentPosition + 7 * 6)
+                    binding.rvList.scrollToPosition(currentPosition + 7 * 3)
                 } else if (currentPosition < findFirstVisibleItemPosition) {
                     binding.rvList.scrollToPosition(currentPosition - 7)
                 }
-//                binding.rvList.scrollToPosition()
+                // 设置今天的日子
+                binding.tvTodayDate.text = mViewMode.getYmdForEn(Date())
             }
         // 初始化当月
         binding.abMonth.text = CalendarUtil.getMonthFromLocation(Date().time)
@@ -121,6 +127,37 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     override fun observe() {
+        mViewMode.getCalendar("2022-01-01", "2022-09-30")
+        mViewMode.apply {
+            // 获取日历任务
+            getCalendar.observe(this@CalendarActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+                success {
+                    hideProgressLoading()
+                    // 添加数据。
+
+                }
+            })
+
+            // 更新日历任务
+            updateTask.observe(this@CalendarActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    errorMsg?.let {
+                        hideProgressLoading()
+                        ToastUtil.shortShow(it)
+                    }
+                    success {
+                        hideProgressLoading()
+                    }
+                }
+            })
+
+        }
     }
 
     override fun initData() {
@@ -227,7 +264,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 //                        """.trimIndent()
 //                        )
 
-                        // 手指按下去的操作
+                        // 手指按下去的操作、然后抬起的瞬间
                         if (adapter.data.isEmpty()) return
                         val firstPosition = layoutManager.findFirstVisibleItemPosition()
                         val data = adapter.data[firstPosition]

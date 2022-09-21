@@ -5,6 +5,7 @@ import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.service.HttpMyApiService
+import dagger.Reusable
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -67,5 +68,13 @@ class MyRemoteRepository @Inject constructor() {
 
     fun getDetailByLearnMoreId(learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
         return service.getDetailByLearnMoreId(learnMoreId)
+    }
+
+    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<CalendarData>> {
+        return service.getCalendar(startDate, endDate)
+    }
+
+    fun updateTask(body: UpdateReq): Flow<HttpResult<BaseBean>> {
+        return service.updateTask(body)
     }
 }

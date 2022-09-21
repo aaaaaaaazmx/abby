@@ -306,7 +306,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 开始种植
         binding.pplantNinth.apply {
             // 选中日历
-            ivCalendar.setOnClickListener{
+            ivCalendar.setOnClickListener {
                 // 如果是订阅用户
                 if (mViewMode.refreshToken.value?.data?.isVip == 1) {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation()
@@ -1401,31 +1401,93 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
 
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
-                    data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }?.let {
-                        if (it.journeyName == HomePeriodPop.KEY_SEED) {
-                            // 那么直接显示
-                            // 显示布局
-                            ViewUtils.setVisible(binding.pplantNinth.root)
-                            //  todo 这个显示有问题，会重复隐藏
-                            ViewUtils.setGone(binding.pplantNinth.clContinue)
-                        }
-                    }
-
-                    // 植物信息数据显示
-                    binding.pplantNinth.tvWeekDay.text = """
-                        Week ${data?.week ?: "-"}
-                        Day ${data?.day ?: "-"}
-                    """.trimIndent()
-
-                    // 树苗的状态
-                    // 也是需要根据植物的信息来,需要找到当前的周期
-                    var number = 0
-                    data?.list?.let { info ->
-                        // 这样看内定不行
-                        info.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
-                            ?.let {
-                                val week = it.week?.toInt() ?: 0
-                                when (it.journeyName) {
+                    data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
+                        ?.let { info ->
+                            ViewUtils.setVisible(info.journeyName != HomePeriodPop.KEY_SEED, binding.pplantNinth.ivWaterStatus)
+                            if (info.journeyName == HomePeriodPop.KEY_SEED) {
+                                // 显示种子背景图
+                                // 根据总天数判断
+                                binding.pplantNinth.ivBowl.background = when (data?.totalDay) {
+                                    0, 1 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_one
+                                            )
+                                        }
+                                    }
+                                    2 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_two
+                                            )
+                                        }
+                                    }
+                                    3 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_three
+                                            )
+                                        }
+                                    }
+                                    4, 5 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_four
+                                            )
+                                        }
+                                    }
+                                    6, 7 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_five
+                                            )
+                                        }
+                                    }
+                                    8, 9 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_six
+                                            )
+                                        }
+                                    }
+                                    10, 11 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_seven
+                                            )
+                                        }
+                                    }
+                                    12 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_eight
+                                            )
+                                        }
+                                    }
+                                    else -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_one
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+                                // 树苗的状态
+                                // 也是需要根据植物的信息来,需要找到当前的周期
+                                var number = 0
+                                // 这样看内定不行
+                                val week = info.week?.toInt() ?: 0
+                                when (info.journeyName) {
                                     "Vegetation" -> {
                                         (if (week > 4) 4 else week
                                                 ).also { period -> number = period }
@@ -1442,59 +1504,120 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         number = 12
                                     }
                                 }
+                                binding.pplantNinth.ivBowl.background = when (number) {
+                                    1 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_one
+                                            )
+                                        }
+                                    }
+                                    2 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_two
+                                            )
+                                        }
+                                    }
+                                    3 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_three
+                                            )
+                                        }
+                                    }
+                                    4 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_four
+                                            )
+                                        }
+                                    }
+                                    5 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_five
+                                            )
+                                        }
+                                    }
+                                    6 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_six
+                                            )
+                                        }
+                                    }
+                                    7 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_seven
+                                            )
+                                        }
+                                    }
+                                    8 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_eight
+                                            )
+                                        }
+                                    }
+                                    9 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_nine
+                                            )
+                                        }
+                                    }
+                                    10 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_ten
+                                            )
+                                        }
+                                    }
+                                    11 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_eleven
+                                            )
+                                        }
+                                    }
+                                    12 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_twelve
+                                            )
+                                        }
+                                    }
+                                    else -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_one
+                                            )
+                                        }
+                                    }
+                                }
                             }
-                    }
-                    binding.pplantNinth.ivBowl.background = when (number) {
-                        1 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_one) }
                         }
-                        2 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_two) }
-                        }
-                        3 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_three) }
-                        }
-                        4 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_four) }
-                        }
-                        5 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_five) }
-                        }
-                        6 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_six) }
-                        }
-                        7 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_seven) }
-                        }
-                        8 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_eight) }
-                        }
-                        9 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_nine) }
-                        }
-                        10 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_ten) }
-                        }
-                        11 -> {
-                            context?.let {
-                                ContextCompat.getDrawable(
-                                    it,
-                                    R.mipmap.home_week_eleven
-                                )
-                            }
-                        }
-                        12 -> {
-                            context?.let {
-                                ContextCompat.getDrawable(
-                                    it,
-                                    R.mipmap.home_week_twelve
-                                )
-                            }
-                        }
-                        else -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_one) }
-                        }
-                    }
+
+                    // 植物信息数据显示
+                    binding.pplantNinth.tvWeekDay.text = """
+                        Week ${data?.week ?: "-"}
+                        Day ${data?.day ?: "-"}
+                    """.trimIndent()
 
                     // 植物的氧气
                     binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
@@ -1676,7 +1799,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
                                 )
                                 // 手动修改状态
-                                it.extension = UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_TWO
+                                it.extension =
+                                    UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_TWO
                                 it.type = UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
                             }
                             plantFour.show()
@@ -2089,9 +2213,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     if (isChooserSeed == true) {
                         // 跳转到向导界面、并且展示
-                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_GUIDE_SEED).navigation()
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_GUIDE_SEED)
+                            .navigation()
                         // 解锁Seed周期
                         mViewMode.unlockJourney("Seed")
+                        // 显示植物种植布局
+                        ViewUtils.setVisible(binding.pplantNinth.root)
+                        //  todo 这个显示有问题，会重复隐藏
+                        ViewUtils.setGone(binding.pplantNinth.clContinue)
                         return
                     }
 

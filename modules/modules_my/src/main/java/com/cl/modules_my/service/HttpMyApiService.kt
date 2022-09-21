@@ -102,4 +102,14 @@ interface HttpMyApiService {
     fun updatePlantInfo(
         @Body body: UpPlantInfoReq
     ): Flow<HttpResult<BaseBean>>
+
+    @FormUrlEncoded
+    @POST("abby/calendar/getCalendar")
+    fun getCalendar(
+        @Field("startDate") startDate: String,
+        @Field("endDate") endDate: String
+    ): Flow<HttpResult<CalendarData>>
+
+    @POST("abby/calendar/updateTask")
+    fun updateTask(@Body body: UpdateReq): Flow<HttpResult<BaseBean>>
 }

@@ -20,6 +20,7 @@ data class PlantInfoData(
     var oxygen: Int? = null,
     var plantStatus: Int? = null,
     var week: Int? = null,
+    var totalDay: Int? = null,
     var list: MutableList<InfoList>? = null
 ) : BaseBean() {
 
