@@ -92,12 +92,14 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="my_to_do">do you wanna go to change water now?</string>
+    <string name="my_to_do">do you wanna go to %s now?</string>
     <string name="my_go">Go</string>
     <string name="my_remind_me">Remind Me</string>
     <string name="my_cancel">Cancel</string>
     <string name="my_calendar_permisson">To use reminders for the first time, you need to authorize abby to access your calendar in order to create task reminders</string>
     <string name="my_guide_seed_desc">You have finished the set up process. \n\nIn the following days, follow the task reminders in the app calendar as well as complete tasks such as water changes on time, and your seeds will germinate smoothly!</string>
+    <string name="my_no_task">No task today~</string>
+    <string name="my_how_is">How is other’s girls looking like in this period</string>
 
 
 </resources>

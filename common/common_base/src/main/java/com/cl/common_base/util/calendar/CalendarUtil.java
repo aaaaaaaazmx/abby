@@ -20,6 +20,11 @@ import static com.cl.common_base.ext.LogKt.logI;
 import android.annotation.SuppressLint;
 import android.net.vcn.VcnManager;
 
+import com.cl.common_base.bean.CalendarData;
+import com.cl.common_base.bean.HttpResult;
+import com.cl.common_base.util.json.GSON;
+import com.google.gson.Gson;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -392,6 +397,39 @@ public final class CalendarUtil {
         }
         return "";
     }
+
+    /**
+     * 计算两个时间相差多少天
+     * @param endDate 结束时间
+     * @param nowDate 现在的时间
+     * @return
+     */
+    public static int getDatePoor(long endDate, long nowDate) {
+        long nd = 1000 * 24 * 60 * 60;
+        long nh = 1000 * 60 * 60;
+        long nm = 1000 * 60;
+        long ns = 1000;
+        // long ns = 1000;
+        // 获得两个时间的秒时间差异
+        long diff = (endDate) - (nowDate);
+        // 计算差多少天
+        long day = diff / nd;
+        // 计算差多少小时
+        long hour = diff % nd / nh;
+        // 计算差多少分钟
+        long min = diff % nd % nh / nm;
+        // 计算差多少秒//输出结果
+        long sec = diff % nd % nh % nm / ns;
+        String res = "";
+        if(day != 0){
+            res += day + "天";
+        }
+        if(hour != 0){
+            res += "  "+hour + ":"+min + ":"+sec;
+        }
+        return Integer.parseInt(String.valueOf(day));
+    }
+
 
     /**
      * 获取统一的simpleDateFormat

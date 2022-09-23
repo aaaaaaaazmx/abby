@@ -102,7 +102,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 finish()
             } else {
                 mExitTime = System.currentTimeMillis()
-                showToast("再按一次退出程序")
+                showToast("Press to exit the program again")
             }
             return true
         }

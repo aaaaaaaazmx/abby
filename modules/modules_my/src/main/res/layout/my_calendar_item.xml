@@ -6,6 +6,10 @@
         <variable
             name="data"
             type="com.cl.common_base.util.calendar.Calendar" />
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_my.adapter.MyCalendarAdapter" />
     </data>
 
     <LinearLayout
@@ -16,12 +20,13 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:background="@{data.showBg ? adapter.getBg(data) : null}"
             android:id="@+id/rl_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <RelativeLayout
                 android:layout_centerInParent="true"
-                android:background="@{data.currentDay ? @drawable/base_choose_main_color : data.chooser ? @drawable/base_dot_main_color : null}"
+                android:background="@{data.chooser ? @drawable/base_dot_main_color : data.currentDay  ? @drawable/base_choose_main_color : null}"
                 android:id="@+id/tv_content_day"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
@@ -38,37 +43,76 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@{String.valueOf(data.day)}"
+                    android:textColor="@{adapter.getTextColors(data)}"
                     android:textSize="15sp"
                     tools:text="10" />
             </RelativeLayout>
         </RelativeLayout>
 
         <LinearLayout
+            android:layout_marginTop="3dp"
+            android:id="@+id/ll_point"
+            android:layout_gravity="center_horizontal|bottom"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="5dp">
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_change_unlock"
+                android:background="@mipmap/my_calendar_circle_three_bg"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_change_else"
+                android:layout_marginStart="2dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@mipmap/my_calendar_circle_two_bg"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_change_water"
+                android:layout_marginStart="2dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@mipmap/my_calendar_circle_bg"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="3dp"
+            android:id="@+id/ll_point_gray"
             android:layout_gravity="center_horizontal|bottom"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
             <ImageView
-                android:layout_marginTop="3dp"
-                android:background="@mipmap/my_calendar_circle_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:visibility="gone"
+                android:id="@+id/iv_change_unlock_gray"
+                android:background="@drawable/base_dot_gray"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
 
             <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_change_else_gray"
                 android:layout_marginStart="2dp"
-                android:layout_marginTop="3dp"
                 android:layout_gravity="center_horizontal|bottom"
-                android:background="@mipmap/my_calendar_circle_two_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:background="@drawable/base_dot_gray"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
 
             <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_change_water_gray"
                 android:layout_marginStart="2dp"
-                android:layout_marginTop="3dp"
                 android:layout_gravity="center_horizontal|bottom"
-                android:background="@mipmap/my_calendar_circle_three_bg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:background="@drawable/base_dot_gray"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
         </LinearLayout>
 
     </LinearLayout>

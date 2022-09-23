@@ -1,7 +1,8 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
-import android.graphics.BitmapFactory
+import android.content.Context
+import android.content.res.AssetManager
 import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -27,8 +28,12 @@ import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.pop.BaseTimeChoosePop
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
+import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.AbTextViewCalendar
+import com.cl.common_base.widget.SvTextView
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
@@ -43,9 +48,15 @@ import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
 import com.joketng.timelinestepview.view.TimeLineStepView
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 import java.lang.reflect.Field
 import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 
 @Route(path = RouterPath.My.PAGE_MY_CALENDAR)
@@ -65,8 +76,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             .isDestroyOnDismiss(false)
             .dismissOnTouchOutside(false)
     }
-
+    var data123: MutableList<CalendarData>? = null
     override fun initView() {
+        // 解析本地数据
+        val testJson =
+            getJson(
+                this@CalendarActivity,
+                "asd.json"
+            )?.let { JSONObject(it) } // 从builder中读取了json中的数据。
+        // 直接传入JSONObject来构造一个实例
+        val array: JSONArray? = testJson?.getJSONArray("data")
+        data123 = GSON.parseObjectList<CalendarData>(
+            array.toString(),
+            CalendarData::class.java
+        ) as MutableList<CalendarData>?
+
         binding.rvList.layoutManager = GridLayoutManager(this@CalendarActivity, 7)
         binding.rvList.adapter = adapter
         val mCurrentDate = com.cl.common_base.util.calendar.Calendar()
@@ -85,10 +109,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             )
         }
 
+        // todo  合并数据
+        list.forEachIndexed { index, calendar ->
+            data123?.filter { it.date == calendar.ymd }?.forEach {
+                calendar.calendarData = it
+            }
+        }
+
         // 添加数据
         adapter.setList(
             list
         )
+
+        // 默认选中今天
+        showTaskList(mCurrentDate)
+
         // 滚到到当前日期到上一行
         binding.rvList.scrollToPosition(list.indexOf(mCurrentDate) - 7)
         adapter.addChildClickViewIds(R.id.tv_content_day, R.id.rl_root)
@@ -114,6 +149,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     binding.rvList.scrollToPosition(currentPosition - 7)
                 }
                 // 设置今天的日子
+                binding.abMonth.text = CalendarUtil.getMonthFromLocation(Date().time)
                 binding.tvTodayDate.text = mViewMode.getYmdForEn(Date())
             }
         // 初始化当月
@@ -121,13 +157,19 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         binding.tvTodayDate.text = mViewMode.getYmdForEn(Date())
 
         // 设置滑动速度
-        setMaxFlingVelocity(binding.rvList, 5000)
+        setMaxFlingVelocity(binding.rvList, 2000)
+    }
 
-        initTime()
+    override fun MyCalendayActivityBinding.initBinding() {
+        binding.apply {
+            lifecycleOwner = this@CalendarActivity
+            viewModel = mViewMode
+            executePendingBindings()
+        }
     }
 
     override fun observe() {
-        mViewMode.getCalendar("2022-01-01", "2022-09-30")
+//        mViewMode.getCalendar("2022-01-01", "2022-09-30")
         mViewMode.apply {
             // 获取日历任务
             getCalendar.observe(this@CalendarActivity, resourceObserver {
@@ -139,7 +181,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 success {
                     hideProgressLoading()
                     // 添加数据。
-
                 }
             })
 
@@ -167,7 +208,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             when (view.id) {
                 R.id.tv_content_day -> {
                     if (list.isNullOrEmpty()) return@setOnItemChildClickListener
-                    // 找到之前的，清除之前的isChoose、然后改为true
+                    view.background = ContextCompat.getDrawable(
+                        this@CalendarActivity,
+                        com.cl.common_base.R.drawable.base_dot_main_color
+                    )
 
                     // 设置为true
                     // 判断点击的是否是今日
@@ -177,20 +221,17 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             adapter.notifyItemChanged(it)
                         }
                     }
+
                     data?.isChooser = true
-                    view.background = ContextCompat.getDrawable(
-                        this@CalendarActivity,
-                        com.cl.common_base.R.drawable.base_dot_main_color
-                    )
-                    // 设置选中文字效果
-                    view.findViewById<TextView>(R.id.text_date_day).setTextColor(Color.WHITE)
+                    adapter.notifyItemChanged(position)
+
                     // 设置选中动效
                     //缩小
                     val animation = ScaleAnimation(
                         1.0f, 0.5f, 1.0f, 0.5f,
                         Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f
                     )
-                    animation.duration = 200 //执行时间
+                    animation.duration = 600 //执行时间
                     animation.repeatCount = 1 //重复执行动画
                     animation.repeatMode = Animation.REVERSE //重复 缩小和放大效果
                     view.startAnimation(animation) //使用View启动动画
@@ -199,6 +240,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     data?.timeInMillis?.let {
                         binding.tvTodayDate.text = mViewMode.getYmdForEn(time = it)
                     }
+
+                    // 显示下面的taskList
+                    showTaskList(data)
                 }
 
 
@@ -278,6 +322,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             mutableListOf()
                         // 如果是小于等于6，那么上一年
                         if (data.month <= 4) {
+                            // 如果上一年的数据已经添加了。那么就不需要添加了。
+                            // 如果已经加载了上一年了，就不需要重复加载
+                            if (adapter.data.firstOrNull { it.year == data.year - 1 && it.month == 5 && it.day == 20 } != null) return
                             for (i in 1..12) {
                                 list += CalendarUtil.initCalendarForMonthView(
                                     data.year - 1,
@@ -290,6 +337,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             list.clear()
                         }
                         if (data.month >= 8) {
+                            // 如果已经加载了下一年了，就不需要重复加载
                             // 加载下一年
                             for (i in 1..12) {
                                 list += CalendarUtil.initCalendarForMonthView(
@@ -299,6 +347,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     Calendar.SUNDAY
                                 )
                             }
+                            if (adapter.data.firstOrNull { it.year == data.year + 1 && it.month == 5 && it.day == 20 } != null) return
                             adapter.addData(list)
                             list.clear()
                         }
@@ -351,65 +400,60 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         clickEvent()
     }
 
+    private fun showTaskList(data: com.cl.common_base.util.calendar.Calendar?) {
+        val calendarData = data123?.firstOrNull { it.date == data?.ymd }
+        // 刷新上面的背景框
+        val startTime = calendarData?.epochStartTime ?: ""
+        val endTime = calendarData?.epochEndTime ?: ""
+        val diffDay = CalendarUtil.getDatePoor(
+            DateHelper.formatToLong(endTime, "yyyy-MM-dd"),
+            DateHelper.formatToLong(startTime, "yyyy-MM-dd")
+        )
+        val currentPosition = adapter.data.indexOfFirst { it.ymd == startTime }
+        adapter.data.filter { it.isShowBg }.forEach {
+            val i = adapter.data.indexOf(it)
+            adapter.data[i].isShowBg = false
+            adapter.notifyItemChanged(i)
+        }
+        logI(
+            """
+            diffDay：
+            $diffDay
+            $currentPosition
+        """.trimIndent()
+        )
+
+        // 绘制点击之后的
+        if (currentPosition != -1) {
+            for (i in currentPosition..(currentPosition + diffDay)) {
+                adapter.data[i].isShowBg = true
+                adapter.notifyItemChanged(i)
+            }
+        }
+
+        ViewUtils.setVisible(
+            null == calendarData,
+            binding.svtDayBg,
+            binding.svtPeriodBg,
+            binding.svtTaskListBg
+        )
+        ViewUtils.setGone(binding.timeLine, null == calendarData)
+        calendarData?.let {
+            // 设置下面卡片的数据
+            // 周期
+            binding.tvCycle.text = it.epoch
+            // 天数
+            binding.tvDay.text = "Day${it.day}"
+            // 判断当前周期有无任务, 显示空布局 or 展示时间轴
+            ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
+            ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
+            initTime(it.taskList ?: mutableListOf())
+        }
+    }
+
     private fun clickEvent() {
         binding.rlCycle.setOnClickListener {
-            //  三行弹窗
-            pop.asCustom(
-                BaseThreeTextPop(
-                    this@CalendarActivity,
-                    content = getString(com.cl.common_base.R.string.my_to_do),
-                    oneLineText = getString(com.cl.common_base.R.string.my_go),
-                    twoLineText = getString(com.cl.common_base.R.string.my_remind_me),
-                    threeLineText = getString(com.cl.common_base.R.string.my_cancel),
-                    oneLineCLickEventAction = {
-                        // todo 解锁周期图文引导弹窗
-                    },
-                    twoLineCLickEventAction = {
-                        // remind me
-                        // 需要授权日历权限弹窗
-                        pop.asCustom(BaseCenterPop(
-                            this@CalendarActivity,
-                            content = getString(com.cl.common_base.R.string.my_calendar_permisson),
-                            confirmText = getString(com.cl.common_base.R.string.my_confirm),
-                            onConfirmAction = {
-                                // 授权日历弹窗
-                                PermissionHelp().applyPermissionHelp(
-                                    this@CalendarActivity,
-                                    getString(com.cl.common_base.R.string.my_calendar_permisson),
-                                    object : PermissionHelp.OnCheckResultListener {
-                                        override fun onResult(result: Boolean) {
-                                            if (!result) return
-                                            // 跳转选择事件弹窗
-                                            pop.asCustom(
-                                                BaseTimeChoosePop(
-                                                    this@CalendarActivity,
-                                                    onConfirmAction = { time, timeMis ->
-                                                        // 时间
-                                                        // 传给后台 & 上报给手机本地日历
-                                                        // todo 传给后台
-                                                        // todo 上报给手机本地日历
-                                                        CalendarEventUtil.addCalendarEvent(
-                                                            this@CalendarActivity,
-                                                            "吃饭睡觉，打豆豆",
-                                                            "打豆豆",
-                                                            timeMis, 2
-                                                        )
-                                                    })
-                                            ).show()
-                                        }
-                                    },
-                                    Manifest.permission.READ_CALENDAR,
-                                    Manifest.permission.WRITE_CALENDAR,
-                                )
-                            }
-                        )).show()
 
-                    },
-                    threeLineCLickEventAction = {
-                        // 暂时没啥用
-                    },
-                )
-            ).show()
         }
     }
 
@@ -428,21 +472,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     /**
      * 初始化时间轴
      */
-    private val listContent = mutableListOf<AllProgressBean>()
-    fun initTime() {
-        repeat(7) {
-            val bean = AllProgressBean("item$it")
-
-            if (it == 3) {
-//                bean.rightTitle = "说的就是看到就隆盛科技发我我积分为弗兰克健康检查绿茶女名称v女村民们处女吗没VM从VM你十多分十分时分我去问而我认为"
-                bean.timeLineState = TimeLineState.CURRENT
-            }
-            if (it > 3) {
-//                bean.rightTitle = "所得到的多多多多多item$it"
-                bean.timeLineState = TimeLineState.INACTIVE
-            }
-            listContent.add(bean)
-        }
+    private fun initTime(data: MutableList<CalendarData.TaskList>) {
+        val listContent = mutableListOf<CalendarData.TaskList>()
+        listContent.addAll(data)
+        listContent.add(0, CalendarData.TaskList())
         binding.timeLine.initData(
             listContent,
             OrientationShowType.CENTER_VERTICAL,
@@ -458,19 +491,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         layoutParams.width = dp2px(0f)
                         layoutParams.height = dp2px(0f)
                         holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-                        //                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
-                        //                val drawable = RoundedBitmapDrawableFactory.create(resources,
-                        //                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                        //                drawable.isCircular = true
                         if (position == 0) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
                             ContextCompat.getDrawable(
                                 this@CalendarActivity,
                                 R.mipmap.my_iv_red_circle
                             )
                         )
-                        //                        holder.itemView.width(LinearLayout.LayoutParams.WRAP_CONTENT)
-                        //                        holder.itemView.height(LinearLayout.LayoutParams.WRAP_CONTENT)
-                        //                        holder.llLine.layoutParams.width = LinearLayout.LayoutParams.MATCH_PARENT
                         return
                     }
                     val layoutParams = holder.imgMark.layoutParams as LinearLayout.LayoutParams
@@ -502,6 +528,117 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     //                } else {
                     //                    holder.itemView.img_two.visibility = View.GONE
                     //                }
+                    logI(
+                        """
+                        task:
+                        ${listContent[position].taskTime}
+                        ${listContent[position].taskName}
+                    """.trimIndent()
+                    )
+                    val tvTaskTime = holder.leftLayout.findViewById<TextView>(R.id.tv_task_time)
+                    tvTaskTime.text = listContent[position].taskTime?.toLong()
+                        ?.let { DateHelper.formatTime(it, "hh:mm a", Locale.getDefault()) }
+
+                    val tvTaskName = holder.rightLayout.findViewById<TextView>(R.id.tv_task_name)
+                    // 按钮
+                    val svtWaitUnlock =
+                        holder.rightLayout.findViewById<AbTextViewCalendar>(R.id.svt_wait_unlock)
+                    val svtUnlock =
+                        holder.rightLayout.findViewById<SvTextView>(R.id.svt_unlock)
+                    val svtGrayUnlock =
+                        holder.rightLayout.findViewById<SvTextView>(R.id.svt_gray_unlock)
+                    when (listContent[position].taskStatus) {
+                        // (1-已完成、0-未完成可操作、2-未完成不可操作)
+                        "1" -> {
+                            ViewUtils.setGone(svtUnlock)
+                            ViewUtils.setGone(svtGrayUnlock)
+                            ViewUtils.setVisible(svtWaitUnlock)
+                            svtWaitUnlock.text = "Done"
+                        }
+                        "0" -> {
+                            ViewUtils.setVisible(svtUnlock)
+                            ViewUtils.setGone(svtWaitUnlock)
+                            ViewUtils.setGone(svtGrayUnlock)
+                            svtUnlock.text = "GO"
+                        }
+                        "2" -> {
+                            ViewUtils.setGone(svtWaitUnlock)
+                            ViewUtils.setVisible(svtGrayUnlock)
+                            ViewUtils.setGone(svtUnlock)
+                            svtGrayUnlock.text = "Go"
+                        }
+                    }
+                    tvTaskName.text = listContent[position].taskName
+
+                    svtUnlock.setOnClickListener {
+                        when (listContent[position].taskStatus) {
+                            "0" -> {
+                                //  三行弹窗
+                                pop.asCustom(
+                                    BaseThreeTextPop(
+                                        this@CalendarActivity,
+                                        content = getString(
+                                            com.cl.common_base.R.string.my_to_do,
+                                            listContent[position].taskName
+                                        ),
+                                        oneLineText = getString(com.cl.common_base.R.string.my_go),
+                                        twoLineText = getString(com.cl.common_base.R.string.my_remind_me),
+                                        threeLineText = getString(com.cl.common_base.R.string.my_cancel),
+                                        oneLineCLickEventAction = {
+                                            // todo 解锁周期图文引导弹窗
+                                        },
+                                        twoLineCLickEventAction = {
+                                            // remind me
+                                            // 需要授权日历权限弹窗
+                                            pop.asCustom(BaseCenterPop(
+                                                this@CalendarActivity,
+                                                content = getString(com.cl.common_base.R.string.my_calendar_permisson),
+                                                confirmText = getString(com.cl.common_base.R.string.my_confirm),
+                                                onConfirmAction = {
+                                                    // 授权日历弹窗
+                                                    PermissionHelp().applyPermissionHelp(
+                                                        this@CalendarActivity,
+                                                        getString(com.cl.common_base.R.string.my_calendar_permisson),
+                                                        object :
+                                                            PermissionHelp.OnCheckResultListener {
+                                                            override fun onResult(result: Boolean) {
+                                                                if (!result) return
+                                                                // 跳转选择事件弹窗
+                                                                pop.asCustom(
+                                                                    BaseTimeChoosePop(
+                                                                        this@CalendarActivity,
+                                                                        currentTime = listContent[position].taskTime?.toLong(),
+                                                                        onConfirmAction = { time, timeMis ->
+                                                                            // 时间
+                                                                            // 传给后台 & 上报给手机本地日历
+                                                                            // todo 传给后台
+                                                                            // todo 上报给手机本地日历
+                                                                            CalendarEventUtil.addCalendarEvent(
+                                                                                this@CalendarActivity,
+                                                                                listContent[position].taskName,
+                                                                                listContent[position].taskName,
+                                                                                timeMis, 2
+                                                                            )
+                                                                        })
+                                                                ).show()
+                                                            }
+                                                        },
+                                                        Manifest.permission.READ_CALENDAR,
+                                                        Manifest.permission.WRITE_CALENDAR,
+                                                    )
+                                                }
+                                            )).show()
+
+                                        },
+                                        threeLineCLickEventAction = {
+                                            // 暂时没啥用
+                                        },
+                                    )
+                                ).show()
+                            }
+                        }
+                    }
+
                 }
 
                 override fun createCustomView(
@@ -519,4 +656,27 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }).setLayoutType(LayoutType.ALL)
             .setIsCustom(true)
     }
+
+    fun getJson(context: Context, fileName: String?): String? {
+        val stringBuilder = StringBuilder()
+        //获得assets资源管理器
+        val assetManager: AssetManager = context.getAssets()
+        //使用IO流读取json文件内容
+        try {
+            val bufferedReader = BufferedReader(
+                InputStreamReader(
+                    assetManager.open(fileName!!), "utf-8"
+                )
+            )
+            var line: String?
+            while (bufferedReader.readLine().also { line = it } != null) {
+                stringBuilder.append(line)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return stringBuilder.toString()
+    }
 }
+
+

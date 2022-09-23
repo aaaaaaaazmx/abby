@@ -68,7 +68,11 @@ public class DatePicker extends WheelPicker<String> {
     public void setCurrentDate(long millisecond) {
         this.millisecond = millisecond;
         updateHour();
+        setSelectedHour();
     }
+
+
+
 
     List<Long> timeLong = new ArrayList<>();
     private void updateHour() {
@@ -115,4 +119,13 @@ public class DatePicker extends WheelPicker<String> {
     public interface OnDateSelectedListener {
         void onDateSelected(String hour, long time);
     }
+
+    public void setSelectedHour() {
+        setSelectedHour( true);
+    }
+
+    public void setSelectedHour(boolean smoothScroll) {
+        setCurrentPosition(3, smoothScroll);
+    }
+
 }

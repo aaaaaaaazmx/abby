@@ -1,5 +1,7 @@
 package com.cl.common_base.widget.wheel.time;
 
+import static com.cl.common_base.ext.LogKt.logI;
+
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -59,12 +61,37 @@ public class MinutePicker extends WheelPicker<Integer> {
         setDataList(list);
     }
 
-    public void setSelectedMinute(int hour) {
-        setSelectedMinute(hour, true);
+    public void setSelectedMinute(int minute) {
+        logI("123123123123" + minute);
+        setSelectedMinute(minute, true);
     }
 
-    public void setSelectedMinute(int hour, boolean smootScroll) {
-        setCurrentPosition(hour, smootScroll);
+    public void setSelectedMinute(int minute, boolean smootScroll) {
+        String min = String.valueOf(minute);
+        boolean isLessThanFive = min.endsWith("1") || min.endsWith("2") || min.endsWith("3") || min.endsWith("4");
+        boolean isGreaterThanFive = min.endsWith("6") || min.endsWith("7") || min.endsWith("8") || min.endsWith("9");
+        if (min.length() == 1) {
+            if (isLessThanFive) {
+                min = "0";
+            } else if (isGreaterThanFive) {
+                min = "10";
+            }
+        } else {
+            if (isLessThanFive) {
+                String first = min.substring(0, 1);
+                min = first + "0";
+            } else if (isGreaterThanFive) {
+                String first = min.substring(0, 1);
+                min = (Integer.parseInt(first) + 1) + "0";
+            }
+        }
+
+        for (int i = 0; i < getDataList().size(); i++) {
+            if (getDataList().get(i) == Integer.parseInt(min)) {
+                setCurrentPosition(i, smootScroll);
+                break;
+            }
+        }
     }
 
     public void setOnMinuteSelectedListener(OnMinuteSelectedListener onMinuteSelectedListener) {

@@ -1,6 +1,7 @@
 package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
+import com.joketng.timelinestepview.TimeLineState
 
 /**
  * 日历后台数据返回接受类
@@ -23,5 +24,11 @@ data class CalendarData(
         var taskTime: String? = null,
         var taskType: String? = null,
         var updateTime: String? = null,
-    ) : BaseBean()
+    ) : com.joketng.timelinestepview.bean.BaseBean(timeLineState = TimeLineState.INACTIVE)
+
+
+    // 主要任务
+    companion object {
+
+    }
 }

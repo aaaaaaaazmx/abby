@@ -118,7 +118,7 @@ public class CalendarEventUtil {
         java.util.Calendar mCalendar = java.util.Calendar.getInstance();
         mCalendar.setTimeInMillis(reminderTime);//设置开始时间
         long start = mCalendar.getTime().getTime();
-//        mCalendar.setTimeInMillis(start + 10 * 60 * 1000);//设置终止时间，开始时间加10分钟
+        mCalendar.setTimeInMillis(start + 60 * 60 * 1000);//设置终止时间，开始时间加10分钟
         long end = mCalendar.getTime().getTime();
         ContentValues event = new ContentValues();
         event.put("title", title);

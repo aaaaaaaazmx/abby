@@ -7,12 +7,13 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginEnd="20dp"
+        android:layout_marginEnd="10dp"
         tools:ignore="MissingConstraints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
         <com.cl.common_base.widget.AbTextViewCalendar
+            android:id="@+id/tv_task_time"
             tools:text="08:00 AM"
             android:textColor="@color/black"
             android:textSize="13sp"

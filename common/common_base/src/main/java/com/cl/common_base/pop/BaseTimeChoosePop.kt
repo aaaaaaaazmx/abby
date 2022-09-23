@@ -21,8 +21,10 @@ import java.util.*
  */
 class BaseTimeChoosePop(
     context: Context,
+    private val currentTime: Long? = null,
     private val onConfirmAction: ((time: String, timeMis: Long) -> Unit)? = null,
-) : CenterPopupView(context), DatePicker.OnDateSelectedListener, HourPicker.OnHourSelectedListener, MinutePicker.OnMinuteSelectedListener {
+) : CenterPopupView(context), DatePicker.OnDateSelectedListener, HourPicker.OnHourSelectedListener,
+    MinutePicker.OnMinuteSelectedListener {
 
     override fun getImplLayoutId(): Int {
         return R.layout.base_time_choose_pop
@@ -36,6 +38,13 @@ class BaseTimeChoosePop(
             datePickerLayoutDate.setOnDateSelectedListener(this@BaseTimeChoosePop)
             minutePickerLayoutTime.setOnMinuteSelectedListener(this@BaseTimeChoosePop)
 
+            // 传递当前时间给日期
+            currentTime?.let {
+                datePickerLayoutDate.setCurrentDate(it)
+                hourPickerLayoutTime.setSelectedHour(DateHelper.formatTime(it, "HH").toInt())
+                minutePickerLayoutTime.setSelectedMinute(DateHelper.formatTime(it, "mm").toInt())
+            }
+
             tvConfirm.setOnClickListener {
                 dismiss()
                 // 需要判断当前时间和选中的时间的比较
@@ -43,12 +52,17 @@ class BaseTimeChoosePop(
                 // todo 需要时间比较
                 // 传给后台的时间为 yyyy-MM-dd HH:mm
 
-                logI("""
+                logI(
+                    """
                     ${"$date $hour-$minute"}
                     ${DateHelper.formatToLong("$date $hour:$minute", "yyyy-MM-dd HH:mm")}
-                """.trimIndent())
+                """.trimIndent()
+                )
                 // 需要除以1000，不然不行。
-                 onConfirmAction?.invoke("$date $hour:$minute", DateHelper.formatToLong("$date $hour:$minute", "yyyy-MM-dd HH:mm"))
+                onConfirmAction?.invoke(
+                    "$date $hour:$minute",
+                    DateHelper.formatToLong("$date $hour:$minute", "yyyy-MM-dd HH:mm")
+                )
             }
 
             tvCancel.setOnClickListener {

@@ -91,7 +91,7 @@ public class HourPicker extends WheelPicker<Integer> {
             }
         }
         for (int i = 0; i < getDataList().size(); i++) {
-            if (getDataList().get(i).equals(hour + "")) {
+            if (getDataList().get(i) == hour) {
                 setCurrentPosition(i, smoothScroll);
                 break;
             }

@@ -18,9 +18,12 @@ package com.cl.common_base.util.calendar;
 import android.text.TextUtils;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.cl.common_base.bean.CalendarData;
+import com.cl.common_base.ext.DateHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +33,13 @@ import java.util.List;
 public final class Calendar implements Serializable, Comparable<Calendar>, MultiItemEntity {
     private static final long serialVersionUID = 141315161718191143L;
 
+    /**
+     * 年月日
+     */
+    public String getYmd() {
+        Date date = DateHelper.INSTANCE.formatToDate(year + "-" + month + "-" + day, "yyyy-MM-dd");
+        return CalendarUtil.getFormat("yyyy-MM-dd").format(date.getTime());
+    }
 
     /**
      * 年
@@ -129,6 +139,11 @@ public final class Calendar implements Serializable, Comparable<Calendar>, Multi
     private boolean isChooser = false;
 
     /**
+     * 是否展示背景
+     */
+    private boolean isShowBg = false;
+
+    /**
      * 当前标志
      *
      * @return
@@ -144,6 +159,28 @@ public final class Calendar implements Serializable, Comparable<Calendar>, Multi
      * 周期的结束日期
      */
     private long endDay;
+
+    /**
+     * 后台返回的数据
+     */
+    private CalendarData calendarData;
+
+
+    public boolean isShowBg() {
+        return isShowBg;
+    }
+
+    public void setShowBg(boolean showBg) {
+        isShowBg = showBg;
+    }
+
+    public CalendarData getCalendarData() {
+        return calendarData;
+    }
+
+    public void setCalendarData(CalendarData calendarData) {
+        this.calendarData = calendarData;
+    }
 
     public long getStartDay() {
         return startDay;
