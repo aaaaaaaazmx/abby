@@ -1,7 +1,6 @@
 package com.cl.modules_pairing_connection.ui
 
 import android.content.Intent
-import android.provider.Settings
 import android.text.method.LinkMovementMethod
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -11,15 +10,11 @@ import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.GuideBlePop
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ble.BleUtil
-import com.cl.common_base.util.lcoation.LocationUtil
-import com.cl.common_base.util.permission.PermissionChecker
 import com.cl.common_base.util.span.appendClickable
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_pairing_connection.PairScanListAdapter
@@ -27,16 +22,14 @@ import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairScanBleBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
-import com.cl.common_base.pop.PairLocationPop
+import com.cl.common_base.report.Reporter
 import com.lxj.xpopup.XPopup
-import com.permissionx.guolindev.PermissionX
 import com.tuya.smart.android.ble.api.BleConfigType
 import com.tuya.smart.android.ble.api.ScanType
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.home.sdk.bean.ConfigProductInfoBean
 import com.tuya.smart.sdk.api.ITuyaDataCallback
 import dagger.hilt.android.AndroidEntryPoint
-import junit.framework.TestResult
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
@@ -240,6 +233,7 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
 
                         override fun onError(errorCode: String, errorMessage: String) {
                             logE("startScan, getActivatorInstance : $errorCode :: errorMessage: $errorMessage")
+                            Reporter.reportTuYaError("getActivatorInstance", errorMessage, errorCode)
                         }
                     })
 //                TuyaHomeSdk.getBleManager().startBleConfig(tuYaHomeId.toLong(), bean.uuid, null,

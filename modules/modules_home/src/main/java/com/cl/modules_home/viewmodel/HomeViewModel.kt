@@ -10,6 +10,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -769,6 +770,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         error: $error
                     """.trimIndent()
                 )
+                Reporter.reportTuYaError("getOtaInfo", error, code)
             }
         })
     }

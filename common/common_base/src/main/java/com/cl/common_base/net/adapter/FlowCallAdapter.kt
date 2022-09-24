@@ -1,13 +1,11 @@
 package com.cl.common_base.net.adapter
 
 
+import com.cl.common_base.report.Reporter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
-import retrofit2.Call
-import retrofit2.CallAdapter
-import retrofit2.Callback
-import retrofit2.Response
+import retrofit2.*
 import java.lang.reflect.Type
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -21,6 +19,7 @@ class ResponseCallAdapter<T>(
                 suspendCancellableCoroutine { continuation ->
                     call.enqueue(object : Callback<T> {
                         override fun onFailure(call: Call<T>, t: Throwable) {
+                            Reporter.reportCatchError(t.message, t.localizedMessage, t.toString())
                             continuation.resumeWithException(t)
                         }
 
@@ -38,20 +37,29 @@ class ResponseCallAdapter<T>(
 }
 
 
-class BodyCallAdapter<T>(private val responseType: Type) : CallAdapter<T, Flow<T>> {
+class BodyCallAdapter<T>(private val responseType: Type) :
+    CallAdapter<T, Flow<T>> {
     override fun adapt(call: Call<T>): Flow<T> {
         return flow {
             emit(
                 suspendCancellableCoroutine { continuation ->
                     call.enqueue(object : Callback<T> {
                         override fun onFailure(call: Call<T>, t: Throwable) {
+                            // 捕获异常
+                            Reporter.reportCatchError(t.message, t.localizedMessage, t.toString(), "enqueue onFailure")
                             continuation.resumeWithException(t)
                         }
 
                         override fun onResponse(call: Call<T>, response: Response<T>) {
                             try {
-                                continuation.resume(response.body()!!)
+                                response.body()?.let { continuation.resume(it) }
                             } catch (e: Exception) {
+                                Reporter.reportCatchError(
+                                    e.message,
+                                    e.localizedMessage,
+                                    e.toString(),
+                                    response.toString()
+                                )
                                 continuation.resumeWithException(e)
                             }
                         }
@@ -63,4 +71,8 @@ class BodyCallAdapter<T>(private val responseType: Type) : CallAdapter<T, Flow<T
     }
 
     override fun responseType() = responseType
+
+    private fun readResponse(response: Response<T>) {
+
+    }
 }

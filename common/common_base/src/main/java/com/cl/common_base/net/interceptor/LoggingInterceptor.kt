@@ -1,7 +1,9 @@
 package com.cl.common_base.net.interceptor
 
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import okhttp3.Interceptor
 import okhttp3.Response
 import okio.Buffer
@@ -9,6 +11,7 @@ import java.io.IOException
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
 import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
 
 class LoggingInterceptor : Interceptor {
 
@@ -65,6 +68,7 @@ class LoggingInterceptor : Interceptor {
                     + "\n请求参数: " + body
         )
 
+
         val startNs = System.nanoTime()
         val response = chain.proceed(request)
         val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
@@ -93,6 +97,15 @@ class LoggingInterceptor : Interceptor {
                     + "\n请求body：" + body
                     + "\nResponse: " + rBody
         )
+
+
+        // 如果是code != 200 都是错误，需要上报
+        thread {
+            if (response.code != Constants.APP_SUCCESS) {
+                val url = response.request.url.toString()
+                Reporter.reportApiError(url = url, query = body, httpCode = response.code, bizCode = "", error = rBody)
+            }
+        }
 
         return response
     }

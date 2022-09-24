@@ -1,6 +1,7 @@
 package com.cl.common_base.util.device
 
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -77,7 +78,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
 
     override fun onError(code: String?, error: String?) {
         onErrorAction?.invoke(this@DeviceControlImpl, code, error)
-
+        Reporter.reportTuYaError("DeviceControlImpl", error, code)
     }
 
     override fun onSuccess() {

@@ -19,7 +19,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+<!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
 
     <!--可选，只有当应用添加位置权限并且在用户权限地理位置权限情况下，SDK才可能会去获取地理位置信息，SDK不强制获取地理位置信息-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />

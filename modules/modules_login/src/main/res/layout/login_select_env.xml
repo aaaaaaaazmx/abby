@@ -31,7 +31,7 @@
             android:gravity="center"
             app:svRadius="16dp"
             app:svSolidType="solid"
-            android:text="开发环境-http://192.168.3.101:9330/"
+            android:text="外网环境-https://5c8730c912.oicp.vip/"
             android:background="@color/lineBg"
             android:layout_width="match_parent"
             android:layout_height="60dp"/>

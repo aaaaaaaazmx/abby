@@ -13,6 +13,7 @@ import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.PairLocationPop
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.lcoation.LocationUtil
 import com.cl.common_base.util.network.NetWorkUtil
@@ -56,6 +57,7 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
                             error: $error
                         """.trimIndent()
                         )
+                        Reporter.reportTuYaError("getUserInstance", error, code)
                     }
                 })
             })

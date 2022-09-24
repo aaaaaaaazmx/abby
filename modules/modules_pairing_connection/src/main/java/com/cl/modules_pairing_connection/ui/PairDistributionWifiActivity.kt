@@ -6,7 +6,6 @@ import android.os.Build
 import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.widget.doAfterTextChanged
@@ -21,19 +20,17 @@ import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.GuideBlePop
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
-import com.cl.common_base.util.ble.BleUtil
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.network.NetWorkUtil
-import com.cl.common_base.util.permission.PermissionChecker
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairConnectNetworkBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
 import com.lxj.xpopup.XPopup
-import com.permissionx.guolindev.PermissionX
 import com.tuya.smart.android.ble.api.ConfigErrorBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -373,8 +370,9 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                         }
                                     }
 
-                                    override fun onError(errorCode: String?, errorMsg: String?) {
+                                    override fun onError(errorCode: String, errorMsg: String?) {
                                         hideProgressLoading()
+                                        Reporter.reportTuYaError("newHomeInstance", errorMsg, errorCode)
                                     }
                                 })
 
@@ -389,7 +387,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 handle: ${(handle as? ConfigErrorBean).toString()}
                             """.trimIndent()
                                 )
-
+                                Reporter.reportTuYaError("getActivator", msg, code.toString())
                                 // 3 密码错误 4 路由器连接失败（大概率是密码错误）
                                 runOnUiThread {
                                     hideProgressLoading()
@@ -419,6 +417,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                 override fun onFailure(errorCode: String?, errorMsg: String?) {
                     hideProgressLoading()
                     logE("getActivatorToken: errorCode->${errorCode}, Error->$errorMsg")
+                    Reporter.reportTuYaError("getActivatorInstance", errorMsg, errorCode)
                 }
             })
     }

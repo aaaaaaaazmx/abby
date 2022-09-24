@@ -14,6 +14,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.DeviceControl
@@ -186,6 +187,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         error: $error
                     """.trimIndent()
                             )
+                            Reporter.reportTuYaError("newDeviceInstance", error, code)
                             mViewModel.deleteDevice()
                         }
 

@@ -1,6 +1,7 @@
 package com.cl.common_base.net.adapter
 
 
+import com.cl.common_base.ext.logI
 import kotlinx.coroutines.flow.Flow
 import retrofit2.CallAdapter
 import retrofit2.Response
