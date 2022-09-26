@@ -13,6 +13,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -274,6 +275,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                         error: $error
                     """.trimIndent()
                 )
+                Reporter.reportTuYaError("newOTAInstance", error, code)
             }
         })
     }
@@ -327,6 +329,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                         error: $error
                     """.trimIndent()
                     )
+                    Reporter.reportTuYaError("newDeviceInstance", error, code)
                 }
 
                 override fun onSuccess() {
@@ -348,6 +351,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                         error: $error
                     """.trimIndent()
                     )
+                    Reporter.reportTuYaError("newDeviceInstance", error, code)
                 }
 
                 override fun onSuccess() {

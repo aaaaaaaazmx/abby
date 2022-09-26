@@ -21,6 +21,7 @@ import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
@@ -100,6 +101,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                             error: $error
                         """.trimIndent()
                         )
+                        Reporter.reportTuYaError("getUserInstance", error, code)
                     }
                 })
             })

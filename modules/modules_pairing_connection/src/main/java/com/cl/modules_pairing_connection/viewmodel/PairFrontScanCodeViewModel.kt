@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
-import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -79,7 +79,7 @@ class PairFrontScanCodeViewModel @Inject constructor(private val repository: Pai
     fun getActivationStatus() {
         TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
-                override fun onError(code: String?, error: String?) {
+                override fun onError(code: String, error: String?) {
                     logI(
                         """
                         KEY_DEVICE_REPAIR_REST_STATUS: error
@@ -87,6 +87,7 @@ class PairFrontScanCodeViewModel @Inject constructor(private val repository: Pai
                         error: $error
                     """.trimIndent()
                     )
+                    Reporter.reportTuYaError("newDeviceInstance", error, code)
                 }
 
                 override fun onSuccess() {

@@ -46,9 +46,9 @@ class AppInitializer : Initializer<Unit> {
             false
         )
         logI("privacyPolicy: $privacyPolicy")
+        val strategy = UserStrategy(context.applicationContext as? Application)
         if (privacyPolicy) {
             // bugly
-            val strategy = UserStrategy(context.applicationContext as? Application)
             strategy.deviceID = AppUtil.getDeviceSerial()
             strategy.deviceModel = AppUtil.deviceModel
 
@@ -61,7 +61,8 @@ class AppInitializer : Initializer<Unit> {
         CrashReport.setIsDevelopmentDevice(context, BuildConfig.DEBUG) // 开发测试阶段设备为调试设备
         CrashReport.initCrashReport(
             context.applicationContext as? Application, "2d55fff670",
-            BuildConfig.DEBUG
+            BuildConfig.DEBUG,
+            strategy
         )
         return Unit
     }

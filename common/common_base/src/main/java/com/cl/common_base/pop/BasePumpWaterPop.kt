@@ -14,6 +14,7 @@ import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
@@ -266,6 +267,7 @@ class BasePumpWaterPop(
                                             error: $error
                                         """.trimIndent()
                                         )
+                                        Reporter.reportTuYaError("newDeviceInstance", error, code)
                                     }
 
                                     override fun onSuccess() {

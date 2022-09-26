@@ -9,6 +9,7 @@ import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
@@ -195,7 +196,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                             }
 
                                             override fun onError(
-                                                errorCode: String?,
+                                                errorCode: String,
                                                 errorMsg: String?
                                             ) {
                                                 logE(
@@ -205,17 +206,19 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                     errorMsg -> $errorMsg
                                                 """.trimIndent()
                                                 )
+                                                Reporter.reportTuYaError("newHomeInstance", errorMsg, errorCode)
                                             }
                                         })
                                 }
                             }
 
-                            override fun onError(errorCode: String?, error: String?) {
+                            override fun onError(errorCode: String, error: String?) {
                                 // 查询当前家庭列表失败，也要进行下一步
                                 // 种植检查
                                 user?.uid?.let { uid ->
                                     checkPlant(uid)
                                 }
+                                Reporter.reportTuYaError("getHomeManagerInstance", error, errorCode)
                             }
 
                         })
@@ -223,10 +226,10 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                         onSuccess?.invoke(user)
                     }
 
-                    override fun onError(code: String?, error: String?) {
+                    override fun onError(code: String, error: String) {
                         logE("code: $code,, erroe: $error}")
-                        error?.let { msg -> ToastUtil.shortShow(msg) }
-
+                        error.let { msg -> ToastUtil.shortShow(msg) }
+                        Reporter.reportTuYaError("getUserInstance", error, code)
                         onError?.invoke(code, error)
                     }
                 }

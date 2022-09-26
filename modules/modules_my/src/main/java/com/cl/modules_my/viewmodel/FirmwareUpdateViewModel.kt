@@ -10,6 +10,7 @@ import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
@@ -81,6 +82,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
                         error: $error
                     """.trimIndent()
                 )
+                Reporter.reportTuYaError("getOtaInfo", error, code)
             }
         })
     }
@@ -130,6 +132,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
                     error: $error
                 """.trimIndent()
                 )
+                Reporter.reportTuYaError("setOtaListener", error, code)
                 onFailure?.invoke(otaType, code, error)
                 stopOta()
             }
@@ -201,6 +204,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
                         error: $error
                     """.trimIndent()
                     )
+                    Reporter.reportTuYaError("newDeviceInstance", error, code)
                     deleteDevice()
                 }
 
