@@ -339,6 +339,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         if (data.month >= 8) {
                             // 如果已经加载了下一年了，就不需要重复加载
                             // 加载下一年
+                            if (adapter.data.firstOrNull { it.year == data.year + 1 && it.month == 5 && it.day == 20 } != null) return
                             for (i in 1..12) {
                                 list += CalendarUtil.initCalendarForMonthView(
                                     data.year + 1,
@@ -347,7 +348,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     Calendar.SUNDAY
                                 )
                             }
-                            if (adapter.data.firstOrNull { it.year == data.year + 1 && it.month == 5 && it.day == 20 } != null) return
                             adapter.addData(list)
                             list.clear()
                         }
