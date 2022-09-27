@@ -318,6 +318,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 客服支持
             ivSupport.setOnClickListener {
                 // todo 客服支持
+                // 暂时跳转邮箱
+                sendEmail()
             }
 
             tvFeef.setOnClickListener {
