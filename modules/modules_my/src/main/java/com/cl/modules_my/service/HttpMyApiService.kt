@@ -108,8 +108,15 @@ interface HttpMyApiService {
     fun getCalendar(
         @Field("startDate") startDate: String,
         @Field("endDate") endDate: String
-    ): Flow<HttpResult<CalendarData>>
+    ): Flow<HttpResult<MutableList<CalendarData>>>
 
     @POST("abby/calendar/updateTask")
     fun updateTask(@Body body: UpdateReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 解锁花期
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/unlockJourney")
+    fun unlockJourney(@Field("journeyName") journeyName: String, @Field("weight") weight: String? = null): Flow<HttpResult<BaseBean>>
 }

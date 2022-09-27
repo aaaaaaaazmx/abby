@@ -15,6 +15,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.BasePlantUsuallyPop
 import com.cl.common_base.pop.ChooserSeedPop
 import com.cl.common_base.pop.StrainNamePop
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyCloneAndReplantBinding
 import com.cl.modules_my.viewmodel.CloneAndReplantViewModel
@@ -69,6 +70,9 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
 
 
     override fun initView() {
+        // 如果是没名字、没属性那么直接隐藏
+        ViewUtils.setGone(binding.llSeed, isNoAttribute||isNoStrainName)
+
         binding.title.setLeftClickListener {
             setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, false))
             finish()
@@ -116,14 +120,14 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                                     }, onCancelAction = {
                                         // 如果是直接弹窗的，也就是老用户，但是没输入名字 或者没有属性名
                                         if (isNoAttribute || isNoStrainName) {
-                                            setResultForRefreshPlantInfo()
+                                            setResultForRefreshPlantInfo(false)
                                         }
                                     })
                             ).show()
                     }, onCancelAction = {
                         if (isNoAttribute) {
                             // 这个是没有选择属性名
-                            setResultForRefreshPlantInfo()
+                            setResultForRefreshPlantInfo(false)
                         }
                     })
                 ).show()
@@ -153,15 +157,18 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                         }, onCancelAction = {
                             // 如果是直接弹窗的，也就是老用户，但是没输入名字 或者没有属性名
                             if (isNoAttribute || isNoStrainName) {
-                                setResultForRefreshPlantInfo()
+                                setResultForRefreshPlantInfo(false)
                             }
                         })
                 ).show()
         }
     }
 
-    private fun setResultForRefreshPlantInfo() {
-        setResult(RESULT_OK, Intent().putExtra(KEY_REFRESH_PLANT_INFO, true))
+    /**
+     * 返回按键 -> 就不用管了。
+     */
+    private fun setResultForRefreshPlantInfo(isRefreshPlantInfo: Boolean) {
+        setResult(RESULT_OK, Intent().putExtra(KEY_REFRESH_PLANT_INFO, isRefreshPlantInfo))
         finish()
     }
 
@@ -179,7 +186,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                     hideProgressLoading()
                     // 只是为了老用户填入属性and名字
                     if (isNoAttribute || isNoStrainName) {
-                        setResultForRefreshPlantInfo()
+                        setResultForRefreshPlantInfo(true)
                         return@success
                     }
 

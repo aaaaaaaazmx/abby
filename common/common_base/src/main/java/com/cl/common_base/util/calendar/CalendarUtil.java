@@ -62,6 +62,7 @@ public final class CalendarUtil {
 
     /**
      * 是否是周日
+     *
      * @param calendar
      * @return
      */
@@ -72,6 +73,7 @@ public final class CalendarUtil {
 
     /**
      * 是否是周六
+     *
      * @param calendar
      * @return
      */
@@ -79,7 +81,6 @@ public final class CalendarUtil {
         int week = getWeekFormCalendar(calendar);
         return week == Calendar.SATURDAY - 1;
     }
-
 
 
     /**
@@ -320,7 +321,8 @@ public final class CalendarUtil {
 
     /**
      * 获取之前的日期
-     * @param num  -7 表示之前7天的日期、 7表示后面7天的日期
+     *
+     * @param num         -7 表示之前7天的日期、 7表示后面7天的日期
      * @param currentTime 当前日期
      * @return 日期
      */
@@ -337,7 +339,7 @@ public final class CalendarUtil {
      * 获取1-31天的后缀
      * *1st ,First
      * *2nd, Second
-
+     * <p>
      * 24th,Twenty-fourth
      * 25th,Twenty-fifth
      * 26th,twenty-sixth
@@ -352,44 +354,44 @@ public final class CalendarUtil {
         try {
             int format = Integer.parseInt(simpleDateFormat.format(date.getTime()));
             switch (format) {
-                case 1 :
+                case 1:
                     return "st";
-                case 2 :
+                case 2:
                     return "nd";
-                case 3 :
+                case 3:
                     return "rd";
-                case 4 :
-                case 5 :
-                case 6 :
-                case 7 :
-                case 8 :
-                case 9 :
-                case 10 :
-                case 11 :
-                case 12 :
-                case 13 :
-                case 14 :
-                case 15 :
-                case 16 :
-                case 17 :
-                case 18 :
-                case 19 :
-                case 20 :
-                case 24 :
-                case 25 :
-                case 26 :
-                case 27 :
-                case 28 :
-                case 29 :
-                case 30 :
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                case 15:
+                case 16:
+                case 17:
+                case 18:
+                case 19:
+                case 20:
+                case 24:
+                case 25:
+                case 26:
+                case 27:
+                case 28:
+                case 29:
+                case 30:
                     return "th";
-                case 21 :
+                case 21:
                     return "st";
-                case 22 :
+                case 22:
                     return "nd";
-                case 23 :
+                case 23:
                     return "rd";
-                case 31 :
+                case 31:
                     return "st";
             }
         } catch (Exception e) {
@@ -400,6 +402,7 @@ public final class CalendarUtil {
 
     /**
      * 计算两个时间相差多少天
+     *
      * @param endDate 结束时间
      * @param nowDate 现在的时间
      * @return
@@ -421,11 +424,11 @@ public final class CalendarUtil {
         // 计算差多少秒//输出结果
         long sec = diff % nd % nh % nm / ns;
         String res = "";
-        if(day != 0){
+        if (day != 0) {
             res += day + "天";
         }
-        if(hour != 0){
-            res += "  "+hour + ":"+min + ":"+sec;
+        if (hour != 0) {
+            res += "  " + hour + ":" + min + ":" + sec;
         }
         return Integer.parseInt(String.valueOf(day));
     }
@@ -433,6 +436,7 @@ public final class CalendarUtil {
 
     /**
      * 获取统一的simpleDateFormat
+     *
      * @param format
      * @return
      */
@@ -440,4 +444,27 @@ public final class CalendarUtil {
         return new SimpleDateFormat(format, Locale.getDefault());
     }
 
+
+    /**
+     * 获取今年的第一天
+     */
+    public static String getYearStartDay(int year) {
+        SimpleDateFormat format = getFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_YEAR, 1);
+        cal.getTime();
+        return format.format(cal.getTime()) + "";
+    }
+
+    /**
+     * 获取今年的最后一天
+     */
+    public static String getYearEndDay(int year) {
+        SimpleDateFormat format = getFormat("yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
+        return format.format(cal.getTime()) + "";
+    }
 }

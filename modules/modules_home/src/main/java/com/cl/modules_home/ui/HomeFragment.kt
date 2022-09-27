@@ -312,6 +312,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation()
                 } else {
                     // todo 如果不是订阅用户，那么直接弹窗
+                    ToastUtil.shortShow("你还不是订阅用户，只能看图文详情")
                 }
             }
 

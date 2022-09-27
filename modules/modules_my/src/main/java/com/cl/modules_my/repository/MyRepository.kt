@@ -107,7 +107,7 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     /**
      *  获取日历任务
      */
-    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<CalendarData>> {
+    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<MutableList<CalendarData>>> {
         return remoteRepository.getCalendar(startDate, endDate)
     }
 
@@ -116,5 +116,12 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
      */
     fun updateTask(body: UpdateReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.updateTask(body)
+    }
+
+    /**
+     * 解锁花期
+     */
+    fun unlockJourney(name: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.unlockJourney(name, weight)
     }
 }

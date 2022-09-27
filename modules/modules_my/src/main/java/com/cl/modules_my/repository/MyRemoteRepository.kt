@@ -70,11 +70,15 @@ class MyRemoteRepository @Inject constructor() {
         return service.getDetailByLearnMoreId(learnMoreId)
     }
 
-    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<CalendarData>> {
+    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<MutableList<CalendarData>>> {
         return service.getCalendar(startDate, endDate)
     }
 
     fun updateTask(body: UpdateReq): Flow<HttpResult<BaseBean>> {
         return service.updateTask(body)
+    }
+
+    fun unlockJourney(name: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
+        return service.unlockJourney(name, weight)
     }
 }
