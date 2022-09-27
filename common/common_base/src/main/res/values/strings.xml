@@ -100,6 +100,7 @@
     <string name="my_guide_seed_desc">You have finished the set up process. \n\nIn the following days, follow the task reminders in the app calendar as well as complete tasks such as water changes on time, and your seeds will germinate smoothly!</string>
     <string name="my_no_task">No task today~</string>
     <string name="my_how_is">How is other’s girls looking like in this period</string>
+    <string name="base_please_try_again">Please set the reminder time later than the current time</string>
 
 
 </resources>

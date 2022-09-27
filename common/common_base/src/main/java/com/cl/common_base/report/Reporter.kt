@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import com.cl.common_base.BuildConfig
 import com.tencent.bugly.crashreport.CrashReport
 
 /**
@@ -29,15 +30,17 @@ object Reporter {
             error: $error,
             options: $params
         """.trimIndent()
-        CrashReport.postCatchedException(
-            Throwable(
-                """
+        if (!BuildConfig.DEBUG) {
+            CrashReport.postCatchedException(
+                Throwable(
+                    """
            errorType: $errorType,
            error: $error,
            params: $params
         """.trimIndent()
+                )
             )
-        )
+        }
     }
 
     /**
@@ -96,7 +99,13 @@ object Reporter {
         throwString: String?,
         response: String? = null
     ) {
-        reportError(ErrorType.CatchError, error.toString(), "localizedMessage" to localizedMessage.toString(), "throwString" to throwString.toString(), "response" to response.toString())
+        reportError(
+            ErrorType.CatchError,
+            error.toString(),
+            "localizedMessage" to localizedMessage.toString(),
+            "throwString" to throwString.toString(),
+            "response" to response.toString()
+        )
     }
 
     /**

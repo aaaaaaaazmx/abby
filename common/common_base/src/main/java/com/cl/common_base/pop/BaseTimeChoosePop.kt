@@ -9,11 +9,13 @@ import com.cl.common_base.databinding.BaseTimeChoosePopBinding
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.calendar.CalendarUtil
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.common_base.widget.wheel.time.DatePicker
 import com.cl.common_base.widget.wheel.time.HourPicker
 import com.cl.common_base.widget.wheel.time.MinutePicker
 import com.google.android.gms.common.util.DataUtils
 import com.lxj.xpopup.core.CenterPopupView
+import java.time.Year
 import java.util.*
 
 /**
@@ -47,11 +49,15 @@ class BaseTimeChoosePop(
 
             tvConfirm.setOnClickListener {
                 dismiss()
-                // 需要判断当前时间和选中的时间的比较
-                val currentYMD = CalendarUtil.getFormat("yyyy-MM-dd").format(Date().time)
-                // todo 需要时间比较
+                // todo 需要判断当前时间和选中的时间的比较
+                currentTime?.let {
+                    val isAfter = DateHelper.after(Date(it), DateHelper.formatToDate("$date $hour:$minute", "yyyy-MM-dd HH:mm"))
+                    if (isAfter) {
+                        ToastUtil.shortShow(context.getString(R.string.base_please_try_again))
+                        return@setOnClickListener
+                    }
+                }
                 // 传给后台的时间为 yyyy-MM-dd HH:mm
-
                 logI(
                     """
                     ${"$date $hour-$minute"}

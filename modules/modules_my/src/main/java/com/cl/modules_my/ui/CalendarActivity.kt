@@ -500,34 +500,43 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         return
                     }
                     val layoutParams = holder.imgMark.layoutParams as LinearLayout.LayoutParams
-                    //                    layoutParams.width = dp2px(10f)
-                    //                    layoutParams.height = dp2px(10f)
                     holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
                     holder.imgLineEnd.layoutParams.width = dp2px(0.8f)
                     holder.imgLineStart.layoutParams.width = dp2px(0.8f)
-                    //                layoutParams.setMargins(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
-                    //                val drawable = RoundedBitmapDrawableFactory.create(resources,
-                    //                    BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                    //                drawable.isCircular = true
-                    if (position == 0) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
-                        ContextCompat.getDrawable(this@CalendarActivity, R.drawable.my_head_bg)
-                    )
-                    //                holder.imgMark.setPadding(dp2px(5f),dp2px(5f),dp2px(5f),dp2px(5f))
                     holder.imgMark.scaleType = ImageView.ScaleType.CENTER_CROP
-                    //                holder.imgMark.background = ContextCompat.getDrawable(this@CalendarActivity, R.mipmap.my_close)
+
+                    // 判断周期
+                    logI("""
+                        initTime ->  time:
+                        ${Date().time}
+                        ${listContent[position].taskTime?.toLong()?: 0L}
+                        ${DateHelper.after(Date(), Date(listContent[position].taskTime?.toLong()?: 0L))}
+                        ${CalendarUtil.getFormat("yyyy-MM-dd").format((listContent[position].taskTime?.toLong()
+                        ?.times(1000)) ?: 0L)}
+                        ${CalendarUtil.getFormat("yyyy-MM-dd").format(Date().time)}
+                    """.trimIndent())
+                    if (CalendarUtil.getFormat("yyyy-MM-dd").format((listContent[position].taskTime?.toLong()
+                            ?.times(1000)) ?: 0L) == CalendarUtil.getFormat("yyyy-MM-dd").format(Date().time)) {
+                        // 当前时间等于taskTime
+                        holder.imgMark.setImageDrawable(
+                            ContextCompat.getDrawable(this@CalendarActivity, com.cl.common_base.R.drawable.base_dot_main_color)
+                        )
+                    } else if (DateHelper.after(Date(), Date((listContent[position].taskTime?.toLong()
+                            ?.times(1000)) ?: 0L))) {
+                        // 当前时间大于taskTime(任务时间)
+                        holder.imgMark.setImageDrawable(
+                            ContextCompat.getDrawable(this@CalendarActivity, com.cl.common_base.R.drawable.base_dot_gray)
+                        )
+                    } else if (DateHelper.after(Date((listContent[position].taskTime?.toLong()
+                            ?.times(1000)) ?: 0L), Date())) {
+                        // 当前时间小于taskTime(任务时间)
+                        holder.imgMark.setImageDrawable(
+                            ContextCompat.getDrawable(this@CalendarActivity, com.cl.common_base.R.drawable.base_dot_red)
+                        )
+                    }
 
 
-                    // 加载右边布局
-                    //                val drawable2 = RoundedBitmapDrawableFactory.create(resources,BitmapFactory.decodeResource(resources, R.mipmap.my_about_us))
-                    //                drawable2.cornerRadius = dp2px(6f).toFloat()
-                    //                holder.itemView.img_one.setImageDrawable(drawable2)
-                    //                holder.itemView.img_two.setImageDrawable(drawable2)
-                    //                holder.itemView.img_three.setImageDrawable(drawable2)
-                    //                if(position % 3 == 0){
-                    //                    holder.itemView.img_two.visibility = View.VISIBLE
-                    //                } else {
-                    //                    holder.itemView.img_two.visibility = View.GONE
-                    //                }
+
                     logI(
                         """
                         task:

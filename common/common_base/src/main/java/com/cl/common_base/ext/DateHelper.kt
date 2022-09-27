@@ -87,7 +87,7 @@ object DateHelper {
     )
     fun getTimestamp(dateStr: String, pattern: String, timeZone: String): Long {
         try {
-            val sdf = SimpleDateFormat(pattern, Locale.CHINA)
+            val sdf = SimpleDateFormat(pattern, Locale.getDefault())
             sdf.timeZone = TimeZone.getTimeZone(timeZone)
             val date: Date? = sdf.parse(dateStr)
             date?.run { return time }
@@ -126,18 +126,18 @@ object DateHelper {
     }
 
     /**
-     * 指定地区为中国[Locale.CHINA]格式化时间戳[timestamp]到默认时间格式[DATE_PATTERN]
+     * 指定地区为中国[Locale.getDefault()]格式化时间戳[timestamp]到默认时间格式[DATE_PATTERN]
      *
      * @param timestamp 时间戳
      * @return 格式化后的时间
      */
     @JvmStatic
     fun formatTime(timestamp: Long): String {
-        return formatTime(timestamp, DATE_PATTERN, Locale.CHINA)
+        return formatTime(timestamp, DATE_PATTERN, Locale.getDefault())
     }
 
     /**
-     * 指定地区为中国[Locale.CHINA]格式化时间戳[timestamp]到指定格式[pattern]
+     * 指定地区为中国[Locale.getDefault()]格式化时间戳[timestamp]到指定格式[pattern]
      *
      * @param timestamp     时间戳
      * @param pattern       时间格式
@@ -145,7 +145,7 @@ object DateHelper {
      */
     @JvmStatic
     fun formatTime(timestamp: Long, pattern: String): String {
-        return formatTime(timestamp, pattern, Locale.CHINA)
+        return formatTime(timestamp, pattern, Locale.getDefault())
     }
 
     /**
@@ -190,10 +190,10 @@ object DateHelper {
     @JvmStatic
     fun formatTime(date: String, patternOld: String, patternNew: String): String {
         try {
-            var formatter = SimpleDateFormat(patternOld, Locale.CHINA)
+            var formatter = SimpleDateFormat(patternOld, Locale.getDefault())
             formatter.isLenient = false
             val newDate: Date? = formatter.parse(date)
-            formatter = SimpleDateFormat(patternNew, Locale.CHINA)
+            formatter = SimpleDateFormat(patternNew, Locale.getDefault())
             newDate?.let {
                 return formatter.format(it)
             }
@@ -308,15 +308,15 @@ object DateHelper {
 
     private fun getDateFormat(patter: String): SimpleDateFormat {
         if (sdf == null)
-            sdf = SimpleDateFormat(patter, Locale.CHINA)
+            sdf = SimpleDateFormat(patter, Locale.getDefault())
         sdf!!.applyPattern(patter)
         return sdf!!
     }
 
-    private fun getCalendar() = Calendar.getInstance(Locale.CHINA)
+    private fun getCalendar() = Calendar.getInstance(Locale.getDefault())
 
     private fun getCalendar(date: Date): Calendar {
-        val calendar = Calendar.getInstance(Locale.CHINA)
+        val calendar = Calendar.getInstance(Locale.getDefault())
         calendar.time = date
         return calendar
     }

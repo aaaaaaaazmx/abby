@@ -82,161 +82,54 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
         }
         // 现在有且只有3个点
         item.calendarData.taskList?.forEachIndexed { index, data ->
-            when (currentColor) {
-                ContextCompat.getColor(
-                    context,
-                    com.cl.common_base.R.color.calendarGray
-                ) -> {
-                    when (index) {
-                        0 -> {
-                            ViewUtils.setVisible(llPointGray)
-                            ViewUtils.setGone(llPoint)
-                            ViewUtils.setVisible(changWaterGray)
-                        }
-                        1 -> {
-                            ViewUtils.setVisible(llPointGray)
-                            ViewUtils.setGone(llPoint)
-                            ViewUtils.setVisible(changUnlockGray)
-                        }
-                        2 -> {
-                            ViewUtils.setVisible(llPointGray)
-                            ViewUtils.setGone(llPoint)
-                            ViewUtils.setVisible(changElseGray)
-                        }
+            val itemTime = Date(item.timeInMillis)
+            val currentTime = Date()
+
+            if (DateHelper.after(currentTime, itemTime)) {
+                // 当前时间大于itemTime
+                when (index) {
+                    0 -> {
+                        ViewUtils.setVisible(llPointGray)
+                        ViewUtils.setGone(llPoint)
+                        ViewUtils.setVisible(changWaterGray)
+                    }
+                    1 -> {
+                        ViewUtils.setVisible(llPointGray)
+                        ViewUtils.setGone(llPoint)
+                        ViewUtils.setVisible(changUnlockGray)
+                    }
+                    2 -> {
+                        ViewUtils.setVisible(llPointGray)
+                        ViewUtils.setGone(llPoint)
+                        ViewUtils.setVisible(changElseGray)
                     }
                 }
-                Color.BLACK -> {
-                    when (data.taskType) {
-                        "Unlock" -> {
-                            ViewUtils.setVisible(changeUnlock)
-                        }
-                        "changing_water" -> {
-                            ViewUtils.setVisible(changWater)
-                        }
-                        else -> {
-                            ViewUtils.setVisible(changElse)
-                        }
+            } else if (DateHelper.after(itemTime, currentTime)) {
+                // 当前时间小于itemTime
+                when (data.taskType) {
+                    "Unlock" -> {
+                        ViewUtils.setVisible(changeUnlock)
+                    }
+                    "changing_water" -> {
+                        ViewUtils.setVisible(changWater)
+                    }
+                    else -> {
+                        ViewUtils.setVisible(changElse)
                     }
                 }
-
-                Color.WHITE -> {
-                    if (item.ymd >= CalendarUtil.getFormat("yyyy-MM-dd").format(Date().time)) {
-                        // 年月日相等的话
-                        when (data.taskType) {
-                            "Unlock" -> {
-                                ViewUtils.setVisible(changeUnlock)
-                            }
-                            "changing_water" -> {
-                                ViewUtils.setVisible(changWater)
-                            }
-                            else -> {
-                                ViewUtils.setVisible(changElse)
-                            }
-                        }
+            } else if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
+                when (data.taskType) {
+                    "Unlock" -> {
+                        ViewUtils.setVisible(changeUnlock)
                     }
-                    val d = Date()
-                    val year = CalendarUtil.getDate("yyyy", d)
-                    val month = CalendarUtil.getDate("MM", d)
-                    val day = CalendarUtil.getDate("dd", d)
-                    if (item.year == year) {
-                        if (item.month > month) {
-                            when (data.taskType) {
-                                "Unlock" -> {
-                                    ViewUtils.setVisible(changeUnlock)
-                                }
-                                "changing_water" -> {
-                                    ViewUtils.setVisible(changWater)
-                                }
-                                else -> {
-                                    ViewUtils.setVisible(changElse)
-                                }
-                            }
-                        } else if (item.month == month) {
-                            if (item.day == day) {
-                                when (data.taskType) {
-                                    "Unlock" -> {
-                                        ViewUtils.setVisible(changeUnlock)
-                                    }
-                                    "changing_water" -> {
-                                        ViewUtils.setVisible(changWater)
-                                    }
-                                    else -> {
-                                        ViewUtils.setVisible(changElse)
-                                    }
-                                }
-                            } else if (item.day > day) {
-                                when (data.taskType) {
-                                    "Unlock" -> {
-                                        ViewUtils.setVisible(changeUnlock)
-                                    }
-                                    "changing_water" -> {
-                                        ViewUtils.setVisible(changWater)
-                                    }
-                                    else -> {
-                                        ViewUtils.setVisible(changElse)
-                                    }
-                                }
-                            } else if (item.day < day) {
-                                when (index) {
-                                    0 -> {
-                                        ViewUtils.setVisible(llPointGray)
-                                        ViewUtils.setGone(llPoint)
-                                        ViewUtils.setVisible(changWaterGray)
-                                    }
-                                    1 -> {
-                                        ViewUtils.setVisible(llPointGray)
-                                        ViewUtils.setGone(llPoint)
-                                        ViewUtils.setVisible(changUnlockGray)
-                                    }
-                                    2 -> {
-                                        ViewUtils.setVisible(llPointGray)
-                                        ViewUtils.setGone(llPoint)
-                                        ViewUtils.setVisible(changElseGray)
-                                    }
-                                }
-                            }
-                        } else if (item.month < month) {
-                            when (index) {
-                                0 -> {
-                                    ViewUtils.setVisible(llPointGray)
-                                    ViewUtils.setGone(llPoint)
-                                    ViewUtils.setVisible(changWaterGray)
-                                }
-                                1 -> {
-                                    ViewUtils.setVisible(llPointGray)
-                                    ViewUtils.setGone(llPoint)
-                                    ViewUtils.setVisible(changUnlockGray)
-                                }
-                                2 -> {
-                                    ViewUtils.setVisible(llPointGray)
-                                    ViewUtils.setGone(llPoint)
-                                    ViewUtils.setVisible(changElseGray)
-                                }
-                            }
-                        }
-                    }  else if (item.year < year) {
-                        when (index) {
-                            0 -> {
-                                ViewUtils.setVisible(llPointGray)
-                                ViewUtils.setGone(llPoint)
-                                ViewUtils.setVisible(changWaterGray)
-                            }
-                            1 -> {
-                                ViewUtils.setVisible(llPointGray)
-                                ViewUtils.setGone(llPoint)
-                                ViewUtils.setVisible(changUnlockGray)
-                            }
-                            2 -> {
-                                ViewUtils.setVisible(llPointGray)
-                                ViewUtils.setGone(llPoint)
-                                ViewUtils.setVisible(changElseGray)
-                            }
-                        }
+                    "changing_water" -> {
+                        ViewUtils.setVisible(changWater)
                     }
-
+                    else -> {
+                        ViewUtils.setVisible(changElse)
+                    }
                 }
             }
-
         }
         return false
     }
@@ -304,56 +197,22 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
     }
 
     fun getTextColors(item: Calendar): Int {
-        val year = item.year
-        val month = item.month
-        val day = item.day
-        kotlin.runCatching {
-            val curr = data.first { it.isCurrentDay }
-            return if (item.isChooser) {
-                Color.WHITE
-            } else if (item.isCurrentDay) {
-                Color.BLACK
-            } else if (year < curr.year) {
-                ContextCompat.getColor(
-                    context,
-                    com.cl.common_base.R.color.calendarGray
-                )
-            } else if (year > curr.year) {
-                Color.BLACK
-            } else if (year == curr.year) {
-                if (month < curr.month) {
-                    ContextCompat.getColor(
-                        context,
-                        com.cl.common_base.R.color.calendarGray
-                    )
-                } else if (month > curr.month) {
-                    Color.BLACK
-                } else if (month == curr.month) {
-                    if (day < curr.day) {
-                        ContextCompat.getColor(
-                            context,
-                            com.cl.common_base.R.color.calendarGray
-                        )
-                    } else if (day > curr.day) {
-                        Color.BLACK
-                    } else {
-                        ContextCompat.getColor(
-                            context,
-                            com.cl.common_base.R.color.calendarGray
-                        )
-                    }
-                } else {
-                    ContextCompat.getColor(
-                        context,
-                        com.cl.common_base.R.color.calendarGray
-                    )
-                }
-            } else {
-                ContextCompat.getColor(
-                    context,
-                    com.cl.common_base.R.color.calendarGray
-                )
-            }
+        val itemTime = Date(item.timeInMillis)
+        val currentTime = Date()
+        // 时间判断
+        if (DateHelper.after(currentTime, itemTime)) {
+            // 当前时间大于itemTime
+            return ContextCompat.getColor(
+                context,
+                com.cl.common_base.R.color.calendarGray
+            )
+        }
+        if (DateHelper.after(itemTime, currentTime)) {
+            // 当前时间小于itemTime
+            return Color.BLACK
+        }
+        if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
+            return Color.BLACK
         }
         return -1
     }
