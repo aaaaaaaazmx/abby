@@ -7,12 +7,14 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.nio.charset.Charset
 import java.nio.charset.UnsupportedCharsetException
+import kotlin.concurrent.thread
 
 
 /**
@@ -56,6 +58,9 @@ class TokenInterceptor : Interceptor {
                 ${it.message}
         """.trimIndent()
             )
+            thread {
+                Reporter.reportApiError(url = request.url.toString(), query = "", chain.proceed(request).code, "", it.message)
+            }
         }.onSuccess {
             if (it?.code == 401) {
                 //token过期 发通知
