@@ -199,6 +199,10 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
     fun getTextColors(item: Calendar): Int {
         val itemTime = Date(item.timeInMillis)
         val currentTime = Date()
+        // 选中状态为白色
+        if (item.isChooser) {
+            Color.WHITE
+        } else
         // 时间判断
         if (DateHelper.after(currentTime, itemTime)) {
             // 当前时间大于itemTime
@@ -206,11 +210,11 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                 context,
                 com.cl.common_base.R.color.calendarGray
             )
-        }
+        } else
         if (DateHelper.after(itemTime, currentTime)) {
             // 当前时间小于itemTime
             return Color.BLACK
-        }
+        } else
         if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
             return Color.BLACK
         }

@@ -55,7 +55,7 @@ android {
         create("abby") {
             keyAlias = readProperties("KEY_ALIAS")
             keyPassword = readProperties("KEY_PASSWORD")
-            storeFile = readProperties("KEYSTORE_FILE")?.let { File(it) }
+            storeFile = readProperties("KEYSTORE_FILE")?.let { file(it) }
             storePassword = readProperties("KEYSTORE_PASSWORD")
         }
     }
