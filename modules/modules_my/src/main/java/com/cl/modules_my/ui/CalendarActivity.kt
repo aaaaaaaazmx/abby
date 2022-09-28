@@ -166,16 +166,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             if (status.isNullOrEmpty()) return@BasePlantUsuallyPop
                             when(status) {
                                 CalendarData.TASK_TYPE_CHANGE_WATER -> {
-                                    // todo 三合一流程、加水换水加肥
                                 }
                                 CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
-                                    // todo 图文
+                                    // todo 任务完成
                                 }
                                 CalendarData.TASK_TYPE_LST -> {
+                                    // todo 任务完成
                                 }
                                 CalendarData.TASK_TYPE_TOPPING -> {
+                                    // todo 任务完成
                                 }
                                 CalendarData.TASK_TYPE_TRIM -> {
+                                    // todo 任务完成
                                 }
                                 CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                     // todo 这个应该是转周期了，调用图文、然后解锁花期
@@ -199,8 +201,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                             }
                         },
-                        data = data
-                    )).show()
+                    ).setData(data)).show()
                 }
             })
 
@@ -787,6 +788,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             when (listContent[position].taskType) {
                                                 CalendarData.TASK_TYPE_CHANGE_WATER -> {
                                                     // todo 三合一流程、加水换水加肥
+                                                    // 换水、加水、加肥。三步
                                                 }
                                                 CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
                                                     // todo 图文

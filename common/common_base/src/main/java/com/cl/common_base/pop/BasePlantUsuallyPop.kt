@@ -67,11 +67,12 @@ class BasePlantUsuallyPop(
     /**
      * 设置数据
      */
-    fun setData(popData: GuideInfoData?) {
+    fun setData(popData: GuideInfoData?): BasePlantUsuallyPop {
         binding?.btnSuccess?.isEnabled = false
         this.popData = popData?.items
         this.data = popData
         this.isCurrentStatus = popData?.type
+        return this
     }
 
     override fun beforeShow() {
