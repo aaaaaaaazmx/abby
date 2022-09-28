@@ -21,18 +21,17 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
-import com.cl.common_base.pop.BaseCenterPop
-import com.cl.common_base.pop.BasePlantUsuallyPop
-import com.cl.common_base.pop.BaseThreeTextPop
-import com.cl.common_base.pop.BaseTimeChoosePop
+import com.cl.common_base.pop.*
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
+import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.widget.AbTextViewCalendar
 import com.cl.common_base.widget.SvTextView
 import com.cl.common_base.widget.toast.ToastUtil
@@ -142,6 +141,63 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 获取换水的图文接口
+            advertising.observe(this@CalendarActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    pop
+                        .enableDrag(false)
+                        .maxHeight(dp2px(600f))
+                        .dismissOnTouchOutside(false)
+                        .asCustom(
+                            BasePumpWaterPop(
+                                this@CalendarActivity,
+                                { status ->
+                                    // 涂鸦指令，添加排水功能
+                                    DeviceControl.get()
+                                        .success {
+                                            // todo 排水成功，然后调用完成任务接口
+
+                                        }
+                                        .error { code, error ->
+                                            ToastUtil.shortShow(
+                                                """
+                                    pumpWater: 
+                                    code-> $code
+                                    errorMsg-> $error
+                                """.trimIndent()
+                                            )
+                                        }
+                                        .pumpWater(status)
+                                },
+                                onWaterFinishedAction = {
+                                    // 排水结束，那么直接弹出
+                                    pop
+                                        .isDestroyOnDismiss(false)
+                                        .enableDrag(false)
+                                        .maxHeight(dp2px(600f))
+                                        .dismissOnTouchOutside(false)
+                                        .asCustom(
+                                            BasePumpWaterFinishedPop(
+                                                this@CalendarActivity,
+                                                onSuccessAction = {
+                                                    // 排水成功弹窗，点击OK按钮
+                                                    // todo 排水成功，然后调用完成任务接口
+
+                                                })
+                                        )
+                                },
+                                data = this.data,
+                            )
+                        ).show()
+                }
+            })
+
             // guideInfo
             getGuideInfo.observe(this@CalendarActivity, resourceObserver {
                 loading { showProgressLoading() }
@@ -158,50 +214,51 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         .dismissOnTouchOutside(false)
                         .isDestroyOnDismiss(false)
                         .asCustom(
-                    BasePlantUsuallyPop(
-                        this@CalendarActivity,
-                        onNextAction = {
-                            // 判断当前的周期状态
-                            val status = mViewMode.guideInfoStatus.value
-                            if (status.isNullOrEmpty()) return@BasePlantUsuallyPop
-                            when(status) {
-                                CalendarData.TASK_TYPE_CHANGE_WATER -> {
-                                }
-                                CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
-                                    // todo 任务完成
-                                }
-                                CalendarData.TASK_TYPE_LST -> {
-                                    // todo 任务完成
-                                }
-                                CalendarData.TASK_TYPE_TOPPING -> {
-                                    // todo 任务完成
-                                }
-                                CalendarData.TASK_TYPE_TRIM -> {
-                                    // todo 任务完成
-                                }
-                                CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
-                                    // todo 这个应该是转周期了，调用图文、然后解锁花期
-                                    mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                }
-                                CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
-                                    mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                }
-                                CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING -> {
-                                    mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                }
-                                CalendarData.TASK_TYPE_CHECK_CHECK_DRYING -> {
-                                    mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                }
-                                CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
-                                    mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                }
-                                CalendarData.TASK_TYPE_CHECK_CHECK_FINISH -> {
-                                    mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                }
+                            BasePlantUsuallyPop(
+                                this@CalendarActivity,
+                                onNextAction = {
+                                    // 判断当前的周期状态
+                                    val status = mViewMode.guideInfoStatus.value
+                                    if (status.isNullOrEmpty()) return@BasePlantUsuallyPop
+                                    when (status) {
+                                        CalendarData.TASK_TYPE_CHANGE_WATER -> {
+                                        }
+                                        CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
+                                            // todo 任务完成
+                                        }
+                                        CalendarData.TASK_TYPE_LST -> {
+                                            // todo 任务完成
+                                        }
+                                        CalendarData.TASK_TYPE_TOPPING -> {
+                                            // todo 任务完成
+                                        }
+                                        CalendarData.TASK_TYPE_TRIM -> {
+                                            // todo 任务完成
+                                        }
+                                        CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
+                                            // todo 这个应该是转周期了，调用图文、然后解锁花期
+                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                        }
+                                        CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
+                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                        }
+                                        CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING -> {
+                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                        }
+                                        CalendarData.TASK_TYPE_CHECK_CHECK_DRYING -> {
+                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                        }
+                                        CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
+                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                        }
+                                        CalendarData.TASK_TYPE_CHECK_CHECK_FINISH -> {
+                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                        }
 
-                            }
-                        },
-                    ).setData(data)).show()
+                                    }
+                                },
+                            ).setData(data)
+                        ).show()
                 }
             })
 
@@ -789,6 +846,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 CalendarData.TASK_TYPE_CHANGE_WATER -> {
                                                     // todo 三合一流程、加水换水加肥
                                                     // 换水、加水、加肥。三步
+                                                    changWaterAddWaterAddpump()
                                                 }
                                                 CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
                                                     // todo 图文
@@ -892,6 +950,39 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
             }).setLayoutType(LayoutType.ALL)
             .setIsCustom(true)
+    }
+
+    // 三合一流程
+    private fun changWaterAddWaterAddpump() {
+        // 首先是换水
+        pop
+            .isDestroyOnDismiss(false)
+            .enableDrag(false)
+            .maxHeight(dp2px(600f))
+            .asCustom(
+                HomePlantDrainPop(
+                    context = this@CalendarActivity,
+                    onNextAction = {
+                        // 请求接口
+                        mViewMode.advertising()
+                    },
+                    onCancelAction = {
+
+                    },
+                    onTvSkipAddWaterAction = {
+                        // todo 跳过换水上报接口有问题、后台暂时未给
+                        pop
+                            .isDestroyOnDismiss(false)
+                            .enableDrag(false)
+                            .maxHeight(dp2px(600f))
+                            .dismissOnTouchOutside(false)
+                            .asCustom(
+                                HomeSkipWaterPop(this@CalendarActivity, onConfirmAction = {
+                                })
+                            ).show()
+                    }
+                )
+            ).show()
     }
 
     fun getJson(context: Context, fileName: String?): String? {

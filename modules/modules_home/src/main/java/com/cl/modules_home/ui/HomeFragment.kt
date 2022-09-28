@@ -1665,6 +1665,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             .success {
                                                 // 气泡任务和右边手动点击通用一个XPopup
                                                 // 气泡任务为：
+                                                // 主要是针对任务
                                                 if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
                                                     mViewMode.deviceOperateStart(
                                                         business = "${mViewMode.unreadMessageList.value?.first()?.messageId}",
