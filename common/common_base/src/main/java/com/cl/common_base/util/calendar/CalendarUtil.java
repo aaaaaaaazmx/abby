@@ -20,6 +20,8 @@ import static com.cl.common_base.ext.LogKt.logI;
 import android.annotation.SuppressLint;
 import android.net.vcn.VcnManager;
 
+import androidx.exifinterface.media.ExifInterface;
+
 import com.cl.common_base.bean.CalendarData;
 import com.cl.common_base.bean.HttpResult;
 import com.cl.common_base.util.json.GSON;
@@ -446,7 +448,7 @@ public final class CalendarUtil {
 
 
     /**
-     * 获取今年的第一天
+     * 获取某年的第一天
      */
     public static String getYearStartDay(int year) {
         SimpleDateFormat format = getFormat("yyyy-MM-dd");
@@ -458,7 +460,7 @@ public final class CalendarUtil {
     }
 
     /**
-     * 获取今年的最后一天
+     * 获取某年的最后一天
      */
     public static String getYearEndDay(int year) {
         SimpleDateFormat format = getFormat("yyyy-MM-dd");
@@ -466,5 +468,49 @@ public final class CalendarUtil {
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.DAY_OF_YEAR, cal.getActualMaximum(Calendar.DAY_OF_YEAR));
         return format.format(cal.getTime()) + "";
+    }
+
+    /**
+     * 指定的某年某月的第一天
+     */
+    public static String getYearMonthStartDay(int year, int month) {
+        Calendar cal = Calendar.getInstance();
+        // 不加下面2行，就是取当前时间前一个月的第一天及最后一天
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        Date lastDate = cal.getTime();
+
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDate = cal.getTime();
+        logI("getYearMonthStartDay: " + getFormat("yyyy-MM-dd").format(firstDate));
+        return getFormat("yyyy-MM-dd").format(firstDate);
+    }
+
+    /**
+     * 指定的某年某月的最后一天
+     */
+    public static String getYearMonthEndDay(int year, int month) {
+        Calendar cal = Calendar.getInstance();
+        // 不加下面2行，就是取当前时间前一个月的第一天及最后一天
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, month);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        Date lastDate = cal.getTime();
+
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Date firstDate = cal.getTime();
+        logI("getYearMonthEndDay: " + getFormat("yyyy-MM-dd").format(lastDate));
+        return getFormat("yyyy-MM-dd").format(lastDate);
     }
 }

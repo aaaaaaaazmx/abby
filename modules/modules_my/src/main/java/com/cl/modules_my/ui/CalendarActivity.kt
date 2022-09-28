@@ -56,6 +56,8 @@ import java.lang.reflect.Field
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.thread
+import kotlin.math.abs
+import kotlin.math.sign
 
 
 @Route(path = RouterPath.My.PAGE_MY_CALENDAR)
@@ -304,48 +306,96 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         // 合并数据
                         val local = mViewMode.localCalendar.value
                         local?.let { localData ->
-                            // todo 需要判断当前的数据量谁大
-                            // todo 判断数组越界
-                            // todo 反复点击会崩溃
-                            // todo 有可能返回的并不是当年的第一天数据，需要找到当天的下标，加载上下2个月以内的
-                            //
-                            // 1、找到当前的第一条
-                            val firstDate = data?.get(0)?.date
-                            // 找到当下的position
-                            val locationIndex = localData.indexOfFirst { firstDate == it.ymd }
-                            // 向下加载20条
-                            for (i in locationIndex until localData.size) {
-                                data?.firstOrNull { it.date == localData[i].ymd }.apply {
-                                    localData[i].calendarData = this
+
+                            // 加载当前月份的上下2个月，一共5个月
+                            val isCurrentDay = localData.first { it.isCurrentDay }
+                            val currentYear = isCurrentDay.year
+                            val currentMonth = isCurrentDay.month
+                            // 在这个区间之内，可以优先加载上下2个月
+                            if (currentMonth in 2..11) {
+                                val startDay =
+                                    CalendarUtil.getYearMonthStartDay(currentYear, currentMonth - 1)
+                                val endDay =
+                                    CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
+                                val locationStartDayIndex = localData.indexOfFirst {
+                                    it.ymd == startDay
+                                }
+                                val locationEndDayIndex = localData.indexOfFirst {
+                                    it.ymd == endDay
+                                }
+
+                                for (i in locationStartDayIndex until locationEndDayIndex) {
+                                    data?.firstOrNull { it.date == localData[i].ymd }.apply {
+                                        localData[i].calendarData = this
+                                    }
+                                }
+                                withContext(Dispatchers.Main) {
+                                    showTaskList(mViewMode.mCurrentDate)
+                                    // 设置数据
+                                    adapter.setList(local)
+                                }
+                            } else if (currentMonth < 2) {
+                                // 那么需要加载上一年的2个月数据
+                                val startDay =
+                                    CalendarUtil.getYearMonthStartDay(currentYear - 1, 12 - abs((currentMonth - 1)))
+                                val endDay =
+                                    CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
+                                val locationStartDayIndex = localData.indexOfFirst {
+                                    it.ymd == startDay
+                                }
+                                val locationEndDayIndex = localData.indexOfFirst {
+                                    it.ymd == endDay
+                                }
+
+                                for (i in locationStartDayIndex until locationEndDayIndex) {
+                                    data?.firstOrNull { it.date == localData[i].ymd }.apply {
+                                        localData[i].calendarData = this
+                                    }
+                                }
+                                withContext(Dispatchers.Main) {
+                                    showTaskList(mViewMode.mCurrentDate)
+                                    // 设置数据
+                                    adapter.setList(local)
+                                }
+                            } else if (currentMonth > 11) {
+                                val startDay =
+                                    CalendarUtil.getYearMonthStartDay(currentYear - 1, currentMonth - 1)
+                                val endDay =
+                                    CalendarUtil.getYearMonthEndDay(currentYear, abs((currentMonth + 1) - 12))
+                                val locationStartDayIndex = localData.indexOfFirst {
+                                    it.ymd == startDay
+                                }
+                                val locationEndDayIndex = localData.indexOfFirst {
+                                    it.ymd == endDay
+                                }
+
+                                for (i in locationStartDayIndex until locationEndDayIndex) {
+                                    data?.firstOrNull { it.date == localData[i].ymd }.apply {
+                                        localData[i].calendarData = this
+                                    }
+                                }
+                                withContext(Dispatchers.Main) {
+                                    showTaskList(mViewMode.mCurrentDate)
+                                    // 设置数据
+                                    adapter.setList(local)
                                 }
                             }
-                            withContext(Dispatchers.Main) {
-                                // 默认选中今天
-                                showTaskList(mViewMode.mCurrentDate)
-                                // 设置数据
-                                adapter.setList(local)
-                            }
 
+                            // todo 这个快速点击就崩溃
                             // 加载完整的数据，会有卡顿，需要放到后面去添加
-                            localData.forEachIndexed { index, calendar ->
+                            localData.forEachIndexed { _, calendar ->
                                 data?.firstOrNull { it.date == calendar.ymd }.apply {
                                     calendar.calendarData = this
                                 }
                             }
 
                             withContext(Dispatchers.Main) {
-                                // 默认选中今天
-                                showTaskList(mViewMode.mCurrentDate)
+                                showTaskList(mViewMode.mCurrentDate, true)
                                 // 设置数据
                                 adapter.setList(local)
                             }
                         }
-                        withContext(Dispatchers.Main) {
-                            // 默认选中今天
-                            showTaskList(mViewMode.mCurrentDate)
-                            // 设置数据
-                            adapter.setList(local)
-                        }
+
                     }
                 }
             })
@@ -407,7 +457,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     }
 
                     // 显示下面的taskList
-                    showTaskList(data)
+                    showTaskList(data, true)
                 }
 
 
@@ -561,7 +611,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
-    private fun showTaskList(data: com.cl.common_base.util.calendar.Calendar?) {
+    private fun showTaskList(data: com.cl.common_base.util.calendar.Calendar?, isExecutionAlphaAni: Boolean? = false) {
         val getCalendarDate = mViewMode.getCalendar.value?.data
         if (getCalendarDate?.isEmpty() == true) return
         val calendarData = getCalendarDate?.firstOrNull { it.date == data?.ymd }
@@ -596,14 +646,16 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }
         }
 
-        // 产品需要一个从0-1的alpha动画
-        // Alpha动画 安排！
-        val animation = AlphaAnimation(
-            0f, 1f
-        )
-        animation.duration = 1000 //执行时间
-        animation.repeatCount = 0 //重复执行动画
-        binding.llRoot.startAnimation(animation) //使用View启动动画
+        if (isExecutionAlphaAni == true) {
+            // 产品需要一个从0-1的alpha动画
+            // Alpha动画 安排！
+            val animation = AlphaAnimation(
+                0f, 1f
+            )
+            animation.duration = 1000 //执行时间
+            animation.repeatCount = 0 //重复执行动画
+            binding.llRoot.startAnimation(animation) //使用View启动动画
+        }
 
         // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
         ViewUtils.setVisible(
