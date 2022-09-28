@@ -118,5 +118,34 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/unlockJourney")
-    fun unlockJourney(@Field("journeyName") journeyName: String, @Field("weight") weight: String? = null): Flow<HttpResult<BaseBean>>
+    fun unlockJourney(
+        @Field("journeyName") journeyName: String,
+        @Field("weight") weight: String? = null
+    ): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 日历-完成任务
+     */
+    @FormUrlEncoded
+    @POST("abby/calendar/finishTask")
+    fun finishTask(
+        @Field("taskId") taskId: String,
+        @Field("weight") weight: String? = null
+    ): Flow<HttpResult<BaseBean>>
+
+
+    /**
+     * 设备操作开始
+     */
+    @FormUrlEncoded
+    @POST("abby/deviceOperate/start")
+    fun deviceOperateStart(@Field("businessId")businessId: String, @Field("type")type: String): Flow<HttpResult<BaseBean>>
+
+
+    /**
+     * 设备操作完成
+     */
+    @FormUrlEncoded
+    @POST("abby/deviceOperate/finish")
+    fun deviceOperateFinish(@Field("type")type: String): Flow<HttpResult<BaseBean>>
 }

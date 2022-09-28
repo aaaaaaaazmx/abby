@@ -32,6 +32,8 @@ import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.util.device.TuYaDeviceConstants
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.AbTextViewCalendar
 import com.cl.common_base.widget.SvTextView
 import com.cl.common_base.widget.toast.ToastUtil
@@ -163,16 +165,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     // 涂鸦指令，添加排水功能
                                     DeviceControl.get()
                                         .success {
-                                            // todo 排水成功，然后调用完成任务接口
-
+                                            // todo 设备下发命令成功
                                         }
                                         .error { code, error ->
                                             ToastUtil.shortShow(
                                                 """
-                                    pumpWater: 
-                                    code-> $code
-                                    errorMsg-> $error
-                                """.trimIndent()
+                                                pumpWater: 
+                                                code-> $code
+                                                errorMsg-> $error
+                                            """.trimIndent()
                                             )
                                         }
                                         .pumpWater(status)
@@ -189,14 +190,150 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 this@CalendarActivity,
                                                 onSuccessAction = {
                                                     // 排水成功弹窗，点击OK按钮
-                                                    // todo 排水成功，然后调用完成任务接口
-
+                                                    // 排水成功、上报结束
+                                                    mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
                                                 })
-                                        )
+                                        ).show()
                                 },
                                 data = this.data,
                             )
                         ).show()
+                }
+            })
+
+            // 排水结束上报 - deviceOperateFinish
+            deviceOperateFinish.observe(this@CalendarActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 判断水箱里面的水位
+                    when (mViewMode.getWaterVolume.value) {
+                        // 加水弹窗
+                        "0L" -> {
+                            // 加水弹窗
+                            mViewMode.taskId.value?.let {
+                                mViewMode.deviceOperateStart(
+                                    it,
+                                    UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
+                                )
+                            }
+                            pop
+                                .isDestroyOnDismiss(false)
+                                .enableDrag(false)
+                                .dismissOnTouchOutside(false)
+                                .asCustom(
+                                    HomePlantFourPop(
+                                        context = this@CalendarActivity,
+                                        onNextAction = {
+                                            // 加水弹窗
+                                            pop
+                                                .isDestroyOnDismiss(false)
+                                                .enableDrag(false)
+                                                .dismissOnTouchOutside(false)
+                                                .asCustom(
+                                                    HomePlantFivePop(
+                                                        context = this@CalendarActivity,
+                                                        onCancelAction = {},
+                                                        onNextAction = {
+                                                            // 如果是在换水的三步当中
+                                                            mViewMode.taskId.value?.let {
+                                                                mViewMode.deviceOperateStart(
+                                                                    it,
+                                                                    UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
+                                                                )
+                                                            }
+
+                                                            pop
+                                                                .isDestroyOnDismiss(false)
+                                                                .maxHeight(dp2px(600f))
+                                                                .enableDrag(false)
+                                                                .dismissOnTouchOutside(false)
+                                                                .asCustom(
+                                                                    // 加肥弹窗
+                                                                    HomePlantSixPop(
+                                                                        context = this@CalendarActivity,
+                                                                        onNextAction = {
+                                                                            // 需要先发送指令喂食
+                                                                            DeviceControl.get()
+                                                                                .success {
+                                                                                    // 如果是在换水的三步当中的最后一步，加肥
+                                                                                    // 直接调用完成任务
+                                                                                    mViewMode.taskId.value?.let {
+                                                                                        mViewMode.finishTask(
+                                                                                            it
+                                                                                        )
+                                                                                    }
+                                                                                }
+                                                                                .error { code, error ->
+                                                                                    ToastUtil.shortShow(
+                                                                                        """
+                                                                                        feedAbby:
+                                                                                        code-> $code
+                                                                                        errorMsg-> $error
+                                                                                    """.trimIndent()
+                                                                                    )
+                                                                                }
+                                                                                .feedAbby(true)
+                                                                        }
+                                                                    )
+                                                                ).show()
+
+                                                        }
+                                                    )
+                                                ).show()
+                                        }
+                                    )
+                                ).show()
+                        }
+                        else -> {
+                            // 如果是在换水的三步当中
+                            mViewMode.taskId.value?.let {
+                                mViewMode.deviceOperateStart(
+                                    it,
+                                    UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
+                                )
+                            }
+
+                            pop
+                                .isDestroyOnDismiss(false)
+                                .maxHeight(dp2px(600f))
+                                .enableDrag(false)
+                                .dismissOnTouchOutside(false)
+                                .asCustom(
+                                    // 加肥弹窗
+                                    HomePlantSixPop(
+                                        context = this@CalendarActivity,
+                                        onNextAction = {
+                                            // 需要先发送指令喂食
+                                            DeviceControl.get()
+                                                .success {
+                                                    // 如果是在换水的三步当中的最后一步，加肥
+                                                    // 直接调用完成任务
+                                                    mViewMode.taskId.value?.let {
+                                                        mViewMode.finishTask(
+                                                            it
+                                                        )
+                                                    }
+                                                }
+                                                .error { code, error ->
+                                                    ToastUtil.shortShow(
+                                                        """
+                                                              feedAbby:
+                                                              code-> $code
+                                                              errorMsg-> $error
+                                                        """.trimIndent()
+                                                    )
+                                                }
+                                                .feedAbby(true)
+                                        }
+                                    )
+                                ).show()
+                        }
+                    }
                 }
             })
 
@@ -337,7 +474,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             } else if (currentMonth < 2) {
                                 // 那么需要加载上一年的2个月数据
                                 val startDay =
-                                    CalendarUtil.getYearMonthStartDay(currentYear - 1, 12 - abs((currentMonth - 1)))
+                                    CalendarUtil.getYearMonthStartDay(
+                                        currentYear - 1,
+                                        12 - abs((currentMonth - 1))
+                                    )
                                 val endDay =
                                     CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
                                 val locationStartDayIndex = localData.indexOfFirst {
@@ -359,9 +499,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 }
                             } else if (currentMonth > 11) {
                                 val startDay =
-                                    CalendarUtil.getYearMonthStartDay(currentYear - 1, currentMonth - 1)
+                                    CalendarUtil.getYearMonthStartDay(
+                                        currentYear - 1,
+                                        currentMonth - 1
+                                    )
                                 val endDay =
-                                    CalendarUtil.getYearMonthEndDay(currentYear, abs((currentMonth + 1) - 12))
+                                    CalendarUtil.getYearMonthEndDay(
+                                        currentYear,
+                                        abs((currentMonth + 1) - 12)
+                                    )
                                 val locationStartDayIndex = localData.indexOfFirst {
                                     it.ymd == startDay
                                 }
@@ -495,28 +641,28 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         layoutManager.findLastVisibleItemPosition()
                         layoutManager.findLastCompletelyVisibleItemPosition()
 
-//                        logI(
-//                            """
-//                               ${layoutManager.findFirstVisibleItemPosition()}
-//                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
-//                               ${layoutManager.findLastVisibleItemPosition()}
-//                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
-//                            """.trimIndent()
-//                        )
+                        //                        logI(
+                        //                            """
+                        //                               ${layoutManager.findFirstVisibleItemPosition()}
+                        //                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
+                        //                               ${layoutManager.findLastVisibleItemPosition()}
+                        //                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
+                        //                            """.trimIndent()
+                        //                        )
 
                         // 查看当前第三行的中间。
                         scrollByDate()
                     }
                     RecyclerView.SCROLL_STATE_DRAGGING -> {
-//                        logI(
-//                            """
-//                            SCROLL_STATE_DRAGGING:
-//                            ${layoutManager.findFirstVisibleItemPosition()}
-//                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
-//                               ${layoutManager.findLastVisibleItemPosition()}
-//                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
-//                        """.trimIndent()
-//                        )
+                        //                        logI(
+                        //                            """
+                        //                            SCROLL_STATE_DRAGGING:
+                        //                            ${layoutManager.findFirstVisibleItemPosition()}
+                        //                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
+                        //                               ${layoutManager.findLastVisibleItemPosition()}
+                        //                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
+                        //                        """.trimIndent()
+                        //                        )
 
                         // 手指按下去的操作、然后抬起的瞬间
                         if (adapter.data.isEmpty()) return
@@ -549,15 +695,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         }
                     }
                     RecyclerView.SCROLL_STATE_SETTLING -> {
-//                        logI(
-//                            """
-//                            SCROLL_STATE_SETTLING:
-//                            ${layoutManager.findFirstVisibleItemPosition()}
-//                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
-//                               ${layoutManager.findLastVisibleItemPosition()}
-//                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
-//                        """.trimIndent()
-//                        )
+                        //                        logI(
+                        //                            """
+                        //                            SCROLL_STATE_SETTLING:
+                        //                            ${layoutManager.findFirstVisibleItemPosition()}
+                        //                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
+                        //                               ${layoutManager.findLastVisibleItemPosition()}
+                        //                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
+                        //                        """.trimIndent()
+                        //                        )
 
 
                     }
@@ -578,15 +724,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 super.onScrolled(recyclerView, dx, dy)
                 // todo 这样加载太暴力了。
                 val layoutManager = recyclerView.layoutManager as GridLayoutManager
-//                logI(
-//                    """
-//                            onScrolled:
-//                            ${layoutManager.findFirstVisibleItemPosition()}
-//                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
-//                               ${layoutManager.findLastVisibleItemPosition()}
-//                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
-//                        """.trimIndent()
-//                )
+                //                logI(
+                //                    """
+                //                            onScrolled:
+                //                            ${layoutManager.findFirstVisibleItemPosition()}
+                //                               ${layoutManager.findFirstCompletelyVisibleItemPosition()}
+                //                               ${layoutManager.findLastVisibleItemPosition()}
+                //                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
+                //                        """.trimIndent()
+                //                )
             }
         })
 
@@ -611,7 +757,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
-    private fun showTaskList(data: com.cl.common_base.util.calendar.Calendar?, isExecutionAlphaAni: Boolean? = false) {
+    private fun showTaskList(
+        data: com.cl.common_base.util.calendar.Calendar?,
+        isExecutionAlphaAni: Boolean? = false
+    ) {
         val getCalendarDate = mViewMode.getCalendar.value?.data
         if (getCalendarDate?.isEmpty() == true) return
         val calendarData = getCalendarDate?.firstOrNull { it.date == data?.ymd }
@@ -893,6 +1042,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         twoLineText = getString(com.cl.common_base.R.string.my_remind_me),
                                         threeLineText = getString(com.cl.common_base.R.string.my_cancel),
                                         oneLineCLickEventAction = {
+                                            // 记录taskId
+                                            listContent[position].taskId?.let { taskId ->
+                                                mViewMode.setTaskId(
+                                                    taskId
+                                                )
+                                            }
                                             // todo 解锁周期图文引导弹窗
                                             when (listContent[position].taskType) {
                                                 CalendarData.TASK_TYPE_CHANGE_WATER -> {
@@ -1006,6 +1161,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     // 三合一流程
     private fun changWaterAddWaterAddpump() {
+        // 记录taskId
         // 首先是换水
         pop
             .isDestroyOnDismiss(false)
@@ -1030,37 +1186,43 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             .dismissOnTouchOutside(false)
                             .asCustom(
                                 HomeSkipWaterPop(this@CalendarActivity, onConfirmAction = {
+                                    mViewMode.taskId.value?.let {
+                                        // 跳过换水
+                                        mViewMode.deviceOperateStart(
+                                            it,
+                                            UnReadConstants.StatusManager.VALUE_STATUS_SKIP_CHANGING_WATERE
+                                        )
+                                    }
                                 })
                             ).show()
                     }
-                )
+                ).setData(true)
             ).show()
     }
 
-    fun getJson(context: Context, fileName: String?): String? {
-        val stringBuilder = StringBuilder()
-        //获得assets资源管理器
-        val assetManager: AssetManager = context.getAssets()
-        //使用IO流读取json文件内容
-        try {
-            val bufferedReader = BufferedReader(
-                InputStreamReader(
-                    assetManager.open(fileName!!), "utf-8"
-                )
-            )
-            var line: String?
-            while (bufferedReader.readLine().also { line = it } != null) {
-                stringBuilder.append(line)
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return stringBuilder.toString()
-    }
+    /**
+     * 设备下发指令
+     */
+    override fun onTuYaToAppDataChange(status: String) {
+        val map = GSON.parseObject(status, Map::class.java)
+        map?.forEach { (key, value) ->
+            when (key) {
+                // 当用户加了水，是需要动态显示当前水的状态的
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
+                    logI("KEY_DEVICE_WATER_STATUS： $value")
+                    mViewMode.setWaterVolume(value.toString())
+                }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mViewMode.setLocalCalendar()
+                // 排水结束
+                TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
+                }
+
+                // SN修复的通知
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
+                    logI("KEY_DEVICE_REPAIR_SN： $value")
+                }
+            }
+        }
     }
 }
 

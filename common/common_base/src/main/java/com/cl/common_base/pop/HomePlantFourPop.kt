@@ -1,30 +1,30 @@
-package com.cl.modules_home.widget
+package com.cl.common_base.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePlantSixPopBinding
+import com.cl.common_base.R
+import com.cl.common_base.databinding.HomePlantFourPopBinding
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
- * plant6
+ * 开水
+ * plant4
  *
  * @author 李志军 2022-08-06 17:35
  */
-class HomePlantSixPop(
+class HomePlantFourPop(
     context: Context,
     private val onNextAction: (() -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
-        return R.layout.home_plant_six_pop
+        return R.layout.home_plant_four_pop
     }
 
-    private var binding: HomePlantSixPopBinding? = null
-
+    private var binding: HomePlantFourPopBinding? = null
     override fun onCreate() {
         super.onCreate()
 
-        binding = DataBindingUtil.bind<HomePlantSixPopBinding>(popupImplView)?.apply {
+        binding = DataBindingUtil.bind<HomePlantFourPopBinding>(popupImplView)?.apply {
             ivClose.setOnClickListener { dismiss() }
             btnSuccess.setOnClickListener {
                 onNextAction?.invoke()
@@ -33,4 +33,3 @@ class HomePlantSixPop(
         }
     }
 }
-

@@ -1,26 +1,17 @@
-package com.cl.modules_home.widget
+package com.cl.common_base.pop
 
 import android.content.Context
-import android.text.method.LinkMovementMethod
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePlantFivePopBinding
+import com.cl.common_base.R
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.ext.dp2px
+import com.cl.common_base.databinding.HomePlantFivePopBinding
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
-import com.cl.common_base.util.span.appendClickable
-import com.cl.common_base.widget.toast.ToastUtil
-import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.tuya.smart.sdk.bean.DeviceBean
 

@@ -33,9 +33,10 @@ class HomePlantDrainPop(
     private var binding: HomePlantDrainPopBinding? = null
 
     // 是否显示跳过文字
-    fun setData(isShow: Boolean) {
+    fun setData(isShow: Boolean): HomePlantDrainPop {
         this.isShow = isShow
         ViewUtils.setVisible(isShow, binding?.tvSkipAddWater)
+        return this
     }
 
     override fun doAfterDismiss() {

@@ -124,4 +124,25 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun unlockJourney(name: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
         return remoteRepository.unlockJourney(name, weight)
     }
+
+    /**
+     * 日历-完成任务
+     */
+    fun finishTask(taskId: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.finishTask(taskId, weight)
+    }
+
+    /**
+     * 跳过换水记录上报接口
+     */
+    fun deviceOperateStart(businessId: String, type: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deviceOperateStart(businessId, type)
+    }
+
+    /**
+     * 上报排水成功
+     */
+    fun deviceOperateFinish(type:String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deviceOperateFinish(type)
+    }
 }

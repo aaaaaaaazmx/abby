@@ -10,8 +10,13 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.calendar.CalendarUtil
+import com.cl.common_base.util.device.TuYaDeviceConstants
+import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
+import com.tuya.smart.android.user.bean.User
+import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -34,6 +39,30 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         mCurrentDate.day = CalendarUtil.getDate("dd", d)
         mCurrentDate.isCurrentDay = true
         mCurrentDate
+    }
+
+
+    val tuYaUser by lazy {
+        val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
+        GSON.parseObject(bean, User::class.java)
+    }
+
+    val tuyaDeviceBean by lazy {
+        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
+        GSON.parseObject(homeData, DeviceBean::class.java)
+    }
+
+    private val getDeviceDps by lazy {
+        tuyaDeviceBean?.dps
+    }
+
+    // 水的容积。=， 多少升
+    private val _getWaterVolume =
+        MutableLiveData(getDeviceDps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS }
+            ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS).toString())
+    val getWaterVolume: LiveData<String> = _getWaterVolume
+    fun setWaterVolume(volume: String) {
+        _getWaterVolume.value = volume
     }
 
     /**
@@ -248,6 +277,79 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
 
 
     /**
+     * 上报排水结束
+     */
+    private val _deviceOperateFinish = MutableLiveData<Resource<BaseBean>>()
+    val deviceOperateFinish: LiveData<Resource<BaseBean>> = _deviceOperateFinish
+    fun deviceOperateFinish(type: String) {
+        viewModelScope.launch {
+            repository.deviceOperateFinish(type)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _deviceOperateFinish.value = it
+                }
+        }
+    }
+
+    /**
+     * 日历 完成任务
+     */
+    private val _finishTask = MutableLiveData<Resource<BaseBean>>()
+    val finishTask: LiveData<Resource<BaseBean>> = _finishTask
+    fun finishTask(taskId: String, weight: String? = null) {
+        viewModelScope.launch {
+            repository.finishTask(taskId, weight)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _finishTask.value = it
+                }
+        }
+    }
+
+
+    /**
      * 获取当前年月日-- 后面跟着英文的th
      * 如 9 12th 2022
      */
@@ -305,6 +407,49 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             _localCalendar.value = list
         }
     }
+
+    /**
+     * 跳过换水上报
+     */
+    private val _taskId = MutableLiveData<String>()
+    val taskId: LiveData<String> = _taskId
+    fun setTaskId(taskId: String) {
+        _taskId.value = taskId
+    }
+
+    private val _deviceOperateStart = MutableLiveData<Resource<BaseBean>>()
+    val deviceOperateStart: LiveData<Resource<BaseBean>> = _deviceOperateStart
+    fun deviceOperateStart(taskId: String, type: String) {
+        viewModelScope.launch {
+            repository.deviceOperateStart(taskId, type)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _deviceOperateStart.value = it
+                }
+        }
+    }
+
 
     /**
      * 滑动时加载时的月份
