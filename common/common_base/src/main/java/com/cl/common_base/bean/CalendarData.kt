@@ -46,6 +46,7 @@ data class CalendarData(
         const val TASK_TYPE_CHECK_TRANSPLANT = "check_transplant"
         const val TASK_TYPE_CHECK_CHECK_FLOWERING = "check_flowering"
         const val TASK_TYPE_CHECK_CHECK_FLUSHING = "check_flushing"
+        const val TASK_TYPE_CHECK_CHECK_HARVEST = "check_harvest"
         const val TASK_TYPE_CHECK_CHECK_DRYING = "check_drying"
         const val TASK_TYPE_CHECK_CHECK_CURING = "check_curing"
         const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"

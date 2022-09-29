@@ -116,7 +116,7 @@ class HomePeriodPop(
 
                         // 解锁
                         svtUnlock.setOnClickListener {
-                            unLockAction?.invoke(data?.get(position)?.guideId.toString())
+                            unLockAction?.invoke(data?.get(position)?.guideType.toString())
                             dismiss()
                         }
 

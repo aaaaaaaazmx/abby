@@ -49,6 +49,19 @@ object UnReadConstants {
     }
 
     /**
+     * 种植状态
+     */
+    object PlantStatus {
+        const val TASK_TYPE_CHECK_TRANSPLANT = "check_transplant"
+        const val TASK_TYPE_CHECK_CHECK_FLOWERING = "check_flowering"
+        const val TASK_TYPE_CHECK_CHECK_FLUSHING = "check_flushing"
+        const val TASK_TYPE_CHECK_CHECK_HARVEST = "check_harvest"
+        const val TASK_TYPE_CHECK_CHECK_DRYING = "check_drying"
+        const val TASK_TYPE_CHECK_CHECK_CURING = "check_curing"
+        const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"
+    }
+
+    /**
      * 设备提醒相关
      */
     object Device {
@@ -65,6 +78,7 @@ object UnReadConstants {
         const val KEY_SWATER_PUMP_FAULT = "water_pump_fault"
         const val KEY_GAS_PUMP_FAULT = "gas_pump_fault"
         const val KEY_SENSOR_HEIGHT_FAULT = "sensor_height_fault"
+
         // 异常
         const val KEY_ENVIRONMENT_FAULT = "environment_fault"
         const val KEY_WATER_FAULT = "water_fault"
@@ -79,10 +93,10 @@ object UnReadConstants {
      * 上报三布局
      */
     object StatusManager {
-       const val VALUE_STATUS_PUMP_WATER = "pump_water"
-       const val VALUE_STATUS_ADD_WATER = "add_water"
-       const val VALUE_STATUS_ADD_MANURE = "add_manure"
-       const val VALUE_STATUS_SKIP_CHANGING_WATERE = "skip_changing_water"
+        const val VALUE_STATUS_PUMP_WATER = "pump_water"
+        const val VALUE_STATUS_ADD_WATER = "add_water"
+        const val VALUE_STATUS_ADD_MANURE = "add_manure"
+        const val VALUE_STATUS_SKIP_CHANGING_WATERE = "skip_changing_water"
     }
 
 

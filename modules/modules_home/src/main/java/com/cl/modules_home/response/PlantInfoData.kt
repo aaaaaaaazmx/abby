@@ -28,6 +28,7 @@ data class PlantInfoData(
         var day: String? = null,
         var journeyName: String? = null,
         var guideId: Int? = null,
+        var guideType: String? = null,
         var journeyStatus: Int? = null,
         var week: String? = null,
     ) : com.joketng.timelinestepview.bean.BaseBean()
