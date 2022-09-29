@@ -311,8 +311,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 if (mViewMode.refreshToken.value?.data?.isVip == 1) {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation()
                 } else {
-                    // todo 如果不是订阅用户，那么直接弹窗
-                    ToastUtil.shortShow("你还不是订阅用户，只能看图文详情")
+                    // 不是订阅用户，直接弹出图文
+                    mViewMode.getGuideInfo("unearned_subscription_explain")
                 }
             }
 
