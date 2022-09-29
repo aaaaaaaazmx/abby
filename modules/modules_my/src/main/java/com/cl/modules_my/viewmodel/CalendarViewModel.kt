@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import retrofit2.http.Body
+import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
@@ -397,12 +398,22 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         viewModelScope.launch {
             val list = mutableListOf<com.cl.common_base.util.calendar.Calendar>()
             for (i in startMonth!!..endMonth!!) {
-                list += CalendarUtil.initCalendarForMonthView(
+                val data = CalendarUtil.initCalendarForMonthView(
                     year,
                     i,
                     mCurrentDate,
                     Calendar.SUNDAY
                 )
+                // 处理日期前面没有相差的天数时产生的问题
+                if (startMonth == i) {
+                    // 一行7个，没有相差，那么在12月的最后一行会自动添加1-7，那么在1月时，不需要添加1-7
+                    if (data[0].day == 1) {
+                        val januaryDate = data.filter { it.day > 7 }
+                        if (januaryDate.isEmpty()) list += data else list += januaryDate
+                    }
+                } else {
+                    list += data
+                }
             }
             _localCalendar.value = list
         }
