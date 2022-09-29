@@ -1192,6 +1192,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             it,
                                             UnReadConstants.StatusManager.VALUE_STATUS_SKIP_CHANGING_WATERE
                                         )
+                                        // 任务完成
+                                        mViewMode.taskId.value?.let { taskId ->
+                                            mViewMode.finishTask(taskId)
+                                        }
                                     }
                                 })
                             ).show()

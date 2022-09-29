@@ -765,42 +765,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         return@BasePlantUsuallyPop
                     }
 
-                    // 表示是从极光或者未读消息列表中跳转过来的。
-                    //                    if (UnReadConstants.plantStatus.contains(unReadList?.first()?.type)) {
-                    //                        // 调取解锁接口，
-                    //                        // Vegetation	1
-                    //                        //  Flowering	2
-                    //                        //  Flushing	3
-                    //                        //  Drying	5
-                    //                        //  Harvest	6
-                    //                        //  Curing	7（请求图文时id转换为int）
-                    //                        when (unReadList?.first()?.type) {
-                    //                            UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
-                    //                            UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
-                    //                            UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
-                    //                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney(
-                    //                                "Drying",
-                    //                                weight
-                    //                            )
-                    //                            UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
-                    //                            UnReadConstants.Plant.KEY_CURING -> {
-                    //                                mViewMode.unlockJourney(
-                    //                                    "Curing",
-                    //                                    weight
-                    //                                )
-                    //                            }
-                    //                        }
-                    //                        return@HomePlantUsuallyPop
-                    //                    }
-
-                    // 其实上面和下面，可以优化为同一种类型，但是需要判断对极光消息的处理，还是分开的好，但是处理逻辑可以写在一起
-
                     // 如果是从解锁周期弹窗过来的，
                     // 这个后期可以优化，就不和上面的状态同一判断了。避免后期优化时忘记
                     if (!mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
                         // 解锁接口
                         mViewMode.popPeriodStatus.value?.let { status ->
-                            mViewMode.unlockJourney(status, weight)
+                            mViewMode.finishTask(status, weight)
                         }
                     }
                 }
@@ -862,10 +832,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      */
     private val unlockCuringPop by lazy {
         context?.let {
-            HomeUnlockCuringPop(it) {
+            HomeUnlockCuringPop(it, { status ->
                 // 直接解锁
-                mViewMode.unlockJourney("Curing")
-            }
+                mViewMode.finishTask(status)
+            })
         }
     }
 
@@ -1056,7 +1026,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
                     // 解锁第一个周期
                     // 显示startRunning气泡的时候，必定是发芽了的
-                    mViewMode.unlockJourney("Vegetation")
+                    // todo 这个地方直接调用startRunning接口了。
+                    mViewMode.startRunning(botanyId= "", goon = false)
                     return@observe
                 }
 
@@ -1248,7 +1219,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 如果在解锁During周期的时候。填入了weight，那么在解锁curing时，这个字段不会为null
                         if (mViewMode.plantInfo.value?.data?.flushingWeight == null) {
                             // 弹出解锁弹窗，然后直接跳转种植完成界面
-                            pop.asCustom(unlockCuringPop).show()
+                            mViewMode.popPeriodStatus.value?.let {
+                                unlockCuringPop?.setPopPeriodStatus(it)
+                                pop.asCustom(unlockCuringPop).show()
+                            }
                             return@success
                         }
                     }
@@ -1731,7 +1705,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
             // 解锁花期回调
-            unlockJourney.observe(viewLifecycleOwner, resourceObserver {
+            finishTask.observe(viewLifecycleOwner, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -2201,7 +2175,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         ARouter.getInstance().build(RouterPath.My.PAGE_MY_GUIDE_SEED)
                             .navigation()
                         // 解锁Seed周期
-                        mViewMode.unlockJourney("Seed")
+                        mViewMode.startRunning(botanyId= "", goon = false)
                         // 显示植物种植布局
                         ViewUtils.setVisible(binding.pplantNinth.root)
                         //  todo 这个显示有问题，会重复隐藏

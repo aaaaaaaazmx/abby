@@ -316,6 +316,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getDetailByLearnMoreId = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
     val getDetailByLearnMoreId: LiveData<Resource<DetailByLearnMoreIdData>> =
         _getDetailByLearnMoreId
+
     fun getDetailByLearnMoreId(type: String) {
         viewModelScope.launch {
             repository.getDetailByLearnMoreId(type)
@@ -354,6 +355,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getMessageDetail = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
     val getMessageDetail: LiveData<Resource<DetailByLearnMoreIdData>> =
         _getMessageDetail
+
     fun getMessageDetail(type: String) {
         viewModelScope.launch {
             repository.getMessageDetail(type)
@@ -464,7 +466,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getUnread = MutableLiveData<Resource<MutableList<UnreadMessageData>>>()
     val getUnread: LiveData<Resource<MutableList<UnreadMessageData>>> = _getUnread
     fun getUnread() {
-        viewModelScope.launch {getUnread
+        viewModelScope.launch {
+            getUnread
             repository.getUnread()
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
@@ -533,7 +536,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
-     * 解锁花期
+     * 解锁花期--弃用
      */
     private val _unlockJourney = MutableLiveData<Resource<BaseBean>>()
     val unlockJourney: LiveData<Resource<BaseBean>> = _unlockJourney
@@ -566,6 +569,45 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 }.collectLatest {
                     _unlockJourney.value = it
+                }
+        }
+    }
+
+
+    /**
+     * 解锁花期、这个是最终的
+     */
+    private val _finishTask = MutableLiveData<Resource<BaseBean>>()
+    val finishTask: LiveData<Resource<BaseBean>> = _finishTask
+    fun finishTask(name: String, weight: String? = null) {
+        viewModelScope.launch {
+            repository.finishTask(name, weight)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        // 删除第一条信息
+                        removeFirstUnreadMessage()
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _finishTask.value = it
                 }
         }
     }

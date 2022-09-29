@@ -11,10 +11,19 @@ import com.lxj.xpopup.core.CenterPopupView
  */
 class HomeUnlockCuringPop(
     context: Context,
-    private val onConfirmAction: (() -> Unit)? = null
+    private val onConfirmAction: ((status: String) -> Unit)? = null,
+    var periodStatus: String? = null
 ) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_curing_unlock
+    }
+
+
+    /**
+     * 周期状态
+     */
+    fun setPopPeriodStatus(stats: String) {
+        this.periodStatus = stats
     }
 
     override fun onCreate() {
@@ -22,7 +31,7 @@ class HomeUnlockCuringPop(
         DataBindingUtil.bind<HomeCuringUnlockBinding>(popupImplView)?.apply {
             tvConfirm.setOnClickListener {
                 dismiss()
-                onConfirmAction?.invoke()
+                periodStatus?.let { it1 -> onConfirmAction?.invoke(it1) }
             }
 
             tvCancel.setOnClickListener{

@@ -160,4 +160,15 @@ interface HttpHomeApiService {
     @POST("abby/plant/start")
     fun start(): Flow<HttpResult<String>>
 
+
+    /**
+     * 日历-完成任务
+     */
+    @FormUrlEncoded
+    @POST("abby/calendar/finishTask")
+    fun finishTask(
+        @Field("taskId") taskId: String,
+        @Field("weight") weight: String? = null
+    ): Flow<HttpResult<BaseBean>>
+
 }

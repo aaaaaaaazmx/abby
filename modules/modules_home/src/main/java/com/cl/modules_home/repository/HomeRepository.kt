@@ -160,4 +160,12 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun start(): Flow<HttpResult<String>> {
         return remoteRepository.start()
     }
+
+    /**
+     * 任务完成、解锁周期
+     */
+    fun finishTask(taskId: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.finishTask(taskId, weight)
+    }
+
 }
