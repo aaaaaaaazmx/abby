@@ -117,7 +117,6 @@ class BasePumpWaterPop(
                 // true 排水
                 // false 停止
                 synchronized(this) {
-                    ViewUtils.setVisible(btnSuccess.isChecked, binding?.circleBar, binding?.cbBg)
                     it.background = if (btnSuccess.isChecked) {
                         downTime()
                         context.resources.getDrawable(
@@ -125,6 +124,7 @@ class BasePumpWaterPop(
                             context.theme
                         )
                     } else {
+                        ViewUtils.setGone(binding?.circleBar, binding?.cbBg)
                         job?.cancel()
                         circleBar.reset()
                         count++
@@ -227,13 +227,11 @@ class BasePumpWaterPop(
                             // 涂鸦指令，添加排水功能
 //                            isOpenOrStop(value)
                             synchronized(this) {
-                                ViewUtils.setVisible(
-                                    (value as? Boolean == true), binding?.circleBar, binding?.cbBg
-                                )
                                 // 加锁的目的是为了
                                 // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
                                 binding?.btnSuccess?.background =
                                     if ((value as? Boolean != true)) {
+                                        ViewUtils.setGone(binding?.circleBar, binding?.cbBg)
                                         job?.cancel()
                                         binding?.circleBar?.reset()
                                         binding?.circleBar?.stopAnimator()
@@ -322,11 +320,15 @@ class BasePumpWaterPop(
 
     private var job: Job? = null
     private fun downTime() {
-        if (count >= 4) {
+        if (count > 3) {
             job?.cancel()
             binding?.circleBar?.reset()
             binding?.circleBar?.visibility = View.GONE
+            binding?.cbBg?.visibility = View.GONE
             return
+        } else {
+            binding?.circleBar?.visibility = View.VISIBLE
+            binding?.cbBg?.visibility = View.VISIBLE
         }
         job?.cancel()
         job = countDownCoroutines(120,
@@ -336,18 +338,24 @@ class BasePumpWaterPop(
                     binding?.circleBar?.stopAnimator()
                     return@countDownCoroutines
                 }
-                var value = 0.2775f * (120 - it)
+
+                if (it == 120) return@countDownCoroutines
+                var value = 0.25f * (120 - it)
+                logI("""
+                    value:
+                    $value
+                """.trimIndent())
                 when (count) {
                     // 三次加水
                     1 -> {
                         binding?.circleBar?.setValue(value)
                     }
                     2 -> {
-                        value += 33f
+                        value += 30f
                         binding?.circleBar?.setValue(value)
                     }
                     3 -> {
-                        value += 66f
+                        value += 63f
                         binding?.circleBar?.setValue(value)
                     }
                 }
@@ -355,7 +363,7 @@ class BasePumpWaterPop(
                 when (count) {
                     // 三次加水
                     1 -> {
-                        binding?.circleBar?.setValue(1f)
+                        binding?.circleBar?.setValue(0f)
                     }
                     2 -> {
                         binding?.circleBar?.setValue(33f)
