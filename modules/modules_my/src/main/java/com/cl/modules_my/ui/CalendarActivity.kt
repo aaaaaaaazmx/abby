@@ -121,6 +121,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     private fun initCalendarData() {
+        mViewMode.setOnlyFirstLoad(true)
         // 添加本地日历的数据
         // todo 需要判断当前的月份，来显示与加载，如果当前是1月，需要加载上面的，如果当前是12月，需要加载下面一年的
         mViewMode.getCalendar(
@@ -444,106 +445,110 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         val local = mViewMode.localCalendar.value
                         local?.let { localData ->
 
-                            // 加载当前月份的上下2个月，一共5个月
-                            localData.firstOrNull { it.isCurrentDay }?.let { isCurrentDay ->
-                                val currentYear = isCurrentDay.year
-                                val currentMonth = isCurrentDay.month
-                                // 在这个区间之内，可以优先加载上下2个月
-                                if (currentMonth in 2..11) {
-                                    val startDay =
-                                        CalendarUtil.getYearMonthStartDay(currentYear, currentMonth - 1)
-                                    val endDay =
-                                        CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
-                                    val locationStartDayIndex = localData.indexOfFirst {
-                                        it.ymd == startDay
-                                    }
-                                    val locationEndDayIndex = localData.indexOfFirst {
-                                        it.ymd == endDay
-                                    }
-
-                                    for (i in locationStartDayIndex until locationEndDayIndex) {
-                                        data?.firstOrNull { it.date == localData[i].ymd }.apply {
-                                            localData[i].calendarData = this
+                            // 只需要进来加载一次、之后不需要加载
+                            if (mViewMode.onlyFirstLoad.value == true) {
+                                // 加载当前月份的上下2个月，一共5个月
+                                localData.firstOrNull { it.isCurrentDay }?.let { isCurrentDay ->
+                                    val currentYear = isCurrentDay.year
+                                    val currentMonth = isCurrentDay.month
+                                    // 在这个区间之内，可以优先加载上下2个月
+                                    if (currentMonth in 2..11) {
+                                        val startDay =
+                                            CalendarUtil.getYearMonthStartDay(currentYear, currentMonth - 1)
+                                        val endDay =
+                                            CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
+                                        val locationStartDayIndex = localData.indexOfFirst {
+                                            it.ymd == startDay
                                         }
-                                    }
-                                    withContext(Dispatchers.Main) {
-                                        showTaskList(mViewMode.mCurrentDate)
-                                        // 设置数据
-                                        adapter.setList(local)
-                                    }
-                                } else if (currentMonth < 2) {
-                                    // 那么需要加载上一年的2个月数据
-                                    val startDay =
-                                        CalendarUtil.getYearMonthStartDay(
-                                            currentYear - 1,
-                                            12 - abs((currentMonth - 1))
-                                        )
-                                    val endDay =
-                                        CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
-                                    val locationStartDayIndex = localData.indexOfFirst {
-                                        it.ymd == startDay
-                                    }
-                                    val locationEndDayIndex = localData.indexOfFirst {
-                                        it.ymd == endDay
-                                    }
-
-                                    for (i in locationStartDayIndex until locationEndDayIndex) {
-                                        data?.firstOrNull { it.date == localData[i].ymd }.apply {
-                                            localData[i].calendarData = this
+                                        val locationEndDayIndex = localData.indexOfFirst {
+                                            it.ymd == endDay
                                         }
-                                    }
-                                    withContext(Dispatchers.Main) {
-                                        showTaskList(mViewMode.mCurrentDate)
-                                        // 设置数据
-                                        adapter.setList(local)
-                                    }
-                                } else if (currentMonth > 11) {
-                                    val startDay =
-                                        CalendarUtil.getYearMonthStartDay(
-                                            currentYear - 1,
-                                            currentMonth - 1
-                                        )
-                                    val endDay =
-                                        CalendarUtil.getYearMonthEndDay(
-                                            currentYear,
-                                            abs((currentMonth + 1) - 12)
-                                        )
-                                    val locationStartDayIndex = localData.indexOfFirst {
-                                        it.ymd == startDay
-                                    }
-                                    val locationEndDayIndex = localData.indexOfFirst {
-                                        it.ymd == endDay
-                                    }
 
-                                    for (i in locationStartDayIndex until locationEndDayIndex) {
-                                        data?.firstOrNull { it.date == localData[i].ymd }.apply {
-                                            localData[i].calendarData = this
+                                        for (i in locationStartDayIndex until locationEndDayIndex) {
+                                            data?.firstOrNull { it.date == localData[i].ymd }.apply {
+                                                localData[i].calendarData = this
+                                            }
                                         }
-                                    }
-                                    withContext(Dispatchers.Main) {
-                                        showTaskList(mViewMode.mCurrentDate)
-                                        // 设置数据
-                                        adapter.setList(local)
+                                        withContext(Dispatchers.Main) {
+                                            showTaskList(mViewMode.mCurrentDate)
+                                            // 设置数据
+                                            adapter.setList(local)
+                                        }
+                                    } else if (currentMonth < 2) {
+                                        // 那么需要加载上一年的2个月数据
+                                        val startDay =
+                                            CalendarUtil.getYearMonthStartDay(
+                                                currentYear - 1,
+                                                12 - abs((currentMonth - 1))
+                                            )
+                                        val endDay =
+                                            CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
+                                        val locationStartDayIndex = localData.indexOfFirst {
+                                            it.ymd == startDay
+                                        }
+                                        val locationEndDayIndex = localData.indexOfFirst {
+                                            it.ymd == endDay
+                                        }
+
+                                        for (i in locationStartDayIndex until locationEndDayIndex) {
+                                            data?.firstOrNull { it.date == localData[i].ymd }.apply {
+                                                localData[i].calendarData = this
+                                            }
+                                        }
+                                        withContext(Dispatchers.Main) {
+                                            showTaskList(mViewMode.mCurrentDate)
+                                            // 设置数据
+                                            adapter.setList(local)
+                                        }
+                                    } else if (currentMonth > 11) {
+                                        val startDay =
+                                            CalendarUtil.getYearMonthStartDay(
+                                                currentYear - 1,
+                                                currentMonth - 1
+                                            )
+                                        val endDay =
+                                            CalendarUtil.getYearMonthEndDay(
+                                                currentYear,
+                                                abs((currentMonth + 1) - 12)
+                                            )
+                                        val locationStartDayIndex = localData.indexOfFirst {
+                                            it.ymd == startDay
+                                        }
+                                        val locationEndDayIndex = localData.indexOfFirst {
+                                            it.ymd == endDay
+                                        }
+
+                                        for (i in locationStartDayIndex until locationEndDayIndex) {
+                                            data?.firstOrNull { it.date == localData[i].ymd }.apply {
+                                                localData[i].calendarData = this
+                                            }
+                                        }
+                                        withContext(Dispatchers.Main) {
+                                            showTaskList(mViewMode.mCurrentDate)
+                                            // 设置数据
+                                            adapter.setList(local)
+                                        }
                                     }
                                 }
                             }
 
+                            // 加载一年的数据
+                            kotlin.runCatching {
+                                // 加载完整的数据，会有卡顿，需要放到后面去添加
+                                localData.forEachIndexed { _, calendar ->
+                                    data?.firstOrNull { it.date == calendar.ymd }.apply {
+                                        calendar.calendarData = this
+                                    }
+                                }
 
-                            // todo 这个快速点击就崩溃
-                            // 加载完整的数据，会有卡顿，需要放到后面去添加
-                            localData.forEachIndexed { _, calendar ->
-                                data?.firstOrNull { it.date == calendar.ymd }.apply {
-                                    calendar.calendarData = this
+                                withContext(Dispatchers.Main) {
+                                    showTaskList(mViewMode.mCurrentDate, true)
+                                    // 设置数据
+                                    adapter.setDiffNewData(local)
                                 }
                             }
 
-                            withContext(Dispatchers.Main) {
-                                showTaskList(mViewMode.mCurrentDate, true)
-                                // 设置数据
-                                adapter.setList(local)
-                            }
                         }
-
                     }
                 }
             })

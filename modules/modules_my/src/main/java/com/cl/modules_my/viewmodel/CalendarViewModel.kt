@@ -404,12 +404,15 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     mCurrentDate,
                     Calendar.SUNDAY
                 )
-                // 处理日期前面没有相差的天数时产生的问题
+                // 处理日期前面没有相差的天数
                 if (startMonth == i) {
                     // 一行7个，没有相差，那么在12月的最后一行会自动添加1-7，那么在1月时，不需要添加1-7
                     if (data[0].day == 1) {
-                        val januaryDate = data.filter { it.day > 7 }
-                        if (januaryDate.isEmpty()) list += data else list += januaryDate
+                        data.filter { it.day > 7 }.let {
+                            list += it
+                        }
+                    } else {
+                        list += data
                     }
                 } else {
                     list += data
@@ -459,6 +462,16 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     _deviceOperateStart.value = it
                 }
         }
+    }
+
+
+    /**
+     * 用来表示只加载一次的标记位
+     */
+    private val _onlyFirstLoad = MutableLiveData<Boolean>(false)
+    val onlyFirstLoad: LiveData<Boolean> = _onlyFirstLoad
+    fun setOnlyFirstLoad(boolean: Boolean) {
+        _onlyFirstLoad.value = boolean
     }
 
 
