@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
+import com.cl.common_base.bean.UpdateReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.DateHelper
@@ -29,6 +30,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.calendar.Calendar
 import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.util.device.DeviceControl
@@ -447,6 +449,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                             // 只需要进来加载一次、之后不需要加载
                             if (mViewMode.onlyFirstLoad.value == true) {
+                                // 添加新数据
                                 // 加载当前月份的上下2个月，一共5个月
                                 localData.firstOrNull { it.isCurrentDay }?.let { isCurrentDay ->
                                     val currentYear = isCurrentDay.year
@@ -472,7 +475,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         withContext(Dispatchers.Main) {
                                             showTaskList(mViewMode.mCurrentDate)
                                             // 设置数据
-                                            adapter.setList(local)
+                                            adapter.setList(localData)
                                         }
                                     } else if (currentMonth < 2) {
                                         // 那么需要加载上一年的2个月数据
@@ -498,7 +501,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         withContext(Dispatchers.Main) {
                                             showTaskList(mViewMode.mCurrentDate)
                                             // 设置数据
-                                            adapter.setList(local)
+                                            adapter.setList(localData)
                                         }
                                     } else if (currentMonth > 11) {
                                         val startDay =
@@ -526,13 +529,25 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         withContext(Dispatchers.Main) {
                                             showTaskList(mViewMode.mCurrentDate)
                                             // 设置数据
-                                            adapter.setList(local)
+                                            adapter.setList(localData)
+                                        }
+                                    }
+                                }
+                            } else {
+                                // 修改选中的数据
+                                // 二次加载isChooser = true 的日期
+                                kotlin.runCatching {
+                                    adapter.data.indexOfFirst { it.isChooser }.let { index ->
+                                        data?.firstOrNull { it.date == localData[index].ymd }.apply {
+                                            adapter.data[index].calendarData = this
+                                            adapter.notifyItemChanged(index)
                                         }
                                     }
                                 }
                             }
 
                             // 加载一年的数据
+                            // 添加新数据
                             kotlin.runCatching {
                                 // 加载完整的数据，会有卡顿，需要放到后面去添加
                                 localData.forEachIndexed { _, calendar ->
@@ -542,7 +557,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 }
 
                                 withContext(Dispatchers.Main) {
-                                    showTaskList(mViewMode.mCurrentDate, true)
                                     // 设置数据
                                     adapter.setDiffNewData(local)
                                 }
@@ -563,6 +577,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     }
                     success {
                         hideProgressLoading()
+                        // 刷新当前任务
+                        localCalendar.value?.firstOrNull { it.isChooser }?.apply {
+                            mViewMode.getCalendar(
+                                CalendarUtil.getYearStartDay(
+                                    this.year
+                                ),
+                                CalendarUtil.getYearEndDay(this.year)
+                            )
+                        }
                     }
                 }
             })
@@ -770,7 +793,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     private fun showTaskList(
-        data: com.cl.common_base.util.calendar.Calendar?,
+        data: Calendar?,
         isExecutionAlphaAni: Boolean? = false
     ) {
         val getCalendarDate = mViewMode.getCalendar.value?.data
@@ -803,6 +826,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         if (currentPosition != -1) {
             for (i in currentPosition..(currentPosition + diffDay)) {
                 adapter.data[i].isShowBg = true
+                // 设置时间背景标志
+                when (i) {
+                    currentPosition -> {
+                        adapter.data[i].bgFlag = Calendar.KEY_START
+                    }
+                    currentPosition + diffDay -> {
+                        adapter.data[i].bgFlag = Calendar.KEY_END
+                    }
+                    else -> {
+                        adapter.data[i].bgFlag = Calendar.KEY_NORMAL
+                    }
+                }
                 adapter.notifyItemChanged(i)
             }
         }
@@ -1126,6 +1161,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                             // 时间
                                                                             // 传给后台 & 上报给手机本地日历
                                                                             // todo 传给后台
+                                                                            mViewMode.updateTask(
+                                                                                UpdateReq(
+                                                                                    taskId = listContent[position].taskId,
+                                                                                    taskTime = timeMis.toString()
+                                                                                )
+                                                                            )
+                                                                            // 手动删除当前这个list、然后刷新
+                                                                            listContent.remove(listContent[position])
                                                                             // todo 上报给手机本地日历
                                                                             CalendarEventUtil.addCalendarEvent(
                                                                                 this@CalendarActivity,

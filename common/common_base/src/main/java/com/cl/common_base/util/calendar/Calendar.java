@@ -146,6 +146,11 @@ public final class Calendar implements Serializable, Comparable<Calendar>, Multi
     private boolean isShowBg = false;
 
     /**
+     * 背景饿状态
+     */
+    private String bgFlag = "";
+
+    /**
      * 当前标志
      *
      * @return
@@ -167,6 +172,14 @@ public final class Calendar implements Serializable, Comparable<Calendar>, Multi
      */
     private CalendarData calendarData;
 
+
+    public String getBgFlag() {
+        return bgFlag;
+    }
+
+    public void setBgFlag(String bgFlag) {
+        this.bgFlag = bgFlag;
+    }
 
     public boolean isShowBg() {
         return isShowBg;
@@ -584,4 +597,8 @@ public final class Calendar implements Serializable, Comparable<Calendar>, Multi
 
     public final static int KEY_TITLE = 0;
     public final static int KEY_CONTENT = 1;
+
+    public final static String KEY_START = "key_start";
+    public final static String KEY_NORMAL = "key_normal";
+    public final static String KEY_END = "key_end";
 }

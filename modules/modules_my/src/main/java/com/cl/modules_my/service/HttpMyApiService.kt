@@ -110,6 +110,9 @@ interface HttpMyApiService {
         @Field("endDate") endDate: String
     ): Flow<HttpResult<MutableList<CalendarData>>>
 
+    /**
+     * 更新任务
+     */
     @POST("abby/calendar/updateTask")
     fun updateTask(@Body body: UpdateReq): Flow<HttpResult<BaseBean>>
 

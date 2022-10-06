@@ -6,6 +6,7 @@ import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.ChooseSeedPopBinding
+import com.cl.common_base.util.ViewUtils
 import com.google.gson.annotations.Until
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
@@ -16,7 +17,8 @@ import com.lxj.xpopup.core.BottomPopupView
 class ChooserSeedPop(
     context: Context,
     private val onConfirmAction: ((type: String) -> Unit)? = null,
-    private val onCancelAction: (() -> Unit)? = null
+    private val onCancelAction: (() -> Unit)? = null,
+    private val isNoAttribute: Boolean? = true
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.choose_seed_pop
@@ -27,6 +29,8 @@ class ChooserSeedPop(
 
         DataBindingUtil.bind<ChooseSeedPopBinding>(popupImplView)?.apply {
             tvHow.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC)
+            // 显示和隐藏弹窗
+            ViewUtils.setVisible(isNoAttribute ?: true, ivClose)
 
             clTwo.setOnClickListener {
                 clTwoBox.isChecked = !clTwoBox.isChecked
@@ -79,6 +83,13 @@ class ChooserSeedPop(
             }
 
         }
+    }
+
+    /**
+     * 屏蔽手机系统返回键
+     */
+    override fun onBackPressed(): Boolean {
+        return true
     }
 
     override fun onDismiss() {

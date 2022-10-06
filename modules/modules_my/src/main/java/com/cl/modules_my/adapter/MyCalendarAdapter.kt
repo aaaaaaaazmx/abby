@@ -135,64 +135,59 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
     }
 
 
+    /**
+     * 设置周期背景
+     */
     fun getBg(item: Calendar): Any? {
-        if (item.calendarData == null) return null
-        val epochStartTime = item.calendarData.epochStartTime?.let { epochStartTime ->
-            DateHelper.formatToLong(
-                epochStartTime, "yyyy-MM-dd"
-            )
-        } ?: 0L
-
-        val epochEndTime = item.calendarData.epochEndTime?.let { epochEndTime ->
-            DateHelper.formatToLong(
-                epochEndTime, "yyyy-MM-dd"
-            )
-        } ?: 0L
-
-        return if (item.ymd == item.calendarData.epochStartTime) {
-            // 判断是否是最后一个
-            if (CalendarUtil.isSaturday(item)) {
-                ContextCompat.getDrawable(
-                    context,
-                    com.cl.common_base.R.drawable.bg_calendar_first_and_circle
-                )
-            } else {
-                ContextCompat.getDrawable(
-                    context,
-                    com.cl.common_base.R.drawable.bg_calendar_first
-                )
+        return when (item.bgFlag) {
+            Calendar.KEY_START -> {
+                // 判断是否是最后一个
+                if (CalendarUtil.isSaturday(item)) {
+                    ContextCompat.getDrawable(
+                        context,
+                        com.cl.common_base.R.drawable.bg_calendar_first_and_circle
+                    )
+                } else {
+                    ContextCompat.getDrawable(
+                        context,
+                        com.cl.common_base.R.drawable.bg_calendar_first
+                    )
+                }
             }
-        } else if (item.ymd == item.calendarData.epochEndTime) {
-            if (CalendarUtil.isSunday(item)) {
-                ContextCompat.getDrawable(
-                    context,
-                    com.cl.common_base.R.drawable.bg_calendar_end_and_circle
-                )
-            } else {
-                ContextCompat.getDrawable(
-                    context,
-                    com.cl.common_base.R.drawable.bg_calendar_end
-                )
+            Calendar.KEY_NORMAL -> {
+                if (CalendarUtil.isSaturday(item)) {
+                    ContextCompat.getDrawable(
+                        context,
+                        com.cl.common_base.R.drawable.bg_calendar_normal_and_rtb_circle
+                    )
+                } else if (CalendarUtil.isSunday(item)) {
+                    ContextCompat.getDrawable(
+                        context,
+                        com.cl.common_base.R.drawable.bg_calendar_normal_and_ltb_circle
+                    )
+                } else {
+                    ContextCompat.getDrawable(
+                        context,
+                        com.cl.common_base.R.drawable.bg_calendar_normal
+                    )
+                }
             }
-        } else if (item.timeInMillis in (epochStartTime + 1) until epochEndTime) {
-            if (CalendarUtil.isSaturday(item)) {
-                ContextCompat.getDrawable(
-                    context,
-                    com.cl.common_base.R.drawable.bg_calendar_normal_and_rtb_circle
-                )
-            } else if (CalendarUtil.isSunday(item)) {
-                ContextCompat.getDrawable(
-                    context,
-                    com.cl.common_base.R.drawable.bg_calendar_normal_and_ltb_circle
-                )
-            } else {
-                ContextCompat.getDrawable(
-                    context,
-                    com.cl.common_base.R.drawable.bg_calendar_normal
-                )
+            Calendar.KEY_END -> {
+                if (CalendarUtil.isSunday(item)) {
+                    ContextCompat.getDrawable(
+                        context,
+                        com.cl.common_base.R.drawable.bg_calendar_end_and_circle
+                    )
+                } else {
+                    ContextCompat.getDrawable(
+                        context,
+                        com.cl.common_base.R.drawable.bg_calendar_end
+                    )
+                }
             }
-        } else {
-            null
+            else -> {
+                null
+            }
         }
     }
 
@@ -204,20 +199,20 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
             Color.WHITE
         } else
         // 时间判断
-        if (DateHelper.after(currentTime, itemTime)) {
-            // 当前时间大于itemTime
-            return ContextCompat.getColor(
-                context,
-                com.cl.common_base.R.color.calendarGray
-            )
-        } else
-        if (DateHelper.after(itemTime, currentTime)) {
-            // 当前时间小于itemTime
-            return Color.BLACK
-        } else
-        if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
-            return Color.BLACK
-        }
+            if (DateHelper.after(currentTime, itemTime)) {
+                // 当前时间大于itemTime
+                return ContextCompat.getColor(
+                    context,
+                    com.cl.common_base.R.color.calendarGray
+                )
+            } else
+                if (DateHelper.after(itemTime, currentTime)) {
+                    // 当前时间小于itemTime
+                    return Color.BLACK
+                } else
+                    if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
+                        return Color.BLACK
+                    }
         return -1
     }
 }

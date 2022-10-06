@@ -6,6 +6,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.StrainNameBinding
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
@@ -17,6 +18,7 @@ class StrainNamePop(
     context: Context,
     private val onConfirmAction: ((strainName: String) -> Unit)? = null,
     private val onCancelAction: (() -> Unit)? = null,
+    private val isNoStrainName: Boolean? = true
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.strain_name
@@ -27,6 +29,7 @@ class StrainNamePop(
 
         DataBindingUtil.bind<StrainNameBinding>(popupImplView)?.apply {
             tvHow.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC)
+            ViewUtils.setVisible(isNoStrainName ?: true, ivClose)
 
             ivClose.setOnClickListener {
                 onCancelAction?.invoke()
@@ -69,6 +72,13 @@ class StrainNamePop(
             }
 
         }
+    }
+
+    /**
+     * 屏蔽手机系统返回键
+     */
+    override fun onBackPressed(): Boolean {
+        return true
     }
 
     override fun onDismiss() {
