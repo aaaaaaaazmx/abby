@@ -123,9 +123,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     private fun initCalendarData() {
+        // 只使用一次
         mViewMode.setOnlyFirstLoad(true)
-        // 添加本地日历的数据
-        // todo 需要判断当前的月份，来显示与加载，如果当前是1月，需要加载上面的，如果当前是12月，需要加载下面一年的
+
+        // 添加网络当前的一年的数据
         mViewMode.getCalendar(
             CalendarUtil.getYearStartDay(
                 CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
@@ -136,6 +137,29 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         mViewMode.getLocalCalendar(
             year = CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
         )
+
+           // 需要判断当前月份是否小于4，或者是否大于8
+//        val currentMonth = CalendarUtil.getFormat("MM").format(Date().time).toInt()
+//        if (currentMonth <= 4) {
+//            // 加载上一年的
+//            mViewMode.setScrollMonth(1)
+//            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year - 1)
+//            mViewMode.getCalendar(
+//                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year - 1),
+//                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year - 1)
+//            )
+//            return
+//        }
+//        if (currentMonth >= 8) {
+//            // 加载下一年的
+//            mViewMode.setScrollMonth(8)
+//            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year + 1)
+//            mViewMode.getCalendar(
+//                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year + 1),
+//                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year + 1)
+//            )
+//            return
+//        }
     }
 
     override fun MyCalendayActivityBinding.initBinding() {

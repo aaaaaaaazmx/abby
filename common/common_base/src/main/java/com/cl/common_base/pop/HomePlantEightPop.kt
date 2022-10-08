@@ -1,9 +1,9 @@
-package com.cl.modules_home.widget
+package com.cl.common_base.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePlantEightPopBinding
+import com.cl.common_base.R
+import com.cl.common_base.databinding.HomePlantEightPopBinding
 import com.lxj.xpopup.core.BottomPopupView
 
 /**

@@ -124,6 +124,8 @@ object UnReadConstants {
 
     /**
      * 种植状态集合
+     *
+     *  这个地方需要删除、以后不能这样判断了。
      */
     var plantStatus = mutableListOf(
         Plant.KEY_PLANT,

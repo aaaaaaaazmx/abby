@@ -1036,8 +1036,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.unreadMessageList.value?.let {
                     // 调用图文信息
                     if (it.size == 0) return@let
+                    // todo 这个判断需要更改
                     mViewMode.unreadMessageList.value?.first()?.type?.let { type ->
                         // 目前只处理了种植状态
+                        // 周期的解锁
+                        // 气泡解锁
+                        // todo 这个地方待测试，包含关系应该更新、type应该也有问题
                         if (UnReadConstants.plantStatus.contains(type)) {
                             // 调用图文接口，获取图文并且弹窗
                             // 种植状态的是调用解锁，并不是调用已读

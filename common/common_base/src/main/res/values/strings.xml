@@ -101,6 +101,8 @@
     <string name="my_no_task">No task today~</string>
     <string name="my_how_is"></string>
     <string name="base_please_try_again">Please set the reminder time later than the current time</string>
+    <string name="base_seed_to_veg">Insert the black sponge into the plant basket, avoiding light exposure to water, affecting water quality</string>
+    <string name="base_fertilizer">Put half a pod of both the silver and gold fertilizer as instructed</string>
 
 
 </resources>
