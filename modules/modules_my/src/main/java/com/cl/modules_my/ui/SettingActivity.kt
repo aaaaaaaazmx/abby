@@ -214,7 +214,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             .setPointClickListener {
                 pop.asCustom(SubPop(this@SettingActivity)).show()
             }
-        binding.ftSub.itemValue = userinfoBean?.subscriptionTime
+        userinfoBean?.subscriptionTime?.let {
+            binding.ftSub.itemValue = it
+        }
     }
 
     override fun observe() {

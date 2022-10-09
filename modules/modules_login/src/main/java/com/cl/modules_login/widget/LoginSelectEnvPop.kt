@@ -51,7 +51,7 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                         .navigation()
                 }
                 tvBd.setOnClickListener {
-                    ServiceCreators.newBuilder(ServiceCreators.HttpsUrl.TEST_URL)
+                    ServiceCreators.newBuilder(ServiceCreators.HttpsUrl.BD_URL)
                     Prefs.clear()
                     dismiss()
                     ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)

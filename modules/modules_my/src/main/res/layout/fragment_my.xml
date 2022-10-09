@@ -6,6 +6,12 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.cl.modules_my.viewmodel.MyViewModel" />
+
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -120,6 +126,7 @@
                 app:itemTitleBold="true" />
 
             <View
+                android:visibility="@{viewModel.userInfo.isVip() == 1 ? View.VISIBLE : View.GONE}"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="20dp"
@@ -127,6 +134,7 @@
                 android:background="#E5E5E5" />
 
             <com.cl.common_base.widget.FeatureItemView
+                android:visibility="@{viewModel.userInfo.isVip() == 1 ? View.VISIBLE : View.GONE}"
                 android:id="@+id/cl_how"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

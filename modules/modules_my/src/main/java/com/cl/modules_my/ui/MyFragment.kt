@@ -114,6 +114,10 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
     }
 
     override fun FragmentMyBinding.initBinding() {
-
+        binding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            viewModel = mViewMode
+            executePendingBindings()
+        }
     }
 }
