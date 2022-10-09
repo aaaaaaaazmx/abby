@@ -128,13 +128,13 @@ object UnReadConstants {
      *  这个地方需要删除、以后不能这样判断了。
      */
     var plantStatus = mutableListOf(
-        Plant.KEY_PLANT,
-        Plant.KEY_VEGETATION,
-        Plant.KEY_FLOWERING,
-        Plant.KEY_FLUSHING,
-        Plant.KEY_DRYING,
-        Plant.KEY_HARVEST,
-        Plant.KEY_CURING
+        PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_HARVEST,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_CURING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_FINISH,
     )
 
     /**
