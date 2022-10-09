@@ -1577,6 +1577,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 植物信息数据显示
                     binding.pplantNinth.tvWeekDay.text = """
+                        ${data?.plantWay}
                         Week ${data?.week ?: "-"}
                         Day ${data?.day ?: "-"}
                     """.trimIndent()
