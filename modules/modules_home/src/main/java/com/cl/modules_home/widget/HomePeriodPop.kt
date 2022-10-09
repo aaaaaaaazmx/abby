@@ -61,6 +61,10 @@ class HomePeriodPop(
                     // 1
                     info.timeLineState = TimeLineState.ACTIVE
                 }
+                else -> {
+                    // 0
+                    info.timeLineState = TimeLineState.INACTIVE
+                }
             }
         }
     }
@@ -79,7 +83,7 @@ class HomePeriodPop(
         showView(LayoutType.RIGHT)
     }
 
-    fun showView(type: LayoutType) {
+    private fun showView(type: LayoutType) {
         data?.let {
             binding?.timeView?.initData(
                 it,
@@ -205,6 +209,23 @@ class HomePeriodPop(
                                 KEY_LOCK_COMPLETED -> {
                                     svtUnlock.text = "Unlock"
                                     svtUnlock.visibility = View.VISIBLE
+
+                                    clRoot.background = ContextCompat.getDrawable(
+                                        context,
+                                        R.mipmap.home_period_green
+                                    )
+
+                                    periodTitle.setTextColor(
+                                        Color.BLACK
+                                    )
+                                    periodTime.setTextColor(
+                                        Color.BLACK
+                                    )
+                                }
+                                else -> {
+                                    svtWaitUnlock.text = "Unlock"
+                                    svtWaitUnlock.visibility = View.VISIBLE
+                                    // 待解锁状态下，不显示时间周期
 
                                     clRoot.background = ContextCompat.getDrawable(
                                         context,

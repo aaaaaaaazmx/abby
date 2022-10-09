@@ -50,6 +50,14 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()
                 }
+                tvBd.setOnClickListener {
+                    ServiceCreators.newBuilder(ServiceCreators.HttpsUrl.TEST_URL)
+                    Prefs.clear()
+                    dismiss()
+                    ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
+                        .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .navigation()
+                }
             }
         }
     }

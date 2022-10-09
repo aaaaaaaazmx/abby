@@ -32,6 +32,9 @@ object Constants {
         // 测试环境
         const val TEST_URL = "http://192.168.3.6:9997/"
 
+        // 本地环境
+        const val BD_URL = "http://192.168.3.101:9330/"
+
         // 正式环境
         const val FORMAL_URL = "https://www.beheyabby.com:9330/"
 

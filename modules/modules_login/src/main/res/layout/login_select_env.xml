@@ -7,46 +7,58 @@
     </data>
 
     <LinearLayout
-        android:background="@color/lineBg"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/lineBg"
+        android:orientation="vertical">
 
         <com.cl.common_base.widget.SvTextView
             android:id="@+id/tv_test"
-            android:layout_margin="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            app:svRadius="16dp"
-            app:svSolidType="solid"
-            android:text="测试环境-http://192.168.3.6:9997/"
-            android:background="@color/lineBg"
             android:layout_width="match_parent"
-            android:layout_height="60dp"/>
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="@color/lineBg"
+            android:gravity="center"
+            android:text="测试环境-http://192.168.3.6:9997/"
+            app:svRadius="16dp"
+            app:svSolidType="solid" />
 
         <com.cl.common_base.widget.SvTextView
             android:id="@+id/tv_development"
-            android:layout_margin="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            app:svRadius="16dp"
-            app:svSolidType="solid"
-            android:text="外网环境-https://5c8730c912.oicp.vip/"
-            android:background="@color/lineBg"
             android:layout_width="match_parent"
-            android:layout_height="60dp"/>
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="@color/lineBg"
+            android:gravity="center"
+            android:text="外网环境-https://5c8730c912.oicp.vip/"
+            app:svRadius="16dp"
+            app:svSolidType="solid" />
 
         <com.cl.common_base.widget.SvTextView
             android:id="@+id/tv_sc"
-            android:layout_margin="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            app:svRadius="16dp"
-            app:svSolidType="solid"
-            android:text="生产环境-https://www.beheyabby.com:9330/"
-            android:background="@color/lineBg"
             android:layout_width="match_parent"
-            android:layout_height="60dp"/>
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="@color/lineBg"
+            android:gravity="center"
+            android:text="本地环境-https://www.beheyabby.com:9330/"
+            app:svRadius="16dp"
+            app:svSolidType="solid" />
+
+        <com.cl.common_base.widget.SvTextView
+            android:id="@+id/tv_bd"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:background="@color/lineBg"
+            android:gravity="center"
+            android:text="生产环境-http://192.168.3.101:9330/"
+            app:svRadius="16dp"
+            app:svSolidType="solid" />
 
     </LinearLayout>
 </layout>
