@@ -47,6 +47,7 @@ class StrainNamePop(
             // 清空输入内容
             curingDelete.setOnClickListener {
                 strainName.setText("")
+                btnSuccess.isEnabled = false
             }
 
             tvHow.setOnClickListener {

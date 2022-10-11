@@ -11,7 +11,7 @@ class BaseCenterPop(
     context: Context,
     private val onConfirmAction: (() -> Unit)? = null,
     private val content: String? = null,
-    private val confirmText: String? = context.getString(R.string.my_confirm),
+    private val confirmText: String? = context.getString(R.string.base_ok),
     private val cancelText: String? = context.getString(R.string.my_cancel),
     private val isShowCancelButton: Boolean = true
 ) : CenterPopupView(context) {

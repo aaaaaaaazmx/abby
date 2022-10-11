@@ -3,6 +3,7 @@ package com.cl.modules_my.ui.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.ext.dp2px
@@ -17,6 +18,8 @@ import com.cl.modules_my.repository.MyTroubleData
 import com.cl.modules_my.viewmodel.MyTroubleViewModel
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -60,7 +63,7 @@ class MyTroubleShootingFragment : BaseFragment<MyTroubleFragmentBinding>() {
 
     override fun observe() {
         mViewMode.apply {
-            getDetailByLearnMoreId.observe(viewLifecycleOwner, resourceObserver {
+            getDetailByLearnMoreId.observe(this@MyTroubleShootingFragment, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -80,7 +83,6 @@ class MyTroubleShootingFragment : BaseFragment<MyTroubleFragmentBinding>() {
             when (view.id) {
                 R.id.cl_content -> {
                     (adapter.data[position] as? MyTroubleData.Bean)?.learnMoreId?.let {
-                        // 获取图文接口
                         mViewMode.getDetailByLearnMoreId(it)
                         pop
                             .isDestroyOnDismiss(false)

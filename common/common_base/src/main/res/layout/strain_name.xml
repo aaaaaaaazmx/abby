@@ -53,7 +53,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="5dp"
                         android:background="@null"
-                        android:hint="@string/my_strain_how"
+                        android:hint="@string/base_og"
                         android:inputType="text"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/curing_delete"
@@ -129,11 +129,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/my_not_know"
-                        android:textColor="@color/black"
+                        android:textColor="@color/mainColor"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <View
+                        android:visibility="gone"
                         android:layout_width="0dp"
                         android:layout_height="0.7dp"
                         android:background="@color/black"

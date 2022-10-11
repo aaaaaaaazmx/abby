@@ -39,6 +39,7 @@ class LearnIdGuidePop(
         datas = data
         list = data?.items
         binding?.tvTitle?.text = data?.title
+        adapter.setList(list)
     }
 
     override fun beforeShow() {
