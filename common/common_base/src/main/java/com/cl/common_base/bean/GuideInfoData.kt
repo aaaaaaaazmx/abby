@@ -13,7 +13,7 @@ import com.cl.common_base.BaseBean
 data class GuideInfoData(
     var items: MutableList<PlantInfo>? = null,  // 引导描述详情
     var title: String? = null,  //	标题
-    var type: Int? = null, // 引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植、8-seed
+    var type: String? = null, // 引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植、8-seed, 现在全部改为中文了
 ) : BaseBean() {
     @Keep
     data class PlantInfo(
@@ -23,6 +23,7 @@ data class GuideInfoData(
         var title: String? = null,
         var isCheck: Boolean? = false,
         var url: String? = null,
+        val interaction: Int? = null,
         var isCurrentStatus: Int? = 0
     ) : BaseBean(), MultiItemEntity {
         // 返回当前布局状态

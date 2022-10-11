@@ -19,6 +19,7 @@ import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.modules_home.response.PlantInfoData
+import com.tuya.bouncycastle.asn1.BEROctetStringGenerator
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -27,6 +28,7 @@ import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import retrofit2.http.Body
 import javax.inject.Inject
 
 
@@ -161,6 +163,40 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     _getGuideInfo.value = it
                 }
         }
+    }
+
+    /**
+     * 任务更新，推迟到多少天之后
+     */
+    private val _updateTask = MutableLiveData<Resource<BaseBean>>()
+    val updateTask: LiveData<Resource<BaseBean>> = _updateTask
+    fun updateTask(body: UpdateReq) = viewModelScope.launch {
+        repository.updateTask(body)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                _updateTask.value = it
+            }
     }
 
 
@@ -579,9 +615,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _finishTask = MutableLiveData<Resource<BaseBean>>()
     val finishTask: LiveData<Resource<BaseBean>> = _finishTask
-    fun finishTask(name: String, weight: String? = null) {
+    fun finishTask(body: FinishTaskReq) {
         viewModelScope.launch {
-            repository.finishTask(name, weight)
+            repository.finishTask(body)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -977,11 +1013,24 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      *  周期弹窗时的状态选择，目前此状态只用于周期弹窗，目的是为了解锁，后期可以优化
      *  周期Id
+     *  改动为map集合，保存了解锁ID（图文展示）、以及TaskId（解锁）
      */
-    private val _popPeriodStatus = MutableLiveData<String?>()
-    val popPeriodStatus: LiveData<String?> = _popPeriodStatus
-    fun setPopPeriodStatus(status: String?) {
-        _popPeriodStatus.value = status
+    private val _popPeriodStatus = MutableLiveData<HashMap<String, String?>?>(hashMapOf())
+    val popPeriodStatus: LiveData<HashMap<String, String?>?> = _popPeriodStatus
+    fun setPopPeriodStatus(guideId: String? = null, taskId: String? = null, taskTime: String? = null) {
+        guideId?.let {
+            _popPeriodStatus.value?.set(KEY_GUIDE_ID, it)
+            // 获取图文引导，然后解锁。
+            getGuideInfo(it)
+        }
+        _popPeriodStatus.value?.set(KEY_TASK_ID, taskId)
+        _popPeriodStatus.value?.set(KEY_TASK_TIME, taskTime)
+    }
+
+    // 清空
+    fun clearPopPeriodStatus() {
+        if (_popPeriodStatus.value.isNullOrEmpty()) return
+        _popPeriodStatus.value?.clear()
     }
 
     /**
@@ -1027,5 +1076,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             .onCompletion { onFinish?.invoke() }
             .onEach { onTick.invoke(it) }
             .launchIn(scope)
+    }
+
+    companion object {
+        const val KEY_GUIDE_ID = "key_guide_id"
+        const val KEY_TASK_ID = "key_task_id"
+        const val KEY_TASK_TIME = "key_task_time"
     }
 }

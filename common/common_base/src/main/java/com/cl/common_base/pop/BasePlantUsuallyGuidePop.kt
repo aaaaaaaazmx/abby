@@ -3,11 +3,9 @@ package com.cl.common_base.pop
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.webkit.MimeTypeMap
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.R
@@ -17,12 +15,9 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.HomePlantUsuallyPopBinding
 import com.cl.common_base.ext.logI
-import com.cl.common_base.util.glide.GlideEngine
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
-import com.luck.picture.lib.basic.PictureSelector
-import com.luck.picture.lib.config.PictureMimeType
-import com.luck.picture.lib.entity.LocalMedia
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.util.SmartGlideImageLoader
@@ -31,13 +26,21 @@ import com.lxj.xpopup.util.SmartGlideImageLoader
 /**
  * 种植引导从后台拉取的数据POP
  *
+ * @param onNextAction 下一步回调
+ * @param popData 展示List数据
+ * @param data 全部的数据
+ * @param isShowRemindMe 是否展示推迟两天后提醒的文案
+ * @param onRemindMeAction 推迟两天后的回调
+ *
  * @author 李志军 2022-08-08 13:46
  */
-class BasePlantUsuallyPop(
+class BasePlantUsuallyGuidePop(
     context: Context,
     private val onNextAction: ((weight: String?) -> Unit)? = null,
     private var popData: MutableList<GuideInfoData.PlantInfo>? = null,
-    private var data: GuideInfoData? = null
+    private var data: GuideInfoData? = null,
+    private var isShowRemindMe: Boolean? = false,
+    private val onRemindMeAction: (() -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_plant_usually_pop
@@ -62,17 +65,21 @@ class BasePlantUsuallyPop(
     /**
      * 当前状态
      */
-    private var isCurrentStatus: Int? = null
+    private var isCurrentStatus: String? = null
 
     /**
      * 设置数据
      */
-    fun setData(popData: GuideInfoData?): BasePlantUsuallyPop {
+    fun setData(popData: GuideInfoData?): BasePlantUsuallyGuidePop {
         binding?.btnSuccess?.isEnabled = false
         this.popData = popData?.items
         this.data = popData
         this.isCurrentStatus = popData?.type
         return this
+    }
+
+    fun setIsRemind(boolean: Boolean) {
+        isShowRemindMe = boolean
     }
 
     override fun beforeShow() {
@@ -81,14 +88,22 @@ class BasePlantUsuallyPop(
         // 设置数据
         popData?.let {
             if (it.size == 0) return
-            when ("$isCurrentStatus") {
+            when (isCurrentStatus) {
                 // 设置最后一个Bean类为当前周期状态
-                UnReadConstants.Plant.KEY_CURING,
-                UnReadConstants.Plant.KEY_DRYING -> {
-                    it[it.size - 1].isCurrentStatus = isCurrentStatus
+                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING,
+                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
+                    when (isCurrentStatus) {
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
+                            it[it.size - 1].isCurrentStatus = UnReadConstants.Plant.KEY_CURING.toInt()
+                        }
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
+                            it[it.size - 1].isCurrentStatus = UnReadConstants.Plant.KEY_DRYING.toInt()
+                        }
+                    }
                 }
                 // 设置当前type = 种子孵化阶段
-                UnReadConstants.Plant.KEY_INCUBATION -> {
+                UnReadConstants.Plant.KEY_INCUBATION,
+                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
                     it.forEach { bean ->
                         if (bean.url.isNullOrEmpty()) {
                             bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
@@ -99,28 +114,57 @@ class BasePlantUsuallyPop(
                     // 这个没有勾选框，默认为可选状态
                     binding?.btnSuccess?.isEnabled = true
                 }
+                // 上面是解锁周期引导图、这个是点击日历问号引导图
+                UnReadConstants.CalendarAsk.KEY_SEED_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_VEGETATION_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_BLOOM_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_FLUSHING_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_HARVEST_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_DRYING_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_CURING_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_UNEARNED_SUBSCRIPTION_EXPLAIN,
+                UnReadConstants.CalendarAsk.KEY_LST,
+                UnReadConstants.CalendarAsk.KEY_TRIM,
+                UnReadConstants.CalendarAsk.KEY_TOPPING
+                -> {
+                    it.forEach { bean ->
+                        if (bean.interaction == 0) {
+                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
+                        } else {
+                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_PLANT.toInt()
+                        }
+                    }
+                    // 这个没有勾选框，默认为可选状态
+                    binding?.btnSuccess?.isEnabled = it.any { data -> data.interaction == 0 }
+                }
             }
             adapter.setList(it)
         }
 
-        when ("$isCurrentStatus") {
-            UnReadConstants.Plant.KEY_CURING -> {
+        when (isCurrentStatus) {
+            UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
                 // 按钮显示不一致
                 binding?.btnSuccess?.text = context.getString(R.string.base_complete)
             }
-            UnReadConstants.Plant.KEY_INCUBATION -> {
+            UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
                 binding?.btnSuccess?.text = context.getString(R.string.base_done)
+            }
+            UnReadConstants.CalendarAsk.KEY_UNEARNED_SUBSCRIPTION_EXPLAIN -> {
+                binding?.btnSuccess?.text = context.getString(R.string.base_supply)
             }
             else -> {
                 // 按钮显示不一致
                 binding?.btnSuccess?.text = context.getString(R.string.my_next)
             }
         }
+
+        // 是否显示推迟
+        isShowRemindMe?.let { ViewUtils.setVisible(it, binding?.tvRemindMe) }
     }
 
     override fun dismiss() {
         super.dismiss()
-        if (isCurrentStatus == UnReadConstants.Plant.KEY_DRYING.toInt()) {
+        if (isCurrentStatus == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING) {
             //  todo 这个position目前时固定写死的，有可能会有问题
             val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
             etWeight?.setText("")
@@ -128,7 +172,7 @@ class BasePlantUsuallyPop(
             (adapter.getViewByPosition(2, R.id.type_two_box) as? CheckBox)?.isChecked = false
         }
 
-        if (isCurrentStatus == UnReadConstants.Plant.KEY_CURING.toInt()) {
+        if (isCurrentStatus == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING) {
             // todo 这个position目前时固定写死的,有可能会有问题
             val etWeight = adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText
             etWeight?.setText("")
@@ -140,9 +184,16 @@ class BasePlantUsuallyPop(
 
         binding = DataBindingUtil.bind<HomePlantUsuallyPopBinding>(popupImplView)?.apply {
             ivClose.setOnClickListener { dismiss() }
+            isShowRemindMe?.let { ViewUtils.setVisible(it, tvRemindMe) }
+
+            tvRemindMe.setOnClickListener {
+                dismiss()
+                // 推迟两天后提醒
+                onRemindMeAction?.invoke()
+            }
             btnSuccess.setOnClickListener {
                 // 需要判断当前是否有需要称重的周期，
-                when ("$isCurrentStatus") {
+                when (isCurrentStatus) {
                     UnReadConstants.Plant.KEY_DRYING -> {
                         val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
                         logI(
@@ -162,6 +213,12 @@ class BasePlantUsuallyPop(
                                 """.trimIndent()
                         )
                         onNextAction?.invoke(etWeight?.text.toString())
+                    }
+                    UnReadConstants.CalendarAsk.KEY_UNEARNED_SUBSCRIPTION_EXPLAIN -> {
+                        // 跳转订阅链接
+                        val intent = Intent(context, WebActivity::class.java)
+                        intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/subscription")
+                        context?.startActivity(intent)
                     }
                     else -> {
                         onNextAction?.invoke(null)

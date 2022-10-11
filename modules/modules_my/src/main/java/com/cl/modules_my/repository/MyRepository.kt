@@ -128,8 +128,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     /**
      * 日历-完成任务
      */
-    fun finishTask(taskId: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
-        return remoteRepository.finishTask(taskId, weight)
+    fun finishTask(body: FinishTaskReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.finishTask(body)
     }
 
     /**

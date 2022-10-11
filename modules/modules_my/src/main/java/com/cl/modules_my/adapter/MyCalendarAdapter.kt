@@ -15,6 +15,7 @@ import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.DetailByLearnMoreIdData
+import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.ViewUtils
@@ -69,10 +70,7 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
         val changElseGray = holder.getView<ImageView>(R.id.iv_change_else_gray)
         val llPointGray = holder.getView<LinearLayout>(R.id.ll_point_gray)
 
-        // 当前字体颜色
-        val currentColor = holder.getView<TextView>(R.id.text_date_day).currentTextColor
-
-        if (null == item.calendarData) {
+        if (item.calendarData?.taskList.isNullOrEmpty()) {
             ViewUtils.setInvisible(llPoint)
             ViewUtils.setGone(llPointGray)
             ViewUtils.setGone(changWater, changeUnlock, changElse)
@@ -103,26 +101,45 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                         ViewUtils.setGone(llPoint)
                         ViewUtils.setVisible(changElseGray)
                     }
+                    else -> {
+
+                    }
                 }
             } else if (DateHelper.after(itemTime, currentTime)) {
                 // 当前时间小于itemTime
                 when (data.taskType) {
-                    "Unlock" -> {
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_HARVEST,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FINISH,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
                         ViewUtils.setVisible(changeUnlock)
                     }
-                    "changing_water" -> {
+                    KEY_CHANGE_WATER,
+                    KEY_CHANGE_CUP_WATER -> {
                         ViewUtils.setVisible(changWater)
                     }
-                    else -> {
+                    KEY_LST,
+                    KEY_TRIM,
+                    KEY_TOPPING -> {
                         ViewUtils.setVisible(changElse)
                     }
+                    else -> {}
                 }
             } else if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
                 when (data.taskType) {
-                    "Unlock" -> {
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_HARVEST,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FINISH,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
                         ViewUtils.setVisible(changeUnlock)
                     }
-                    "changing_water" -> {
+                    "change_water" -> {
                         ViewUtils.setVisible(changWater)
                     }
                     else -> {
@@ -214,5 +231,13 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                         return Color.BLACK
                     }
         return -1
+    }
+
+    companion object {
+        const val KEY_CHANGE_CUP_WATER = "change_cup_water"
+        const val KEY_CHANGE_WATER = "change_water"
+        const val KEY_LST = "lst"
+        const val KEY_TOPPING = "topping"
+        const val KEY_TRIM = "trim"
     }
 }

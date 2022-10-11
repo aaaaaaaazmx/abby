@@ -1,9 +1,11 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import androidx.core.view.isNotEmpty
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.BaseThreePopBinding
+import com.cl.common_base.util.ViewUtils
 import com.lxj.xpopup.core.CenterPopupView
 
 /**
@@ -23,10 +25,11 @@ class BaseThreeTextPop(
         return R.layout.base_three_pop
     }
 
+    private var binding: BaseThreePopBinding? = null
     override fun onCreate() {
         super.onCreate()
 
-        DataBindingUtil.bind<BaseThreePopBinding>(popupImplView)?.apply {
+        binding = DataBindingUtil.bind<BaseThreePopBinding>(popupImplView)?.apply {
             tvContent.text = content
             tvOne.text = oneLineText
             tvTwo.text = twoLineText

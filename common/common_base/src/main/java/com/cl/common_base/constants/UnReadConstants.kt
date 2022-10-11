@@ -49,6 +49,23 @@ object UnReadConstants {
     }
 
     /**
+     * 日历点击问号相关
+     */
+    object CalendarAsk {
+        const val KEY_SEED_EXPLAIN = "seed_explain"
+        const val KEY_VEGETATION_EXPLAIN = "vegetation_explain"
+        const val KEY_BLOOM_EXPLAIN = "bloom_explain"
+        const val KEY_FLUSHING_EXPLAIN = "flushing_explain"
+        const val KEY_HARVEST_EXPLAIN = "harvest_explain"
+        const val KEY_DRYING_EXPLAIN = "drying_explain"
+        const val KEY_CURING_EXPLAIN = "curing_explain"
+        const val KEY_UNEARNED_SUBSCRIPTION_EXPLAIN = "unearned_subscription_explain"
+        const val KEY_LST = "lst"
+        const val KEY_TOPPING = "topping"
+        const val KEY_TRIM = "trim"
+    }
+
+    /**
      * 种植状态
      */
     object PlantStatus {

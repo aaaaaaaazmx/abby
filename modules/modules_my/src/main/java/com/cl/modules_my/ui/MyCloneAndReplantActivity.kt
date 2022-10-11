@@ -12,7 +12,7 @@ import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_ATTRIBUTE
 import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_STRAIN_NAME
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.pop.BasePlantUsuallyPop
+import com.cl.common_base.pop.BasePlantUsuallyGuidePop
 import com.cl.common_base.pop.ChooserSeedPop
 import com.cl.common_base.pop.StrainNamePop
 import com.cl.common_base.util.ViewUtils
@@ -57,7 +57,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
      * 网络请求
      */
     private val custom by lazy {
-        BasePlantUsuallyPop(
+        BasePlantUsuallyGuidePop(
             context = this@MyCloneAndReplantActivity,
             onNextAction = {
                 // 点击 Done， 需要解锁周期为Seed

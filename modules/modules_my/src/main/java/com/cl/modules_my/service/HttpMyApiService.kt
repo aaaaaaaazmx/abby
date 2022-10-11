@@ -16,7 +16,7 @@ interface HttpMyApiService {
     /**
      * 上传图片
      */
-    @Multipart//这里用Multipart,不添加的话会引起崩溃反应
+    @Multipart //这里用Multipart,不添加的话会引起崩溃反应
     @POST("abby/base/uploadImg")
     fun uploadImg(
         @Part partLis: List<MultipartBody.Part>,
@@ -129,11 +129,9 @@ interface HttpMyApiService {
     /**
      * 日历-完成任务
      */
-    @FormUrlEncoded
     @POST("abby/calendar/finishTask")
     fun finishTask(
-        @Field("taskId") taskId: String,
-        @Field("weight") weight: String? = null
+        @Body boyd: FinishTaskReq
     ): Flow<HttpResult<BaseBean>>
 
 
@@ -142,7 +140,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/deviceOperate/start")
-    fun deviceOperateStart(@Field("businessId")businessId: String, @Field("type")type: String): Flow<HttpResult<BaseBean>>
+    fun deviceOperateStart(@Field("businessId") businessId: String, @Field("type") type: String): Flow<HttpResult<BaseBean>>
 
 
     /**
@@ -150,5 +148,5 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/deviceOperate/finish")
-    fun deviceOperateFinish(@Field("type")type: String): Flow<HttpResult<BaseBean>>
+    fun deviceOperateFinish(@Field("type") type: String): Flow<HttpResult<BaseBean>>
 }

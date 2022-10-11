@@ -58,8 +58,10 @@ class TokenInterceptor : Interceptor {
                 ${it.message}
         """.trimIndent()
             )
-            thread {
-                Reporter.reportApiError(url = request.url.toString(), query = "", chain.proceed(request).code, "", it.message)
+            kotlin.runCatching {
+                thread {
+                    Reporter.reportApiError(url = request.url.toString(), query = "", -1, "", it.message)
+                }
             }
         }.onSuccess {
             if (it?.code == 401) {

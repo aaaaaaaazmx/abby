@@ -36,7 +36,7 @@
             android:background="@color/_xpopup_list_divider" />
 
         <LinearLayout
-            android:layout_marginBottom="10dp"
+            android:paddingBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
@@ -84,7 +84,7 @@
                 android:gravity="center"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Confirm"
+                android:text="Cancel"
                 android:textColor="#C4C4C4"
                 android:textSize="18sp" />
         </LinearLayout>

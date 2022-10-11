@@ -11,6 +11,7 @@ data class CalendarData(
     var day: String? = null,
     var epoch: String? = null,
     var epochEndTime: String? = null,
+    var epochExplain: String? = null,
     var epochStartTime: String? = null,
     var plantId: String? = null,
     var taskList: MutableList<TaskList>? = null
@@ -32,9 +33,9 @@ data class CalendarData(
     // 主要任务
     companion object {
         // 决定日历上任务点的颜色
-        const val TYPE_CHANGE_WATER = "change_water"
-        const val TYPE_TRAIN = "train"
-        const val TYPE_PERIOD_CHECK = "Period_check"
+        const val TYPE_CHANGE_WATER = "change_water_task"
+        const val TYPE_TRAIN = "train_task"
+        const val TYPE_PERIOD_CHECK = "period_check_task"
 
         // taskType
         // 任务类型

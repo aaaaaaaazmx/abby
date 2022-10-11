@@ -164,11 +164,11 @@ interface HttpHomeApiService {
     /**
      * 日历-完成任务
      */
-    @FormUrlEncoded
     @POST("abby/calendar/finishTask")
     fun finishTask(
-        @Field("taskId") taskId: String,
-        @Field("weight") weight: String? = null
+      @Body body: FinishTaskReq
     ): Flow<HttpResult<BaseBean>>
 
+    @POST("abby/calendar/updateTask")
+    fun updateTask(@Body body: UpdateReq): Flow<HttpResult<BaseBean>>
 }

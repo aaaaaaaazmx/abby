@@ -82,8 +82,8 @@ class MyRemoteRepository @Inject constructor() {
         return service.unlockJourney(name, weight)
     }
 
-    fun finishTask(taskId: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
-        return service.finishTask(taskId, weight)
+    fun finishTask(body: FinishTaskReq): Flow<HttpResult<BaseBean>> {
+        return service.finishTask(body)
     }
 
     fun deviceOperateStart(businessId: String, type: String): Flow<HttpResult<BaseBean>> {

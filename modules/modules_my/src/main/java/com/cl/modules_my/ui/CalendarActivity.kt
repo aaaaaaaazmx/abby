@@ -1,8 +1,6 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
-import android.content.Context
-import android.content.res.AssetManager
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
+import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.UpdateReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
@@ -28,6 +27,7 @@ import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.Calendar
@@ -53,15 +53,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
 import java.lang.reflect.Field
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.thread
 import kotlin.math.abs
-import kotlin.math.sign
 
 
 @Route(path = RouterPath.My.PAGE_MY_CALENDAR)
@@ -138,28 +134,28 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             year = CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
         )
 
-           // 需要判断当前月份是否小于4，或者是否大于8
-//        val currentMonth = CalendarUtil.getFormat("MM").format(Date().time).toInt()
-//        if (currentMonth <= 4) {
-//            // 加载上一年的
-//            mViewMode.setScrollMonth(1)
-//            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year - 1)
-//            mViewMode.getCalendar(
-//                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year - 1),
-//                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year - 1)
-//            )
-//            return
-//        }
-//        if (currentMonth >= 8) {
-//            // 加载下一年的
-//            mViewMode.setScrollMonth(8)
-//            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year + 1)
-//            mViewMode.getCalendar(
-//                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year + 1),
-//                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year + 1)
-//            )
-//            return
-//        }
+        // 需要判断当前月份是否小于4，或者是否大于8
+        //        val currentMonth = CalendarUtil.getFormat("MM").format(Date().time).toInt()
+        //        if (currentMonth <= 4) {
+        //            // 加载上一年的
+        //            mViewMode.setScrollMonth(1)
+        //            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year - 1)
+        //            mViewMode.getCalendar(
+        //                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year - 1),
+        //                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year - 1)
+        //            )
+        //            return
+        //        }
+        //        if (currentMonth >= 8) {
+        //            // 加载下一年的
+        //            mViewMode.setScrollMonth(8)
+        //            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year + 1)
+        //            mViewMode.getCalendar(
+        //                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year + 1),
+        //                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year + 1)
+        //            )
+        //            return
+        //        }
     }
 
     override fun MyCalendayActivityBinding.initBinding() {
@@ -291,7 +287,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                                     // 直接调用完成任务
                                                                                     mViewMode.taskId.value?.let {
                                                                                         mViewMode.finishTask(
-                                                                                            it
+                                                                                            FinishTaskReq(it)
                                                                                         )
                                                                                     }
                                                                                 }
@@ -342,7 +338,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     // 直接调用完成任务
                                                     mViewMode.taskId.value?.let {
                                                         mViewMode.finishTask(
-                                                            it
+                                                            FinishTaskReq(it)
                                                         )
                                                     }
                                                 }
@@ -380,12 +376,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         .dismissOnTouchOutside(false)
                         .isDestroyOnDismiss(false)
                         .asCustom(
-                            BasePlantUsuallyPop(
+                            BasePlantUsuallyGuidePop(
                                 this@CalendarActivity,
                                 onNextAction = {
                                     // 判断当前的周期状态
                                     val status = mViewMode.guideInfoStatus.value
-                                    if (status.isNullOrEmpty()) return@BasePlantUsuallyPop
+                                    if (status.isNullOrEmpty()) return@BasePlantUsuallyGuidePop
                                     when (status) {
                                         CalendarData.TASK_TYPE_CHANGE_WATER -> {
                                         }
@@ -403,26 +399,37 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         }
                                         CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                             // todo 这个应该是转周期了，调用图文、然后解锁花期
-                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                            // seed to veg
+                                            SeedGuideHelp(this@CalendarActivity).showGuidePop {
+                                                // 手动删除当前这个list、然后刷新
+//                                                thread {
+//                                                    adapter.data.firstOrNull { it.calendarData.taskList?.firstOrNull { it.taskType == status } != null }
+//                                                        ?.apply {
+//                                                            adapter.data.remove(this)
+//                                                        }
+//                                                }
+                                                mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
+                                            }
                                         }
-                                        CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
-                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
+                                        else -> {
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
                                         }
-                                        CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING -> {
-                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                        }
-                                        CalendarData.TASK_TYPE_CHECK_CHECK_DRYING -> {
-                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                        }
-                                        CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
-                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                        }
-                                        CalendarData.TASK_TYPE_CHECK_CHECK_FINISH -> {
-                                            mViewMode.unlockJourney(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                        }
-
                                     }
                                 },
+                                isShowRemindMe = mViewMode.guideInfoTaskTime.value?.isNotEmpty(),
+                                onRemindMeAction = {
+                                    // 推迟时间
+                                    // 时间
+                                    // 传给后台 & 上报给手机本地日历
+                                    // todo 传给后台
+                                    // 1667864539000 + 172800000
+                                    mViewMode.updateTask(
+                                        UpdateReq(
+                                            taskId = mViewMode.taskId.value,
+                                            taskTime = "${(mViewMode.guideInfoTaskTime.value?.toLong() ?: 0L) + (0L + 60 * 60 * 1000  * 48)}"
+                                        )
+                                    )
+                                }
                             ).setData(data)
                         ).show()
                 }
@@ -478,12 +485,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 localData.firstOrNull { it.isCurrentDay }?.let { isCurrentDay ->
                                     val currentYear = isCurrentDay.year
                                     val currentMonth = isCurrentDay.month
-                                    // 在这个区间之内，可以优先加载上下2个月
+                                    // 加载当月数据
                                     if (currentMonth in 2..11) {
                                         val startDay =
-                                            CalendarUtil.getYearMonthStartDay(currentYear, currentMonth - 1)
+                                            CalendarUtil.getYearMonthStartDay(currentYear, currentMonth)
                                         val endDay =
-                                            CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
+                                            CalendarUtil.getYearMonthEndDay(currentYear, currentMonth)
                                         val locationStartDayIndex = localData.indexOfFirst {
                                             it.ymd == startDay
                                         }
@@ -557,6 +564,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         }
                                     }
                                 }
+                                // 加载之后就设置false
+                                mViewMode.setOnlyFirstLoad(false)
                             } else {
                                 // 修改选中的数据
                                 // 二次加载isChooser = true 的日期
@@ -565,6 +574,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         data?.firstOrNull { it.date == localData[index].ymd }.apply {
                                             adapter.data[index].calendarData = this
                                             adapter.notifyItemChanged(index)
+                                            // 刷新当前选中的时间轴、
+                                            showTaskList(adapter.data[index])
                                         }
                                     }
                                 }
@@ -582,7 +593,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                                 withContext(Dispatchers.Main) {
                                     // 设置数据
-                                    adapter.setDiffNewData(local)
+                                    adapter.setList(local)
                                 }
                             }
 
@@ -614,13 +625,39 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
             })
 
+            // 更新日历任务
+            finishTask.observe(this@CalendarActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    errorMsg?.let {
+                        hideProgressLoading()
+                        ToastUtil.shortShow(it)
+                    }
+                    success {
+                        hideProgressLoading()
+                        // 刷新当前任务
+                        localCalendar.value?.firstOrNull { it.isChooser }?.apply {
+                            mViewMode.getCalendar(
+                                CalendarUtil.getYearStartDay(
+                                    this.year
+                                ),
+                                CalendarUtil.getYearEndDay(this.year)
+                            )
+                        }
+                    }
+                }
+            })
+
         }
     }
 
     override fun initData() {
         // 周期点击事件
         binding.tvCycle.setOnClickListener {
-            mViewMode.getGuideInfo(binding.tvCycle.text.toString())
+            // 需要小问号
+            adapter.data.firstOrNull { it.isChooser }?.apply {
+                this.calendarData.epochExplain?.let { it1 -> mViewMode.getGuideInfo(it1) }
+            }
         }
 
         adapter.setOnItemChildClickListener { adapter, view, position ->
@@ -836,6 +873,16 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             val i = adapter.data.indexOf(it)
             adapter.data[i].isShowBg = false
             adapter.notifyItemChanged(i)
+        }
+        // 如果当前没有选中日期的，手动设置当前日期为选中日期
+        // 只会加载一次，因为有了isChooser 就不会走了。
+        adapter.data.firstOrNull { it.isChooser }.apply {
+            if (null == this) {
+                adapter.data.indexOfFirst { it.isCurrentDay }.apply {
+                    adapter.data[this].isChooser = true
+                    adapter.notifyItemChanged(this)
+                }
+            }
         }
         logI(
             """
@@ -1102,7 +1149,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         when (listContent[position].taskStatus) {
                             "0" -> {
                                 //  三行弹窗
-                                pop.asCustom(
+                                XPopup
+                                    .Builder(this@CalendarActivity)
+                                    .asCustom(
                                     BaseThreeTextPop(
                                         this@CalendarActivity,
                                         content = getString(
@@ -1119,6 +1168,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     taskId
                                                 )
                                             }
+                                            // 记录taskTime
+                                            listContent[position].taskTime?.let { mViewMode.setGuideInfoTime(it) }
+                                            // 记录TaskType
+                                            listContent[position].taskType?.let { mViewMode.setGuideInfoStatus(it) }
                                             // todo 解锁周期图文引导弹窗
                                             when (listContent[position].taskType) {
                                                 CalendarData.TASK_TYPE_CHANGE_WATER -> {
@@ -1126,37 +1179,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     // 换水、加水、加肥。三步
                                                     changWaterAddWaterAddpump()
                                                 }
-                                                CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
-                                                    // todo 图文
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_CHANGE_CUP_WATER)
-                                                }
-                                                CalendarData.TASK_TYPE_LST -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_LST)
-                                                }
-                                                CalendarData.TASK_TYPE_TOPPING -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_TOPPING)
-                                                }
-                                                CalendarData.TASK_TYPE_TRIM -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_TRIM)
-                                                }
-                                                CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
-                                                    // 发芽转 veg
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_CHECK_TRANSPLANT)
-                                                }
-                                                CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING)
-                                                }
-                                                CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING)
-                                                }
-                                                CalendarData.TASK_TYPE_CHECK_CHECK_DRYING -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_CHECK_CHECK_DRYING)
-                                                }
-                                                CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_CHECK_CHECK_CURING)
-                                                }
-                                                CalendarData.TASK_TYPE_CHECK_CHECK_FINISH -> {
-                                                    mViewMode.getGuideInfo(CalendarData.TASK_TYPE_CHECK_CHECK_FINISH)
+                                                else -> {
+                                                    listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }
                                                 }
                                             }
                                         },
@@ -1272,7 +1296,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         )
                                         // 任务完成
                                         mViewMode.taskId.value?.let { taskId ->
-                                            mViewMode.finishTask(taskId)
+                                            mViewMode.finishTask(FinishTaskReq(taskId))
                                         }
                                     }
                                 })

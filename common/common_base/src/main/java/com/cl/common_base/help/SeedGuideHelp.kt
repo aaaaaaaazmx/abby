@@ -22,8 +22,7 @@ class SeedGuideHelp(val context: Context) {
      * 返回是否可以解锁的判断
      * true 表示可以解锁
      */
-    fun showGuidePop(): Boolean {
-        var isUnlock: Boolean = false
+    fun showGuidePop(onNextAction: (() -> Unit)? = null) {
         pop.asCustom(
             // onePop
             HomePlantFourPop(context = context, onNextAction = {
@@ -44,7 +43,7 @@ class SeedGuideHelp(val context: Context) {
                                             buttonText = context.getString(R.string.home_done),
                                             onNextAction = {
                                                 // 这个用来返回数据
-                                                isUnlock = true
+                                                onNextAction?.invoke()
                                             })
                                     ).show()
                                 })).show()
@@ -54,7 +53,6 @@ class SeedGuideHelp(val context: Context) {
                 ).show()
             })
         ).show()
-        return isUnlock
     }
 
 }

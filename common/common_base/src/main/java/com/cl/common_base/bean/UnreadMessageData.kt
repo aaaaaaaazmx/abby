@@ -1,5 +1,7 @@
 package com.cl.common_base.bean
 
+import com.google.gson.annotations.SerializedName
+
 /**
  *
  * 未读消息
@@ -14,7 +16,10 @@ data class UnreadMessageData(
     val notifyTitle: String? = null,
     val sendTime: String? = null,
     val title: String? = null,
+    @SerializedName("tasktype")
     var type: String? = null,
+    var taskTime: String? = null,
+    var taskId: String? = null,
     val category: Int? = null,
     val messageId: Int? = null,
     val sort: Int? = null,

@@ -207,42 +207,6 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         }
     }
 
-    /**
-     * 解锁花期
-     */
-    private val _unlockJourney = MutableLiveData<Resource<BaseBean>>()
-    val unlockJourney: LiveData<Resource<BaseBean>> = _unlockJourney
-    fun unlockJourney(name: String, weight: String? = null) {
-        viewModelScope.launch {
-            repository.unlockJourney(name, weight)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _unlockJourney.value = it
-                }
-        }
-    }
-
     private val _advertising = MutableLiveData<Resource<MutableList<AdvertisingData>>>()
     val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
     fun advertising(type: String? = "0") {
@@ -314,13 +278,13 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     }
 
     /**
-     * 日历 完成任务
+     * 日历 完成任务、解锁周期
      */
     private val _finishTask = MutableLiveData<Resource<BaseBean>>()
     val finishTask: LiveData<Resource<BaseBean>> = _finishTask
-    fun finishTask(taskId: String, weight: String? = null) {
+    fun finishTask(body: FinishTaskReq) {
         viewModelScope.launch {
-            repository.finishTask(taskId, weight)
+            repository.finishTask(body)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -468,10 +432,10 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     /**
      * 用来表示只加载一次的标记位
      */
-    private val _onlyFirstLoad = MutableLiveData<Boolean>(false)
+    private val _onlyFirstLoad = MutableLiveData<Boolean>(true)
     val onlyFirstLoad: LiveData<Boolean> = _onlyFirstLoad
     fun setOnlyFirstLoad(boolean: Boolean) {
-        _onlyFirstLoad.value = boolean
+        _onlyFirstLoad.postValue(boolean)
     }
 
 
@@ -494,5 +458,14 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
 
     fun setGuideInfoStatus(guideInfoStatus: String) {
         _guideInfoStatus.value = guideInfoStatus
+    }
+
+    private val _guideInfoTaskTime =
+        MutableLiveData<String>()
+    val guideInfoTaskTime: LiveData<String> =
+        _guideInfoTaskTime
+
+    fun setGuideInfoTime(guideInfoTaskTime: String) {
+        _guideInfoTaskTime.value = guideInfoTaskTime
     }
 }
