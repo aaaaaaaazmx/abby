@@ -449,7 +449,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     if (value.toString() == "NG") {
                         binding.ftSub.setSvText("Activate")
                     } else {
-                        binding.ftSub.itemValue = userinfoBean?.subscriptionTime
+                        userinfoBean?.subscriptionTime?.let {
+                            binding.ftSub.itemValue = it
+                        }
                     }
                 }
             }
