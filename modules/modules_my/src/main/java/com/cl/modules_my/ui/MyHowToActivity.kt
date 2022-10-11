@@ -46,10 +46,13 @@ class MyHowToActivity : BaseActivity<MyHowToBinding>() {
 
 
     override fun initView() {
-        binding.title.setRightButtonImg(R.mipmap.my_support)
-            .setRightClickListener {
-                sendEmail()
-            }
+        // 如果不是Vip那么就不限时支持按钮
+        if (mViewMode.userInfo?.isVip == 1) {
+            binding.title.setRightButtonImg(R.mipmap.my_support)
+                .setRightClickListener {
+                    sendEmail()
+                }
+        }
 
         binding.rvList.layoutManager = LinearLayoutManager(this@MyHowToActivity)
         binding.rvList.adapter = adapter

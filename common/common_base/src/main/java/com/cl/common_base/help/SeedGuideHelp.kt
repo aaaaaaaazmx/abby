@@ -30,7 +30,7 @@ class SeedGuideHelp(val context: Context) {
                     HomePlantFivePop(context, onNextAction = {
                         pop.asCustom(
                             BaseBottomPop(
-                                context, ContextCompat.getDrawable(context, R.drawable.base_dot_red),
+                                context, ContextCompat.getDrawable(context, R.mipmap.base_seed_fattening_bg),
                                 context.getString(R.string.base_fertilizer),
                                 context.getString(R.string.my_next)
                             ) {

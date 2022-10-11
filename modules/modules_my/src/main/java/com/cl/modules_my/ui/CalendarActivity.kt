@@ -127,7 +127,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             CalendarUtil.getYearStartDay(
                 CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
             ),
-            CalendarUtil.getYearEndDay(CalendarUtil.getFormat("yyyy").format(Date().time).toInt())
+            CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year + 1)
         )
         // 添加本地12个月的数据
         mViewMode.getLocalCalendar(

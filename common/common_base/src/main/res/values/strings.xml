@@ -106,6 +106,7 @@
     <string name="base_remind_me"><![CDATA[Not Ready，Remind me 2 days later >]]></string>
     <string name="base_supply">Purchase supply pack</string>
     <string name="base_og">eg. OG Kush..</string>
+    <string name="mt_seed_desc">Have no idea about this?</string>
 
 
 </resources>
