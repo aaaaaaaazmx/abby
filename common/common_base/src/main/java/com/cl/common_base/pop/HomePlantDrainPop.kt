@@ -65,7 +65,7 @@ class HomePlantDrainPop(
             // 弹出跳过加水的提示框
             tvSkipAddWater.text = buildSpannedString {
                 color(context.resources.getColor(R.color.mainColor)) {
-                    appendClickable("I've already changed the water >>") {
+                    appendClickable(context.getString(R.string.base_water_already)) {
                         dismiss()
                         onTvSkipAddWaterAction?.invoke()
                     }

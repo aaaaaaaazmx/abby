@@ -107,6 +107,7 @@
     <string name="base_supply">Purchase supply pack</string>
     <string name="base_og">eg. OG Kush..</string>
     <string name="mt_seed_desc">Have no idea about this?</string>
+    <string name="base_water_already">I have already drained</string>
 
 
 </resources>
