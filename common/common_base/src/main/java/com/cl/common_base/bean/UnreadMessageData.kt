@@ -16,7 +16,7 @@ data class UnreadMessageData(
     val notifyTitle: String? = null,
     val sendTime: String? = null,
     val title: String? = null,
-    @SerializedName("tasktype")
+    @SerializedName("taskType")
     var type: String? = null,
     var taskTime: String? = null,
     var taskId: String? = null,

@@ -121,41 +121,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     private fun initCalendarData() {
         // 只使用一次
         mViewMode.setOnlyFirstLoad(true)
-
-        // 添加网络当前的一年的数据
-        mViewMode.getCalendar(
-            CalendarUtil.getYearStartDay(
-                CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
-            ),
-            CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year + 1)
-        )
         // 添加本地12个月的数据
         mViewMode.getLocalCalendar(
             year = CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
         )
-
-        // 需要判断当前月份是否小于4，或者是否大于8
-        //        val currentMonth = CalendarUtil.getFormat("MM").format(Date().time).toInt()
-        //        if (currentMonth <= 4) {
-        //            // 加载上一年的
-        //            mViewMode.setScrollMonth(1)
-        //            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year - 1)
-        //            mViewMode.getCalendar(
-        //                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year - 1),
-        //                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year - 1)
-        //            )
-        //            return
-        //        }
-        //        if (currentMonth >= 8) {
-        //            // 加载下一年的
-        //            mViewMode.setScrollMonth(8)
-        //            mViewMode.getLocalCalendar(1, 12, mViewMode.mCurrentDate.year + 1)
-        //            mViewMode.getCalendar(
-        //                CalendarUtil.getYearStartDay(mViewMode.mCurrentDate.year + 1),
-        //                CalendarUtil.getYearEndDay(mViewMode.mCurrentDate.year + 1)
-        //            )
-        //            return
-        //        }
     }
 
     override fun MyCalendayActivityBinding.initBinding() {
@@ -438,26 +407,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             // 本地数据
             localCalendar.observe(this@CalendarActivity) {
                 if (it.isNullOrEmpty()) return@observe
-                when (mViewMode.scrollMonth.value) {
-                    -1 -> {
-                        // 优先加载本地数据、等网络数据返回了之后添加这玩意
-                        adapter.setList(it)
-                        // 滚到到当前日期到上一行
-                        // todo 但是后续添加不需要滚到到现在这一行
-                        binding.rvList.scrollToPosition(it.indexOf(mViewMode.mCurrentDate) - 7)
-                        // todo  初始化当月,, 固定写法只加7，会出现时间差错问题
-                        binding.abMonth.text =
-                            CalendarUtil.getMonthFromLocation(adapter.data[it.indexOf(mViewMode.mCurrentDate) + 7].timeInMillis)
-                    }
-                    1, 2, 3, 4 -> {
-                        adapter.addData(0, it)
-                    }
-                    5, 6, 7 -> {}
-                    8, 9, 10, 11, 12 -> {
-                        //
-                        adapter.addData(it)
-                    }
-                }
+                // 添加网络数据
+                mViewMode.getCalendar(
+                    it.first().ymd,
+                    it.last().ymd
+                )
             }
 
             // 获取日历任务
@@ -585,12 +539,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             // 添加新数据
                             kotlin.runCatching {
                                 // 加载完整的数据，会有卡顿，需要放到后面去添加
-                                localData.forEachIndexed { _, calendar ->
-                                    data?.firstOrNull { it.date == calendar.ymd }.apply {
-                                        calendar.calendarData = this
-                                    }
+                                localData.forEachIndexed { index, calendar ->
+                                    calendar.calendarData = data?.get(index)
                                 }
-
                                 withContext(Dispatchers.Main) {
                                     // 设置数据
                                     adapter.setList(local)
@@ -759,36 +710,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         //                               ${layoutManager.findLastCompletelyVisibleItemPosition()}
                         //                        """.trimIndent()
                         //                        )
-
-                        // 手指按下去的操作、然后抬起的瞬间
-                        if (adapter.data.isEmpty()) return
-                        val firstPosition = layoutManager.findFirstVisibleItemPosition()
-                        val data = adapter.data[firstPosition]
-
-                        // 如果是小于等于6，那么上一年
-                        if (data.month <= 4) {
-                            // 如果上一年的数据已经添加了。那么就不需要添加了。
-                            // 如果已经加载了上一年了，就不需要重复加载
-                            if (adapter.data.firstOrNull { it.year == data.year - 1 && it.month == 5 && it.day == 20 } != null) return
-                            mViewMode.setScrollMonth(data.month)
-                            mViewMode.getLocalCalendar(1, 12, data.year - 1)
-                            mViewMode.getCalendar(
-                                CalendarUtil.getYearStartDay(data.year - 1),
-                                CalendarUtil.getYearEndDay(data.year - 1)
-                            )
-                        }
-                        if (data.month >= 8) {
-                            // 如果已经加载了下一年了，就不需要重复加载
-                            // 加载下一年
-                            // 如果已经加载了下一年的数据了，那么直接返回，
-                            if (adapter.data.firstOrNull { it.year == data.year + 1 && it.month == 5 && it.day == 20 } != null) return
-                            mViewMode.setScrollMonth(data.month)
-                            mViewMode.getLocalCalendar(1, 12, data.year + 1)
-                            mViewMode.getCalendar(
-                                CalendarUtil.getYearStartDay(data.year + 1),
-                                CalendarUtil.getYearEndDay(data.year + 1)
-                            )
-                        }
                     }
                     RecyclerView.SCROLL_STATE_SETTLING -> {
                         //                        logI(
@@ -819,7 +740,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 // todo 这样加载太暴力了。
-                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                // val layoutManager = recyclerView.layoutManager as GridLayoutManager
                 //                logI(
                 //                    """
                 //                            onScrolled:

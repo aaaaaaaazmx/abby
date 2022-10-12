@@ -26,6 +26,7 @@ import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 @ActivityRetainedScoped
 class CalendarViewModel @Inject constructor(private val repository: MyRepository) :
@@ -38,6 +39,9 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         mCurrentDate.year = CalendarUtil.getDate("yyyy", d)
         mCurrentDate.month = CalendarUtil.getDate("MM", d)
         mCurrentDate.day = CalendarUtil.getDate("dd", d)
+        //        mCurrentDate.year = 2022
+        //        mCurrentDate.month = 12
+        //        mCurrentDate.day = 1
         mCurrentDate.isCurrentDay = true
         mCurrentDate
     }
@@ -361,25 +365,32 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     ) {
         viewModelScope.launch {
             val list = mutableListOf<com.cl.common_base.util.calendar.Calendar>()
-            for (i in startMonth!!..endMonth!!) {
-                val data = CalendarUtil.initCalendarForMonthView(
-                    year,
-                    i,
-                    mCurrentDate,
-                    Calendar.SUNDAY
-                )
-                // 处理日期前面没有相差的天数
-                if (startMonth == i) {
-                    // 一行7个，没有相差，那么在12月的最后一行会自动添加1-7，那么在1月时，不需要添加1-7
-                    if (data[0].day == 1) {
-                        data.filter { it.day > 7 }.let {
-                            list += it
+            // 傻逼后台不肯分段，只能一次性全部拉取，哎，完全没考虑后面的兼容性
+            val yearNumber = year - 2022
+            if (yearNumber < 0) return@launch // 后台说咩有2022年之前的植物
+            // 0..yearNumber + 1
+            // 从2022年开始咯、到year年的后一年咯，没办法咯。
+            for (currentYear in 0..yearNumber + 1) {
+                for (i in startMonth!!..endMonth!!) {
+                    val data = CalendarUtil.initCalendarForMonthView(
+                        2022 + currentYear,
+                        i,
+                        mCurrentDate,
+                        Calendar.SUNDAY
+                    )
+                    // 处理日期前面没有相差的天数
+                    if (startMonth == i) {
+                        // 一行7个，没有相差，那么在12月的最后一行会自动添加1-7，那么在1月时，不需要添加1-7
+                        if (data[0].day == 1) {
+                            data.filter { it.day > 7 }.let {
+                                list += it
+                            }
+                        } else {
+                            list += data
                         }
                     } else {
                         list += data
                     }
-                } else {
-                    list += data
                 }
             }
             _localCalendar.value = list
