@@ -608,12 +608,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             HomeSkipWaterPop(it, onConfirmAction = {
                 // 跳过换水、加水、加肥
                 mViewMode.unreadMessageList.value?.first()?.let { bean ->
-                    val messagaeId = bean.messageId
                     mViewMode.deviceOperateStart(
-                        "$messagaeId",
+                        "${bean.messageId}",
                         UnReadConstants.StatusManager.VALUE_STATUS_SKIP_CHANGING_WATERE
                     )
-                    mViewMode.getRead("$messagaeId")
+                    // 上报排水结束
+                    mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
                 }
             })
         }
