@@ -103,11 +103,11 @@ class HomeRemoteRepository @Inject constructor() {
         return service.start()
     }
 
-    fun finishTask(body: FinishTaskReq): Flow<HttpResult<BaseBean>> {
+    fun finishTask(body: FinishTaskReq): Flow<HttpResult<String>> {
         return service.finishTask(body)
     }
 
-    fun updateTask(body: UpdateReq): Flow<HttpResult<BaseBean>> {
+    fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
         return service.updateTask(body)
     }
 }

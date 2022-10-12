@@ -168,8 +168,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 任务更新，推迟到多少天之后
      */
-    private val _updateTask = MutableLiveData<Resource<BaseBean>>()
-    val updateTask: LiveData<Resource<BaseBean>> = _updateTask
+    private val _updateTask = MutableLiveData<Resource<String>>()
+    val updateTask: LiveData<Resource<String>> = _updateTask
     fun updateTask(body: UpdateReq) = viewModelScope.launch {
         repository.updateTask(body)
             .map {
@@ -613,8 +613,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 解锁花期、这个是最终的
      */
-    private val _finishTask = MutableLiveData<Resource<BaseBean>>()
-    val finishTask: LiveData<Resource<BaseBean>> = _finishTask
+    private val _finishTask = MutableLiveData<Resource<String>>()
+    val finishTask: LiveData<Resource<String>> = _finishTask
     fun finishTask(body: FinishTaskReq) {
         viewModelScope.launch {
             repository.finishTask(body)

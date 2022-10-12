@@ -167,8 +167,8 @@ interface HttpHomeApiService {
     @POST("abby/calendar/finishTask")
     fun finishTask(
       @Body body: FinishTaskReq
-    ): Flow<HttpResult<BaseBean>>
+    ): Flow<HttpResult<String>>
 
     @POST("abby/calendar/updateTask")
-    fun updateTask(@Body body: UpdateReq): Flow<HttpResult<BaseBean>>
+    fun updateTask(@Body body: UpdateReq): Flow<HttpResult<String>>
 }

@@ -119,8 +119,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     private fun initCalendarData() {
-        // 只使用一次
-        mViewMode.setOnlyFirstLoad(true)
         // 添加本地12个月的数据
         mViewMode.getLocalCalendar(
             year = CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
@@ -355,28 +353,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         CalendarData.TASK_TYPE_CHANGE_WATER -> {
                                         }
                                         CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
-                                            // todo 任务完成
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
                                         }
                                         CalendarData.TASK_TYPE_LST -> {
-                                            // todo 任务完成
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
                                         }
                                         CalendarData.TASK_TYPE_TOPPING -> {
-                                            // todo 任务完成
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
                                         }
                                         CalendarData.TASK_TYPE_TRIM -> {
-                                            // todo 任务完成
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
                                         }
                                         CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                             // todo 这个应该是转周期了，调用图文、然后解锁花期
                                             // seed to veg
                                             SeedGuideHelp(this@CalendarActivity).showGuidePop {
-                                                // 手动删除当前这个list、然后刷新
-//                                                thread {
-//                                                    adapter.data.firstOrNull { it.calendarData.taskList?.firstOrNull { it.taskType == status } != null }
-//                                                        ?.apply {
-//                                                            adapter.data.remove(this)
-//                                                        }
-//                                                }
                                                 mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
                                             }
                                         }
@@ -395,7 +386,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     mViewMode.updateTask(
                                         UpdateReq(
                                             taskId = mViewMode.taskId.value,
-                                            taskTime = "${(mViewMode.guideInfoTaskTime.value?.toLong() ?: 0L) + (0L + 60 * 60 * 1000  * 48)}"
+                                            taskTime = "${(mViewMode.guideInfoTaskTime.value?.toLong() ?: 0L) + (0L + 60 * 60 * 1000 * 48)}"
                                         )
                                     )
                                 }
@@ -407,6 +398,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             // 本地数据
             localCalendar.observe(this@CalendarActivity) {
                 if (it.isNullOrEmpty()) return@observe
+                // 优先加载本地数据、等网络数据返回了之后添加这玩意
+                adapter.setList(it)
+                // 滚动
+                // 滚到到当前日期到上一行
+                // todo 但是后续添加不需要滚到到现在这一行
+                binding.rvList.scrollToPosition(it.indexOf(mViewMode.mCurrentDate) - 7)
+                // todo  初始化当月,, 固定写法只加7，会出现时间差错问题
+                binding.abMonth.text =
+                    CalendarUtil.getMonthFromLocation(adapter.data[it.indexOf(mViewMode.mCurrentDate) + 7].timeInMillis)
                 // 添加网络数据
                 mViewMode.getCalendar(
                     it.first().ymd,
@@ -431,110 +431,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         // 合并数据
                         val local = mViewMode.localCalendar.value
                         local?.let { localData ->
-
-                            // 只需要进来加载一次、之后不需要加载
-                            if (mViewMode.onlyFirstLoad.value == true) {
-                                // 添加新数据
-                                // 加载当前月份的上下2个月，一共5个月
-                                localData.firstOrNull { it.isCurrentDay }?.let { isCurrentDay ->
-                                    val currentYear = isCurrentDay.year
-                                    val currentMonth = isCurrentDay.month
-                                    // 加载当月数据
-                                    if (currentMonth in 2..11) {
-                                        val startDay =
-                                            CalendarUtil.getYearMonthStartDay(currentYear, currentMonth)
-                                        val endDay =
-                                            CalendarUtil.getYearMonthEndDay(currentYear, currentMonth)
-                                        val locationStartDayIndex = localData.indexOfFirst {
-                                            it.ymd == startDay
-                                        }
-                                        val locationEndDayIndex = localData.indexOfFirst {
-                                            it.ymd == endDay
-                                        }
-
-                                        for (i in locationStartDayIndex until locationEndDayIndex) {
-                                            data?.firstOrNull { it.date == localData[i].ymd }.apply {
-                                                localData[i].calendarData = this
-                                            }
-                                        }
-                                        withContext(Dispatchers.Main) {
-                                            showTaskList(mViewMode.mCurrentDate)
-                                            // 设置数据
-                                            adapter.setList(localData)
-                                        }
-                                    } else if (currentMonth < 2) {
-                                        // 那么需要加载上一年的2个月数据
-                                        val startDay =
-                                            CalendarUtil.getYearMonthStartDay(
-                                                currentYear - 1,
-                                                12 - abs((currentMonth - 1))
-                                            )
-                                        val endDay =
-                                            CalendarUtil.getYearMonthEndDay(currentYear, currentMonth + 1)
-                                        val locationStartDayIndex = localData.indexOfFirst {
-                                            it.ymd == startDay
-                                        }
-                                        val locationEndDayIndex = localData.indexOfFirst {
-                                            it.ymd == endDay
-                                        }
-
-                                        for (i in locationStartDayIndex until locationEndDayIndex) {
-                                            data?.firstOrNull { it.date == localData[i].ymd }.apply {
-                                                localData[i].calendarData = this
-                                            }
-                                        }
-                                        withContext(Dispatchers.Main) {
-                                            showTaskList(mViewMode.mCurrentDate)
-                                            // 设置数据
-                                            adapter.setList(localData)
-                                        }
-                                    } else if (currentMonth > 11) {
-                                        val startDay =
-                                            CalendarUtil.getYearMonthStartDay(
-                                                currentYear - 1,
-                                                currentMonth - 1
-                                            )
-                                        val endDay =
-                                            CalendarUtil.getYearMonthEndDay(
-                                                currentYear,
-                                                abs((currentMonth + 1) - 12)
-                                            )
-                                        val locationStartDayIndex = localData.indexOfFirst {
-                                            it.ymd == startDay
-                                        }
-                                        val locationEndDayIndex = localData.indexOfFirst {
-                                            it.ymd == endDay
-                                        }
-
-                                        for (i in locationStartDayIndex until locationEndDayIndex) {
-                                            data?.firstOrNull { it.date == localData[i].ymd }.apply {
-                                                localData[i].calendarData = this
-                                            }
-                                        }
-                                        withContext(Dispatchers.Main) {
-                                            showTaskList(mViewMode.mCurrentDate)
-                                            // 设置数据
-                                            adapter.setList(localData)
-                                        }
-                                    }
-                                }
-                                // 加载之后就设置false
-                                mViewMode.setOnlyFirstLoad(false)
-                            } else {
-                                // 修改选中的数据
-                                // 二次加载isChooser = true 的日期
-                                kotlin.runCatching {
-                                    adapter.data.indexOfFirst { it.isChooser }.let { index ->
-                                        data?.firstOrNull { it.date == localData[index].ymd }.apply {
-                                            adapter.data[index].calendarData = this
-                                            adapter.notifyItemChanged(index)
-                                            // 刷新当前选中的时间轴、
-                                            showTaskList(adapter.data[index])
-                                        }
-                                    }
-                                }
-                            }
-
                             // 加载一年的数据
                             // 添加新数据
                             kotlin.runCatching {
@@ -545,60 +441,22 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 withContext(Dispatchers.Main) {
                                     // 设置数据
                                     adapter.setList(local)
+                                    if (mViewMode.onlyRefreshLoad.value == true) {
+                                        // 修改选中的数据
+                                        // 二次加载isChooser = true 的日期
+                                        adapter.data.indexOfFirst { it.isChooser }.let { index ->
+                                            showTaskList(adapter.data[index])
+                                        }
+                                    } else {
+                                        showTaskList(mViewMode.mCurrentDate)
+                                    }
                                 }
+
                             }
-
                         }
                     }
                 }
             })
-
-            // 更新日历任务
-            updateTask.observe(this@CalendarActivity, resourceObserver {
-                loading { showProgressLoading() }
-                error { errorMsg, code ->
-                    errorMsg?.let {
-                        hideProgressLoading()
-                        ToastUtil.shortShow(it)
-                    }
-                    success {
-                        hideProgressLoading()
-                        // 刷新当前任务
-                        localCalendar.value?.firstOrNull { it.isChooser }?.apply {
-                            mViewMode.getCalendar(
-                                CalendarUtil.getYearStartDay(
-                                    this.year
-                                ),
-                                CalendarUtil.getYearEndDay(this.year)
-                            )
-                        }
-                    }
-                }
-            })
-
-            // 更新日历任务
-            finishTask.observe(this@CalendarActivity, resourceObserver {
-                loading { showProgressLoading() }
-                error { errorMsg, code ->
-                    errorMsg?.let {
-                        hideProgressLoading()
-                        ToastUtil.shortShow(it)
-                    }
-                    success {
-                        hideProgressLoading()
-                        // 刷新当前任务
-                        localCalendar.value?.firstOrNull { it.isChooser }?.apply {
-                            mViewMode.getCalendar(
-                                CalendarUtil.getYearStartDay(
-                                    this.year
-                                ),
-                                CalendarUtil.getYearEndDay(this.year)
-                            )
-                        }
-                    }
-                }
-            })
-
         }
     }
 
@@ -1073,94 +931,94 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 XPopup
                                     .Builder(this@CalendarActivity)
                                     .asCustom(
-                                    BaseThreeTextPop(
-                                        this@CalendarActivity,
-                                        content = getString(
-                                            com.cl.common_base.R.string.my_to_do,
-                                            listContent[position].taskName
-                                        ),
-                                        oneLineText = getString(com.cl.common_base.R.string.my_go),
-                                        twoLineText = getString(com.cl.common_base.R.string.my_remind_me),
-                                        threeLineText = getString(com.cl.common_base.R.string.my_cancel),
-                                        oneLineCLickEventAction = {
-                                            // 记录taskId
-                                            listContent[position].taskId?.let { taskId ->
-                                                mViewMode.setTaskId(
-                                                    taskId
-                                                )
-                                            }
-                                            // 记录taskTime
-                                            listContent[position].taskTime?.let { mViewMode.setGuideInfoTime(it) }
-                                            // 记录TaskType
-                                            listContent[position].taskType?.let { mViewMode.setGuideInfoStatus(it) }
-                                            // todo 解锁周期图文引导弹窗
-                                            when (listContent[position].taskType) {
-                                                CalendarData.TASK_TYPE_CHANGE_WATER -> {
-                                                    // todo 三合一流程、加水换水加肥
-                                                    // 换水、加水、加肥。三步
-                                                    changWaterAddWaterAddpump()
-                                                }
-                                                else -> {
-                                                    listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }
-                                                }
-                                            }
-                                        },
-                                        twoLineCLickEventAction = {
-                                            // remind me
-                                            // 需要授权日历权限弹窗
-                                            pop.asCustom(BaseCenterPop(
-                                                this@CalendarActivity,
-                                                content = getString(com.cl.common_base.R.string.my_calendar_permisson),
-                                                confirmText = getString(com.cl.common_base.R.string.my_confirm),
-                                                onConfirmAction = {
-                                                    // 授权日历弹窗
-                                                    PermissionHelp().applyPermissionHelp(
-                                                        this@CalendarActivity,
-                                                        getString(com.cl.common_base.R.string.my_calendar_permisson),
-                                                        object :
-                                                            PermissionHelp.OnCheckResultListener {
-                                                            override fun onResult(result: Boolean) {
-                                                                if (!result) return
-                                                                // 跳转选择事件弹窗
-                                                                pop.asCustom(
-                                                                    BaseTimeChoosePop(
-                                                                        this@CalendarActivity,
-                                                                        currentTime = listContent[position].taskTime?.toLong(),
-                                                                        onConfirmAction = { time, timeMis ->
-                                                                            // 时间
-                                                                            // 传给后台 & 上报给手机本地日历
-                                                                            // todo 传给后台
-                                                                            mViewMode.updateTask(
-                                                                                UpdateReq(
-                                                                                    taskId = listContent[position].taskId,
-                                                                                    taskTime = timeMis.toString()
-                                                                                )
-                                                                            )
-                                                                            // 手动删除当前这个list、然后刷新
-                                                                            listContent.remove(listContent[position])
-                                                                            // todo 上报给手机本地日历
-                                                                            CalendarEventUtil.addCalendarEvent(
-                                                                                this@CalendarActivity,
-                                                                                listContent[position].taskName,
-                                                                                listContent[position].taskName,
-                                                                                timeMis, 2
-                                                                            )
-                                                                        })
-                                                                ).show()
-                                                            }
-                                                        },
-                                                        Manifest.permission.READ_CALENDAR,
-                                                        Manifest.permission.WRITE_CALENDAR,
+                                        BaseThreeTextPop(
+                                            this@CalendarActivity,
+                                            content = getString(
+                                                com.cl.common_base.R.string.my_to_do,
+                                                listContent[position].taskName
+                                            ),
+                                            oneLineText = getString(com.cl.common_base.R.string.my_go),
+                                            twoLineText = getString(com.cl.common_base.R.string.my_remind_me),
+                                            threeLineText = getString(com.cl.common_base.R.string.my_cancel),
+                                            oneLineCLickEventAction = {
+                                                // 记录taskId
+                                                listContent[position].taskId?.let { taskId ->
+                                                    mViewMode.setTaskId(
+                                                        taskId
                                                     )
                                                 }
-                                            )).show()
+                                                // 记录taskTime
+                                                listContent[position].taskTime?.let { mViewMode.setGuideInfoTime(it) }
+                                                // 记录TaskType
+                                                listContent[position].taskType?.let { mViewMode.setGuideInfoStatus(it) }
+                                                // todo 解锁周期图文引导弹窗
+                                                when (listContent[position].taskType) {
+                                                    CalendarData.TASK_TYPE_CHANGE_WATER -> {
+                                                        // todo 三合一流程、加水换水加肥
+                                                        // 换水、加水、加肥。三步
+                                                        changWaterAddWaterAddpump()
+                                                    }
+                                                    else -> {
+                                                        listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }
+                                                    }
+                                                }
+                                            },
+                                            twoLineCLickEventAction = {
+                                                // remind me
+                                                // 需要授权日历权限弹窗
+                                                pop.asCustom(BaseCenterPop(
+                                                    this@CalendarActivity,
+                                                    content = getString(com.cl.common_base.R.string.my_calendar_permisson),
+                                                    confirmText = getString(com.cl.common_base.R.string.my_confirm),
+                                                    onConfirmAction = {
+                                                        // 授权日历弹窗
+                                                        PermissionHelp().applyPermissionHelp(
+                                                            this@CalendarActivity,
+                                                            getString(com.cl.common_base.R.string.my_calendar_permisson),
+                                                            object :
+                                                                PermissionHelp.OnCheckResultListener {
+                                                                override fun onResult(result: Boolean) {
+                                                                    if (!result) return
+                                                                    // 跳转选择事件弹窗
+                                                                    pop.asCustom(
+                                                                        BaseTimeChoosePop(
+                                                                            this@CalendarActivity,
+                                                                            currentTime = listContent[position].taskTime?.toLong(),
+                                                                            onConfirmAction = { time, timeMis ->
+                                                                                // 时间
+                                                                                // 传给后台 & 上报给手机本地日历
+                                                                                // todo 传给后台
+                                                                                mViewMode.updateTask(
+                                                                                    UpdateReq(
+                                                                                        taskId = listContent[position].taskId,
+                                                                                        taskTime = timeMis.toString()
+                                                                                    )
+                                                                                )
+                                                                                // 手动删除当前这个list、然后刷新
+                                                                                listContent.remove(listContent[position])
+                                                                                // todo 上报给手机本地日历
+                                                                                CalendarEventUtil.addCalendarEvent(
+                                                                                    this@CalendarActivity,
+                                                                                    listContent[position].taskName,
+                                                                                    listContent[position].taskName,
+                                                                                    timeMis, 2
+                                                                                )
+                                                                            })
+                                                                    ).show()
+                                                                }
+                                                            },
+                                                            Manifest.permission.READ_CALENDAR,
+                                                            Manifest.permission.WRITE_CALENDAR,
+                                                        )
+                                                    }
+                                                )).show()
 
-                                        },
-                                        threeLineCLickEventAction = {
-                                            // 暂时没啥用
-                                        },
-                                    )
-                                ).show()
+                                            },
+                                            threeLineCLickEventAction = {
+                                                // 暂时没啥用
+                                            },
+                                        )
+                                    ).show()
                             }
                         }
                     }

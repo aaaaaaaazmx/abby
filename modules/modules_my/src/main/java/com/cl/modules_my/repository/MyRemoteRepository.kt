@@ -74,7 +74,7 @@ class MyRemoteRepository @Inject constructor() {
         return service.getCalendar(startDate, endDate)
     }
 
-    fun updateTask(body: UpdateReq): Flow<HttpResult<BaseBean>> {
+    fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
         return service.updateTask(body)
     }
 
@@ -82,7 +82,7 @@ class MyRemoteRepository @Inject constructor() {
         return service.unlockJourney(name, weight)
     }
 
-    fun finishTask(body: FinishTaskReq): Flow<HttpResult<BaseBean>> {
+    fun finishTask(body: FinishTaskReq): Flow<HttpResult<String>> {
         return service.finishTask(body)
     }
 

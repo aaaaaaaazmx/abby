@@ -114,7 +114,7 @@ interface HttpMyApiService {
      * 更新任务
      */
     @POST("abby/calendar/updateTask")
-    fun updateTask(@Body body: UpdateReq): Flow<HttpResult<BaseBean>>
+    fun updateTask(@Body body: UpdateReq): Flow<HttpResult<String>>
 
     /**
      * 解锁花期
@@ -132,7 +132,7 @@ interface HttpMyApiService {
     @POST("abby/calendar/finishTask")
     fun finishTask(
         @Body boyd: FinishTaskReq
-    ): Flow<HttpResult<BaseBean>>
+    ): Flow<HttpResult<String>>
 
 
     /**

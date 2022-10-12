@@ -164,14 +164,14 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 任务完成、解锁周期
      */
-    fun finishTask(body: FinishTaskReq): Flow<HttpResult<BaseBean>> {
+    fun finishTask(body: FinishTaskReq): Flow<HttpResult<String>> {
         return remoteRepository.finishTask(body)
     }
 
     /**
      * 更新任务
      */
-    fun updateTask(body: UpdateReq): Flow<HttpResult<BaseBean>> {
+    fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
         return remoteRepository.updateTask(body)
     }
 

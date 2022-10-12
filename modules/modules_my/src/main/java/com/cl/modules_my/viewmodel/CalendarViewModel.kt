@@ -39,9 +39,6 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         mCurrentDate.year = CalendarUtil.getDate("yyyy", d)
         mCurrentDate.month = CalendarUtil.getDate("MM", d)
         mCurrentDate.day = CalendarUtil.getDate("dd", d)
-        //        mCurrentDate.year = 2022
-        //        mCurrentDate.month = 12
-        //        mCurrentDate.day = 1
         mCurrentDate.isCurrentDay = true
         mCurrentDate
     }
@@ -143,8 +140,8 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     /**
      * 更新日历任务
      */
-    private val _updateTask = MutableLiveData<Resource<BaseBean>>()
-    val updateTask: LiveData<Resource<BaseBean>> = _updateTask
+    private val _updateTask = MutableLiveData<Resource<String>>()
+    val updateTask: LiveData<Resource<String>> = _updateTask
     fun updateTask(body: UpdateReq) = viewModelScope.launch {
         repository.updateTask(body)
             .map {
@@ -154,6 +151,16 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                         it.msg
                     )
                 } else {
+                    // 刷新任务
+                    _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
+                        _localCalendar.value?.let { list ->
+                            setOnlyRefreshLoad(true)
+                            getCalendar(
+                                list.first().ymd,
+                                list.last().ymd
+                            )
+                        }
+                    }
                     Resource.Success(it.data)
                 }
             }
@@ -284,8 +291,8 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     /**
      * 日历 完成任务、解锁周期
      */
-    private val _finishTask = MutableLiveData<Resource<BaseBean>>()
-    val finishTask: LiveData<Resource<BaseBean>> = _finishTask
+    private val _finishTask = MutableLiveData<Resource<String>>()
+    val finishTask: LiveData<Resource<String>> = _finishTask
     fun finishTask(body: FinishTaskReq) {
         viewModelScope.launch {
             repository.finishTask(body)
@@ -296,6 +303,16 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                             it.msg
                         )
                     } else {
+                        // 刷新任务
+                        _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
+                            _localCalendar.value?.let { list ->
+                                setOnlyRefreshLoad(true)
+                                getCalendar(
+                                    list.first().ymd,
+                                    list.last().ymd
+                                )
+                            }
+                        }
                         Resource.Success(it.data)
                     }
                 }
@@ -443,10 +460,10 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     /**
      * 用来表示只加载一次的标记位
      */
-    private val _onlyFirstLoad = MutableLiveData<Boolean>(true)
-    val onlyFirstLoad: LiveData<Boolean> = _onlyFirstLoad
-    fun setOnlyFirstLoad(boolean: Boolean) {
-        _onlyFirstLoad.postValue(boolean)
+    private val _onlyRefreshLoad = MutableLiveData<Boolean>(true)
+    val onlyRefreshLoad: LiveData<Boolean> = _onlyRefreshLoad
+    fun setOnlyRefreshLoad(boolean: Boolean) {
+        _onlyRefreshLoad.postValue(boolean)
     }
 
 
