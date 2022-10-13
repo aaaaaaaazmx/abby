@@ -460,7 +460,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     /**
      * 用来表示只加载一次的标记位
      */
-    private val _onlyRefreshLoad = MutableLiveData<Boolean>(true)
+    private val _onlyRefreshLoad = MutableLiveData<Boolean>(false)
     val onlyRefreshLoad: LiveData<Boolean> = _onlyRefreshLoad
     fun setOnlyRefreshLoad(boolean: Boolean) {
         _onlyRefreshLoad.postValue(boolean)

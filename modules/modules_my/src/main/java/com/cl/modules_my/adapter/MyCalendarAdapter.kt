@@ -126,7 +126,8 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                     KEY_TOPPING -> {
                         ViewUtils.setVisible(changElse)
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             } else if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
                 when (data.taskType) {
@@ -139,7 +140,8 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
                         ViewUtils.setVisible(changeUnlock)
                     }
-                    "change_water" -> {
+                    KEY_CHANGE_WATER,
+                    KEY_CHANGE_CUP_WATER -> {
                         ViewUtils.setVisible(changWater)
                     }
                     else -> {

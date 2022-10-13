@@ -141,6 +141,9 @@ object Constants {
         // 是否选择了Seed
         const val KEY_IS_CHOOSE_SEED = "key_is_choose_seed"
 
+        // 是否展示肥料掉落弹窗
+        const val KEY_IS_SHOW_FEET_POP = "key_is_show_feet_pop"
+
         // 跳转选择界面师傅哦直接弹窗
         const val KEY_USER_NO_STRAIN_NAME = "key_user_no_strain_name"
         const val KEY_USER_NO_ATTRIBUTE = "key_user_no_attribute"

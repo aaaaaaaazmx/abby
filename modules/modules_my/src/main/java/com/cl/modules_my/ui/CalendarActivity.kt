@@ -1,6 +1,9 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
+import android.content.Intent
+import android.graphics.Typeface
+import android.text.TextPaint
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +23,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.UpdateReq
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.DateHelper
@@ -29,6 +33,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.Calendar
 import com.cl.common_base.util.calendar.CalendarEventUtil
@@ -56,8 +61,6 @@ import kotlinx.coroutines.withContext
 import java.lang.reflect.Field
 import java.util.*
 import javax.inject.Inject
-import kotlin.concurrent.thread
-import kotlin.math.abs
 
 
 @Route(path = RouterPath.My.PAGE_MY_CALENDAR)
@@ -98,6 +101,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 // 设置今天的日子
                 binding.abMonth.text = CalendarUtil.getMonthFromLocation(Date().time)
                 binding.tvTodayDate.text = mViewMode.getYmdForEn(Date())
+            }.setLeftClickListener {
+                setResult(RESULT_OK)
+                finish()
             }
 
         // 初始化本地日历数据
@@ -287,7 +293,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
                                 )
                             }
-
                             pop
                                 .isDestroyOnDismiss(false)
                                 .maxHeight(dp2px(600f))
@@ -301,12 +306,51 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             // 需要先发送指令喂食
                                             DeviceControl.get()
                                                 .success {
-                                                    // 如果是在换水的三步当中的最后一步，加肥
-                                                    // 直接调用完成任务
-                                                    mViewMode.taskId.value?.let {
-                                                        mViewMode.finishTask(
-                                                            FinishTaskReq(it)
-                                                        )
+                                                    // 加肥掉落弹窗
+                                                    if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
+                                                        pop
+                                                            .isDestroyOnDismiss(false)
+                                                            .maxHeight(dp2px(600f))
+                                                            .enableDrag(false)
+                                                            .dismissOnTouchOutside(false)
+                                                            .asCustom(
+                                                                BaseBottomPop(
+                                                                    this@CalendarActivity,
+                                                                    backGround = ContextCompat.getDrawable(
+                                                                        this@CalendarActivity,
+                                                                        com.cl.common_base.R.mipmap.base_feet_fall_bg
+                                                                    ),
+                                                                    text = getString(com.cl.common_base.R.string.base_feet_fall),
+                                                                    buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
+                                                                    bottomText = getString(com.cl.common_base.R.string.base_dont_show),
+                                                                    onNextAction = {
+                                                                        // 如果是在换水的三步当中的最后一步，加肥
+                                                                        // 直接调用完成任务
+                                                                        mViewMode.taskId.value?.let {
+                                                                            mViewMode.finishTask(
+                                                                                FinishTaskReq(it)
+                                                                            )
+                                                                        }
+                                                                    },
+                                                                    bottomTextAction = {
+                                                                        // 如果是在换水的三步当中的最后一步，加肥
+                                                                        // 直接调用完成任务
+                                                                        mViewMode.taskId.value?.let {
+                                                                            mViewMode.finishTask(
+                                                                                FinishTaskReq(it)
+                                                                            )
+                                                                        }
+                                                                    }
+                                                                )
+                                                            )
+                                                    } else {
+                                                        // 如果是在换水的三步当中的最后一步，加肥
+                                                        // 直接调用完成任务
+                                                        mViewMode.taskId.value?.let {
+                                                            mViewMode.finishTask(
+                                                                FinishTaskReq(it)
+                                                            )
+                                                        }
                                                     }
                                                 }
                                                 .error { code, error ->
@@ -455,6 +499,17 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             }
                         }
                     }
+                }
+            })
+
+            updateTask.observe(this@CalendarActivity, resourceObserver {
+                error { errorMsg, _ ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+            })
+            finishTask.observe(this@CalendarActivity, resourceObserver {
+                error { errorMsg, _ ->
+                    ToastUtil.shortShow(errorMsg)
                 }
             })
         }
@@ -716,6 +771,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         // 如果日历数据不为空，那么开始加载数据
         calendarData?.let {
             // 设置下面卡片的数据
+            // 为null的数据都不显示
+            ViewUtils.setVisible(!it.epoch.isNullOrEmpty(), binding.tvCycle, binding.ivAsk)
+            ViewUtils.setVisible(!it.day.isNullOrEmpty(), binding.tvDay)
             // 周期
             binding.tvCycle.text = it.epoch
             // 天数
@@ -811,7 +869,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
                                         this@CalendarActivity,
-                                        com.cl.common_base.R.mipmap.my_calendar_circle_bg
+                                        com.cl.common_base.R.drawable.base_dot_change_water
                                     )
                                 )
                             }
@@ -819,7 +877,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
                                         this@CalendarActivity,
-                                        com.cl.common_base.R.mipmap.my_calendar_circle_three_bg
+                                        com.cl.common_base.R.drawable.base_dot_change_period
                                     )
                                 )
                             }
@@ -827,7 +885,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
                                         this@CalendarActivity,
-                                        com.cl.common_base.R.mipmap.my_calendar_circle_two_bg
+                                        com.cl.common_base.R.drawable.base_dot_change_train
                                     )
                                 )
                             }
@@ -856,7 +914,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
                                         this@CalendarActivity,
-                                        com.cl.common_base.R.mipmap.my_calendar_circle_bg
+                                        com.cl.common_base.R.drawable.base_dot_change_water
                                     )
                                 )
                             }
@@ -864,7 +922,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
                                         this@CalendarActivity,
-                                        com.cl.common_base.R.mipmap.my_calendar_circle_three_bg
+                                        com.cl.common_base.R.drawable.base_dot_change_period
                                     )
                                 )
                             }
@@ -872,7 +930,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
                                         this@CalendarActivity,
-                                        com.cl.common_base.R.mipmap.my_calendar_circle_two_bg
+                                        com.cl.common_base.R.drawable.base_dot_change_train
                                     )
                                 )
                             }
@@ -891,7 +949,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     )
                     val tvTaskTime = holder.leftLayout.findViewById<TextView>(R.id.tv_task_time)
                     tvTaskTime.text = listContent[position].taskTime?.toLong()
-                        ?.let { DateHelper.formatTime(it, "hh:mm a", Locale.getDefault()) }
+                        ?.let { DateHelper.formatTime(it, "HH:mm", Locale.US) }
 
                     val tvTaskName = holder.rightLayout.findViewById<TextView>(R.id.tv_task_name)
                     // 按钮
@@ -964,6 +1022,37 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 }
                                             },
                                             twoLineCLickEventAction = {
+                                                if (PermissionHelp().hasPermissions(
+                                                        this@CalendarActivity,
+                                                        Manifest.permission.READ_CALENDAR,
+                                                        Manifest.permission.WRITE_CALENDAR
+                                                    )
+                                                ) {
+                                                    pop.asCustom(
+                                                        BaseTimeChoosePop(
+                                                            this@CalendarActivity,
+                                                            currentTime = listContent[position].taskTime?.toLong(),
+                                                            onConfirmAction = { time, timeMis ->
+                                                                // 时间
+                                                                // 传给后台 & 上报给手机本地日历
+                                                                // todo 传给后台
+                                                                mViewMode.updateTask(
+                                                                    UpdateReq(
+                                                                        taskId = listContent[position].taskId,
+                                                                        taskTime = timeMis.toString()
+                                                                    )
+                                                                )
+                                                                // todo 上报给手机本地日历
+                                                                CalendarEventUtil.addCalendarEvent(
+                                                                    this@CalendarActivity,
+                                                                    listContent[position].taskName,
+                                                                    listContent[position].taskName,
+                                                                    timeMis, 2
+                                                                )
+                                                            })
+                                                    ).show()
+                                                    return@BaseThreeTextPop
+                                                }
                                                 // remind me
                                                 // 需要授权日历权限弹窗
                                                 pop.asCustom(BaseCenterPop(
@@ -971,6 +1060,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     content = getString(com.cl.common_base.R.string.my_calendar_permisson),
                                                     confirmText = getString(com.cl.common_base.R.string.my_confirm),
                                                     onConfirmAction = {
+                                                        // 如果有权限那么就直接弹出
                                                         // 授权日历弹窗
                                                         PermissionHelp().applyPermissionHelp(
                                                             this@CalendarActivity,
@@ -994,8 +1084,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                                         taskTime = timeMis.toString()
                                                                                     )
                                                                                 )
-                                                                                // 手动删除当前这个list、然后刷新
-                                                                                listContent.remove(listContent[position])
                                                                                 // todo 上报给手机本地日历
                                                                                 CalendarEventUtil.addCalendarEvent(
                                                                                     this@CalendarActivity,
@@ -1010,6 +1098,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                             Manifest.permission.READ_CALENDAR,
                                                             Manifest.permission.WRITE_CALENDAR,
                                                         )
+
                                                     }
                                                 )).show()
 
@@ -1107,6 +1196,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
             }
         }
+    }
+
+    // 手动返回
+    override fun onBackPressed() {
+        setResult(RESULT_OK)
+        finish()
     }
 }
 

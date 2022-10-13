@@ -29,7 +29,7 @@ import com.lxj.xpopup.core.BottomPopupView
 class HomePeriodPop(
     context: Context,
     private var data: MutableList<PlantInfoData.InfoList>? = null,
-    val unLockAction: ((guideId: String?, taskId: String?, lastOneType: String?) -> Unit)? = null
+    val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?) -> Unit)? = null
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_period_pop

@@ -49,21 +49,23 @@ class BaseTimeChoosePop(
 
             tvConfirm.setOnClickListener {
                 dismiss()
+                logI(
+                    """
+                    tvConfirm:  
+                    ${"$date $hour-$minute"}
+                    ${Date().time}
+                    ${DateHelper.formatToLong("$date $hour:$minute", "yyyy-MM-dd HH:mm")}
+                """.trimIndent()
+                )
                 // todo 需要判断当前时间和选中的时间的比较
                 currentTime?.let {
-                    val isAfter = DateHelper.after(Date(it), DateHelper.formatToDate("$date $hour:$minute", "yyyy-MM-dd HH:mm"))
-                    if (isAfter) {
+                    // 判断是否是今天之前的就
+                    if (DateHelper.formatToLong("$date $hour:$minute", "yyyy-MM-dd HH:mm") < Date().time) {
                         ToastUtil.shortShow(context.getString(R.string.base_please_try_again))
                         return@setOnClickListener
                     }
                 }
                 // 传给后台的时间为 yyyy-MM-dd HH:mm
-                logI(
-                    """
-                    ${"$date $hour-$minute"}
-                    ${DateHelper.formatToLong("$date $hour:$minute", "yyyy-MM-dd HH:mm")}
-                """.trimIndent()
-                )
                 // 需要除以1000，不然不行。
                 onConfirmAction?.invoke(
                     "$date $hour:$minute",

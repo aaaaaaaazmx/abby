@@ -1,13 +1,13 @@
 package com.cl.common_base.help
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.pop.GuideBlePop
@@ -431,6 +431,33 @@ class PermissionHelp {
                     }
                 }
         }
+    }
+
+
+    /**
+     * 多个权限判断
+     */
+    fun hasPermissions(context: Context?, vararg permissions: String): Boolean {
+        for (permission in permissions) {
+            //始终允许
+            when (val result = androidx.core.content.PermissionChecker.checkSelfPermission(context!!, permission)) {
+                androidx.core.content.PermissionChecker.PERMISSION_GRANTED -> {
+                    logI("hasPermissions $permission Granted")
+                }
+                androidx.core.content.PermissionChecker.PERMISSION_DENIED -> {
+                    logI("hasPermissions $permission Denied")
+                    return false
+                }
+                androidx.core.content.PermissionChecker.PERMISSION_DENIED_APP_OP -> {
+                    logI("hasPermissions $permission Denied_APP_OP")
+                    return false
+                }
+                else -> {
+                    logI("hasPermissions $permission result=$result")
+                }
+            }
+        }
+        return true
     }
 
 }

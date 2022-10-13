@@ -76,6 +76,7 @@ public class DatePicker extends WheelPicker<String> {
 
     List<Long> timeLong = new ArrayList<>();
     private void updateHour() {
+        timeLong.clear();
         List<String> list = new ArrayList<>();
         // 当前的时间毫秒
         // 找到前三天、后三天、加今天
@@ -92,10 +93,10 @@ public class DatePicker extends WheelPicker<String> {
             }
             if (i == 3) {
                 // 插入今天
-                daySuffix = CalendarUtil.getDaySuffix(new Date()); // 月份后面的后缀
+                daySuffix = CalendarUtil.getDaySuffix(new Date(millisecond)); // 月份后面的后缀
                 @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = CalendarUtil.getFormat("MMM dd");
-                format = simpleDateFormat.format(new Date().getTime());
-                timeLong.add(new Date().getTime());
+                format = simpleDateFormat.format(new Date(millisecond).getTime());
+                timeLong.add(new Date(millisecond).getTime());
             }
 
             if (i > 3) {

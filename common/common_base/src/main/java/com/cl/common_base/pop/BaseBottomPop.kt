@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
@@ -20,6 +23,8 @@ class BaseBottomPop(
     private val text: String? = null,
     private val buttonText: String? = null,
     private val onNextAction: (() -> Unit)? = null,
+    private val bottomText: String? = null,
+    private val bottomTextAction: (()-> Unit)? = null
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_botoom_pop
@@ -43,6 +48,17 @@ class BaseBottomPop(
                 onNextAction?.invoke()
             }
             ivClose.setOnClickListener { dismiss() }
+
+            bottomText?.let {
+                ViewUtils.setVisible(it.isNotEmpty(), tvShowAgain)
+                tvShowAgain.text = it
+            }
+            tvShowAgain.setOnClickListener {
+                // 不再显示
+                Prefs.putBooleanAsync(Constants.Global.KEY_IS_SHOW_FEET_POP, false)
+                bottomTextAction?.invoke()
+                dismiss()
+            }
         }
     }
 }

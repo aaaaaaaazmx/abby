@@ -45,7 +45,7 @@ public class MinutePicker extends WheelPicker<Integer> {
             @Override
             public void onWheelSelected(Integer item, int position) {
                 if (mOnMinuteSelectedListener != null) {
-                    mOnMinuteSelectedListener.onMinuteSelected(item);
+                    mOnMinuteSelectedListener.onMinuteSelected(item == null ? 0 : item);
                 }
             }
         });
@@ -62,7 +62,6 @@ public class MinutePicker extends WheelPicker<Integer> {
     }
 
     public void setSelectedMinute(int minute) {
-        logI("123123123123" + minute);
         setSelectedMinute(minute, true);
     }
 

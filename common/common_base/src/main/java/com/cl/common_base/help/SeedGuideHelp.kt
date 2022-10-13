@@ -5,6 +5,8 @@ import androidx.core.content.ContextCompat
 import com.cl.common_base.R
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.pop.*
+import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
 
 /**
@@ -32,22 +34,37 @@ class SeedGuideHelp(val context: Context) {
                             BaseBottomPop(
                                 context, ContextCompat.getDrawable(context, R.mipmap.base_seed_fattening_bg),
                                 context.getString(R.string.base_fertilizer),
-                                context.getString(R.string.my_next)
-                            ) {
-                                pop.asCustom(HomePlantEightPop(context, onNextAction = {
-                                    pop.asCustom(
-                                        BaseBottomPop(
-                                            context,
-                                            ContextCompat.getDrawable(context, R.mipmap.base_seed_to_veg_bg),
-                                            context.getString(R.string.base_seed_to_veg),
-                                            buttonText = context.getString(R.string.home_done),
-                                            onNextAction = {
-                                                // 这个用来返回数据
-                                                onNextAction?.invoke()
-                                            })
-                                    ).show()
-                                })).show()
-                            }
+                                context.getString(R.string.my_next),
+                                onNextAction = {
+                                    // 加肥指令
+                                    DeviceControl.get()
+                                        .success {
+                                            pop.asCustom(HomePlantEightPop(context, onNextAction = {
+                                                pop.asCustom(
+                                                    BaseBottomPop(
+                                                        context,
+                                                        ContextCompat.getDrawable(context, R.mipmap.base_seed_to_veg_bg),
+                                                        context.getString(R.string.base_seed_to_veg),
+                                                        buttonText = context.getString(R.string.home_done),
+                                                        onNextAction = {
+                                                            // 这个用来返回数据
+                                                            onNextAction?.invoke()
+                                                        })
+                                                ).show()
+                                            })).show()
+                                        }
+                                        .error { code, error ->
+                                            ToastUtil.shortShow(
+                                                """
+                                                    feedAbby:
+                                                    code-> $code
+                                                    errorMsg-> $error
+                                                """.trimIndent()
+                                            )
+                                        }
+                                        .feedAbby(true)
+                                }
+                            )
                         ).show()
                     })
                 ).show()

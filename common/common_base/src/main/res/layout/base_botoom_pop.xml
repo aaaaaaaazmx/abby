@@ -23,7 +23,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="13dp"
-            tools:background="@mipmap/iv_close" />
+            android:background="@mipmap/iv_close" />
 
         <TextView
             android:id="@+id/tv_dec"
@@ -58,9 +58,21 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/create_state_button"
-            tools:text="Next"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            tools:text="Next" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_show_again"
+            android:layout_marginTop="14dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/btn_success"
+            android:text="@string/base_dont_show"
+            android:textColor="@color/mainColor"
+            android:textSize="11sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
     </RelativeLayout>
 </layout>

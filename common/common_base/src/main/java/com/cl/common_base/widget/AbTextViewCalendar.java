@@ -24,7 +24,7 @@ public class AbTextViewCalendar extends androidx.appcompat.widget.AppCompatTextV
 
     @Override
     public void setTypeface(@Nullable Typeface tf) {
-        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/Gilroy-Medium.ttf");
+        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/Gilroy-Bold.ttf");
         super.setTypeface(tf);
     }
 
