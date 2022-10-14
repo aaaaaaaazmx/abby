@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +16,7 @@ import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.setVisible
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -93,43 +96,45 @@ class BasePumpWaterPop(
                 R.mipmap.base_start_bg,
                 context.theme
             )
-            count++
-            ViewUtils.setGone(binding?.circleBar)
-            binding?.circleBar?.stopAnimator()
             binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
         }
         job?.cancel()
+        animation.cancel()
         count = 0
+        timing = 140
         super.onDismiss()
     }
 
+    private val animation by lazy {
+        val animation = AlphaAnimation(
+            0f, 1f
+        )
+        animation.duration = 1000 //执行时间
+        animation.repeatCount = -1 //重复执行动画
+        animation
+    }
+
+    // 记时器、标准时间为140秒
+    private var timing: Int = 140
     var binding: BasePumpWaterPopBinding? = null
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<BasePumpWaterPopBinding>(popupImplView)?.apply {
-            circleBar.gradientColors = intArrayOf(
-                Color.parseColor("#8053CF8D"),
-                Color.parseColor("#8053CF8D"),
-            )
-            circleBar.setRectangle(true)
             btnSuccess.setOnClickListener {
                 onSuccessAction?.invoke(btnSuccess.isChecked)
                 // true 排水
                 // false 停止
                 synchronized(this) {
                     it.background = if (btnSuccess.isChecked) {
-                        downTime()
+                        // 如果是第一次排水
+                        showAlphaAniamtion()
                         context.resources.getDrawable(
                             R.mipmap.base_start_bg,
                             context.theme
                         )
                     } else {
-                        ViewUtils.setGone(binding?.circleBar, binding?.cbBg)
-                        job?.cancel()
-                        circleBar.reset()
-                        count++
-
-                        circleBar.stopAnimator()
+                        ViewUtils.setGone(binding?.cbBg)
+                        animation.cancel()
                         context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
                     }
 
@@ -165,33 +170,33 @@ class BasePumpWaterPop(
                     o: AdvertisingData?,
                     direction: Int
                 ) {
-//                    when (direction) {
-//                        ReItemTouchHelper.DOWN -> Toast.makeText(
-//                            context,
-//                            "swipe down out",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        ReItemTouchHelper.UP -> Toast.makeText(
-//                            context,
-//                            "swipe up out ",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        ReItemTouchHelper.LEFT -> Toast.makeText(
-//                            context,
-//                            "swipe left out",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        ReItemTouchHelper.RIGHT -> Toast.makeText(
-//                            context,
-//                            "swipe right out",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
+                    //                    when (direction) {
+                    //                        ReItemTouchHelper.DOWN -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe down out",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                        ReItemTouchHelper.UP -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe up out ",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                        ReItemTouchHelper.LEFT -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe left out",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                        ReItemTouchHelper.RIGHT -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe right out",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                    }
                 }
 
                 override fun onSwipedClear() {
-//                    Toast.makeText(context, "cards are consumed", Toast.LENGTH_SHORT)
-//                        .show()
+                    //                    Toast.makeText(context, "cards are consumed", Toast.LENGTH_SHORT)
+                    //                        .show()
                 }
             })
 
@@ -216,7 +221,7 @@ class BasePumpWaterPop(
                     when (key) {
                         TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
                             // 涂鸦指令，添加排水功能
-//                            isOpenOrStop(false)
+                            //                            isOpenOrStop(false)
                             // 排水成功
                             if ((value as? Boolean == false)) return@observe
                             onWaterFinishedAction?.invoke()
@@ -225,22 +230,28 @@ class BasePumpWaterPop(
                         //
                         TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
                             // 涂鸦指令，添加排水功能
-//                            isOpenOrStop(value)
+                            //                            isOpenOrStop(value)
                             synchronized(this) {
                                 // 加锁的目的是为了
                                 // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
+                                // false 是暂停排水、 true是开始排水
+                                if (value == false) {
+                                    job?.cancel()
+                                    count++
+                                } else {
+                                    // 计时器减去时间
+                                    downTime()
+                                }
                                 binding?.btnSuccess?.background =
                                     if ((value as? Boolean != true)) {
-                                        ViewUtils.setGone(binding?.circleBar, binding?.cbBg)
-                                        job?.cancel()
-                                        binding?.circleBar?.reset()
-                                        binding?.circleBar?.stopAnimator()
+                                        ViewUtils.setGone(binding?.cbBg)
+                                        animation.cancel()
                                         context.resources.getDrawable(
                                             R.mipmap.base_start_bg,
                                             context.theme
                                         )
                                     } else {
-                                        downTime()
+                                        showAlphaAniamtion()
                                         context.resources.getDrawable(
                                             R.mipmap.base_suspend_bg,
                                             context.theme
@@ -280,6 +291,33 @@ class BasePumpWaterPop(
             }
     }
 
+    private fun showAlphaAniamtion() {
+        ViewUtils.setVisible(binding?.cbBg)
+        when (count) {
+            1 -> {
+                animation.cancel()
+                ViewUtils.setVisible(binding?.ivWaterOne)
+                binding?.ivWaterOne?.animation = animation
+                animation.start()
+            }
+            2 -> {
+                animation.cancel()
+                ViewUtils.setVisible(binding?.ivWaterOne, binding?.ivWaterTwo)
+                binding?.ivWaterOne?.animation = null
+                binding?.ivWaterTwo?.animation = animation
+                animation.start()
+            }
+            else -> {
+                animation.cancel()
+                ViewUtils.setVisible(binding?.ivWaterOne, binding?.ivWaterTwo, binding?.ivWaterThree)
+                binding?.ivWaterOne?.animation = null
+                binding?.ivWaterTwo?.animation = null
+                binding?.ivWaterThree?.animation = animation
+                animation.start()
+            }
+        }
+    }
+
     private fun isOpenOrStop(value: Any?) {
         DeviceControl.get()
             .success {
@@ -296,8 +334,34 @@ class BasePumpWaterPop(
             .pumpWater((value as? Boolean == true))
     }
 
+
+    private var job: Job? = null
+    private fun downTime() {
+        // 开启定时器，每次20秒刷新未读气泡消息
+        job = countDownCoroutines(
+            10 * 6 * 500000,
+            lifecycleScope,
+            onTick = {
+                logI("$it,,,,$timing")
+                timing -= 1
+                // 等于0了，表示排水成功
+                if (timing == 0) {
+                    onWaterFinishedAction?.invoke()
+                    job?.cancel()
+                    dismiss()
+                }
+                if (it == 0) {
+                    job?.cancel()
+                }
+            },
+            onStart = {},
+            onFinish = {
+                job?.cancel()
+            })
+    }
+
     /**
-     * 定时器
+     * 计时器
      */
     private fun countDownCoroutines(
         total: Int,
@@ -318,63 +382,4 @@ class BasePumpWaterPop(
             .launchIn(scope)
     }
 
-    private var job: Job? = null
-    private fun downTime() {
-        if (count > 3) {
-            job?.cancel()
-            binding?.circleBar?.reset()
-            binding?.circleBar?.visibility = View.GONE
-            binding?.cbBg?.visibility = View.GONE
-            return
-        } else {
-            binding?.circleBar?.visibility = View.VISIBLE
-            binding?.cbBg?.visibility = View.VISIBLE
-        }
-        job?.cancel()
-        job = countDownCoroutines(120,
-            lifecycleScope,
-            onTick = {
-                if (it == 0) {
-                    binding?.circleBar?.stopAnimator()
-                    return@countDownCoroutines
-                }
-
-                if (it == 120) return@countDownCoroutines
-                var value = 0.25f * (120 - it)
-                logI("""
-                    value:
-                    $value
-                """.trimIndent())
-                when (count) {
-                    // 三次加水
-                    1 -> {
-                        binding?.circleBar?.setValue(value)
-                    }
-                    2 -> {
-                        value += 30f
-                        binding?.circleBar?.setValue(value)
-                    }
-                    3 -> {
-                        value += 63f
-                        binding?.circleBar?.setValue(value)
-                    }
-                }
-            }, onStart = {
-                when (count) {
-                    // 三次加水
-                    1 -> {
-                        binding?.circleBar?.setValue(0f)
-                    }
-                    2 -> {
-                        binding?.circleBar?.setValue(33f)
-                    }
-                    3 -> {
-                        binding?.circleBar?.setValue(66f)
-                    }
-                }
-
-            }, onFinish = {
-                binding?.circleBar?.stopAnimator()
-            })
-    }
 }
