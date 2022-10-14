@@ -1478,7 +1478,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 植物信息数据显示
                             binding.pplantNinth.tvWeekDay.text =
                                 """
-                                ${info.journeyName}
+                                ${if(info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(com.cl.common_base.R.string.base_autoflowering_abbreviations)  else info.journeyName}
                                 Week ${data?.week ?: "-"}
                                 Day ${data?.day ?: "-"}
                             """.trimIndent()
