@@ -1483,10 +1483,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 Day ${data?.day ?: "-"}
                             """.trimIndent()
                             ViewUtils.setVisible(info.journeyName != HomePeriodPop.KEY_SEED, binding.pplantNinth.ivWaterStatus)
-                            if (info.journeyName == HomePeriodPop.KEY_SEED) {
+                            if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) {
                                 // 显示种子背景图
                                 // 根据总天数判断
-                                binding.pplantNinth.ivBowl.background = when (data?.totalDay) {
+                                binding.pplantNinth.ivBowl.background = when (info.totalDay) {
                                     0, 1 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -1563,26 +1563,84 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             } else {
                                 // 树苗的状态
                                 // 也是需要根据植物的信息来,需要找到当前的周期
-                                var number: Int
-                                // 这样看内定不行
-                                val week = info.week?.toInt() ?: 0
+                                var number: Int = 1
+
+                                // 植物周期状态
                                 when (info.journeyName) {
-                                    "Vegetation" -> {
-                                        (if (week > 4) 4 else week
-                                                ).also { period -> number = period }
-                                    }
-                                    "Flowering" -> {
-                                        (if (week > 6) 10 else 4 + week).also { period ->
-                                            number = period
+                                    UnReadConstants.PeriodStatus.KEY_VEGETATION -> {
+                                        number = if ((info.totalDay ?: 0) in 1..7) {
+                                            1
+                                        } else if ((info.totalDay ?: 0) in 8..14) {
+                                            2
+                                        } else if ((info.totalDay ?: 0) in 15..21) {
+                                            3
+                                        } else {
+                                            4
                                         }
                                     }
-                                    "Flushing" -> {
-                                        number = 11
+                                    UnReadConstants.PeriodStatus.KEY_FLOWERING -> {
+                                        number = if ((info.totalDay ?: 0) in 1..7) {
+                                            5
+                                        } else if ((info.totalDay ?: 0) in 8..14) {
+                                            6
+                                        } else if ((info.totalDay ?: 0) in 15..21) {
+                                            7
+                                        } else if ((info.totalDay ?: 0) in 22..29) {
+                                            8
+                                        } else if ((info.totalDay ?: 0) in 30..35) {
+                                            9
+                                        } else if ((info.totalDay ?: 0) in 36..42) {
+                                            10
+                                        } else if ((info.totalDay ?: 0) in 43..49) {
+                                            11
+                                        } else {
+                                            12
+                                        }
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING -> {
+                                        // Photo （seed & Clone） 没有这个周期
+                                        // Auto才会有这个周期
+                                        number = if ((info.totalDay ?: 0) in 1..6) {
+                                            1
+                                        } else if ((info.totalDay ?: 0) in 7..12) {
+                                            2
+                                        } else if ((info.totalDay ?: 0) in 13..18) {
+                                            3
+                                        } else if ((info.totalDay ?: 0) in 19..24) {
+                                            4
+                                        } else if ((info.totalDay ?: 0) in 25..30) {
+                                            5
+                                        } else if ((info.totalDay ?: 0) in 31..36) {
+                                            6
+                                        } else if ((info.totalDay ?: 0) in 37..42) {
+                                            7
+                                        } else if ((info.totalDay ?: 0) in 43..48) {
+                                            8
+                                        } else if ((info.totalDay ?: 0) in 49..54) {
+                                            9
+                                        } else if ((info.totalDay ?: 0) in 55..60) {
+                                            10
+                                        } else {
+                                            11
+                                        }
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_FLUSHING -> {
+                                        number = 12
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_HARVEST -> {
+                                        number = 12
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_DRYING -> {
+                                        number = 12
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_CURING -> {
+                                        number = 12
                                     }
                                     else -> {
                                         number = 12
                                     }
                                 }
+
                                 binding.pplantNinth.ivBowl.background = when (number) {
                                     1 -> {
                                         context?.let {
@@ -1689,6 +1747,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         }
                                     }
                                 }
+
+                                logI("""
+                                    number::::
+                                $number """)
                             }
                         }
 
@@ -2351,6 +2413,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 跳转继承界面的回调
         const val KEY_FOR_CLONE_RESULT = 66
+
         // 为了刷新的回调
         const val KEY_FOR_CALENDAR_REFRSH = 88
 

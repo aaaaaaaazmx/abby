@@ -79,6 +79,21 @@ object UnReadConstants {
     }
 
     /**
+     * 周期状态
+     */
+    object PeriodStatus {
+        const val KEY_SEED = "Seed"
+        const val KEY_GERMINATION = "Germination"
+        const val KEY_VEGETATION = "Vegetation"
+        const val KEY_FLOWERING = "Flowering"
+        const val KEY_AUTOFLOWERING = "AutoFlowering"
+        const val KEY_FLUSHING = "Flushing"
+        const val KEY_HARVEST = "Harvest"
+        const val KEY_CURING = "Curing"
+        const val KEY_DRYING = "Drying"
+    }
+
+    /**
      * 设备提醒相关
      */
     object Device {
