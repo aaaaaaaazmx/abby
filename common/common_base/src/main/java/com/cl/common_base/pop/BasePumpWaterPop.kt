@@ -102,6 +102,7 @@ class BasePumpWaterPop(
         animation.cancel()
         count = 0
         timing = 140
+        ViewUtils.setGone(binding?.ivWaterOne, binding?.ivWaterOne, binding?.ivWaterThree)
         super.onDismiss()
     }
 
