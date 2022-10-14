@@ -71,7 +71,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
 
     override fun initView() {
         // 如果是没名字、没属性那么直接隐藏
-        ViewUtils.setGone(binding.llSeed, isNoAttribute||isNoStrainName)
+        ViewUtils.setGone(binding.llSeed, isNoAttribute || isNoStrainName)
 
         binding.title.setLeftClickListener {
             setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, false))
@@ -123,7 +123,8 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                                         if (isNoAttribute || isNoStrainName) {
                                             setResultForRefreshPlantInfo()
                                         }
-                                    }, isNoStrainName = isNoStrainName)
+                                    }, isNoStrainName = isNoStrainName
+                                )
                             ).show()
                     }, onCancelAction = {
                         if (isNoAttribute) {
@@ -161,7 +162,8 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                             if (isNoAttribute || isNoStrainName) {
                                 setResultForRefreshPlantInfo()
                             }
-                        }, isNoStrainName = isNoStrainName)
+                        }, isNoStrainName = isNoStrainName
+                    )
                 ).show()
         }
     }
@@ -177,7 +179,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
     override fun observe() {
         mViewModel.apply {
             updatePlantInfo.observe(this@MyCloneAndReplantActivity, resourceObserver {
-                loading {  }
+                loading { }
                 error { errorMsg, code ->
                     hideProgressLoading()
                     errorMsg?.let {
@@ -199,7 +201,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
 
             // 图文引导界面
             getGuideInfo.observe(this@MyCloneAndReplantActivity, resourceObserver {
-                loading {  }
+                loading { }
                 error { errorMsg, code ->
                     hideProgressLoading()
                     errorMsg?.let {
@@ -249,9 +251,34 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
 
             // 继承植物
             if (cloneCheck) {
-                mViewModel.upPlantInfoReq.value?.let { req -> mViewModel.updatePlantInfo(req) }
-                setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, true))
-                finish()
+                XPopup.Builder(this@MyCloneAndReplantActivity)
+                    .maxHeight(dp2px(700))
+                    .maxWidth(dp2px(700))
+                    .enableDrag(false)
+                    .moveUpToKeyboard(false)
+                    .dismissOnTouchOutside(false)
+                    .isDestroyOnDismiss(false).asCustom(
+                        // 填入Strain名字弹擦混改
+                        StrainNamePop(
+                            this@MyCloneAndReplantActivity,
+                            onConfirmAction = { name ->
+                                mViewModel.upPlantInfoReq.value?.strainName = name
+                                // 这个时候上报一次，然后弹出通用图文弹窗
+                                mViewModel.upPlantInfoReq.value?.let { req ->
+                                    mViewModel.updatePlantInfo(
+                                        req
+                                    )
+                                }
+                                setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, true))
+                                finish()
+                            }, onCancelAction = {
+                                // 如果是直接弹窗的，也就是老用户，但是没输入名字 或者没有属性名
+                                if (isNoAttribute || isNoStrainName) {
+                                    setResultForRefreshPlantInfo()
+                                }
+                            }, isNoStrainName = isNoStrainName
+                        )
+                    ).show()
                 return@setOnClickListener
             }
 
