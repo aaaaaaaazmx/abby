@@ -141,20 +141,26 @@ class BasePlantUsuallyGuidePop(
             adapter.setList(it)
         }
 
-        when (isCurrentStatus) {
+        binding?.btnSuccess?.text = when (isCurrentStatus) {
             UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
                 // 按钮显示不一致
-                binding?.btnSuccess?.text = context.getString(R.string.base_complete)
+                context.getString(R.string.base_complete)
             }
             UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
-                binding?.btnSuccess?.text = context.getString(R.string.base_done)
+                context.getString(R.string.base_done)
             }
             UnReadConstants.CalendarAsk.KEY_UNEARNED_SUBSCRIPTION_EXPLAIN -> {
-                binding?.btnSuccess?.text = context.getString(R.string.base_supply)
+                context.getString(R.string.base_supply)
+            }
+            UnReadConstants.CalendarAsk.KEY_TRIM,
+            UnReadConstants.CalendarAsk.KEY_TOPPING,
+            UnReadConstants.CalendarAsk.KEY_LST
+            -> {
+                context.getString(R.string.base_job)
             }
             else -> {
                 // 按钮显示不一致
-                binding?.btnSuccess?.text = context.getString(R.string.my_next)
+                context.getString(R.string.my_next)
             }
         }
 
