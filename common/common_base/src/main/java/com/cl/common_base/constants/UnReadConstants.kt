@@ -70,6 +70,7 @@ object UnReadConstants {
      */
     object PlantStatus {
         const val TASK_TYPE_CHECK_TRANSPLANT = "check_transplant"
+        const val TASK_TYPE_CHECK_CHECK_AUTOFLOWERING = "check_autoflowering"
         const val TASK_TYPE_CHECK_CHECK_FLOWERING = "check_flowering"
         const val TASK_TYPE_CHECK_CHECK_FLUSHING = "check_flushing"
         const val TASK_TYPE_CHECK_CHECK_HARVEST = "check_harvest"
@@ -97,7 +98,7 @@ object UnReadConstants {
      * 设备提醒相关
      */
     object Device {
-        const val KEY_CHANGING_WATER = "changing_water"
+        const val KEY_CHANGING_WATER = "change_water"
         const val KEY_CHANGE_CUP_WATER = "change_cup_water"
         const val KEY_ADD_WATER = "add_water"
         const val KEY_ADD_MANURE = "add_manure"

@@ -1,6 +1,7 @@
 package com.cl.common_base.adapter
 
 import android.text.style.UnderlineSpan
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -15,6 +16,9 @@ import com.cl.common_base.bean.DetailByLearnMoreIdData
 import com.cl.common_base.databinding.HomeFinishGuideItemBinding
 import com.cl.common_base.databinding.HomeFinishGuideTextItemBinding
 import com.cl.common_base.databinding.HomeFinishGuideUrlItemBinding
+import com.cl.common_base.ext.dp2px
+import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.px2dp
 import com.cl.common_base.util.span.appendClickable
 
 /**
@@ -96,6 +100,14 @@ class LearnFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?
                         underline { appendLine(item.extend?.title) }
                     }
                 }
+            }
+            // 动态设置宽高
+            DetailByLearnMoreIdData.KEY_IMAGE_TYPE -> {
+//                val ivImg = helper.itemView.findViewById<ImageView>(R.id.iv_pic)
+//                val layoutParams = ivImg.layoutParams
+//                layoutParams.height = item.extend?.height?.toInt() ?: -2
+//                layoutParams.width = item.extend?.width?.toInt() ?: -1
+//                ivImg.layoutParams = layoutParams
             }
         }
 

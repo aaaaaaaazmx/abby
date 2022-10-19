@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -15,6 +16,7 @@ import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
+import com.goldentec.android.tools.util.letMultiple
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -40,6 +42,10 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         mCurrentDate.month = CalendarUtil.getDate("MM", d)
         mCurrentDate.day = CalendarUtil.getDate("dd", d)
         mCurrentDate.isCurrentDay = true
+        logI("""
+            asdasdasdas:
+            ${mCurrentDate.ymd}
+        """.trimIndent())
         mCurrentDate
     }
 
@@ -64,7 +70,42 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS).toString())
     val getWaterVolume: LiveData<String> = _getWaterVolume
     fun setWaterVolume(volume: String) {
-        _getWaterVolume.value = volume
+        // 暂时不做水箱的容积判断，手动赋值默认就是为0L
+        _getWaterVolume.value = "0"
+    }
+
+
+    private val _plantInfo = MutableLiveData<Resource<PlantInfoData>>()
+    val plantInfo: LiveData<Resource<PlantInfoData>> = _plantInfo
+    fun plantInfo() {
+        viewModelScope.launch {
+            repository.plantInfo()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _plantInfo.value = it
+                }
+        }
     }
 
     /**
@@ -155,10 +196,12 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
                         _localCalendar.value?.let { list ->
                             setOnlyRefreshLoad(true)
-                            getCalendar(
-                                list.first().ymd,
-                                list.last().ymd
-                            )
+                            letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
+                                getCalendar(
+                                    first,
+                                    last
+                                )
+                            }
                         }
                     }
                     Resource.Success(it.data)
@@ -288,6 +331,9 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         }
     }
 
+    private val _showCompletePage = MutableLiveData<Boolean>(false)
+    val showCompletePage: LiveData<Boolean> = _showCompletePage
+
     /**
      * 日历 完成任务、解锁周期
      */
@@ -307,11 +353,14 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                         _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
                             _localCalendar.value?.let { list ->
                                 setOnlyRefreshLoad(true)
-                                getCalendar(
-                                    list.first().ymd,
-                                    list.last().ymd
-                                )
+                                letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
+                                    getCalendar(first, last)
+                                }
                             }
+                        }
+                        if (guideInfoStatus.value == CalendarData.TASK_TYPE_CHECK_CHECK_CURING) {
+                            // 直接跳转到完成界面
+                            _showCompletePage.postValue(true)
                         }
                         Resource.Success(it.data)
                     }
@@ -382,7 +431,6 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     ) {
         viewModelScope.launch {
             val list = mutableListOf<com.cl.common_base.util.calendar.Calendar>()
-            // 傻逼后台不肯分段，只能一次性全部拉取，哎，完全没考虑后面的兼容性
             val yearNumber = year - 2022
             if (yearNumber < 0) return@launch // 后台说咩有2022年之前的植物
             // 0..yearNumber + 1

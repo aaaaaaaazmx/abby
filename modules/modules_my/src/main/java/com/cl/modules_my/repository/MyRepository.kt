@@ -33,6 +33,13 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     }
 
     /**
+     * 获取植物信息
+     */
+    fun plantInfo(): Flow<HttpResult<PlantInfoData>> {
+        return remoteRepository.plantInfo()
+    }
+
+    /**
      * 获取用户信息
      */
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {

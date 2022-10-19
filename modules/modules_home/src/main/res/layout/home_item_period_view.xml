@@ -97,7 +97,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
             app:layout_constraintTop_toTopOf="@+id/period_title"
-            android:background="@mipmap/home_period_bg"
+            android:background="@mipmap/base_period_gou"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

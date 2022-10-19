@@ -144,6 +144,9 @@ object Constants {
         // 是否展示肥料掉落弹窗
         const val KEY_IS_SHOW_FEET_POP = "key_is_show_feet_pop"
 
+        // 是否展示植物种植完成界面
+        const val KEY_IS_SHOW_COMPLETE = "key_is_show_complete"
+
         // 跳转选择界面师傅哦直接弹窗
         const val KEY_USER_NO_STRAIN_NAME = "key_user_no_strain_name"
         const val KEY_USER_NO_ATTRIBUTE = "key_user_no_attribute"

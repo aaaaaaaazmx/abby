@@ -46,6 +46,7 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
             // 设置数据
             data = item
             adapter = this@MyCalendarAdapter
+            holders = holder
             executePendingBindings()
         }
         setCircleBg(holder, item)
@@ -70,10 +71,11 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
         val changElseGray = holder.getView<ImageView>(R.id.iv_change_else_gray)
         val llPointGray = holder.getView<LinearLayout>(R.id.ll_point_gray)
 
+        // 放置布局错乱，应该是全部都先隐藏，然后在根据滑动的时候来进行显示
+        ViewUtils.setGone(changWater, changeUnlock, changElse)
         if (item.calendarData?.taskList.isNullOrEmpty()) {
             ViewUtils.setInvisible(llPoint)
             ViewUtils.setGone(llPointGray)
-            ViewUtils.setGone(changWater, changeUnlock, changElse)
             return true
         } else {
             ViewUtils.setVisible(llPoint)
@@ -105,33 +107,11 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
 
                     }
                 }
-            } else if (DateHelper.after(itemTime, currentTime)) {
-                // 当前时间小于itemTime
+            } else if (DateHelper.after(itemTime, currentTime) || item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
+                // 当前时间小于或者等于itemTime
                 when (data.taskType) {
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
-                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING,
-                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_HARVEST,
-                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING,
-                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING,
-                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FINISH,
-                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
-                        ViewUtils.setVisible(changeUnlock)
-                    }
-                    KEY_CHANGE_WATER,
-                    KEY_CHANGE_CUP_WATER -> {
-                        ViewUtils.setVisible(changWater)
-                    }
-                    KEY_LST,
-                    KEY_TRIM,
-                    KEY_TOPPING -> {
-                        ViewUtils.setVisible(changElse)
-                    }
-                    else -> {
-                    }
-                }
-            } else if (item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
-                when (data.taskType) {
-                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING,
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING,
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_HARVEST,
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING,

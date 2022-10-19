@@ -1,4 +1,4 @@
-package com.cl.modules_home.response
+package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
 
@@ -12,7 +12,7 @@ data class PlantInfoData(
     var strainName: String? = null, // 种植名字
     var plantWay: String? = null, // 种植方式
     var day: Int? = null,
-    var flushingWeight: Int? = null, // 称重重量
+    var flushingWeight: Int? = 0, // 称重重量
     var healthStatus: String? = null,
     var name: String? = null,
     var heigh: Int? = null,
@@ -29,6 +29,7 @@ data class PlantInfoData(
         var journeyName: String? = null,
         var guideId: Int? = null,
         var guideType: String? = null,
+        var taskTime: String? = null,
         var taskId: String? = null,
         var journeyStatus: Int? = null,
         var totalDay: Int? = null,

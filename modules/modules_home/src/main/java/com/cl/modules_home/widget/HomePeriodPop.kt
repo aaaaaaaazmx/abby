@@ -11,9 +11,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.widget.SvTextView
-import com.cl.modules_home.response.PlantInfoData
+import com.cl.common_base.bean.PlantInfoData
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomePeriodPopBinding
+import com.cl.common_base.ext.logI
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.TimeLineState
@@ -29,7 +30,7 @@ import com.lxj.xpopup.core.BottomPopupView
 class HomePeriodPop(
     context: Context,
     private var data: MutableList<PlantInfoData.InfoList>? = null,
-    val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?) -> Unit)? = null
+    val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?, taskTime: String?) -> Unit)? = null
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_period_pop
@@ -120,11 +121,15 @@ class HomePeriodPop(
 
                         // 解锁
                         svtUnlock.setOnClickListener {
-
+                            logI("""
+                                guideType: ${data?.get(position)?.guideType.toString()}
+                                taskId: ${data?.get(position)?.taskId.toString()}
+                            """.trimIndent())
                             unLockAction?.invoke(
                                 data?.get(position)?.guideType.toString(),
                                 data?.get(position)?.taskId.toString(),
-                                if (position != 0) data?.get(position - 1)?.guideType.toString() else data?.get(0)?.guideType.toString()
+                                if (position != 0) data?.get(position - 1)?.guideType.toString() else data?.get(0)?.guideType.toString(),
+                                data?.get(position)?.taskTime.toString()
                             )
 
                             dismiss()

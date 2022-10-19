@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -11,13 +12,16 @@ import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.R
 import com.cl.common_base.adapter.LearnFinishPopAdapter
 import com.cl.common_base.bean.DetailByLearnMoreIdData
+import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.HomeFinishGuideBinding
 import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.web.WebActivity
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.entity.LocalMedia
+import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
+import com.lxj.xpopup.util.SmartGlideImageLoader
 
 /**
  * 种植完成之后的通用弹窗
@@ -57,8 +61,7 @@ class LearnIdGuidePop(
 
             ivClose.setOnClickListener { dismiss() }
 
-
-            adapter.addChildClickViewIds(R.id.tv_html)
+            adapter.addChildClickViewIds(R.id.tv_html, R.id.iv_pic)
             adapter.setOnItemChildClickListener { adapter, view, position ->
                 val data = adapter.data[position] as? DetailByLearnMoreIdData.ItemBean
                 when (view.id) {
@@ -72,11 +75,22 @@ class LearnIdGuidePop(
                                 return@setOnItemChildClickListener
                             }
                         }
-                        
+
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, data?.content)
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, data?.extend?.title)
                         context?.startActivity(intent)
+                    }
+                    R.id.iv_pic -> {
+                        (adapter.data[position] as? DetailByLearnMoreIdData.ItemBean)?.apply {
+                            XPopup.Builder(context)
+                                .asImageViewer(
+                                    (view as? ImageView),
+                                    content,
+                                    SmartGlideImageLoader()
+                                )
+                                .show()
+                        }
                     }
                 }
             }

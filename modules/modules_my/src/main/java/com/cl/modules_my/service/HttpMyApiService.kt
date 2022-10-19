@@ -103,6 +103,13 @@ interface HttpMyApiService {
         @Body body: UpPlantInfoReq
     ): Flow<HttpResult<BaseBean>>
 
+
+    /**
+     * 获取植物的基本信息
+     */
+    @POST("abby/plant/plantInfo")
+    fun plantInfo(): Flow<HttpResult<PlantInfoData>>
+
     @FormUrlEncoded
     @POST("abby/calendar/getCalendar")
     fun getCalendar(

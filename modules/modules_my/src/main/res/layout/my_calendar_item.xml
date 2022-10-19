@@ -10,6 +10,10 @@
         <variable
             name="adapter"
             type="com.cl.modules_my.adapter.MyCalendarAdapter" />
+
+        <variable
+            name="holders"
+            type="com.chad.library.adapter.base.viewholder.BaseViewHolder" />
     </data>
 
     <LinearLayout

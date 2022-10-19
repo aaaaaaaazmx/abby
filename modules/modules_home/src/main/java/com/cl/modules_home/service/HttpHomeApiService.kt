@@ -5,7 +5,7 @@ import com.cl.common_base.bean.*
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
-import com.cl.modules_home.response.PlantInfoData
+import com.cl.common_base.bean.PlantInfoData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*
 

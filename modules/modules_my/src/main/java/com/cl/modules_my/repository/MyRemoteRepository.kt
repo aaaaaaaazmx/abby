@@ -30,6 +30,10 @@ class MyRemoteRepository @Inject constructor() {
         return service.updatePlantInfo(body)
     }
 
+    fun plantInfo(): Flow<HttpResult<PlantInfoData>> {
+        return service.plantInfo()
+    }
+
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
         return service.userDetail()
     }

@@ -354,7 +354,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.unreadMessageList.value?.let { message ->
                     if (message.size == 0) return@setOnClickListener
                     // 标记已读信息
-                    mViewMode.getRead("${message.first().messageId}")
+                    mViewMode.getRead("${message.firstOrNull()?.messageId}")
                 }
             }
         }
@@ -414,9 +414,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                 bottomText = getString(com.cl.common_base.R.string.base_dont_show),
                                                 onNextAction = {
                                                     // 如果是在换水的三步当中的最后一步，加肥
-                                                    if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
                                                         // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                        mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                                                         return@BaseBottomPop
                                                     }
 
@@ -427,9 +433,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                 },
                                                 bottomTextAction = {
                                                     // 如果是在换水的三步当中的最后一步，加肥
-                                                    if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
                                                         // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                        mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                                                         return@BaseBottomPop
                                                     }
 
@@ -439,11 +451,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                     mViewMode.saveOrUpdate("3")
                                                 }
                                             )
-                                        )
+                                        ).show()
                                 } else {
                                     // 加肥气泡
-                                    if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_MANURE) {
-                                        mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                                    if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_MANURE) {
+                                        // 完成任务
+                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                        }
+                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                                         return@success
                                     }
                                 }
@@ -489,7 +505,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 .asCustom(context?.let {
                     BasePumpWaterFinishedPop(it, onSuccessAction = {
                         // 排水成功弹窗，点击OK按钮
-                        mViewMode.unreadMessageList.value?.first()?.let { bean ->
+                        mViewMode.getUnreadMessageList().firstOrNull()?.let { bean ->
                             // 如果正好是第一步排水
                             if (bean.extension.isNullOrEmpty() || bean.extension == UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_ONE) {
                                 mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
@@ -580,8 +596,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     context = it,
                     onCancelAction = {
                         // 在执行未读消息时，不需要showView
-                        if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                            || mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_WATER
+                        if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                            || mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_WATER
                         ) {
                             return@HomePlantFivePop
                         }
@@ -593,26 +609,33 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     },
                     onNextAction = {
                         // 如果是在换水的三步当中
-                        if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
-                            // 弹出加肥
-                            mViewMode.unreadMessageList.value?.first()?.let { bean ->
-                                mViewMode.userMessageFlag(
-                                    UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE,
-                                    "${bean.messageId}"
-                                )
-                                mViewMode.deviceOperateStart(
-                                    "${bean.messageId}",
-                                    UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
-                                )
+                        if (mViewMode.unreadMessageList.value?.isNotEmpty() == true) {
+                            if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                // 弹出加肥
+                                mViewMode.getUnreadMessageList().firstOrNull()?.let { bean ->
+                                    mViewMode.userMessageFlag(
+                                        UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE,
+                                        "${bean.messageId}"
+                                    )
+                                    mViewMode.deviceOperateStart(
+                                        "${bean.messageId}",
+                                        UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
+                                    )
+                                }
+                                plantSix.show()
+                                return@HomePlantFivePop
                             }
-                            plantSix.show()
-                            return@HomePlantFivePop
-                        }
 
-                        // 加水
-                        if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_WATER) {
-                            mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                            return@HomePlantFivePop
+                            // 加水
+                            if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_WATER) {
+                                // 任务完成
+                                // 完成任务
+                                mViewMode.popPeriodStatus.value?.let { map ->
+                                    mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                }
+                                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                return@HomePlantFivePop
+                            }
                         }
 
                         // plant5后记“2”
@@ -654,7 +677,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let {
             HomeSkipWaterPop(it, onConfirmAction = {
                 // 跳过换水、加水、加肥
-                mViewMode.unreadMessageList.value?.first()?.let { bean ->
+                mViewMode.getUnreadMessageList().firstOrNull()?.let { bean ->
                     mViewMode.deviceOperateStart(
                         "${bean.messageId}",
                         UnReadConstants.StatusManager.VALUE_STATUS_SKIP_CHANGING_WATERE
@@ -700,9 +723,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                 bottomText = getString(com.cl.common_base.R.string.base_dont_show),
                                                 onNextAction = {
                                                     // 如果是在换水的三步当中的最后一步，加肥
-                                                    if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
                                                         // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                        mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                                                         return@BaseBottomPop
                                                     }
 
@@ -713,9 +742,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                 },
                                                 bottomTextAction = {
                                                     // 如果是在换水的三步当中的最后一步，加肥
-                                                    if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
                                                         // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                        mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                                                         return@BaseBottomPop
                                                     }
 
@@ -725,12 +760,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                     mViewMode.saveOrUpdate("3")
                                                 }
                                             )
-                                        )
+                                        ).show()
                                 } else {
                                     // 如果是在换水的三步当中的最后一步，加肥
-                                    if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                    if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                        // 完成任务
+                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                            mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
+                                        }
                                         // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                        mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                                         return@success
                                     }
 
@@ -784,12 +823,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             FanFailPop(it, {
                 // todo 风扇故障，跳转环信客服
                 // 并且表示已读
-                mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                 // todo 暂时不跳环信，跳转邮件转发
                 sendEmail()
             }, {
                 // 并且表示已读
-                mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
             })
         }
     }
@@ -814,22 +853,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                          * 引导阶段
                          */
                         when (mViewMode.typeStatus.value) {
-                            0 -> {
+                            "0" -> {
                                 // 当前表示开始种植
                                 // 上报当前的步骤 1
                                 mViewMode.setCurrentReqStatus(1)
                                 mViewMode.saveOrUpdate("1")
                             }
-                            1 -> {
+                            "1" -> {
                                 // 这是第9个弹窗，开始种植，需要传入步骤为 4
                                 mViewMode.setCurrentReqStatus(4)
                                 mViewMode.saveOrUpdate("4")
                             }
-                            2 -> {}
-                            3 -> {}
-                            4 -> {}
-                            5 -> {}
-                            6 -> {}
+                            else -> {}
                         }
                         return@BasePlantUsuallyGuidePop
                     }
@@ -864,6 +899,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     val taskId = mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_ID)
                     // 60 * 60 * 1000 = 1小时
                     taskTime?.let {
+                        // 这个只有出现在气泡、气泡会带时间
                         kotlin.runCatching {
                             mViewMode.updateTask(UpdateReq(taskId = taskId, taskTime = "${it.toLong() + 60 * 60 * 1000 * 48}"))
                         }
@@ -910,7 +946,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let {
             HomePeriodPop(
                 it,
-                unLockAction = { guideType, taskId, lastOneGuideType ->
+                unLockAction = { guideType, taskId, lastOneGuideType, taskTime ->
                     //                    if (lastOneGuideType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
                     //                        // 表示是seed to veg
                     //                        SeedGuideHelp(it).showGuidePop {
@@ -919,7 +955,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     //                        return@HomePeriodPop
                     //                    }
                     // todo 此处是用于周期弹窗解锁的
-                    mViewMode.setPopPeriodStatus(guideId = guideType, taskId = taskId, taskTime = null)
+                    mViewMode.setPopPeriodStatus(guideId = guideType, taskId = taskId, taskTime = taskTime)
                 }
             )
         }
@@ -1139,57 +1175,47 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.unreadMessageList.value?.let {
                     // 调用图文信息
                     if (it.size == 0) return@let
-                    // todo 这个判断需要更改
-                    mViewMode.unreadMessageList.value?.first()?.type?.let { type ->
+                    // How to do LTS
+                    mViewMode.getUnreadMessageList().firstOrNull()?.jumpType?.let { jumpType ->
+                        if (jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
+                            // 单独处理， 弹窗
+                            mViewMode.getMessageDetail("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                            mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                            return@observe
+                        }
+                    }
+
+                    // 状态赋值
+                    mViewMode.getUnreadMessageList().firstOrNull()?.type?.let { type ->
                         // 目前只处理了种植状态
                         // 周期的解锁
                         // 气泡解锁
-                        // todo 这个地方待测试，包含关系应该更新、type应该也有问题
-                        if (UnReadConstants.plantStatus.contains(type)) {
-                            // 调用图文接口，获取图文并且弹窗
-                            // 种植状态的是调用解锁，并不是调用已读
-                            mViewMode.setPopPeriodStatus(
-                                guideId = type,
-                                taskId = mViewMode.unreadMessageList.value?.first()?.taskId,
-                                taskTime = mViewMode.unreadMessageList.value?.first()?.taskTime
-                            )
-                        } else {
-                            // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
-                            // todo 设备故障跳转环信
-                            when (type) {
-                                // 杯子换水
-                                UnReadConstants.Device.KEY_CHANGE_CUP_WATER -> {
-                                    mViewMode.setPopPeriodStatus(
-                                        guideId = type,
-                                        taskId = mViewMode.unreadMessageList.value?.first()?.taskId,
-                                        taskTime = mViewMode.unreadMessageList.value?.first()?.taskTime
-                                    )
-                                }
-                                // 换水、加水、加肥。三步
-                                // 这玩意有三步！！！
-                                UnReadConstants.Device.KEY_CHANGING_WATER -> {
-                                    specificStep()
-                                }
-                                // 加水
-                                UnReadConstants.Device.KEY_ADD_WATER -> {
-                                    plantFour.show()
-                                }
-                                // 加肥
-                                UnReadConstants.Device.KEY_ADD_MANURE -> {
-                                    plantFeed.show()
-                                }
-                                else -> {}
+
+                        mViewMode.setPopPeriodStatus(
+                            guideId = type,
+                            taskId = mViewMode.getUnreadMessageList().firstOrNull()?.taskId,
+                            taskTime = mViewMode.getUnreadMessageList().firstOrNull()?.taskTime
+                        )
+
+                        // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
+                        // todo 设备故障跳转环信
+                        when (type) {
+                            // 换水、加水、加肥。三步
+                            // 这玩意有三步！！！
+                            UnReadConstants.Device.KEY_CHANGING_WATER -> {
+                                specificStep()
+                            }
+                            // 加水
+                            UnReadConstants.Device.KEY_ADD_WATER -> {
+                                plantFour.show()
+                            }
+                            // 加肥
+                            UnReadConstants.Device.KEY_ADD_MANURE -> {
+                                plantFeed.show()
                             }
                         }
                     }
-                    // How to do LTS
-                    mViewMode.unreadMessageList.value?.first()?.jumpType?.let { jumpType ->
-                        if (jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
-                            // 单独处理， 弹窗
-                            mViewMode.getMessageDetail("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                            mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                        }
-                    }
+
                 }
             }
             // 植物周期数据监听,植物周期弹窗数据
@@ -1328,12 +1354,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 需要判断当前是否需要称重 判断当前是周期 CURING 7，然后需要判断 flushingWeight == null 或者直接跳转
                     if (mViewMode.popPeriodStatus.value?.containsValue(UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING) == true) {
                         // 如果在解锁During周期的时候。填入了weight，那么在解锁curing时，这个字段不会为null
-                        if (mViewMode.plantInfo.value?.data?.flushingWeight == null) {
+                        if ((mViewMode.plantInfo.value?.data?.flushingWeight ?: 0) <= 0) {
                             // 弹出解锁弹窗，然后直接跳转种植完成界面
                             mViewMode.popPeriodStatus.value?.let {
                                 mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_ID)
-                                    ?.let { taskId -> unlockCuringPop?.setPopPeriodStatus(taskId) }
-                                pop.asCustom(unlockCuringPop).show()
+                                    ?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId = taskId)) }
                             }
                             return@success
                         }
@@ -1344,7 +1369,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     custom?.setData(data)
                     mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_TIME)?.isNotEmpty()?.let { custom?.setIsRemind(it) }
                     // todo 暂时不用引导上报
-                    // data?.type?.let { mViewMode.setTypeStatus(it) }
+                    data?.type?.let { mViewMode.setTypeStatus(it) }
                     plantUsually.show()
                 }
                 error { errorMsg, _ ->
@@ -1388,6 +1413,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // plant9之后记4
                             ViewUtils.setGone(binding.plantClone.root)
                             ViewUtils.setVisible(binding.pplantNinth.root)
+                            mViewMode.startRunning(botanyId = "", goon = false)
                         }
                     }
                 }
@@ -1478,7 +1504,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 植物信息数据显示
                             binding.pplantNinth.tvWeekDay.text =
                                 """
-                                ${if(info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(com.cl.common_base.R.string.base_autoflowering_abbreviations)  else info.journeyName}
+                                ${if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(com.cl.common_base.R.string.base_autoflowering_abbreviations) else info.journeyName}
                                 Week ${data?.week ?: "-"}
                                 Day ${data?.day ?: "-"}
                             """.trimIndent()
@@ -1585,9 +1611,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             6
                                         } else if ((info.totalDay ?: 0) in 15..21) {
                                             7
-                                        } else if ((info.totalDay ?: 0) in 22..29) {
+                                        } else if ((info.totalDay ?: 0) in 22..28) {
                                             8
-                                        } else if ((info.totalDay ?: 0) in 30..35) {
+                                        } else if ((info.totalDay ?: 0) in 29..35) {
                                             9
                                         } else if ((info.totalDay ?: 0) in 36..42) {
                                             10
@@ -1748,9 +1774,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     }
                                 }
 
-                                logI("""
+                                logI(
+                                    """
                                     number::::
-                                $number """)
+                                $number """
+                                )
                             }
                         }
 
@@ -1786,7 +1814,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     context?.let {
                         XPopup.Builder(context)
                             .enableDrag(false)
-                            .maxHeight(dp2px(600f))
+                            .maxHeight(dp2px(700f))
                             .dismissOnTouchOutside(false)
                             .asCustom(
                                 BasePumpWaterPop(
@@ -1798,9 +1826,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                 // 气泡任务和右边手动点击通用一个XPopup
                                                 // 气泡任务为：
                                                 // 主要是针对任务
-                                                if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                                if (mViewMode.getUnreadMessageList()
+                                                        .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                ) {
                                                     mViewMode.deviceOperateStart(
-                                                        business = "${mViewMode.unreadMessageList.value?.first()?.messageId}",
+                                                        business = "${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}",
                                                         type = UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER
                                                     )
                                                     return@success
@@ -1847,23 +1877,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    // 气泡会消失掉，需要防止当前点了之后，这是状态之后，气泡消失掉了，但是数据还保存着
-                    mViewMode.clearPopPeriodStatus()
-                    if (!data.isNullOrEmpty()) {
-                        // 显示气泡
-                        // 这个气泡只有在开始种植之后才会弹出
-                        logI(data.toString())
-                        logI("size: ${data?.size}")
-                        data?.let {
-                            mViewMode.setUnreadMessageList(it)
-                        }
+                    // 气泡会消失掉，需要防止当前点了之后，这是状态之后，气泡消失掉了，但是数据还保存着, 查找当前任务不在了，那么直接消失掉
+                    if (data?.firstOrNull { it.taskId == mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_ID) } == null) mViewMode.clearPopPeriodStatus()
+
+                    // 显示气泡
+                    // 这个气泡只有在开始种植之后才会弹出
+                    logI(data.toString())
+                    logI("size: ${data?.size}")
+                    data?.let {
+                        mViewMode.setUnreadMessageList(it)
                     }
                 }
                 error { errorMsg, _ ->
                     hideProgressLoading()
-                    errorMsg?.let {
-                        ToastUtil.shortShow(it)
-                    }
                 }
             })
 
@@ -1912,13 +1938,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     if (mViewMode.popPeriodStatus.value?.containsValue(UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING) == true) {
-                        // 跳转解锁完成界面
-                        ViewUtils.setGone(binding.pplantNinth.root)
-                        ViewUtils.setVisible(binding.plantComplete.root)
-                        // 解锁周期之后，清空保存的周期状态
-                        mViewMode.clearPopPeriodStatus()
-                        // 种植完成获取参数
-                        mViewMode.getFinishPage()
+                        showCompletePage()
                         return@success
                     }
                     // 解锁周期之后，清空保存的周期状态
@@ -1947,7 +1967,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     when (mViewMode.getWaterVolume.value) {
                         "0L" -> {
                             // 加水弹窗
-                            mViewMode.unreadMessageList.value?.first()?.let {
+                            mViewMode.getUnreadMessageList().firstOrNull()?.let {
                                 mViewMode.userMessageFlag(
                                     UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_TWO,
                                     "${it.messageId}"
@@ -1964,7 +1984,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             plantFour.show()
                         }
                         else -> {
-                            mViewMode.unreadMessageList.value?.first()?.let {
+                            mViewMode.getUnreadMessageList().firstOrNull()?.let {
                                 mViewMode.userMessageFlag(
                                     UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE,
                                     "${it.messageId}"
@@ -1996,6 +2016,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
         }
+    }
+
+    /**
+     * 展示完成界面逻辑
+     */
+    private fun showCompletePage() {
+        // 跳转解锁完成界面
+        ViewUtils.setGone(binding.pplantNinth.root)
+        ViewUtils.setVisible(binding.plantComplete.root)
+        // 解锁周期之后，清空保存的周期状态
+        mViewMode.clearPopPeriodStatus()
+        // 种植完成获取参数
+        mViewMode.getFinishPage()
     }
 
     private fun offLineTextSpan() {
@@ -2075,10 +2108,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         logI("changUnReadMessageUI Coming")
 
         // 获取第一个
-        val unRead = unReadList.first()
+        val unRead = unReadList.firstOrNull()
         //  判断气泡时间是否过期，如果过期那么就直接不用了。
         //  LocalReceiveTime == null, 表示长期
-        if (unRead.LocalReceiveTime?.isNotEmpty() == true) {
+        if (unRead?.LocalReceiveTime?.isNotEmpty() == true) {
             // 发送时间
             val receiveTime = (unRead.LocalReceiveTime?.toLong())?.div(1000L)
             // 当前时间
@@ -2095,8 +2128,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 不限时气泡，显示弹窗
         // 故障 显示弹窗
-        if (UnReadConstants.malfunction.contains(unRead.type)) {
-            customFanFailPop?.setData(unRead.title)
+        if (UnReadConstants.malfunction.contains(unRead?.type)) {
+            customFanFailPop?.setData(unRead?.title)
             fanFailPop.show()
             ViewUtils.setGone(binding.pplantNinth.clContinue)
             return
@@ -2108,17 +2141,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 按钮
         binding.pplantNinth.tvBtnDesc.text =
-            if (UnReadConstants.plantStatus.contains(unRead.type)) {
+            if (UnReadConstants.plantStatus.contains(unRead?.type)) {
                 "Unlock"
-            } else if (unRead.jumpType == UnReadConstants.JumpType.KEY_TREND) {
+            } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_TREND) {
                 "View"
-            } else if (UnReadConstants.noCancel.contains(unRead.type) && unRead.extension.isNullOrEmpty()) {
+            } else if (UnReadConstants.noCancel.contains(unRead?.type) && unRead?.extension.isNullOrEmpty()) {
                 "Start"
-            } else if (unRead.jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
+            } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
                 "Learn More"
-            } else if (unRead.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
+            } else if (unRead?.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
                 "Continue"
-            } else if (unRead.jumpType == UnReadConstants.JumpType.KEY_GUIDE) {
+            } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_GUIDE) {
                 "Start"
             } else {
                 ""
@@ -2126,27 +2159,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 新的气泡如果需要解锁周期那么就需要显示红点
         ViewUtils.setVisible(
-            UnReadConstants.plantStatus.contains(unRead.type),
+            UnReadConstants.plantStatus.contains(unRead?.type),
             binding.pplantNinth.ivNewRed
         )
 
         // 如果jumpType == none 就不显示按钮
         ViewUtils.setVisible(
-            unRead.jumpType != UnReadConstants.JumpType.KEY_NONE,
+            unRead?.jumpType != UnReadConstants.JumpType.KEY_NONE,
             binding.pplantNinth.tvBtnDesc
         )
 
         // 内容
         binding.pplantNinth.tvPopTitle.text =
-            if (unRead.extension?.contains(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
+            if (unRead?.extension?.contains(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
                 "You have Job to do."
             } else {
-                unRead.title
+                unRead?.title
             }
 
         // 是否显示取消按钮
         binding.pplantNinth.ivClose.visibility =
-            if (UnReadConstants.noCancel.contains(unRead.type)) View.GONE else View.VISIBLE
+            if (UnReadConstants.noCancel.contains(unRead?.type)) View.GONE else View.VISIBLE
     }
 
     /**
@@ -2246,7 +2279,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 三步
      */
     private fun specificStep() {
-        mViewMode.unreadMessageList.value?.first()?.let {
+        mViewMode.getUnreadMessageList().firstOrNull()?.let {
             val extension = it.extension
             if (extension.isNullOrEmpty() || extension == UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_ONE) {
                 // 换水弹窗
@@ -2378,9 +2411,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 解锁Seed周期
                         mViewMode.startRunning(botanyId = "", goon = false)
                         // 显示植物种植布局
-                        ViewUtils.setVisible(binding.pplantNinth.root)
-                        //  todo 这个显示有问题，会重复隐藏
+                        ViewUtils.setGone(binding.plantFirst.root)
                         ViewUtils.setGone(binding.pplantNinth.clContinue)
+                        ViewUtils.setVisible(binding.pplantNinth.root)
                         return
                     }
 
@@ -2397,6 +2430,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 // 日历界面返回刷新
                 KEY_FOR_CALENDAR_REFRSH -> {
+                    // 是否展示种植完成界面
+                    val isShowCompletePage = data?.getBooleanExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, false)
+                    if (isShowCompletePage == true) {
+                        showCompletePage()
+                        return
+                    }
+                    mViewMode.getUnread()
                     mViewMode.plantInfo()
                 }
 

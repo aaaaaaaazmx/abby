@@ -24,7 +24,7 @@ data class DetailByLearnMoreIdData(
                 else -> KEY_TEXT_TYPE
             }
 
-        data class Extends(val title: String? = null): BaseBean()
+        data class Extends(val title: String? = null, val width: String? = null, val height: String? = null) : BaseBean()
     }
 
     companion object {

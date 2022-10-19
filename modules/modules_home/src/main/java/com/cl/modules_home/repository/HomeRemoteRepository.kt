@@ -6,7 +6,7 @@ import com.cl.common_base.net.ServiceCreators
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
-import com.cl.modules_home.response.PlantInfoData
+import com.cl.common_base.bean.PlantInfoData
 import com.cl.modules_home.service.HttpHomeApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow

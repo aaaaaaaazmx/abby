@@ -146,6 +146,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         BasePumpWaterPop(
             this@SettingActivity,
             { status ->
+                logI(
+                    """
+                       BasePumpWaterPop: status:
+                        $status
+                    """.trimIndent()
+                )
                 // 涂鸦指令，添加排水功能
                 DeviceControl.get()
                     .success {
@@ -336,7 +342,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 success {
                     hideProgressLoading()
                     data?.let { plantDrainNextCustomPop.setData(it) }
-                    pop.maxHeight(dp2px(600f))
+                    pop.maxHeight(dp2px(700f))
                         .asCustom(plantDrainNextCustomPop).show()
                 }
             })

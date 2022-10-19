@@ -48,7 +48,8 @@ class HomePlantFivePop(
             ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS).toString())
     val getWaterVolume: LiveData<String> = _getWaterVolume
     fun setWaterVolume(volume: String) {
-        _getWaterVolume.value = volume
+        // 暂时不做水箱的容积判断，手动赋值默认就是为0L
+        _getWaterVolume.value = "0"
     }
 
 

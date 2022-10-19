@@ -19,7 +19,7 @@ object Version {
 
     const val compileSdk = 31
     const val applicationId = "com.cl.abby"
-    const val minSdk = 23
+    const val minSdk = 26
     const val targetSdk = 31
     val versionCode = 7
     const val versionName = "1.0.0"

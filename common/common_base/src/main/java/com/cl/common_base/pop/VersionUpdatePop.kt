@@ -26,12 +26,14 @@ class VersionUpdatePop(
         return R.layout.base_version_update
     }
 
+    var forcedUpdate = "0"
     override fun onCreate() {
         super.onCreate()
         DataBindingUtil.bind<BaseVersionUpdateBinding>(popupImplView)?.apply {
             tvContent.text =
                 "To ensure the best user experience, you must update your app to the latest version."
             appVersionData?.let {
+                forcedUpdate = it.forcedUpdate.toString()
                 // 0 不强制，1 强制升级
                 ViewUtils.setVisible(it.forcedUpdate == "0", tvCancel, xpopupDivider2)
             }
@@ -71,6 +73,10 @@ class VersionUpdatePop(
 
     fun setData(data: AppVersionData) {
         this.appVersionData = data
+    }
+
+    override fun onBackPressed(): Boolean {
+        return forcedUpdate != "0"
     }
 
     companion object {

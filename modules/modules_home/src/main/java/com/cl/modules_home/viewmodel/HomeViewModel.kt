@@ -18,8 +18,8 @@ import com.cl.modules_home.repository.HomeRepository
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
-import com.cl.modules_home.response.PlantInfoData
-import com.tuya.bouncycastle.asn1.BEROctetStringGenerator
+import com.cl.common_base.bean.PlantInfoData
+import com.cl.common_base.constants.UnReadConstants
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -28,7 +28,6 @@ import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import retrofit2.http.Body
 import javax.inject.Inject
 
 
@@ -72,7 +71,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS).toString())
     val getWaterVolume: LiveData<String> = _getWaterVolume
     fun setWaterVolume(volume: String) {
-        _getWaterVolume.value = volume
+        // 暂时不做水箱的容积判断，手动赋值默认就是为0L
+        _getWaterVolume.value = "0"
     }
 
     // 是否需要修复SN
@@ -179,6 +179,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         it.msg
                     )
                 } else {
+                    // 删除第一条信息
+                    removeFirstUnreadMessage()
                     Resource.Success(it.data)
                 }
             }
@@ -808,9 +810,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 当前获取引导图文详情到状态，默认为0
      *      * type	引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植
      */
-    private val _typeStatus = MutableLiveData<Int>()
-    val typeStatus: LiveData<Int> = _typeStatus
-    fun setTypeStatus(status: Int) {
+    private val _typeStatus = MutableLiveData<String>()
+    val typeStatus: LiveData<String> = _typeStatus
+    fun setTypeStatus(status: String) {
         _typeStatus.value = status
     }
 
@@ -830,6 +832,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val unreadMessageList: LiveData<MutableList<UnreadMessageData>> = _unreadMessageList
     fun setUnreadMessageList(list: MutableList<UnreadMessageData>) {
         _unreadMessageList.value = list
+    }
+
+    fun getUnreadMessageList(): MutableList<UnreadMessageData> {
+        val value = _unreadMessageList.value
+        return if (value.isNullOrEmpty()) mutableListOf() else value
     }
 
     // 删除当前第一条消息
@@ -1021,7 +1028,14 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         guideId?.let {
             _popPeriodStatus.value?.set(KEY_GUIDE_ID, it)
             // 获取图文引导，然后解锁。
-            getGuideInfo(it)
+            when(it) {
+                UnReadConstants.Device.KEY_CHANGING_WATER -> {}
+                UnReadConstants.Device.KEY_ADD_WATER -> {}
+                UnReadConstants.Device.KEY_ADD_MANURE -> {}
+                else -> {
+                    getGuideInfo(it)
+                }
+            }
         }
         _popPeriodStatus.value?.set(KEY_TASK_ID, taskId)
         _popPeriodStatus.value?.set(KEY_TASK_TIME, taskTime)

@@ -13,6 +13,7 @@ import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +50,8 @@ import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
+import com.goldentec.android.tools.util.let
+import com.goldentec.android.tools.util.letMultiple
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
@@ -117,7 +120,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         snapHelper.attachToRecyclerView(binding.rvList)
 
         // 点击事件
-        adapter.addChildClickViewIds(R.id.tv_content_day, R.id.rl_root)
+        adapter.addChildClickViewIds(R.id.ll_root)
         // 设置滑动速度
         setMaxFlingVelocity(binding.rvList, 2000)
         // 初始化年月日
@@ -141,6 +144,42 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 跳转到主页
+            showCompletePage.observe(this@CalendarActivity) {
+                if (it) {
+                    // 直接跳转到首页、展示种植完成界面
+                    setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, true))
+                    finish()
+                }
+            }
+
+            // 获取植物信息、
+            plantInfo.observe(this@CalendarActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 产看当前FlushWeight是否有东西
+                    when (mViewMode.guideInfoStatus.value) {
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
+                            if ((data?.flushingWeight ?: 0) <= 0) {
+                                mViewMode.taskId.value?.let { mViewMode.finishTask(FinishTaskReq(taskId = it)) }
+                                // 直接跳转到首页、展示种植完成界面
+                                setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, true))
+                                finish()
+                            } else {
+                                // 展示图文
+                                mViewMode.guideInfoStatus.value?.let {
+                                    mViewMode.getGuideInfo(it)
+                                }
+                            }
+                        }
+                    }
+                }
+            })
             // 获取换水的图文接口
             advertising.observe(this@CalendarActivity, resourceObserver {
                 loading { showProgressLoading() }
@@ -342,7 +381,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                         }
                                                                     }
                                                                 )
-                                                            )
+                                                            ).show()
                                                     } else {
                                                         // 如果是在换水的三步当中的最后一步，加肥
                                                         // 直接调用完成任务
@@ -389,7 +428,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         .asCustom(
                             BasePlantUsuallyGuidePop(
                                 this@CalendarActivity,
-                                onNextAction = {
+                                onNextAction = { weight ->
                                     // 判断当前的周期状态
                                     val status = mViewMode.guideInfoStatus.value
                                     if (status.isNullOrEmpty()) return@BasePlantUsuallyGuidePop
@@ -397,26 +436,26 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         CalendarData.TASK_TYPE_CHANGE_WATER -> {
                                         }
                                         CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
                                         }
                                         CalendarData.TASK_TYPE_LST -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
                                         }
                                         CalendarData.TASK_TYPE_TOPPING -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
                                         }
                                         CalendarData.TASK_TYPE_TRIM -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
                                         }
                                         CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                             // todo 这个应该是转周期了，调用图文、然后解锁花期
                                             // seed to veg
                                             SeedGuideHelp(this@CalendarActivity).showGuidePop {
-                                                mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
+                                                mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
                                             }
                                         }
                                         else -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId)) }
+                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
                                         }
                                     }
                                 },
@@ -452,10 +491,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 binding.abMonth.text =
                     CalendarUtil.getMonthFromLocation(adapter.data[it.indexOf(mViewMode.mCurrentDate) + 7].timeInMillis)
                 // 添加网络数据
-                mViewMode.getCalendar(
-                    it.first().ymd,
-                    it.last().ymd
-                )
+                letMultiple(it.firstOrNull()?.ymd, it.lastOrNull()?.ymd) { first, last ->
+                    mViewMode.getCalendar(first, last)
+                }
             }
 
             // 获取日历任务
@@ -528,9 +566,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             val list = adapter.data as? MutableList<com.cl.common_base.util.calendar.Calendar>
             val data = adapter.data[position] as? com.cl.common_base.util.calendar.Calendar
             when (view.id) {
-                R.id.tv_content_day -> {
+                R.id.ll_root -> {
                     if (list.isNullOrEmpty()) return@setOnItemChildClickListener
-                    view.background = ContextCompat.getDrawable(
+                    val rlDay = view.findViewById<RelativeLayout>(R.id.tv_content_day)
+                    rlDay.background = ContextCompat.getDrawable(
                         this@CalendarActivity,
                         com.cl.common_base.R.drawable.base_dot_main_color
                     )
@@ -555,7 +594,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     )
                     animation.duration = 600 //执行时间
                     animation.repeatCount = 0 //重复执行动画
-                    view.startAnimation(animation) //使用View启动动画
+                    rlDay.startAnimation(animation) //使用View启动动画
 
                     // todo 时间转换，并且需要请求接口
                     data?.timeInMillis?.let {
@@ -858,39 +897,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         ${CalendarUtil.getFormat("yyyy-MM-dd").format(Date().time)}
                     """.trimIndent()
                     )
-                    if (CalendarUtil.getFormat("yyyy-MM-dd").format(
-                            listContent[position].taskTime?.toLong() ?: 0L
-                        ) == CalendarUtil.getFormat("yyyy-MM-dd").format(Date().time)
-                    ) {
-                        // 当前时间等于taskTime
-                        // 当前时间小于taskTime(任务时间)
-                        when (listContent[position].taskCategory) {
-                            CalendarData.TYPE_CHANGE_WATER -> {
-                                holder.imgMark.setImageDrawable(
-                                    ContextCompat.getDrawable(
-                                        this@CalendarActivity,
-                                        com.cl.common_base.R.drawable.base_dot_change_water
-                                    )
-                                )
-                            }
-                            CalendarData.TYPE_PERIOD_CHECK -> {
-                                holder.imgMark.setImageDrawable(
-                                    ContextCompat.getDrawable(
-                                        this@CalendarActivity,
-                                        com.cl.common_base.R.drawable.base_dot_change_period
-                                    )
-                                )
-                            }
-                            CalendarData.TYPE_TRAIN -> {
-                                holder.imgMark.setImageDrawable(
-                                    ContextCompat.getDrawable(
-                                        this@CalendarActivity,
-                                        com.cl.common_base.R.drawable.base_dot_change_train
-                                    )
-                                )
-                            }
-                        }
-                    } else if (DateHelper.after(
+                    if (DateHelper.after(
                             Date(),
                             Date(listContent[position].taskTime?.toLong() ?: 0L)
                         )
@@ -906,9 +913,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             Date(
                                 listContent[position].taskTime?.toLong() ?: 0L
                             ), Date()
-                        )
+                        ) || CalendarUtil.getFormat("yyyy-MM-dd").format(
+                            listContent[position].taskTime?.toLong() ?: 0L
+                        ) == CalendarUtil.getFormat("yyyy-MM-dd").format(Date().time)
                     ) {
-                        // 当前时间小于taskTime(任务时间)
+                        // 当前时间小于或者等于taskTime(任务时间)
                         when (listContent[position].taskCategory) {
                             CalendarData.TYPE_CHANGE_WATER -> {
                                 holder.imgMark.setImageDrawable(
@@ -1015,6 +1024,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         // todo 三合一流程、加水换水加肥
                                                         // 换水、加水、加肥。三步
                                                         changWaterAddWaterAddpump()
+                                                    }
+                                                    CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
+                                                        // 首先调用plantInfo接口去查看当前有无称重
+                                                        mViewMode.plantInfo()
                                                     }
                                                     else -> {
                                                         listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }

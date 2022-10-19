@@ -100,7 +100,7 @@ class BaseTimeChoosePop(
     /**
      * 分钟选择
      */
-    private var minute: Int? = null
+    private var minute: Int? = 0
     override fun onMinuteSelected(minute: Int) {
         this.minute = minute
     }

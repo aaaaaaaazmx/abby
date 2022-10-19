@@ -102,8 +102,7 @@ class BasePlantUsuallyGuidePop(
                     }
                 }
                 // 设置当前type = 种子孵化阶段
-                UnReadConstants.Plant.KEY_INCUBATION,
-                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
+                UnReadConstants.Plant.KEY_INCUBATION -> {
                     it.forEach { bean ->
                         if (bean.url.isNullOrEmpty()) {
                             bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
@@ -114,19 +113,28 @@ class BasePlantUsuallyGuidePop(
                     // 这个没有勾选框，默认为可选状态
                     binding?.btnSuccess?.isEnabled = true
                 }
-                // 上面是解锁周期引导图、这个是点击日历问号引导图
-                UnReadConstants.CalendarAsk.KEY_SEED_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_VEGETATION_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_BLOOM_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_FLUSHING_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_HARVEST_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_DRYING_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_CURING_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_UNEARNED_SUBSCRIPTION_EXPLAIN,
-                UnReadConstants.CalendarAsk.KEY_LST,
-                UnReadConstants.CalendarAsk.KEY_TRIM,
-                UnReadConstants.CalendarAsk.KEY_TOPPING
-                -> {
+                /**
+                 *    // 上面是解锁周期引导图、这个是点击日历问号引导图
+                        UnReadConstants.Device.KEY_CHANGE_CUP_WATER,
+                        UnReadConstants.CalendarAsk.KEY_SEED_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_VEGETATION_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_BLOOM_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_FLUSHING_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_HARVEST_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_DRYING_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_CURING_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_UNEARNED_SUBSCRIPTION_EXPLAIN,
+                        UnReadConstants.CalendarAsk.KEY_LST,
+                        UnReadConstants.CalendarAsk.KEY_TRIM,
+                        UnReadConstants.CalendarAsk.KEY_TOPPING,
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING,
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING,
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING,
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_HARVEST,
+                        UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FINISH,
+                 */
+                else -> {
                     it.forEach { bean ->
                         if (bean.interaction == 0) {
                             bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
@@ -135,8 +143,9 @@ class BasePlantUsuallyGuidePop(
                         }
                     }
                     // 这个没有勾选框，默认为可选状态
-                    binding?.btnSuccess?.isEnabled = it.any { data -> data.interaction == 0 }
+                    binding?.btnSuccess?.isEnabled = it.firstOrNull { data-> data.interaction == 1 } == null
                 }
+
             }
             adapter.setList(it)
         }
@@ -200,7 +209,7 @@ class BasePlantUsuallyGuidePop(
             btnSuccess.setOnClickListener {
                 // 需要判断当前是否有需要称重的周期，
                 when (isCurrentStatus) {
-                    UnReadConstants.Plant.KEY_DRYING -> {
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
                         val etWeight = adapter.getViewByPosition(2, R.id.et_weight) as? EditText
                         logI(
                             """
@@ -209,7 +218,7 @@ class BasePlantUsuallyGuidePop(
                         )
                         onNextAction?.invoke(etWeight?.text.toString())
                     }
-                    UnReadConstants.Plant.KEY_CURING -> {
+                    UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
                         // todo VALUE_STATUS_CURING
                         val etWeight =
                             adapter.getViewByPosition(0, R.id.curing_et_weight) as? EditText
@@ -273,7 +282,7 @@ class BasePlantUsuallyGuidePop(
                         }
                         // 按钮是否可点击
                         btnSuccess.isEnabled =
-                            (adapter.data as? MutableList<GuideInfoData.PlantInfo>)?.filter { it.isCheck == true }?.size == adapter.data.size
+                            (adapter.data as? MutableList<GuideInfoData.PlantInfo>)?.filter { it.isCheck == true }?.size == (adapter.data as? MutableList<GuideInfoData.PlantInfo>)?.filter { it.interaction == 1 }?.size
                     }
                     R.id.box -> {
                         (adapter.data[position] as? GuideInfoData.PlantInfo)?.apply {
@@ -286,7 +295,7 @@ class BasePlantUsuallyGuidePop(
 
                         // 按钮是否可点击
                         btnSuccess.isEnabled =
-                            (adapter.data as? MutableList<GuideInfoData.PlantInfo>)?.filter { it.isCheck == true }?.size == adapter.data.size
+                            (adapter.data as? MutableList<GuideInfoData.PlantInfo>)?.filter { it.isCheck == true }?.size == (adapter.data as? MutableList<GuideInfoData.PlantInfo>)?.filter { it.interaction == 1 }?.size
                     }
                     R.id.iv_pic -> {
                         (adapter.data[position] as? GuideInfoData.PlantInfo)?.apply {

@@ -63,6 +63,9 @@ public class MinutePicker extends WheelPicker<Integer> {
 
     public void setSelectedMinute(int minute) {
         setSelectedMinute(minute, true);
+        if (mOnMinuteSelectedListener != null) {
+            mOnMinuteSelectedListener.onMinuteSelected(getDataList().get(getCurrentPosition()));
+        }
     }
 
     public void setSelectedMinute(int minute, boolean smootScroll) {

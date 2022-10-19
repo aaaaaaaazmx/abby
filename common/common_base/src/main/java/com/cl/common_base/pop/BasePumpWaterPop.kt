@@ -90,18 +90,19 @@ class BasePumpWaterPop(
         // 涂鸦指令，添加排水功能
         isOpenOrStop(false)
         // 因为是通过by lazy 添加的， 所以状态需要重置
+        isFirst = true
         binding?.btnSuccess?.isChecked = true
         binding?.btnSuccess?.let {
             it.background = context.resources.getDrawable(
                 R.mipmap.base_start_bg,
                 context.theme
             )
-            binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
+            binding?.tvAddClockTime?.text = "Click to start draining"
         }
         job?.cancel()
         animation.cancel()
         count = 0
-        timing = 140
+        timing = 140 * 3
         ViewUtils.setGone(binding?.ivWaterOne, binding?.ivWaterOne, binding?.ivWaterThree)
         super.onDismiss()
     }
@@ -116,13 +117,16 @@ class BasePumpWaterPop(
     }
 
     // 记时器、标准时间为140秒
-    private var timing: Int = 140
+    private var timing: Int = 140 * 3
     var binding: BasePumpWaterPopBinding? = null
+    var isFirst = true
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<BasePumpWaterPopBinding>(popupImplView)?.apply {
+            tvAddClockTime.text = "Click to start draining"
             btnSuccess.setOnClickListener {
-                onSuccessAction?.invoke(btnSuccess.isChecked)
+                onSuccessAction?.invoke(if (isFirst) isFirst else btnSuccess.isChecked)
+                isFirst = false
                 // true 排水
                 // false 停止
                 synchronized(this) {
@@ -258,10 +262,22 @@ class BasePumpWaterPop(
                                             context.theme
                                         )
                                     }
-
-                                binding?.tvAddClockTime?.text =
-                                    if ((value as? Boolean != true)) context.getString(R.string.base_pump_start_desc)
-                                    else context.getString(R.string.base_pump_stop_dec)
+                                binding?.btnSuccess?.isChecked = value as Boolean
+                                if (binding?.btnSuccess?.isChecked == true) {
+                                    // 暂停
+                                    if (value == false) {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_auto_start_desc)
+                                    } else {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
+                                    }
+                                } else {
+                                    // 暂停
+                                    if (value == false) {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_stop_dec)
+                                    } else {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
+                                    }
+                                }
                             }
 
                             if ((value as? Boolean == false)) return@observe
@@ -298,12 +314,14 @@ class BasePumpWaterPop(
             1 -> {
                 animation.cancel()
                 ViewUtils.setVisible(binding?.ivWaterOne)
+                ViewUtils.setGone(binding?.ivWaterTwo, binding?.ivWaterThree)
                 binding?.ivWaterOne?.animation = animation
                 animation.start()
             }
             2 -> {
                 animation.cancel()
                 ViewUtils.setVisible(binding?.ivWaterOne, binding?.ivWaterTwo)
+                ViewUtils.setGone(binding?.ivWaterThree)
                 binding?.ivWaterOne?.animation = null
                 binding?.ivWaterTwo?.animation = animation
                 animation.start()
@@ -343,7 +361,7 @@ class BasePumpWaterPop(
             10 * 6 * 500000,
             lifecycleScope,
             onTick = {
-                logI("$it,,,,$timing")
+                // logI("$it,,,,$timing")
                 timing -= 1
                 // 等于0了，表示排水成功
                 if (timing == 0) {
