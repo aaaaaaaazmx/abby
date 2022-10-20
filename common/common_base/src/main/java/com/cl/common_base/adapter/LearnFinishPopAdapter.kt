@@ -19,6 +19,7 @@ import com.cl.common_base.databinding.HomeFinishGuideUrlItemBinding
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.px2dp
+import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.span.appendClickable
 
 /**
@@ -35,26 +36,26 @@ class LearnFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?
         addItemType(DetailByLearnMoreIdData.KEY_URL_TYPE, R.layout.home_finish_guide_url_item)
     }
 
-//    override fun onItemViewHolderCreated(holder: BaseViewHolder, viewType: Int) {
-//        when(viewType) {
-//            DetailByLearnMoreIdData.KEY_TEXT_TYPE -> {
-//                val binding = DataBindingUtil.bind<HomeFinishGuideTextItemBinding>(holder.itemView)
-//                if (binding != null) {
-//                    // 设置数据
-//                    binding.data = data[holder.layoutPosition]
-//                    binding.executePendingBindings()
-//                }
-//            }
-//            DetailByLearnMoreIdData.KEY_IMAGE_TYPE -> {
-//                val binding = DataBindingUtil.bind<HomeFinishGuideItemBinding>(holder.itemView)
-//                if (binding != null) {
-//                    // 设置数据
-//                    binding.data = data[holder.layoutPosition]
-//                    binding.executePendingBindings()
-//                }
-//            }
-//        }
-//    }
+    //    override fun onItemViewHolderCreated(holder: BaseViewHolder, viewType: Int) {
+    //        when(viewType) {
+    //            DetailByLearnMoreIdData.KEY_TEXT_TYPE -> {
+    //                val binding = DataBindingUtil.bind<HomeFinishGuideTextItemBinding>(holder.itemView)
+    //                if (binding != null) {
+    //                    // 设置数据
+    //                    binding.data = data[holder.layoutPosition]
+    //                    binding.executePendingBindings()
+    //                }
+    //            }
+    //            DetailByLearnMoreIdData.KEY_IMAGE_TYPE -> {
+    //                val binding = DataBindingUtil.bind<HomeFinishGuideItemBinding>(holder.itemView)
+    //                if (binding != null) {
+    //                    // 设置数据
+    //                    binding.data = data[holder.layoutPosition]
+    //                    binding.executePendingBindings()
+    //                }
+    //            }
+    //        }
+    //    }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
@@ -86,11 +87,11 @@ class LearnFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?
 
     override fun convert(helper: BaseViewHolder, item: DetailByLearnMoreIdData.ItemBean) {
         // 获取 Binding
-//        val binding: HomeFinishGuideItemBinding? = helper.getBinding()
-//        if (binding != null) {
-//            binding.data = item
-//            binding.executePendingBindings()
-//        }
+        //        val binding: HomeFinishGuideItemBinding? = helper.getBinding()
+        //        if (binding != null) {
+        //            binding.data = item
+        //            binding.executePendingBindings()
+        //        }
 
         when (helper.itemViewType) {
             DetailByLearnMoreIdData.KEY_URL_TYPE -> {
@@ -103,11 +104,26 @@ class LearnFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?
             }
             // 动态设置宽高
             DetailByLearnMoreIdData.KEY_IMAGE_TYPE -> {
-//                val ivImg = helper.itemView.findViewById<ImageView>(R.id.iv_pic)
-//                val layoutParams = ivImg.layoutParams
-//                layoutParams.height = item.extend?.height?.toInt() ?: -2
-//                layoutParams.width = item.extend?.width?.toInt() ?: -1
-//                ivImg.layoutParams = layoutParams
+                logI(
+                    """
+                    windwo:
+                    ${AppUtil.getWindowWidth()}
+                    ${AppUtil.getWindowHeight()}
+                """.trimIndent()
+                )
+
+                kotlin.runCatching {
+                    item.extend?.width?.toInt()?.let {
+                        val widthProportion = AppUtil.getWindowWidth().div(it)
+                        item.extend.height?.toInt()?.times(widthProportion)?.apply {
+                            val ivImg = helper.itemView.findViewById<ImageView>(R.id.iv_pic)
+                            val layoutParams = ivImg.layoutParams
+                            layoutParams.height = this
+                            //  layoutParams.width = item.extend?.width?.toInt() ?: -1
+                            ivImg.layoutParams = layoutParams
+                        }
+                    }
+                }
             }
         }
 

@@ -130,7 +130,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      */
     private val plantDrainFinished by lazy {
         XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(true)
+            .isDestroyOnDismiss(false)
             .enableDrag(false)
             .maxHeight(dp2px(600f))
             .dismissOnTouchOutside(false)

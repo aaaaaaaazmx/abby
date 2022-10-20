@@ -191,7 +191,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     hideProgressLoading()
                     pop
                         .enableDrag(false)
-                        .maxHeight(dp2px(600f))
+                        .maxHeight(dp2px(700f))
                         .dismissOnTouchOutside(false)
                         .asCustom(
                             BasePumpWaterPop(

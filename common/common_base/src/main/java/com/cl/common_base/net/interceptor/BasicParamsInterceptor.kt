@@ -28,7 +28,7 @@ class BasicParamsInterceptor : Interceptor {
             addQueryParameter("uuid", if (privacyPolicy) AppUtil.getDeviceSerial() else null)
             addQueryParameter("mobileModel", if (privacyPolicy) AppUtil.deviceModel else null)
             addQueryParameter("mobileBrand", if (privacyPolicy) AppUtil.deviceBrand else null)
-            addQueryParameter("version", if (privacyPolicy) "${AppUtil.appVersionCode}" else null)
+            addQueryParameter("version", if (privacyPolicy) AppUtil.appVersionName else null)
             addQueryParameter("system_version_code", "${Build.VERSION.SDK_INT}")
             addQueryParameter("timeZone", "${DateHelper.getTimeZOneNumber()}")
 //            addQueryParameter("token", Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
