@@ -5,10 +5,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.ext.Resource
-import com.cl.common_base.ext.logD
-import com.cl.common_base.ext.logE
-import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.*
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
@@ -44,7 +41,8 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
         mobileModel = if (privacyPolicy) AppUtil.deviceModel else null,
         mobileBrand = if (privacyPolicy) AppUtil.deviceBrand else null,
         version =  if (privacyPolicy) AppUtil.appVersionName else null,
-        osType = "1"
+        osType = "1",
+        timeZone = DateHelper.getTimeZOneNumber().toString()
     ))
     val loginReq: LiveData<LoginReq> = _loginReq
 

@@ -72,33 +72,35 @@ class BasePumpWaterPop(
 
     override fun beforeShow() {
         super.beforeShow()
-        if (data?.size == 0) return
         kotlin.runCatching {
-            // 卡片布局需要展示3张，所以需要多添加几张
-            if ((data?.size ?: 0) == 1) {
-                data?.get(0)?.let { data?.add(it) }
+            if (data?.size != 0) {
+                // 卡片布局需要展示3张，所以需要多添加几张
+                if ((data?.size ?: 0) == 1) {
+                    data?.get(0)?.let { data?.add(it) }
+                }
+                if ((data?.size ?: 0) == 2) {
+                    data?.get(0)?.let { data?.add(it) }
+                    data?.get(1)?.let { data?.add(it) }
+                }
+                adapter.setList(data)
             }
-            if ((data?.size ?: 0) == 2) {
-                data?.get(0)?.let { data?.add(it) }
-                data?.get(1)?.let { data?.add(it) }
+
+            // 因为是通过by lazy 添加的， 所以状态需要重置
+            isFirst = true
+            binding?.btnSuccess?.isChecked = true
+            binding?.btnSuccess?.let {
+                it.background = context.resources.getDrawable(
+                    R.mipmap.base_start_bg,
+                    context.theme
+                )
             }
-            adapter.setList(data)
+            binding?.tvAddClockTime?.text = "Click to start draining"
         }
     }
 
     override fun onDismiss() {
         // 涂鸦指令，添加排水功能
         isOpenOrStop(false)
-        // 因为是通过by lazy 添加的， 所以状态需要重置
-        isFirst = true
-        binding?.btnSuccess?.isChecked = true
-        binding?.btnSuccess?.let {
-            it.background = context.resources.getDrawable(
-                R.mipmap.base_start_bg,
-                context.theme
-            )
-            binding?.tvAddClockTime?.text = "Click to start draining"
-        }
         job?.cancel()
         animation.cancel()
         count = 0
@@ -245,6 +247,7 @@ class BasePumpWaterPop(
                                     count++
                                 } else {
                                     // 计时器减去时间
+                                    if (count >= 3) timing = 120
                                     downTime()
                                 }
                                 binding?.btnSuccess?.background =
@@ -262,7 +265,6 @@ class BasePumpWaterPop(
                                             context.theme
                                         )
                                     }
-                                binding?.btnSuccess?.isChecked = value as Boolean
                                 if (binding?.btnSuccess?.isChecked == true) {
                                     // 暂停
                                     if (value == false) {
@@ -278,6 +280,7 @@ class BasePumpWaterPop(
                                         binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
                                     }
                                 }
+                                binding?.btnSuccess?.isChecked = value as Boolean
                             }
 
                             if ((value as? Boolean == false)) return@observe

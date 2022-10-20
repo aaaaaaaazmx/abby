@@ -170,6 +170,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             onWaterFinishedAction = {
                 // 排水结束
                 // 排水结束，那么直接弹出
+                if (plantDrainFinished.isShow) return@BasePumpWaterPop
                 plantDrainFinished.show()
             }
         )

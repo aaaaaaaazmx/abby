@@ -142,6 +142,16 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
+    private val basePumpWaterFinishPop by lazy {
+        BasePumpWaterFinishedPop(
+            this@CalendarActivity,
+            onSuccessAction = {
+                // 排水成功弹窗，点击OK按钮
+                // 排水成功、上报结束
+                mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
+            })
+    }
+
     override fun observe() {
         mViewMode.apply {
             // 跳转到主页
@@ -215,19 +225,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 },
                                 onWaterFinishedAction = {
                                     // 排水结束，那么直接弹出
+                                    if (basePumpWaterFinishPop.isShow) return@BasePumpWaterPop
                                     pop
                                         .isDestroyOnDismiss(false)
                                         .enableDrag(false)
                                         .maxHeight(dp2px(600f))
                                         .dismissOnTouchOutside(false)
                                         .asCustom(
-                                            BasePumpWaterFinishedPop(
-                                                this@CalendarActivity,
-                                                onSuccessAction = {
-                                                    // 排水成功弹窗，点击OK按钮
-                                                    // 排水成功、上报结束
-                                                    mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
-                                                })
+                                            basePumpWaterFinishPop
                                         ).show()
                                 },
                                 data = this.data,
