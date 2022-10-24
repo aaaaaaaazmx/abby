@@ -2,7 +2,7 @@
 <network-security-config
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="MissingDefaultResource">
-    <base-config cleartextTrafficPermitted="true">
+    <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" overridePins="true" /> <!--信任系统证书-->
 <!--            <certificates src="user" overridePins="true" /> &lt;!&ndash;信任用户证书&ndash;&gt;-->

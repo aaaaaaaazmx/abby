@@ -1,6 +1,7 @@
 package com.cl.common_base.util.device
 
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -20,6 +21,10 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     private val tuyaHomeBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
+    }
+
+    private val map by lazy {
+        hashMapOf<String, Any>()
     }
 
     // 成功和失败回调
@@ -47,7 +52,6 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      * 排水
      */
     override fun pumpWater(startOrStop: Boolean) {
-        val map = hashMapOf<String, Any>()
         map[TuYaDeviceConstants.KAY_PUMP_WATER] = startOrStop
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
@@ -60,7 +64,6 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      * 添加肥料、喂食
      */
     override fun feedAbby(startOrStop: Boolean): DeviceControlImpl {
-        val map = hashMapOf<String, Any>()
         map[TuYaDeviceConstants.KAY_FEED_ABBY] = startOrStop
         getCurrentDevice()?.publishDps(GSON.toJson(map), this)
         return this@DeviceControlImpl
@@ -70,7 +73,6 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      * 修复SN上报
      */
     override fun repairSN(isRepair: String): DeviceControlImpl {
-        val map = hashMapOf<String, Any>()
         map[TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN] = isRepair
         getCurrentDevice()?.publishDps(GSON.toJson(map), this)
         return this@DeviceControlImpl
@@ -78,10 +80,16 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
 
     override fun onError(code: String?, error: String?) {
         onErrorAction?.invoke(this@DeviceControlImpl, code, error)
-        Reporter.reportTuYaError("DeviceControlImpl", error, code)
+        kotlin.runCatching {
+            Reporter.reportTuYaError(map.keys.firstOrNull() ?: "DeviceControlImpl", map.values.firstOrNull().toString(), code)
+            map.clear()
+        }
     }
 
     override fun onSuccess() {
-        onSuccessAction?.invoke(this@DeviceControlImpl)
+        kotlin.runCatching {
+            onSuccessAction?.invoke(this@DeviceControlImpl)
+            map.clear()
+        }
     }
 }
