@@ -13,18 +13,13 @@
         <import type="android.view.View" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <com.cl.common_base.widget.MyImageView
+        android:id="@+id/iv_pic"
+        android:adjustViewBounds="true"
+        url="@{data.content}"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:id="@+id/iv_pic"
-            url="@{data.content}"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:visibility='@{data.type == "string" ? View.GONE : View.VISIBLE}'
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:visibility='@{data.type == "string" ? View.GONE : View.VISIBLE}' />
 </layout>

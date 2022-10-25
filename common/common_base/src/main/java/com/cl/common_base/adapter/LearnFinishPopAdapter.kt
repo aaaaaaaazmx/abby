@@ -21,6 +21,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.px2dp
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.span.appendClickable
+import com.goldentec.android.tools.util.letMultiple
 
 /**
  * 通用图文界面
@@ -113,15 +114,15 @@ class LearnFinishPopAdapter(data: MutableList<DetailByLearnMoreIdData.ItemBean>?
                 )
 
                 kotlin.runCatching {
-                    item.extend?.width?.toInt()?.let {
-                        val widthProportion = AppUtil.getWindowWidth().div(it)
-                        item.extend.height?.toInt()?.times(widthProportion)?.apply {
-                            val ivImg = helper.itemView.findViewById<ImageView>(R.id.iv_pic)
-                            val layoutParams = ivImg.layoutParams
-                            layoutParams.height = this
-                            //  layoutParams.width = item.extend?.width?.toInt() ?: -1
-                            ivImg.layoutParams = layoutParams
-                        }
+                    letMultiple(item.extend?.width, item.extend?.height) { width, height ->
+                        val widthProportion = width.toInt().div(height.toInt())
+                        val heightProportion = height.toInt().div(width.toInt())
+
+                        val ivImg = helper.itemView.findViewById<ImageView>(R.id.iv_pic)
+                        val layoutParams = ivImg.layoutParams
+                        layoutParams.height = heightProportion * AppUtil.getWindowHeight()
+                        // layoutParams.width = -1
+                        ivImg.layoutParams = layoutParams
                     }
                 }
             }
