@@ -18,7 +18,7 @@ class StrainNamePop(
     context: Context,
     private val onConfirmAction: ((strainName: String) -> Unit)? = null,
     private val onCancelAction: (() -> Unit)? = null,
-    private val isNoStrainName: Boolean? = true
+    private val isNoStrainName: Boolean? = false
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.strain_name
@@ -29,7 +29,7 @@ class StrainNamePop(
 
         DataBindingUtil.bind<StrainNameBinding>(popupImplView)?.apply {
             tvHow.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC)
-            ViewUtils.setVisible(isNoStrainName ?: true, ivClose)
+            ViewUtils.setGone(ivClose, isNoStrainName ?: false)
 
             ivClose.setOnClickListener {
                 onCancelAction?.invoke()

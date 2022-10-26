@@ -21,8 +21,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 31
-    val versionCode = 11
-    const val versionName = "1.1.0"
+    val versionCode = 12
+    const val versionName = "1.1.1"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"

@@ -71,7 +71,6 @@ class BasePlantUsuallyGuidePop(
      * 设置数据
      */
     fun setData(popData: GuideInfoData?): BasePlantUsuallyGuidePop {
-        binding?.btnSuccess?.isEnabled = false
         this.popData = popData?.items
         this.data = popData
         this.isCurrentStatus = popData?.type
@@ -159,6 +158,7 @@ class BasePlantUsuallyGuidePop(
                 context.getString(R.string.base_done)
             }
             UnReadConstants.CalendarAsk.KEY_UNEARNED_SUBSCRIPTION_EXPLAIN -> {
+                binding?.btnSuccess?.isEnabled = true
                 context.getString(R.string.base_supply)
             }
             UnReadConstants.CalendarAsk.KEY_TRIM,

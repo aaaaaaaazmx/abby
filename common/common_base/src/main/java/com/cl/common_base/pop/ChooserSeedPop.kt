@@ -18,7 +18,7 @@ class ChooserSeedPop(
     context: Context,
     private val onConfirmAction: ((type: String) -> Unit)? = null,
     private val onCancelAction: (() -> Unit)? = null,
-    private val isNoAttribute: Boolean? = true
+    private val isNoAttribute: Boolean? = false
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.choose_seed_pop
@@ -30,7 +30,7 @@ class ChooserSeedPop(
         DataBindingUtil.bind<ChooseSeedPopBinding>(popupImplView)?.apply {
             tvHow.setTypeface(Typeface.SANS_SERIF, Typeface.BOLD_ITALIC)
             // 显示和隐藏弹窗
-            ViewUtils.setVisible(isNoAttribute ?: true, ivClose)
+            ViewUtils.setGone(ivClose, isNoAttribute ?: false)
 
             clTwo.setOnClickListener {
                 clTwoBox.isChecked = !clTwoBox.isChecked
