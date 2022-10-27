@@ -44,7 +44,7 @@
             android:layout_margin="10dp"
             android:background="@color/lineBg"
             android:gravity="center"
-            android:text="本地环境-https://www.beheyabby.com:9330/"
+            android:text="生产环境-https://www.beheyabby.com:9330/"
             app:svRadius="16dp"
             app:svSolidType="solid" />
 
@@ -56,7 +56,7 @@
             android:layout_margin="10dp"
             android:background="@color/lineBg"
             android:gravity="center"
-            android:text="生产环境-http://192.168.3.101:9330/"
+            android:text="本地环境-http://192.168.3.101:9330/"
             app:svRadius="16dp"
             app:svSolidType="solid" />
 

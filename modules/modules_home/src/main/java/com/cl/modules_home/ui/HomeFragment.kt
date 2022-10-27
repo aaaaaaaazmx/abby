@@ -1341,6 +1341,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 error { msg, code ->
                     hideProgressLoading()
                     msg?.let { it1 -> ToastUtil.shortShow(it1) }
+                    // 容错处理、不管接口报错都显示
+                    showView(plantFlag, plantGuideFlag)
+                    // 请求未读消息数据，只有在种植之后才会开始有数据返回
+                    mViewMode.getUnread()
+                    checkOtaUpdateInfo()
                 }
                 loading {
                     showProgressLoading()
@@ -2379,6 +2384,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) {
+            mViewMode.plantInfo()
+        }
+    }
 
     /**
      * 跳转选择种子还是继承界面回调
