@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.R
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.viewmodel.MyViewModel
@@ -43,7 +44,6 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
         }
 
         binding.clMessgae.setOnClickListener {
-
         }
 
         binding.clSetting.setOnClickListener {
@@ -105,16 +105,23 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
     }
 
     override fun lazyLoad() {
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // 获取用户信息
+        // 只加载一次
         mViewMode.userDetail()
     }
 
-    override fun FragmentMyBinding.initBinding() {
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            mViewMode.userDetail()
+        }
+    }
+
+    override fun FragmentMyBinding.initBinding() {
+        binding.apply {
+            lifecycleOwner = viewLifecycleOwner
+            viewModel = mViewMode
+            executePendingBindings()
+        }
     }
 }

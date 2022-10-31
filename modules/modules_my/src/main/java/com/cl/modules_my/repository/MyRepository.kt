@@ -26,6 +26,20 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     }
 
     /**
+     * 更新植物信息
+     */
+    fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updatePlantInfo(body)
+    }
+
+    /**
+     * 获取植物信息
+     */
+    fun plantInfo(): Flow<HttpResult<PlantInfoData>> {
+        return remoteRepository.plantInfo()
+    }
+
+    /**
      * 获取用户信息
      */
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
@@ -68,6 +82,13 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.advertising(type)
     }
 
+    /**
+     * 换水获取图文
+     */
+    fun getGuideInfo(type: String): Flow<HttpResult<GuideInfoData>> {
+        return remoteRepository.getGuideInfo(type)
+    }
+
 
     /**
      * 获取疑问信息
@@ -88,5 +109,47 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
      */
     fun howTo(): Flow<HttpResult<MutableList<MyTroubleData.Bean>>> {
         return remoteRepository.howTo()
+    }
+
+    /**
+     *  获取日历任务
+     */
+    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<MutableList<CalendarData>>> {
+        return remoteRepository.getCalendar(startDate, endDate)
+    }
+
+    /**
+     * 更新日历任务
+     */
+    fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
+        return remoteRepository.updateTask(body)
+    }
+
+    /**
+     * 解锁花期
+     */
+    fun unlockJourney(name: String, weight: String? = null): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.unlockJourney(name, weight)
+    }
+
+    /**
+     * 日历-完成任务
+     */
+    fun finishTask(body: FinishTaskReq): Flow<HttpResult<String>> {
+        return remoteRepository.finishTask(body)
+    }
+
+    /**
+     * 跳过换水记录上报接口
+     */
+    fun deviceOperateStart(businessId: String, type: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deviceOperateStart(businessId, type)
+    }
+
+    /**
+     * 上报排水成功
+     */
+    fun deviceOperateFinish(type:String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deviceOperateFinish(type)
     }
 }

@@ -22,17 +22,6 @@
         <attr name="title" />
     </declare-styleable>
 
-
-    <!--ToolBar-->
-    <style name="toolBar">
-        <item name="colorControlNormal">#ffffff</item>
-        <item name="android:homeAsUpIndicator">@mipmap/left</item>
-        <item name="android:titleTextStyle">@style/titlestyle</item>
-    </style>
-    <style name="titlestyle">
-        <item name="android:textSize">12sp</item>
-    </style>
-
     <declare-styleable name="SvTextView">
         <!-- 背景填充色类型 -->
         <attr name="svSolidType">

@@ -11,9 +11,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.widget.SvTextView
-import com.cl.modules_home.response.PlantInfoData
+import com.cl.common_base.bean.PlantInfoData
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomePeriodPopBinding
+import com.cl.common_base.ext.logI
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.TimeLineState
@@ -29,7 +30,7 @@ import com.lxj.xpopup.core.BottomPopupView
 class HomePeriodPop(
     context: Context,
     private var data: MutableList<PlantInfoData.InfoList>? = null,
-    val unLockAction: ((guideId: String?) -> Unit)? = null
+    val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?, taskTime: String?) -> Unit)? = null
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_period_pop
@@ -61,6 +62,10 @@ class HomePeriodPop(
                     // 1
                     info.timeLineState = TimeLineState.ACTIVE
                 }
+                else -> {
+                    // 0
+                    info.timeLineState = TimeLineState.INACTIVE
+                }
             }
         }
     }
@@ -79,7 +84,7 @@ class HomePeriodPop(
         showView(LayoutType.RIGHT)
     }
 
-    fun showView(type: LayoutType) {
+    private fun showView(type: LayoutType) {
         data?.let {
             binding?.timeView?.initData(
                 it,
@@ -116,7 +121,17 @@ class HomePeriodPop(
 
                         // 解锁
                         svtUnlock.setOnClickListener {
-                            unLockAction?.invoke(data?.get(position)?.guideId.toString())
+                            logI("""
+                                guideType: ${data?.get(position)?.guideType.toString()}
+                                taskId: ${data?.get(position)?.taskId.toString()}
+                            """.trimIndent())
+                            unLockAction?.invoke(
+                                data?.get(position)?.guideType.toString(),
+                                data?.get(position)?.taskId.toString(),
+                                if (position != 0) data?.get(position - 1)?.guideType.toString() else data?.get(0)?.guideType.toString(),
+                                data?.get(position)?.taskTime.toString()
+                            )
+
                             dismiss()
                         }
 
@@ -218,6 +233,23 @@ class HomePeriodPop(
                                         Color.BLACK
                                     )
                                 }
+                                else -> {
+                                    svtWaitUnlock.text = "Unlock"
+                                    svtWaitUnlock.visibility = View.VISIBLE
+                                    // 待解锁状态下，不显示时间周期
+
+                                    clRoot.background = ContextCompat.getDrawable(
+                                        context,
+                                        R.mipmap.home_period_green
+                                    )
+
+                                    periodTitle.setTextColor(
+                                        Color.BLACK
+                                    )
+                                    periodTime.setTextColor(
+                                        Color.BLACK
+                                    )
+                                }
                             }
                         }
 
@@ -236,5 +268,8 @@ class HomePeriodPop(
         const val KEY_ON_GOING = "2"
         const val KEY_ALLOW_UNLOCKING = "3"
         const val KEY_LOCK_COMPLETED = "4"
+
+
+        const val KEY_SEED = "Seed"
     }
 }

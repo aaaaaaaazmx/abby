@@ -14,6 +14,7 @@ class AddHeadInterceptor : Interceptor {
         val original: Request = chain.request()
         val request: Request = original.newBuilder()
             .header("token", Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
+            .addHeader("Connection","close")
             .build()
         /*builder.addHeader("Cookie", "设置的自定义的值")
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/bg_round_calendar">
+
+        <com.cl.common_base.widget.AbTextViewCalendar
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="3dp"
+            app:layout_constraintEnd_toStartOf="@+id/rl_btn"
+            android:id="@+id/tv_task_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Vegetation" />
+
+<!--        <com.cl.common_base.widget.AbTextViewCalendar-->
+<!--            android:layout_marginEnd="3dp"-->
+<!--            app:layout_constraintEnd_toStartOf="@+id/rl_btn"-->
+<!--            android:id="@+id/period_time"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginBottom="13dp"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="13sp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            tools:text="Week5 Day5" />-->
+
+
+      <RelativeLayout
+          android:id="@+id/rl_btn"
+          android:layout_marginEnd="15dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toTopOf="parent"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+
+          <com.cl.common_base.widget.SvTextView
+              android:id="@+id/svt_unlock"
+              android:layout_width="64dp"
+              android:layout_height="28.38dp"
+              android:gravity="center"
+              android:textColor="@color/white"
+              android:textSize="13sp"
+              android:textStyle="bold"
+              app:svRadius="100dp"
+              app:svSolidColor="@color/mainColor"
+              app:svSolidType="solid"
+              tools:text="Unlock" />
+
+          <com.cl.common_base.widget.AbTextViewCalendar
+              android:visibility="gone"
+              android:id="@+id/svt_wait_unlock"
+              android:layout_width="64dp"
+              android:layout_height="28.38dp"
+              android:gravity="center"
+              android:textColor="@color/mainColor"
+              android:textSize="13sp"
+              android:textStyle="bold"
+              tools:text="Done" />
+
+          <com.cl.common_base.widget.SvTextView
+              android:id="@+id/svt_gray_unlock"
+              android:layout_width="64dp"
+              android:layout_height="28.38dp"
+              android:gravity="center"
+              android:textColor="@color/white"
+              android:textSize="13sp"
+              android:textStyle="bold"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:svRadius="100dp"
+              app:svSolidColor="#C4C4C4"
+              app:svSolidType="solid"
+              tools:text="Unlock" />
+      </RelativeLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

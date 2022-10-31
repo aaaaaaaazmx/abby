@@ -33,9 +33,10 @@ class HomePlantDrainPop(
     private var binding: HomePlantDrainPopBinding? = null
 
     // 是否显示跳过文字
-    fun setData(isShow: Boolean) {
+    fun setData(isShow: Boolean): HomePlantDrainPop {
         this.isShow = isShow
         ViewUtils.setVisible(isShow, binding?.tvSkipAddWater)
+        return this
     }
 
     override fun doAfterDismiss() {
@@ -64,7 +65,7 @@ class HomePlantDrainPop(
             // 弹出跳过加水的提示框
             tvSkipAddWater.text = buildSpannedString {
                 color(context.resources.getColor(R.color.mainColor)) {
-                    appendClickable("I've already changed the water >>") {
+                    appendClickable(context.getString(R.string.base_water_already)) {
                         dismiss()
                         onTvSkipAddWaterAction?.invoke()
                     }

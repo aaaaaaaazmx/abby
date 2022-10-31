@@ -130,7 +130,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      */
     private val plantDrainFinished by lazy {
         XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(true)
+            .isDestroyOnDismiss(false)
             .enableDrag(false)
             .maxHeight(dp2px(600f))
             .dismissOnTouchOutside(false)
@@ -146,6 +146,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         BasePumpWaterPop(
             this@SettingActivity,
             { status ->
+                logI(
+                    """
+                       BasePumpWaterPop: status:
+                        $status
+                    """.trimIndent()
+                )
                 // 涂鸦指令，添加排水功能
                 DeviceControl.get()
                     .success {
@@ -164,6 +170,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             onWaterFinishedAction = {
                 // 排水结束
                 // 排水结束，那么直接弹出
+                if (plantDrainFinished.isShow) return@BasePumpWaterPop
                 plantDrainFinished.show()
             }
         )
@@ -214,7 +221,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             .setPointClickListener {
                 pop.asCustom(SubPop(this@SettingActivity)).show()
             }
-        binding.ftSub.itemValue = userinfoBean?.subscriptionTime
+        userinfoBean?.subscriptionTime?.let {
+            binding.ftSub.itemValue = it
+        }
     }
 
     override fun observe() {
@@ -334,7 +343,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 success {
                     hideProgressLoading()
                     data?.let { plantDrainNextCustomPop.setData(it) }
-                    pop.maxHeight(dp2px(600f))
+                    pop.maxHeight(dp2px(700f))
                         .asCustom(plantDrainNextCustomPop).show()
                 }
             })
@@ -447,7 +456,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     if (value.toString() == "NG") {
                         binding.ftSub.setSvText("Activate")
                     } else {
-                        binding.ftSub.itemValue = userinfoBean?.subscriptionTime
+                        userinfoBean?.subscriptionTime?.let {
+                            binding.ftSub.itemValue = it
+                        }
                     }
                 }
             }

@@ -35,8 +35,8 @@
 -keep public class com.cl.modules_login.request.**{*;}
 -keep public class com.cl.modules_login.response.**{*;}
 
--keep public class com.cl.modules_my.request.**{*;}
--keep public class com.cl.modules_my.response.**{*;}
+#保留这个modules下面素有的类
+-keep public class com.cl.modules_my.**{*;}
 
 -keep public class com.cl.modules_pairing_connection.request.**{*;}
 -keep public class com.cl.modules_pairing_connection.response.**{*;}

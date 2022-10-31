@@ -4,8 +4,8 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
-import com.cl.modules_home.response.GuideInfoData
-import com.cl.modules_home.response.PlantInfoData
+import com.cl.common_base.bean.GuideInfoData
+import com.cl.common_base.bean.PlantInfoData
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*
 
@@ -154,4 +154,21 @@ interface HttpHomeApiService {
     @POST("abby/userMessage/getMessageDetail")
     fun getMessageDetail(@Field("messageId") messageId: String): Flow<HttpResult<DetailByLearnMoreIdData>>
 
+    /**
+     * 新的开始种植
+     */
+    @POST("abby/plant/start")
+    fun start(): Flow<HttpResult<String>>
+
+
+    /**
+     * 日历-完成任务
+     */
+    @POST("abby/calendar/finishTask")
+    fun finishTask(
+      @Body body: FinishTaskReq
+    ): Flow<HttpResult<String>>
+
+    @POST("abby/calendar/updateTask")
+    fun updateTask(@Body body: UpdateReq): Flow<HttpResult<String>>
 }

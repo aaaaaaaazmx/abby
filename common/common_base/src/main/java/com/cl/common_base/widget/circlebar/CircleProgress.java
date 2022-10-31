@@ -32,6 +32,7 @@ import com.cl.common_base.R;
 public class CircleProgress extends View {
 
     private static final String TAG = CircleProgress.class.getSimpleName();
+    private boolean isRectangle;
     private Context mContext;
 
     //默认大小
@@ -54,7 +55,7 @@ public class CircleProgress extends View {
 
     //绘制数值
     private TextPaint mValuePaint;
-    private float mValue;
+    private float mCurrentValue;
     private float mMaxValue;
     private float mValueOffset;
     private int mPrecision;
@@ -69,7 +70,7 @@ public class CircleProgress extends View {
     private RectF mRectF;
     //渐变的颜色是360度，如果只显示270，那么则会缺失部分颜色
     private SweepGradient mSweepGradient;
-    //    private int[] mGradientColors = {Color.GREEN, Color.YELLOW, Color.RED};
+//        private int[] mGradientColors = {};
     private int[] mGradientColors = {ContextCompat.getColor(getContext(), R.color.mainColor), ContextCompat.getColor(getContext(), R.color.mainColor)};
     //当前进度，[0.0f,1.0f]
     private float mPercent;
@@ -103,7 +104,7 @@ public class CircleProgress extends View {
         mCenterPoint = new Point();
         initAttrs(attrs);
         initPaint();
-        setValue(mValue);
+        setValue(mCurrentValue);
     }
 
     private void initAttrs(AttributeSet attrs) {
@@ -115,7 +116,7 @@ public class CircleProgress extends View {
         mHintColor = typedArray.getColor(R.styleable.CircleProgressBar_hintColor, Color.BLACK);
         mHintSize = typedArray.getDimension(R.styleable.CircleProgressBar_hintSize, 15);
 
-        mValue = typedArray.getFloat(R.styleable.CircleProgressBar_value, 50);
+        mCurrentValue = typedArray.getFloat(R.styleable.CircleProgressBar_value, 50);
         mMaxValue = typedArray.getFloat(R.styleable.CircleProgressBar_maxValue, 100);
         //内容数值精度格式
         mPrecision = typedArray.getInt(R.styleable.CircleProgressBar_precision, 0);
@@ -141,7 +142,8 @@ public class CircleProgress extends View {
         int gradientArcColors = typedArray.getResourceId(R.styleable.CircleProgressBar_arcColors, 0);
         if (gradientArcColors != 0) {
             try {
-                int[] gradientColors = getResources().getIntArray(gradientArcColors);
+//                int[] gradientColors = getResources().getIntArray(gradientArcColors);
+                int[] gradientColors = getGradientColors();
                 if (gradientColors.length == 0) {//如果渐变色为数组为0，则尝试以单色读取色值
                     int color = getResources().getColor(gradientArcColors);
                     mGradientColors = new int[2];
@@ -264,7 +266,7 @@ public class CircleProgress extends View {
         // 计算文字宽度，由于Paint已设置为居中绘制，故此处不需要重新计算
         // float textWidth = mValuePaint.measureText(mValue.toString());
         // float x = mCenterPoint.x - textWidth / 2;
-        canvas.drawText(String.format(mPrecisionFormat, mValue), mCenterPoint.x, mValueOffset, mValuePaint);
+        canvas.drawText(String.format(mPrecisionFormat, mCurrentValue), mCenterPoint.x, mValueOffset, mValuePaint);
 
         if (mHint != null) {
             canvas.drawText(mHint.toString(), mCenterPoint.x, mHintOffset, mHintPaint);
@@ -274,7 +276,7 @@ public class CircleProgress extends View {
             Rect rect = new Rect(); // 文字所在区域的矩形
             mValuePaint.getTextBounds(mPrecisionFormat, 0, mPrecisionFormat.length(), rect);
             canvas.drawText(mUnit.toString(),
-                    mValue < 10 ? mCenterPoint.x + rect.width() / 4 + dipToPx(getContext(), 2)
+                    mCurrentValue < 10 ? mCenterPoint.x + rect.width() / 4 + dipToPx(getContext(), 2)
                             :
                             mCenterPoint.x + rect.width() / 3 + dipToPx(getContext(), 5), mValueOffset, mUnitPaint);
         }
@@ -302,6 +304,11 @@ public class CircleProgress extends View {
     private void updateArcPaint() {
         // 设置渐变
         mSweepGradient = new SweepGradient(mCenterPoint.x, mCenterPoint.y, mGradientColors, null);
+        if (isRectangle) {
+            mArcPaint.setStrokeCap(Paint.Cap.SQUARE);
+        } else {
+            mArcPaint.setStrokeCap(Paint.Cap.ROUND);
+        }
         mArcPaint.setShader(mSweepGradient);
     }
 
@@ -325,8 +332,12 @@ public class CircleProgress extends View {
         mUnit = unit;
     }
 
-    public float getValue() {
-        return mValue;
+    public float getmCurrentValue() {
+        return mCurrentValue;
+    }
+
+    public void setmCurrentValue(float mCurrentValue) {
+        this.mCurrentValue = mCurrentValue;
     }
 
     /**
@@ -339,6 +350,7 @@ public class CircleProgress extends View {
         if (value > mMaxValue) {
             value = mMaxValue;
         }
+        mCurrentValue = value;
         float start = mPercent;
         float end = value / mMaxValue;
         startAnimator(start, end, mAnimTime);
@@ -352,16 +364,23 @@ public class CircleProgress extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mPercent = (float) animation.getAnimatedValue();
-                mValue = mPercent * mMaxValue;
+                mCurrentValue = mPercent * mMaxValue;
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "onAnimationUpdate: percent = " + mPercent
                             + ";currentAngle = " + (mSweepAngle * mPercent)
-                            + ";value = " + mValue);
+                            + ";value = " + mCurrentValue);
                 }
                 invalidate();
             }
         });
         mAnimator.start();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void stopAnimator() {
+        if (mAnimator != null) {
+            mAnimator.pause();
+        }
     }
 
     /**
@@ -408,6 +427,12 @@ public class CircleProgress extends View {
     public void setGradientColors(int[] gradientColors) {
         mGradientColors = gradientColors;
         updateArcPaint();
+    }
+    /**
+     * 显示矩形进度条
+     */
+    public void setRectangle(boolean isBoolean) {
+        isRectangle = isBoolean;
     }
 
     public long getAnimTime() {

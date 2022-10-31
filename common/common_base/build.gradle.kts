@@ -110,5 +110,9 @@ dependencies {
     api(project(mapOf("path" to ":common:BarcodeScanning")))
     // lottie
     api(Deps.lottie)
+    // viewPager指示器
     api("com.github.hackware1993:MagicIndicator:1.7.0")
+    // snapHelp
+    api("com.github.rubensousa:gravitysnaphelper:2.2.2")
+    api("com.github.limuyang2:LShadowLayout:1.0.3")
 }

@@ -8,7 +8,9 @@ import com.cl.common_base.net.adapter.GsonTypeAdapterFactory
 import com.cl.common_base.net.interceptor.*
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
+import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -21,8 +23,9 @@ object ServiceCreators {
 
     // 服务器地址
 //    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.OUTER_ANG_URL else HttpsUrl.PRODUCTION_URL
-//    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
-    private val BASE_URL =  HttpsUrl.PRODUCTION_URL
+    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
+//    private val BASE_URL =  HttpsUrl.PRODUCTION_URL
+//    private val BASE_URL =  HttpsUrl.BD_URL
 
     private const val MAX_CACHE_SIZE: Long = 1024 * 1024 * 50 // 50M 的缓存大小
 
@@ -35,9 +38,9 @@ object ServiceCreators {
 //    )
 
     private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .writeTimeout(20, TimeUnit.SECONDS)
+        .connectTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(100, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
         .addInterceptor(TokenInterceptor())
         .addInterceptor(MultiBaseUrlInterceptor())
@@ -47,6 +50,8 @@ object ServiceCreators {
         .cache(cache)
         .addInterceptor(AddHeadInterceptor())
         .addInterceptor(BasicParamsInterceptor())
+        .connectionPool(ConnectionPool(32, 5, TimeUnit.MINUTES))
+        .protocols(listOf(Protocol.HTTP_1_1))
         .build()
 
     private val builder = Retrofit.Builder()
@@ -86,6 +91,7 @@ object ServiceCreators {
     object HttpsUrl {
         // 测试服务器
         const val TEST_URL = Constants.HttpUrl.TEST_URL
+        const val BD_URL = Constants.HttpUrl.BD_URL
         const val PRODUCTION_URL = Constants.HttpUrl.FORMAL_URL
         const val DEVELOPMENT_URL = Constants.HttpUrl.DEVELOPMENT_URL
         const val OUTER_ANG_URL = Constants.HttpUrl.OUTER_ANG_URL

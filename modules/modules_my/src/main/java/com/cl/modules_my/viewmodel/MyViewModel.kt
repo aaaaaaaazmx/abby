@@ -8,6 +8,8 @@ import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -19,6 +21,12 @@ import javax.inject.Inject
 class MyViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
 
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
+    }
 
     /**
      * 获取用户信息

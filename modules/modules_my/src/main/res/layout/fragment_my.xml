@@ -6,6 +6,12 @@
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.cl.modules_my.viewmodel.MyViewModel" />
+
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

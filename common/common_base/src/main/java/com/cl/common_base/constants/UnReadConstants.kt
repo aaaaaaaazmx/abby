@@ -45,13 +45,61 @@ object UnReadConstants {
         const val KEY_DRYING = "5"
         const val KEY_HARVEST = "6"
         const val KEY_CURING = "7"
+        const val KEY_INCUBATION = "8"
+    }
+
+    /**
+     * 日历点击问号相关
+     */
+    object CalendarAsk {
+        const val KEY_SEED_EXPLAIN = "seed_explain"
+        const val KEY_VEGETATION_EXPLAIN = "vegetation_explain"
+        const val KEY_BLOOM_EXPLAIN = "bloom_explain"
+        const val KEY_FLUSHING_EXPLAIN = "flushing_explain"
+        const val KEY_HARVEST_EXPLAIN = "harvest_explain"
+        const val KEY_DRYING_EXPLAIN = "drying_explain"
+        const val KEY_CURING_EXPLAIN = "curing_explain"
+        const val KEY_UNEARNED_SUBSCRIPTION_EXPLAIN = "unearned_subscription_explain"
+        const val KEY_LST = "lst"
+        const val KEY_TOPPING = "topping"
+        const val KEY_TRIM = "trim"
+    }
+
+    /**
+     * 种植状态
+     */
+    object PlantStatus {
+        const val TASK_TYPE_CHECK_TRANSPLANT = "check_transplant"
+        const val TASK_TYPE_CHECK_CHECK_AUTOFLOWERING = "check_autoflowering"
+        const val TASK_TYPE_CHECK_CHECK_FLOWERING = "check_flowering"
+        const val TASK_TYPE_CHECK_CHECK_FLUSHING = "check_flushing"
+        const val TASK_TYPE_CHECK_CHECK_HARVEST = "check_harvest"
+        const val TASK_TYPE_CHECK_CHECK_DRYING = "check_drying"
+        const val TASK_TYPE_CHECK_CHECK_CURING = "check_curing"
+        const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"
+    }
+
+    /**
+     * 周期状态
+     */
+    object PeriodStatus {
+        const val KEY_SEED = "Seed"
+        const val KEY_GERMINATION = "Germination"
+        const val KEY_VEGETATION = "Vegetation"
+        const val KEY_FLOWERING = "Flowering"
+        const val KEY_AUTOFLOWERING = "AutoFlowering"
+        const val KEY_FLUSHING = "Flushing"
+        const val KEY_HARVEST = "Harvest"
+        const val KEY_CURING = "Curing"
+        const val KEY_DRYING = "Drying"
     }
 
     /**
      * 设备提醒相关
      */
     object Device {
-        const val KEY_CHANGING_WATER = "changing_water"
+        const val KEY_CHANGING_WATER = "change_water"
+        const val KEY_CHANGE_CUP_WATER = "change_cup_water"
         const val KEY_ADD_WATER = "add_water"
         const val KEY_ADD_MANURE = "add_manure"
 
@@ -64,6 +112,7 @@ object UnReadConstants {
         const val KEY_SWATER_PUMP_FAULT = "water_pump_fault"
         const val KEY_GAS_PUMP_FAULT = "gas_pump_fault"
         const val KEY_SENSOR_HEIGHT_FAULT = "sensor_height_fault"
+
         // 异常
         const val KEY_ENVIRONMENT_FAULT = "environment_fault"
         const val KEY_WATER_FAULT = "water_fault"
@@ -78,10 +127,10 @@ object UnReadConstants {
      * 上报三布局
      */
     object StatusManager {
-       const val VALUE_STATUS_PUMP_WATER = "pump_water"
-       const val VALUE_STATUS_ADD_WATER = "add_water"
-       const val VALUE_STATUS_ADD_MANURE = "add_manure"
-       const val VALUE_STATUS_SKIP_CHANGING_WATERE = "skip_changing_water"
+        const val VALUE_STATUS_PUMP_WATER = "pump_water"
+        const val VALUE_STATUS_ADD_WATER = "add_water"
+        const val VALUE_STATUS_ADD_MANURE = "add_manure"
+        const val VALUE_STATUS_SKIP_CHANGING_WATERE = "skip_changing_water"
     }
 
 
@@ -109,15 +158,17 @@ object UnReadConstants {
 
     /**
      * 种植状态集合
+     *
+     *  这个地方需要删除、以后不能这样判断了。
      */
     var plantStatus = mutableListOf(
-        Plant.KEY_PLANT,
-        Plant.KEY_VEGETATION,
-        Plant.KEY_FLOWERING,
-        Plant.KEY_FLUSHING,
-        Plant.KEY_DRYING,
-        Plant.KEY_HARVEST,
-        Plant.KEY_CURING
+        PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_HARVEST,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_CURING,
+        PlantStatus.TASK_TYPE_CHECK_CHECK_FINISH,
     )
 
     /**

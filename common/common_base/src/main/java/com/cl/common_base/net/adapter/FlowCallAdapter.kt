@@ -46,8 +46,22 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                     call.enqueue(object : Callback<T> {
                         override fun onFailure(call: Call<T>, t: Throwable) {
                             // 捕获异常
-                            Reporter.reportCatchError(t.message, t.localizedMessage, t.toString(), "enqueue onFailure")
-                            continuation.resumeWithException(t)
+                            // 如果是HostName异常、连接超时异常，那么不需要上报，也不需要提示
+                            if (t.toString().contains("SocketTimeoutException") || t.toString().contains("UnknownHostException") || t.toString().contains("ConnectException")) {
+                                continuation.resumeWithException(t)
+                                kotlin.runCatching {
+                                    Reporter.reportCatchError(
+                                        t.message,
+                                        t.localizedMessage,
+                                        t.toString(),
+                                        t.toString()
+                                    )
+                                }
+                            } else {
+                                Reporter.reportCatchError(t.message, t.localizedMessage, t.toString(), "enqueue onFailure")
+                                continuation.resumeWithException(t)
+                            }
+
                         }
 
                         override fun onResponse(call: Call<T>, response: Response<T>) {

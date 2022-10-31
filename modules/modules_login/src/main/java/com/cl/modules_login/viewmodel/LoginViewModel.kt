@@ -5,11 +5,9 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.ext.Resource
-import com.cl.common_base.ext.logD
-import com.cl.common_base.ext.logE
-import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.*
 import com.cl.common_base.report.Reporter
+import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
@@ -34,7 +32,18 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
     private val _registerLoginLiveData = MutableLiveData<Resource<LoginData>>()
     val registerLoginLiveData: LiveData<Resource<LoginData>> = _registerLoginLiveData
 
-    private val _loginReq = MutableLiveData(LoginReq())
+    // 是否同意隐私协议，如果同意了，那么需要更新
+    private val privacyPolicy by lazy {
+        Prefs.getBoolean(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE, false)
+    }
+
+    private val _loginReq = MutableLiveData(LoginReq(
+        mobileModel = if (privacyPolicy) AppUtil.deviceModel else null,
+        mobileBrand = if (privacyPolicy) AppUtil.deviceBrand else null,
+        version =  if (privacyPolicy) AppUtil.appVersionName else null,
+        osType = "1",
+        timeZone = DateHelper.getTimeZOneNumber().toString()
+    ))
     val loginReq: LiveData<LoginReq> = _loginReq
 
     // 账号

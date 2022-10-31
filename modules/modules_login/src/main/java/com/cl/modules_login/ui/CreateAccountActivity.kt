@@ -107,9 +107,9 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                         // 获取第一个给用户展示
                         it.data?.let { list ->
                             if (list.isEmpty()) return@let
-                            binding.tvCounttry.text = list.first().countryName
-                            userRegisterBean.country = list.first().countryName
-                            userRegisterBean.countryCode = list.first().countryCode
+                            binding.tvCounttry.text = list.firstOrNull()?.countryName
+                            userRegisterBean.country = list.firstOrNull()?.countryName
+                            userRegisterBean.countryCode = list.firstOrNull()?.countryCode
                         }
                     }
                     is Resource.Loading -> {

@@ -53,10 +53,10 @@ android {
 
     signingConfigs {
         create("abby") {
-            keyAlias = "abby.keystore"
-            keyPassword = "BaypacClub666"
-            storeFile = file("../abby.keystore")
-            storePassword = "BaypacClub666"
+            keyAlias = readProperties("KEY_ALIAS")
+            keyPassword = readProperties("KEY_PASSWORD")
+            storeFile = readProperties("KEYSTORE_FILE")?.let { file(it) }
+            storePassword = readProperties("KEYSTORE_PASSWORD")
         }
     }
 

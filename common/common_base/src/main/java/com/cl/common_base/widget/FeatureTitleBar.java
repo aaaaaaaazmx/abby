@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.cl.common_base.R;
 import com.cl.common_base.util.ViewUtils;
@@ -41,6 +42,7 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
     private ConstraintLayout clTitle;
     private OnClickListener leftClickListener;
     private OnClickListener rightClickListener;
+    private OnClickListener quickClickListener;
 
     public FeatureTitleBar(Context context) {
         this(context, null);
@@ -64,6 +66,7 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
         tvLeftName = view.findViewById(R.id.tv_left_name);
         tvLeftName.setOnClickListener(this);
         ivLeft.setOnClickListener(this);
+        clTitle.setOnClickListener(this);
         tvRight.setOnClickListener(this);
         ivRight.setOnClickListener(this);
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
@@ -94,8 +97,31 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
             if (rightClickListener != null) {
                 rightClickListener.onClick(v);
             }
+        } else if (v.getId() == R.id.cl_title) {
+            // 快速点击
+            if (quickClickListener != null && isFastClick()) {
+                quickClickListener.onClick(v);
+            }
         }
     }
+
+    /**
+     * 快速点击
+     */
+    // 两次点击间隔不能少于1000ms
+    private static final int FAST_CLICK_DELAY_TIME = 1000;
+    private static long lastClickTime;
+
+    public static boolean isFastClick() {
+        boolean flag = true;
+        long currentClickTime = System.currentTimeMillis();
+        if ((currentClickTime - lastClickTime) <= FAST_CLICK_DELAY_TIME ) {
+            flag = false;
+        }
+        lastClickTime = currentClickTime;
+        return flag;
+    }
+
 
 
     /**
@@ -155,6 +181,11 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
      */
     public FeatureTitleBar setTitle(String title) {
         tvTitle.setText(title);
+        return this;
+    }
+
+    public FeatureTitleBar setTitleColor(int colors) {
+        tvTitle.setTextColor(ContextCompat.getColor(getContext(), colors));
         return this;
     }
 
@@ -283,6 +314,14 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
      */
     public FeatureTitleBar setRightClickListener(OnClickListener onClickListener) {
         this.rightClickListener = onClickListener;
+        return this;
+    }
+
+    /**
+     * 快速点击
+     */
+    public FeatureTitleBar setQuickClickListener(OnClickListener onClickListener) {
+        this.quickClickListener = onClickListener;
         return this;
     }
 

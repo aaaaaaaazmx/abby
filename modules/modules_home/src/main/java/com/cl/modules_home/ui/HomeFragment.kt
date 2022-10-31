@@ -37,11 +37,10 @@ import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
 import com.bbgo.module_home.databinding.HomeBinding
 import com.bumptech.glide.request.RequestOptions
-import com.cl.common_base.bean.FinishPageData
-import com.cl.common_base.bean.JpushMessageData
-import com.cl.common_base.bean.UnreadMessageData
+import com.cl.common_base.bean.*
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
@@ -58,6 +57,7 @@ import kotlin.random.Random
  * 种植引导Fragment
  * 种植继承
  */
+@Suppress("LABEL_NAME_CLASH")
 @Route(path = RouterPath.Home.PAGE_HOME)
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<HomeBinding>() {
@@ -254,10 +254,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 继承
             KEY_EXTEND_PLANT -> {
                 // 弹出继承或者重新种植的的窗口
-                ViewUtils.setVisible(binding.plantExtendBg.root)
+                //                ViewUtils.setVisible(binding.plantExtendBg.root)
                 // todo 由于涂鸦下发的onLine会重新刷新这个，所以需要判断一下
-                if (plantExtendPop.isShow) return
-                plantExtendPop.show()
+                //                if (plantExtendPop.isShow) return
+                //                plantExtendPop.show()
+                // todo 现在不走这个继承弹窗了，直接走页面了
+                // 继承弹窗需要直接删除了
+                ViewUtils.setGone(binding.plantExtendBg.root)
+                ViewUtils.setVisible(binding.plantFirst.root)
             }
             // 种植完成过
             KEY_PLANTING_COMPLETED -> {
@@ -276,7 +280,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.plantFirst.apply {
             // 跳跳转plant2
             ivStart.setOnClickListener {
-                startGuidePage()
+                mViewMode.start()
             }
 
         }
@@ -301,9 +305,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 开始种植
         binding.pplantNinth.apply {
+            // 选中日历
+            ivCalendar.setOnClickListener {
+                // 如果是订阅用户
+                if (mViewMode.refreshToken.value?.data?.isVip == 1) {
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(activity, KEY_FOR_CALENDAR_REFRSH)
+                } else {
+                    // 不是订阅用户，直接弹出图文
+                    mViewMode.getGuideInfo("unearned_subscription_explain")
+                }
+            }
+
             // 客服支持
             ivSupport.setOnClickListener {
                 // todo 客服支持
+                // 暂时跳转邮箱
+                sendEmail()
             }
 
             tvFeef.setOnClickListener {
@@ -337,7 +354,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.unreadMessageList.value?.let { message ->
                     if (message.size == 0) return@setOnClickListener
                     // 标记已读信息
-                    mViewMode.getRead("${message.first().messageId}")
+                    mViewMode.getRead("${message.firstOrNull()?.messageId}")
                 }
             }
         }
@@ -364,26 +381,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     /**
-     *  初始化弹窗
-     */
-    private val plantOnePop by lazy {
-        XPopup.Builder(context)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(false)
-            .asCustom(context?.let {
-                HomePlantTwoPop(
-                    context = it,
-                    onNextAction = {
-                        ViewUtils.setVisible(binding.plantAddWater.root)
-                        ViewUtils.setGone(binding.plantFirst.root)
-                    }
-                )
-            })
-    }
-
-    /**
      * 添加化肥弹窗
      */
     private val plantFeed by lazy {
@@ -399,11 +396,74 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 涂鸦指令，添加化肥
                         DeviceControl.get()
                             .success {
-                                // 加肥气泡
-                                if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_MANURE) {
-                                    mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                                    return@success
+                                if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
+                                    pop
+                                        .isDestroyOnDismiss(false)
+                                        .maxHeight(dp2px(600f))
+                                        .enableDrag(false)
+                                        .dismissOnTouchOutside(false)
+                                        .asCustom(
+                                            BaseBottomPop(
+                                                it,
+                                                backGround = ContextCompat.getDrawable(
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.base_feet_fall_bg
+                                                ),
+                                                text = getString(com.cl.common_base.R.string.base_feet_fall),
+                                                buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
+                                                bottomText = getString(com.cl.common_base.R.string.base_dont_show),
+                                                onNextAction = {
+                                                    // 如果是在换水的三步当中的最后一步，加肥
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
+                                                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                                        return@BaseBottomPop
+                                                    }
+
+                                                    // 第六个弹窗
+                                                    // plant6后记“3”
+                                                    mViewMode.setCurrentReqStatus(3)
+                                                    mViewMode.saveOrUpdate("3")
+                                                },
+                                                bottomTextAction = {
+                                                    // 如果是在换水的三步当中的最后一步，加肥
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
+                                                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                                        return@BaseBottomPop
+                                                    }
+
+                                                    // 第六个弹窗
+                                                    // plant6后记“3”
+                                                    mViewMode.setCurrentReqStatus(3)
+                                                    mViewMode.saveOrUpdate("3")
+                                                }
+                                            )
+                                        ).show()
+                                } else {
+                                    // 加肥气泡
+                                    if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_MANURE) {
+                                        // 完成任务
+                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                        }
+                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                        return@success
+                                    }
                                 }
+
                             }
                             .error { code, error ->
                                 ToastUtil.shortShow(
@@ -445,7 +505,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 .asCustom(context?.let {
                     BasePumpWaterFinishedPop(it, onSuccessAction = {
                         // 排水成功弹窗，点击OK按钮
-                        mViewMode.unreadMessageList.value?.first()?.let { bean ->
+                        mViewMode.getUnreadMessageList().firstOrNull()?.let { bean ->
                             // 如果正好是第一步排水
                             if (bean.extension.isNullOrEmpty() || bean.extension == UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_ONE) {
                                 mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
@@ -459,35 +519,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     /**
      *  继承弹窗
+     *  暂时不需要
      */
-    private val plantExtendPop by lazy {
-        XPopup.Builder(context)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(false)
-            .asCustom(context?.let {
-                HomePlantExtendPop(
-                    context = it,
-                    onNextAction = { status ->
-                        when (status) {
-                            HomePlantExtendPop.KEY_NEW_PLANT -> {
-                                ViewUtils.setGone(binding.plantExtendBg.root)
-                                ViewUtils.setVisible(binding.plantFirst.root)
-                            }
-                            HomePlantExtendPop.KEY_EXTEND -> {
-                                // 直接跳转到种植界面
-                                ViewUtils.setGone(binding.plantExtendBg.root)
-                                ViewUtils.setGone(binding.plantFirst.root)
-                                ViewUtils.setVisible(binding.pplantNinth.root)
-                                ViewUtils.setGone(binding.pplantNinth.clContinue)
-                                mViewMode.startRunning(null, true)
-                            }
-                        }
-                    }
-                )
-            })
-    }
+    //    private val plantExtendPop by lazy {
+    //        XPopup.Builder(context)
+    //            .isDestroyOnDismiss(false)
+    //            .enableDrag(false)
+    //            .maxHeight(dp2px(600f))
+    //            .dismissOnTouchOutside(false)
+    //            .asCustom(context?.let {
+    //                HomePlantExtendPop(
+    //                    context = it,
+    //                    onNextAction = { status ->
+    //                        when (status) {
+    //                            HomePlantExtendPop.KEY_NEW_PLANT -> {
+    //                                ViewUtils.setGone(binding.plantExtendBg.root)
+    //                                ViewUtils.setVisible(binding.plantFirst.root)
+    //                            }
+    //                            HomePlantExtendPop.KEY_EXTEND -> {
+    //                                // 直接跳转到种植界面
+    //                                ViewUtils.setGone(binding.plantExtendBg.root)
+    //                                ViewUtils.setGone(binding.plantFirst.root)
+    //                                ViewUtils.setVisible(binding.pplantNinth.root)
+    //                                ViewUtils.setGone(binding.pplantNinth.clContinue)
+    //                                // mViewMode.startRunning(null, true)
+    //                            }
+    //                        }
+    //                    }
+    //                )
+    //            })
+    //    }
 
 
     // 升级弹窗
@@ -535,8 +596,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     context = it,
                     onCancelAction = {
                         // 在执行未读消息时，不需要showView
-                        if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                            || mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_WATER
+                        if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                            || mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_WATER
                         ) {
                             return@HomePlantFivePop
                         }
@@ -544,30 +605,37 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 种植引导时，点击取消弹窗时，处理得事。
                         // 状态改为2，然后
                         // 当作 plantGuideFlag = 2 来处理
-//                        showView(plantFlag, "2")
+                        //                        showView(plantFlag, "2")
                     },
                     onNextAction = {
                         // 如果是在换水的三步当中
-                        if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
-                            // 弹出加肥
-                            mViewMode.unreadMessageList.value?.first()?.let { bean ->
-                                mViewMode.userMessageFlag(
-                                    UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE,
-                                    "${bean.messageId}"
-                                )
-                                mViewMode.deviceOperateStart(
-                                    "${bean.messageId}",
-                                    UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
-                                )
+                        if (mViewMode.unreadMessageList.value?.isNotEmpty() == true) {
+                            if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                // 弹出加肥
+                                mViewMode.getUnreadMessageList().firstOrNull()?.let { bean ->
+                                    mViewMode.userMessageFlag(
+                                        UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE,
+                                        "${bean.messageId}"
+                                    )
+                                    mViewMode.deviceOperateStart(
+                                        "${bean.messageId}",
+                                        UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
+                                    )
+                                }
+                                plantSix.show()
+                                return@HomePlantFivePop
                             }
-                            plantSix.show()
-                            return@HomePlantFivePop
-                        }
 
-                        // 加水
-                        if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_ADD_WATER) {
-                            mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                            return@HomePlantFivePop
+                            // 加水
+                            if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_WATER) {
+                                // 任务完成
+                                // 完成任务
+                                mViewMode.popPeriodStatus.value?.let { map ->
+                                    mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                }
+                                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                return@HomePlantFivePop
+                            }
                         }
 
                         // plant5后记“2”
@@ -609,13 +677,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let {
             HomeSkipWaterPop(it, onConfirmAction = {
                 // 跳过换水、加水、加肥
-                mViewMode.unreadMessageList.value?.first()?.let { bean ->
-                    val messagaeId = bean.messageId
+                mViewMode.getUnreadMessageList().firstOrNull()?.let { bean ->
                     mViewMode.deviceOperateStart(
-                        "$messagaeId",
+                        "${bean.messageId}",
                         UnReadConstants.StatusManager.VALUE_STATUS_SKIP_CHANGING_WATERE
                     )
-                    mViewMode.getRead("$messagaeId")
+                    // 上报排水结束
+                    mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
                 }
             })
         }
@@ -637,17 +705,80 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 需要先发送指令喂食
                         DeviceControl.get()
                             .success {
-                                // 如果是在换水的三步当中的最后一步，加肥
-                                if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
-                                    // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                    mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                                    return@success
+                                if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
+                                    pop
+                                        .isDestroyOnDismiss(false)
+                                        .maxHeight(dp2px(600f))
+                                        .enableDrag(false)
+                                        .dismissOnTouchOutside(false)
+                                        .asCustom(
+                                            BaseBottomPop(
+                                                it,
+                                                backGround = ContextCompat.getDrawable(
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.base_feet_fall_bg
+                                                ),
+                                                text = getString(com.cl.common_base.R.string.base_feet_fall),
+                                                buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
+                                                bottomText = getString(com.cl.common_base.R.string.base_dont_show),
+                                                onNextAction = {
+                                                    // 如果是在换水的三步当中的最后一步，加肥
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
+                                                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                                        return@BaseBottomPop
+                                                    }
+
+                                                    // 第六个弹窗
+                                                    // plant6后记“3”
+                                                    mViewMode.setCurrentReqStatus(3)
+                                                    mViewMode.saveOrUpdate("3")
+                                                },
+                                                bottomTextAction = {
+                                                    // 如果是在换水的三步当中的最后一步，加肥
+                                                    if (mViewMode.getUnreadMessageList()
+                                                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                    ) {
+                                                        // 完成任务
+                                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                        }
+                                                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                                        return@BaseBottomPop
+                                                    }
+
+                                                    // 第六个弹窗
+                                                    // plant6后记“3”
+                                                    mViewMode.setCurrentReqStatus(3)
+                                                    mViewMode.saveOrUpdate("3")
+                                                }
+                                            )
+                                        ).show()
+                                } else {
+                                    // 如果是在换水的三步当中的最后一步，加肥
+                                    if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                        // 完成任务
+                                        mViewMode.popPeriodStatus.value?.let { map ->
+                                            mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
+                                        }
+                                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                        return@success
+                                    }
+
+                                    // 第六个弹窗
+                                    // plant6后记“3”
+                                    mViewMode.setCurrentReqStatus(3)
+                                    mViewMode.saveOrUpdate("3")
                                 }
 
-                                // 第六个弹窗
-                                // plant6后记“3”
-                                mViewMode.setCurrentReqStatus(3)
-                                mViewMode.saveOrUpdate("3")
                             }
                             .error { code, error ->
                                 ToastUtil.shortShow(
@@ -692,12 +823,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             FanFailPop(it, {
                 // todo 风扇故障，跳转环信客服
                 // 并且表示已读
-                mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                 // todo 暂时不跳环信，跳转邮件转发
                 sendEmail()
             }, {
                 // 并且表示已读
-                mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
+                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
             })
         }
     }
@@ -709,94 +840,68 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      */
     private val custom by lazy {
         context?.let {
-            HomePlantUsuallyPop(
+            BasePlantUsuallyGuidePop(
                 context = it,
                 onNextAction = { weight ->
                     val unReadList = mViewMode.unreadMessageList.value
                     // 应该是判断当前的种植周期。
-                    // 这个是引导阶段
                     if (unReadList.isNullOrEmpty() && mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
+                        // 这个是引导阶段
                         /**
                          * 这个状态是自己自定义的状态，主要用于上报到第几步
                          * 上报步骤
                          * 引导阶段
                          */
                         when (mViewMode.typeStatus.value) {
-                            0 -> {
+                            "0" -> {
                                 // 当前表示开始种植
                                 // 上报当前的步骤 1
                                 mViewMode.setCurrentReqStatus(1)
                                 mViewMode.saveOrUpdate("1")
                             }
-                            1 -> {
+                            "1" -> {
                                 // 这是第9个弹窗，开始种植，需要传入步骤为 4
                                 mViewMode.setCurrentReqStatus(4)
                                 mViewMode.saveOrUpdate("4")
                             }
-                            2 -> {}
-                            3 -> {}
-                            4 -> {}
-                            5 -> {}
-                            6 -> {}
+                            else -> {}
                         }
-                        return@HomePlantUsuallyPop
+                        return@BasePlantUsuallyGuidePop
                     }
 
-                    // 表示是从极光或者未读消息列表中跳转过来的。
-//                    if (UnReadConstants.plantStatus.contains(unReadList?.first()?.type)) {
-//                        // 调取解锁接口，
-//                        // Vegetation	1
-//                        //  Flowering	2
-//                        //  Flushing	3
-//                        //  Drying	5
-//                        //  Harvest	6
-//                        //  Curing	7（请求图文时id转换为int）
-//                        when (unReadList?.first()?.type) {
-//                            UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
-//                            UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
-//                            UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
-//                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney(
-//                                "Drying",
-//                                weight
-//                            )
-//                            UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
-//                            UnReadConstants.Plant.KEY_CURING -> {
-//                                mViewMode.unlockJourney(
-//                                    "Curing",
-//                                    weight
-//                                )
-//                            }
-//                        }
-//                        return@HomePlantUsuallyPop
-//                    }
-
-                    // 其实上面和下面，可以优化为同一种类型，但是需要判断对极光消息的处理，还是分开的好，但是处理逻辑可以写在一起
-
                     // 如果是从解锁周期弹窗过来的，
-                    // 这个后期可以优化，就不和上面的状态同一判断了。避免后期优化时忘记
                     if (!mViewMode.popPeriodStatus.value.isNullOrEmpty()) {
-                        // 调取解锁接口，
-                        // Vegetation	1
-                        //  Flowering	2
-                        //  Flushing	3
-                        //  Drying	5
-                        //  Harvest	6
-                        //  Curing	7（请求图文时id转换为int）
-                        when (mViewMode.popPeriodStatus.value) {
-                            UnReadConstants.Plant.KEY_VEGETATION -> mViewMode.unlockJourney("Vegetation")
-                            UnReadConstants.Plant.KEY_FLOWERING -> mViewMode.unlockJourney("Flowering")
-                            UnReadConstants.Plant.KEY_FLUSHING -> mViewMode.unlockJourney("Flushing")
-                            UnReadConstants.Plant.KEY_DRYING -> mViewMode.unlockJourney(
-                                "Drying",
-                                weight
-                            )
-                            UnReadConstants.Plant.KEY_HARVEST -> mViewMode.unlockJourney("Harvest")
-                            UnReadConstants.Plant.KEY_CURING -> {
-                                mViewMode.unlockJourney(
-                                    "Curing",
-                                    weight
-                                )
+                        val taskType = mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_GUIDE_ID)
+                        val taskId = mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_ID)
+
+                        // 判断当前的解锁周期是否需要添加新的引导图
+                        // seed -> to veg 周期解锁
+                        if (taskType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
+                            context?.let { context ->
+                                SeedGuideHelp(context).showGuidePop {
+                                    mViewMode.popPeriodStatus.value?.let { map ->
+                                        mViewMode.finishTask(FinishTaskReq(taskId, weight))
+                                    }
+                                }
                             }
+                            return@BasePlantUsuallyGuidePop
+                        }
+
+                        // 解锁接口
+                        mViewMode.finishTask(FinishTaskReq(taskId, weight))
+                    }
+                },
+                // 是否展示提醒周期文案，那么只根据taskTime是否为空，来展示，目目前只用到seed to veg 才会有taskTime
+                isShowRemindMe = mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_TIME)?.isNotEmpty(),
+                onRemindMeAction = {
+                    //  推迟两天执行
+                    val taskTime = mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_TIME)
+                    val taskId = mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_ID)
+                    // 60 * 60 * 1000 = 1小时
+                    taskTime?.let {
+                        // 这个只有出现在气泡、气泡会带时间
+                        kotlin.runCatching {
+                            mViewMode.updateTask(UpdateReq(taskId = taskId, taskTime = "${it.toLong() + 60 * 60 * 1000 * 48}"))
                         }
                     }
                 }
@@ -841,9 +946,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let {
             HomePeriodPop(
                 it,
-                unLockAction = { guideId ->
+                unLockAction = { guideType, taskId, lastOneGuideType, taskTime ->
+                    //                    if (lastOneGuideType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
+                    //                        // 表示是seed to veg
+                    //                        SeedGuideHelp(it).showGuidePop {
+                    //                            mViewMode.setPopPeriodStatus(guideId = guideType, taskId = taskId, taskTime = null)
+                    //                        }
+                    //                        return@HomePeriodPop
+                    //                    }
                     // todo 此处是用于周期弹窗解锁的
-                    guideId?.let { it1 -> mViewMode.setPopPeriodStatus(it1) }
+                    mViewMode.setPopPeriodStatus(guideId = guideType, taskId = taskId, taskTime = taskTime)
                 }
             )
         }
@@ -858,10 +970,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      */
     private val unlockCuringPop by lazy {
         context?.let {
-            HomeUnlockCuringPop(it) {
+            HomeUnlockCuringPop(it, { status ->
                 // 直接解锁
-                mViewMode.unlockJourney("Curing")
-            }
+                mViewMode.finishTask(FinishTaskReq(taskId = status))
+            })
         }
     }
 
@@ -896,9 +1008,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val versionPop by lazy {
         context?.let {
             VersionUpdatePop(it, onConfirmAction = {
-//                checkOtaUpdateInfo()
+                //                checkOtaUpdateInfo()
             }, onCancelAction = {
-//                checkOtaUpdateInfo()
+                //                checkOtaUpdateInfo()
             })
         }
     }
@@ -949,7 +1061,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 删除未读消息
                     mViewMode.removeFirstUnreadMessage()
                     // 清空气泡状态
-                    mViewMode.setPopPeriodStatus(null)
+                    mViewMode.clearPopPeriodStatus()
 
                     // 是否种植过
                     data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
@@ -1014,10 +1126,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         val requestOptions = RequestOptions()
                         requestOptions.placeholder(com.cl.common_base.R.mipmap.placeholder)
                         requestOptions.error(com.cl.common_base.R.mipmap.errorholder)
-//                        Glide.with(this@HomeFragment)
-//                            .load(it.imageUrl)
-//                            .apply(requestOptions)
-//                            .into(binding.plantComplete.ivComplete)
+                        //                        Glide.with(this@HomeFragment)
+                        //                            .load(it.imageUrl)
+                        //                            .apply(requestOptions)
+                        //                            .into(binding.plantComplete.ivComplete)
                         binding.plantComplete.tvCompleteDesc.text =
                             getString(com.cl.common_base.R.string.complete_desc, it.harvestComplete)
 
@@ -1044,15 +1156,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                 }
             })
+            // 气泡点击事件
             // 气泡按钮点击事件
             bubbleOnClickEvent.observe(viewLifecycleOwner) { clickEvent ->
                 if (clickEvent == false) return@observe
                 // 自定义开始种植弹窗
                 // 判断点击时长
                 if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
-                    // 开始种植，首先调用后台接口
-                    // 继承的情况下，只有在那个继承弹窗下才可以继承
-                    mViewMode.startRunning(null, false)
+                    // 解锁第一个周期
+                    // 显示startRunning气泡的时候，必定是发芽了的
+                    // todo 这个地方直接调用startRunning接口了。
+                    mViewMode.startRunning(botanyId = "", goon = false)
                     return@observe
                 }
 
@@ -1061,41 +1175,47 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.unreadMessageList.value?.let {
                     // 调用图文信息
                     if (it.size == 0) return@let
-                    mViewMode.unreadMessageList.value?.first()?.type?.let { type ->
+                    // How to do LTS
+                    mViewMode.getUnreadMessageList().firstOrNull()?.jumpType?.let { jumpType ->
+                        if (jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
+                            // 单独处理， 弹窗
+                            mViewMode.getMessageDetail("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                            mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                            return@observe
+                        }
+                    }
+
+                    // 状态赋值
+                    mViewMode.getUnreadMessageList().firstOrNull()?.type?.let { type ->
                         // 目前只处理了种植状态
-                        if (UnReadConstants.plantStatus.contains(type)) {
-                            // 调用图文接口，获取图文并且弹窗
-                            // 种植状态的是调用解锁，并不是调用已读
-                            mViewMode.setPopPeriodStatus(type)
-                        } else {
-                            // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
-                            // todo 设备故障跳转环信
-                            when (type) {
-                                // 换水、加水、加肥。三步
-                                // 这玩意有三步！！！
-                                UnReadConstants.Device.KEY_CHANGING_WATER -> {
-                                    specificStep()
-                                }
-                                // 加水
-                                UnReadConstants.Device.KEY_ADD_WATER -> {
-                                    plantFour.show()
-                                }
-                                // 加肥
-                                UnReadConstants.Device.KEY_ADD_MANURE -> {
-                                    plantFeed.show()
-                                }
-                                else -> {}
+                        // 周期的解锁
+                        // 气泡解锁
+
+                        mViewMode.setPopPeriodStatus(
+                            guideId = type,
+                            taskId = mViewMode.getUnreadMessageList().firstOrNull()?.taskId,
+                            taskTime = mViewMode.getUnreadMessageList().firstOrNull()?.taskTime
+                        )
+
+                        // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
+                        // todo 设备故障跳转环信
+                        when (type) {
+                            // 换水、加水、加肥。三步
+                            // 这玩意有三步！！！
+                            UnReadConstants.Device.KEY_CHANGING_WATER -> {
+                                specificStep()
+                            }
+                            // 加水
+                            UnReadConstants.Device.KEY_ADD_WATER -> {
+                                plantFour.show()
+                            }
+                            // 加肥
+                            UnReadConstants.Device.KEY_ADD_MANURE -> {
+                                plantFeed.show()
                             }
                         }
                     }
-                    // How to do LTS
-                    mViewMode.unreadMessageList.value?.first()?.jumpType?.let { jumpType ->
-                        if (jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
-                            // 单独处理， 弹窗
-                            mViewMode.getMessageDetail("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                            mViewMode.getRead("${mViewMode.unreadMessageList.value?.first()?.messageId}")
-                        }
-                    }
+
                 }
             }
             // 植物周期数据监听,植物周期弹窗数据
@@ -1115,16 +1235,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             }
 
-            // 周期内解锁，这个状态其实很垃圾，无奈选择为了赶进度
-            popPeriodStatus.observe(viewLifecycleOwner) {
-                if (it.isNullOrEmpty()) return@observe
-                // 获取图文引导，然后解锁。
-                mViewMode.getGuideInfo(it)
-            }
-
             // 未读消息
             unreadMessageList.observe(viewLifecycleOwner) {
-                if (it.isNullOrEmpty()) return@observe
                 changUnReadMessageUI()
             }
             // 是否修复SN问题
@@ -1229,6 +1341,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 error { msg, code ->
                     hideProgressLoading()
                     msg?.let { it1 -> ToastUtil.shortShow(it1) }
+                    // 容错处理、不管接口报错都显示
+                    showView(plantFlag, plantGuideFlag)
+                    // 请求未读消息数据，只有在种植之后才会开始有数据返回
+                    mViewMode.getUnread()
+                    checkOtaUpdateInfo()
                 }
                 loading {
                     showProgressLoading()
@@ -1240,11 +1357,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     // 需要判断当前是什么状态,从而显示是否展示图文通用弹窗
                     // 需要判断当前是否需要称重 判断当前是周期 CURING 7，然后需要判断 flushingWeight == null 或者直接跳转
-                    if (mViewMode.popPeriodStatus.value == UnReadConstants.Plant.KEY_CURING) {
+                    if (mViewMode.popPeriodStatus.value?.containsValue(UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING) == true) {
                         // 如果在解锁During周期的时候。填入了weight，那么在解锁curing时，这个字段不会为null
-                        if (mViewMode.plantInfo.value?.data?.flushingWeight == null) {
+                        if ((mViewMode.plantInfo.value?.data?.flushingWeight ?: 0) <= 0) {
                             // 弹出解锁弹窗，然后直接跳转种植完成界面
-                            pop.asCustom(unlockCuringPop).show()
+                            mViewMode.popPeriodStatus.value?.let {
+                                mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_ID)
+                                    ?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId = taskId)) }
+                            }
                             return@success
                         }
                     }
@@ -1252,6 +1372,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     hideProgressLoading()
                     // 给弹窗赋值
                     custom?.setData(data)
+                    mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_TIME)?.isNotEmpty()?.let { custom?.setIsRemind(it) }
+                    // todo 暂时不用引导上报
                     data?.type?.let { mViewMode.setTypeStatus(it) }
                     plantUsually.show()
                 }
@@ -1296,6 +1418,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // plant9之后记4
                             ViewUtils.setGone(binding.plantClone.root)
                             ViewUtils.setVisible(binding.pplantNinth.root)
+                            mViewMode.startRunning(botanyId = "", goon = false)
                         }
                     }
                 }
@@ -1312,9 +1435,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 获取植物基本信息
                     mViewMode.plantInfo()
                 }
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     hideProgressLoading()
                     errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+            })
+
+            // 开始种植
+            start.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, _ ->
+                    errorMsg?.let { ToastUtil.show(it) }
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 优先跳转选择种子还是继承界面
+                    // seed or clone
+                    ARouter.getInstance()
+                        .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                        .withString(Constants.Global.KEY_PLANT_ID, data)
+                        .navigation(activity, KEY_FOR_CLONE_RESULT)
                 }
             })
 
@@ -1323,90 +1464,328 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    // 植物信息数据显示
-                    binding.pplantNinth.tvWeekDay.text = """
-                        Week ${data?.week ?: "-"}
-                        Day ${data?.day ?: "-"}
-                    """.trimIndent()
 
-                    // 树苗的状态
-                    // 也是需要根据植物的信息来,需要找到当前的周期
-                    var number = 0
-                    data?.list?.let { info ->
-                        // 这样看内定不行
-                        info.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
-                            ?.let {
-                                val week = it.week?.toInt() ?: 0
-                                when (it.journeyName) {
-                                    "Vegetation" -> {
-                                        (if (week > 4) 4 else week
-                                                ).also { period -> number = period }
-                                    }
-                                    "Flowering" -> {
-                                        (if (week > 6) 10 else 4 + week).also { period ->
-                                            number = period
+                    // 属性名优先
+                    if (data?.attribute.isNullOrEmpty()) {
+                        ARouter.getInstance()
+                            .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                            .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
+                            .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
+                            .navigation(activity, KEY_FOR_USER_NAME)
+                        return@success
+                    }
+
+                    // 用来判断当前用户是否拥有名字 or 属性名，如果没有拥有名字，那么直接需要选择
+                    if (data?.strainName.isNullOrEmpty()) {
+                        pop.isDestroyOnDismiss(false)
+                            .isDestroyOnDismiss(false)
+                            .asCustom(context?.let {
+                                // 显示居中弹窗文案
+                                BaseCenterPop(
+                                    it,
+                                    onConfirmAction = {
+                                        ARouter.getInstance()
+                                            .build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                                            .withString(
+                                                Constants.Global.KEY_PLANT_ID,
+                                                data?.id.toString()
+                                            )
+                                            .withBoolean(
+                                                Constants.Global.KEY_USER_NO_STRAIN_NAME,
+                                                true
+                                            )
+                                            .navigation(activity, KEY_FOR_USER_NAME)
+                                    },
+                                    content = getString(com.cl.common_base.R.string.base_no_starin_name_desc),
+                                    isShowCancelButton = false
+                                )
+                            }).show()
+                        return@success
+                    }
+
+                    //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
+                    data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
+                        ?.let { info ->
+                            // 植物信息数据显示
+                            binding.pplantNinth.tvWeekDay.text =
+                                """
+                                ${if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(com.cl.common_base.R.string.base_autoflowering_abbreviations) else info.journeyName}
+                                Week ${data?.week ?: "-"}
+                                Day ${data?.day ?: "-"}
+                            """.trimIndent()
+                            ViewUtils.setVisible(info.journeyName != HomePeriodPop.KEY_SEED, binding.pplantNinth.ivWaterStatus)
+                            if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) {
+                                // 显示种子背景图
+                                // 根据总天数判断
+                                binding.pplantNinth.ivBowl.background = when (info.totalDay) {
+                                    0, 1 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_one
+                                            )
                                         }
                                     }
-                                    "Flushing" -> {
-                                        number = 11
+                                    2 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_two
+                                            )
+                                        }
+                                    }
+                                    3 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_three
+                                            )
+                                        }
+                                    }
+                                    4, 5 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_four
+                                            )
+                                        }
+                                    }
+                                    6, 7 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_five
+                                            )
+                                        }
+                                    }
+                                    8, 9 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_six
+                                            )
+                                        }
+                                    }
+                                    10, 11 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_seven
+                                            )
+                                        }
+                                    }
+                                    12 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_eight
+                                            )
+                                        }
+                                    }
+                                    else -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_seed_bg_eight
+                                            )
+                                        }
+                                    }
+                                }
+                            } else {
+                                // 树苗的状态
+                                // 也是需要根据植物的信息来,需要找到当前的周期
+                                var number: Int = 1
+
+                                // 植物周期状态
+                                when (info.journeyName) {
+                                    UnReadConstants.PeriodStatus.KEY_VEGETATION -> {
+                                        number = if ((info.totalDay ?: 0) in 1..7) {
+                                            1
+                                        } else if ((info.totalDay ?: 0) in 8..14) {
+                                            2
+                                        } else if ((info.totalDay ?: 0) in 15..21) {
+                                            3
+                                        } else {
+                                            4
+                                        }
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_FLOWERING -> {
+                                        number = if ((info.totalDay ?: 0) in 1..7) {
+                                            5
+                                        } else if ((info.totalDay ?: 0) in 8..14) {
+                                            6
+                                        } else if ((info.totalDay ?: 0) in 15..21) {
+                                            7
+                                        } else if ((info.totalDay ?: 0) in 22..28) {
+                                            8
+                                        } else if ((info.totalDay ?: 0) in 29..35) {
+                                            9
+                                        } else if ((info.totalDay ?: 0) in 36..42) {
+                                            10
+                                        } else if ((info.totalDay ?: 0) in 43..49) {
+                                            11
+                                        } else {
+                                            12
+                                        }
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING -> {
+                                        // Photo （seed & Clone） 没有这个周期
+                                        // Auto才会有这个周期
+                                        number = if ((info.totalDay ?: 0) in 1..6) {
+                                            1
+                                        } else if ((info.totalDay ?: 0) in 7..12) {
+                                            2
+                                        } else if ((info.totalDay ?: 0) in 13..18) {
+                                            3
+                                        } else if ((info.totalDay ?: 0) in 19..24) {
+                                            4
+                                        } else if ((info.totalDay ?: 0) in 25..30) {
+                                            5
+                                        } else if ((info.totalDay ?: 0) in 31..36) {
+                                            6
+                                        } else if ((info.totalDay ?: 0) in 37..42) {
+                                            7
+                                        } else if ((info.totalDay ?: 0) in 43..48) {
+                                            8
+                                        } else if ((info.totalDay ?: 0) in 49..54) {
+                                            9
+                                        } else if ((info.totalDay ?: 0) in 55..60) {
+                                            10
+                                        } else {
+                                            11
+                                        }
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_FLUSHING -> {
+                                        number = 12
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_HARVEST -> {
+                                        number = 12
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_DRYING -> {
+                                        number = 12
+                                    }
+                                    UnReadConstants.PeriodStatus.KEY_CURING -> {
+                                        number = 12
                                     }
                                     else -> {
                                         number = 12
                                     }
                                 }
-                            }
-                    }
-                    binding.pplantNinth.ivBowl.background = when (number) {
-                        1 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_one) }
-                        }
-                        2 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_two) }
-                        }
-                        3 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_three) }
-                        }
-                        4 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_four) }
-                        }
-                        5 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_five) }
-                        }
-                        6 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_six) }
-                        }
-                        7 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_seven) }
-                        }
-                        8 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_eight) }
-                        }
-                        9 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_nine) }
-                        }
-                        10 -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_ten) }
-                        }
-                        11 -> {
-                            context?.let {
-                                ContextCompat.getDrawable(
-                                    it,
-                                    R.mipmap.home_week_eleven
+
+                                binding.pplantNinth.ivBowl.background = when (number) {
+                                    1 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_one
+                                            )
+                                        }
+                                    }
+                                    2 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_two
+                                            )
+                                        }
+                                    }
+                                    3 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_three
+                                            )
+                                        }
+                                    }
+                                    4 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_four
+                                            )
+                                        }
+                                    }
+                                    5 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_five
+                                            )
+                                        }
+                                    }
+                                    6 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_six
+                                            )
+                                        }
+                                    }
+                                    7 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_seven
+                                            )
+                                        }
+                                    }
+                                    8 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_eight
+                                            )
+                                        }
+                                    }
+                                    9 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_nine
+                                            )
+                                        }
+                                    }
+                                    10 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_ten
+                                            )
+                                        }
+                                    }
+                                    11 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_eleven
+                                            )
+                                        }
+                                    }
+                                    12 -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_twelve
+                                            )
+                                        }
+                                    }
+                                    else -> {
+                                        context?.let {
+                                            ContextCompat.getDrawable(
+                                                it,
+                                                R.mipmap.home_week_one
+                                            )
+                                        }
+                                    }
+                                }
+
+                                logI(
+                                    """
+                                    number::::
+                                $number """
                                 )
                             }
                         }
-                        12 -> {
-                            context?.let {
-                                ContextCompat.getDrawable(
-                                    it,
-                                    R.mipmap.home_week_twelve
-                                )
-                            }
-                        }
-                        else -> {
-                            context?.let { ContextCompat.getDrawable(it, R.mipmap.home_week_one) }
-                        }
-                    }
 
                     // 植物的氧气
                     binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
@@ -1424,7 +1803,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
                     }
                 }
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     hideProgressLoading()
                     errorMsg?.let { ToastUtil.shortShow(it) }
                 }
@@ -1432,7 +1811,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 获取排水的图文广告
             advertising.observe(viewLifecycleOwner, resourceObserver {
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     errorMsg?.let { ToastUtil.shortShow(it) }
                 }
 
@@ -1440,7 +1819,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     context?.let {
                         XPopup.Builder(context)
                             .enableDrag(false)
-                            .maxHeight(dp2px(600f))
+                            .maxHeight(dp2px(700f))
                             .dismissOnTouchOutside(false)
                             .asCustom(
                                 BasePumpWaterPop(
@@ -1451,9 +1830,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             .success {
                                                 // 气泡任务和右边手动点击通用一个XPopup
                                                 // 气泡任务为：
-                                                if (mViewMode.unreadMessageList.value?.first()?.type == UnReadConstants.Device.KEY_CHANGING_WATER) {
+                                                // 主要是针对任务
+                                                if (mViewMode.getUnreadMessageList()
+                                                        .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                ) {
                                                     mViewMode.deviceOperateStart(
-                                                        business = "${mViewMode.unreadMessageList.value?.first()?.messageId}",
+                                                        business = "${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}",
                                                         type = UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER
                                                     )
                                                     return@success
@@ -1490,7 +1872,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.let { envirPop?.setData(it) }
                     envirPopDelete.show()
                 }
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     errorMsg?.let { ToastUtil.shortShow(it) }
                 }
             })
@@ -1500,21 +1882,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    if (!data.isNullOrEmpty()) {
-                        // 显示气泡
-                        // 这个气泡只有在开始种植之后才会弹出
-                        logI(data.toString())
-                        logI("size: ${data?.size}")
-                        data?.let {
-                            mViewMode.setUnreadMessageList(it)
-                        }
+                    // 气泡会消失掉，需要防止当前点了之后，这是状态之后，气泡消失掉了，但是数据还保存着, 查找当前任务不在了，那么直接消失掉
+                    if (data?.firstOrNull { it.taskId == mViewMode.popPeriodStatus.value?.get(HomeViewModel.KEY_TASK_ID) } == null) mViewMode.clearPopPeriodStatus()
+
+                    // 显示气泡
+                    // 这个气泡只有在开始种植之后才会弹出
+                    logI(data.toString())
+                    logI("size: ${data?.size}")
+                    data?.let {
+                        mViewMode.setUnreadMessageList(it)
                     }
                 }
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     hideProgressLoading()
-                    errorMsg?.let {
-                        ToastUtil.shortShow(it)
-                    }
                 }
             })
 
@@ -1526,7 +1906,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 检查下面是否还有气泡弹出
                     checkBubble()
                 }
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     hideProgressLoading()
                     errorMsg?.let {
                         ToastUtil.shortShow(it)
@@ -1534,26 +1914,40 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
-            // 解锁花期回调
-            unlockJourney.observe(viewLifecycleOwner, resourceObserver {
+            // 更新任务回调
+            updateTask.observe(viewLifecycleOwner, resourceObserver {
                 loading { showProgressLoading() }
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    // 解锁周期之后，清空保存的周期状态
+                    mViewMode.clearPopPeriodStatus()
+
+                    hideProgressLoading()
+                    // 又重新请求一次咯.主要是为了消失周期上面的红点,其他没啥作用
+                    mViewMode.plantInfo()
+                    // 看看下面还有没有弹窗，有的话，就继续弹出来
+                    checkBubble()
+                }
+            })
+
+            // 解锁花期回调
+            finishTask.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, _ ->
                     hideProgressLoading()
                     errorMsg?.let { ToastUtil.shortShow(it) }
                 }
                 success {
-                    if (mViewMode.popPeriodStatus.value == UnReadConstants.Plant.KEY_CURING) {
-                        // 跳转解锁完成界面
-                        ViewUtils.setGone(binding.pplantNinth.root)
-                        ViewUtils.setVisible(binding.plantComplete.root)
-                        // 解锁周期之后，清空保存的周期状态
-                        mViewMode.setPopPeriodStatus(null)
-                        // 种植完成获取参数
-                        mViewMode.getFinishPage()
+                    if (mViewMode.popPeriodStatus.value?.containsValue(UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING) == true) {
+                        showCompletePage()
                         return@success
                     }
                     // 解锁周期之后，清空保存的周期状态
-                    mViewMode.setPopPeriodStatus(null)
+                    mViewMode.clearPopPeriodStatus()
 
                     hideProgressLoading()
                     // 又重新请求一次咯.主要是为了消失周期上面的红点,其他没啥作用
@@ -1578,7 +1972,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     when (mViewMode.getWaterVolume.value) {
                         "0L" -> {
                             // 加水弹窗
-                            mViewMode.unreadMessageList.value?.first()?.let {
+                            mViewMode.getUnreadMessageList().firstOrNull()?.let {
                                 mViewMode.userMessageFlag(
                                     UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_TWO,
                                     "${it.messageId}"
@@ -1588,13 +1982,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
                                 )
                                 // 手动修改状态
-                                it.extension = UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_TWO
+                                it.extension =
+                                    UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_TWO
                                 it.type = UnReadConstants.StatusManager.VALUE_STATUS_ADD_WATER
                             }
                             plantFour.show()
                         }
                         else -> {
-                            mViewMode.unreadMessageList.value?.first()?.let {
+                            mViewMode.getUnreadMessageList().firstOrNull()?.let {
                                 mViewMode.userMessageFlag(
                                     UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE,
                                     "${it.messageId}"
@@ -1626,6 +2021,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
         }
+    }
+
+    /**
+     * 展示完成界面逻辑
+     */
+    private fun showCompletePage() {
+        // 跳转解锁完成界面
+        ViewUtils.setGone(binding.pplantNinth.root)
+        ViewUtils.setVisible(binding.plantComplete.root)
+        // 解锁周期之后，清空保存的周期状态
+        mViewMode.clearPopPeriodStatus()
+        // 种植完成获取参数
+        mViewMode.getFinishPage()
     }
 
     private fun offLineTextSpan() {
@@ -1705,10 +2113,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         logI("changUnReadMessageUI Coming")
 
         // 获取第一个
-        val unRead = unReadList.first()
+        val unRead = unReadList.firstOrNull()
         //  判断气泡时间是否过期，如果过期那么就直接不用了。
         //  LocalReceiveTime == null, 表示长期
-        if (unRead.LocalReceiveTime?.isNotEmpty() == true) {
+        if (unRead?.LocalReceiveTime?.isNotEmpty() == true) {
             // 发送时间
             val receiveTime = (unRead.LocalReceiveTime?.toLong())?.div(1000L)
             // 当前时间
@@ -1725,8 +2133,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 不限时气泡，显示弹窗
         // 故障 显示弹窗
-        if (UnReadConstants.malfunction.contains(unRead.type)) {
-            customFanFailPop?.setData(unRead.title)
+        if (UnReadConstants.malfunction.contains(unRead?.type)) {
+            customFanFailPop?.setData(unRead?.title)
             fanFailPop.show()
             ViewUtils.setGone(binding.pplantNinth.clContinue)
             return
@@ -1738,43 +2146,45 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 按钮
         binding.pplantNinth.tvBtnDesc.text =
-            if (UnReadConstants.plantStatus.contains(unRead.type)) {
+            if (UnReadConstants.plantStatus.contains(unRead?.type)) {
                 "Unlock"
-            } else if (unRead.jumpType == UnReadConstants.JumpType.KEY_TREND) {
+            } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_TREND) {
                 "View"
-            } else if (UnReadConstants.noCancel.contains(unRead.type) && unRead.extension.isNullOrEmpty()) {
+            } else if (UnReadConstants.noCancel.contains(unRead?.type) && unRead?.extension.isNullOrEmpty()) {
                 "Start"
-            } else if (unRead.jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
+            } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
                 "Learn More"
-            } else if (unRead.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
+            } else if (unRead?.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
                 "Continue"
+            } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_GUIDE) {
+                "Start"
             } else {
                 ""
             }.toString()
 
         // 新的气泡如果需要解锁周期那么就需要显示红点
         ViewUtils.setVisible(
-            UnReadConstants.plantStatus.contains(unRead.type),
+            UnReadConstants.plantStatus.contains(unRead?.type),
             binding.pplantNinth.ivNewRed
         )
 
         // 如果jumpType == none 就不显示按钮
         ViewUtils.setVisible(
-            unRead.jumpType != UnReadConstants.JumpType.KEY_NONE,
+            unRead?.jumpType != UnReadConstants.JumpType.KEY_NONE,
             binding.pplantNinth.tvBtnDesc
         )
 
         // 内容
         binding.pplantNinth.tvPopTitle.text =
-            if (unRead.extension?.contains(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
+            if (unRead?.extension?.contains(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
                 "You have Job to do."
             } else {
-                unRead.title
+                unRead?.title
             }
 
         // 是否显示取消按钮
         binding.pplantNinth.ivClose.visibility =
-            if (UnReadConstants.noCancel.contains(unRead.type)) View.GONE else View.VISIBLE
+            if (UnReadConstants.noCancel.contains(unRead?.type)) View.GONE else View.VISIBLE
     }
 
     /**
@@ -1874,7 +2284,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 三步
      */
     private fun specificStep() {
-        mViewMode.unreadMessageList.value?.first()?.let {
+        mViewMode.getUnreadMessageList().firstOrNull()?.let {
             val extension = it.extension
             if (extension.isNullOrEmpty() || extension == UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_ONE) {
                 // 换水弹窗
@@ -1903,7 +2313,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 //  加肥的弹窗
                 plantSix.show()
             } else {
-
+                logI("specificStep")
             }
         }
     }
@@ -1961,7 +2371,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(context!!) { null }).show()
+                .asCustom(SendEmailTipsPop(context!!)).show()
             return
         }
         try {
@@ -1970,8 +2380,79 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(context?.let { SendEmailTipsPop(it) { null } }).show()
+                .asCustom(context?.let { SendEmailTipsPop(it) }).show()
         }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) {
+            mViewMode.plantInfo()
+        }
+    }
+
+    /**
+     * 跳转选择种子还是继承界面回调
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == AppCompatActivity.RESULT_OK) {
+            when (requestCode) {
+                KEY_FOR_CLONE_RESULT -> {
+                    // 是否选择了继承
+                    val isChooserClone =
+                        data?.getBooleanExtra(Constants.Global.KEY_IS_CHOOSE_CLONE, false)
+                    val isChooserSeed =
+                        data?.getBooleanExtra(Constants.Global.KEY_IS_CHOOSE_SEED, false)
+                    // 表示啥也没选
+                    if (isChooserClone == false && isChooserSeed == false) {
+                        return
+                    }
+                    if (isChooserClone == true) {
+                        // 如果是
+                        // 弹出引导图
+                        startGuidePage()
+                        return
+                    }
+
+                    if (isChooserSeed == true) {
+                        // 跳转到向导界面、并且展示
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_GUIDE_SEED)
+                            .navigation()
+                        // 解锁Seed周期
+                        mViewMode.startRunning(botanyId = "", goon = false)
+                        // 显示植物种植布局
+                        ViewUtils.setGone(binding.plantFirst.root)
+                        ViewUtils.setGone(binding.pplantNinth.clContinue)
+                        ViewUtils.setVisible(binding.pplantNinth.root)
+                        return
+                    }
+
+                }
+
+                KEY_FOR_USER_NAME -> {
+                    // 刷新接口
+                    val isRefresh =
+                        data?.getBooleanExtra(Constants.Global.KEY_REFRESH_PLANT_INFO, false)
+                    if (isRefresh == true) {
+                        mViewMode.plantInfo()
+                    }
+                }
+
+                // 日历界面返回刷新
+                KEY_FOR_CALENDAR_REFRSH -> {
+                    // 是否展示种植完成界面
+                    val isShowCompletePage = data?.getBooleanExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, false)
+                    if (isShowCompletePage == true) {
+                        showCompletePage()
+                        return
+                    }
+                    mViewMode.getUnread()
+                    mViewMode.plantInfo()
+                }
+
+            }
+        }
+
     }
 
     companion object {
@@ -1979,5 +2460,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         const val KEY_PLANTED = "1"
         const val KEY_EXTEND_PLANT = "2"
         const val KEY_PLANTING_COMPLETED = "3"
+
+        // 跳转继承界面的回调
+        const val KEY_FOR_CLONE_RESULT = 66
+
+        // 为了刷新的回调
+        const val KEY_FOR_CALENDAR_REFRSH = 88
+
+        // 跳转继承界面为了老用户输入属性或者名字
+        const val KEY_FOR_USER_NAME = 77
     }
 }

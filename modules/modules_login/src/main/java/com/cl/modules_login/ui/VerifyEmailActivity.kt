@@ -177,6 +177,8 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                 return@let
             }
             binding.btnSuccess.isEnabled = true
+            // 验证码邮箱是否正确
+            emailName?.let { name -> mViewModel.verifyCode(it, name) }
         }
     }
 

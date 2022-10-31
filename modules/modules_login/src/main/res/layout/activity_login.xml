@@ -47,6 +47,7 @@
             app:passwordToggleDrawable="@mipmap/ic_launcher">
 
             <EditText
+                android:imeOptions="actionSend"
                 android:background="@null"
                 android:id="@+id/account_edit_text"
                 android:layout_width="match_parent"

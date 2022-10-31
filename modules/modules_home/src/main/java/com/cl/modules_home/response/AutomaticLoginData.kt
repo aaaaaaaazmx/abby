@@ -1,6 +1,7 @@
 package com.cl.modules_home.response
 
 import androidx.annotation.Keep
+import com.cl.common_base.ext.DateHelper
 import java.io.Serializable
 
 @Keep
@@ -23,4 +24,5 @@ data class AutomaticLoginData(
     val tuyaPassword: String? = null,
     val tuyaUserId: String? = null,
     val tuyaUserType: String? = null,
-) : Serializable
+    var timeZone: String? = DateHelper.getTimeZOneNumber().toString(),
+    ) : Serializable

@@ -17,8 +17,9 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
-import com.cl.modules_home.response.GuideInfoData
-import com.cl.modules_home.response.PlantInfoData
+import com.cl.common_base.bean.GuideInfoData
+import com.cl.common_base.bean.PlantInfoData
+import com.cl.common_base.constants.UnReadConstants
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -70,7 +71,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS).toString())
     val getWaterVolume: LiveData<String> = _getWaterVolume
     fun setWaterVolume(volume: String) {
-        _getWaterVolume.value = volume
+        // 暂时不做水箱的容积判断，手动赋值默认就是为0L
+        _getWaterVolume.value = "0"
     }
 
     // 是否需要修复SN
@@ -163,6 +165,42 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+    /**
+     * 任务更新，推迟到多少天之后
+     */
+    private val _updateTask = MutableLiveData<Resource<String>>()
+    val updateTask: LiveData<Resource<String>> = _updateTask
+    fun updateTask(body: UpdateReq) = viewModelScope.launch {
+        repository.updateTask(body)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    // 删除第一条信息
+                    removeFirstUnreadMessage()
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                _updateTask.value = it
+            }
+    }
+
 
     /**
      * 上报引导
@@ -201,7 +239,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
-     * 开始种植植物
+     * 旧的开始种植植物
      */
     private val _startRunning = MutableLiveData<Resource<Boolean>>()
     val startRunning: LiveData<Resource<Boolean>> = _startRunning
@@ -232,6 +270,43 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 }.collectLatest {
                     _startRunning.value = it
+                }
+        }
+    }
+
+
+    /**
+     * 开始种植植物
+     */
+    private val _start = MutableLiveData<Resource<String>>()
+    val start: LiveData<Resource<String>> = _start
+    fun start() {
+        viewModelScope.launch {
+            repository.start()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _start.value = it
                 }
         }
     }
@@ -279,6 +354,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getDetailByLearnMoreId = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
     val getDetailByLearnMoreId: LiveData<Resource<DetailByLearnMoreIdData>> =
         _getDetailByLearnMoreId
+
     fun getDetailByLearnMoreId(type: String) {
         viewModelScope.launch {
             repository.getDetailByLearnMoreId(type)
@@ -317,6 +393,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getMessageDetail = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
     val getMessageDetail: LiveData<Resource<DetailByLearnMoreIdData>> =
         _getMessageDetail
+
     fun getMessageDetail(type: String) {
         viewModelScope.launch {
             repository.getMessageDetail(type)
@@ -427,7 +504,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getUnread = MutableLiveData<Resource<MutableList<UnreadMessageData>>>()
     val getUnread: LiveData<Resource<MutableList<UnreadMessageData>>> = _getUnread
     fun getUnread() {
-        viewModelScope.launch {getUnread
+        viewModelScope.launch {
+            getUnread
             repository.getUnread()
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
@@ -496,7 +574,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
-     * 解锁花期
+     * 解锁花期--弃用
      */
     private val _unlockJourney = MutableLiveData<Resource<BaseBean>>()
     val unlockJourney: LiveData<Resource<BaseBean>> = _unlockJourney
@@ -529,6 +607,45 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 }.collectLatest {
                     _unlockJourney.value = it
+                }
+        }
+    }
+
+
+    /**
+     * 解锁花期、这个是最终的
+     */
+    private val _finishTask = MutableLiveData<Resource<String>>()
+    val finishTask: LiveData<Resource<String>> = _finishTask
+    fun finishTask(body: FinishTaskReq) {
+        viewModelScope.launch {
+            repository.finishTask(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        // 删除第一条信息
+                        removeFirstUnreadMessage()
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _finishTask.value = it
                 }
         }
     }
@@ -693,9 +810,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 当前获取引导图文详情到状态，默认为0
      *      * type	引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植
      */
-    private val _typeStatus = MutableLiveData<Int>()
-    val typeStatus: LiveData<Int> = _typeStatus
-    fun setTypeStatus(status: Int) {
+    private val _typeStatus = MutableLiveData<String>()
+    val typeStatus: LiveData<String> = _typeStatus
+    fun setTypeStatus(status: String) {
         _typeStatus.value = status
     }
 
@@ -715,6 +832,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val unreadMessageList: LiveData<MutableList<UnreadMessageData>> = _unreadMessageList
     fun setUnreadMessageList(list: MutableList<UnreadMessageData>) {
         _unreadMessageList.value = list
+    }
+
+    fun getUnreadMessageList(): MutableList<UnreadMessageData> {
+        val value = _unreadMessageList.value
+        return if (value.isNullOrEmpty()) mutableListOf() else value
     }
 
     // 删除当前第一条消息
@@ -898,11 +1020,31 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      *  周期弹窗时的状态选择，目前此状态只用于周期弹窗，目的是为了解锁，后期可以优化
      *  周期Id
+     *  改动为map集合，保存了解锁ID（图文展示）、以及TaskId（解锁）
      */
-    private val _popPeriodStatus = MutableLiveData<String?>()
-    val popPeriodStatus: LiveData<String?> = _popPeriodStatus
-    fun setPopPeriodStatus(status: String?) {
-        _popPeriodStatus.value = status
+    private val _popPeriodStatus = MutableLiveData<HashMap<String, String?>?>(hashMapOf())
+    val popPeriodStatus: LiveData<HashMap<String, String?>?> = _popPeriodStatus
+    fun setPopPeriodStatus(guideId: String? = null, taskId: String? = null, taskTime: String? = null) {
+        guideId?.let {
+            _popPeriodStatus.value?.set(KEY_GUIDE_ID, it)
+            // 获取图文引导，然后解锁。
+            when(it) {
+                UnReadConstants.Device.KEY_CHANGING_WATER -> {}
+                UnReadConstants.Device.KEY_ADD_WATER -> {}
+                UnReadConstants.Device.KEY_ADD_MANURE -> {}
+                else -> {
+                    getGuideInfo(it)
+                }
+            }
+        }
+        _popPeriodStatus.value?.set(KEY_TASK_ID, taskId)
+        _popPeriodStatus.value?.set(KEY_TASK_TIME, taskTime)
+    }
+
+    // 清空
+    fun clearPopPeriodStatus() {
+        if (_popPeriodStatus.value.isNullOrEmpty()) return
+        _popPeriodStatus.value?.clear()
     }
 
     /**
@@ -948,5 +1090,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             .onCompletion { onFinish?.invoke() }
             .onEach { onTick.invoke(it) }
             .launchIn(scope)
+    }
+
+    companion object {
+        const val KEY_GUIDE_ID = "key_guide_id"
+        const val KEY_TASK_ID = "key_task_id"
+        const val KEY_TASK_TIME = "key_task_time"
     }
 }

@@ -10,9 +10,10 @@
 
 
     <androidx.core.widget.NestedScrollView
-        android:background="@drawable/bg_round_tl_tr"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_round_tl_tr">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,36 +40,34 @@
                 android:background="@color/white" />
 
             <TextView
-                android:layout_gravity="center"
+                android:gravity="center_horizontal"
                 android:id="@+id/tv_add_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rv_add"
                 android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="43dp"
-                android:text="Click the button to start draining"
+                android:layout_marginEnd="20dp"
+                android:text="@string/base_pump_start_desc"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
 
             <RelativeLayout
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:layout_centerInParent="true"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_below="@+id/tv_add_clock_time"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_add_clock_time"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center">
 
                 <com.cl.common_base.widget.ripple.RippleView
-                    app:ripple_circle_color="@color/mainColor"
-                    app:ripple_circle_count="3"
-                    app:ripple_circle_min_radius="10dp"
-                    app:ripple_circle_style="FILL"
-                    app:ripple_speed="1"
-                    android:id="@+id/wv"
                     android:layout_width="130dp"
                     android:layout_height="130dp"
                     android:layout_gravity="center"
@@ -76,7 +75,52 @@
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="18sp"
-                    />
+                    app:ripple_circle_color="@color/mainColor"
+                    app:ripple_circle_count="3"
+                    app:ripple_circle_min_radius="10dp"
+                    app:ripple_circle_style="FILL"
+                    app:ripple_speed="1" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:visibility="gone"
+                    android:id="@+id/cb_bg"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:background="@mipmap/home_water_bg">
+
+                    <ImageView
+                        android:visibility="gone"
+                        android:id="@+id/iv_water_one"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:background="@mipmap/one_bg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+
+                        <ImageView
+                            android:visibility="gone"
+                            android:id="@+id/iv_water_two"
+                            android:layout_marginEnd="2dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:background="@mipmap/two_bg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:visibility="gone"
+                        android:id="@+id/iv_water_three"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:background="@mipmap/three_bg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <CheckBox
                     android:id="@+id/btn_success"

@@ -23,7 +23,7 @@ class UpdateProgressPop(
 
     fun setData(progress: Int) {
         this.progress = progress
-        binding?.circleBar?.value = progress.toFloat()
+        binding?.circleBar?.setValue(progress.toFloat())
     }
 
     override fun onDismiss() {

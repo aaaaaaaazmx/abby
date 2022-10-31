@@ -1,4 +1,3 @@
-
 package com.cl.common_base.util
 
 import android.annotation.SuppressLint
@@ -8,12 +7,14 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.DisplayMetrics
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.cl.common_base.BaseApplication
@@ -124,6 +125,24 @@ object AppUtil {
     }
 
     /**
+     * 获取屏幕的宽
+     */
+    fun getWindowWidth(): Int {
+        val resources: Resources = BaseApplication.getContext().resources
+        val dm: DisplayMetrics = resources.displayMetrics
+        return dm.widthPixels
+    }
+
+    /**
+     * 获取屏幕的高
+     */
+    fun getWindowHeight(): Int {
+        val resources: Resources = BaseApplication.getContext().resources
+        val dm: DisplayMetrics = resources.displayMetrics
+        return dm.heightPixels
+    }
+
+    /**
      * 获取资源文件中定义的字符串。
      *
      * @param resId
@@ -157,7 +176,8 @@ object AppUtil {
         var applicationInfo: ApplicationInfo? = null
         try {
             applicationInfo = BaseApplication.getContext().packageManager.getApplicationInfo(
-                appPackage, PackageManager.GET_META_DATA)
+                appPackage, PackageManager.GET_META_DATA
+            )
         } catch (e: PackageManager.NameNotFoundException) {
             logE("${e.message},,$e")
         }
@@ -238,7 +258,7 @@ object AppUtil {
         if (Build.BRAND == null) {
             return
         }
-        when(Build.BRAND.lowercase(Locale.getDefault())) {
+        when (Build.BRAND.lowercase(Locale.getDefault())) {
             "realme" -> goOPPOSetting(context)
             "oppo" -> goOPPOSetting(context)
             "huawei" -> goHuaWeiSetting(context)

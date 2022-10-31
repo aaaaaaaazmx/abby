@@ -1,13 +1,14 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
-import android.widget.Toast
+import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
@@ -15,8 +16,10 @@ import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.setVisible
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -31,9 +34,8 @@ import com.lxj.xpopup.core.BottomPopupView
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.delay
-import kotlin.concurrent.thread
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 
 /**
@@ -54,6 +56,8 @@ class BasePumpWaterPop(
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
+    private var count = 1
+
     override fun getImplLayoutId(): Int {
         return R.layout.base_pump_water_pop
     }
@@ -68,58 +72,82 @@ class BasePumpWaterPop(
 
     override fun beforeShow() {
         super.beforeShow()
-        if (data?.size == 0) return
         kotlin.runCatching {
-            // 卡片布局需要展示3张，所以需要多添加几张
-            if ((data?.size ?: 0) == 1) {
-                data?.get(0)?.let { data?.add(it) }
+            if (data?.size != 0) {
+                // 卡片布局需要展示3张，所以需要多添加几张
+                if ((data?.size ?: 0) == 1) {
+                    data?.get(0)?.let { data?.add(it) }
+                }
+                if ((data?.size ?: 0) == 2) {
+                    data?.get(0)?.let { data?.add(it) }
+                    data?.get(1)?.let { data?.add(it) }
+                }
+                adapter.setList(data)
             }
-            if ((data?.size ?: 0) == 2) {
-                data?.get(0)?.let { data?.add(it) }
-                data?.get(1)?.let { data?.add(it) }
+
+            // 因为是通过by lazy 添加的， 所以状态需要重置
+            isFirst = true
+            binding?.btnSuccess?.isChecked = true
+            binding?.btnSuccess?.let {
+                it.background = context.resources.getDrawable(
+                    R.mipmap.base_start_bg,
+                    context.theme
+                )
             }
-            adapter.setList(data)
+            binding?.tvAddClockTime?.text = "Click to start draining"
         }
     }
 
     override fun onDismiss() {
         // 涂鸦指令，添加排水功能
         isOpenOrStop(false)
-        // 因为是通过by lazy 添加的， 所以状态需要重置
-        binding?.btnSuccess?.isChecked = true
-        binding?.btnSuccess?.let {
-            it.background = context.resources.getDrawable(
-                R.mipmap.base_start_bg,
-                context.theme
-            )
-            binding?.tvAddClockTime?.text = "Click the button to start draining"
-        }
+        job?.cancel()
+        animation.cancel()
+        count = 0
+        timing = 140 * 3
+        ViewUtils.setGone(binding?.ivWaterOne, binding?.ivWaterOne, binding?.ivWaterThree)
         super.onDismiss()
     }
 
+    private val animation by lazy {
+        val animation = AlphaAnimation(
+            0f, 1f
+        )
+        animation.duration = 1000 //执行时间
+        animation.repeatCount = -1 //重复执行动画
+        animation
+    }
+
+    // 记时器、标准时间为140秒
+    private var timing: Int = 140 * 3
     var binding: BasePumpWaterPopBinding? = null
+    var isFirst = true
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<BasePumpWaterPopBinding>(popupImplView)?.apply {
+            tvAddClockTime.text = "Click to start draining"
             btnSuccess.setOnClickListener {
-                onSuccessAction?.invoke(btnSuccess.isChecked)
+                onSuccessAction?.invoke(if (isFirst) isFirst else btnSuccess.isChecked)
+                isFirst = false
                 // true 排水
                 // false 停止
                 synchronized(this) {
                     it.background = if (btnSuccess.isChecked) {
-                        wv.onPause()
+                        // 如果是第一次排水
+                        showAlphaAniamtion()
                         context.resources.getDrawable(
                             R.mipmap.base_start_bg,
                             context.theme
                         )
                     } else {
-                        wv.onStart(this@BasePumpWaterPop)
+                        ViewUtils.setGone(binding?.cbBg)
+                        animation.cancel()
                         context.resources.getDrawable(R.mipmap.base_suspend_bg, context.theme)
                     }
 
                     tvAddClockTime.text =
-                        if (btnSuccess.isChecked) "Click the button to start draining"
-                        else "Click the button to stop draining"
+                        if (btnSuccess.isChecked) context.getString(R.string.base_pump_start_desc)
+                        else context.getString(R.string.base_pump_stop_dec)
                 }
             }
             ivClose.setOnClickListener {
@@ -149,33 +177,33 @@ class BasePumpWaterPop(
                     o: AdvertisingData?,
                     direction: Int
                 ) {
-//                    when (direction) {
-//                        ReItemTouchHelper.DOWN -> Toast.makeText(
-//                            context,
-//                            "swipe down out",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        ReItemTouchHelper.UP -> Toast.makeText(
-//                            context,
-//                            "swipe up out ",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        ReItemTouchHelper.LEFT -> Toast.makeText(
-//                            context,
-//                            "swipe left out",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                        ReItemTouchHelper.RIGHT -> Toast.makeText(
-//                            context,
-//                            "swipe right out",
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
+                    //                    when (direction) {
+                    //                        ReItemTouchHelper.DOWN -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe down out",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                        ReItemTouchHelper.UP -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe up out ",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                        ReItemTouchHelper.LEFT -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe left out",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                        ReItemTouchHelper.RIGHT -> Toast.makeText(
+                    //                            context,
+                    //                            "swipe right out",
+                    //                            Toast.LENGTH_SHORT
+                    //                        ).show()
+                    //                    }
                 }
 
                 override fun onSwipedClear() {
-//                    Toast.makeText(context, "cards are consumed", Toast.LENGTH_SHORT)
-//                        .show()
+                    //                    Toast.makeText(context, "cards are consumed", Toast.LENGTH_SHORT)
+                    //                        .show()
                 }
             })
 
@@ -200,7 +228,7 @@ class BasePumpWaterPop(
                     when (key) {
                         TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
                             // 涂鸦指令，添加排水功能
-//                            isOpenOrStop(false)
+                            //                            isOpenOrStop(false)
                             // 排水成功
                             if ((value as? Boolean == false)) return@observe
                             onWaterFinishedAction?.invoke()
@@ -209,28 +237,50 @@ class BasePumpWaterPop(
                         //
                         TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
                             // 涂鸦指令，添加排水功能
-//                            isOpenOrStop(value)
+                            //                            isOpenOrStop(value)
                             synchronized(this) {
                                 // 加锁的目的是为了
                                 // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
+                                // false 是暂停排水、 true是开始排水
+                                if (value == false) {
+                                    job?.cancel()
+                                    count++
+                                } else {
+                                    // 计时器减去时间
+                                    if (count >= 3) timing = 120
+                                    downTime()
+                                }
                                 binding?.btnSuccess?.background =
                                     if ((value as? Boolean != true)) {
-                                        binding?.wv?.onPause()
+                                        ViewUtils.setGone(binding?.cbBg)
+                                        animation.cancel()
                                         context.resources.getDrawable(
                                             R.mipmap.base_start_bg,
                                             context.theme
                                         )
                                     } else {
-                                        binding?.wv?.onStart(this@BasePumpWaterPop)
+                                        showAlphaAniamtion()
                                         context.resources.getDrawable(
                                             R.mipmap.base_suspend_bg,
                                             context.theme
                                         )
                                     }
-
-                                binding?.tvAddClockTime?.text =
-                                    if ((value as? Boolean != true)) "Click the button to start draining"
-                                    else "Click the button to stop draining"
+                                if (binding?.btnSuccess?.isChecked == true) {
+                                    // 暂停
+                                    if (value == false) {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_auto_start_desc)
+                                    } else {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
+                                    }
+                                } else {
+                                    // 暂停
+                                    if (value == false) {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_stop_dec)
+                                    } else {
+                                        binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_start_desc)
+                                    }
+                                }
+                                binding?.btnSuccess?.isChecked = value as Boolean
                             }
 
                             if ((value as? Boolean == false)) return@observe
@@ -261,6 +311,35 @@ class BasePumpWaterPop(
             }
     }
 
+    private fun showAlphaAniamtion() {
+        ViewUtils.setVisible(binding?.cbBg)
+        when (count) {
+            1 -> {
+                animation.cancel()
+                ViewUtils.setVisible(binding?.ivWaterOne)
+                ViewUtils.setGone(binding?.ivWaterTwo, binding?.ivWaterThree)
+                binding?.ivWaterOne?.animation = animation
+                animation.start()
+            }
+            2 -> {
+                animation.cancel()
+                ViewUtils.setVisible(binding?.ivWaterOne, binding?.ivWaterTwo)
+                ViewUtils.setGone(binding?.ivWaterThree)
+                binding?.ivWaterOne?.animation = null
+                binding?.ivWaterTwo?.animation = animation
+                animation.start()
+            }
+            else -> {
+                animation.cancel()
+                ViewUtils.setVisible(binding?.ivWaterOne, binding?.ivWaterTwo, binding?.ivWaterThree)
+                binding?.ivWaterOne?.animation = null
+                binding?.ivWaterTwo?.animation = null
+                binding?.ivWaterThree?.animation = animation
+                animation.start()
+            }
+        }
+    }
+
     private fun isOpenOrStop(value: Any?) {
         DeviceControl.get()
             .success {
@@ -276,4 +355,53 @@ class BasePumpWaterPop(
             }
             .pumpWater((value as? Boolean == true))
     }
+
+
+    private var job: Job? = null
+    private fun downTime() {
+        // 开启定时器，每次20秒刷新未读气泡消息
+        job = countDownCoroutines(
+            10 * 6 * 500000,
+            lifecycleScope,
+            onTick = {
+                // logI("$it,,,,$timing")
+                timing -= 1
+                // 等于0了，表示排水成功
+                if (timing == 0) {
+                    onWaterFinishedAction?.invoke()
+                    job?.cancel()
+                    dismiss()
+                }
+                if (it == 0) {
+                    job?.cancel()
+                }
+            },
+            onStart = {},
+            onFinish = {
+                job?.cancel()
+            })
+    }
+
+    /**
+     * 计时器
+     */
+    private fun countDownCoroutines(
+        total: Int,
+        scope: CoroutineScope,
+        onTick: (Int) -> Unit,
+        onStart: (() -> Unit)? = null,
+        onFinish: (() -> Unit)? = null,
+    ): Job {
+        return flow {
+            for (i in total downTo 0) {
+                emit(i)
+                delay(1000)
+            }
+        }.flowOn(Dispatchers.Main)
+            .onStart { onStart?.invoke() }
+            .onCompletion { onFinish?.invoke() }
+            .onEach { onTick.invoke(it) }
+            .launchIn(scope)
+    }
+
 }

@@ -4,8 +4,8 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.modules_home.request.AutomaticLoginReq
 import com.cl.modules_home.response.AutomaticLoginData
-import com.cl.modules_home.response.GuideInfoData
-import com.cl.modules_home.response.PlantInfoData
+import com.cl.common_base.bean.GuideInfoData
+import com.cl.common_base.bean.PlantInfoData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -153,4 +153,26 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun getMessageDetail(messageId: String): Flow<HttpResult<DetailByLearnMoreIdData>> {
         return remoteRepository.getMessageDetail(messageId)
     }
+
+    /**
+     * 开始种植
+     */
+    fun start(): Flow<HttpResult<String>> {
+        return remoteRepository.start()
+    }
+
+    /**
+     * 任务完成、解锁周期
+     */
+    fun finishTask(body: FinishTaskReq): Flow<HttpResult<String>> {
+        return remoteRepository.finishTask(body)
+    }
+
+    /**
+     * 更新任务
+     */
+    fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
+        return remoteRepository.updateTask(body)
+    }
+
 }

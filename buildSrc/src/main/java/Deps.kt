@@ -19,10 +19,10 @@ object Version {
 
     const val compileSdk = 31
     const val applicationId = "com.cl.abby"
-    const val minSdk = 23
+    const val minSdk = 26
     const val targetSdk = 31
-    val versionCode = 8
-    const val versionName = "1.0.1"
+    val versionCode = 12
+    const val versionName = "1.1.1"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"
@@ -41,7 +41,7 @@ object Version {
 
     // 网络
     const val retrofitVersion = "2.9.0"
-    const val okHttp3Version = "4.9.3"
+    const val okHttp3Version = "4.10.0"
     const val gsonVersion = "2.9.0"
     const val frescoVersion = "2.6.0"
 
@@ -77,7 +77,7 @@ object Version {
 
     const val permission = "1.6.4"
 
-    const val choosePhoto = "v3.10.5"
+    const val choosePhoto = "v3.10.6"
 
     const val luban = "1.1.8"
 
