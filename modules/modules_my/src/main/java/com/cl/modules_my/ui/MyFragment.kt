@@ -105,13 +105,16 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
     }
 
     override fun lazyLoad() {
-
+        // 只加载一次
+        mViewMode.userDetail()
     }
 
-    override fun onResume() {
-        super.onResume()
-        // 获取用户信息
-        mViewMode.userDetail()
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            mViewMode.userDetail()
+        }
     }
 
     override fun FragmentMyBinding.initBinding() {
