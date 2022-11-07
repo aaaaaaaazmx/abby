@@ -703,12 +703,14 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                 .isMaxSelectEnabledMask(true) // 是否显示蒙层
                 .isDisplayCamera(false)//是否显示摄像
                 .setLanguage(LanguageConfig.ENGLISH) //显示英语
+                .setFilterVideoMaxSecond(30)
                 .setMaxSelectNum(1)
                 .forResult(new OnResultCallbackListener<LocalMedia>() {
                     @Override
                     public void onResult(ArrayList<LocalMedia> result) {
                         if (null == result || result.size() == 0) return;
                         LocalMedia media = result.get(0);
+                        // todo 大于10M的视频 都需要进行视频压缩
                         // 发送视频
                         sendVideoMessage(Uri.parse(media.getPath()), Integer.parseInt(String.valueOf(media.getDuration())));
                     }
