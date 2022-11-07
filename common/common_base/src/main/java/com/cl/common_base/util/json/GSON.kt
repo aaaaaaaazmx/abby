@@ -12,6 +12,7 @@ object GSON {
      *
      * @param json
      */
+    @JvmStatic
     fun <T> parseObject(json: String?, clazz: Class<T>?): T? {
         return if (TextUtils.isEmpty(json)) {
             null
@@ -24,6 +25,7 @@ object GSON {
      *
      * @param json
      */
+    @JvmStatic
     fun <T> parseObject(json: String?, type: Type?): T {
         return Gson().fromJson(json, type)
     }

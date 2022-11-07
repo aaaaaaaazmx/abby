@@ -12,6 +12,7 @@ open class BaseApplication : Application() {
 
     companion object {
         private var context: BaseApplication? = null
+        @JvmStatic
         fun getContext(): Context {
             return context!!
         }

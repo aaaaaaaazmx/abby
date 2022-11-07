@@ -7,6 +7,7 @@ import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
@@ -41,23 +42,8 @@ class AppInitializer : Initializer<Unit> {
         )
         TuyaHomeSdk.setDebugMode(true)
 
-        val privacyPolicy = Prefs.getBoolean(
-            Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE,
-            false
-        )
-        logI("privacyPolicy: $privacyPolicy")
-        val strategy = UserStrategy(context.applicationContext as? Application)
-        if (privacyPolicy) {
-            // bugly
-            strategy.deviceID = AppUtil.getDeviceSerial()
-            strategy.deviceModel = AppUtil.deviceModel
-
-            // 极光，需要同意隐私协议
-            JPushInterface.setDebugMode(true)
-            JPushInterface.init(context.applicationContext as? Application)
-        }
-
         // bugly 初始化符合合规要求
+        val strategy = UserStrategy(context.applicationContext as? Application)
         CrashReport.setIsDevelopmentDevice(context, BuildConfig.DEBUG) // 开发测试阶段设备为调试设备
         CrashReport.initCrashReport(
             context.applicationContext as? Application, "2d55fff670",

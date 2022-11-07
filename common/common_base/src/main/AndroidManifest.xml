@@ -9,6 +9,9 @@
     <application>
         <activity android:name="com.cl.common_base.web.BaseWebActivity" />
         <activity android:name="com.cl.common_base.web.WebActivity" />
+        <activity android:name=".easeui.ui.ChatActivity" />
+        <activity android:name=".easeui.ui.EaseUiActivity" />
+
         <service android:name=".listener.TuYaDeviceUpdateReceiver"/>
     </application>
 </manifest>

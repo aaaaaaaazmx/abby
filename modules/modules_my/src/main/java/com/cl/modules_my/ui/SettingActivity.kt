@@ -307,6 +307,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             userDetail.observe(this@SettingActivity, resourceObserver {
                 success {
                     hideProgressLoading()
+                    // 缓存信息
+                    GSON.toJson(this)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
                     // 是否开启通知(1-开启、0-关闭)
                     binding.ftNotif.setItemSwitch(data?.openNotify == 1)
                 }

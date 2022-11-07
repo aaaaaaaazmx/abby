@@ -70,8 +70,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             onConfirmAction = {
                 // 点击同意隐私协议
                 Prefs.putBooleanAsync(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE, true)
-                // 初始化SDK
-                InitSdk.init()
                 checkLogin()
             },
             onTermUsAction = {
@@ -178,6 +176,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     when (userInfoBean.deviceStatus) {
                         // 1-> 绑定设备、 2-> 未绑定设备
                         "1" -> {
+                            // 初始化SDK
+                            InitSdk.init()
                             // 是否种植过
                             data?.let { PlantCheckHelp().plantStatusCheck(it) }
                         }

@@ -2,7 +2,9 @@ package com.cl.common_base.init
 
 import androidx.startup.AppInitializer
 import com.cl.common_base.BaseApplication
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
+import com.cl.common_base.util.Prefs
 
 /**
  * 手动初始化SDK
@@ -11,11 +13,14 @@ import com.cl.common_base.ext.logI
  */
 class InitSdk {
     companion object {
-        fun init(): Boolean {
+        fun init() {
+            val boolean = Prefs.getBoolean(
+                Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE,
+                false
+            )
+            if (!boolean) return
             val initializer = AppInitializer.getInstance(BaseApplication.getContext())
-            val isInit = initializer.isEagerlyInitialized(com.cl.common_base.init.AppInitializer::class.java)
-            logI(":AppInitializer: $isInit")
-            return isInit
+            initializer.initializeComponent(com.cl.common_base.init.PolicyInitializer::class.java)
         }
     }
 }

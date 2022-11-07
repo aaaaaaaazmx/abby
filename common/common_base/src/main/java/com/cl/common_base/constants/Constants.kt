@@ -24,6 +24,12 @@ object Constants {
         const val ABBY_OFFICIAL_WEBSITE = "https://heyabby.com/"
     }
 
+    object EaseUi {
+        const val DEFAULT_CUSTOMER_APPKEY = "2100220117031055#kefuchannelapp1000069"
+        const val DEFAULT_CUSTOMER_ACCOUNT = "kefuchannelimid_075945" // IM服务号
+        const val DEFAULT_TENANTID = "1000069"
+    }
+
     // 服务器地址
     object HttpUrl {
         // WebView 生产服务器
@@ -58,6 +64,9 @@ object Constants {
 
         // 密码 加密后的
         const val KEY_LOGIN_PSD = "key_login_psd"
+
+        // 用户信息
+        const val KEY_USER_INFO = "key_user_info"
     }
 
     // 隐私合规相关

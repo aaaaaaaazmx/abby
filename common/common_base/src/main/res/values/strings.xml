@@ -114,6 +114,12 @@
     <string name="base_dont_show">Don’t show it again</string>
     <string name="base_autoflowering_abbreviations">AutoFLW</string>
     <string name="base_job">Job’s Done</string>
+    <string name="noti_text_expression">[Expression]</string>
+    <string name="is_contact_customer">Being contact customer service, please wait...</string>
+    <string name="is_contact_customer_failure_seconed">Contact customer service failure:</string>
+    <string name="chat_row_satisfaction_content">Please make evaluation to my service!</string>
+    <string name="chatrow_eval_btn_text">Evaluation</string>
+    <string name="em_notice_sending">Sending</string>
 
 
 </resources>
