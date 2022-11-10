@@ -755,7 +755,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                         if (null == result || result.size() == 0) return;
                         LocalMedia media = result.get(0);
                         // todo 大于10M的视频 都需要进行视频压缩
-                        if (media.getSize() >= 10 * 1024) {
+                        if (media.getSize() >= 10 * 1024 * 100) {
                             // 视频压缩
                             executeScaleVideo(media.getAvailablePath(), Integer.parseInt(String.valueOf(media.getDuration())));
                             return;
