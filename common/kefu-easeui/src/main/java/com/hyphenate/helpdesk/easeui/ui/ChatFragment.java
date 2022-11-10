@@ -746,7 +746,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                 .isMaxSelectEnabledMask(true) // 是否显示蒙层
                 .isDisplayCamera(true)//是否显示摄像
                 .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                // .setFilterVideoMaxSecond(30) // 只显示30秒的
+                .setFilterVideoMaxSecond(30) // 只显示30秒的
                 .setMaxSelectNum(1)
                 .setCameraInterceptListener(getCustomCameraEvent())
                 .forResult(new OnResultCallbackListener<LocalMedia>() {

@@ -164,6 +164,8 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         ARouter.getInstance().inject(this)
         // 设置nikeName
         binding.ftNickName.setItemValueWithColor(userInfo?.nickName, "#000000")
+        // 设置邮箱
+        binding.ftEmail.itemValue = userInfo?.email
         // 设置abbyID
         binding.ftId.itemValue = userInfo?.abbyId
         binding.ftId.setHideArrow(true)
@@ -179,6 +181,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         binding.ftHead.setItemTitle(getString(com.cl.common_base.R.string.profile_photo), true)
         binding.ftNickName.setItemTitle(getString(com.cl.common_base.R.string.profile_name), true)
         binding.ftId.setItemTitle(getString(com.cl.common_base.R.string.profile_abby_id), true)
+        binding.ftEmail.setItemTitle(getString(com.cl.common_base.R.string.profile_email), true)
     }
 
     override fun observe() {
