@@ -384,6 +384,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftWaterTank.setOnClickListener {
             plantDrain.show()
         }
+        // 数字兑换Vip
+        binding.ftChargeTime.setOnClickListener {
+            startActivity(Intent(this@SettingActivity, ReDeemActivity::class.java))
+        }
         // 去激活
         binding.ftSub.setOnClickListener {
             if (binding.ftSub.svtText.isShown) {
