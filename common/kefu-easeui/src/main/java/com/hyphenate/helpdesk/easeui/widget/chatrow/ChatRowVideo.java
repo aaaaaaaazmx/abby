@@ -13,6 +13,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.hyphenate.chat.EMFileMessageBody;
 import com.hyphenate.chat.EMVideoMessageBody;
 import com.hyphenate.chat.ChatClient;
@@ -133,7 +136,8 @@ public class ChatRowVideo extends ChatRowFile {
         Bitmap bitmap = ImageCache.getInstance().get(localThumb);
         if (bitmap != null) {
             // thumbnail image is already loaded, reuse the drawable
-            iv.setImageBitmap(bitmap);
+            // iv.setImageBitmap(bitmap);
+            Glide.with(context).load(bitmap).apply(RequestOptions.bitmapTransform(new RoundedCorners(5))).into(iv);//四周都是圆角的圆角矩形图片。
 
         } else {
             final int width = DensityUtil.dip2px(getContext(), 150);
@@ -192,8 +196,8 @@ public class ChatRowVideo extends ChatRowFile {
                     super.onPostExecute(result);
                     if (result != null) {
                         ImageCache.getInstance().put(localThumb, result);
-                        iv.setImageBitmap(result);
-
+                        // iv.setImageBitmap(result);
+                        Glide.with(context).load(result).apply(RequestOptions.bitmapTransform(new RoundedCorners(5))).into(iv);//四周都是圆角的圆角矩形图片。
                     } else {
                         if (message.status() == Message.Status.SUCCESS) {
                             if (CommonUtils.isNetWorkConnected(activity)) {

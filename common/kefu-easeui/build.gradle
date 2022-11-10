@@ -60,6 +60,8 @@ dependencies {
     api "com.github.netless-io:fastboard-android:1.2.3"
     // 图片选择
     api(Deps.choosePhoto)
+    api(Deps.choosePhotoCamera)
+    api(Deps.epMedia)
 
     // implementation 'com.easemob:kefu-sdk-lite:1.3.1'
 }

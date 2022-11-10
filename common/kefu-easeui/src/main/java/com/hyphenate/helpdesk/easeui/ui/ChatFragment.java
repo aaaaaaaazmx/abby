@@ -3,9 +3,11 @@ package com.hyphenate.helpdesk.easeui.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -14,7 +16,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.ClipboardManager;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,14 +30,22 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.bumptech.glide.Glide;
 import com.hyphenate.chat.AgoraMessage;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.chat.ChatManager;
@@ -47,6 +61,7 @@ import com.hyphenate.helpdesk.easeui.runtimepermission.PermissionsManager;
 import com.hyphenate.helpdesk.easeui.runtimepermission.PermissionsResultAction;
 import com.hyphenate.helpdesk.easeui.util.CommonUtils;
 import com.hyphenate.helpdesk.easeui.util.Config;
+import com.hyphenate.helpdesk.easeui.util.uri.UriUtil;
 import com.hyphenate.helpdesk.easeui.widget.AlertDialog;
 import com.hyphenate.helpdesk.easeui.widget.AlertDialog.AlertDialogUser;
 import com.hyphenate.helpdesk.easeui.widget.EaseChatInputMenu;
@@ -64,18 +79,28 @@ import com.hyphenate.util.EMLog;
 import com.hyphenate.util.PathUtil;
 import com.hyphenate.util.UriUtils;
 import com.hyphenate.util.VersionUtils;
+import com.luck.lib.camerax.CameraImageEngine;
+import com.luck.lib.camerax.SimpleCameraX;
+import com.luck.lib.camerax.listener.OnSimpleXPermissionDeniedListener;
+import com.luck.lib.camerax.listener.OnSimpleXPermissionDescriptionListener;
+import com.luck.lib.camerax.permissions.SimpleXPermissionUtil;
 import com.luck.picture.lib.basic.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.config.SelectMimeType;
+import com.luck.picture.lib.dialog.RemindDialog;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.picture.lib.entity.MediaExtraInfo;
+import com.luck.picture.lib.interfaces.OnCameraInterceptListener;
 import com.luck.picture.lib.interfaces.OnResultCallbackListener;
 import com.luck.picture.lib.language.LanguageConfig;
+import com.luck.picture.lib.permissions.PermissionConfig;
 import com.luck.picture.lib.style.BottomNavBarStyle;
 import com.luck.picture.lib.style.PictureSelectorStyle;
+import com.luck.picture.lib.utils.DensityUtil;
 import com.luck.picture.lib.utils.MediaUtils;
 import com.luck.picture.lib.utils.ToastUtils;
+import com.luck.picture.lib.widget.MediumBoldTextView;
 
 import org.json.JSONObject;
 
@@ -83,6 +108,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import VideoHandle.EpEditor;
+import VideoHandle.EpVideo;
+import VideoHandle.OnEditorListener;
 
 /**
  * 可以直接new出来使用的聊天对话页面fragment，
@@ -126,8 +155,11 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     protected static final int ITEM_VIDEO = 3;
     protected static final int ITEM_FILE = 4;
 
-    protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture, R.string.attach_video, R.string.attach_file};
-    protected int[] itemdrawables = {R.drawable.hd_chat_takepic_selector, R.drawable.hd_chat_image_selector, R.drawable.hd_chat_video_selector, R.drawable.hd_chat_file_selector};
+//    protected int[] itemStrings = {R.string.attach_take_pic, R.string.attach_picture, R.string.attach_video, R.string.attach_file};
+//    protected int[] itemdrawables = {R.drawable.hd_chat_takepic_selector, R.drawable.hd_chat_image_selector, R.drawable.hd_chat_video_selector, R.drawable.hd_chat_file_selector};
+
+    protected int[] itemStrings = {R.string.attach_picture, R.string.attach_video};
+    protected int[] itemdrawables = {R.drawable.hd_chat_image_selector, R.drawable.hd_chat_video_selector};
 
     protected int[] itemIds = {ITEM_TAKE_PICTURE, ITEM_PICTURE, ITEM_VIDEO, ITEM_FILE};
     protected int[] itemResIds = {R.id.chat_menu_take_pic, R.id.chat_menu_pic, R.id.chat_menu_video, R.id.chat_menu_file};
@@ -391,6 +423,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         conversation = ChatClient.getInstance().chatManager().getConversation(toChatUsername);
         if (conversation != null) {
             // 把此会话的未读数置为0
+            // 已读所有
             conversation.markAllMessagesAsRead();
             final List<Message> msgs = conversation.getAllMessages();
             int msgCount = msgs != null ? msgs.size() : 0;
@@ -645,7 +678,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                     PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(ChatFragment.this, new String[]{Manifest.permission.CAMERA}, new PermissionsResultAction() {
                         @Override
                         public void onGranted() {
-                            selectPicFromCamera();
+                            selectPicFromLocal(); // 图库选择图片
                         }
 
                         @Override
@@ -655,7 +688,17 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                     });
                     break;
                 case ITEM_PICTURE:
-                    selectPicFromLocal(); // 图库选择图片
+                    PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(ChatFragment.this, new String[]{Manifest.permission.CAMERA}, new PermissionsResultAction() {
+                        @Override
+                        public void onGranted() {
+                            selectVideoFromLocal();
+                        }
+
+                        @Override
+                        public void onDenied(String permission) {
+
+                        }
+                    });
                     break;
                 case ITEM_VIDEO:
                     PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(ChatFragment.this, new String[]{Manifest.permission.CAMERA}, new PermissionsResultAction() {
@@ -691,7 +734,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
 //        BottomNavBarStyle bottomNavBarStyle = new BottomNavBarStyle();
 //        pictureSelectorStyle.setBottomBarStyle(bottomNavBarStyle);
 //        // 选择照片
-//        // 选择照片，不显示角标
+//        // 选择视频，不显示角标
         PictureSelector.create(getContext())
                 .openGallery(SelectMimeType.ofVideo())
                 .setImageEngine(GlideEngine.createGlideEngine())
@@ -701,16 +744,22 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                 .isDisplayTimeAxis(true)// 资源轴
                 .setEditMediaInterceptListener(null)// 是否开启图片编辑功能
                 .isMaxSelectEnabledMask(true) // 是否显示蒙层
-                .isDisplayCamera(false)//是否显示摄像
+                .isDisplayCamera(true)//是否显示摄像
                 .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                .setFilterVideoMaxSecond(30)
+                .setFilterVideoMaxSecond(30) // 只显示30秒的
                 .setMaxSelectNum(1)
+                .setCameraInterceptListener(getCustomCameraEvent())
                 .forResult(new OnResultCallbackListener<LocalMedia>() {
                     @Override
                     public void onResult(ArrayList<LocalMedia> result) {
                         if (null == result || result.size() == 0) return;
                         LocalMedia media = result.get(0);
                         // todo 大于10M的视频 都需要进行视频压缩
+                        if (media.getSize() >= 10 * 1024) {
+                            // 视频压缩
+                            executeScaleVideo(media.getAvailablePath(), Integer.parseInt(String.valueOf(media.getDuration())));
+                            return;
+                        }
                         // 发送视频
                         sendVideoMessage(Uri.parse(media.getPath()), Integer.parseInt(String.valueOf(media.getDuration())));
                     }
@@ -721,6 +770,234 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                     }
                 });
     }
+
+    private File getTempMovieDir(){
+        File movie = new File(getContext().getCacheDir(), "movie");
+        movie.mkdirs();
+        return movie;
+    }
+
+    /**
+     * 压缩视频
+     */
+    private void executeScaleVideo(String path, int dur) {
+        ProgressDialog  progressDialog = new ProgressDialog(getContext());
+        progressDialog.setTitle(null);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("please wait......");
+        File moviesDir = getTempMovieDir();
+        progressDialog.show();
+        String filePrefix = "scale_video";
+        String fileExtn = ".mp4";
+        File dest = new File(moviesDir, filePrefix + fileExtn);
+        int fileNo = 0;
+        while (dest.exists()) {
+            fileNo++;
+            dest = new File(moviesDir, filePrefix + fileNo + fileExtn);
+        }
+       String filePath = dest.getAbsolutePath();
+
+        EpVideo epVideo = new EpVideo(path);
+        //输出选项，参数为输出文件路径(目前仅支持mp4格式输出)
+        EpEditor.OutputOption outputOption = new EpEditor.OutputOption(filePath);
+//        outputOption.setWidth(720);//输出视频宽，如果不设置则为原始视频宽高
+//        outputOption.setHeight(1080);//输出视频高度
+        outputOption.frameRate = 30;//输出视频帧率,默认30
+        outputOption.bitRate = 2;//输出视频码率,默认10
+        EpEditor.exec(epVideo, outputOption, new OnEditorListener(){
+            @Override
+            public void onSuccess() {
+                progressDialog.dismiss();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Uri uri = UriUtil.getUri(getContext(), new File(filePath));
+                        sendVideoMessage(uri, dur);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onFailure() {
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onProgress(float progress) {
+                Log.e("123123123", "progress: " + progress);
+            }
+        });
+    }
+
+
+    /**
+     * 自定义视频录像
+     */
+    private OnCameraInterceptListener getCustomCameraEvent() {
+        return  new MeOnCameraInterceptListener();
+    }
+
+    private class MeOnCameraInterceptListener implements OnCameraInterceptListener {
+
+        @Override
+        public void openCamera(Fragment fragment, int cameraMode, int requestCode) {
+            SimpleCameraX camera = SimpleCameraX.of();
+            camera.isAutoRotation(true);
+            camera.setCameraMode(cameraMode);
+            camera.setVideoFrameRate(20);
+            camera.setRecordVideoMaxSecond(30);
+            camera.setRecordVideoMinSecond(5);
+            camera.setVideoBitRate(2 * 1024 * 1024);
+            camera.isDisplayRecordChangeTime(true);
+            camera.isManualFocusCameraPreview(true);
+            camera.isZoomCameraPreview(true);
+            camera.setOutputPathDir(getSandboxCameraOutputPath());
+            camera.setPermissionDeniedListener(getSimpleXPermissionDeniedListener());
+            camera.setPermissionDescriptionListener(getSimpleXPermissionDescriptionListener());
+            camera.setImageEngine(new CameraImageEngine() {
+                @Override
+                public void loadImage(Context context, String url, ImageView imageView) {
+                    Glide.with(context).load(url).into(imageView);
+                }
+            });
+            camera.start(fragment.requireActivity(), fragment, requestCode);
+        }
+    }
+
+    private OnSimpleXPermissionDescriptionListener getSimpleXPermissionDescriptionListener() {
+        return new MeOnSimpleXPermissionDescriptionListener();
+    }
+
+    private static class MeOnSimpleXPermissionDescriptionListener implements OnSimpleXPermissionDescriptionListener {
+
+        @Override
+        public void onPermissionDescription(Context context, ViewGroup viewGroup, String permission) {
+            addPermissionDescription(true, viewGroup, new String[]{permission});
+        }
+
+        @Override
+        public void onDismiss(ViewGroup viewGroup) {
+            removePermissionDescription(viewGroup);
+        }
+    }
+
+
+    /**
+     * 添加权限说明
+     *
+     * @param viewGroup
+     * @param permissionArray
+     */
+    private static void addPermissionDescription(boolean isHasSimpleXCamera, ViewGroup viewGroup, String[] permissionArray) {
+        int dp10 = DensityUtil.dip2px(viewGroup.getContext(), 10);
+        int dp15 = DensityUtil.dip2px(viewGroup.getContext(), 15);
+        MediumBoldTextView view = new MediumBoldTextView(viewGroup.getContext());
+        view.setTag(TAG_EXPLAIN_VIEW);
+        view.setTextSize(14);
+        view.setTextColor(Color.parseColor("#333333"));
+        view.setPadding(dp10, dp15, dp10, dp15);
+
+        String title;
+        String explain;
+
+        if (TextUtils.equals(permissionArray[0], PermissionConfig.CAMERA[0])) {
+            title = "相机权限使用说明";
+            explain = "相机权限使用说明\n用户app用于拍照/录视频";
+        } else if (TextUtils.equals(permissionArray[0], Manifest.permission.RECORD_AUDIO)) {
+            if (isHasSimpleXCamera) {
+                title = "麦克风权限使用说明";
+                explain = "麦克风权限使用说明\n用户app用于录视频时采集声音";
+            } else {
+                title = "录音权限使用说明";
+                explain = "录音权限使用说明\n用户app用于采集声音";
+            }
+        } else {
+            title = "存储权限使用说明";
+            explain = "存储权限使用说明\n用户app写入/下载/保存/读取/修改/删除图片、视频、文件等信息";
+        }
+        int startIndex = 0;
+        int endOf = startIndex + title.length();
+        SpannableStringBuilder builder = new SpannableStringBuilder(explain);
+        builder.setSpan(new AbsoluteSizeSpan(DensityUtil.dip2px(viewGroup.getContext(), 16)), startIndex, endOf, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        builder.setSpan(new ForegroundColorSpan(0xFF333333), startIndex, endOf, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        view.setText(builder);
+        view.setBackground(ContextCompat.getDrawable(viewGroup.getContext(), R.drawable.ps_demo_permission_desc_bg));
+
+        if (isHasSimpleXCamera) {
+            RelativeLayout.LayoutParams layoutParams =
+                    new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.topMargin = DensityUtil.getStatusBarHeight(viewGroup.getContext());
+            layoutParams.leftMargin = dp10;
+            layoutParams.rightMargin = dp10;
+            viewGroup.addView(view, layoutParams);
+        } else {
+            ConstraintLayout.LayoutParams layoutParams =
+                    new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.topToBottom = R.id.title_bar;
+            layoutParams.leftToLeft = ConstraintSet.PARENT_ID;
+            layoutParams.leftMargin = dp10;
+            layoutParams.rightMargin = dp10;
+            viewGroup.addView(view, layoutParams);
+        }
+    }
+
+    /**
+     * 移除权限说明
+     *
+     * @param viewGroup
+     */
+    private final static String TAG_EXPLAIN_VIEW = "TAG_EXPLAIN_VIEW";
+    private static void removePermissionDescription(ViewGroup viewGroup) {
+        View tagExplainView = viewGroup.findViewWithTag(TAG_EXPLAIN_VIEW);
+        viewGroup.removeView(tagExplainView);
+    }
+
+    private String getSandboxCameraOutputPath() {
+        if (true) {
+            File externalFilesDir = getContext().getExternalFilesDir("");
+            File customFile = new File(externalFilesDir.getAbsolutePath(), "Sandbox");
+            if (!customFile.exists()) {
+                customFile.mkdirs();
+            }
+            return customFile.getAbsolutePath() + File.separator;
+        } else {
+            return "";
+        }
+    }
+
+    private OnSimpleXPermissionDeniedListener getSimpleXPermissionDeniedListener() {
+       return new MeOnSimpleXPermissionDeniedListener();
+    }
+
+    /**
+     * SimpleCameraX添加权限说明
+     */
+    private static class MeOnSimpleXPermissionDeniedListener implements OnSimpleXPermissionDeniedListener {
+
+        @Override
+        public void onDenied(Context context, String permission, int requestCode) {
+            String tips;
+            if (TextUtils.equals(permission, Manifest.permission.RECORD_AUDIO)) {
+                tips = "缺少麦克风权限\n可能会导致录视频无法采集声音";
+            } else {
+                tips = "缺少相机权限\n可能会导致不能使用摄像头功能";
+            }
+            RemindDialog dialog = RemindDialog.buildDialog(context, tips);
+            dialog.setButtonText("去设置");
+            dialog.setButtonTextColor(0xFF7D7DFF);
+            dialog.setContentTextColor(0xFF333333);
+            dialog.setOnDialogClickListener(new RemindDialog.OnDialogClickListener() {
+                @Override
+                public void onClick(View view) {
+                    SimpleXPermissionUtil.goIntentSetting((Activity) context, requestCode);
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
 
     /**
      * 选择文件
@@ -827,7 +1104,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                 .isDisplayTimeAxis(true)// 资源轴
                 .setEditMediaInterceptListener(null)// 是否开启图片编辑功能
                 .isMaxSelectEnabledMask(true) // 是否显示蒙层
-                .isDisplayCamera(false)//是否显示摄像
+                .isDisplayCamera(true)//是否显示摄像
                 .setLanguage(LanguageConfig.ENGLISH) //显示英语
                 .setMaxSelectNum(1)
                 .setSelectorUIStyle(pictureSelectorStyle)

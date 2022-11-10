@@ -79,6 +79,10 @@ object Version {
 
     const val choosePhoto = "v3.10.6"
 
+    const val choosePhotoCamera = "v3.10.6"
+
+    const val epMedia = "v1.0.1"
+
     const val luban = "1.1.8"
 
     const val tuya = "3.36.1"
@@ -204,6 +208,11 @@ object Deps {
 
     // chooserPhoto
     const val choosePhoto = "io.github.lucksiege:pictureselector:${Version.choosePhoto}"
+    // camera
+    const val choosePhotoCamera =  "io.github.lucksiege:camerax:${Version.choosePhotoCamera}"
+
+    // ffmpeg
+    const val epMedia = "com.github.yangjie10930:EpMedia:${Version.epMedia}"
 
     //luban
     const val luban = "top.zibin:Luban:${Version.luban}"

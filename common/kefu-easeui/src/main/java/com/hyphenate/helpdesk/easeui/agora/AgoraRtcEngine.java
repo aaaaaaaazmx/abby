@@ -16,7 +16,6 @@ import io.agora.rtc.RtcEngine;
 import io.agora.rtc.ScreenCaptureParameters;
 import io.agora.rtc.mediaio.AgoraDefaultSource;
 import io.agora.rtc.models.ChannelMediaOptions;
-import io.agora.rtc.ss.ScreenSharingClient;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 import io.agora.rtc.video.WatermarkOptions;

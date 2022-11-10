@@ -13,5 +13,16 @@
         <activity android:name=".easeui.ui.EaseUiActivity" />
 
         <service android:name=".listener.TuYaDeviceUpdateReceiver"/>
+
+        <provider
+            android:name="com.hyphenate.helpdesk.easeui.provider.RyeexProvider"
+            android:authorities="${applicationId}.share.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/app_share_provider_paths" />
+        </provider>
+
     </application>
 </manifest>
