@@ -746,7 +746,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                 .isMaxSelectEnabledMask(true) // 是否显示蒙层
                 .isDisplayCamera(true)//是否显示摄像
                 .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                .setFilterVideoMaxSecond(30) // 只显示30秒的
+                // .setFilterVideoMaxSecond(30) // 只显示30秒的
                 .setMaxSelectNum(1)
                 .setCameraInterceptListener(getCustomCameraEvent())
                 .forResult(new OnResultCallbackListener<LocalMedia>() {
@@ -756,8 +756,21 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                         LocalMedia media = result.get(0);
                         // todo 大于10M的视频 都需要进行视频压缩
                         if (media.getSize() >= 10 * 1024 * 100) {
+                            // 判断当前视频的原始宽高
+                            try {
+                                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                                retriever.setDataSource(getActivity(), Uri.parse(media.getPath()));
+                                int originWidth = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                                int originHeight = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                                if (originWidth > 720 && originHeight > 1080) {
+                                    executeScaleVideo(media.getAvailablePath(), Integer.parseInt(String.valueOf(media.getDuration())), 720, 1080);
+                                } else {
+                                    executeScaleVideo(media.getAvailablePath(), Integer.parseInt(String.valueOf(media.getDuration())), originWidth, originHeight);
+                                }
+                            }catch (Exception e) {
+                                Log.i(TAG, "onResult: 发生异常了。");
+                            }
                             // 视频压缩
-                            executeScaleVideo(media.getAvailablePath(), Integer.parseInt(String.valueOf(media.getDuration())));
                             return;
                         }
                         // 发送视频
@@ -780,7 +793,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
     /**
      * 压缩视频
      */
-    private void executeScaleVideo(String path, int dur) {
+    private void executeScaleVideo(String path, int dur, int width , int height) {
         ProgressDialog  progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle(null);
         progressDialog.setCancelable(false);
@@ -800,8 +813,8 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         EpVideo epVideo = new EpVideo(path);
         //输出选项，参数为输出文件路径(目前仅支持mp4格式输出)
         EpEditor.OutputOption outputOption = new EpEditor.OutputOption(filePath);
-//        outputOption.setWidth(720);//输出视频宽，如果不设置则为原始视频宽高
-//        outputOption.setHeight(1080);//输出视频高度
+        outputOption.setWidth(width);//输出视频宽，如果不设置则为原始视频宽高
+        outputOption.setHeight(height);//输出视频高度
         outputOption.frameRate = 30;//输出视频帧率,默认30
         outputOption.bitRate = 2;//输出视频码率,默认10
         EpEditor.exec(epVideo, outputOption, new OnEditorListener(){
