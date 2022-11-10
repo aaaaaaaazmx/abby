@@ -22,6 +22,7 @@ import com.hyphenate.chat.ChatClient;
 import com.hyphenate.helpdesk.R;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.easeui.ImageCache;
+import com.hyphenate.helpdesk.easeui.ui.GSYPlayVideoActivity;
 import com.hyphenate.helpdesk.easeui.ui.ShowVideoActivity;
 import com.hyphenate.helpdesk.easeui.util.CommonUtils;
 import com.hyphenate.helpdesk.util.Log;
@@ -113,9 +114,12 @@ public class ChatRowVideo extends ChatRowFile {
 
     @Override
     protected void onBubbleClick() {
+        // 展示视频
+        // 播放视频
+        // 视频播放
         EMVideoMessageBody videoBody = (EMVideoMessageBody) message.body();
         Log.d(TAG, "video view is on click");
-        Intent intent = new Intent(context, ShowVideoActivity.class);
+        Intent intent = new Intent(context, GSYPlayVideoActivity.class);
         intent.putExtra("msg", message);
         activity.startActivity(intent);
     }

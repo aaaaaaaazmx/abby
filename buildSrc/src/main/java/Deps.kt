@@ -95,6 +95,8 @@ object Version {
     const val cardSwip = "1.0.0"
 
     const val lottieVersion = "5.2.0"
+
+    const val videoPlayer = "v8.3.4"
 }
 
 object Deps {
@@ -237,6 +239,9 @@ object Deps {
 
     // lottie
     const val lottie = "com.airbnb.android:lottie:${Version.lottieVersion}"
+
+    // VideoPlay
+    const val videoPlayer = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:${Version.videoPlayer}-release-jitpack"
 }
 
 fun String.exec(): String =
