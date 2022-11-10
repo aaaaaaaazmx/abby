@@ -23,7 +23,6 @@ import com.hyphenate.helpdesk.R;
 import com.hyphenate.chat.Message;
 import com.hyphenate.helpdesk.easeui.ImageCache;
 import com.hyphenate.helpdesk.easeui.ui.GSYPlayVideoActivity;
-import com.hyphenate.helpdesk.easeui.ui.ShowVideoActivity;
 import com.hyphenate.helpdesk.easeui.util.CommonUtils;
 import com.hyphenate.helpdesk.util.Log;
 import com.hyphenate.util.DateUtils;

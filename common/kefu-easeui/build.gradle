@@ -33,7 +33,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
 }
 
 
@@ -48,7 +47,7 @@ dependencies {
 
     api 'com.google.code.gson:gson:2.8.5'
     api files('libs/kefu-sdk-1.3.2.9.jar')
-    api project(path: ':common:player')
+    // api project(path: ':common:player')
 
     // x.y.z，请填写具体的 SDK 版本号，如：3.6.2。
     // 通过发版说明获取最新版本号。
