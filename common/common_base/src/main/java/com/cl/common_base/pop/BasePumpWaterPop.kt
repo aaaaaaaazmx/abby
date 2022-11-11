@@ -1,22 +1,19 @@
 package com.cl.common_base.pop
 
 import android.content.Context
-import android.graphics.Color
+import android.os.PowerManager
 import android.util.Log
-import android.view.View
 import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
 import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
 import com.cl.common_base.ext.logI
-import com.cl.common_base.ext.setVisible
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -73,6 +70,7 @@ class BasePumpWaterPop(
     override fun beforeShow() {
         super.beforeShow()
         kotlin.runCatching {
+            mWakeLock?.acquire()
             if (data?.size != 0) {
                 // 卡片布局需要展示3张，所以需要多添加几张
                 if ((data?.size ?: 0) == 1) {
@@ -106,6 +104,7 @@ class BasePumpWaterPop(
         count = 0
         timing = 140 * 3
         ViewUtils.setGone(binding?.ivWaterOne, binding?.ivWaterOne, binding?.ivWaterThree)
+        mWakeLock?.release()
         super.onDismiss()
     }
 
@@ -116,6 +115,12 @@ class BasePumpWaterPop(
         animation.duration = 1000 //执行时间
         animation.repeatCount = -1 //重复执行动画
         animation
+    }
+
+    private val mWakeLock by lazy {
+        val systemService = BaseApplication.getContext().getSystemService(Context.POWER_SERVICE) as? PowerManager
+        val mWakeLock: PowerManager.WakeLock? = systemService?.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Tag")
+        mWakeLock
     }
 
     // 记时器、标准时间为140秒
