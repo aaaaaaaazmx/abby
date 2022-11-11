@@ -170,6 +170,9 @@ public class EaseUiActivity extends AppCompatActivity {
 				VisitorInfo visitorInfo = new VisitorInfo();
 				visitorInfo.nickName(userinfoBean.getNickName());
 				visitorInfo.email(userinfoBean.getEmail());
+				String desc = userinfoBean.isVip() == 1 ? "This is an Android user and he is a subscriber" : "This is an Android user and he is not is a subscriber";
+				visitorInfo.description(desc);
+
 				// 进入主页面
 				Intent intent = new IntentBuilder(EaseUiActivity.this)
 						.setTargetClass(ChatActivity.class)
