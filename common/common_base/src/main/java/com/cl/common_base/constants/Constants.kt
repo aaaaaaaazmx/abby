@@ -48,6 +48,7 @@ object Constants {
     // Login信息相关
     object Login {
         // UserinfoBean
+        // 登录信息
         const val KEY_LOGIN_DATA = "key_login_data"
 
         // Token
@@ -58,6 +59,10 @@ object Constants {
 
         // 密码 加密后的
         const val KEY_LOGIN_PSD = "key_login_psd"
+
+        // 用户信息
+        // 用户接口返回的用户信息
+        const val KEY_USER_INFO = "key_user_info"
     }
 
     // 隐私合规相关
