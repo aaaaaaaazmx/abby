@@ -1464,7 +1464,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-
+                    if (null == data) return@success
                     // 属性名优先
                     if (data?.attribute.isNullOrEmpty()) {
                         ARouter.getInstance()
