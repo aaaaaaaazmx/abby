@@ -51,12 +51,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
-    // 登录信息
-    private val userinfoBean by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        GSON.parseObject(bean, UserinfoBean::class.java)
-    }
-
     private val tuYaUser by lazy {
         val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
         GSON.parseObject(bean, User::class.java)
@@ -221,9 +215,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             .setPointClickListener {
                 pop.asCustom(SubPop(this@SettingActivity)).show()
             }
-        userinfoBean?.subscriptionTime?.let {
-            binding.ftSub.itemValue = it
-        }
     }
 
     override fun observe() {
@@ -309,6 +300,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     hideProgressLoading()
                     // 是否开启通知(1-开启、0-关闭)
                     binding.ftNotif.setItemSwitch(data?.openNotify == 1)
+                    // 订阅时间
+                    data?.subscriptionTime?.let {
+                        binding.ftSub.itemValue = it
+                    }
                 }
                 loading { }
                 error { errorMsg, code ->
@@ -381,6 +376,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 换水
         binding.ftWaterTank.setOnClickListener {
             plantDrain.show()
+        }
+        // 数字兑换Vip
+        binding.ftChargeTime.setOnClickListener {
+            startActivity(Intent(this@SettingActivity, ReDeemActivity::class.java))
         }
         // 去激活
         binding.ftSub.setOnClickListener {
@@ -456,7 +455,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     if (value.toString() == "NG") {
                         binding.ftSub.setSvText("Activate")
                     } else {
-                        userinfoBean?.subscriptionTime?.let {
+                        mViewModel.userDetail.value?.data?.subscriptionTime?.let {
                             binding.ftSub.itemValue = it
                         }
                     }

@@ -27,6 +27,7 @@
     <string name="about_terms">Terms of Use</string>
     <string name="about_policy">Privacy Policy</string>
     <string name="setting_sub_time">No subscription</string>
+    <string name="setting_sub_charge_time">Digital Service Code Redeem</string>
     <string name="home_great_tips">Great! Now that you\'re prepared, let‘s put the clone in the grow box. </string>
     <string name="home_start">Start</string>
     <string name="setting_delete_device">After selecting \'Delete Device\', this device will no longer be associated with your account and it will be restored to factory settings. Your plant records will not be deleted.</string>

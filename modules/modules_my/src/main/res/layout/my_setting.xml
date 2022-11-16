@@ -93,6 +93,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"/>
 
+                <com.cl.common_base.widget.FeatureItemView
+                    app:hideArrow="true"
+                    android:id="@+id/ft_charge_time"
+                    app:itemTitle="@string/setting_sub_charge_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"/>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height=".5dp"

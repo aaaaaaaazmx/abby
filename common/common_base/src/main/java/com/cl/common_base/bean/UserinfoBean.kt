@@ -40,5 +40,6 @@ data class UserinfoBean(
         val userName: String? = null,
         val wallAddress: String? = null,
         val wallId: String? = null,
+        val subscriptionTime: String? = null,
     ) : BaseBean()
 }

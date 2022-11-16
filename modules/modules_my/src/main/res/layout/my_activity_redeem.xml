@@ -33,6 +33,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
+                    android:id="@+id/tv_html"
                     tools:text="step1"
                     android:layout_marginTop="29dp"
                     android:layout_marginEnd="20dp"
@@ -42,19 +43,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-                <TextView
-                    android:layout_marginTop="45dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_marginStart="20dp"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:text="We have sent an email to the email you used in heyabby.com
-Enter the verification code and Subscription timeperiod will be extended accordingly"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
                 <com.cl.common_base.widget.code.RedeemCodeInputView
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="30dp"
                     android:id="@+id/codeView"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
