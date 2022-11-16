@@ -40,6 +40,8 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
 
     override fun initData() {
         binding.btnSuccess.setOnClickListener {
+            // 检测验证码是否正确
+            binding.codeView.code
             // todo 弹出确认框
             //
             pop.asCustom(
@@ -59,6 +61,7 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
 
     override fun onComplete(code: String?) {
         code?.let {
+            binding.btnSuccess.isEnabled = true
             if (it.isEmpty()) {
                 return@let
             }
