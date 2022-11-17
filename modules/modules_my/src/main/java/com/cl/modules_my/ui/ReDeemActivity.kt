@@ -51,7 +51,7 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
 
     private fun htmlSpan() {
         binding.tvHtml.text = buildSpannedString {
-            append("If you need to buy grow pack, please go to our official website ")
+            append("If you would like to extend your growing service, please go to our official website ")
             appendClickable("https://heyabby.com/pages/subscription") {
                 // 跳转到重新连接页面
                 val intent = Intent(
@@ -63,16 +63,11 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
                     intent
                 )
             }
-            append(" to buy it. It includes fertilizers, tools, and accompanying digital services for planting.")
+            append(" to purchase the option most suitable for you. This service includes our one-on-one support, growing pack (fertilizers, basket, carbon filters, etc), and device connectivity to our server.")
 
             appendLine()
             appendLine()
-            append("After purchase, there will be an email with verification code, which will be automatically sent to your email, please check and redeem related digital services")
-
-
-            appendLine()
-            appendLine()
-            append("Enter the verification code and Subscription timeperiod will be extended accordingly")
+            append("After purchase, you’ll receive a verification code via email. Enter the code below to extend your service validity accordingly.")
         }
         binding.tvHtml.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击
         binding.tvHtml.highlightColor = ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色
@@ -101,7 +96,7 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
                                 val subscriberNumber = data?.subscriberNumber
                                 subscriberNumber?.let { mViewModel.topUpSubscriberNumber(it) }
                             },
-                            content = "${data?.month} Month Digital will be added to ",
+                            content = "${data?.month} months will be added to your ",
                             cancelText = getString(com.cl.common_base.R.string.my_cancel),
                             confirmText = getString(com.cl.common_base.R.string.base_ok),
                             richText = data?.email

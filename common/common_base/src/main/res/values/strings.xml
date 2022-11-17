@@ -21,7 +21,7 @@
     <string name="profile_abby_id">Abby ID</string>
     <string name="profile_edit_nickname">Enter your nickname</string>
     <string name="base_ok">OK</string>
-    <string name="setting_sub_desc">The subscription starts from the activation time (or when the subscription package is purchased); the activation time is when abby is connected to the internet for the first time</string>
+    <string name="setting_sub_desc">The Digital service starts from the activation time (or when the subscription package is purchased); the activation time is when abby is connected to the internet for the first time</string>
     <string name="about_learn">Learn about “heyabby”</string>
     <string name="about_rate">Leave a review</string>
     <string name="about_terms">Terms of Use</string>
