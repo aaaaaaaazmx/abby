@@ -36,6 +36,7 @@ class BaseCenterPop(
                     color(context.getColor(R.color.mainColor)) {
                         appendLine("$richText")
                     }
+                    appendLine("account")
                 }
             } else {
                 binding?.tvContent?.text = it
