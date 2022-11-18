@@ -122,6 +122,8 @@
     <string name="chat_row_satisfaction_content">Please make evaluation to my service!</string>
     <string name="chatrow_eval_btn_text">Evaluation</string>
     <string name="em_notice_sending">Sending</string>
+    <string name="home_bind_device">Know more about hey abby growing box</string>
+    <string name="home_go">Go</string>
 
 
 </resources>

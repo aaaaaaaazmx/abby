@@ -125,19 +125,19 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 }
             }
             success {
-                when (userinfoBean?.deviceStatus) {
-                    // 设备状态(1-绑定，2-已解绑)
-                    "1" -> {
-                        // 是否种植过
-                        data?.let { PlantCheckHelp().plantStatusCheck(it) }
-                    }
-                    "2" -> {
-                        // 跳转绑定界面
-                        ARouter.getInstance()
-                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                            .navigation()
-                    }
-                }
+                data?.let { PlantCheckHelp().plantStatusCheck(it) }
+//                when (userinfoBean?.deviceStatus) {
+//                    // 设备状态(1-绑定，2-已解绑)
+//                    "1" -> {
+//                        // 是否种植过
+//                    }
+//                    "2" -> {
+//                        // 跳转绑定界面
+//                        ARouter.getInstance()
+//                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+//                            .navigation()
+//                    }
+//                }
                 finish()
             }
         })

@@ -185,22 +185,23 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             success {
                 hideProgressLoading()
                 kotlin.runCatching {
-                    when (userInfoBean.deviceStatus) {
-                        // 1-> 绑定设备、 2-> 未绑定设备
-                        "1" -> {
-                            // 初始化SDK
-                            InitSdk.init()
-                            // 是否种植过
-                            data?.let { PlantCheckHelp().plantStatusCheck(it) }
-                        }
-                        "2" -> {
-                            // 跳转绑定界面
-                            ARouter.getInstance()
-                                .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                                .navigation()
-                        }
-                        else -> {}
-                    }
+                    // 初始化SDK
+                    InitSdk.init()
+                    // 是否种植过
+                    data?.let { PlantCheckHelp().plantStatusCheck(it) }
+//                    when (userInfoBean.deviceStatus) {
+//                        // 1-> 绑定设备、 2-> 未绑定设备
+//                        "1" -> {
+//
+//                        }
+//                        "2" -> {
+//                            // 跳转绑定界面
+//                            ARouter.getInstance()
+//                                .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+//                                .navigation()
+//                        }
+//                        else -> {}
+//                    }
                 }
                 finish()
             }

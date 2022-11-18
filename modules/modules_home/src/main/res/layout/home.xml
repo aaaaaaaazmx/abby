@@ -69,6 +69,11 @@
                         android:visibility="gone" />
                 </RelativeLayout>
 
+                <!--绑定设备界面-->
+                <include
+                    android:id="@+id/bind_device"
+                    layout="@layout/home_item_bind_device"
+                    android:visibility="gone" />
                 <!--设备离线显示图, 这个需要显示在最下面，必须的！-->
                 <include
                     android:id="@+id/plant_off_line"

@@ -1,6 +1,7 @@
 package com.cl.abby
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.viewModels
@@ -26,9 +27,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     // 默认为0
     private var mIndex = 0
 
-//    private val plantGuideFlag by lazy {
-//        intent.getStringExtra(LoginActivity.KEY_GUIDE_STATE)
-//    }
+    //    private val plantGuideFlag by lazy {
+    //        intent.getStringExtra(LoginActivity.KEY_GUIDE_STATE)
+    //    }
 
     // 引导状态
     @Autowired(name = Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG)
@@ -44,6 +45,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     @Autowired(name = Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE)
     @JvmField
     var deviceOffLineState = "0"
+
+    // 是否是第一次登录注册、并且是从未绑定过设备
+    @Autowired(name = Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE)
+    @JvmField
+    var firstLoginAndNoDevice = false
 
     // fragments
     private var homeFragment: Fragment? = null
@@ -84,8 +90,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 R.id.action_home ->
                     switchFragment(Constants.FragmentIndex.HOME_INDEX)
                 // todo 这个到时需要放出来
-//                R.id.action_contact ->
-//                    switchFragment(Constants.FragmentIndex.CONTACT_INDEX)
+                //                R.id.action_contact ->
+                //                    switchFragment(Constants.FragmentIndex.CONTACT_INDEX)
                 R.id.action_my ->
                     switchFragment(Constants.FragmentIndex.MY_INDEX)
             }
@@ -130,6 +136,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                     deviceOffLineState
                 )
+                // 是否是第一次登录注册、并且是从未绑定过设备
+                bundle.putBoolean(Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE, firstLoginAndNoDevice)
                 // todo 跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
                 // todo RouterPath.Home.PAGE_HOME 种植引导页面
                 homeFragment?.let {

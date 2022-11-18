@@ -23,7 +23,7 @@ object ServiceCreators {
 
     // 服务器地址
 //    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.OUTER_ANG_URL else HttpsUrl.PRODUCTION_URL
-    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
+    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.BD_URL else HttpsUrl.PRODUCTION_URL
 //    private val BASE_URL =  HttpsUrl.PRODUCTION_URL
 //    private val BASE_URL =  HttpsUrl.BD_URL
 

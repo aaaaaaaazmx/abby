@@ -22,7 +22,8 @@ data class UserinfoBean(
     val tuyaPassword: String? = null,
     val tuyaUserId: String? = null,
     val tuyaUserType: String? = null,
-    var userDetailData: BasicUserBean? = null
+    var userDetailData: BasicUserBean? = null,
+    val notBound: Int? = null, // 1 是绑定过、其他都是未绑定过
 ) : BaseBean() {
     // 用户基本信息Bean
     // 从用户详情接口返回

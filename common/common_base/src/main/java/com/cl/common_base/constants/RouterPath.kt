@@ -33,6 +33,8 @@ class RouterPath {
         private const val PAIR_CONNECT = "module_pair_connect"
         // 配对设备界面
         const val PAGE_PLANT_CHECK = "/plant/$PAIR_CONNECT"
+        // 设备列表界面
+        const val PAGE_PLANT_SCAN = "/plantScan/$PAIR_CONNECT"
         // 重新连接界面
         const val KEY_PAIR_RECONNECTING = "/pairReconnecting/$PAIR_CONNECT"
         // 扫码界面

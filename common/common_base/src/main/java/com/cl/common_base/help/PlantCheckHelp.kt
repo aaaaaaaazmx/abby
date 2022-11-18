@@ -23,6 +23,33 @@ class PlantCheckHelp {
      * 检查种植统一跳转
      */
     fun plantStatusCheck(data: CheckPlantData, isClearTask: Boolean = false) {
+        // 如果是没绑定过设备的 2
+        if (userinfoBean?.deviceStatus == "2") {
+            // 跳转未种植引导页面
+            // 附带引导flag过去
+            ARouter.getInstance()
+                .build(RouterPath.Main.PAGE_MAIN)
+                .withString(
+                    Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
+                    data.plantGuideFlag
+                )
+                .withString(
+                    Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
+                    data.plantExistingStatus
+                )
+                .withString(
+                    Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
+                    userinfoBean?.deviceOnlineStatus
+                )
+                .withBoolean(
+                    // 是否是第一次登录注册、并且是从未绑定过设备
+                    Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
+                    userinfoBean?.notBound == 0
+                )
+                .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
+                .navigation()
+            return
+        }
         // 是否种植过
         when (data.plantExistingStatus) {
             KEY_NOT_PLANTED -> {

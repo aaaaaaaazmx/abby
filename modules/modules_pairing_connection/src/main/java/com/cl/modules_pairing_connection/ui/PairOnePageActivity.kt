@@ -8,8 +8,10 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.help.PermissionHelp
@@ -39,6 +41,7 @@ import javax.inject.Inject
  *  当能扫描到设备了，那么就是第二个配对界面了
  * @author 李志军 2022-08-03 14:43
  */
+@Route(path = RouterPath.PairConnect.PAGE_PLANT_SCAN)
 @AndroidEntryPoint
 class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
 

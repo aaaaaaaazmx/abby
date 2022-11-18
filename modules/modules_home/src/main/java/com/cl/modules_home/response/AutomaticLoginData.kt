@@ -25,4 +25,5 @@ data class AutomaticLoginData(
     val tuyaUserId: String? = null,
     val tuyaUserType: String? = null,
     var timeZone: String? = DateHelper.getTimeZOneNumber().toString(),
+    val notBound: Int? = null
     ) : Serializable

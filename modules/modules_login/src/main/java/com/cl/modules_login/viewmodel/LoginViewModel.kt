@@ -6,6 +6,7 @@ import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.*
+import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
@@ -165,10 +166,14 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                 // 取数据
                                                 bean?.let { homeBean ->
                                                     if (homeBean.deviceList.size == 0) {
+                                                        // 种植检查
+                                                        user?.uid?.let { uid ->
+                                                            checkPlant(uid)
+                                                        }
                                                         // 跳转绑定界面
-                                                        ARouter.getInstance()
-                                                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                                                            .navigation()
+//                                                        ARouter.getInstance()
+//                                                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+//                                                            .navigation()
                                                         return@let
                                                     }
                                                     kotlin.runCatching {

@@ -39,6 +39,7 @@ import com.bbgo.module_home.databinding.HomeBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
@@ -86,6 +87,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val deviceOffLineStatus by lazy {
         val flag = arguments?.getString(Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE)
         flag ?: "0"
+    }
+
+    // 传过来的设备状态
+    // 默认为false
+    private val firstLoginAndNoDevice by lazy {
+        arguments?.getBoolean(Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE, false)
     }
 
     override fun initView(view: View) {
@@ -207,8 +214,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             """ 
             plantFlag： $viewPlantFlag
             plantGuideFlag: $viewPlantGuideFlag
+            firstLoginAndNoDevice: $firstLoginAndNoDevice
         """.trimIndent()
         )
+
+        if (firstLoginAndNoDevice == true) {
+            // 显示出绑定设备界面
+            ViewUtils.setVisible(binding.bindDevice.root)
+            ViewUtils.setGone(binding.plantOffLine.root)
+            ViewUtils.setGone(binding.clRoot)
+
+            // 如果是第一次、也从未绑定过设备、显示出气泡
+            ViewUtils.setVisible(firstLoginAndNoDevice == true, binding.bindDevice.clContinue)
+            ViewUtils.setVisible(firstLoginAndNoDevice == true, binding.bindDevice.connectDevice)
+            ViewUtils.setGone(binding.bindDevice.tvScan, firstLoginAndNoDevice == true)
+            return
+        }
+
         // 判断当前植物存在状态
         when (viewPlantFlag) {
             // 从来没有种植过
@@ -376,6 +398,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 分享
             completeIvShare.setOnClickListener {
                 // todo
+            }
+        }
+
+        // 设备绑定界面
+        binding.bindDevice.apply {
+            knowMore.setOnClickListener {
+                // 跳转新的图文界面
+            }
+            connectDevice.setOnClickListener {
+                //  连接设备
+                checkPer()
             }
         }
     }
@@ -1330,12 +1363,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                         }
                     } else {
+                        // 显示出绑定设备界面
+                        ViewUtils.setVisible(binding.bindDevice.root)
+                        ViewUtils.setGone(binding.plantOffLine.root)
+                        ViewUtils.setGone(binding.clRoot)
+
+                        // 如果是第一次、也从未绑定过设备、显示出气泡
+                        ViewUtils.setVisible(data?.notBound == 0, binding.bindDevice.clContinue)
+                        ViewUtils.setVisible(data?.notBound == 0, binding.bindDevice.connectDevice)
+                        ViewUtils.setGone(binding.bindDevice.tvScan, data?.notBound == 0)
                         // 跳转到绑定设备界面，
                         // 跳转绑定界面
-                        ARouter.getInstance()
-                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                            .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .navigation()
+                        //                        ARouter.getInstance()
+                        //                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                        //                            .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        //                            .navigation()
                     }
                 }
                 error { msg, code ->
@@ -1464,6 +1506,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
+                    if (null == data) return@success
 
                     // 属性名优先
                     if (data?.attribute.isNullOrEmpty()) {
@@ -2386,14 +2429,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
-            mViewMode.plantInfo()
-            mViewMode.refreshIsVip(
-                AutomaticLoginReq(
-                    userName = mViewMode.account,
-                    password = mViewMode.psd,
-                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+            // 在线、并且绑定了设备
+            if(mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
+                // 如果没有绑定过设备
+                mViewMode.plantInfo()
+                mViewMode.refreshIsVip(
+                    AutomaticLoginReq(
+                        userName = mViewMode.account,
+                        password = mViewMode.psd,
+                        token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -2461,6 +2508,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
 
     }
+
+    private fun checkPer() {
+        activity?.let {
+            PermissionHelp().checkConnectForTuYaBle(
+                it,
+                object :
+                    PermissionHelp.OnCheckResultListener {
+                    override fun onResult(result: Boolean) {
+                        if (!result) return
+                        // 如果权限都已经同意了
+                        ARouter.getInstance()
+                            .build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
+                            .navigation()
+                    }
+                })
+        }
+    }
+
 
     companion object {
         const val KEY_NEW_PLANT = "0"
