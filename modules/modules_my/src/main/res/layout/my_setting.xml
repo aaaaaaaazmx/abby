@@ -89,7 +89,14 @@
                     app:hideArrow="true"
                     android:id="@+id/ft_sub"
                     android:layout_marginTop="7dp"
-                    app:itemTitle="Subscription"
+                    app:itemTitle="Digital service"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"/>
+
+                <com.cl.common_base.widget.FeatureItemView
+                    app:hideArrow="true"
+                    android:id="@+id/ft_charge_time"
+                    app:itemTitle="@string/setting_sub_charge_time"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"/>
 

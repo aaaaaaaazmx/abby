@@ -107,6 +107,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
         )
+        mViewMode.refreshIsVip(
+            AutomaticLoginReq(
+                userName = mViewMode.account,
+                password = mViewMode.psd,
+                token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+            )
+        )
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -1294,25 +1301,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     data?.let { versionData ->
-                        // 强制升级才弹窗
-                        if (versionData.forcedUpdate == "1") {
-                            // versionUpdatePop
-                            val split = versionData.version?.split(".")
-                            var netWorkVersion = ""
-                            split?.forEach { version ->
-                                netWorkVersion += version
-                            }
-                            val localVersionSplit = AppUtil.appVersionName.split(".")
-                            var localVersion = ""
-                            localVersionSplit.forEach { version ->
-                                localVersion += version
-                            }
-                            // 判断当前的版本号是否需要升级
-                            kotlin.runCatching {
-                                if (netWorkVersion.toInt() > localVersion.toInt()) {
-                                    versionPop?.setData(versionData)
-                                    versionUpdatePop.show()
-                                }
+                        // versionUpdatePop
+                        val split = versionData.version?.split(".")
+                        var netWorkVersion = ""
+                        split?.forEach { version ->
+                            netWorkVersion += version
+                        }
+                        val localVersionSplit = AppUtil.appVersionName.split(".")
+                        var localVersion = ""
+                        localVersionSplit.forEach { version ->
+                            localVersion += version
+                        }
+                        // 判断当前的版本号是否需要升级
+                        kotlin.runCatching {
+                            if (netWorkVersion.toInt() > localVersion.toInt()) {
+                                versionPop?.setData(versionData)
+                                versionUpdatePop.show()
                             }
                         }
                     }
