@@ -100,6 +100,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
         )
+        mViewMode.refreshIsVip(
+            AutomaticLoginReq(
+                userName = mViewMode.account,
+                password = mViewMode.psd,
+                token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+            )
+        )
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -308,7 +315,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 选中日历
             ivCalendar.setOnClickListener {
                 // 如果是订阅用户
-                if (mViewMode.refreshToken.value?.data?.isVip == 1) {
+                if (mViewMode.refreshIsVip.value?.data?.isVip == 1) {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                 } else {
                     // 不是订阅用户，直接弹出图文
@@ -2384,6 +2391,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
             mViewMode.plantInfo()
+            mViewMode.refreshIsVip(
+                AutomaticLoginReq(
+                    userName = mViewMode.account,
+                    password = mViewMode.psd,
+                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                )
+            )
         }
     }
 

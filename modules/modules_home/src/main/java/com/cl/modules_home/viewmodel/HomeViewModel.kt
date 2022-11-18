@@ -127,6 +127,39 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
 
+    private val _refreshIsVip = MutableLiveData<Resource<AutomaticLoginData>>()
+    val refreshIsVip: LiveData<Resource<AutomaticLoginData>> = _refreshIsVip
+    fun refreshIsVip(req: AutomaticLoginReq) {
+        viewModelScope.launch {
+            repository.automaticLogin(req)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _refreshIsVip.value = it
+                }
+        }
+    }
+
     /**
      * 获取图文引导
      *

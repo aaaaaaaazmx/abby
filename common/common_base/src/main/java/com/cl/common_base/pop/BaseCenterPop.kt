@@ -33,10 +33,12 @@ class BaseCenterPop(
                 binding?.tvContent?.text = buildSpannedString {
                     // 3 Month Digital will be added to dee@baypac.com
                     bold { append(it) }
+                    appendLine()
                     color(context.getColor(R.color.mainColor)) {
-                        appendLine("$richText")
+                        bold {
+                            appendLine("$richText")
+                        }
                     }
-                    appendLine("account")
                 }
             } else {
                 binding?.tvContent?.text = it
