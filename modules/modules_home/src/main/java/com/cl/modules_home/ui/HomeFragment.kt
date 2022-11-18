@@ -404,10 +404,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 设备绑定界面
         binding.bindDevice.apply {
             knowMore.setOnClickListener {
-                // 跳转新的图文界面
+                // todo 跳转新的图文界面
             }
             connectDevice.setOnClickListener {
                 //  连接设备
+                // todo 删除设备跳转到首页
                 checkPer()
             }
         }
