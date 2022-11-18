@@ -45,7 +45,7 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
     override fun initView() {
         binding.codeView.setOnInputListener(this@ReDeemActivity)
         // 富文本
-        htmlSpan()
+        // htmlSpan()
 
     }
 
