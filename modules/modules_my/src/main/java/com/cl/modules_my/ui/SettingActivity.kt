@@ -242,7 +242,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
 
                 loading {
-                    showProgressLoading()
+                    // showProgressLoading()
                 }
 
                 success {
