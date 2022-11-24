@@ -9,6 +9,9 @@
             name="data"
             type="com.cl.common_base.bean.GuideInfoData.PlantInfo" />
 
+        <variable
+            name="datas"
+            type="com.cl.common_base.bean.RichTextData.Page" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

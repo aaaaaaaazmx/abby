@@ -27,6 +27,10 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getGuideInfo(body)
     }
 
+    fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
+        return service.getRichText(txtId, type)
+    }
+
     fun saveOrUpdate(body: String): Flow<HttpResult<BaseBean>> {
         return service.saveOrUpdate(body)
     }

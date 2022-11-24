@@ -29,6 +29,13 @@ interface HttpHomeApiService {
     @POST("abby/guide/getGuideInfo")
     fun getGuideInfo(@Field("type") type: String): Flow<HttpResult<GuideInfoData>>
 
+
+    /**
+     * 富文本图文接口 统一
+     */
+    @GET("abby/richText/getRichText")
+    fun getRichText(@Query("txtId")txtId: String? = null, @Query("txtType") txtType: String? = null): Flow<HttpResult<RichTextData>>
+
     /**
      * 上报引导标记
      */

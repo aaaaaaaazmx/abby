@@ -29,27 +29,33 @@
     <uses-permission
         android:name="android.permission.REQUEST_INSTALL_PACKAGES"
         tools:node="remove" />
-<!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
+    <!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 
-<!--    <application-->
-<!--        android:allowBackup="true"-->
-<!--        android:icon="@mipmap/ic_launcher"-->
-<!--        android:label="@string/app_name"-->
-<!--        android:supportsRtl="true"-->
-<!--        android:theme="@style/Theme.Abby">-->
-<!--        <activity-->
-<!--            android:name="com.baypacclub.modules_home.ui.HomeActivity"-->
-<!--            android:exported="true">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--        </activity>-->
-<!--    </application>-->
+    <!--    <application-->
+    <!--        android:allowBackup="true"-->
+    <!--        android:icon="@mipmap/ic_launcher"-->
+    <!--        android:label="@string/app_name"-->
+    <!--        android:supportsRtl="true"-->
+    <!--        android:theme="@style/Theme.Abby">-->
+    <!--        <activity-->
+    <!--            android:name="com.baypacclub.modules_home.ui.HomeActivity"-->
+    <!--            android:exported="true">-->
+    <!--            <intent-filter>-->
+    <!--                <action android:name="android.intent.action.MAIN" />-->
+    <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+    <!--            </intent-filter>-->
+    <!--        </activity>-->
+    <!--    </application>-->
 
+    <application>
+        <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:name="com.cl.modules_home.ui.KnowMoreActivity"
+            android:screenOrientation="portrait" />
+    </application>
 </manifest>

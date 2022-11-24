@@ -12,7 +12,6 @@
 
     </FrameLayout>
 
-
     <RelativeLayout
         android:id="@+id/thumb"
         android:layout_width="match_parent"
@@ -24,7 +23,15 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:background="#000000"
-        android:scaleType="fitCenter" />
+        android:scaleType="fitCenter">
+
+        <ImageView
+            android:id="@+id/thumbImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/layout_bottom"
@@ -67,17 +74,6 @@
             android:text="00:00"
             android:textColor="#ffffff" />
 
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/switchSize"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginRight="16dp"
-            android:gravity="center"
-            android:minEms="2"
-            android:text="标准"
-            android:textColor="#ffffff" />
-
         <ImageView
             android:id="@+id/fullscreen"
             android:layout_width="wrap_content"
@@ -104,6 +100,30 @@
         android:layout_marginTop="6dp"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/layout_top"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/video_title_bg"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:paddingLeft="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/video_back" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+    </LinearLayout>
+
     <moe.codeest.enviews.ENDownloadView
         android:id="@+id/loading"
         android:layout_width="28dp"
@@ -116,7 +136,8 @@
         android:id="@+id/start"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_gravity="center_vertical" />
 
 
@@ -139,79 +160,6 @@
         android:layout_marginRight="50dp"
         android:scaleType="centerInside"
         android:src="@drawable/unlock"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/layout_top"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/back_tiny"
-        android:layout_toRightOf="@+id/back_tiny"
-        android:background="@drawable/video_title_bg"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:paddingLeft="10dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/video_back" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/change_transform"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:minEms="5"
-            android:paddingLeft="10dp"
-            android:text="旋转镜像"
-            android:textColor="@android:color/white"
-            android:textSize="13sp" />
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/change_rotate"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:minEms="5"
-            android:paddingLeft="10dp"
-            android:text="旋转画面"
-            android:textColor="@android:color/white"
-            android:textSize="13sp" />
-
-        <TextView
-            android:visibility="gone"
-            android:id="@+id/moreScale"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:minEms="5"
-            android:paddingLeft="10dp"
-            android:text="默认比例"
-            android:textColor="@android:color/white"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/preview_layout"
-        android:layout_width="@dimen/seek_bar_image"
-        android:layout_height="100dp"
-        android:layout_above="@+id/layout_bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
         android:visibility="gone" />
 
 </RelativeLayout>

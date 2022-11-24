@@ -412,6 +412,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.bindDevice.apply {
             knowMore.setOnClickListener {
                 // todo 跳转新的图文界面
+                startActivity(Intent(activity, KnowMoreActivity::class.java))
             }
             connectDevice.setOnClickListener {
                 //  连接设备
@@ -2435,7 +2436,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
             // 在线、并且绑定了设备
-            if(mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
+            if (mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
                 // 如果没有绑定过设备
                 mViewMode.plantInfo()
                 mViewMode.refreshIsVip(
