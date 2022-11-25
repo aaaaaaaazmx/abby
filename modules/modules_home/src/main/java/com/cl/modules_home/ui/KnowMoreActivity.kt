@@ -18,10 +18,11 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.viewmodel.KnowMoreViewModel
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.util.SmartGlideImageLoader
-import com.shuyu.gsyvideoplayer.GSYVideoADManager
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener
+import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import dagger.hilt.android.AndroidEntryPoint
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 import javax.inject.Inject
 
 
@@ -42,6 +43,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
     }
 
     override fun initView() {
+        // EXO模式
+        PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
         // mViewMode.getRichText(txtId = "516c590993a041309912ebe16c2eb856")

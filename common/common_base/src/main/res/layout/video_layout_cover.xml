@@ -63,7 +63,7 @@
             android:minHeight="4dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:progressDrawable="@drawable/video_seek_progress"
+            android:progressDrawable="@drawable/video_seek_color"
             android:thumb="@drawable/video_seek_thumb" />
 
         <TextView
@@ -132,7 +132,7 @@
         android:layout_centerVertical="true"
         android:visibility="invisible" />
 
-    <moe.codeest.enviews.ENPlayView
+    <ImageView
         android:id="@+id/start"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -161,5 +161,13 @@
         android:scaleType="centerInside"
         android:src="@drawable/unlock"
         android:visibility="gone" />
+
+
+    <com.cl.common_base.video.player.PlayerFastSeekOverlay
+        android:id="@+id/fast_seek_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:visibility="invisible" /> <!-- Required for the first appearance fading correctly -->
 
 </RelativeLayout>

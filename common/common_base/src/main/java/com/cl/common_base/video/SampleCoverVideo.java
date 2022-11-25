@@ -3,26 +3,40 @@ package com.cl.common_base.video;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 
+import androidx.annotation.RequiresApi;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cl.common_base.R;
+import com.cl.common_base.ext.ViewUtils;
+import com.cl.common_base.video.player.PlayerFastSeekOverlay;
+import com.cl.common_base.widget.FeatureTitleBar;
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
 import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
+import com.shuyu.gsyvideoplayer.video.NormalGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
+import com.shuyu.gsyvideoplayer.video.base.GSYVideoControlView;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 
 /**
@@ -30,15 +44,17 @@ import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
  * Created by guoshuyu on 2017/9/3.
  */
 
-public class SampleCoverVideo extends StandardGSYVideoPlayer {
+@RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+public class SampleCoverVideo extends NormalGSYVideoPlayer {
 
     ImageView mCoverImage;
 
     String mCoverOriginUrl;
 
-    int  mCoverOriginId = 0;
+    int mCoverOriginId = 0;
 
     int mDefaultRes;
+    private PlayerFastSeekOverlay fastSeekOverlay;
 
     public SampleCoverVideo(Context context, Boolean fullFlag) {
         super(context, fullFlag);
@@ -56,10 +72,28 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
     protected void init(Context context) {
         super.init(context);
         mCoverImage = (ImageView) findViewById(R.id.thumbImage);
+        fastSeekOverlay = findViewById(R.id.fast_seek_overlay);
 
         if (mThumbImageViewLayout != null &&
                 (mCurrentState == -1 || mCurrentState == CURRENT_STATE_NORMAL || mCurrentState == CURRENT_STATE_ERROR)) {
             mThumbImageViewLayout.setVisibility(VISIBLE);
+        }
+
+        // 默认显示的底部进度条
+        setBottomProgressBarDrawable(getResources().getDrawable(R.drawable.video_new_progress));
+    }
+
+    @Override
+    protected void updateStartImage() {
+        if(mStartButton instanceof ImageView) {
+            ImageView imageView = (ImageView) mStartButton;
+            if (mCurrentState == CURRENT_STATE_PLAYING) {
+                imageView.setImageResource(R.drawable.video_click_pause);
+            } else if (mCurrentState == CURRENT_STATE_ERROR) {
+                imageView.setImageResource(R.drawable.video_click_play);
+            } else {
+                imageView.setImageResource(R.drawable.video_click_play);
+            }
         }
     }
 
@@ -69,41 +103,219 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
     }
 
     @Override
-    public void touchDoubleUp(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Log.e("123312312", "ACTION_DOWN");
-            break;
-            case MotionEvent.ACTION_UP:
-                Log.e("123312312", "ACTION_UP");
-                break;
+    public boolean onTouch(View v, MotionEvent event) {
+
+
+        int id = v.getId();
+        float x = event.getX();
+        float y = event.getY();
+
+        if (mIfCurrentIsFullscreen && mLockCurScreen && mNeedLockFull) {
+            onClickUiToggle(event);
+            startDismissControlViewTimer();
+            return true;
         }
+
+        if (id == R.id.fullscreen) {
+            return false;
+        }
+
+        if (id == R.id.surface_container) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+
+                    touchSurfaceDown(x, y);
+
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float deltaX = x - mDownX;
+                    float deltaY = y - mDownY;
+                    float absDeltaX = Math.abs(deltaX);
+                    float absDeltaY = Math.abs(deltaY);
+
+                    if ((mIfCurrentIsFullscreen && mIsTouchWigetFull)
+                            || (mIsTouchWiget && !mIfCurrentIsFullscreen)) {
+                        if (!mChangePosition && !mChangeVolume && !mBrightness) {
+                            touchSurfaceMoveFullLogic(absDeltaX, absDeltaY);
+                        }
+                    }
+                    touchSurfaceMove(deltaX, deltaY, y);
+
+                    break;
+                case MotionEvent.ACTION_UP:
+
+                    startDismissControlViewTimer();
+
+                    touchSurfaceUp();
+
+
+                    Debuger.printfLog(SampleCoverVideo.this.hashCode() + "------------------------------ surface_container ACTION_UP");
+
+                    startProgressTimer();
+
+                    //不要和隐藏虚拟按键后，滑出虚拟按键冲突
+                    if (mHideKey && mShowVKey) {
+                        return true;
+                    }
+                    break;
+            }
+            this.gestureDetector.onTouchEvent(event);
+        } else if (id == R.id.progress) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    cancelDismissControlViewTimer();
+                case MotionEvent.ACTION_MOVE:
+                    cancelProgressTimer();
+                    ViewParent vpdown = getParent();
+                    while (vpdown != null) {
+                        vpdown.requestDisallowInterceptTouchEvent(true);
+                        vpdown = vpdown.getParent();
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                    startDismissControlViewTimer();
+
+                    Debuger.printfLog(SampleCoverVideo.this.hashCode() + "------------------------------ progress ACTION_UP");
+                    startProgressTimer();
+                    ViewParent vpup = getParent();
+                    while (vpup != null) {
+                        vpup.requestDisallowInterceptTouchEvent(false);
+                        vpup = vpup.getParent();
+                    }
+                    mBrightnessData = -1f;
+                    break;
+            }
+        }
+
+        return false;
+    }
+
+    private int i = 1;
+    protected GestureDetector gestureDetector = new GestureDetector(getContext().getApplicationContext(), new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            if (GSYVideoManager.instance().getCurrentPosition() == 0) {
+                clickStartIcon();
+                return true;
+            }
+            touchDoubleUp(e);
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (!mChangePosition && !mChangeVolume && !mBrightness) {
+                onClickUiToggle(e);
+            }
+            return super.onSingleTapConfirmed(e);
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            super.onLongPress(e);
+            touchLongPress(e);
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            // todo 判断当前是否是双击状态、然后在每次按下去的时候加1
+            Boolean isttt = fastSeekOverlay.onDown(e);
+            if (!isttt) {
+                if (fastSeekOverlay.onDownNotDoubleTapping(e)) {
+                    return super.onDown(e);
+                }
+            }
+            return true;
+        }
+    });
+
+    public void touchDoubleUp(MotionEvent event) {
         OrientationUtils orientationUtils = new OrientationUtils(CommonUtil.getActivityContext(getContext()), this, getOrientationOption());
         float x = event.getX();
-        int screenWidth = 0;
+        fastSeekOverlay.startMultiDoubleTap(event, new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                i = 0;
+                Log.e("12312312 双击开始", "i: " + i);
+                // todo 双击开始
+                fastSeekOverlay.getSecondsView().stopAnimation();
+                fastSeekOverlay.getSecondsView().setSeconds(0);
+                ViewUtils.animate(fastSeekOverlay, true, 450);
+                // extracted(orientationUtils, x, i, false);
+                return null;
+            }
+        }, new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                // todo 结束双击
+                Log.e("12312312 结束双击", "i: " + i);
+                fastSeekOverlay.getSecondsView().stopAnimation();
+                ViewUtils.animate(fastSeekOverlay, false, 450);
+                extracted(orientationUtils, x, i, true);
+                i = 1;
+                return null;
+            }
+        }, new Function0<Unit>() {
+            @Override
+            public Unit invoke() {
+                Log.e("12312312 持续双击", "i: " + i);
+                i++;
+                // todo 持续双击
+                fastSeekOverlay.getSecondsView().setSeconds(i * 10);
+                extracted(orientationUtils, x, i, false);
+                return null;
+            }
+        });
+    }
+
+    private void extracted(OrientationUtils orientationUtils, float x, int count, boolean isDoubleOver) {
+        int screenWidth;
         //竖屏
         if (orientationUtils.getScreenType() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
             screenWidth = mScreenWidth;
         } else {
-            screenWidth  = mScreenHeight;
+            screenWidth = mScreenHeight;
         }
+        // 是否取消延时操作
+        if (fastSeekOverlay.isDoubleTapping() && fastSeekOverlay.isDoubleTapEnabled()) {
+            fastSeekOverlay.keepInDoubleTapMode();
+        }
+        // 快退
         if (x <= screenWidth * 0.3) {
-            Log.e("12332123", "x : " + x + "touch: " + screenWidth * 0.3  + "快退");
+            Log.e("12332123", "x : " + x + "touch: " + screenWidth * 0.3 + "快退");
+
             //快退
-            forwardOrRewind(-10000);
+            fastSeekOverlay.changeConstraints(false);
+            fastSeekOverlay.getCircleClipTapView().updatePosition(true);
+            fastSeekOverlay.getSecondsView().setForwarding(false);
+            if (isDoubleOver) {
+                // 10000 是 10 秒
+                forwardOrRewind(- (count * 10000L));
+            }
         }
 
+        // 双击暂停
         if (x > screenWidth * 0.3 && x < screenWidth * 0.6) {
             if (!mHadPlay) {
                 return;
             }
             clickStartIcon();
+            return;
         }
+        // 快进
         if (x >= screenWidth * 0.6) {
-            Log.e("12332123", "x : " + x + "touch: " + screenWidth * 0.6  + "快进");
-            Log.e("12332123", "快进");
+            Log.e("12332123", "x : " + x + "touch: " + screenWidth * 0.6 + "快进");
+
+            // 展示动画
+            fastSeekOverlay.changeConstraints(true);
+            fastSeekOverlay.getCircleClipTapView().updatePosition(false);
+            fastSeekOverlay.getSecondsView().setForwarding(true);
+
             //快进10
-            forwardOrRewind(10000);
+            if (isDoubleOver) {
+                // 10000 是 10 秒
+                forwardOrRewind(count * 10000L);
+            }
         }
     }
 
@@ -115,13 +327,13 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
         }
         String seekTime = CommonUtil.stringForTime(currentTime);
         String totalTime = CommonUtil.stringForTime(totalTimeDuration);
-        getGSYVideoManager().seekTo(currentTime);
+        this.getGSYVideoManager().seekTo(currentTime);
 
-        int finalCurrentTime = currentTime;
-        new Handler().postDelayed(() -> {
-            showProgressDialog(time, seekTime, finalCurrentTime, totalTime, totalTimeDuration);
-        }, 100);
-        new Handler().postDelayed(this::dismissProgressDialog, 600);
+//        int finalCurrentTime = currentTime;
+//        new Handler().postDelayed(() -> {
+//            showProgressDialog(time, seekTime, finalCurrentTime, totalTime, totalTimeDuration);
+//        }, 100);
+//        new Handler().postDelayed(this::dismissProgressDialog, 600);
     }
 
     public void loadCoverImage(String url, int res) {
@@ -148,9 +360,9 @@ public class SampleCoverVideo extends StandardGSYVideoPlayer {
     public GSYBaseVideoPlayer startWindowFullscreen(Context context, boolean actionBar, boolean statusBar) {
         GSYBaseVideoPlayer gsyBaseVideoPlayer = super.startWindowFullscreen(context, actionBar, statusBar);
         SampleCoverVideo sampleCoverVideo = (SampleCoverVideo) gsyBaseVideoPlayer;
-        if(mCoverOriginUrl != null) {
+        if (mCoverOriginUrl != null) {
             sampleCoverVideo.loadCoverImage(mCoverOriginUrl, mDefaultRes);
-        } else  if(mCoverOriginId != 0) {
+        } else if (mCoverOriginId != 0) {
             sampleCoverVideo.loadCoverImageBy(mCoverOriginId, mDefaultRes);
         }
         return gsyBaseVideoPlayer;

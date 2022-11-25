@@ -124,6 +124,9 @@
     <string name="em_notice_sending">Sending</string>
     <string name="home_bind_device">Know more about hey abby growing box</string>
     <string name="home_go">Go</string>
-
+    <plurals name="seconds">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
 
 </resources>
