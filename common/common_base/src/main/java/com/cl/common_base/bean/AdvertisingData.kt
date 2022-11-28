@@ -17,4 +17,5 @@ data class AdvertisingData(
     val praise: Int? = null,
     val reward: String? = null,
     val title: String? = null,
+    val video: String? = null,
 ) : BaseBean()

@@ -184,7 +184,7 @@ public class CommonUtils {
 
     public static Uri getUriForFile(Context context, @NonNull File file) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider", file);
+            return FileProvider.getUriForFile(context, context.getPackageName() + ".ease", file);
         } else {
             return Uri.fromFile(file);
         }

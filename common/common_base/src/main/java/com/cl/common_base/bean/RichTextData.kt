@@ -59,7 +59,8 @@ data class RichTextData(
         val url: String? = null, // URL
         val width: String? = null, // 宽度
         val icon: String? = null, // 按钮图标
-    ) : BaseBean()
+        val autoplay: Boolean? = null, // 自动播放
+        ) : BaseBean()
 
 
     companion object {

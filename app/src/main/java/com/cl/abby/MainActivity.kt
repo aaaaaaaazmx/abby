@@ -16,7 +16,11 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.showToast
+import com.shuyu.gsyvideoplayer.cache.CacheFactory
+import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import dagger.hilt.android.AndroidEntryPoint
+import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
+import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
 
 /**
  * 主页入口
@@ -72,6 +76,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun initView() {
+        // 设置视频缓存、以及播放内核
+        PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
+        CacheFactory.setCacheManager(ExoPlayerCacheManager::class.java)
         // Arouter注入
         ARouter.getInstance().inject(this)
         // 切换Fragment

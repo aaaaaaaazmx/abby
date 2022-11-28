@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.PowerManager
 import android.util.Log
 import android.view.animation.AlphaAnimation
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +22,7 @@ import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.common_base.video.SampleCoverVideo
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lin.cardlib.CardLayoutManager
 import com.lin.cardlib.CardSetting
@@ -28,6 +30,7 @@ import com.lin.cardlib.CardTouchHelperCallback
 import com.lin.cardlib.OnSwipeCardListener
 import com.lin.cardlib.utils.ReItemTouchHelper
 import com.lxj.xpopup.core.BottomPopupView
+import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
@@ -182,28 +185,29 @@ class BasePumpWaterPop(
                     o: AdvertisingData?,
                     direction: Int
                 ) {
-                    //                    when (direction) {
-                    //                        ReItemTouchHelper.DOWN -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe down out",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                        ReItemTouchHelper.UP -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe up out ",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                        ReItemTouchHelper.LEFT -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe left out",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                        ReItemTouchHelper.RIGHT -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe right out",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                    }
+                    GSYVideoManager.releaseAllVideos()
+                   /* when (direction) {
+                        ReItemTouchHelper.DOWN -> Toast.makeText(
+                            context,
+                            "swipe down out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ReItemTouchHelper.UP -> Toast.makeText(
+                            context,
+                            "swipe up out ",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ReItemTouchHelper.LEFT -> Toast.makeText(
+                            context,
+                            "swipe left out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ReItemTouchHelper.RIGHT -> Toast.makeText(
+                            context,
+                            "swipe right out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }*/
                 }
 
                 override fun onSwipedClear() {

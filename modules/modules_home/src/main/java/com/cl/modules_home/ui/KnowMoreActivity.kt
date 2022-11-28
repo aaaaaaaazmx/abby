@@ -4,8 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.Gravity
-import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -13,7 +11,6 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
-import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.mtjsoft.barcodescanning.extentions.dp2px
@@ -22,8 +19,7 @@ import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.ext.logE
-import com.cl.common_base.ext.logI
+import com.cl.common_base.easeui.ui.videoUiHelp
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
 import com.cl.common_base.web.WebActivity
@@ -32,10 +28,7 @@ import com.cl.modules_home.viewmodel.KnowMoreViewModel
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.shuyu.gsyvideoplayer.GSYVideoManager
-import com.shuyu.gsyvideoplayer.listener.GSYMediaPlayerListener
-import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import dagger.hilt.android.AndroidEntryPoint
-import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 import javax.inject.Inject
 
 
@@ -60,8 +53,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     }
 
     override fun initView() {
-        // EXO模式
-        PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
+        binding.ivBack.setOnClickListener { finish() }
 
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
@@ -73,32 +65,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     /**
      * 初始化Video
      */
-    private fun initVideo(url: String) {
+    private fun initVideo(url: String, autoPlay: Boolean) {
         binding.videoItemPlayer.apply {
-            // 第一帧显示的图
-            loadCoverImage(url, R.mipmap.placeholder)
-            setUp(url, true, null, null, "")
-            // 隐藏标题
-            titleTextView.visibility = View.GONE
-            // 隐藏返回键
-            backButton.visibility = View.GONE
-            //设置全屏按键功能
-            fullscreenButton.setOnClickListener { startWindowFullscreen(context, false, true) }
-            //防止错位设置
-            playTag = "${0}"
-            isLockLand = true
-            logI("layou: ${0}")
-            playPosition = 0
-            //是否根据视频尺寸，自动选择竖屏全屏或者横屏全屏，这个标志为和 setLockLand 冲突，需要和 orientationUtils 使用
-            isAutoFullWithSize = true
-            //音频焦点冲突时是否释放
-            isReleaseWhenLossAudio = false
-            //全屏动画
-            isShowFullAnimation = false
-            //小屏时不触摸滑动
-            setIsTouchWiget(false)
-            // 暂停状态下显示封面
-            isShowPauseCover = true
+            videoUiHelp(url)
+            if (autoPlay) startPlayLogic()
         }
     }
 
@@ -116,7 +86,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
                     // 初始化头部Video
                     data?.topPage?.firstOrNull { it.type == "video" }?.apply {
-                        value?.url?.let { initVideo(it) }
+                        value?.url?.let { initVideo(it, value?.autoplay == true) }
                     }
                     data?.bar?.let {
                         // todo 设置标题

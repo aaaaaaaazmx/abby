@@ -108,15 +108,15 @@ public class EaseChatPrimaryMenu extends EaseChatPrimaryMenuBase implements View
             @Override
             public void afterTextChanged(Editable s) {
                 refleshEmojiSendBtn();
-                if (hasSendButton()) {
-                    if (s.length() > 0){
-                        buttonSend.setVisibility(View.VISIBLE);
-                    }else{
-                        buttonSend.setVisibility(View.GONE);
-                    }
-                } else {
-                    buttonSend.setVisibility(View.GONE);
-                }
+//                if (hasSendButton()) {
+//                    if (s.length() > 0){
+//                        buttonSend.setVisibility(View.VISIBLE);
+//                    }else{
+//                        buttonSend.setVisibility(View.GONE);
+//                    }
+//                } else {
+//                    buttonSend.setVisibility(View.GONE);
+//                }
                 ChatClient.getInstance().chatManager().postMessagePredict(s.toString());
             }
         });
@@ -211,20 +211,28 @@ public class EaseChatPrimaryMenu extends EaseChatPrimaryMenuBase implements View
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.btn_set_mode_voice) {
+//            if (listener != null)
+//                listener.onToggleVoiceBtnClicked();
+//            setModeVoice();
+
+            // 视频图片
+            hideVoiceMode();
+            showMoreorLess(false);
+            showNormalFaceImage();
             if (listener != null)
-                listener.onToggleVoiceBtnClicked();
-            setModeVoice();
+                listener.onToggleExtendClicked();
         } else if (id == R.id.btn_set_mode_keyboard) {
             if (listener != null)
                 listener.onToggleVoiceBtnClicked();
             editText.requestFocus();
             displayKeyboard(editText);
         } else if (id == R.id.btn_more) {
-            hideVoiceMode();
-            showMoreorLess(false);
-            showNormalFaceImage();
-            if (listener != null)
-                listener.onToggleExtendClicked();
+//            hideVoiceMode();
+//            showMoreorLess(false);
+//            showNormalFaceImage();
+//            if (listener != null)
+//                listener.onToggleExtendClicked();
+            sendTextMsg();
         } else if (id ==R.id.btn_less) {
             showMoreorLess(true);
             if (listener != null)

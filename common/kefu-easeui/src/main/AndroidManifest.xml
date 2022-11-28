@@ -32,17 +32,6 @@
             android:name="org.apache.http.legacy"
             android:required="false"/>
 
-
-        <provider
-            android:name="com.hyphenate.helpdesk.easeui.provider.RyeexProvider"
-            android:authorities="${applicationId}.share.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/app_share_provider_paths" />
-        </provider>
-
         <activity
             android:name="com.hyphenate.helpdesk.easeui.ui.ShowBigImageActivity"
             android:screenOrientation="portrait"

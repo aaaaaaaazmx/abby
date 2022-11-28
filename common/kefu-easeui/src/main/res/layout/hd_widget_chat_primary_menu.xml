@@ -26,7 +26,7 @@
             android:padding="2dp"
             android:cropToPadding="true"
             android:layout_marginLeft="18dp"
-            android:background="@drawable/hd_chatting_setmode_voice_btn_normal"
+            android:background="@drawable/ease_pic"
             android:visibility="visible" />
 
         <Button
@@ -64,13 +64,12 @@
                 android:textColorHint="#BBBBBB"
                 android:textSize="16sp" />
 
-            <RelativeLayout 
+            <RelativeLayout
                 android:id="@+id/rl_face"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                >
+                android:layout_centerVertical="true">
 
                 <ImageView
                     android:id="@+id/iv_face"
@@ -83,16 +82,16 @@
                     android:src="@drawable/hd_chatting_biaoqing_btn_normal"
                     android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/iv_face_keyboard"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:padding="2dp"
-                android:cropToPadding="true"
-                android:scaleType="fitCenter"
-                android:layout_centerVertical="true"
-                android:src="@drawable/hd_chatting_setmode_keyboard_btn_normal"
-                android:visibility="gone" />
+                <ImageView
+                    android:id="@+id/iv_face_keyboard"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_centerVertical="true"
+                    android:cropToPadding="true"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/hd_chatting_setmode_keyboard_btn_normal"
+                    android:visibility="gone" />
 
             </RelativeLayout>
         </RelativeLayout>
@@ -113,7 +112,7 @@
                     android:layout_height="24dp"
                     android:padding="2dp"
                     android:cropToPadding="true"
-                    android:background="@drawable/hd_type_select_btn_nor"
+                    android:background="@drawable/ease_enter"
                     android:visibility="visible"/>
 
                 <Button

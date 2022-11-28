@@ -1,18 +1,14 @@
 package com.cl.common_base.adapter
 
-import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.R
 import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.databinding.*
-import com.cl.common_base.ext.logI
+import com.cl.common_base.easeui.ui.videoUiHelp
 import com.cl.common_base.video.SampleCoverVideo
 import com.cl.common_base.widget.FeatureTitleBar
-import com.shuyu.gsyvideoplayer.GSYVideoManager
-import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
-import com.shuyu.gsyvideoplayer.video.base.GSYVideoView
 
 /**
  * 富文本
@@ -174,46 +170,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                 }
                 helper.getView<SampleCoverVideo>(R.id.video_item_player).apply {
                     item.videoTag = true
-                    // 第一帧显示的图
-                    val url = item.value?.url
-                    loadCoverImage(url, R.mipmap.placeholder)
-                    setUp(url, true, null, null, item.value?.title)
-                    // 隐藏标题
-                    titleTextView.visibility = View.GONE
-                    // 隐藏返回键
-                    backButton.visibility = View.GONE
-                    //设置全屏按键功能
-                    fullscreenButton.setOnClickListener { startWindowFullscreen(context, false, true) }
-                    //防止错位设置
-                    playTag = "${helper.layoutPosition}"
-                    isLockLand = true
-                    logI("layou: ${helper.layoutPosition}")
-                    playPosition = helper.layoutPosition
-                    //是否根据视频尺寸，自动选择竖屏全屏或者横屏全屏，这个标志为和 setLockLand 冲突，需要和 orientationUtils 使用
-                    isAutoFullWithSize = false
-                    //音频焦点冲突时是否释放
-                    isReleaseWhenLossAudio = false
-                    //全屏动画
-                    isShowFullAnimation = false
-                    //小屏时不触摸滑动
-                    setIsTouchWiget(false)
-                    // 暂停状态下显示封面
-                    isShowPauseCover = true
-                    setVideoAllCallBack(object : GSYSampleCallBack() {
-                        override fun onClickResume(url: String, vararg objects: Any) {
-                            super.onClickResume(url, *objects)
-                            logI("123123123: ${GSYVideoManager.instance().currentPosition}")
-                            //                            seekOnStart = GSYVideoManager.instance().currentPosition
-                            // cancelProgressTimer()
-                            // hideAllWidget()
-                        }
-
-                        override fun onAutoComplete(url: String, vararg objects: Any) {
-                            super.onAutoComplete(url, *objects)
-                            val video = (objects[1] as? GSYVideoView)
-                            logI("videoDur: ${video?.currentPositionWhenPlaying}")
-                        }
-                    })
+                    item.value?.url?.let { videoUiHelp(it) }
                 }
             }
 

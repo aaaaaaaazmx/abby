@@ -6,6 +6,8 @@ import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.databinding.BaseItemPumpWaterBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.cl.common_base.easeui.ui.videoUiHelp
+import com.cl.common_base.video.SampleCoverVideo
 
 /**
  * 排水适配器
@@ -26,5 +28,8 @@ class PumpWaterAdapter(data: MutableList<AdvertisingData>?) :
             binding.data = item
             binding.executePendingBindings()
         }
+        // 视频播放
+        item.video?.let { helper.getView<SampleCoverVideo>(R.id.video_item_player).videoUiHelp(it) }
+
     }
 }
