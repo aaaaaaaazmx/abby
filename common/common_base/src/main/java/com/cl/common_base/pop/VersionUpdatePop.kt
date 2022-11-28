@@ -9,6 +9,7 @@ import com.cl.common_base.bean.AppVersionData
 import com.cl.common_base.databinding.BaseVersionUpdateBinding
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.web.WebActivity
 import com.lxj.xpopup.core.CenterPopupView
 
 
@@ -40,8 +41,17 @@ class VersionUpdatePop(
 
             tvConfirm.setOnClickListener {
                 onConfirmAction?.invoke()
-                // 跳转到谷歌市场
-                startGooglePlay()
+                if (appVersionData?.downloadAddress.isNullOrEmpty()) {
+                    // 跳转到谷歌市场
+                    startGooglePlay()
+                } else {
+                    // 跳转到下载界面
+                    val intent = Intent(context, WebActivity::class.java)
+                    intent.putExtra(WebActivity.KEY_WEB_URL, appVersionData?.downloadAddress)
+                    intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Download")
+                    context.startActivity(intent)
+                }
+
                 // 强制升级才可以取消弹窗
                 if (appVersionData?.forcedUpdate == "0")dismiss()
             }
