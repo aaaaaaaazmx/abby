@@ -5,12 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.bean.RichTextData
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
-import com.cl.modules_home.request.AutomaticLoginReq
-import com.cl.modules_home.response.AutomaticLoginData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -18,6 +19,13 @@ import javax.inject.Inject
 
 class KnowMoreViewModel @Inject constructor(private val repository: HomeRepository) : ViewModel() {
 
+
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
+    }
 
     /**
      * 富文本图文图文接口、所用东西都是从接口拉取

@@ -160,4 +160,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun topUpSubscriberNumber(number:String): Flow<HttpResult<Boolean>> {
         return remoteRepository.topUpSubscriberNumber(number)
     }
+
+    fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
+        return remoteRepository.automaticLogin(body)
+    }
 }

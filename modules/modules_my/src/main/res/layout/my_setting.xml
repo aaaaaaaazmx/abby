@@ -156,6 +156,14 @@
                     android:layout_height="60dp"
                     app:itemTitle="Notifications" />
 
+                <!--缓存-->
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_cache"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="@string/my_cache" />
+
+
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_vision"
                     android:layout_width="match_parent"

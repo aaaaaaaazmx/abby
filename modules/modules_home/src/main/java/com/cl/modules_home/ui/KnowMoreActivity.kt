@@ -1,18 +1,31 @@
 package com.cl.modules_home.ui
 
 import android.content.Intent
+import android.graphics.Color
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.view.ViewCompat
+import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
+import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import cn.mtjsoft.barcodescanning.extentions.dp2px
 import com.bbgo.module_home.databinding.HomeKnowMoreLayoutBinding
+import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
-import com.cl.common_base.bean.RichTextData
+import com.cl.common_base.easeui.EaseUiHelper
+import com.cl.common_base.ext.logE
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.sp2px
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.viewmodel.KnowMoreViewModel
@@ -30,7 +43,7 @@ import javax.inject.Inject
  * 统一图文接口
  */
 @AndroidEntryPoint
-class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlayerListener {
+class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     @Inject
     lateinit var mViewMode: KnowMoreViewModel
 
@@ -42,29 +55,50 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
         LinearLayoutManager(this@KnowMoreActivity)
     }
 
+    private val txtId by lazy {
+        intent.getStringExtra(KEY_TXT_ID)
+    }
+
     override fun initView() {
         // EXO模式
         PlayerFactory.setPlayManager(Exo2PlayerManager::class.java)
+
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
         // mViewMode.getRichText(txtId = "516c590993a041309912ebe16c2eb856")
-        mViewMode.getRichText(txtId = "c3eeb4d2f1332f4869erwqfa912557ae")
-
-        val bu = Button(this@KnowMoreActivity)
-        bu.text = "123"
-        binding.flRoot.addView(
-            bu
-        )
+        // mViewMode.getRichText(txtId = "c3eeb4d2f1332f4869erwqfa912557ae")
+        mViewMode.getRichText(txtId = txtId)
     }
 
-    override fun onResume() {
-        super.onResume()
-        // 添加背景高度
-        ViewCompat.setOnApplyWindowInsetsListener(binding.vvRoot) { v, insets ->
-            binding.vvRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                height = insets.systemWindowInsetTop
-            }
-            return@setOnApplyWindowInsetsListener insets
+    /**
+     * 初始化Video
+     */
+    private fun initVideo(url: String) {
+        binding.videoItemPlayer.apply {
+            // 第一帧显示的图
+            loadCoverImage(url, R.mipmap.placeholder)
+            setUp(url, true, null, null, "")
+            // 隐藏标题
+            titleTextView.visibility = View.GONE
+            // 隐藏返回键
+            backButton.visibility = View.GONE
+            //设置全屏按键功能
+            fullscreenButton.setOnClickListener { startWindowFullscreen(context, false, true) }
+            //防止错位设置
+            playTag = "${0}"
+            isLockLand = true
+            logI("layou: ${0}")
+            playPosition = 0
+            //是否根据视频尺寸，自动选择竖屏全屏或者横屏全屏，这个标志为和 setLockLand 冲突，需要和 orientationUtils 使用
+            isAutoFullWithSize = true
+            //音频焦点冲突时是否释放
+            isReleaseWhenLossAudio = false
+            //全屏动画
+            isShowFullAnimation = false
+            //小屏时不触摸滑动
+            setIsTouchWiget(false)
+            // 暂停状态下显示封面
+            isShowPauseCover = true
         }
     }
 
@@ -80,12 +114,50 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
                     hideProgressLoading()
                     if (null == data) return@success
 
-                    // val list = mutableListOf<>()
-                    // data.topPage
-                    // 适配器设置数据
-                    data?.bar?.let {
-                        data?.page?.add(0, RichTextData.Page(type = RichTextData.KEY_BAR, value = RichTextData.Value(txt = it)))
+                    // 初始化头部Video
+                    data?.topPage?.firstOrNull { it.type == "video" }?.apply {
+                        value?.url?.let { initVideo(it) }
                     }
+                    data?.bar?.let {
+                        // todo 设置标题
+                        binding.tvTitle.text = it
+                    }
+
+                    // 动态添加按钮
+                    // 不是video的都需要添加
+                    val list = data?.topPage?.filter { it.type != "video" }
+                    list?.forEachIndexed { index, topPage ->
+                        val tv = TextView(this@KnowMoreActivity)
+                        tv.setBackgroundResource(R.drawable.create_state_button)
+                        tv.isEnabled = true
+                        tv.text = topPage.value?.txt
+                        val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(60))
+                        lp.setMargins(dp2px(20), dp2px(5), dp2px(20), dp2px(5))
+                        tv.layoutParams = lp
+                        tv.gravity = Gravity.CENTER
+                        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
+                        tv.setTextColor(Color.WHITE)
+                        binding.flRoot.addView(tv)
+                    }
+                    binding.flRoot.children.forEach {
+                        val tv = (it as? TextView)
+                        tv?.setOnClickListener {
+                            list?.firstOrNull { data -> data.value?.txt == tv.text.toString() }?.apply {
+                                when (type) {
+                                    "pageClose" -> this@KnowMoreActivity.finish()
+                                    "pageDown" -> {
+                                        // 跳转下一页
+                                        val intent = Intent(this@KnowMoreActivity, KnowMoreActivity::class.java)
+                                        intent.putExtra(KEY_TXT_ID, value?.txtId)
+                                        startActivity(intent)
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                    // 适配器设置数据
                     adapter.setList(data?.page)
                 }
             })
@@ -99,13 +171,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
 
     private fun scrollListener() {
         binding.rvKnow.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            var firstVisibleItem = 0
-            var lastVisibleItem = 0
-
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
-                lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition()
+                val firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
+                val lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition()
                 //大于0说明有播放
                 if (GSYVideoManager.instance().playPosition >= 0) {
                     //当前播放的位置
@@ -125,6 +193,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
                         }
                     }
                 }
+                super.onScrolled(recyclerView, dx, dy)
             }
         })
     }
@@ -134,7 +203,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
      */
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(com.cl.common_base.R.id.iv_pic, com.cl.common_base.R.id.tv_html)
+            addChildClickViewIds(com.cl.common_base.R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
@@ -150,6 +219,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
                     }
 
                     // 跳转HTML
+                    R.id.cl_go_url,
                     com.cl.common_base.R.id.tv_html -> {
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
@@ -157,6 +227,40 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
                         context.startActivity(intent)
                     }
 
+                    // 阅读更多
+                    R.id.cl_learn,
+                    R.id.tv_learn -> {
+                        // todo 请求id
+                        bean.value?.txtId?.let {
+                            // 继续请求弹窗
+                            val intent = Intent(context, KnowMoreActivity::class.java)
+                            intent.putExtra(KEY_TXT_ID, it)
+                            context.startActivity(intent)
+                        }
+                    }
+
+                    // 跳转到客服
+                    R.id.cl_support -> {
+                        // 如果是会员、那么直接跳转过去
+                        if (mViewMode.userInfo?.isVip == 1) {
+                            // 跳转聊天界面
+                            EaseUiHelper.getInstance().startChat(null)
+                        } else {
+                            // todo 不是会员那么显示弹窗、和日历界面一样
+                        }
+                    }
+
+                    // 跳转到Discord
+                    R.id.cl_discord -> {
+                        val intent = Intent(context, WebActivity::class.java)
+                        if (bean.value?.url.isNullOrEmpty()) {
+                            intent.putExtra(WebActivity.KEY_WEB_URL, "https://discord.gg/FCj6UGCNtU")
+                        } else {
+                            intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
+                        }
+                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "hey abby")
+                        context.startActivity(intent)
+                    }
                 }
             }
         }
@@ -167,6 +271,18 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
             lifecycleOwner = this@KnowMoreActivity
             viewModel = mViewMode
             executePendingBindings()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        GSYVideoManager.releaseAllVideos()
+        // 添加背景高度
+        ViewCompat.setOnApplyWindowInsetsListener(binding.vvRoot) { v, insets ->
+            binding.vvRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                height = insets.systemWindowInsetTop
+            }
+            return@setOnApplyWindowInsetsListener insets
         }
     }
 
@@ -187,41 +303,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>(), GSYMediaPlay
         super.onBackPressed()
     }
 
-    override fun onPrepared() {
-    }
 
-    override fun onAutoCompletion() {
+    companion object {
+        const val KEY_TXT_ID = "key_txt_id"
     }
-
-    override fun onCompletion() {
-    }
-
-    override fun onBufferingUpdate(percent: Int) {
-    }
-
-    override fun onSeekComplete() {
-    }
-
-    override fun onError(what: Int, extra: Int) {
-    }
-
-    override fun onInfo(what: Int, extra: Int) {
-    }
-
-    override fun onVideoSizeChanged() {
-    }
-
-    override fun onBackFullscreen() {
-    }
-
-    override fun onVideoPause() {
-        // ToastUtil.shortShow("${GSYVideoManager.instance().playPosition}")
-    }
-
-    override fun onVideoResume() {
-    }
-
-    override fun onVideoResume(seek: Boolean) {
-    }
-
 }

@@ -5,6 +5,7 @@ import android.content.Intent.*
 import android.net.Uri
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -17,6 +18,8 @@ import com.cl.common_base.pop.*
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.cache.CacheUtil
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -215,10 +218,53 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             .setPointClickListener {
                 pop.asCustom(SubPop(this@SettingActivity)).show()
             }
+        // 缓存
+        binding.ftCache.itemValue = CacheUtil.getTotalCacheSize(this@SettingActivity)
     }
 
     override fun observe() {
         mViewModel.apply {
+            // 监听设备
+            refreshToken.observe(this@SettingActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    /**
+                     * 当有设备的时候，判断当前设备是否在线
+                     *
+                     * 1- 绑定状态
+                     * 2- 解绑状态
+                     */
+                    if (data?.deviceStatus == "1") {
+                        data?.deviceOnlineStatus?.let {
+                            when (it) {
+                                // 	设备在线状态(0-不在线，1-在线)
+                                "0" -> {
+
+                                }
+                                "1" -> {
+                                    // 当前固件版本号
+                                    mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
+                                        bean?.firstOrNull { it.type == 9 }?.let { data ->
+                                            binding.ftCurrentFir.itemValue = data.currentVersion
+                                            binding.ftCurrentFir.setHideArrow(true)
+                                            binding.ftFirUpdate.setShowRedDot(isShow)
+                                        }
+                                    }
+                                    // 获取SN & 并且判断是否是修复了SN的
+                                    mViewModel.getSn()
+                                    mViewModel.getActivationStatus()
+                                }
+                                else -> {}
+                            }
+                        }
+                    } else {
+
+                    }
+                }
+            })
+
             deleteDevice.observe(this@SettingActivity, resourceObserver {
                 success {
                     //  删除设备之后应该去哪？
@@ -392,22 +438,20 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     .navigation()
             }
         }
+        binding.ftCache.setOnClickListener {
+            pop.asCustom(BaseCenterPop(this@SettingActivity, content = "Clean up all the picture and video cache?", onConfirmAction = {
+                CacheUtil.clearAllCache(this@SettingActivity)
+                binding.ftCache.itemValue = CacheUtil.getTotalCacheSize(this@SettingActivity)
+            })).show()
+        }
     }
 
     override fun onResume() {
         super.onResume()
         mViewModel.userDetail()
-        // 当前固件版本号
-        mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
-            bean?.firstOrNull { it.type == 9 }?.let { data ->
-                binding.ftCurrentFir.itemValue = data.currentVersion
-                binding.ftCurrentFir.setHideArrow(true)
-                binding.ftFirUpdate.setShowRedDot(isShow)
-            }
-        }
-        // 获取SN & 并且判断是否是修复了SN的
-        mViewModel.getSn()
-        mViewModel.getActivationStatus()
+        mViewModel.refreshToken(
+            AutomaticLoginReq(userName = mViewModel.account, password = mViewModel.psd, token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
+        )
     }
 
 

@@ -3,8 +3,8 @@ package com.cl.modules_home.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
-import com.cl.modules_home.request.AutomaticLoginReq
-import com.cl.modules_home.response.AutomaticLoginData
+import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.modules_home.service.HttpHomeApiService

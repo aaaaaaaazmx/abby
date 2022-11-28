@@ -5,10 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
-import com.cl.common_base.bean.AdvertisingData
-import com.cl.common_base.bean.AppVersionData
-import com.cl.common_base.bean.CheckPlantData
-import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -240,6 +237,49 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }.collectLatest {
                 _userDetail.value = it
             }
+    }
+
+    // 账号
+    val account by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
+    }
+
+    // 密码
+    val psd by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_PSD)
+    }
+
+    private val _refreshToken = MutableLiveData<Resource<AutomaticLoginData>>()
+    val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
+    fun refreshToken(req: AutomaticLoginReq) {
+        viewModelScope.launch {
+            repository.automaticLogin(req)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _refreshToken.value = it
+                }
+        }
     }
 
 

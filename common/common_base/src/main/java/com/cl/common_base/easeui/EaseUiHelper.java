@@ -472,6 +472,7 @@ public class EaseUiHelper {
 
     /**
      * 跳转到聊天界面
+     * @param message 附带消息过去
      */
     public void startChat(String message) {
         Intent intent = new Intent(BaseApplication.getContext(), EaseUiActivity.class);

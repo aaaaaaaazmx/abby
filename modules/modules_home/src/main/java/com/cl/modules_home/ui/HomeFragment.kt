@@ -32,7 +32,7 @@ import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_home.request.AutomaticLoginReq
+import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
 import com.bbgo.module_home.databinding.HomeBinding
@@ -412,7 +412,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.bindDevice.apply {
             knowMore.setOnClickListener {
                 // todo 跳转新的图文界面
-                startActivity(Intent(activity, KnowMoreActivity::class.java))
+                val intent = Intent(activity, KnowMoreActivity::class.java)
+                intent.putExtra(KnowMoreActivity.KEY_TXT_ID, "c3eeb4d2f1332f4869erwqfa912557ae")
+                startActivity(intent)
             }
             connectDevice.setOnClickListener {
                 //  连接设备

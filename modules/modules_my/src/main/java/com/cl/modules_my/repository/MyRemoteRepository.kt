@@ -106,5 +106,7 @@ class MyRemoteRepository @Inject constructor() {
         return service.topUpSubscriberNumber(number)
     }
 
-
+    fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
+        return service.automaticLogin(body)
+    }
 }

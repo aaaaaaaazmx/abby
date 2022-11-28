@@ -22,6 +22,16 @@ interface HttpMyApiService {
         @Part partLis: List<MultipartBody.Part>,
     ): Flow<HttpResult<String>>
 
+
+    /**
+     * 自动刷新token,更新token接口
+     * /abby/user/app/automaticLogin
+     */
+    @POST("abby/user/app/automaticLogin")
+    fun automaticLogin(
+        @Body requestBody: AutomaticLoginReq,
+    ): Flow<HttpResult<AutomaticLoginData>>
+
     /**
      * 更新用户信息
      */
