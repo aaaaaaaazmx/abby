@@ -108,6 +108,7 @@ class BasePumpWaterPop(
         timing = 140 * 3
         ViewUtils.setGone(binding?.ivWaterOne, binding?.ivWaterOne, binding?.ivWaterThree)
         mWakeLock?.release()
+        GSYVideoManager.releaseAllVideos()
         super.onDismiss()
     }
 

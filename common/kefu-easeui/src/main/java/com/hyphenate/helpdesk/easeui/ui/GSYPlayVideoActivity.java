@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.view.View;
 import android.view.Window;
@@ -53,16 +54,21 @@ public class GSYPlayVideoActivity extends BaseActivity {
     private void initView() {
         // 消息
         Message message = getIntent().getParcelableExtra("msg");
-        EMVideoMessageBody messageBody = (EMVideoMessageBody)message.body();
-        Uri localFilePath = messageBody.getLocalUri();
-        if(UriUtils.isFileExistByUri(this, localFilePath)) {
-            // 找到了路径
-            // 播放视频
-            detailPlayer.setUp(localFilePath.toString(), false, "");
+        String videoUrl = getIntent().getStringExtra("url");
+        if (null != message) {
+            EMVideoMessageBody messageBody = (EMVideoMessageBody)message.body();
+            Uri localFilePath = messageBody.getLocalUri();
+            if(UriUtils.isFileExistByUri(this, localFilePath)) {
+                // 找到了路径
+                // 播放视频
+                detailPlayer.setUp(localFilePath.toString(), true, "");
+                detailPlayer.startPlayLogic();
+            }
+        }
+        if (null == message && !TextUtils.isEmpty(videoUrl)) {
+            detailPlayer.setUp(videoUrl, true, "");
             detailPlayer.startPlayLogic();
         }
-
-
 
         String url = "https://res.exexm.com/cw_145225549855002";
 
