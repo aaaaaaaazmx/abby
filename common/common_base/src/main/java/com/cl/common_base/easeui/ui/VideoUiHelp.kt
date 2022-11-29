@@ -4,13 +4,14 @@ import android.view.View
 import com.cl.common_base.R
 import com.cl.common_base.ext.logI
 import com.cl.common_base.video.SampleCoverVideo
-import com.goldentec.android.tools.util.isCanToBigDecimal
-import java.math.BigDecimal
 
-    
+
 fun SampleCoverVideo.videoUiHelp(url: String)  {
     // 第一帧显示的图
     loadCoverImage(url, R.mipmap.placeholder)
+    // 设置全屏按钮
+    enlargeImageRes = R.drawable.video_shrink_bg
+    shrinkImageRes = R.drawable.video_enlarge_bg
     setUp(url, true, null, null, "")
     // 隐藏标题
     titleTextView.visibility = View.GONE
