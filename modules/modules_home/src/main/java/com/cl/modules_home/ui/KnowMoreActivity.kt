@@ -67,7 +67,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private fun initVideo(url: String, autoPlay: Boolean) {
         binding.videoItemPlayer.apply {
-            videoUiHelp(url)
+            videoUiHelp(url, -1)
             if (autoPlay) startPlayLogic()
         }
     }

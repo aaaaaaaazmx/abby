@@ -170,7 +170,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                 }
                 helper.getView<SampleCoverVideo>(R.id.video_item_player).apply {
                     item.videoTag = true
-                    item.value?.url?.let { videoUiHelp(it) }
+                    item.value?.url?.let { videoUiHelp(it, helper.layoutPosition) }
                 }
             }
 

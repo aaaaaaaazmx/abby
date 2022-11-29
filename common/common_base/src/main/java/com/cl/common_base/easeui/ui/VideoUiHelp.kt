@@ -6,7 +6,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.video.SampleCoverVideo
 
 
-fun SampleCoverVideo.videoUiHelp(url: String)  {
+fun SampleCoverVideo.videoUiHelp(url: String, tag: Int? = 0)  {
     // 第一帧显示的图
     loadCoverImage(url, R.mipmap.placeholder)
     // 设置全屏按钮
@@ -20,10 +20,10 @@ fun SampleCoverVideo.videoUiHelp(url: String)  {
     //设置全屏按键功能
     fullscreenButton.setOnClickListener { startWindowFullscreen(context, false, true) }
     //防止错位设置
-    playTag = "${0}"
+    playTag = "$tag"
     isLockLand = true
-    logI("layou: ${0}")
-    playPosition = 0
+    logI("layou: $tag")
+    playPosition = tag!!
     //是否根据视频尺寸，自动选择竖屏全屏或者横屏全屏，这个标志为和 setLockLand 冲突，需要和 orientationUtils 使用
     isAutoFullWithSize = true
     //音频焦点冲突时是否释放

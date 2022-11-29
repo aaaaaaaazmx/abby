@@ -409,8 +409,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
         // 检查更新
         binding.ftNewVision.setOnClickListener {
-            // 直接跳转GooglePlay
-            startGooglePlay()
+            mViewModel.getAppVersion()
         }
         // 关闭还是打开推送
         binding.ftNotif.setSwitchCheckedChangeListener { compoundButton, b ->
