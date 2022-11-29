@@ -7,7 +7,7 @@ import com.cl.common_base.video.SampleCoverVideo
 import com.goldentec.android.tools.util.isCanToBigDecimal
 import java.math.BigDecimal
 
-
+    
 fun SampleCoverVideo.videoUiHelp(url: String)  {
     // 第一帧显示的图
     loadCoverImage(url, R.mipmap.placeholder)

@@ -2,6 +2,7 @@ package com.cl.common_base.video;
 
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -78,14 +80,16 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
                 (mCurrentState == -1 || mCurrentState == CURRENT_STATE_NORMAL || mCurrentState == CURRENT_STATE_ERROR)) {
             mThumbImageViewLayout.setVisibility(VISIBLE);
         }
+        // 中间滑动进度条
+        setDialogProgressBar(ContextCompat.getDrawable(context, R.drawable.video_progress_bg));
 
         // 默认显示的底部进度条
-        setBottomProgressBarDrawable(getResources().getDrawable(R.drawable.video_new_progress));
+        setBottomProgressBarDrawable(ContextCompat.getDrawable(context, R.drawable.video_new_progress));
     }
 
     @Override
     protected void updateStartImage() {
-        if(mStartButton instanceof ImageView) {
+        if (mStartButton instanceof ImageView) {
             ImageView imageView = (ImageView) mStartButton;
             if (mCurrentState == CURRENT_STATE_PLAYING) {
                 imageView.setImageResource(R.drawable.video_click_pause);
@@ -290,7 +294,7 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
             fastSeekOverlay.getSecondsView().setForwarding(false);
             if (isDoubleOver) {
                 // 10000 是 10 秒
-                forwardOrRewind(- (count * 10000L));
+                forwardOrRewind(-(count * 10000L));
             }
         }
 
@@ -508,6 +512,33 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
         if (!byStartedClick) {
             setViewShowState(mBottomContainer, INVISIBLE);
             setViewShowState(mStartButton, INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        super.onProgressChanged(seekBar, progress, fromUser);
+        // 滚动seekBar时添加时间的监听
+        float prioss = progress;
+        if (fromUser) {
+            setDialogProgressColor(Color.parseColor("#53CF8D"), -1);
+            long duration = getGSYVideoManager().getCurrentPosition();
+            int totalTimeDuration = (int) getDuration();
+            long currentTime = (long) (prioss * 0.01 * totalTimeDuration);
+            String seekTime = CommonUtil.stringForTime(currentTime);
+            String totalTime = CommonUtil.stringForTime(totalTimeDuration);
+            if (duration > currentTime) {
+                prioss = -1;
+            } else {
+                prioss = 1;
+            }
+            float finalPrioss = prioss;
+            new Handler().postDelayed(() -> {
+                // time = 在当前的时间的基础上增加的时间、或者减少的时间 long、用来判断时快进还是快退， seektime = 格式化的时间 HH：mm，
+                // finalCurrentTime = 当前时间+加增加的时间 long， totalTime = 总时间 HH：mm， totalTimeDuration = 总时间 long
+                showProgressDialog(finalPrioss, seekTime, currentTime, totalTime, totalTimeDuration);
+            }, 100);
+            new Handler().postDelayed(this::dismissProgressDialog, 600);
         }
     }
 
