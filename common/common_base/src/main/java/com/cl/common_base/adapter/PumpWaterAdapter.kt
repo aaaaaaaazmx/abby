@@ -36,11 +36,11 @@ class PumpWaterAdapter(data: MutableList<AdvertisingData>?) :
             helper.getView<SampleCoverVideo>(R.id.video_item_player).apply {
                 videoUiHelp(item.video, helper.layoutPosition)
                 //设置全屏按键功能
-                fullscreenButton.setOnClickListener {
-                    val intent = Intent(context, GSYPlayVideoActivity::class.java)
-                    intent.putExtra("url", item.video)
-                    context.startActivity(intent)
-                }
+//                fullscreenButton.setOnClickListener {
+//                    val intent = Intent(context, GSYPlayVideoActivity::class.java)
+//                    intent.putExtra("url", item.video)
+//                    context.startActivity(intent)
+//                }
             }
         }
 
