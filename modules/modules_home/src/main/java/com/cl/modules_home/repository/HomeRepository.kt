@@ -182,4 +182,11 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
         return remoteRepository.updateTask(body)
     }
 
+    fun getAcademyList(): Flow<HttpResult<MutableList<AcademyListData>>> {
+        return remoteRepository.getAcademyList()
+    }
+
+    fun getAcademyDetails(academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>> {
+        return remoteRepository.getAcademyDetails(academyId)
+    }
 }

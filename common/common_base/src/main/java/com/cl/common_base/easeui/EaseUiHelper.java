@@ -347,7 +347,9 @@ public class EaseUiHelper {
      */
     protected void registerEventListener() {
         messageListener = new ChatManager.MessageListener() {
-
+            /**
+             * 后台消息，关闭聊天界面之后也会在这接收到
+             */
             @Override
             public void onMessage(List<Message> msgs) {
                 for (Message message : msgs) {
@@ -468,6 +470,7 @@ public class EaseUiHelper {
         Conversation conversation = ChatClient.getInstance().chatManager().getConversation(Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT);
         //指定会话消息未读数清零
         conversation.markAllMessagesAsRead();
+        ChatClient.getInstance().chatManager().markAllConversationsAsRead();
     }
 
     /**

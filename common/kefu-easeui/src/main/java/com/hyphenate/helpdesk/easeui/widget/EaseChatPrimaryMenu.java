@@ -217,7 +217,7 @@ public class EaseChatPrimaryMenu extends EaseChatPrimaryMenuBase implements View
 
             // 视频图片
             hideVoiceMode();
-            showMoreorLess(false);
+            // showMoreorLess(false);
             showNormalFaceImage();
             if (listener != null)
                 listener.onToggleExtendClicked();

@@ -57,5 +57,8 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:name="com.cl.modules_home.ui.KnowMoreActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name="com.cl.modules_home.ui.AcademyActivity" />
+        <activity android:name="com.cl.modules_home.ui.AcademyDetailActivity" />
     </application>
 </manifest>

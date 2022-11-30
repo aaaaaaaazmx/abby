@@ -115,4 +115,12 @@ class HomeRemoteRepository @Inject constructor() {
     fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
         return service.updateTask(body)
     }
+
+    fun getAcademyList(): Flow<HttpResult<MutableList<AcademyListData>>> {
+        return service.getAcademyList()
+    }
+
+    fun getAcademyDetails(academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>> {
+        return service.getAcademyDetails(academyId)
+    }
 }

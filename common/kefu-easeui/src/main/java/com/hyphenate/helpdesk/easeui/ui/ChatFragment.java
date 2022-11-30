@@ -425,6 +425,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
             // 把此会话的未读数置为0
             // 已读所有
             conversation.markAllMessagesAsRead();
+            ChatClient.getInstance().chatManager().markAllConversationsAsRead();
             final List<Message> msgs = conversation.getAllMessages();
             int msgCount = msgs != null ? msgs.size() : 0;
             if (msgCount < conversation.getAllMsgCount() && msgCount < pagesize) {
@@ -433,9 +434,9 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                     msgId = msgs.get(0).messageId();
                 }
                 conversation.loadMessages(msgId, pagesize - msgCount);
+                conversation.markMessageAsRead(msgId);
             }
         }
-
     }
 
     protected void onMessageListInit() {
@@ -1222,6 +1223,9 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
             username = message.from();
             // 如果是当前会话的消息，刷新聊天页面
             if (username != null && username.equals(toChatUsername)) {
+                // 已读一条消息
+                Conversation conversation = ChatClient.getInstance().chatManager().getConversation(toChatUsername);
+                conversation.markMessageAsRead(message.messageId());
                 messageList.refreshSelectLast();
                 // 声音和震动提示有新消息
                 UIProvider.getInstance().getNotifier().viberateAndPlayTone(message);

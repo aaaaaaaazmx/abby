@@ -178,4 +178,12 @@ interface HttpHomeApiService {
 
     @POST("abby/calendar/updateTask")
     fun updateTask(@Body body: UpdateReq): Flow<HttpResult<String>>
+
+    @POST("abby/academy/getAcademyList")
+    fun getAcademyList(): Flow<HttpResult<MutableList<AcademyListData>>>
+
+
+    @FormUrlEncoded
+    @POST("abby/academy/getAcademyDetails")
+    fun getAcademyDetails(@Field("academyId") academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>>
 }

@@ -345,6 +345,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             }
 
+
+            // 选中学院
+            ivAcademy.setOnClickListener {
+                // 不限制
+                context?.startActivity(Intent(context, AcademyActivity::class.java))
+            }
+
             // 客服支持
             ivSupport.setOnClickListener {
                 // todo 客服支持

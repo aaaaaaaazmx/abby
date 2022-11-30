@@ -31,14 +31,34 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/iv_academy"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintTop_toTopOf="@+id/iv_calendar"
+            app:layout_constraintEnd_toEndOf="@+id/iv_calendar"
+            app:layout_constraintEnd_toStartOf="@+id/iv_calendar"
+            android:background="@mipmap/home_academy"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
+
+        <View
+            android:visibility="gone"
+            android:id="@+id/vv_academy"
+            app:layout_constraintCircleRadius="20dp"
+            app:layout_constraintCircleAngle="50"
+            app:layout_constraintCircle="@id/iv_academy"
+            android:background="@drawable/base_dot_red"
+            android:layout_width="8dp"
+            android:layout_height="8dp"/>
+
+        <ImageView
             android:id="@+id/iv_calendar"
             android:layout_marginEnd="26dp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_title"
             app:layout_constraintTop_toTopOf="@+id/tv_title"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@mipmap/home_calendar_bg"
-            android:layout_width="22dp"
-            android:layout_height="22dp"/>
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout

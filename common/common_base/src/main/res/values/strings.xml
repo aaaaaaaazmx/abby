@@ -125,6 +125,8 @@
     <string name="home_bind_device">Know more about hey abby growing box</string>
     <string name="home_go">Go</string>
     <string name="my_cache">Cache</string>
+    <string name="home_academy">Academy</string>
+    <string name="home_instrusctors">Abby Instrusctors</string>
     <plurals name="seconds">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

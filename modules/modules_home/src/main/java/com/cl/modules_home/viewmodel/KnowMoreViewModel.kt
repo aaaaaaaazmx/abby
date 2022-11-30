@@ -12,11 +12,13 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@ActivityRetainedScoped
 class KnowMoreViewModel @Inject constructor(private val repository: HomeRepository) : ViewModel() {
 
 
