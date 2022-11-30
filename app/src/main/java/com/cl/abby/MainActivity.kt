@@ -1,9 +1,10 @@
 package com.cl.abby
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
+import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -16,6 +17,12 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.showToast
+import com.cl.common_base.pop.CustomBubbleAttachPopup
+import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.util.XPopupUtils
 import com.shuyu.gsyvideoplayer.cache.CacheFactory
 import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import dagger.hilt.android.AndroidEntryPoint
@@ -91,6 +98,33 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun initData() {
+        //获取底部菜单view
+        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+        //获取第1个itemView
+        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+        //引入badgeView
+        val badgeView = LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
+        //把badgeView添加到itemView中
+        itemView.addView(badgeView)
+
+        XPopup.Builder(this@MainActivity) //                        .isCenterHorizontal(true)、
+            .popupPosition(PopupPosition.Top)
+            .dismissOnTouchOutside(false)
+            .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+            .isClickThrough(true)  //点击透传
+            .atView(itemView)
+            .hasShadowBg(false) // 去掉半透明背景
+            //                        .offsetX(XPopupUtils.dp2px(this@MainActivity, 20))
+            .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
+            .asCustom(
+                CustomBubbleAttachPopup(this@MainActivity) //                                .setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
+                    .setBubbleBgColor(Color.RED) //气泡背景
+                    .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 5f))
+                    .setArrowHeight(XPopupUtils.dp2px(this@MainActivity, 6f)) //                                .setBubbleRadius(100)
+                    .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 3f))
+            )
+            .show()
+
         // 底部点击
         binding.bottomNavigation.setOnNavigationItemSelectedListener {
             when (it.itemId) {

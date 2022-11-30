@@ -189,4 +189,11 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun getAcademyDetails(academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>> {
         return remoteRepository.getAcademyDetails(academyId)
     }
+
+    /**
+     * 消息已读
+     */
+    fun messageRead(academyDetailsId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.messageRead(academyDetailsId)
+    }
 }

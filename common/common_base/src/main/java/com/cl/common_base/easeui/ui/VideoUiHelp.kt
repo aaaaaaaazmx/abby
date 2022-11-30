@@ -61,7 +61,7 @@ fun SampleCoverVideo.videoUiHelp(url: String, tag: Int? = -1) {
             Debuger.printfLog("onPrepared")
             val full: Boolean = currentPlayer.isIfCurrentIsFullscreen
             if (!currentPlayer.isIfCurrentIsFullscreen) {
-                GSYVideoManager.instance().isNeedMute = true
+                GSYVideoManager.instance().isNeedMute = false
             }
             if (currentPlayer.isIfCurrentIsFullscreen) {
                 GSYVideoManager.instance().setLastListener(this@videoUiHelp)
@@ -77,7 +77,7 @@ fun SampleCoverVideo.videoUiHelp(url: String, tag: Int? = -1) {
         override fun onQuitFullscreen(url: String, vararg objects: Any) {
             super.onQuitFullscreen(url, *objects)
             // isFull = false
-            GSYVideoManager.instance().isNeedMute = true
+            GSYVideoManager.instance().isNeedMute = false
             onQuitFullscreenn()
         }
 

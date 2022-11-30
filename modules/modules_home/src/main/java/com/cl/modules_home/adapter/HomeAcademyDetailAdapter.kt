@@ -6,6 +6,8 @@ import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeAcademyDetailItemPopBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.cl.common_base.ext.DateHelper
+import com.goldentec.android.tools.util.letMultiple
 
 /**
  * 学院一级列表

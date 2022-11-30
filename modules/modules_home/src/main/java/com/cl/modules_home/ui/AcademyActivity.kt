@@ -1,7 +1,9 @@
 package com.cl.modules_home.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bbgo.module_home.databinding.HomeAcademyActivityBinding
 import com.cl.common_base.base.BaseActivity
@@ -52,7 +54,15 @@ class AcademyActivity: BaseActivity<HomeAcademyActivityBinding>() {
             val data = adapter.data[position] as? AcademyListData
             val intent = Intent(this@AcademyActivity, AcademyDetailActivity::class.java)
             intent.putExtra(KEY_ID, data?.id)
-            startActivity(intent)
+            myActivityLauncher.launch(intent)
+        }
+    }
+
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ activityResult ->
+        if(activityResult.resultCode == Activity.RESULT_OK){
+            val result = activityResult.data?.getStringArrayListExtra(AcademyDetailActivity.KEY_ID_LIST)
+            /*Toast.makeText(applicationContext,result,Toast.LENGTH_SHORT).show()
+            textView.text = "回传数据：$result"*/
         }
     }
 

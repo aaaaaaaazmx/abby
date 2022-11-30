@@ -9,4 +9,5 @@ data class AcademyDetails(
     val picture: String? = null,
     val title: String? = null,
     val txtId: String? = null,
+    val createTime: Long? = null,
 ): BaseBean()

@@ -121,7 +121,7 @@ public class ChatActivity extends BaseActivity {
 
     /**
      * 发送轨迹消息
-     * @param selectedIndex
+     * @param
      */
 //    private void sendTrackMessage(int selectedIndex) {
 //        Message message = Message.createTxtSendMessage(getMessageContent(selectedIndex), toChatUsername);

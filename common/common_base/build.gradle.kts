@@ -115,5 +115,5 @@ dependencies {
     api("com.github.hackware1993:MagicIndicator:1.7.0")
     // snapHelp
     api("com.github.rubensousa:gravitysnaphelper:2.2.2")
-    api("com.github.limuyang2:LShadowLayout:1.0.3")
+    // api("com.github.limuyang2:LShadowLayout:1.0.3")
 }

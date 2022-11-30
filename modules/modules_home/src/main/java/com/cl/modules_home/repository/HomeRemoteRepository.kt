@@ -123,4 +123,8 @@ class HomeRemoteRepository @Inject constructor() {
     fun getAcademyDetails(academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>> {
         return service.getAcademyDetails(academyId)
     }
+
+    fun messageRead(academyDetailsId: String): Flow<HttpResult<BaseBean>> {
+        return service.messageRead(academyDetailsId)
+    }
 }

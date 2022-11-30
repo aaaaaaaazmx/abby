@@ -186,4 +186,11 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/academy/getAcademyDetails")
     fun getAcademyDetails(@Field("academyId") academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>>
+
+    /**
+     * 已读学院消息
+     */
+    @FormUrlEncoded
+    @POST("abby/academy/read")
+    fun messageRead(@Field("academyDetailsId") academyDetailsId: String): Flow<HttpResult<BaseBean>>
 }

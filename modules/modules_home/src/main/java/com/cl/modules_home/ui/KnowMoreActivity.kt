@@ -246,7 +246,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun onResume() {
         super.onResume()
-        GSYVideoManager.releaseAllVideos()
+        GSYVideoManager.onResume()
         // 添加背景高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.vvRoot) { v, insets ->
             binding.vvRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -258,7 +258,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun onPause() {
         super.onPause()
-        GSYVideoManager.releaseAllVideos()
+        GSYVideoManager.onPause()
     }
 
     override fun onDestroy() {

@@ -392,6 +392,7 @@ object DateHelper {
 
 
     fun before(timestamp1: String, timestamp2: String) = before(timestamp1, timestamp2, YMDHMS)
+
     /**
      * timestamp1 在 timestamp2 之前
      * timestamp1<timestamp2
@@ -417,6 +418,7 @@ object DateHelper {
     fun after(timestamp1: Long, timestamp2: Long): Boolean = timestamp1 > timestamp2
 
     fun after(timestamp1: String, timestamp2: String) = after(timestamp1, timestamp2, YMDHMS)
+
     /**
      * timestamp1 在 timestamp2 之后
      * timestamp1>timestamp2
@@ -583,6 +585,48 @@ object DateHelper {
         }
     }
 
+    /**
+     * 转换成多少时间前
+     */
+    fun convert(startDate: Long): String? {
+        val endTime = System.currentTimeMillis()     //获取毫秒数
+        val timeDifference = endTime - startDate;
+        val second = timeDifference / 1000;    //计算秒
+        if (second < 60) {
+            return "$second second ago" //根据需要可以写成刚刚。
+        } else {
+            val minute = second / 60
+            if (minute < 60) {
+                return "$minute minutes ago"
+            } else {
+                val hour = minute / 60
+                if (hour < 24) {
+                    return "$hour hours ago"
+                } else {
+                    val day = hour / 24
+                    if (day < 7) {
+                        return "$day days ago"
+                    } else {
+                        return if (formatTime(startDate, "yyyy") == formatTime(endTime, "yyyy")) {
+                            formatTime(startDate, "MMdd")
+                        } else {
+                            formatTime(startDate, "MMdd yyyy")
+                        }
+                        /*  var month = day / 30
+                        if (month < 12) {
+                            return "$month 月前"
+                        } else {
+                            var year = month / 12
+                            return "$year 年前"
+                        }*/
+                    }
+
+                }
+            }
+        }
+    }
+
+
     fun getCurrentTimeInMillis() = getCalendar().timeInMillis
     fun getCurrentYear() = getCalendar().get(Calendar.YEAR)
     fun getCurrentMonth() = getCalendar().get(Calendar.MONTH) + 1
@@ -598,5 +642,5 @@ object DateHelper {
     fun getHour(date: Date) = getCalendar(date).get(Calendar.HOUR_OF_DAY)
     fun getMinute(date: Date) = getCalendar(date).get(Calendar.MINUTE)
     fun getSecond(date: Date) = getCalendar(date).get(Calendar.SECOND)
-    
+
 }

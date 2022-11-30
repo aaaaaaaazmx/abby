@@ -1,5 +1,6 @@
 package com.cl.modules_home.ui
 
+import android.app.Activity
 import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bbgo.module_home.databinding.HomeAcademyDetailActivityBinding
@@ -32,8 +33,25 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
     override fun initView() {
         binding.rvAcademy.layoutManager = LinearLayoutManager(this@AcademyDetailActivity)
         binding.rvAcademy.adapter = adapter
-
         id?.let { mViewMode.getAcademyDetails(it) }
+        binding.title.setLeftClickListener {
+            back()
+        }
+    }
+
+    override fun onBackPressed() {
+        back()
+    }
+
+    private fun back() {
+        val value = mViewMode.messageReadList.value?.toTypedArray()
+        if (value.isNullOrEmpty()) {
+            finish()
+            return
+        }
+        intent.putExtra(KEY_ID_LIST, value)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     override fun observe() {
@@ -50,12 +68,28 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
                     adapter.setList(data)
                 }
             })
+
+            /*  mViewMode.messageRead.observe(this@AcademyDetailActivity, resourceObserver {
+                  loading { }
+                  error { errorMsg, code ->
+                      ToastUtil.shortShow(errorMsg)
+                  }
+                  success {
+                  }
+              })*/
         }
     }
 
     override fun initData() {
         adapter.setOnItemClickListener { adapter, view, position ->
             val data = adapter.data[position] as? AcademyDetails
+
+            // 已读消息
+            id?.let {
+                mViewMode.messageRead(it)
+                mViewMode.setReadList(it)
+            }
+
             val intent = Intent(
                 this@AcademyDetailActivity,
                 KnowMoreActivity::class.java
@@ -63,6 +97,10 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
             intent.putExtra(KnowMoreActivity.KEY_TXT_ID, data?.txtId)
             startActivity(intent)
         }
+    }
+
+    companion object {
+        const val KEY_ID_LIST = "key_id_list"
     }
 
 }

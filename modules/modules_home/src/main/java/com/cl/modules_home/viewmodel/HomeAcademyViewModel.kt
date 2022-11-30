@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AcademyDetails
 import com.cl.common_base.bean.AcademyListData
 import com.cl.common_base.bean.RichTextData
@@ -140,4 +141,49 @@ class HomeAcademyViewModel @Inject constructor(private val repository: HomeRepos
         }
     }
 
+
+    /**
+     * 学院已读消息
+     */
+    private val _messageRead = MutableLiveData<Resource<BaseBean>>()
+    val messageRead: LiveData<Resource<BaseBean>> = _messageRead
+    fun messageRead(academyDetailsId: String) {
+        viewModelScope.launch {
+            repository.messageRead(academyDetailsId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _messageRead.value = it
+                }
+        }
+    }
+
+    // 已读列表
+    private val _messageReadList = MutableLiveData<MutableList<String>>()
+    val messageReadList: LiveData<MutableList<String>> = _messageReadList
+    fun setReadList(id: String) {
+        val value = (_messageRead.value as? MutableList<String>)
+        value?.add(id)
+        _messageReadList.value = value
+    }
 }
