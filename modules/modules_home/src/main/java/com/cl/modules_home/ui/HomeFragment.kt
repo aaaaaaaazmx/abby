@@ -2122,9 +2122,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     ) {
                         appendClickable("Reconnect abby") {
                             // 跳转到ReconnectActivity
-                            ARouter.getInstance()
-                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
-                                .navigation()
+
+                            startActivity(Intent(context, BasePopActivity::class.java))
+//                            ARouter.getInstance()
+//                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
+//                                .navigation()
                         }
                     }
                 }
