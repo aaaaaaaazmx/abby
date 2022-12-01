@@ -39,6 +39,7 @@ import com.bbgo.module_home.databinding.HomeBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
@@ -345,11 +346,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             }
 
-            // 不限制
-            context?.startActivity(Intent(context, AcademyActivity::class.java))
+
             // 选中学院
             ivAcademy.setOnClickListener {
-
+                // 不限制
+                context?.startActivity(Intent(context, AcademyActivity::class.java))
             }
 
             // 客服支持

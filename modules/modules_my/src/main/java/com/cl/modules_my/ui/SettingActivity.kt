@@ -332,7 +332,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 versionPop.setData(versionData)
                                 versionUpdatePop.show()
                             } else {
-                                ToastUtil.shortShow(getString(R.string.my_appversion))
+                                ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
                             }
                         }
                     }

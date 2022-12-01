@@ -107,21 +107,24 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         //把badgeView添加到itemView中
         itemView.addView(badgeView)
 
-        XPopup.Builder(this@MainActivity) //                        .isCenterHorizontal(true)、
+        XPopup.Builder(this@MainActivity)
+            // .isCenterHorizontal(true)
             .popupPosition(PopupPosition.Top)
             .dismissOnTouchOutside(false)
             .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
             .isClickThrough(true)  //点击透传
             .atView(itemView)
             .hasShadowBg(false) // 去掉半透明背景
-            //                        .offsetX(XPopupUtils.dp2px(this@MainActivity, 20))
+            //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
             .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
             .asCustom(
-                CustomBubbleAttachPopup(this@MainActivity) //                                .setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
+                CustomBubbleAttachPopup(this@MainActivity)
+                    //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
                     .setBubbleBgColor(Color.RED) //气泡背景
-                    .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 5f))
-                    .setArrowHeight(XPopupUtils.dp2px(this@MainActivity, 6f)) //                                .setBubbleRadius(100)
-                    .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 3f))
+                    .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 6f))
+                    .setArrowHeight(XPopupUtils.dp2px(this@MainActivity, 6f))
+                    //.setBubbleRadius(100)
+                    .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 2f))
             )
             .show()
 
