@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AcademyActivity: BaseActivity<HomeAcademyActivityBinding>() {
+class AcademyActivity : BaseActivity<HomeAcademyActivityBinding>() {
     private val adapter by lazy {
         HomeAcademyPopAdapter(mutableListOf())
     }
@@ -43,7 +43,7 @@ class AcademyActivity: BaseActivity<HomeAcademyActivityBinding>() {
                 success {
                     hideProgressLoading()
                     if (data?.isEmpty() == true) return@success
-                     adapter.setList(data)
+                    adapter.setList(data)
                 }
             })
         }
@@ -58,11 +58,18 @@ class AcademyActivity: BaseActivity<HomeAcademyActivityBinding>() {
         }
     }
 
-    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ activityResult ->
-        if(activityResult.resultCode == Activity.RESULT_OK){
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
             val result = activityResult.data?.getStringArrayListExtra(AcademyDetailActivity.KEY_ID_LIST)
-            /*Toast.makeText(applicationContext,result,Toast.LENGTH_SHORT).show()
-            textView.text = "回传数据：$result"*/
+            if (result.isNullOrEmpty()) return@registerForActivityResult
+            result.forEach { id ->
+                val index = adapter.data.indexOfFirst { it.id == id }
+                if (index != -1) {
+                    // 设置为已读
+                    adapter.data[index].isRead = "1"
+                    adapter.notifyItemChanged(index)
+                }
+            }
         }
     }
 
