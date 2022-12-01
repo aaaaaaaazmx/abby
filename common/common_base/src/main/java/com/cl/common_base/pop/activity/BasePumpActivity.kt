@@ -1,4 +1,4 @@
-package com.cl.common_base.pop
+package com.cl.common_base.pop.activity
 
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +12,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 /**
- * 通用弹窗
+ * 排水弹窗
  */
-class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
+class BasePumpActivity : BaseActivity<BasePopActivityBinding>() {
     override fun initView() {
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.cl) { v, insets ->

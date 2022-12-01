@@ -5,7 +5,7 @@ import com.cl.common_base.BaseBean
 data class AcademyDetails(
     val describe: String? = null,
     val extend: String? = null,
-    val isRead: String? = null,
+    var isRead: Int? = null,
     val picture: String? = null,
     val title: String? = null,
     val txtId: String? = null,

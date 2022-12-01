@@ -44,12 +44,12 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
     }
 
     private fun back() {
-        val value = mViewMode.messageReadList.value?.toTypedArray()
-        if (value.isNullOrEmpty()) {
+        val value = mViewMode.messageReadList
+        if (value.isEmpty()) {
             finish()
             return
         }
-        intent.putExtra(KEY_ID_LIST, value)
+        intent.putExtra(KEY_ID_LIST, value.toList().toTypedArray())
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
@@ -88,6 +88,8 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
             id?.let {
                 mViewMode.messageRead(it)
                 mViewMode.setReadList(it)
+                data?.isRead = 1
+                adapter.notifyItemChanged(position)
             }
 
             val intent = Intent(

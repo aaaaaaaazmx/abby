@@ -346,11 +346,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             }
 
-
+            context?.startActivity(Intent(context, AcademyActivity::class.java))
             // 选中学院
             ivAcademy.setOnClickListener {
                 // 不限制
-                context?.startActivity(Intent(context, AcademyActivity::class.java))
             }
 
             // 客服支持

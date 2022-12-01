@@ -29,7 +29,7 @@
             android:background="@drawable/base_dot_red"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:visibility='@{data.isRead == "1" ? View.GONE : View.VISIBLE}'
+            android:visibility='@{data.isRead == 1 ? View.GONE : View.VISIBLE}'
             />
 
         <TextView

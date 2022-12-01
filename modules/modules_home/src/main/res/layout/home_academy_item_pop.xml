@@ -20,7 +20,7 @@
 
 
         <View
-            android:visibility='@{data.isRead == "1" ? View.GONE : View.VISIBLE}'
+            android:visibility='@{data.isRead == 1 ? View.GONE : View.VISIBLE}'
             android:id="@+id/vv_message"
             android:layout_width="8dp"
             android:layout_height="8dp"

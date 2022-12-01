@@ -179,11 +179,8 @@ class HomeAcademyViewModel @Inject constructor(private val repository: HomeRepos
     }
 
     // 已读列表
-    private val _messageReadList = MutableLiveData<MutableList<String>>()
-    val messageReadList: LiveData<MutableList<String>> = _messageReadList
+     val messageReadList = mutableListOf<String>()
     fun setReadList(id: String) {
-        val value = (_messageRead.value as? MutableList<String>)
-        value?.add(id)
-        _messageReadList.value = value
+        messageReadList?.add(id)
     }
 }
