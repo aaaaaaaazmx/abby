@@ -24,6 +24,7 @@ import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MySettingBinding
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
@@ -330,6 +331,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             if (netWorkVersion.toInt() > localVersion.toInt()) {
                                 versionPop.setData(versionData)
                                 versionUpdatePop.show()
+                            } else {
+                                ToastUtil.shortShow(getString(R.string.my_appversion))
                             }
                         }
                     }

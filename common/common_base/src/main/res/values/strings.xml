@@ -127,6 +127,7 @@
     <string name="my_cache">Cache</string>
     <string name="home_academy">Academy</string>
     <string name="home_instrusctors">Abby Instrusctors</string>
+    <string name="my_appversion">The current version is up-to-date.</string>
     <plurals name="seconds">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>
