@@ -36,6 +36,8 @@ import com.lin.cardlib.CardSetting
 import com.lin.cardlib.CardTouchHelperCallback
 import com.lin.cardlib.OnSwipeCardListener
 import com.lin.cardlib.utils.ReItemTouchHelper
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.widget.SmartDragLayout
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
@@ -55,21 +57,6 @@ import javax.inject.Inject
 class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
     @Inject
     lateinit var mViewMode: BasePumpViewModel
-
-
-    private val callback by lazy {
-        object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
-                    finish()
-                }
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.vvDivider.alpha = slideOffset
-            }
-        }
-    }
 
     /**
      * 图文数据
@@ -130,20 +117,29 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
 
     override fun initView() {
         // 添加状态蓝高度
-        ViewCompat.setOnApplyWindowInsetsListener(binding.cl) { v, insets ->
-            binding.ll.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.smart) { v, insets ->
+            binding.waterPop.root.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 topMargin = insets.systemWindowInsetTop
-
-                val from = BottomSheetBehavior.from(binding.ll)
-                from.skipCollapsed = true
-                from.state = BottomSheetBehavior.STATE_EXPANDED
-                from.addBottomSheetCallback(callback)
             }
             return@setOnApplyWindowInsetsListener insets
         }
-        val asa = intent?.extras?.getSerializable(KEY_DATA)
-        val ss = intent?.getSerializableExtra(KEY_DATA)
-        logI("${(ss as? MutableList<AdvertisingData>)?.get(0)?.id}")
+        binding.smart.setDuration(600)
+        binding.smart.enableDrag(true)
+        binding.smart.dismissOnTouchOutside(false)
+        binding.smart.isThreeDrag(false)
+        binding.smart.open()
+        binding.smart.setOnCloseListener(object : SmartDragLayout.OnCloseListener {
+            override fun onClose() {
+                finish()
+            }
+
+            override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) {
+                binding.smart.alpha = percent
+            }
+
+            override fun onOpen() {
+            }
+        })
         initPumpWater()
         initClick()
     }
@@ -198,7 +194,6 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 data?.get(0)?.let { data?.add(it) }
                 data?.get(1)?.let { data?.add(it) }
             }
-            ToastUtil.shortShow("${data?.size}")
             adapter.setList(data)
         }
 
@@ -491,7 +486,6 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         isOpenOrStop(false)
         job?.cancel()
         animation.cancel()
-        BottomSheetBehavior.from(binding.ll).removeBottomSheetCallback(callback)
         mWakeLock?.release()
         GSYVideoManager.releaseAllVideos()
     }

@@ -1,5 +1,6 @@
 package com.cl.modules_home.ui
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -39,11 +41,11 @@ import com.bbgo.module_home.databinding.HomeBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
@@ -52,6 +54,8 @@ import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import java.io.Serializable
+import java.util.logging.Handler
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -1875,7 +1879,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 success {
                     context?.let {
-                        XPopup.Builder(context)
+                        android.os.Handler().postDelayed({
+                            // 传递的数据为空
+                            val intent = Intent(it, BasePumpActivity::class.java)
+                            intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                            intent.putExtra(BasePumpActivity.KEY_UNREAD_MESSAGE_DATA, mViewMode.getUnreadMessageList() as? Serializable)
+                            myActivityLauncher.launch(intent)
+                        }, 50)
+                        /*XPopup.Builder(context)
                             .enableDrag(false)
                             .maxHeight(dp2px(700f))
                             .dismissOnTouchOutside(false)
@@ -1918,7 +1929,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     },
                                     data = this.data,
                                 )
-                            ).show()
+                            ).show()*/
                     }
                 }
             })
@@ -2123,9 +2134,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 跳转到ReconnectActivity
 
                             startActivity(Intent(context, BasePopActivity::class.java))
-//                            ARouter.getInstance()
-//                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
-//                                .navigation()
+                            //                            ARouter.getInstance()
+                            //                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
+                            //                                .navigation()
                         }
                     }
                 }
@@ -2540,6 +2551,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             .navigation()
                     }
                 })
+        }
+    }
+
+    /**
+     * 排水界面结束回调
+     */
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            // 排水结束，那么直接弹出
+            if (plantDrainFinished?.isShow == false) {
+                plantDrainFinished?.show()
+            }
         }
     }
 

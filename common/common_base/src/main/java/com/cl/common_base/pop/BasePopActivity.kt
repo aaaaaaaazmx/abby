@@ -5,6 +5,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.databinding.BasePopActivityBinding
+import com.lxj.xpopup.XPopup.getAnimationDuration
 import com.lxj.xpopup.widget.SmartDragLayout
 
 /**
@@ -19,7 +20,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             }
             return@setOnApplyWindowInsetsListener insets
         }
-        // bottomPopupContainer.setDuration(getAnimationDuration());
+        binding.smart.setDuration(getAnimationDuration());
         binding.smart.enableDrag(true)
         binding.smart.dismissOnTouchOutside(false)
         binding.smart.isThreeDrag(false)
@@ -30,7 +31,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private val callback by lazy {
         object : SmartDragLayout.OnCloseListener {
             override fun onClose() {
-
+                finish()
             }
 
             override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) {

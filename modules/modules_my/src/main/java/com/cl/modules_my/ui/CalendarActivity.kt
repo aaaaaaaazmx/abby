@@ -1,6 +1,7 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Typeface
 import android.text.TextPaint
@@ -15,6 +16,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -34,6 +36,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.Calendar
@@ -61,6 +64,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.Serializable
 import java.lang.reflect.Field
 import java.util.*
 import javax.inject.Inject
@@ -199,7 +203,13 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    pop
+                    android.os.Handler().postDelayed({
+                        // 传递的数据为空
+                        val intent = Intent(this@CalendarActivity, BasePumpActivity::class.java)
+                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                        myActivityLauncher.launch(intent)
+                    }, 50)
+                    /*pop
                         .enableDrag(false)
                         .maxHeight(dp2px(700f))
                         .dismissOnTouchOutside(false)
@@ -237,7 +247,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 },
                                 data = this.data,
                             )
-                        ).show()
+                        ).show()*/
                 }
             })
 
@@ -1213,6 +1223,25 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     logI("KEY_DEVICE_REPAIR_SN： $value")
                 }
             }
+        }
+    }
+
+
+    /**
+     * 排水界面结束回调
+     */
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            // 排水结束，那么直接弹出
+            if (basePumpWaterFinishPop.isShow) return@registerForActivityResult
+            pop
+                .isDestroyOnDismiss(false)
+                .enableDrag(false)
+                .maxHeight(dp2px(600f))
+                .dismissOnTouchOutside(false)
+                .asCustom(
+                    basePumpWaterFinishPop
+                ).show()
         }
     }
 

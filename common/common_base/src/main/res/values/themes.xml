@@ -15,9 +15,9 @@
     </style>
 
     <style name="TranslucentStyle" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:activityOpenEnterAnimation">@anim/tranlate_dialog_in</item>
+<!--        <item name="android:activityOpenEnterAnimation">@anim/tranlate_dialog_in</item>-->
 <!--        <item name="android:activityOpenExitAnimation">@anim/tranlate_dialog_out</item>-->
-        <item name="android:activityCloseExitAnimation">@anim/tranlate_dialog_out</item>
+<!--        <item name="android:activityCloseExitAnimation">@anim/tranlate_dialog_out</item>-->
         <item name="android:windowBackground">@android:color/transparent</item> <!-- 背景色透明 -->
         <item name="android:windowIsTranslucent">true</item> <!-- 是否有透明属性 -->
         <item name="android:backgroundDimEnabled">false</item> <!-- 背景是否半透明 -->

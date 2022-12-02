@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.*
 import android.content.Intent.*
 import android.net.Uri
+import android.os.Handler
 import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
@@ -145,7 +146,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      * 换水弹窗-附带其他东西
      */
     private val plantDrainNextCustomPop by lazy {
-        BasePumpWaterPop(
+        /*BasePumpWaterPop(
             this@SettingActivity,
             { status ->
                 logI(
@@ -175,7 +176,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 if (plantDrainFinished.isShow) return@BasePumpWaterPop
                 plantDrainFinished.show()
             }
-        )
+        )*/
     }
 
     /**
@@ -392,13 +393,17 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                 success {
                     hideProgressLoading()
-                    // 传递的数据为空
-                    val intent = Intent(this@SettingActivity, BasePumpActivity::class.java)
-                    intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
-                    myActivityLauncher.launch(intent)
-                    //                    data?.let { plantDrainNextCustomPop.setData(it) }
-                    //                    pop.maxHeight(dp2px(700f))
-                    //                        .asCustom(plantDrainNextCustomPop).show()
+                    // 跳转排水界面
+                    Handler().postDelayed({
+                        // 传递的数据为空
+                        val intent = Intent(this@SettingActivity, BasePumpActivity::class.java)
+                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                        myActivityLauncher.launch(intent)
+                    }, 50)
+
+                    /*data?.let { plantDrainNextCustomPop.setData(it) }
+                    pop.maxHeight(dp2px(700f))
+                        .asCustom(plantDrainNextCustomPop).show()*/
                 }
             })
         }
@@ -576,7 +581,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
             // 排水结束，那么直接弹出
-            if (plantDrainFinished.isShow)  plantDrainFinished.show()
+            if (plantDrainFinished.isShow) plantDrainFinished.show()
         }
     }
 
