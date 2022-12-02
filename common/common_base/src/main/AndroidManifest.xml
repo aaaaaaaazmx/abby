@@ -15,8 +15,15 @@
         <activity android:name=".easeui.ui.EaseUiActivity" />
 
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait"
             android:theme="@style/TranslucentStyle"
             android:name=".pop.BasePopActivity" />
+
+        <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait"
+            android:name=".pop.activity.BasePumpActivity" />
 
         <service android:name=".listener.TuYaDeviceUpdateReceiver"/>
 

@@ -1,8 +1,10 @@
 package com.cl.modules_my.ui
 
+import android.app.Activity
 import android.content.*
 import android.content.Intent.*
 import android.net.Uri
+import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AutomaticLoginReq
@@ -15,6 +17,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
@@ -37,6 +40,7 @@ import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.Serializable
 import javax.inject.Inject
 
 
@@ -388,9 +392,13 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                 success {
                     hideProgressLoading()
-                    data?.let { plantDrainNextCustomPop.setData(it) }
-                    pop.maxHeight(dp2px(700f))
-                        .asCustom(plantDrainNextCustomPop).show()
+                    // 传递的数据为空
+                    val intent = Intent(this@SettingActivity, BasePumpActivity::class.java)
+                    intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                    myActivityLauncher.launch(intent)
+                    //                    data?.let { plantDrainNextCustomPop.setData(it) }
+                    //                    pop.maxHeight(dp2px(700f))
+                    //                        .asCustom(plantDrainNextCustomPop).show()
                 }
             })
         }
@@ -561,6 +569,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             val intent = Intent(Intent.ACTION_VIEW, currentPackageUri)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
+        }
+    }
+
+
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            // 排水结束，那么直接弹出
+            if (plantDrainFinished.isShow)  plantDrainFinished.show()
         }
     }
 
