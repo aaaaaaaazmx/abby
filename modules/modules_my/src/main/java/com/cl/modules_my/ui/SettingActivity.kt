@@ -414,6 +414,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftReplant.setOnClickListener {
             rePlantPop.show()
         }
+        // 重量单位
+        binding.ftWeight.setOnClickListener {
+            startActivity(Intent(this@SettingActivity, WeightActivity::class.java))
+        }
+
         // 1v1
         binding.ftSolo.setOnClickListener {
             sendEmail()
@@ -467,6 +472,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         mViewModel.refreshToken(
             AutomaticLoginReq(userName = mViewModel.account, password = mViewModel.psd, token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
         )
+
+        // 重量单位
+        val weightUnit = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        binding.ftWeight.itemValue = if (weightUnit) getString(com.cl.common_base.R.string.my_metric) else getString(com.cl.common_base.R.string.my_us)
     }
 
 

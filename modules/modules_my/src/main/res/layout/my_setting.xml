@@ -156,6 +156,13 @@
                     android:layout_height="60dp"
                     app:itemTitle="Notifications" />
 
+                <!--重量单位-->
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="@string/my_weight_unit" />
+
                 <!--缓存-->
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_cache"

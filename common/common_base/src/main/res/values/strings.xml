@@ -129,6 +129,9 @@
     <string name="home_instrusctors">Abby Instrusctors</string>
     <string name="my_appversion">The current version is up-to-date.</string>
     <string name="draining_complete">Draining Complete</string>
+    <string name="my_weight_unit">Measurement System</string>
+    <string name="my_metric">Metric</string>
+    <string name="my_us">US</string>
     <plurals name="seconds">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>

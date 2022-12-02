@@ -71,6 +71,11 @@ object Constants {
         const val KEY_USER_INFO = "key_user_info"
     }
 
+    // 我的界面相关
+    object My {
+        const val KEY_MY_WEIGHT_UNIT = "key_my_weight_unit"
+    }
+
     // 隐私合规相关
     object PrivacyPolicy {
         const val KEY_PRIVACY_POLICY_IS_AGREE = "key_privacy_policy_is_agree"
@@ -167,44 +172,6 @@ object Constants {
 
         // 植物ID
         const val KEY_PLANT_ID = "key_plant_id"
-    }
-
-    /**
-     * url key
-     */
-    const val CONTENT_URL_KEY = "url"
-
-    /**
-     * title key
-     */
-    const val CONTENT_TITLE_KEY = "title"
-
-    /**
-     * id key
-     */
-    const val CONTENT_ID_KEY = "id"
-
-    /**
-     * id key
-     */
-    const val CONTENT_CID_KEY = "cid"
-
-    /**
-     * share key
-     */
-    const val CONTENT_SHARE_TYPE = "text/plain"
-
-    const val POSITION = "position"
-
-    const val COLLECT = "isCollect"
-
-    const val ROUTER_PATH = "routerPath"
-
-
-    object CollectType {
-        const val COLLECT = "COLLECT"
-        const val UNCOLLECT = "UNCOLLECT"
-        const val UNKNOWN = "UNKNOWN"
     }
 
     object FragmentIndex {
