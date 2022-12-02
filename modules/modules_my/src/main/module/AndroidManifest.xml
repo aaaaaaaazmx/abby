@@ -66,6 +66,7 @@
             android:screenOrientation="portrait"
             android:name="com.cl.modules_my.ui.EditNickNameActivity" />
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name="com.cl.modules_my.ui.SettingActivity" />
         <activity
@@ -82,6 +83,7 @@
             android:screenOrientation="portrait"
             android:name=".ui.MyHowToActivity" />
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".ui.CalendarActivity" />
 

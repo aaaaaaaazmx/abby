@@ -168,7 +168,8 @@ public class EaseUiActivity extends AppCompatActivity {
 				}
 				// 访客信息
 				VisitorInfo visitorInfo = new VisitorInfo();
-				visitorInfo.nickName(userinfoBean.getNickName());
+				visitorInfo.name(userinfoBean.getEmail());
+				visitorInfo.nickName(userinfoBean.getEmail());
 				visitorInfo.email(userinfoBean.getEmail());
 				String desc = userinfoBean.isVip() == 1 ? "This is an Android user and he is a subscriber" : "This is an Android user and he is not is a subscriber";
 				visitorInfo.description(desc);

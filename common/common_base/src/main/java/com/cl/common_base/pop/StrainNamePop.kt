@@ -4,16 +4,22 @@ import android.content.Context
 import android.graphics.Typeface
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.EditText
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildClickListener
+import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.cl.common_base.R
+import com.cl.common_base.adapter.StrainNameSearchAdapter
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.StrainNameBinding
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.setVisible
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.ViewUtils
@@ -39,6 +45,9 @@ class StrainNamePop(
     override fun getImplLayoutId(): Int {
         return R.layout.strain_name
     }
+
+    // 搜索时
+    private val searching: MutableList<String> = mutableListOf("Searching")
 
     private var binding: StrainNameBinding? = null
     override fun onCreate() {
@@ -90,7 +99,22 @@ class StrainNamePop(
                 onConfirmAction?.invoke(strainName.text.toString())
             }
 
+            // 搜索列表
+            rvSearch.layoutManager = LinearLayoutManager(context)
+            rvSearch.adapter = searchAdapter
+
+            searchAdapter.setOnItemClickListener { adapter, view, position ->
+                if (adapter.data[position].toString() == "Searching") return@setOnItemClickListener
+                binding?.strainName?.setText(adapter.data[position].toString())
+                binding?.strainName?.setSelection(binding?.strainName?.text?.length ?: 0)
+                binding?.rvSearch?.setVisible(false)
+                binding?.clStrain?.setVisible(true)
+            }
         }
+    }
+
+    private val searchAdapter by lazy {
+        StrainNameSearchAdapter(mutableListOf())
     }
 
     // 构建输入框文字变化流
@@ -102,6 +126,9 @@ class StrainNamePop(
 
             // 在文本变化后向流发射数据
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                binding?.rvSearch?.setVisible(!s.isNullOrEmpty())
+                binding?.clStrain?.setVisible(s.isNullOrEmpty())
+                if (!s.isNullOrEmpty()) searchAdapter.setList(searching)
                 // 点击按钮状态监听
                 binding?.btnSuccess?.isEnabled = !s.isNullOrEmpty()
                 trySend(text)
@@ -145,34 +172,17 @@ class StrainNamePop(
     }
 
     // 更新界面
-    fun updateUi(it: List<String>) {
-        XPopup.Builder(context)
-            .hasShadowBg(false) //                        .isRequestFocus(false)
-            .isCoverSoftInput(true) //                        .isViewMode(true)
-            //                        .popupAnimation(PopupAnimation.ScrollAlphaFromTop)
-            //                        .isClickThrough(true)
-            //                        .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
-            //                        .isDarkTheme(true)
-            //                        .popupAnimation(PopupAnimation.ScrollAlphaFromTop) //NoAnimation表示禁用动画
-            //                        .isCenterHorizontal(true) //是否与目标水平居中对齐
-            //                        .offsetY(60)
-            //                        .offsetX(80)
-            //                        .popupPosition(PopupPosition.Top) //手动指定弹窗的位置
-            //                        .popupWidth(500)
-            .atView(binding?.strainName) // 依附于所点击的View，内部会自动判断在上方或者下方显示
-            .asAttachList(
-                it.toTypedArray(), null,
-                { position, text -> binding?.strainName?.setText(text) }, 0, 0 /*, Gravity.LEFT*/
-            ).show()
+    private fun updateUi(it: List<String>) {
+        searchAdapter.setList(it)
     }
 
     // 访问网络进行搜索
-    suspend fun search(key: String): List<String> {
+    private suspend fun search(key: String): List<String> {
         return getStrainNameList(key)
     }
 
     // 将搜索关键词转换成搜索结果流
-    fun searchFlow(key: String) = flow { emit(search(key)) }
+    private fun searchFlow(key: String) = flow { emit(search(key)) }
 
     /**
      * 屏蔽手机系统返回键

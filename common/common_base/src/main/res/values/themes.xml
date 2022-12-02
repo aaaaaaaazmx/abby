@@ -22,4 +22,14 @@
         <item name="android:windowIsTranslucent">true</item> <!-- 是否有透明属性 -->
         <item name="android:backgroundDimEnabled">false</item> <!-- 背景是否半透明 -->
     </style>
+
+    <style name="TranslucentTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsTranslucent">true</item> <!-- 是否有透明属性 -->
+        <item name="android:windowContentTransitions">true</item>
+    </style>
 </resources>

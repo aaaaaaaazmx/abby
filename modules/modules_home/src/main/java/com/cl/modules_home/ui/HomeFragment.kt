@@ -2133,10 +2133,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         appendClickable("Reconnect abby") {
                             // 跳转到ReconnectActivity
 
-                            startActivity(Intent(context, BasePopActivity::class.java))
-                            //                            ARouter.getInstance()
-                            //                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
-                            //                                .navigation()
+                            ARouter.getInstance()
+                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
+                                .navigation()
                         }
                     }
                 }
@@ -2460,7 +2459,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 在线、并且绑定了设备
             if (mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
                 // 如果没有绑定过设备
-                mViewMode.plantInfo()
+                if (plantFlag != KEY_NEW_PLANT) {
+                    // 种植过的才可以请求
+                    mViewMode.plantInfo()
+                }
                 mViewMode.refreshIsVip(
                     AutomaticLoginReq(
                         userName = mViewMode.account,

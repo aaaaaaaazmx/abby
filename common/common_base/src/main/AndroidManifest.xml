@@ -17,11 +17,11 @@
         <activity
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
-            android:theme="@style/TranslucentStyle"
+            android:theme="@style/TranslucentTheme"
             android:name=".pop.BasePopActivity" />
 
         <activity
-            android:theme="@style/TranslucentStyle"
+            android:theme="@style/TranslucentTheme"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".pop.activity.BasePumpActivity" />

@@ -58,6 +58,7 @@
         </activity>
 
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name="com.cl.abby.MainActivity"
             android:launchMode="singleTask" />
