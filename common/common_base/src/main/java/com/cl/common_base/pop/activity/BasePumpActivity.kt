@@ -285,6 +285,13 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                             //                            isOpenOrStop(false)
                             // 排水成功
                             if ((value as? Boolean == false)) return@observe
+                            job?.cancel()
+                            // 判断当前播放器是否全屏
+                            if (!GSYVideoManager.isFullState(this@BasePumpActivity)) {
+                                finishVideoAndPump = true
+                                ToastUtil.shortShow(getString(R.string.draining_complete))
+                                return@observe
+                            }
                             setResult(Activity.RESULT_OK)
                             finish()
                         }
@@ -393,6 +400,8 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
             .pumpWater((value as? Boolean == true))
     }
 
+    // 是否排水完毕、以及视频退出全屏
+    private var finishVideoAndPump = false
     private var job: Job? = null
     private fun downTime() {
         // 开启定时器，每次20秒刷新未读气泡消息
@@ -405,6 +414,12 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 // 等于0了，表示排水成功
                 if (timing == 0) {
                     job?.cancel()
+                    // 判断当前播放器是否全屏
+                    if (!GSYVideoManager.isFullState(this@BasePumpActivity)) {
+                        finishVideoAndPump = true
+                        ToastUtil.shortShow(getString(R.string.draining_complete))
+                        return@countDownCoroutines
+                    }
                     setResult(Activity.RESULT_OK)
                     finish()
                 }
@@ -474,6 +489,22 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        GSYVideoManager.onResume()
+        // 也就是从全屏退出、然后排水也结束了。
+        if (!GSYVideoManager.backFromWindowFull(this@BasePumpActivity) && finishVideoAndPump) {
+            GSYVideoManager.releaseAllVideos()
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        GSYVideoManager.onPause()
+    }
 
     override fun observe() {
     }

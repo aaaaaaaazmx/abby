@@ -580,8 +580,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
     private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
+            logI("1231myActivityLaunchermyActivityLaunchermyActivityLauncher23123")
             // 排水结束，那么直接弹出
-            if (plantDrainFinished.isShow) plantDrainFinished.show()
+            if (!plantDrainFinished.isShow) plantDrainFinished.show()
         }
     }
 
