@@ -424,7 +424,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             knowMore.setOnClickListener {
                 // todo 跳转新的图文界面
                 val intent = Intent(activity, KnowMoreActivity::class.java)
-                intent.putExtra(KnowMoreActivity.KEY_TXT_ID, "c3eeb4d2f1332f4869erwqfa912557ae")
+                intent.putExtra(KnowMoreActivity.KEY_TXT_ID, KnowMoreActivity.KEY_COLLEGE_TXT_ID)
                 startActivity(intent)
             }
             connectDevice.setOnClickListener {
@@ -1009,6 +1009,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     //                        }
                     //                        return@HomePeriodPop
                     //                    }
+                    // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
+                    if (mViewMode.refreshIsVip.value?.data?.isVip == 1) {
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(activity, KEY_FOR_CALENDAR_REFRSH)
+                        return@HomePeriodPop
+                    }
                     // todo 此处是用于周期弹窗解锁的
                     mViewMode.setPopPeriodStatus(guideId = guideType, taskId = taskId, taskTime = taskTime)
                 }

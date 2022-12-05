@@ -276,5 +276,6 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     companion object {
         const val KEY_TXT_ID = "key_txt_id"
+        const val KEY_COLLEGE_TXT_ID = "516c590993a041309912ebe16c2eb856"
     }
 }

@@ -109,6 +109,8 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                 }
             } else if (DateHelper.after(itemTime, currentTime) || item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
                 // 当前时间小于或者等于itemTime
+                if (null == data) return@forEachIndexed
+                if (data.taskType.isNullOrEmpty()) return@forEachIndexed
                 when (data.taskType) {
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING,

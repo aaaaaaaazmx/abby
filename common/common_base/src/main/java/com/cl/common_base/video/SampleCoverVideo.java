@@ -82,6 +82,8 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
         }
         // 中间滑动进度条
         setDialogProgressBar(ContextCompat.getDrawable(context, R.drawable.video_progress_bg));
+        // 音量进度条
+        setDialogVolumeProgressBar(ContextCompat.getDrawable(context, R.drawable.video_progress_volume_bg));
 
         // 默认显示的底部进度条
         setBottomProgressBarDrawable(ContextCompat.getDrawable(context, R.drawable.video_new_progress));
@@ -515,12 +517,20 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
         }
     }
 
+    /**
+     * 是否展示拖动弹窗
+     */
+    private boolean isShowProgressDialog = false;
+    public void setIsShowProgressBar(boolean isShowProgressDialog) {
+        this.isShowProgressDialog = isShowProgressDialog;
+    }
+
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         super.onProgressChanged(seekBar, progress, fromUser);
         // 滚动seekBar时添加时间的监听
         float prioss = progress;
-        if (fromUser) {
+        if (fromUser && isShowProgressDialog) {
             setDialogProgressColor(Color.parseColor("#53CF8D"), -1);
             long duration = getGSYVideoManager().getCurrentPosition();
             int totalTimeDuration = (int) getDuration();
