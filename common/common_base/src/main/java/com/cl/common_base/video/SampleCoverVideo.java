@@ -520,7 +520,7 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
     /**
      * 是否展示拖动弹窗
      */
-    private boolean isShowProgressDialog = false;
+    private boolean isShowProgressDialog = true;
     public void setIsShowProgressBar(boolean isShowProgressDialog) {
         this.isShowProgressDialog = isShowProgressDialog;
     }
