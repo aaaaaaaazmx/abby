@@ -8,6 +8,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
         tools:ignore="MissingConstraints"
         android:layout_width="wrap_content"
         android:background="@drawable/background_red_r8"
@@ -50,6 +51,8 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:layout_marginEnd="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/tv_support_number"
             android:layout_marginStart="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_support"
@@ -63,6 +66,7 @@
 
 
         <ImageView
+            android:visibility="gone"
             app:layout_constraintStart_toEndOf="@+id/tv_support_number"
             android:id="@+id/iv_collage"
             android:layout_marginStart="10dp"
@@ -75,6 +79,7 @@
             android:layout_height="wrap_content"/>
 
         <TextView
+            android:visibility="gone"
             android:layout_marginEnd="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="5dp"

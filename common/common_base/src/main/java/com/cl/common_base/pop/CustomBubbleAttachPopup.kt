@@ -10,6 +10,7 @@ import com.lxj.xpopup.core.BubbleAttachPopupView
 class CustomBubbleAttachPopup(
     context: Context,
     private val easeNumber: Int? = null, // 婚讯啊未读数量
+    private val bubbleClickAction: (() -> Unit)? = null
 ) : BubbleAttachPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_custom_bubble_attach_popup
@@ -20,6 +21,11 @@ class CustomBubbleAttachPopup(
         DataBindingUtil.bind<BaseCustomBubbleAttachPopupBinding>(popupImplView)?.apply {
             tvSupportNumber.visibility = if ("$easeNumber".isEmpty()) View.GONE else View.VISIBLE
             tvSupportNumber.text = "$easeNumber"
+
+            clRoot.setOnClickListener {
+                bubbleClickAction?.invoke()
+                dismiss()
+            }
         }
     }
 

@@ -24,6 +24,7 @@ import com.cl.common_base.easeui.ui.EaseUiActivity;
 import com.cl.common_base.util.Prefs;
 import com.cl.common_base.util.json.GSON;
 import com.cl.common_base.util.livedatabus.LiveEventBus;
+import com.hyphenate.chat.AgoraMessage;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.chat.ChatManager;
 import com.hyphenate.chat.Conversation;
@@ -465,9 +466,13 @@ public class EaseUiHelper {
      * 获取未读消息数量
      */
     public int getUnReadMessage() {
-        // im 服务号
-        Conversation conversation = ChatClient.getInstance().chatManager().getConversation(Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT);
-        return conversation.unreadMessagesCount();
+        // todo 需要判断先登录
+        if (ChatClient.getInstance().isLoggedInBefore()) {
+            // im 服务号
+            Conversation conversation = ChatClient.getInstance().chatManager().getConversation(Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT);
+            return conversation.unreadMessagesCount();
+        }
+        return 0;
     }
 
     /**

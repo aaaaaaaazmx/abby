@@ -102,19 +102,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private val bubblePop by lazy {
         XPopup.Builder(this@MainActivity)
-            // .isCenterHorizontal(true)
+            .isCenterHorizontal(true)
             .popupPosition(PopupPosition.Top)
             .dismissOnTouchOutside(false)
             .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
             .isClickThrough(true)  //点击透传
-            .atView((binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0))
+            .atView(
+                (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
+                    0
+                )
+            )
             .hasShadowBg(false) // 去掉半透明背景
             //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
             .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
             .asCustom(
                 CustomBubbleAttachPopup(
                     this@MainActivity,
-                    easeNumber = EaseUiHelper.getInstance().unReadMessage
+                    easeNumber = EaseUiHelper.getInstance().unReadMessage,
+                    bubbleClickAction = {
+                        switchFragment(0)
+                    }
                 )
                     //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
                     .setBubbleBgColor(Color.RED) //气泡背景
@@ -130,14 +137,41 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         //获取第1个itemView
         val itemView = menuView.getChildAt(0) as BottomNavigationItemView
         //引入badgeView
-        val badgeView = LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
+        val badgeView =
+            LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
         badgeView
     }
 
+    override fun onResume() {
+        super.onResume()
+        mViewModel.getEaseUINumber()
+    }
+
     override fun observe() {
+        mViewModel.apply {
+            // 监听消息的变化
+            unReadMessageNumber.observe(this@MainActivity) {
+                if (null == it) return@observe
+                if (it <= 0) {
+                    // todo 判断日历还有没有数据、以及·it==0·、如果没有数据，那么就直接隐藏下面的小红点
+                    val itemView =
+                        (binding.bottomNavigation.getChildAt(0) as? BottomNavigationMenuView)?.getChildAt(
+                            0
+                        ) as? BottomNavigationItemView
+                    if (itemView?.contains(badgeView) == true) {
+                        // 如果是添加的，那么就直接remoview
+                        itemView.removeView(badgeView)
+                    }
+                }
+            }
+        }
+
         // 设备状态监听变化
         LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
             .observe(this) {
+                // 如果不是等于0、那么是不要展示的
+                if (mIndex == 0) return@observe
+
                 if (it) {
                     if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
                         // todo 表示有消息要来了，需要查询一遍
@@ -146,7 +180,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
                         // 查询环信
                         //获取底部菜单view
-                        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                        val menuView =
+                            binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                         //获取第1个itemView
                         val itemView = menuView.getChildAt(0) as BottomNavigationItemView
                         if (!itemView.contains(badgeView)) {
@@ -154,9 +189,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             itemView.addView(badgeView)
                         }
                         // 弹窗
-                        bubblePop.show()
-                    } else {
-                        // todo 清空消息或者是清空消息
+                        if (!bubblePop.isShow) bubblePop.show()
+                    }
+                } else {
+                    // todo 需要执行消除逻辑
+                    if ((mViewModel.unReadMessageNumber.value ?: 0) <= 0) {
+                        // todo 判断日历还有没有数据、以及·it==0·、如果没有数据，那么就直接隐藏下面的小红点
+                        val itemView =
+                            (binding.bottomNavigation.getChildAt(0) as? BottomNavigationMenuView)?.getChildAt(
+                                0
+                            ) as? BottomNavigationItemView
+                        if (itemView?.contains(badgeView) == true) {
+                            // 如果是添加的，那么就直接remoview
+                            itemView.removeView(badgeView)
+                        }
                     }
                 }
             }
@@ -168,16 +214,22 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             if (it.itemId != R.id.action_home) {
                 // todo 不是首页得时候、都需要请求接口、检查是否有数量
                 mViewModel.getMessageNumber()
+
+                // 判断当前的气泡是否弹出
+                if (bubblePop.isShow) {
+                    Handler().postDelayed({
+                        // 不再显示气泡
+                        Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
+                        bubblePop.dismiss()
+                    }, 10000)
+                }
             }
 
             when (it.itemId) {
                 R.id.action_home -> {
-                    // 判断当前的气泡是否弹出
+                    // 判断气泡是否弹出
                     if (bubblePop.isShow) {
-                        Handler().postDelayed({
-                            Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
-                            bubblePop.dismiss()
-                        }, 10000)
+                        bubblePop.dismiss()
                     }
                     switchFragment(Constants.FragmentIndex.HOME_INDEX)
                 }
@@ -231,7 +283,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     deviceOffLineState
                 )
                 // 是否是第一次登录注册、并且是从未绑定过设备
-                bundle.putBoolean(Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE, firstLoginAndNoDevice)
+                bundle.putBoolean(
+                    Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
+                    firstLoginAndNoDevice
+                )
                 // todo 跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
                 // todo RouterPath.Home.PAGE_HOME 种植引导页面
                 homeFragment?.let {
