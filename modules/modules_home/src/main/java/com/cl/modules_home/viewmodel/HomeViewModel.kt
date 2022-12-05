@@ -127,43 +127,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
-     * 刷新是否是vip
-     */
-    private val _refreshIsVip = MutableLiveData<Resource<AutomaticLoginData>>()
-    val refreshIsVip: LiveData<Resource<AutomaticLoginData>> = _refreshIsVip
-    fun refreshIsVip(req: AutomaticLoginReq) {
-        viewModelScope.launch {
-            repository.automaticLogin(req)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _refreshIsVip.value = it
-                }
-        }
-    }
-
-
-    /**
      * 获取图文引导
      *
      * 引导类型:0-种植、1-开始种植、2-开始花期、3-开始清洗期、5-开始烘干期、6-完成种植
@@ -1037,6 +1000,40 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 )
             }.collectLatest {
                 _checkPlant.value = it
+            }
+    }
+
+    /**
+     * 获取用户信息
+     */
+    private val _userDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()
+    val userDetail: LiveData<Resource<UserinfoBean.BasicUserBean>> = _userDetail
+    fun userDetail() = viewModelScope.launch {
+        repository.userDetail()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                _userDetail.value = it
             }
     }
 

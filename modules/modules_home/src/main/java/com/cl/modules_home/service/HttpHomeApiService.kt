@@ -82,6 +82,12 @@ interface HttpHomeApiService {
     fun getUnread(): Flow<HttpResult<MutableList<UnreadMessageData>>>
 
     /**
+     * 获取用户信息
+     */
+    @POST("abby/user/userDetail")
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>>
+
+    /**
      * 获取已读信息
      */
     @FormUrlEncoded

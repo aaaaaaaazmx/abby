@@ -113,13 +113,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
         )
-        mViewMode.refreshIsVip(
-            AutomaticLoginReq(
-                userName = mViewMode.account,
-                password = mViewMode.psd,
-                token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-            )
-        )
+        mViewMode.userDetail()
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -343,7 +337,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 选中日历
             ivCalendar.setOnClickListener {
                 // 如果是订阅用户
-                if (mViewMode.refreshIsVip.value?.data?.isVip == 1) {
+                if (mViewMode.userDetail.value?.data?.isVip == 1) {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                 } else {
                     // 不是订阅用户，直接弹出图文
@@ -1011,7 +1005,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     //                        return@HomePeriodPop
                     //                    }
                     // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
-                    if (mViewMode.refreshIsVip.value?.data?.isVip == 1) {
+                    if (mViewMode.userDetail.value?.data?.isVip == 1) {
                         ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                         return@HomePeriodPop
                     }
@@ -2470,13 +2464,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 种植过的才可以请求
                     mViewMode.plantInfo()
                 }
-                mViewMode.refreshIsVip(
-                    AutomaticLoginReq(
-                        userName = mViewMode.account,
-                        password = mViewMode.psd,
-                        token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-                    )
-                )
+                // 获取用户信息
+                mViewMode.userDetail()
             }
         }
     }

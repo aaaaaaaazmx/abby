@@ -78,7 +78,7 @@
                 android:background="@mipmap/home_plant_three_bg" />
 
             <com.cl.common_base.widget.SvTextView
-                android:visibility='@{viewModel.refreshIsVip.data.isVip == 1 ? View.GONE : View.VISIBLE}'
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.GONE : View.VISIBLE}'
                 android:textStyle="bold"
                 android:id="@+id/tv_feef"
                 android:layout_width="42dp"
@@ -98,7 +98,7 @@
 
             <ImageView
                 android:id="@+id/iv_support"
-                android:visibility='@{viewModel.refreshIsVip.data.isVip == 1 ? View.VISIBLE : View.GONE}'
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}'
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginEnd="12dp"
@@ -115,7 +115,7 @@
                 />
 
             <com.cl.common_base.widget.SvTextView
-                android:visibility='@{viewModel.refreshIsVip.data.isVip == 1 ? View.GONE : View.VISIBLE}'
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.GONE : View.VISIBLE}'
                 android:id="@+id/tv_drain"
                 android:layout_width="42dp"
                 android:layout_height="42dp"

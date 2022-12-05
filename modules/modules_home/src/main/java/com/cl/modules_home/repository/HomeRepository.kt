@@ -77,6 +77,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     }
 
     /**
+     * 获取用户信息
+     */
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return remoteRepository.userDetail()
+    }
+
+    /**
      * 标记为已读消息
      */
     fun getRead(messageId: String): Flow<HttpResult<BaseBean>> {

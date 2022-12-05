@@ -56,6 +56,10 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getUnread()
     }
 
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return service.userDetail()
+    }
+
     fun getRead(messageId: String): Flow<HttpResult<BaseBean>> {
         return service.getRead(messageId)
     }
