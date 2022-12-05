@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
@@ -61,6 +62,43 @@ class KnowMoreViewModel @Inject constructor(private val repository: HomeReposito
                     )
                 }.collectLatest {
                     _richText.value = it
+                }
+        }
+    }
+
+
+    /**
+     * 任务完成
+     */
+    private val _finishTask = MutableLiveData<Resource<String>>()
+    val finishTask: LiveData<Resource<String>> = _finishTask
+    fun finishTask(body: FinishTaskReq) {
+        viewModelScope.launch {
+            repository.finishTask(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _finishTask.value = it
                 }
         }
     }

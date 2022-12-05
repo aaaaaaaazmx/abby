@@ -63,12 +63,14 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
         val changWater = holder.getView<ImageView>(R.id.iv_change_water)
         val changeUnlock = holder.getView<ImageView>(R.id.iv_change_unlock)
         val changElse = holder.getView<ImageView>(R.id.iv_change_else)
+        val changeAcademyTask = holder.getView<ImageView>(R.id.iv_academy_task)
         val llPoint = holder.getView<LinearLayout>(R.id.ll_point)
 
         // 过期的颜色展示
         val changWaterGray = holder.getView<ImageView>(R.id.iv_change_water_gray)
         val changUnlockGray = holder.getView<ImageView>(R.id.iv_change_unlock_gray)
         val changElseGray = holder.getView<ImageView>(R.id.iv_change_else_gray)
+        val changAcadeMyTaskGray = holder.getView<ImageView>(R.id.iv_change_academy_task_gray)
         val llPointGray = holder.getView<LinearLayout>(R.id.ll_point_gray)
 
         // 放置布局错乱，应该是全部都先隐藏，然后在根据滑动的时候来进行显示
@@ -125,6 +127,10 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                     KEY_CHANGE_WATER,
                     KEY_CHANGE_CUP_WATER -> {
                         ViewUtils.setVisible(changWater)
+                    }
+                    // 学院消息
+                    KEY_TEST -> {
+                        ViewUtils.setVisible(changeAcademyTask)
                     }
                     else -> {
                         ViewUtils.setVisible(changElse)
@@ -223,5 +229,6 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
         const val KEY_LST = "lst"
         const val KEY_TOPPING = "topping"
         const val KEY_TRIM = "trim"
+        const val KEY_TEST = "test" // 学院消息
     }
 }

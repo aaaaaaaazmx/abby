@@ -42,10 +42,12 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         mCurrentDate.month = CalendarUtil.getDate("MM", d)
         mCurrentDate.day = CalendarUtil.getDate("dd", d)
         mCurrentDate.isCurrentDay = true
-        logI("""
+        logI(
+            """
             asdasdasdas:
             ${mCurrentDate.ymd}
-        """.trimIndent())
+        """.trimIndent()
+        )
         mCurrentDate
     }
 
@@ -193,17 +195,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     )
                 } else {
                     // 刷新任务
-                    _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
-                        _localCalendar.value?.let { list ->
-                            setOnlyRefreshLoad(true)
-                            letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
-                                getCalendar(
-                                    first,
-                                    last
-                                )
-                            }
-                        }
-                    }
+                    refreshTask()
                     Resource.Success(it.data)
                 }
             }
@@ -222,6 +214,20 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             }.collectLatest {
                 _updateTask.value = it
             }
+    }
+
+    fun refreshTask() {
+        _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
+            _localCalendar.value?.let { list ->
+                setOnlyRefreshLoad(true)
+                letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
+                    getCalendar(
+                        first,
+                        last
+                    )
+                }
+            }
+        }
     }
 
 
@@ -350,14 +356,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                         )
                     } else {
                         // 刷新任务
-                        _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
-                            _localCalendar.value?.let { list ->
-                                setOnlyRefreshLoad(true)
-                                letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
-                                    getCalendar(first, last)
-                                }
-                            }
-                        }
+                        refreshTask()
                         if (guideInfoStatus.value == CalendarData.TASK_TYPE_CHECK_CHECK_CURING) {
                             // 直接跳转到完成界面
                             _showCompletePage.postValue(true)

@@ -57,7 +57,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
     /**
      * theme color
      */
-//    private var themeColor: Int = SettingUtil.getColor()
+    //    private var themeColor: Int = SettingUtil.getColor()
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -135,18 +135,18 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     open fun initColor() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isLightStatusBar()) {
-//            window.decorView.apply {
-//                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-//            }
-//        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isLightNavigationBar()) {
-//            window.decorView.apply {
-//                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-//            }
-//        }
-//        window.statusBarColor = getStatusBarColor()
-//        window.navigationBarColor = getNavigationBarColor()
+        //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isLightStatusBar()) {
+        //            window.decorView.apply {
+        //                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        //            }
+        //        }
+        //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isLightNavigationBar()) {
+        //            window.decorView.apply {
+        //                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        //            }
+        //        }
+        //        window.statusBarColor = getStatusBarColor()
+        //        window.navigationBarColor = getNavigationBarColor()
 
         StatusBarUtil.setColor(this, Color.TRANSPARENT, 0)
         StatusBarUtil.setLightMode(this)
@@ -283,6 +283,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
     override fun onDestroy() {
         super.onDestroy()
         activity = null
+        hideProgressLoading()
         ActivityCollector.removeTask(activityWR)
         binding.let {
             it.unbind()

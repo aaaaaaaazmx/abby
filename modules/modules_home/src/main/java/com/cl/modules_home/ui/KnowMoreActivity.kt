@@ -1,5 +1,6 @@
 package com.cl.modules_home.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.util.TypedValue
@@ -14,10 +15,14 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.mtjsoft.barcodescanning.extentions.dp2px
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.bbgo.module_home.databinding.HomeKnowMoreLayoutBinding
 import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.FinishTaskReq
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.easeui.ui.videoUiHelp
 import com.cl.common_base.ext.resourceObserver
@@ -35,6 +40,7 @@ import javax.inject.Inject
 /**
  * 统一图文接口
  */
+@Route(path = RouterPath.Home.PAGE_KNOW)
 @AndroidEntryPoint
 class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     @Inject
@@ -49,17 +55,28 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     }
 
     private val txtId by lazy {
-        intent.getStringExtra(KEY_TXT_ID)
+        intent.getStringExtra(Constants.Global.KEY_TXT_ID)
+    }
+
+    private val txtType by lazy {
+        intent.getStringExtra(Constants.Global.KEY_TXT_TYPE)
+    }
+
+    private val taskId by lazy {
+        intent.getStringExtra(Constants.Global.KEY_TASK_ID)
     }
 
     override fun initView() {
-        binding.ivBack.setOnClickListener { finish() }
+        binding.ivBack.setOnClickListener {
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
 
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
         // mViewMode.getRichText(txtId = "516c590993a041309912ebe16c2eb856")
         // mViewMode.getRichText(txtId = "c3eeb4d2f1332f4869erwqfa912557ae")
-        mViewMode.getRichText(txtId = txtId)
+        mViewMode.getRichText(txtId = txtId, type = txtType)
     }
 
     /**
@@ -74,6 +91,20 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 完成任务
+            finishTask.observe(this@KnowMoreActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    setResult(Activity.RESULT_OK)
+                    this@KnowMoreActivity.finish()
+                }
+            })
+
             richText.observe(this@KnowMoreActivity, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->
@@ -118,8 +149,12 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                     "pageDown" -> {
                                         // 跳转下一页
                                         val intent = Intent(this@KnowMoreActivity, KnowMoreActivity::class.java)
-                                        intent.putExtra(KEY_TXT_ID, value?.txtId)
+                                        intent.putExtra(Constants.Global.KEY_TXT_ID, value?.txtId)
                                         startActivity(intent)
+                                    }
+                                    "finishTask" -> {
+                                        // 完成任务
+                                        mViewMode.finishTask(FinishTaskReq(taskId = taskId))
                                     }
                                 }
                             }
@@ -204,7 +239,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         bean.value?.txtId?.let {
                             // 继续请求弹窗
                             val intent = Intent(context, KnowMoreActivity::class.java)
-                            intent.putExtra(KEY_TXT_ID, it)
+                            intent.putExtra(Constants.Global.KEY_TXT_ID, it)
                             context.startActivity(intent)
                         }
                     }
@@ -270,12 +305,12 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         if (GSYVideoManager.backFromWindowFull(this)) {
             return
         }
-        super.onBackPressed()
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 
 
     companion object {
-        const val KEY_TXT_ID = "key_txt_id"
         const val KEY_COLLEGE_TXT_ID = "516c590993a041309912ebe16c2eb856"
     }
 }

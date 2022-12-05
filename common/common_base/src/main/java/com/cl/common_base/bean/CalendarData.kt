@@ -36,6 +36,7 @@ data class CalendarData(
         const val TYPE_CHANGE_WATER = "change_water_task"
         const val TYPE_TRAIN = "train_task"
         const val TYPE_PERIOD_CHECK = "period_check_task"
+        const val TYPE_ACADEMY_TASK = "academy_task" // 学院任务
 
         // taskType
         // 任务类型

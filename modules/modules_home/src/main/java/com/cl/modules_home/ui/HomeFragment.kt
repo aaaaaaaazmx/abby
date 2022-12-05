@@ -424,7 +424,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             knowMore.setOnClickListener {
                 // todo 跳转新的图文界面
                 val intent = Intent(activity, KnowMoreActivity::class.java)
-                intent.putExtra(KnowMoreActivity.KEY_TXT_ID, KnowMoreActivity.KEY_COLLEGE_TXT_ID)
+                intent.putExtra(Constants.Global.KEY_TXT_ID, KnowMoreActivity.KEY_COLLEGE_TXT_ID)
                 startActivity(intent)
             }
             connectDevice.setOnClickListener {

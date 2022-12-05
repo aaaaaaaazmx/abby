@@ -172,6 +172,12 @@ object Constants {
 
         // 植物ID
         const val KEY_PLANT_ID = "key_plant_id"
+
+        // 学院页面的TXid
+        const val KEY_TXT_ID = "key_txt_id"
+        const val KEY_TXT_TYPE = "key_txt_type"
+        const val KEY_TASK_ID = "key_task_id"
+
     }
 
     object FragmentIndex {

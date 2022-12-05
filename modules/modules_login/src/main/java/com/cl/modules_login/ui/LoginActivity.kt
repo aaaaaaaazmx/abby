@@ -107,7 +107,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         mViewModel.registerLoginLiveData.observe(this@LoginActivity) {
             when (it) {
                 is Resource.Loading -> {
-                    showProgressLoading()
+                     showProgressLoading()
                 }
                 is Resource.Success -> {
                     userInfoBean = it.data!!

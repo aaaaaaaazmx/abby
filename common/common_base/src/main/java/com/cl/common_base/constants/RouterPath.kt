@@ -66,6 +66,7 @@ class RouterPath {
     object Home {
         private const val HOME = "modules_home"
         const val PAGE_HOME = "/home/$HOME"
+        const val PAGE_KNOW = "/knowMore/$HOME" // 学院
     }
 
     /**

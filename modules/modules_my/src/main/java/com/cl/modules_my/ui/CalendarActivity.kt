@@ -22,6 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
@@ -958,6 +959,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     )
                                 )
                             }
+                            // 学院任务
+                            CalendarData.TYPE_ACADEMY_TASK -> {
+                                holder.imgMark.setImageDrawable(
+                                    ContextCompat.getDrawable(
+                                        this@CalendarActivity,
+                                        com.cl.common_base.R.drawable.base_dot_academy_task
+                                    )
+                                )
+                            }
                         }
 
                     }
@@ -1045,6 +1055,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         mViewMode.plantInfo()
                                                     }
                                                     else -> {
+                                                        // todo、如果是学院任务，那么就直接跳转到学院弹窗
+                                                        if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {
+                                                            ARouter.getInstance().build(RouterPath.Home.PAGE_KNOW)
+                                                                .withString(Constants.Global.KEY_TXT_TYPE, listContent[position].taskType)
+                                                                .withString(Constants.Global.KEY_TASK_ID, listContent[position].taskId)
+                                                                .navigation(this@CalendarActivity, KEY_REQUEST_KNOW_MORE)
+                                                            return@BaseThreeTextPop
+                                                        }
                                                         listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }
                                                     }
                                                 }
@@ -1245,11 +1263,30 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when(requestCode) {
+                // 请求学院页面的返回
+                KEY_REQUEST_KNOW_MORE -> {
+                    // 刷新任务
+                    mViewMode.refreshTask()
+                }
+            }
+        }
+
+    }
+
     // 手动返回
     override fun onBackPressed() {
         setResult(RESULT_OK)
         finish()
     }
+
+    companion object {
+        const val KEY_REQUEST_KNOW_MORE = 1
+    }
+
 }
 
 

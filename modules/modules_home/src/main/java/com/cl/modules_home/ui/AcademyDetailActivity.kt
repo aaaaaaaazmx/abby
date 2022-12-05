@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bbgo.module_home.databinding.HomeAcademyDetailActivityBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AcademyDetails
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.adapter.HomeAcademyDetailAdapter
@@ -96,7 +97,7 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
                 this@AcademyDetailActivity,
                 KnowMoreActivity::class.java
             )
-            intent.putExtra(KnowMoreActivity.KEY_TXT_ID, data?.txtId)
+            intent.putExtra(Constants.Global.KEY_TXT_ID, data?.txtId)
             startActivity(intent)
         }
     }
