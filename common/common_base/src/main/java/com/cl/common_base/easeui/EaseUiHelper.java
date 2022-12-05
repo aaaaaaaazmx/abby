@@ -23,6 +23,7 @@ import com.cl.common_base.easeui.receiver.CallReceiver;
 import com.cl.common_base.easeui.ui.EaseUiActivity;
 import com.cl.common_base.util.Prefs;
 import com.cl.common_base.util.json.GSON;
+import com.cl.common_base.util.livedatabus.LiveEventBus;
 import com.hyphenate.chat.ChatClient;
 import com.hyphenate.chat.ChatManager;
 import com.hyphenate.chat.Conversation;
@@ -359,6 +360,12 @@ public class EaseUiHelper {
                     } catch (HyphenateException e) {
                         e.printStackTrace();
                     }
+                    // 有消息推送过来了。
+                    // 直接下发状态-MainActivity
+                    LiveEventBus.get()
+                            .with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean.class)
+                            .postEvent(true);
+
                     //这里全局监听通知类消息,通知类消息是通过普通消息的扩展实现
                     if (MessageHelper.isNotificationMessage(message)) {
                         // 检测是否为留言的通知消息
@@ -475,6 +482,7 @@ public class EaseUiHelper {
 
     /**
      * 跳转到聊天界面
+     *
      * @param message 附带消息过去
      */
     public void startChat(String message) {

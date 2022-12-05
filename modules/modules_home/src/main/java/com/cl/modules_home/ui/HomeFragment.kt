@@ -118,6 +118,32 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
 
+        liveDataObser()
+
+        // 开启定时器，每次20秒刷新未读气泡消息
+        job = mViewMode.countDownCoroutines(
+            10 * 6 * 500000,
+            lifecycleScope,
+            onTick = {
+                if (it % 20 == 0) {
+                    // 表示过了20秒
+                    mViewMode.getUnread()
+                }
+                if (it == 0) {
+                    job?.cancel()
+                }
+            },
+            onStart = {},
+            onFinish = {
+                // todo 这个finish也指的是当前页面被关闭, 定时任务不能放在这个地方.
+                job?.cancel()
+            })
+    }
+
+    /**
+     * eventBus消息接收
+     */
+    private fun liveDataObser() {
         // 极光应用内部消息
         // 主要是用来显示气泡
         LiveEventBus.get().with(Constants.Jpush.KEY_IN_APP_MESSAGE, String::class.java)
@@ -143,24 +169,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             }
 
-        // 开启定时器，每次20秒刷新未读气泡消息
-        job = mViewMode.countDownCoroutines(
-            10 * 6 * 500000,
-            lifecycleScope,
-            onTick = {
-                if (it % 20 == 0) {
-                    // 表示过了20秒
-                    mViewMode.getUnread()
+        /**
+         * 环信消息
+         */
+        LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
+            .observe(viewLifecycleOwner) {
+                if (it) {
+                    mViewMode.getEaseUINumber()
                 }
-                if (it == 0) {
-                    job?.cancel()
-                }
-            },
-            onStart = {},
-            onFinish = {
-                // todo 这个finish也指的是当前页面被关闭, 定时任务不能放在这个地方.
-                job?.cancel()
-            })
+            }
     }
 
     /**
@@ -2150,6 +2167,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+        mViewMode.getEaseUINumber()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -2459,6 +2477,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         if (!hidden) {
             // 在线、并且绑定了设备
             if (mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
+                mViewMode.getEaseUINumber()
                 // 如果没有绑定过设备
                 if (plantFlag != KEY_NEW_PLANT) {
                     // 种植过的才可以请求

@@ -3,9 +3,11 @@ package com.cl.abby
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import androidx.activity.viewModels
+import androidx.core.view.contains
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.alibaba.android.arouter.facade.annotation.Autowired
@@ -15,9 +17,12 @@ import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.showToast
 import com.cl.common_base.pop.CustomBubbleAttachPopup
+import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.modules_home.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.lxj.xpopup.XPopup
@@ -28,6 +33,7 @@ import com.shuyu.gsyvideoplayer.player.PlayerFactory
 import dagger.hilt.android.AndroidEntryPoint
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
+import javax.inject.Inject
 
 /**
  * 主页入口
@@ -41,6 +47,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     //    private val plantGuideFlag by lazy {
     //        intent.getStringExtra(LoginActivity.KEY_GUIDE_STATE)
     //    }
+
+    @Inject
+    lateinit var mViewModel: HomeViewModel
 
     // 引导状态
     @Autowired(name = Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG)
@@ -67,9 +76,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var contactFragment: Fragment? = null
     private var myFragment: Fragment? = null
 
-    // ViewModel
-    private val mViewModel by viewModels<MainViewModel>()
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt("currTabIndex", mIndex)
@@ -94,31 +100,22 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         logI(plantGuideFlag)
     }
 
-    override fun observe() {
-    }
-
-    override fun initData() {
-        //获取底部菜单view
-        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
-        //获取第1个itemView
-        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-        //引入badgeView
-        val badgeView = LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
-        //把badgeView添加到itemView中
-        itemView.addView(badgeView)
-
+    private val bubblePop by lazy {
         XPopup.Builder(this@MainActivity)
             // .isCenterHorizontal(true)
             .popupPosition(PopupPosition.Top)
             .dismissOnTouchOutside(false)
             .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
             .isClickThrough(true)  //点击透传
-            .atView(itemView)
+            .atView((binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0))
             .hasShadowBg(false) // 去掉半透明背景
             //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
             .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
             .asCustom(
-                CustomBubbleAttachPopup(this@MainActivity)
+                CustomBubbleAttachPopup(
+                    this@MainActivity,
+                    easeNumber = EaseUiHelper.getInstance().unReadMessage
+                )
                     //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
                     .setBubbleBgColor(Color.RED) //气泡背景
                     .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 6f))
@@ -126,18 +123,71 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     //.setBubbleRadius(100)
                     .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 2f))
             )
-            .show()
+    }
 
+    private val badgeView by lazy {
+        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+        //获取第1个itemView
+        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+        //引入badgeView
+        val badgeView = LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
+        badgeView
+    }
+
+    override fun observe() {
+        // 设备状态监听变化
+        LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
+            .observe(this) {
+                if (it) {
+                    if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
+                        // todo 表示有消息要来了，需要查询一遍
+                        // todo 查询接口
+                        mViewModel.getMessageNumber()
+
+                        // 查询环信
+                        //获取底部菜单view
+                        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                        //获取第1个itemView
+                        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                        if (!itemView.contains(badgeView)) {
+                            //把badgeView添加到itemView中
+                            itemView.addView(badgeView)
+                        }
+                        // 弹窗
+                        bubblePop.show()
+                    } else {
+                        // todo 清空消息或者是清空消息
+                    }
+                }
+            }
+    }
+
+    override fun initData() {
         // 底部点击
         binding.bottomNavigation.setOnNavigationItemSelectedListener {
+            if (it.itemId != R.id.action_home) {
+                // todo 不是首页得时候、都需要请求接口、检查是否有数量
+                mViewModel.getMessageNumber()
+            }
+
             when (it.itemId) {
-                R.id.action_home ->
+                R.id.action_home -> {
+                    // 判断当前的气泡是否弹出
+                    if (bubblePop.isShow) {
+                        Handler().postDelayed({
+                            Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
+                            bubblePop.dismiss()
+                        }, 10000)
+                    }
                     switchFragment(Constants.FragmentIndex.HOME_INDEX)
+                }
+
                 // todo 这个到时需要放出来
-                //                R.id.action_contact ->
-                //                    switchFragment(Constants.FragmentIndex.CONTACT_INDEX)
-                R.id.action_my ->
+                /*R.id.action_contact -> switchFragment(Constants.FragmentIndex.CONTACT_INDEX)*/
+
+                R.id.action_my -> {
                     switchFragment(Constants.FragmentIndex.MY_INDEX)
+                }
             }
             true
         }

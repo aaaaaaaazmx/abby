@@ -20,6 +20,7 @@ import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.easeui.EaseUiHelper
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -1102,6 +1103,22 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+    /**
+     * 获取环信未读消息
+     */
+    private val _unReadMessageNumber = MutableLiveData<Int>()
+    val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
+    fun getEaseUINumber() {
+        _unReadMessageNumber.value = EaseUiHelper.getInstance().unReadMessage
+    }
+
+
+    /**
+     * 请求消息数量接口
+     */
+    fun getMessageNumber() {
+
+    }
 
     /**
      * 定时器

@@ -178,6 +178,12 @@ object Constants {
         const val KEY_TXT_TYPE = "key_txt_type"
         const val KEY_TASK_ID = "key_task_id"
 
+        // MainActivity显示气泡
+        const val KEY_MAIN_SHOW_BUBBLE = "key_main_show_bubble"
+
+        // 只展示一次的消息气泡
+        var KEY_IS_ONLY_ONE_SHOW = true
+
     }
 
     object FragmentIndex {
