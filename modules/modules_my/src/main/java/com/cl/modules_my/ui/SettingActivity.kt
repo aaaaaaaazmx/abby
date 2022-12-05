@@ -226,7 +226,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 pop.asCustom(SubPop(this@SettingActivity)).show()
             }
         // 缓存
-        binding.ftCache.itemValue = CacheUtil.getTotalCacheSize(this@SettingActivity)
+        kotlin.runCatching {
+            // 会抛出异常
+            binding.ftCache.itemValue = CacheUtil.getVideoCache(this@SettingActivity)
+        }
     }
 
     override fun observe() {
@@ -461,7 +464,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
         binding.ftCache.setOnClickListener {
             pop.asCustom(BaseCenterPop(this@SettingActivity, content = "Clean up all the picture and video cache?", onConfirmAction = {
-                CacheUtil.clearAllCache(this@SettingActivity)
+                CacheUtil.clearVideoCache(this@SettingActivity)
                 binding.ftCache.itemValue = CacheUtil.getTotalCacheSize(this@SettingActivity)
             })).show()
         }

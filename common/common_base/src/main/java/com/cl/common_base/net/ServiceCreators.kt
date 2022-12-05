@@ -50,8 +50,6 @@ object ServiceCreators {
         .cache(cache)
         .addInterceptor(AddHeadInterceptor())
         .addInterceptor(BasicParamsInterceptor())
-        .connectionPool(ConnectionPool(32, 5, TimeUnit.MINUTES))
-        .protocols(listOf(Protocol.HTTP_1_1))
         .build()
 
     private val builder = Retrofit.Builder()

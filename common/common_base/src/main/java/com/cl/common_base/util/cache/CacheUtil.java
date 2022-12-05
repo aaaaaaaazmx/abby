@@ -89,6 +89,24 @@ public class CacheUtil {
         }
     }
 
+    /**
+     * 删除视频缓存
+     */
+    public static void clearVideoCache(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            deleteDir(new File(context.getCacheDir().toPath() + "/video-cache"));
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.FROYO)
+    public static String getVideoCache(Context context) throws Exception {
+        long cacheSize = 0;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            cacheSize = getFolderSize(new File(context.getCacheDir().toPath() + "/video-cache"));
+        }
+        return getFormatSize(cacheSize);
+    }
+
     private static boolean deleteDir(File dir) {
         if (dir != null && dir.isDirectory()) {
             String[] children = dir.list();
