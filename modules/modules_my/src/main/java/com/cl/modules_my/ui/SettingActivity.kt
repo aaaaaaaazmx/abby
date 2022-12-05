@@ -12,6 +12,7 @@ import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
@@ -538,34 +539,36 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      * 发送支持邮件
      */
     private fun sendEmail() {
-        val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
+        /*val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
         val uri = Uri.parse(uriText)
-        val sendIntent = Intent(ACTION_SENDTO)
+        val sendIntent = Intent(Intent.ACTION_SENDTO)
         sendIntent.data = uri
-        val pm = this.packageManager
+        val pm = context?.packageManager
         // 根据意图查找包
-        val activityList = pm.queryIntentActivities(sendIntent, 0)
-        if (activityList.size == 0) {
+        val activityList = pm?.queryIntentActivities(sendIntent, 0)
+        if (activityList?.size == 0) {
             // 弹出框框
-            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard =
+                context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
             // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
             val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
             // 把数据集设置（复制）到剪贴板
             clipboard.setPrimaryClip(clipData)
-            XPopup.Builder(this@SettingActivity)
+            XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(this@SettingActivity) { null }).show()
+                .asCustom(SendEmailTipsPop(context!!)).show()
             return
         }
         try {
-            startActivity(createChooser(sendIntent, "Send email"))
+            startActivity(Intent.createChooser(sendIntent, "Send email"))
         } catch (ex: ActivityNotFoundException) {
-            XPopup.Builder(this@SettingActivity)
+            XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(this@SettingActivity) { null }).show()
-        }
+                .asCustom(context?.let { SendEmailTipsPop(it) }).show()
+        }*/
+        EaseUiHelper.getInstance().startChat(null)
     }
 
     private fun startGooglePlay() {

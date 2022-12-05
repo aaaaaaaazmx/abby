@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.LearnIdGuidePop
@@ -107,34 +108,35 @@ class MyHowToActivity : BaseActivity<MyHowToBinding>() {
      * 发送支持邮件
      */
     private fun sendEmail() {
-        val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
+        /*val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
         val uri = Uri.parse(uriText)
         val sendIntent = Intent(Intent.ACTION_SENDTO)
         sendIntent.data = uri
-        val pm = packageManager
+        val pm = context?.packageManager
         // 根据意图查找包
         val activityList = pm?.queryIntentActivities(sendIntent, 0)
         if (activityList?.size == 0) {
             // 弹出框框
             val clipboard =
-                getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
+                context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
             // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
             val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
             // 把数据集设置（复制）到剪贴板
             clipboard.setPrimaryClip(clipData)
-            XPopup.Builder(this@MyHowToActivity)
+            XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(this@MyHowToActivity)).show()
+                .asCustom(SendEmailTipsPop(context!!)).show()
             return
         }
         try {
             startActivity(Intent.createChooser(sendIntent, "Send email"))
         } catch (ex: ActivityNotFoundException) {
-            XPopup.Builder(this@MyHowToActivity)
+            XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(this)).show()
-        }
+                .asCustom(context?.let { SendEmailTipsPop(it) }).show()
+        }*/
+        EaseUiHelper.getInstance().startChat(null)
     }
 }

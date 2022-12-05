@@ -41,6 +41,7 @@ import com.bbgo.module_home.databinding.HomeBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
@@ -2428,7 +2429,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 发送支持邮件
      */
     private fun sendEmail() {
-        val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
+        /*val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
         val uri = Uri.parse(uriText)
         val sendIntent = Intent(Intent.ACTION_SENDTO)
         sendIntent.data = uri
@@ -2456,7 +2457,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
                 .asCustom(context?.let { SendEmailTipsPop(it) }).show()
-        }
+        }*/
+        EaseUiHelper.getInstance().startChat(null)
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
