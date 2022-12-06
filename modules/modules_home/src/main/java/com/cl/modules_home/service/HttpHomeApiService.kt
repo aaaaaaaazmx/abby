@@ -199,4 +199,10 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/academy/read")
     fun messageRead(@Field("academyDetailsId") academyDetailsId: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 消息统计
+     */
+    @POST("abby/base/homePage")
+    fun getHomePageNumber(): Flow<HttpResult<HomePageNumberData>>
 }

@@ -131,4 +131,8 @@ class HomeRemoteRepository @Inject constructor() {
     fun messageRead(academyDetailsId: String): Flow<HttpResult<BaseBean>> {
         return service.messageRead(academyDetailsId)
     }
+
+    fun getHomePageNumber(): Flow<HttpResult<HomePageNumberData>> {
+        return service.getHomePageNumber()
+    }
 }

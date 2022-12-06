@@ -529,6 +529,38 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+    /**
+     * 获取消息统计
+     */
+    private val _getHomePageNumber = MutableLiveData<Resource<HomePageNumberData>>()
+    val getHomePageNumber: LiveData<Resource<HomePageNumberData>> = _getHomePageNumber
+    fun getHomePageNumber() {
+        viewModelScope.launch {
+            repository.getHomePageNumber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    // 获取环信消息数量
+                    getEaseUINumber()
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "$it"
+                    )
+                )
+            }.collectLatest {
+                _getHomePageNumber.value = it
+            }
+        }
+    }
+
 
     /**
      * 解锁花期、这个是最终的
@@ -983,7 +1015,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 请求消息数量接口
      */
     fun getMessageNumber() {
-
+        getHomePageNumber()
     }
 
     /**

@@ -1066,6 +1066,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 消息统计
+            getHomePageNumber.observe(viewLifecycleOwner, resourceObserver {
+                loading {  }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                }
+            })
+
             // 检查是否种植过
             // 检查植物
             checkPlant.observe(viewLifecycleOwner, resourceObserver {
@@ -2091,6 +2103,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+        // 从聊天退出来之后需要刷新环信数量
         mViewMode.getEaseUINumber()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
@@ -2394,12 +2407,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         if (!hidden) {
             // 在线、并且绑定了设备
             if (mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
-                mViewMode.getEaseUINumber()
                 // 如果没有绑定过设备
                 if (plantFlag != KEY_NEW_PLANT) {
                     // 种植过的才可以请求
                     mViewMode.plantInfo()
                 }
+                // 消息统计
+                mViewMode.getHomePageNumber()
                 // 获取用户信息
                 mViewMode.userDetail()
             }

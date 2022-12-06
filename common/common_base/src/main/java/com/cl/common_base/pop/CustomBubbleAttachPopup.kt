@@ -9,18 +9,55 @@ import com.lxj.xpopup.core.BubbleAttachPopupView
 
 class CustomBubbleAttachPopup(
     context: Context,
-    private val easeNumber: Int? = null, // 婚讯啊未读数量
-    private val bubbleClickAction: (() -> Unit)? = null
+    private var easeNumber: Int? = null, // 婚讯啊未读数量
+    private val bubbleClickAction: (() -> Unit)? = null,
+    private var calendarNumber: Int? = null,
 ) : BubbleAttachPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_custom_bubble_attach_popup
     }
 
+    /**
+     * 学院消息
+     */
+    fun setCalendarNumbers(calendarNumber: Int) {
+        this.calendarNumber = calendarNumber
+        mBinding?.tvCalendarNumber?.text = "$calendarNumber"
+        mBinding?.tvCalendarNumber?.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+        mBinding?.ivCalendar?.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+    }
+
+    /**
+     * 环信消息
+     */
+    fun setEaseNumber(easeNumber: Int) {
+        this.easeNumber = easeNumber
+        mBinding?.tvSupportNumber?.text = "$easeNumber"
+        mBinding?.tvSupportNumber?.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
+        mBinding?.ivSupport?.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
+    }
+
+    override fun beforeShow() {
+        super.beforeShow()
+        mBinding?.tvCalendarNumber?.text = "$calendarNumber"
+        mBinding?.tvCalendarNumber?.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+        mBinding?.ivCalendar?.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+        mBinding?.tvSupportNumber?.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
+        mBinding?.ivSupport?.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
+    }
+
+    private var mBinding: BaseCustomBubbleAttachPopupBinding? = null
     override fun onCreate() {
         super.onCreate()
-        DataBindingUtil.bind<BaseCustomBubbleAttachPopupBinding>(popupImplView)?.apply {
-            tvSupportNumber.visibility = if ("$easeNumber".isEmpty()) View.GONE else View.VISIBLE
+        mBinding = DataBindingUtil.bind<BaseCustomBubbleAttachPopupBinding>(popupImplView)?.apply {
+            tvSupportNumber.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
+            ivSupport.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
             tvSupportNumber.text = "$easeNumber"
+
+            tvCalendarNumber.text = "$calendarNumber"
+            tvCalendarNumber.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+            ivCalendar.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+
 
             clRoot.setOnClickListener {
                 bubbleClickAction?.invoke()

@@ -17,11 +17,12 @@ import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.showToast
 import com.cl.common_base.pop.CustomBubbleAttachPopup
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
@@ -105,7 +106,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             .isCenterHorizontal(true)
             .popupPosition(PopupPosition.Top)
             .dismissOnTouchOutside(false)
-            .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
             .isClickThrough(true)  //点击透传
             .atView(
                 (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
@@ -116,20 +116,24 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
             .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
             .asCustom(
-                CustomBubbleAttachPopup(
-                    this@MainActivity,
-                    easeNumber = EaseUiHelper.getInstance().unReadMessage,
-                    bubbleClickAction = {
-                        switchFragment(0)
-                    }
-                )
-                    //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
-                    .setBubbleBgColor(Color.RED) //气泡背景
-                    .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 6f))
-                    .setArrowHeight(XPopupUtils.dp2px(this@MainActivity, 6f))
-                    //.setBubbleRadius(100)
-                    .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 2f))
+                asPop
             )
+    }
+
+    private val asPop by lazy {
+        val pop = CustomBubbleAttachPopup(
+            this@MainActivity,
+            bubbleClickAction = {
+                switchFragment(0)
+            }
+        )
+            //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
+            .setBubbleBgColor(Color.RED) //气泡背景
+            .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 6f))
+            .setArrowHeight(XPopupUtils.dp2px(this@MainActivity, 6f))
+            //.setBubbleRadius(100)
+            .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 2f))
+        pop as CustomBubbleAttachPopup
     }
 
     private val badgeView by lazy {
@@ -144,25 +148,78 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onResume() {
         super.onResume()
-        mViewModel.getEaseUINumber()
+        if (mIndex == 0) {
+            // 当选中第0个的时候
+            // 主要是消除小红点
+            val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+            val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+            if (itemView.contains(badgeView)) {
+                mViewModel.getHomePageNumber()
+            }
+        }
     }
 
     override fun observe() {
         mViewModel.apply {
+            // 消息统计
+            getHomePageNumber.observe(this@MainActivity, resourceObserver {
+                loading {
+                }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    if (null == data) return@success
+                    /**
+                     * 只有2个中有一个是不等于0、那么就可以添加弹窗
+                     */
+                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    //获取第1个itemView
+                    val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarMsgCount ?: 0) > 0) {
+                        if (!itemView.contains(badgeView)) {
+                            //把badgeView添加到itemView中
+                            itemView.addView(badgeView)
+                        }
+                        // 不是第0个的时候才显示弹窗、不然只显示下面的小红点
+                        if (mIndex != 0) {
+                            // 不再显示气泡
+                            Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
+                            // 弹窗
+                            if (!bubblePop.isShow) bubblePop.show()
+                        }
+                    } else if ((data?.academyMsgCount ?: 0) > 0) {
+                        if (!itemView.contains(badgeView)) {
+                            //把badgeView添加到itemView中
+                            itemView.addView(badgeView)
+                        }
+                    } else if ((mViewModel.unReadMessageNumber.value ?: 0) == 0 && (data?.calendarMsgCount ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0) {
+                        if (itemView.contains(badgeView)) {
+                            //把badgeView添加到itemView中
+                            itemView.removeView(badgeView)
+                            if (bubblePop.isShow) bubblePop.dismiss()
+                        }
+                    }
+                    data?.calendarMsgCount?.let { asPop.setCalendarNumbers(it) }
+
+                    // 选中其他TAb的时候、请求这个接口、弹出弹窗、然后在10秒内隐藏。
+                    if (mIndex != 0) {
+                        // 判断当前的气泡是否弹出
+                        if (bubblePop.isShow) {
+                            Handler().postDelayed({
+                                bubblePop.dismiss()
+                            }, 10000)
+                        }
+                    }
+                }
+            })
+
             // 监听消息的变化
             unReadMessageNumber.observe(this@MainActivity) {
                 if (null == it) return@observe
-                if (it <= 0) {
-                    // todo 判断日历还有没有数据、以及·it==0·、如果没有数据，那么就直接隐藏下面的小红点
-                    val itemView =
-                        (binding.bottomNavigation.getChildAt(0) as? BottomNavigationMenuView)?.getChildAt(
-                            0
-                        ) as? BottomNavigationItemView
-                    if (itemView?.contains(badgeView) == true) {
-                        // 如果是添加的，那么就直接remoview
-                        itemView.removeView(badgeView)
-                    }
-                }
+                asPop.setEaseNumber(it)
             }
         }
 
@@ -170,58 +227,38 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
             .observe(this) {
                 // 如果不是等于0、那么是不要展示的
-                if (mIndex == 0) return@observe
-
-                if (it) {
-                    if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                        // todo 表示有消息要来了，需要查询一遍
-                        // todo 查询接口
-                        mViewModel.getMessageNumber()
-
-                        // 查询环信
-                        //获取底部菜单view
-                        val menuView =
-                            binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
-                        //获取第1个itemView
-                        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                        if (!itemView.contains(badgeView)) {
-                            //把badgeView添加到itemView中
-                            itemView.addView(badgeView)
-                        }
-                        // 弹窗
-                        if (!bubblePop.isShow) bubblePop.show()
+                if (mIndex == 0) {
+                    // 当选中第0个的时候
+                    // 主要是消除小红点
+                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                    if (!itemView.contains(badgeView)) {
+                        itemView.addView(badgeView)
                     }
-                } else {
-                    // todo 需要执行消除逻辑
-                    if ((mViewModel.unReadMessageNumber.value ?: 0) <= 0) {
-                        // todo 判断日历还有没有数据、以及·it==0·、如果没有数据，那么就直接隐藏下面的小红点
-                        val itemView =
-                            (binding.bottomNavigation.getChildAt(0) as? BottomNavigationMenuView)?.getChildAt(
-                                0
-                            ) as? BottomNavigationItemView
-                        if (itemView?.contains(badgeView) == true) {
-                            // 如果是添加的，那么就直接remoview
-                            itemView.removeView(badgeView)
-                        }
+                    return@observe
+                }
+                // 不等于0
+                if (it) {
+                    // 只展示一次
+                    if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
+                        //  表示有消息要来了，需要查询一遍
+                        //  查询接口
+                        mViewModel.getMessageNumber()
                     }
                 }
             }
     }
 
     override fun initData() {
+        // 请求消息统计
+        mViewModel.getHomePageNumber()
+
         // 底部点击
         binding.bottomNavigation.setOnNavigationItemSelectedListener {
             if (it.itemId != R.id.action_home) {
-                // todo 不是首页得时候、都需要请求接口、检查是否有数量
-                mViewModel.getMessageNumber()
-
-                // 判断当前的气泡是否弹出
-                if (bubblePop.isShow) {
-                    Handler().postDelayed({
-                        // 不再显示气泡
-                        Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
-                        bubblePop.dismiss()
-                    }, 10000)
+                //  不是首页得时候、都需要请求接口、检查是否有数量
+                if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
+                    mViewModel.getMessageNumber()
                 }
             }
 

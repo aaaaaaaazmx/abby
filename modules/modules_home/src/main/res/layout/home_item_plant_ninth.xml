@@ -46,7 +46,7 @@
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:background="@drawable/base_dot_red"
-            android:visibility="gone"
+            android:visibility="@{viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintCircle="@id/iv_academy"
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
@@ -62,11 +62,12 @@
             app:layout_constraintTop_toTopOf="@+id/tv_title" />
 
         <TextView
+            android:visibility="@{viewModel.getHomePageNumber.data.calendarMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="11sp"
-            android:text="10"
+            android:text="@{String.valueOf(viewModel.getHomePageNumber.data.calendarMsgCount)}"
             android:id="@+id/vv_calendar_number"
             android:layout_width="wrap_content"
             android:layout_height="17dp"
