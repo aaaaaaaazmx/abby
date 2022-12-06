@@ -15,6 +15,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.HostnameVerifier
+import javax.net.ssl.HttpsURLConnection
 
 /**
  *  description: 服务创建类
@@ -50,6 +52,11 @@ object ServiceCreators {
         .cache(cache)
         .addInterceptor(AddHeadInterceptor())
         .addInterceptor(BasicParamsInterceptor())
+        .hostnameVerifier { hostname, session ->
+            // 信任主机
+            val hv: HostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier()
+            hv.verify("beheyabby.com", session)
+        }
         .build()
 
     private val builder = Retrofit.Builder()
