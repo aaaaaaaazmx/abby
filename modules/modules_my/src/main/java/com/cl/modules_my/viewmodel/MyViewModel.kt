@@ -47,7 +47,6 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
                 logD("catch $it")

@@ -57,6 +57,9 @@ object Constants {
         // 登录信息
         const val KEY_LOGIN_DATA = "key_login_data"
 
+        // 刷新信息接口
+        const val KEY_REFRESH_LOGIN_DATA = "key_refresh_login_data+login_data"
+
         // Token
         const val KEY_LOGIN_DATA_TOKEN = "key_login_data_token"
 

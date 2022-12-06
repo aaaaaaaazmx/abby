@@ -120,7 +120,6 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
                 logD("catch $it")
@@ -190,7 +189,6 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
                 logD("catch $it")
@@ -224,7 +222,6 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
                 logD("catch $it")
@@ -238,50 +235,6 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                 _userDetail.value = it
             }
     }
-
-    // 账号
-    val account by lazy {
-        Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
-    }
-
-    // 密码
-    val psd by lazy {
-        Prefs.getString(Constants.Login.KEY_LOGIN_PSD)
-    }
-
-    private val _refreshToken = MutableLiveData<Resource<AutomaticLoginData>>()
-    val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
-    fun refreshToken(req: AutomaticLoginReq) {
-        viewModelScope.launch {
-            repository.automaticLogin(req)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _refreshToken.value = it
-                }
-        }
-    }
-
 
     // 获取当前设备信息
     private val tuYaDeviceBean by lazy {

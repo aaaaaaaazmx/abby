@@ -14,7 +14,7 @@ data class UserinfoBean(
     val easemobUserName: String? = null,
     val email: String? = null,
     val eventCount: String? = null,
-    val isVip: Int? = null,
+    val isVip: Int? = 0,
     val nickName: String? = null,
     val subscriptionTime: String? = null,
     val token: String? = null,
@@ -42,6 +42,6 @@ data class UserinfoBean(
         val wallAddress: String? = null,
         val wallId: String? = null,
         val subscriptionTime: String? = null,
-        val isVip: Int? = null,
+        val isVip: Int? = 0,
     ) : BaseBean()
 }

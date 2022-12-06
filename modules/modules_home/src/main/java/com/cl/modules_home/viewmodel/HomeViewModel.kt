@@ -109,9 +109,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 } else {
                     Resource.Success(it.data)
                 }
-            }.flowOn(Dispatchers.IO).onStart {
-                emit(Resource.Loading())
-            }.catch {
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
                 logD("catch $it")
                 emit(
                     Resource.DataError(
@@ -172,9 +170,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 removeFirstUnreadMessage()
                 Resource.Success(it.data)
             }
-        }.flowOn(Dispatchers.IO).onStart {
-            emit(Resource.Loading())
-        }.catch {
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
             logD("catch $it")
             emit(
                 Resource.DataError(
@@ -294,9 +290,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 } else {
                     Resource.Success(it.data)
                 }
-            }.flowOn(Dispatchers.IO).onStart {
-                emit(Resource.Loading())
-            }.catch {
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
                 logD("catch $it")
                 emit(
                     Resource.DataError(
@@ -450,9 +444,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 } else {
                     Resource.Success(it.data)
                 }
-            }.flowOn(Dispatchers.IO).onStart {
-                emit(Resource.Loading())
-            }.catch {
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
                 logD("catch $it")
                 emit(
                     Resource.DataError(
@@ -547,7 +539,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     Resource.Success(it.data)
                 }
             }.flowOn(Dispatchers.IO).onStart {
-                emit(Resource.Loading())
             }.catch {
                 logD("catch $it")
                 emit(
@@ -920,9 +911,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             } else {
                 Resource.Success(it.data)
             }
-        }.flowOn(Dispatchers.IO).onStart {
-            emit(Resource.Loading())
-        }.catch {
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
             logD("catch $it")
             emit(
                 Resource.DataError(
@@ -1024,7 +1013,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun easeLogin(uname: String, upwd: String) {
         ChatClient.getInstance().login(uname, upwd, object : Callback {
             override fun onSuccess() {
-                AgoraMessage.newAgoraMessage().currentChatUsername = Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT;
+                AgoraMessage.newAgoraMessage().currentChatUsername =
+                    Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT;
                 getEaseUINumber()
             }
 

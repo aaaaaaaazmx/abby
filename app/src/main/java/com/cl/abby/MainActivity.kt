@@ -102,31 +102,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private val bubblePop by lazy {
-        XPopup.Builder(this@MainActivity)
-            .isCenterHorizontal(true)
-            .popupPosition(PopupPosition.Top)
-            .dismissOnTouchOutside(false)
-            .isClickThrough(true)  //点击透传
+        XPopup.Builder(this@MainActivity).isCenterHorizontal(true).popupPosition(PopupPosition.Top)
+            .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
             .atView(
                 (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
                     0
                 )
-            )
-            .hasShadowBg(false) // 去掉半透明背景
+            ).hasShadowBg(false) // 去掉半透明背景
             //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
-            .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
-            .asCustom(
+            .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
                 asPop
             )
     }
 
     private val asPop by lazy {
-        val pop = CustomBubbleAttachPopup(
-            this@MainActivity,
-            bubbleClickAction = {
-                switchFragment(0)
-            }
-        )
+        val pop = CustomBubbleAttachPopup(this@MainActivity, bubbleClickAction = {
+            switchFragment(0)
+        })
             //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
             .setBubbleBgColor(Color.RED) //气泡背景
             .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 6f))
@@ -163,8 +155,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewModel.apply {
             // 消息统计
             getHomePageNumber.observe(this@MainActivity, resourceObserver {
-                loading {
-                }
+                loading {}
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
                     hideProgressLoading()
@@ -175,10 +166,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
-                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    val menuView =
+                        binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarMsgCount ?: 0) > 0) {
+                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarMsgCount
+                            ?: 0) > 0
+                    ) {
                         if (!itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
@@ -195,7 +189,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
                         }
-                    } else if ((mViewModel.unReadMessageNumber.value ?: 0) == 0 && (data?.calendarMsgCount ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0) {
+                    } else if ((mViewModel.unReadMessageNumber.value
+                            ?: 0) == 0 && (data?.calendarMsgCount
+                            ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
+                    ) {
                         if (itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.removeView(badgeView)
@@ -230,7 +227,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 if (mIndex == 0) {
                     // 当选中第0个的时候
                     // 主要是消除小红点
-                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    val menuView =
+                        binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
                     if (!itemView.contains(badgeView)) {
                         itemView.addView(badgeView)
@@ -308,16 +306,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             Constants.FragmentIndex.HOME_INDEX -> {
                 val bundle = Bundle()
                 bundle.putString(
-                    Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
-                    plantGuideFlag
+                    Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG, plantGuideFlag
                 )
                 bundle.putString(
-                    Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
-                    plantFlag
+                    Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE, plantFlag
                 )
                 bundle.putString(
-                    Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
-                    deviceOffLineState
+                    Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE, deviceOffLineState
                 )
                 // 是否是第一次登录注册、并且是从未绑定过设备
                 bundle.putBoolean(
@@ -330,8 +325,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     it.arguments = bundle
                     transaction.show(it)
                 } ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.Home.PAGE_HOME).navigation()
-                        ?.let {
+                    ARouter.getInstance().build(RouterPath.Home.PAGE_HOME).navigation()?.let {
                             homeFragment = it as Fragment
                             homeFragment?.let { fragment ->
                                 fragment.arguments = bundle
@@ -341,10 +335,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
             }
 
-            Constants.FragmentIndex.CONTACT_INDEX ->
-                contactFragment?.let { transaction.show(it) } ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()
-                        ?.let {
+            Constants.FragmentIndex.CONTACT_INDEX -> contactFragment?.let { transaction.show(it) }
+                ?: kotlin.run {
+                    ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()?.let {
                             contactFragment = it as Fragment
                             contactFragment?.let {
                                 contactFragment = it
@@ -353,10 +346,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         }
                 }
 
-            Constants.FragmentIndex.MY_INDEX ->
-                myFragment?.let { transaction.show(it) } ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.My.PAGE_MY).navigation()
-                        ?.let {
+            Constants.FragmentIndex.MY_INDEX -> myFragment?.let { transaction.show(it) }
+                ?: kotlin.run {
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY).navigation()?.let {
                             myFragment = it as Fragment
                             myFragment?.let {
                                 myFragment = it

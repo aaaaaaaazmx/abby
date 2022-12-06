@@ -448,13 +448,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 HomePlantFeedPop(context = it, onNextAction = {
                     // 涂鸦指令，添加化肥
                     DeviceControl.get().success {
-                            if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
-                                pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f))
-                                    .enableDrag(false).dismissOnTouchOutside(false)
-                                    .asCustom(BaseBottomPop(it,
+                        if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
+                            pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
+                                .dismissOnTouchOutside(false).asCustom(
+                                    BaseBottomPop(it,
                                         backGround = ContextCompat.getDrawable(
-                                            it,
-                                            com.cl.common_base.R.mipmap.base_feet_fall_bg
+                                            it, com.cl.common_base.R.mipmap.base_feet_fall_bg
                                         ),
                                         text = getString(com.cl.common_base.R.string.base_feet_fall),
                                         buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
@@ -506,35 +505,35 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             // plant6后记“3”
                                             mViewMode.setCurrentReqStatus(3)
                                             mViewMode.saveOrUpdate("3")
-                                        })).show()
-                            } else {
-                                // 加肥气泡
-                                if (mViewMode.getUnreadMessageList()
-                                        .firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_MANURE
-                                ) {
-                                    // 完成任务
-                                    mViewMode.popPeriodStatus.value?.let { map ->
-                                        mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
-                                    }
-                                    mViewMode.getRead(
-                                        "${
-                                            mViewMode.getUnreadMessageList()
-                                                .firstOrNull()?.messageId
-                                        }"
-                                    )
-                                    return@success
+                                        })
+                                ).show()
+                        } else {
+                            // 加肥气泡
+                            if (mViewMode.getUnreadMessageList()
+                                    .firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_MANURE
+                            ) {
+                                // 完成任务
+                                mViewMode.popPeriodStatus.value?.let { map ->
+                                    mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
                                 }
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
+                                return@success
                             }
+                        }
 
-                        }.error { code, error ->
-                            ToastUtil.shortShow(
-                                """
+                    }.error { code, error ->
+                        ToastUtil.shortShow(
+                            """
                                     feedAbby:
                                     code-> $code
                                     errorMsg-> $error
                                 """.trimIndent()
-                            )
-                        }.feedAbby(true)
+                        )
+                    }.feedAbby(true)
                 })
             })
     }
@@ -735,13 +734,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 HomePlantSixPop(context = it, onNextAction = {
                     // 需要先发送指令喂食
                     DeviceControl.get().success {
-                            if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
-                                pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f))
-                                    .enableDrag(false).dismissOnTouchOutside(false)
-                                    .asCustom(BaseBottomPop(it,
+                        if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
+                            pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
+                                .dismissOnTouchOutside(false).asCustom(
+                                    BaseBottomPop(it,
                                         backGround = ContextCompat.getDrawable(
-                                            it,
-                                            com.cl.common_base.R.mipmap.base_feet_fall_bg
+                                            it, com.cl.common_base.R.mipmap.base_feet_fall_bg
                                         ),
                                         text = getString(com.cl.common_base.R.string.base_feet_fall),
                                         buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
@@ -793,41 +791,41 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             // plant6后记“3”
                                             mViewMode.setCurrentReqStatus(3)
                                             mViewMode.saveOrUpdate("3")
-                                        })).show()
-                            } else {
-                                // 如果是在换水的三步当中的最后一步，加肥
-                                if (mViewMode.getUnreadMessageList()
-                                        .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                                ) {
-                                    // 完成任务
-                                    mViewMode.popPeriodStatus.value?.let { map ->
-                                        mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
-                                    }
-                                    // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                    mViewMode.getRead(
-                                        "${
-                                            mViewMode.getUnreadMessageList()
-                                                .firstOrNull()?.messageId
-                                        }"
-                                    )
-                                    return@success
+                                        })
+                                ).show()
+                        } else {
+                            // 如果是在换水的三步当中的最后一步，加肥
+                            if (mViewMode.getUnreadMessageList()
+                                    .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                            ) {
+                                // 完成任务
+                                mViewMode.popPeriodStatus.value?.let { map ->
+                                    mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
                                 }
-
-                                // 第六个弹窗
-                                // plant6后记“3”
-                                mViewMode.setCurrentReqStatus(3)
-                                mViewMode.saveOrUpdate("3")
+                                // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
+                                return@success
                             }
 
-                        }.error { code, error ->
-                            ToastUtil.shortShow(
-                                """
+                            // 第六个弹窗
+                            // plant6后记“3”
+                            mViewMode.setCurrentReqStatus(3)
+                            mViewMode.saveOrUpdate("3")
+                        }
+
+                    }.error { code, error ->
+                        ToastUtil.shortShow(
+                            """
                                     feedAbby:
                                     code-> $code
                                     errorMsg-> $error
                                 """.trimIndent()
-                            )
-                        }.feedAbby(true)
+                        )
+                    }.feedAbby(true)
                 })
             })
     }
@@ -1068,7 +1066,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         mViewMode.apply {
             // 消息统计
             getHomePageNumber.observe(viewLifecycleOwner, resourceObserver {
-                loading {  }
+                loading { }
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
                     hideProgressLoading()
@@ -1315,16 +1313,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             refreshToken.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     hideProgressLoading()
+
+                    // 保存刷新token信息
+                    GSON.toJson(data)?.let { data ->
+                        Prefs.putStringAsync(Constants.Login.KEY_REFRESH_LOGIN_DATA, data)
+                    }
+
                     // 登录环信
-                    letMultiple(data?.easemobUserName, data?.easemobPassword) { username, password ->
+                    letMultiple(
+                        data?.easemobUserName, data?.easemobPassword
+                    ) { username, password ->
                         mViewMode.easeLogin(username, password)
                     }
 
                     // 保存当前的信息.
                     GSON.toJson(data)?.let {
-                            logI("refreshToken: $it")
-                            Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
-                        }
+                        logI("refreshToken: $it")
+                        Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
+                    }
                     // 保存Token
                     data?.token?.let { it ->
                         Prefs.putStringAsync(
@@ -2081,29 +2087,29 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     context, com.cl.common_base.R.color.mainColor
                 )
             }?.let { color ->
-                    color(
-                        color
-                    ) {
-                        appendClickable("Reconnect abby") {
-                            // 跳转到ReconnectActivity
+                color(
+                    color
+                ) {
+                    appendClickable("Reconnect abby") {
+                        // 跳转到ReconnectActivity
 
-                            ARouter.getInstance()
-                                .build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING).navigation()
-                        }
+                        ARouter.getInstance().build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
+                            .navigation()
                     }
                 }
+            }
         }
     }
 
     override fun HomeBinding.initBinding() {
-        binding.lifecycleOwner = this@HomeFragment
+        binding.lifecycleOwner = viewLifecycleOwner
         binding.viewModel = mViewMode
         binding.executePendingBindings()
     }
 
     override fun onResume() {
         super.onResume()
-        // 从聊天退出来之后需要刷新环信数量
+        // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getEaseUINumber()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
@@ -2412,8 +2418,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 种植过的才可以请求
                     mViewMode.plantInfo()
                 }
-                // 消息统计
-                mViewMode.getHomePageNumber()
                 // 获取用户信息
                 mViewMode.userDetail()
             }
