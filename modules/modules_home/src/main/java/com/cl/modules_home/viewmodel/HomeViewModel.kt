@@ -975,7 +975,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _unReadMessageNumber = MutableLiveData<Int>(0)
     val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
     fun getEaseUINumber() {
-        _unReadMessageNumber.value = EaseUiHelper.getInstance().unReadMessage
+        _unReadMessageNumber.postValue(EaseUiHelper.getInstance().unReadMessage)
     }
 
 
