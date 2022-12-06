@@ -73,13 +73,16 @@
             android:screenOrientation="portrait"
             android:name=".ui.FirmwareUpdateActivity" />
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".ui.AboutUsActivity" />
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".ui.MyTroubleShootingActivity" />
 
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".ui.MyHowToActivity" />
         <activity
@@ -88,14 +91,17 @@
             android:name=".ui.CalendarActivity" />
 
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".ui.MyCloneAndReplantActivity" />
         
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".ui.MySeedGuideActivity" />
 
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name=".ui.ReDeemActivity" />
         <activity android:name=".ui.WeightActivity" />
