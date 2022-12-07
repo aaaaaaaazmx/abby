@@ -97,7 +97,6 @@ public class CacheUtil {
     public static void clearVideoCache(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             deleteDir(new File(context.getCacheDir().toPath() + "/video-cache"));
-            GSYVideoManager.instance().clearAllDefaultCache(context);
         }
     }
 
@@ -105,7 +104,7 @@ public class CacheUtil {
     public static String getVideoCache(Context context) throws Exception {
         long cacheSize = 0;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            cacheSize = getFolderSize(new File(context.getCacheDir().toPath() + "/video-cache"));
+            cacheSize = getFolderSize(new File(context.getCacheDir().toPath() + "/exo"));
         }
         return getFormatSize(cacheSize);
     }

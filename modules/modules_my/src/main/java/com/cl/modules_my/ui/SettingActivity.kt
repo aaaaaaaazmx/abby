@@ -9,8 +9,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AutomaticLoginData
-import com.cl.common_base.bean.AutomaticLoginReq
-import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.easeui.EaseUiHelper
@@ -24,13 +22,10 @@ import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.cache.CacheUtil
-import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MySettingBinding
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
@@ -38,6 +33,7 @@ import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.cl.modules_my.widget.MyRePlantPop
 import com.cl.modules_my.widget.SubPop
 import com.lxj.xpopup.XPopup
+import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
@@ -398,7 +394,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 BaseCenterPop(this@SettingActivity,
                     content = "Clean up all the picture and video cache?",
                     onConfirmAction = {
-                        CacheUtil.clearVideoCache(this@SettingActivity)
+                        GSYVideoManager.instance().clearAllDefaultCache(this@SettingActivity)
                         kotlin.runCatching {
                             binding.ftCache.itemValue =
                                 CacheUtil.getVideoCache(this@SettingActivity)
