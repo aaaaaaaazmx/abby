@@ -57,6 +57,7 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
 
     int mDefaultRes;
     private PlayerFastSeekOverlay fastSeekOverlay;
+    private SeekBar mProgress;
 
     public SampleCoverVideo(Context context, Boolean fullFlag) {
         super(context, fullFlag);
@@ -75,6 +76,7 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
         super.init(context);
         mCoverImage = (ImageView) findViewById(R.id.thumbImage);
         fastSeekOverlay = findViewById(R.id.fast_seek_overlay);
+        mProgress = findViewById(R.id.progress);
 
         if (mThumbImageViewLayout != null &&
                 (mCurrentState == -1 || mCurrentState == CURRENT_STATE_NORMAL || mCurrentState == CURRENT_STATE_ERROR)) {
@@ -194,6 +196,27 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
         }
 
         return false;
+    }
+
+    @Override
+    public long getCurrentPositionWhenPlaying() {
+        long position = 0;
+        if (mCurrentState == CURRENT_STATE_PLAYING || mCurrentState == CURRENT_STATE_PAUSE) {
+            try {
+                position = getGSYVideoManager().getCurrentPosition();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return position;
+            }
+        }
+        // 防止在暂停时、进度条回弹问题
+        if (getGSYVideoManager().getCurrentPosition() == 0) {
+            return 1;
+        }
+        if (position == 0 && mCurrentPosition > 0) {
+            return mCurrentPosition;
+        }
+        return position;
     }
 
     private int i = 1;
@@ -521,6 +544,7 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
      * 是否展示拖动弹窗
      */
     private boolean isShowProgressDialog = true;
+
     public void setIsShowProgressBar(boolean isShowProgressDialog) {
         this.isShowProgressDialog = isShowProgressDialog;
     }
