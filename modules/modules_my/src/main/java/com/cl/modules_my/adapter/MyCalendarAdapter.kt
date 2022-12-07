@@ -74,7 +74,7 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
         val llPointGray = holder.getView<LinearLayout>(R.id.ll_point_gray)
 
         // 放置布局错乱，应该是全部都先隐藏，然后在根据滑动的时候来进行显示
-        ViewUtils.setGone(changWater, changeUnlock, changElse)
+        ViewUtils.setGone(changWater, changeUnlock, changElse, changeAcademyTask)
         if (item.calendarData?.taskList.isNullOrEmpty()) {
             ViewUtils.setInvisible(llPoint)
             ViewUtils.setGone(llPointGray)

@@ -981,6 +981,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         task:
                         ${listContent[position].taskTime}
                         ${listContent[position].taskName}
+                        ${listContent[position].timeLineState}
                     """.trimIndent()
                     )
                     val tvTaskTime = holder.leftLayout.findViewById<TextView>(R.id.tv_task_time)

@@ -147,15 +147,15 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
     /**
      * 排水界面的点击i时间
      */
+    private var isFirst = true
     private fun initClick() {
         binding.waterPop.apply {
             ivClose.setOnClickListener {
                 finish()
             }
-
             btnSuccess.setOnClickListener {
-                isOpenOrStop(btnSuccess.isChecked)
-                // isFirst = false
+                isOpenOrStop(if (isFirst) isFirst else btnSuccess.isChecked)
+                isFirst = false
                 // true 排水
                 // false 停止
                 synchronized(this) {
@@ -197,9 +197,6 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
             adapter.setList(data)
         }
 
-        // 因为是通过by lazy 添加的， 所以状态需要重置
-        // isFirst = true
-        binding.waterPop.btnSuccess.isChecked = true
         binding.waterPop.btnSuccess.let {
             it.background = resources.getDrawable(
                 R.mipmap.base_start_bg,
@@ -287,7 +284,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                             if ((value as? Boolean == false)) return@observe
                             job?.cancel()
                             // 判断当前播放器是否全屏
-                            if (!GSYVideoManager.isFullState(this@BasePumpActivity)) {
+                            if (GSYVideoManager.isFullState(this@BasePumpActivity)) {
                                 finishVideoAndPump = true
                                 ToastUtil.shortShow(getString(R.string.draining_complete))
                                 return@observe
@@ -415,7 +412,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 if (timing == 0) {
                     job?.cancel()
                     // 判断当前播放器是否全屏
-                    if (!GSYVideoManager.isFullState(this@BasePumpActivity)) {
+                    if (GSYVideoManager.isFullState(this@BasePumpActivity)) {
                         finishVideoAndPump = true
                         ToastUtil.shortShow(getString(R.string.draining_complete))
                         return@countDownCoroutines
@@ -493,7 +490,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         super.onResume()
         GSYVideoManager.onResume()
         // 也就是从全屏退出、然后排水也结束了。
-        if (!GSYVideoManager.backFromWindowFull(this@BasePumpActivity) && finishVideoAndPump) {
+        if (!GSYVideoManager.isFullState(this@BasePumpActivity) && finishVideoAndPump) {
             GSYVideoManager.releaseAllVideos()
             setResult(Activity.RESULT_OK)
             finish()
