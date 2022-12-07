@@ -24,20 +24,20 @@ import javax.net.ssl.HttpsURLConnection
 object ServiceCreators {
 
     // 服务器地址
-    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.OUTER_ANG_URL else HttpsUrl.PRODUCTION_URL
-//    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
-//    private val BASE_URL =  HttpsUrl.PRODUCTION_URL
-//    private val BASE_URL =  HttpsUrl.BD_URL
+    //    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.OUTER_ANG_URL else HttpsUrl.PRODUCTION_URL
+    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
+    //    private val BASE_URL =  HttpsUrl.PRODUCTION_URL
+    //    private val BASE_URL =  HttpsUrl.BD_URL
 
     private const val MAX_CACHE_SIZE: Long = 1024 * 1024 * 50 // 50M 的缓存大小
 
     //设置 请求的缓存的大小跟位置
     private val cacheFile = File(BaseApplication.getContext().cacheDir, "httpCache")
     private val cache = Cache(cacheFile, MAX_CACHE_SIZE)
-//    private val cookieJar = PersistentCookieJar(
-//        SetCookieCache(),
-//        SharedPrefsCookiePersistor(BaseApplication.getContext())
-//    )
+    //    private val cookieJar = PersistentCookieJar(
+    //        SetCookieCache(),
+    //        SharedPrefsCookiePersistor(BaseApplication.getContext())
+    //    )
 
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)
@@ -47,13 +47,12 @@ object ServiceCreators {
         .addInterceptor(TokenInterceptor())
         .addInterceptor(MultiBaseUrlInterceptor())
         .addInterceptor(LoggingInterceptor())
-//        .addInterceptor(com.cl.common_base.net.interceptor.CacheInterceptor())
-//        .cookieJar(cookieJar)
         .cache(cache)
         .addInterceptor(AddHeadInterceptor())
         .addInterceptor(BasicParamsInterceptor())
         /*.hostnameVerifier { hostname, session ->
             // 信任主机
+            // 也可以使用DNS优化政策
             val hv: HostnameVerifier = HttpsURLConnection.getDefaultHostnameVerifier()
             hv.verify("beheyabby.com", session)
         }*/
@@ -73,7 +72,7 @@ object ServiceCreators {
 
     private var retrofit = builder.build()
 
-//    val service: HttpApiService by lazy { retrofit.create(HttpApiService::class.java) }
+    //    val service: HttpApiService by lazy { retrofit.create(HttpApiService::class.java) }
 
     fun <T> create(serviceClass: Class<T>): T = retrofit.create(serviceClass)
 

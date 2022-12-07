@@ -374,6 +374,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
                                     override fun onError(errorCode: String, errorMsg: String?) {
                                         hideProgressLoading()
+                                        ToastUtil.shortShow(errorMsg)
                                         Reporter.reportTuYaError("newHomeInstance", errorMsg, errorCode)
                                     }
                                 })
@@ -389,6 +390,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 handle: ${(handle as? ConfigErrorBean).toString()}
                             """.trimIndent()
                                 )
+                                ToastUtil.shortShow(msg)
                                 Reporter.reportTuYaError("getActivator", msg, code.toString())
                                 // 3 密码错误 4 路由器连接失败（大概率是密码错误）
                                 runOnUiThread {
@@ -418,6 +420,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
                 override fun onFailure(errorCode: String?, errorMsg: String?) {
                     hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
                     logE("getActivatorToken: errorCode->${errorCode}, Error->$errorMsg")
                     Reporter.reportTuYaError("getActivatorInstance", errorMsg, errorCode)
                 }

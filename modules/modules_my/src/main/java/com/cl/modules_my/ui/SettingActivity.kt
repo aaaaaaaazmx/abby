@@ -203,11 +203,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftSub.setTitleValueEndDrawable(null).setPointClickListener {
             pop.asCustom(SubPop(this@SettingActivity)).show()
         }
-        // 缓存
-        kotlin.runCatching {
-            // 会抛出异常
-            binding.ftCache.itemValue = CacheUtil.getVideoCache(this@SettingActivity)
-        }
     }
 
     override fun observe() {
@@ -404,8 +399,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     content = "Clean up all the picture and video cache?",
                     onConfirmAction = {
                         CacheUtil.clearVideoCache(this@SettingActivity)
-                        binding.ftCache.itemValue =
-                            CacheUtil.getTotalCacheSize(this@SettingActivity)
+                        kotlin.runCatching {
+                            binding.ftCache.itemValue =
+                                CacheUtil.getVideoCache(this@SettingActivity)
+                        }
                     })
             ).show()
         }
@@ -413,6 +410,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
     override fun onResume() {
         super.onResume()
+        // 缓存
+        kotlin.runCatching {
+            binding.ftCache.itemValue =
+                CacheUtil.getVideoCache(this@SettingActivity)
+        }
         mViewModel.userDetail()
 
         /**

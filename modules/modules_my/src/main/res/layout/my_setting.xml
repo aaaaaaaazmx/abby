@@ -165,6 +165,7 @@
 
                 <!--缓存-->
                 <com.cl.common_base.widget.FeatureItemView
+                    android:visibility="gone"
                     android:id="@+id/ft_cache"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

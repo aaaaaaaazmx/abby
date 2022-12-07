@@ -6,6 +6,8 @@ import android.os.Environment;
 
 import androidx.annotation.RequiresApi;
 
+import com.shuyu.gsyvideoplayer.GSYVideoManager;
+
 import java.io.File;
 
 public class CacheUtil {
@@ -95,6 +97,7 @@ public class CacheUtil {
     public static void clearVideoCache(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             deleteDir(new File(context.getCacheDir().toPath() + "/video-cache"));
+            GSYVideoManager.instance().clearAllDefaultCache(context);
         }
     }
 
