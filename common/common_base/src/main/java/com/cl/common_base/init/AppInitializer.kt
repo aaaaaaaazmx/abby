@@ -47,7 +47,7 @@ class AppInitializer : Initializer<Unit> {
         CrashReport.setIsDevelopmentDevice(context, BuildConfig.DEBUG) // 开发测试阶段设备为调试设备
         CrashReport.initCrashReport(
             context.applicationContext as? Application, "2d55fff670",
-            BuildConfig.DEBUG,
+            false,
             strategy
         )
         return Unit
