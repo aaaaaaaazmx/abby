@@ -8,7 +8,7 @@ data class UserinfoBean(
     val avatarPicture: String? = null,
     val childLock: String? = null,
     val deviceOnlineStatus: String? = null,
-    val deviceStatus: String? = null,
+    val deviceStatus: String? = null, // 1 绑定状态、其他是设备未绑定
     val easemobId: String? = null,
     val easemobPassword: String? = null,
     val easemobUserName: String? = null,

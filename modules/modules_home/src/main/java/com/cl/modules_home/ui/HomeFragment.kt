@@ -436,6 +436,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // todo 删除设备跳转到首页
                 checkPer()
             }
+            tvScan.setOnClickListener {
+                // todo 删除设备跳转到首页
+                checkPer()
+            }
         }
     }
 

@@ -9,8 +9,8 @@ data class AutomaticLoginData(
     val abbyId: String? = null,
     val avatarPicture: String? = null,
     val childLock: String? = null,
-    val deviceOnlineStatus: String? = null,
-    val deviceStatus: String? = null,
+    val deviceOnlineStatus: String? = null, // 设备在线状态(0-不在线，1-在线)
+    val deviceStatus: String? = null,    // 设备状态(1-绑定，2-已解绑)
     val easemobId: String? = null,
     val easemobPassword: String? = null,
     val easemobUserName: String? = null,

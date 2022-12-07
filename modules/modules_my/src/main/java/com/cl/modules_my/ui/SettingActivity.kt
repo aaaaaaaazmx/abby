@@ -209,9 +209,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     //  删除设备之后应该去哪？
                     // 跳转 Adddevice 界面
                     logI("deleteDevice is Success")
-                    ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                    /*ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .navigation()
+                        .navigation()*/
+
+                    tuYaUser?.uid?.let { mViewModel.checkPlant(it) }
                 }
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)

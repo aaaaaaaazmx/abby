@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.KeyEvent
 import android.view.LayoutInflater
-import androidx.activity.viewModels
 import androidx.core.view.contains
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -15,17 +14,21 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.showToast
 import com.cl.common_base.pop.CustomBubbleAttachPopup
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
+import com.hyphenate.chat.ChatClient
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
@@ -35,6 +38,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
 import javax.inject.Inject
+
 
 /**
  * 主页入口
@@ -138,8 +142,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         badgeView
     }
 
+    /**
+     * 获取用户信息
+     */
+    private val userInfo = {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
+    }
+
     override fun onResume() {
         super.onResume()
+        // logI("1111: ${(userInfo.invoke())?.deviceStatus == "1"}")
+        // 只有绑定的时候才会调用这个
         if (mIndex == 0) {
             // 当选中第0个的时候
             // 主要是消除小红点
@@ -224,6 +239,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
             .observe(this) {
                 // 如果不是等于0、那么是不要展示的
+                // 如果是设备在线状态 && 并且是已经开始种植的。
                 if (mIndex == 0) {
                     // 当选中第0个的时候
                     // 主要是消除小红点
@@ -248,9 +264,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun initData() {
-        // 请求消息统计
-        mViewModel.getHomePageNumber()
-
         // 底部点击
         binding.bottomNavigation.setOnNavigationItemSelectedListener {
             if (it.itemId != R.id.action_home) {
@@ -326,35 +339,35 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     transaction.show(it)
                 } ?: kotlin.run {
                     ARouter.getInstance().build(RouterPath.Home.PAGE_HOME).navigation()?.let {
-                            homeFragment = it as Fragment
-                            homeFragment?.let { fragment ->
-                                fragment.arguments = bundle
-                                transaction.add(R.id.container, fragment, null)
-                            }
+                        homeFragment = it as Fragment
+                        homeFragment?.let { fragment ->
+                            fragment.arguments = bundle
+                            transaction.add(R.id.container, fragment, null)
                         }
+                    }
                 }
             }
 
             Constants.FragmentIndex.CONTACT_INDEX -> contactFragment?.let { transaction.show(it) }
                 ?: kotlin.run {
                     ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()?.let {
-                            contactFragment = it as Fragment
-                            contactFragment?.let {
-                                contactFragment = it
-                                transaction.add(R.id.container, it, null)
-                            }
+                        contactFragment = it as Fragment
+                        contactFragment?.let {
+                            contactFragment = it
+                            transaction.add(R.id.container, it, null)
                         }
+                    }
                 }
 
             Constants.FragmentIndex.MY_INDEX -> myFragment?.let { transaction.show(it) }
                 ?: kotlin.run {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY).navigation()?.let {
-                            myFragment = it as Fragment
-                            myFragment?.let {
-                                myFragment = it
-                                transaction.add(R.id.container, it, null)
-                            }
+                        myFragment = it as Fragment
+                        myFragment?.let {
+                            myFragment = it
+                            transaction.add(R.id.container, it, null)
                         }
+                    }
                 }
         }
         mIndex = position
@@ -393,5 +406,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         homeFragment?.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //  需要判断先登录
+        if (ChatClient.getInstance().isLoggedInBefore) {
+            // 注销环信
+            ChatClient.getInstance().logout(true, null)
+        }
     }
 }

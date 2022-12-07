@@ -996,7 +996,10 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _unReadMessageNumber = MutableLiveData<Int>(0)
     val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
     fun getEaseUINumber() {
-        _unReadMessageNumber.postValue(EaseUiHelper.getInstance().unReadMessage)
+        // 只有当设备绑定且在线的时候、才去添加
+        if (refreshToken.value?.data?.deviceStatus == "1" && refreshToken.value?.data?.deviceOnlineStatus == "1") {
+            _unReadMessageNumber.postValue(EaseUiHelper.getInstance().unReadMessage)
+        }
     }
 
 
@@ -1013,8 +1016,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun easeLogin(uname: String, upwd: String) {
         ChatClient.getInstance().login(uname, upwd, object : Callback {
             override fun onSuccess() {
+                logI("ChatClient Login")
                 AgoraMessage.newAgoraMessage().currentChatUsername =
-                    Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT;
+                    Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT
                 getEaseUINumber()
             }
 
