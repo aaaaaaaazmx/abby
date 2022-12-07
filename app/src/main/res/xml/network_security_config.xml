@@ -3,13 +3,16 @@
     tools:ignore="MissingDefaultResource">
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
+            <!--信任系统证书-->
             <certificates
                 overridePins="true"
-                src="system" /> <!--信任系统证书-->
-            <certificates
+                src="system" />
+
+            <!--信任用户证书-->
+            <!--<certificates
                 overridePins="true"
                 src="user"
-                tools:ignore="AcceptsUserCertificates" /> <!--信任用户证书-->
+                tools:ignore="AcceptsUserCertificates" />-->
         </trust-anchors>
     </base-config>
 </network-security-config>
