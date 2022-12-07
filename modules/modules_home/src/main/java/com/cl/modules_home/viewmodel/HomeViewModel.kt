@@ -21,6 +21,7 @@ import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.repository.HomeRepository
 import com.hyphenate.chat.AgoraMessage
 import com.hyphenate.chat.ChatClient
@@ -803,6 +804,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         error: $error
                     """.trimIndent()
                 )
+                ToastUtil.shortShow(error)
                 Reporter.reportTuYaError("getOtaInfo", error, code)
             }
         })

@@ -354,6 +354,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                                             error: $error
                                         """.trimIndent()
                                         )
+                                        ToastUtil.shortShow(error)
                                         Reporter.reportTuYaError("newDeviceInstance", error, code)
                                     }
 

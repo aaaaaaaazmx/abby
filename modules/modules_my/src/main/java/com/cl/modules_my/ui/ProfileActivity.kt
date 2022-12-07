@@ -101,6 +101,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                             error: $error
                         """.trimIndent()
                         )
+                        ToastUtil.shortShow(error)
                         Reporter.reportTuYaError("getUserInstance", error, code)
                     }
                 })

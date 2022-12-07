@@ -14,6 +14,7 @@ import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
@@ -322,6 +323,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                         error: $error
                     """.trimIndent()
                     )
+                    ToastUtil.shortShow(error)
                     Reporter.reportTuYaError("newDeviceInstance", error, code)
                 }
 
@@ -344,6 +346,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                         error: $error
                     """.trimIndent()
                     )
+                    ToastUtil.shortShow(error)
                     Reporter.reportTuYaError("newDeviceInstance", error, code)
                 }
 
