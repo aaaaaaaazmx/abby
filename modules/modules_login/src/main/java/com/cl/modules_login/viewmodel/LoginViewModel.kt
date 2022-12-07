@@ -216,6 +216,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                 """.trimIndent()
                                                 )
                                                 Reporter.reportTuYaError("newHomeInstance", errorMsg, errorCode)
+                                                ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
                                             }
                                         })
                                 }
@@ -228,6 +229,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                     checkPlant(uid)
                                 }
                                 Reporter.reportTuYaError("getHomeManagerInstance", error, errorCode)
+                                ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
                             }
 
                         })
@@ -240,6 +242,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                         error.let { msg -> ToastUtil.shortShow(msg) }
                         Reporter.reportTuYaError("getUserInstance", error, code)
                         onError?.invoke(code, error)
+                        ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
                     }
                 }
             )

@@ -144,7 +144,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 }
                 .flowOn(Dispatchers.IO)
                 .onStart {
-                    emit(Resource.Loading())
                 }
                 .catch {
                     logD("catch $it")
@@ -365,7 +364,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 }
                 .flowOn(Dispatchers.IO)
                 .onStart {
-                    emit(Resource.Loading())
                 }
                 .catch {
                     logD("catch $it")
