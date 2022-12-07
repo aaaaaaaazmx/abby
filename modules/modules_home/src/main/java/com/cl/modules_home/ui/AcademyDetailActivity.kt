@@ -48,11 +48,11 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
         val value = mViewMode.messageReadList
         if (value.isEmpty()) {
             finish()
-            return
+        } else {
+            intent.putExtra(KEY_ID_LIST, value.toList().toTypedArray())
+            setResult(Activity.RESULT_OK, intent)
+            finish()
         }
-        intent.putExtra(KEY_ID_LIST, value.toList().toTypedArray())
-        setResult(Activity.RESULT_OK, intent)
-        finish()
     }
 
     override fun observe() {
