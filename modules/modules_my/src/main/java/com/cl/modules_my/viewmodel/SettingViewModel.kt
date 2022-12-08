@@ -1,5 +1,6 @@
 package com.cl.modules_my.viewmodel
 
+import android.app.Presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -31,6 +32,15 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class SettingViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
+
+    /**
+     * refreshToken 接口返回
+     */
+    val deviceInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
+    }
 
     /**
      * 删除用户设备
@@ -367,8 +377,9 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
 
     /**
      * 设备是否在线
+     * false、不在线 true、 在线
      */
-    private val _isOffLine = MutableLiveData<Boolean>(false)
+    private val _isOffLine = MutableLiveData<Boolean>(true)
     val isOffLine: LiveData<Boolean> = _isOffLine
     fun setOffLine(offline: Boolean) {
         _isOffLine.value = offline

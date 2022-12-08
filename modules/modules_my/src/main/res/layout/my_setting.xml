@@ -3,9 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="data"
             type="com.cl.modules_my.viewmodel.SettingViewModel" />
+
+        <import type="android.view.View" />
 
     </data>
 
@@ -56,15 +59,15 @@
                     android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    isOffline="@{data.isOffLine()}"
                     android:id="@+id/ft_fir_update"
+                    isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     app:itemTitle="Firmware upgrade" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    isOffline="@{data.isOffLine()}"
                     android:id="@+id/ft_water_tank"
+                    isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginTop="7dp"
@@ -78,27 +81,27 @@
                     android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    isOffline="@{data.isOffLine()}"
                     android:id="@+id/ft_replant"
+                    isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     app:itemTitle="Replant" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    app:itemValue="@string/setting_sub_time"
-                    app:hideArrow="true"
                     android:id="@+id/ft_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
                     android:layout_marginTop="7dp"
+                    app:hideArrow="true"
                     app:itemTitle="Digital service"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"/>
+                    app:itemValue="@string/setting_sub_time" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    app:hideArrow="true"
                     android:id="@+id/ft_charge_time"
-                    app:itemTitle="@string/setting_sub_charge_time"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"/>
+                    android:layout_height="60dp"
+                    app:hideArrow="true"
+                    app:itemTitle="@string/setting_sub_charge_time" />
 
                 <View
                     android:layout_width="match_parent"
@@ -108,13 +111,15 @@
                     android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    app:hideArrow="true"
                     android:id="@+id/ft_solo"
-                    app:itemTitle="@string/my_solo"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"/>
+                    android:layout_height="60dp"
+                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}"
+                    app:hideArrow="true"
+                    app:itemTitle="@string/my_solo" />
 
                 <View
+                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height=".5dp"
                     android:layout_marginStart="20dp"
@@ -122,12 +127,11 @@
                     android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    app:hideArrow="true"
                     android:id="@+id/ft_SN"
-                    app:itemTitle="SN"
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"/>
-
+                    android:layout_height="60dp"
+                    app:hideArrow="true"
+                    app:itemTitle="SN" />
 
 
                 <com.cl.common_base.widget.FeatureItemView
@@ -158,10 +162,10 @@
 
                 <!--重量单位-->
                 <com.cl.common_base.widget.FeatureItemView
-                    android:visibility="gone"
                     android:id="@+id/ft_weight"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
+                    android:visibility="gone"
                     app:itemTitle="@string/my_weight_unit" />
 
                 <!--缓存-->

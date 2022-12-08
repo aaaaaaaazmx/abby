@@ -199,6 +199,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftSub.setTitleValueEndDrawable(null).setPointClickListener {
             pop.asCustom(SubPop(this@SettingActivity)).show()
         }
+
+        // 是否可以操作设备相关的功能
+        val isBind = mViewModel.deviceInfo?.deviceStatus == "1"
+        val isOnline = mViewModel.deviceInfo?.deviceOnlineStatus == "1"
+        mViewModel.setOffLine(isBind && isOnline)
     }
 
     override fun observe() {
@@ -460,13 +465,13 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         super.onDeviceChange(status)
         when (status) {
             Constants.Device.KEY_DEVICE_OFFLINE -> {
-                mViewModel.setOffLine(true)
-            }
-            Constants.Device.KEY_DEVICE_ONLINE -> {
                 mViewModel.setOffLine(false)
             }
-            Constants.Device.KEY_DEVICE_REMOVE -> {
+            Constants.Device.KEY_DEVICE_ONLINE -> {
                 mViewModel.setOffLine(true)
+            }
+            Constants.Device.KEY_DEVICE_REMOVE -> {
+                mViewModel.setOffLine(false)
             }
         }
     }

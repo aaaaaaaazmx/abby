@@ -319,7 +319,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
 
     @BindingAdapter("isOffline")
     public static void setTextForDeviceOffline(FeatureItemView view, boolean isOffline) {
-        if (isOffline) {
+        if (!isOffline) {
             view.setEnable(false);
             view.tvItemTitle.setTextColor(Color.parseColor("#979797"));
             view.ivItemArrow.setBackgroundResource(R.mipmap.base_ic_arrow_right);
