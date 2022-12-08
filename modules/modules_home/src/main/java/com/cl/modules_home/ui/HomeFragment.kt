@@ -970,13 +970,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val periodPop by lazy {
         context?.let {
             HomePeriodPop(it, unLockAction = { guideType, taskId, lastOneGuideType, taskTime ->
-                //                    if (lastOneGuideType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
-                //                        // 表示是seed to veg
-                //                        SeedGuideHelp(it).showGuidePop {
-                //                            mViewMode.setPopPeriodStatus(guideId = guideType, taskId = taskId, taskTime = null)
-                //                        }
-                //                        return@HomePeriodPop
-                //                    }
+                /*if (lastOneGuideType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
+                    // 表示是seed to veg
+                    SeedGuideHelp(it).showGuidePop {
+                        mViewMode.setPopPeriodStatus(guideId = guideType, taskId = taskId, taskTime = null)
+                    }
+                    return@HomePeriodPop
+                }*/
                 // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
                 if (mViewMode.userDetail.value?.data?.isVip == 1) {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
@@ -1221,7 +1221,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 目前只处理了种植状态
                         // 周期的解锁
                         // 气泡解锁
-
+                        // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
+                        if (mViewMode.userDetail.value?.data?.isVip == 1) {
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                                .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
+                            return@observe
+                        }
                         mViewMode.setPopPeriodStatus(
                             guideId = type,
                             taskId = mViewMode.getUnreadMessageList().firstOrNull()?.taskId,
