@@ -2114,7 +2114,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun onResume() {
         super.onResume()
         // 从聊天退出来之后需要刷新消息环信数量
-        mViewMode.getEaseUINumber()
+        mViewMode.getHomePageNumber()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
