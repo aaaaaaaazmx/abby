@@ -1323,6 +1323,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     hideProgressLoading()
 
+                    // 环信消息
+                    getEaseUINumber()
+
                     // 保存刷新token信息
                     GSON.toJson(data)?.let { data ->
                         Prefs.putStringAsync(Constants.Login.KEY_REFRESH_LOGIN_DATA, data)

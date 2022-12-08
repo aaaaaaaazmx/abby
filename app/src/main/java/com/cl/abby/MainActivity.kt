@@ -194,10 +194,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         }
                         // 不是第0个的时候才显示弹窗、不然只显示下面的小红点
                         if (mIndex != 0) {
+                            // 弹窗
+                            if (!bubblePop.isShow && Constants.Global.KEY_IS_ONLY_ONE_SHOW) bubblePop.show()
                             // 不再显示气泡
                             Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
-                            // 弹窗
-                            if (!bubblePop.isShow) bubblePop.show()
                         }
                     } else if ((data?.academyMsgCount ?: 0) > 0) {
                         if (!itemView.contains(badgeView)) {
@@ -278,6 +278,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     // 判断气泡是否弹出
                     if (bubblePop.isShow) {
                         bubblePop.dismiss()
+                        Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
                     }
                     switchFragment(Constants.FragmentIndex.HOME_INDEX)
                 }
