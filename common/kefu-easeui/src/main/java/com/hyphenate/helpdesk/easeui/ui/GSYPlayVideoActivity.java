@@ -61,7 +61,7 @@ public class GSYPlayVideoActivity extends BaseActivity {
             if(UriUtils.isFileExistByUri(this, localFilePath)) {
                 // 找到了路径
                 // 播放视频
-                detailPlayer.setUp(localFilePath.toString(), true, "");
+                detailPlayer.setUp(localFilePath.toString(), false, "");
                 detailPlayer.startPlayLogic();
             }
         }

@@ -176,4 +176,15 @@ public class UriUtil {
         return uri;
     }
 
+    public static Uri getUris(Context context, File file){
+        Uri uri;
+        //兼容7.0
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            uri = FileProvider.getUriForFile(context,   "com.hyphenate.helpdesk.ease", file);
+        } else {
+            uri = Uri.fromFile(file);
+        }
+        return uri;
+    }
+
 }

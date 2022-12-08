@@ -117,7 +117,8 @@ public class ChatRowVideo extends ChatRowFile {
         // 播放视频
         // 视频播放
         EMVideoMessageBody videoBody = (EMVideoMessageBody) message.body();
-        Log.d(TAG, "video view is on click");
+        Uri localFilePath = videoBody.getLocalUri();
+        Log.d(TAG, "video view is on click : " + localFilePath);
         Intent intent = new Intent(context, GSYPlayVideoActivity.class);
         intent.putExtra("msg", message);
         activity.startActivity(intent);

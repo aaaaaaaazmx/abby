@@ -825,7 +825,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Uri uri = UriUtil.getUri(getContext(), new File(filePath));
+                        Uri uri = UriUtil.getUris(getContext(), new File(filePath));
                         sendVideoMessage(uri, dur);
                     }
                 });

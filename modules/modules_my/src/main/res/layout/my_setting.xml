@@ -46,6 +46,7 @@
                     android:textSize="14sp" />
 
                 <com.cl.common_base.widget.FeatureItemView
+                    isOffline="@{data.isOffLine()}"
                     android:id="@+id/ft_current_fir"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
