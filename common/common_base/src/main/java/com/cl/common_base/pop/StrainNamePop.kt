@@ -47,7 +47,7 @@ class StrainNamePop(
     }
 
     // 搜索时
-    private val searching: MutableList<String> = mutableListOf("Searching")
+    private val searching: MutableList<String> = mutableListOf("Searching...")
 
     private var binding: StrainNameBinding? = null
     override fun onCreate() {
@@ -104,7 +104,7 @@ class StrainNamePop(
             rvSearch.adapter = searchAdapter
 
             searchAdapter.setOnItemClickListener { adapter, view, position ->
-                if (adapter.data[position].toString() == "Searching") return@setOnItemClickListener
+                if (adapter.data[position].toString() == searching[0]) return@setOnItemClickListener
                 binding?.strainName?.setText(adapter.data[position].toString())
                 binding?.strainName?.setSelection(binding?.strainName?.text?.length ?: 0)
                 binding?.rvSearch?.setVisible(false)
