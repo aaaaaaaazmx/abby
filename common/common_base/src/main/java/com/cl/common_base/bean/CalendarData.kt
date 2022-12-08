@@ -9,6 +9,7 @@ import com.joketng.timelinestepview.TimeLineState
 data class CalendarData(
     var date: String? = null,
     var day: String? = null,
+    var week: String? = null,
     var epoch: String? = null,
     var epochEndTime: String? = null,
     var epochExplain: String? = null,

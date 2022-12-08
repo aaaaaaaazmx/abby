@@ -832,9 +832,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             // 周期
             binding.tvCycle.text = it.epoch
             // 天数
-            val week = (it.day?.toInt() ?: 0).div(7) + 1
-            val day = if ((it.day?.toInt() ?: 0).rem(7) == 0) 7 else (it.day?.toInt() ?: 0).rem(7)
-            binding.tvDay.text = "Week $week Day $day"
+            binding.tvDay.text = "Week $${it.week} Day ${it.day}"
             // 判断当前周期有无任务, 显示空布局 or 展示时间轴
             ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
             ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
