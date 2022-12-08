@@ -184,7 +184,7 @@ public class CommonUtils {
 
     public static Uri getUriForFile(Context context, @NonNull File file) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return FileProvider.getUriForFile(context, context.getPackageName() + ".ease", file);
+            return FileProvider.getUriForFile(context, context.getPackageName() + ".share.provider", file);
         } else {
             return Uri.fromFile(file);
         }
@@ -194,7 +194,7 @@ public class CommonUtils {
         try {
             Uri uri = null;
             if (Build.VERSION.SDK_INT >= 24) {
-                uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider",file);
+                uri = FileProvider.getUriForFile(context, context.getPackageName() + ".share.provider",file);
             } else {
                 uri = Uri.fromFile(file);
             }
@@ -240,7 +240,7 @@ public class CommonUtils {
                 return true;
             }
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Uri fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileProvider", new File(filePath));
+                Uri fileUri = FileProvider.getUriForFile(context, context.getPackageName() + ".share.provider", new File(filePath));
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.setDataAndType(fileUri, getMimeType(context, filename));

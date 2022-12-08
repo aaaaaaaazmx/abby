@@ -41,11 +41,11 @@
             android:id="@+id/bubble"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_userid"
             android:layout_marginLeft="@dimen/margin_chat_activity"
             android:layout_toLeftOf="@+id/progress_bar"
             android:layout_toRightOf="@id/iv_userhead"
-            android:layout_below="@+id/tv_userid"
-            android:background="@drawable/hd_chatfrom_bg" >
+            android:background="@drawable/hd_chatfrom_bg">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -59,22 +59,22 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="7dp"
                 android:gravity="center_vertical"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_file_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:singleLine="true"
                     android:ellipsize="middle"
+                    android:singleLine="true"
                     android:textColor="#000"
                     android:textSize="15sp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="3dp" >
+                    android:layout_marginTop="3dp">
 
                     <TextView
                         android:id="@+id/tv_file_size"

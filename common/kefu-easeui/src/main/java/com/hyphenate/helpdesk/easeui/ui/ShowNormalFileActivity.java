@@ -45,7 +45,8 @@ public class ShowNormalFileActivity extends BaseActivity {
                     public void run() {
                         String filePath = getFilePath(message);
                         if(!TextUtils.isEmpty(filePath)) {
-                            CommonUtils.openFile(new File(filePath), ShowNormalFileActivity.this);
+                            // todo 下载完成之后不打开
+                            // CommonUtils.openFile(new File(filePath), ShowNormalFileActivity.this);
                         }
                         finish();
                     }
