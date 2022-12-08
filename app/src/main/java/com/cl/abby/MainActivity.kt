@@ -196,7 +196,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         if (mIndex != 0) {
                             // 弹窗
                             if (!bubblePop.isShow && Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                                if (data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0) {
+                                if ((data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value == 0) || (mViewModel.unReadMessageNumber.value == 0 && data?.calendarMsgCount == 0)) {
                                     bubblePop.show()
                                 } else {
                                     XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
