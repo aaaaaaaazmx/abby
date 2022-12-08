@@ -261,6 +261,21 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
     public void touchDoubleUp(MotionEvent event) {
         OrientationUtils orientationUtils = new OrientationUtils(CommonUtil.getActivityContext(getContext()), this, getOrientationOption());
         float x = event.getX();
+        // 双击暂停
+        int screenWidth;
+        //竖屏
+        if (orientationUtils.getScreenType() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            screenWidth = mScreenWidth;
+        } else {
+            screenWidth = mScreenHeight;
+        }
+        if (x > screenWidth * 0.3 && x < screenWidth * 0.6) {
+            if (!mHadPlay) {
+                return;
+            }
+            clickStartIcon();
+            return;
+        }
         fastSeekOverlay.startMultiDoubleTap(event, new Function0<Unit>() {
             @Override
             public Unit invoke() {
