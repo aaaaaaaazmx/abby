@@ -195,7 +195,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         // 不是第0个的时候才显示弹窗、不然只显示下面的小红点
                         if (mIndex != 0) {
                             // 弹窗
-                            if (!bubblePop.isShow && Constants.Global.KEY_IS_ONLY_ONE_SHOW) bubblePop.show()
+                            if (!bubblePop.isShow && Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
+                                if (data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0) {
+                                    bubblePop.show()
+                                } else {
+                                    XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
+                                        .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
+                                        .atView(
+                                            (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
+                                                0
+                                            )
+                                        ).hasShadowBg(false) // 去掉半透明背景
+                                        .offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                                        .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
+                                            asPop
+                                        ).show()
+                                }
+                            }
                             // 不再显示气泡
                             Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
                         }

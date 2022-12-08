@@ -8,6 +8,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:paddingEnd="12dp"
         android:id="@+id/cl_root"
         tools:ignore="MissingConstraints"
         android:layout_width="wrap_content"
@@ -51,7 +52,6 @@
             android:layout_height="wrap_content"/>
 
         <TextView
-            android:layout_marginEnd="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/tv_support_number"
             android:layout_marginStart="5dp"
@@ -80,7 +80,6 @@
 
         <TextView
             android:visibility="gone"
-            android:layout_marginEnd="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_collage"
