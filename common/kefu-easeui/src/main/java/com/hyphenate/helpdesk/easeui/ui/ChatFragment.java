@@ -916,19 +916,19 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         String explain;
 
         if (TextUtils.equals(permissionArray[0], PermissionConfig.CAMERA[0])) {
-            title = "相机权限使用说明";
-            explain = "相机权限使用说明\n用户app用于拍照/录视频";
+            title = viewGroup.getContext().getString(R.string.chat_camera);
+            explain = viewGroup.getContext().getString(R.string.chat_camera_desc);
         } else if (TextUtils.equals(permissionArray[0], Manifest.permission.RECORD_AUDIO)) {
             if (isHasSimpleXCamera) {
-                title = "麦克风权限使用说明";
-                explain = "麦克风权限使用说明\n用户app用于录视频时采集声音";
+                title = viewGroup.getContext().getString(R.string.chat_microp);
+                explain = viewGroup.getContext().getString(R.string.chat_microp_desc);
             } else {
-                title = "录音权限使用说明";
-                explain = "录音权限使用说明\n用户app用于采集声音";
+                title = viewGroup.getContext().getString(R.string.chat_record);
+                explain = viewGroup.getContext().getString(R.string.chat_record_desc);
             }
         } else {
-            title = "存储权限使用说明";
-            explain = "存储权限使用说明\n用户app写入/下载/保存/读取/修改/删除图片、视频、文件等信息";
+            title = viewGroup.getContext().getString(R.string.chat_storage);
+            explain = viewGroup.getContext().getString(R.string.chat_storage_desc);
         }
         int startIndex = 0;
         int endOf = startIndex + title.length();
@@ -993,12 +993,12 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
         public void onDenied(Context context, String permission, int requestCode) {
             String tips;
             if (TextUtils.equals(permission, Manifest.permission.RECORD_AUDIO)) {
-                tips = "缺少麦克风权限\n可能会导致录视频无法采集声音";
+                tips = context.getString(R.string.chat_microp_tips);
             } else {
-                tips = "缺少相机权限\n可能会导致不能使用摄像头功能";
+                tips = context.getString(R.string.chat_camera_tips);
             }
             RemindDialog dialog = RemindDialog.buildDialog(context, tips);
-            dialog.setButtonText("去设置");
+            dialog.setButtonText(context.getString(R.string.chat_gosetting));
             dialog.setButtonTextColor(0xFF7D7DFF);
             dialog.setContentTextColor(0xFF333333);
             dialog.setOnDialogClickListener(new RemindDialog.OnDialogClickListener() {

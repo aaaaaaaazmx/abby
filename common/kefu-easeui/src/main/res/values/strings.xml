@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="chat_camera">Allow Access to Camera</string>
+    <string name="chat_camera_desc">This permission will enable the app to take photos and record videos</string>
+    <string name="chat_microp">Allow Access to Microphone</string>
+    <string name="chat_microp_desc">This permission will enable the app to pick up sound when recording videos</string>
+    <string name="chat_record">Allow Recording Permission</string>
+    <string name="chat_record_desc">This permission will enable the app to pick up sounds</string>
+    <string name="chat_storage">Allow Access to Storage</string>
+    <string name="chat_storage_desc">This app will be able to write, download, save, read, modify, and delete pictures, videos, files and other information</string>
+    <string name="chat_microp_tips">Denying microphone permission access\nmay lead to the inability to record sound in videos</string>
+    <string name="chat_camera_tips">Denying camera permission access\nmay result in the inability to use camera functions</string>
+    <string name="chat_gosetting">Go to settings</string>
+</resources>

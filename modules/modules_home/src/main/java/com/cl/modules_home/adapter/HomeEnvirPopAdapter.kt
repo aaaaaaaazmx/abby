@@ -1,5 +1,6 @@
 package com.cl.modules_home.adapter
 
+import android.graphics.Color
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.bean.EnvironmentInfoData
 import com.bbgo.module_home.R
@@ -25,7 +26,22 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData>?) :
         if (binding != null) {
             // 设置数据
             binding.data = item
+            binding.adapter = this@HomeEnvirPopAdapter
             binding.executePendingBindings()
         }
     }
+
+    fun getColor(text: String?): Int {
+        return when (text) {
+            "Too High" -> Color.parseColor("#D61744")
+            "High" -> Color.parseColor("#E3A00D")
+            "Ideal" -> Color.parseColor("#006241")
+            "Low" -> Color.parseColor("#E3A00D")
+            "Too Low" -> Color.parseColor("#D61744")
+            "OK" -> Color.parseColor("#006241")
+            "Error" -> Color.parseColor("#D61744")
+            else -> Color.BLACK
+        }
+    }
+
 }

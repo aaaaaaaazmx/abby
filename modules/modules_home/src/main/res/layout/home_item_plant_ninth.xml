@@ -464,6 +464,7 @@ Day1" />
                     app:layout_constraintTop_toTopOf="@+id/iv_temperature_bg" />
 
                 <ImageView
+                    android:id="@+id/iv_health"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"

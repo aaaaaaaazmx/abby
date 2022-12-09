@@ -42,6 +42,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.easeui.EaseUiHelper
+import com.cl.common_base.ext.visible
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
@@ -1263,12 +1264,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     it.indexOfLast { bean -> "${bean.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
                 if (index == -1) return@observe
 
-                kotlin.runCatching {
+                // 隐藏周期右上角红点
+                /*kotlin.runCatching {
                     ViewUtils.setVisible(
                         "${it[index + 1].journeyStatus}" == HomePeriodPop.KEY_LOCK_COMPLETED || "${it[index + 1].journeyStatus}" == HomePeriodPop.KEY_ALLOW_UNLOCKING,
                         binding.pplantNinth.ivNewRed
                     )
-                }
+                }*/
             }
 
             // 未读消息
@@ -1824,8 +1826,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 植物的氧气
                     binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
 
-                    // 植物的干燥程度
+                    // 植物的健康程度
                     binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
+                    binding.pplantNinth.ivHealth.visibility = if (data?.healthStatus == "Ideal") View.GONE else View.VISIBLE
 
                     // 植物的period 周期
                     data?.list?.let {
@@ -2206,9 +2209,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }.toString()
 
         // 新的气泡如果需要解锁周期那么就需要显示红点
-        ViewUtils.setVisible(
+        // 隐藏周期右上角红点
+        /*ViewUtils.setVisible(
             UnReadConstants.plantStatus.contains(unRead?.type), binding.pplantNinth.ivNewRed
-        )
+        )*/
 
         // 如果jumpType == none 就不显示按钮
         ViewUtils.setVisible(
