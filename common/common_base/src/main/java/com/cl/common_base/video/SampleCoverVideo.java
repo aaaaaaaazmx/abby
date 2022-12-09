@@ -258,8 +258,8 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
         }
     });
 
+    private OrientationUtils orientationUtils = new OrientationUtils(CommonUtil.getActivityContext(getContext()), this, getOrientationOption());
     public void touchDoubleUp(MotionEvent event) {
-        OrientationUtils orientationUtils = new OrientationUtils(CommonUtil.getActivityContext(getContext()), this, getOrientationOption());
         float x = event.getX();
         // 双击暂停
         int screenWidth;
