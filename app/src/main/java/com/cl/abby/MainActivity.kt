@@ -161,6 +161,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
             val itemView = menuView.getChildAt(0) as BottomNavigationItemView
             if (itemView.contains(badgeView)) {
+                mViewModel.plantInfo()
                 mViewModel.getHomePageNumber()
             }
         }
@@ -181,8 +182,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
-                    val menuView =
-                        binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    val menuView =  binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
                     if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarMsgCount

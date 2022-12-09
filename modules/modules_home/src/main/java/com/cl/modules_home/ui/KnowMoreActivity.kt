@@ -20,6 +20,7 @@ import com.bbgo.module_home.databinding.HomeKnowMoreLayoutBinding
 import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -77,6 +78,12 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         // mViewMode.getRichText(txtId = "516c590993a041309912ebe16c2eb856")
         // mViewMode.getRichText(txtId = "c3eeb4d2f1332f4869erwqfa912557ae")
         mViewMode.getRichText(txtId = txtId, type = txtType)
+        // 学院任务一进来就已读。
+        when(txtType) {
+            CalendarData.TASK_TYPE_TEST -> {
+                mViewMode.finishTask(FinishTaskReq(taskId = taskId))
+            }
+        }
     }
 
     /**
@@ -99,6 +106,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
+                    // 学院任务不管
+                    if (txtType == CalendarData.TASK_TYPE_TEST) return@success
+
                     hideProgressLoading()
                     setResult(Activity.RESULT_OK)
                     this@KnowMoreActivity.finish()

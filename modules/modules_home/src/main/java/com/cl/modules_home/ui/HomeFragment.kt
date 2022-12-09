@@ -124,9 +124,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 开启定时器，每次20秒刷新未读气泡消息
         job = mViewMode.countDownCoroutines(10 * 6 * 500000, lifecycleScope, onTick = {
-            if (it % 20 == 0) {
-                // 表示过了20秒
+            if (it % 30 == 0) {
+                // 表示过了30秒
                 mViewMode.getUnread()
+                // 查询植物信息Look
+                mViewMode.plantInfoLoop()
             }
             if (it == 0) {
                 job?.cancel()

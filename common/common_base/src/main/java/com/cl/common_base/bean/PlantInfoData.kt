@@ -21,6 +21,7 @@ data class PlantInfoData(
     var plantStatus: Int? = null,
     var week: Int? = null,
     var totalDay: Int? = null,
+    var lightingStatus: Int? = null, // 0 关灯、1 开灯
     var list: MutableList<InfoList>? = null
 ) : BaseBean() {
 

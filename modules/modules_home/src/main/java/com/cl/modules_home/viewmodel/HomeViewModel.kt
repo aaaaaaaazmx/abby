@@ -23,6 +23,7 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.repository.HomeRepository
+import com.goldentec.android.tools.util.isCanToBigDecimal
 import com.goldentec.android.tools.util.letMultiple
 import com.hyphenate.chat.AgoraMessage
 import com.hyphenate.chat.ChatClient
@@ -308,6 +309,34 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 )
             }.collectLatest {
                 _plantInfo.value = it
+            }
+        }
+    }
+
+    /**
+     * 获取植物基本信息\Look接口
+     */
+    private val _plantInfoLoop = MutableLiveData<Resource<PlantInfoData>>()
+    val plantInfoLoop: LiveData<Resource<PlantInfoData>> = _plantInfoLoop
+    fun plantInfoLoop() {
+        viewModelScope.launch {
+            repository.plantInfo().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "$it"
+                    )
+                )
+            }.collectLatest {
+                _plantInfoLoop.value = it
             }
         }
     }
