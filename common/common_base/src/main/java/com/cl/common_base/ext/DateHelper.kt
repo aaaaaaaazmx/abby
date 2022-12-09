@@ -607,10 +607,10 @@ object DateHelper {
                     if (day < 7) {
                         return "$day days ago"
                     } else {
-                        return if (formatTime(startDate, "yyyy") == formatTime(endTime, "yyyy")) {
-                            formatTime(startDate, "MMdd")
+                        return if (formatTime(startDate, "yyyy") == formatTime(endTime, "yyyy", Locale.US)) {
+                            formatTime(startDate, "MMM dd", Locale.US)
                         } else {
-                            formatTime(startDate, "MMdd yyyy")
+                            formatTime(startDate, "MMMdd,yyyy", Locale.US)
                         }
                         /*  var month = day / 30
                         if (month < 12) {

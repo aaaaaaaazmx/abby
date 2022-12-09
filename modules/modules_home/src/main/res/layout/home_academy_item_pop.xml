@@ -41,6 +41,7 @@
             android:layout_height="45dp" />
 
         <TextView
+            android:textStyle="bold"
             android:id="@+id/tv_title"
             tools:text="Abby Instrusctors"
             android:layout_marginStart="12dp"

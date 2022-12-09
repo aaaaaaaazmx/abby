@@ -1255,23 +1255,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 }
             }
-            // 植物周期数据监听,植物周期弹窗数据
-            periodData.observe(viewLifecycleOwner) {
-                if (it.isNullOrEmpty()) return@observe
-                // 加这位玩意的监听，就是为了加个小红点
-                // 找到onging的状态，然后判断下面一个状态是不是解锁, 不是解锁就不需要显示小红点
-                val index =
-                    it.indexOfLast { bean -> "${bean.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
-                if (index == -1) return@observe
-
-                // 隐藏周期右上角红点
-                /*kotlin.runCatching {
-                    ViewUtils.setVisible(
-                        "${it[index + 1].journeyStatus}" == HomePeriodPop.KEY_LOCK_COMPLETED || "${it[index + 1].journeyStatus}" == HomePeriodPop.KEY_ALLOW_UNLOCKING,
-                        binding.pplantNinth.ivNewRed
-                    )
-                }*/
-            }
 
             // 未读消息
             unreadMessageList.observe(viewLifecycleOwner) {
@@ -1331,13 +1314,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 保存刷新token信息
                     GSON.toJson(data)?.let { data ->
                         Prefs.putStringAsync(Constants.Login.KEY_REFRESH_LOGIN_DATA, data)
-                    }
-
-                    // 登录环信
-                    letMultiple(
-                        data?.easemobUserName, data?.easemobPassword
-                    ) { username, password ->
-                        mViewMode.easeLogin(username, password)
                     }
 
                     // 保存当前的信息.

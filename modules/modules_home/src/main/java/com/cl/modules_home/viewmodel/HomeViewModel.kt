@@ -23,8 +23,10 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.repository.HomeRepository
+import com.goldentec.android.tools.util.letMultiple
 import com.hyphenate.chat.AgoraMessage
 import com.hyphenate.chat.ChatClient
+import com.hyphenate.chat.EMClient
 import com.hyphenate.helpdesk.callback.Callback
 import com.hyphenate.helpdesk.easeui.widget.ToastHelper
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
@@ -108,6 +110,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         it.code, it.msg
                     )
                 } else {
+                    // 登录环信
+                    letMultiple(
+                        it.data.easemobUserName, it.data.easemobPassword
+                    ) { username, password ->
+                        easeLogin(username, password)
+                    }
                     Resource.Success(it.data)
                 }
             }.flowOn(Dispatchers.IO).onStart {}.catch {
@@ -804,7 +812,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         error: $error
                     """.trimIndent()
                 )
-                ToastUtil.shortShow(error)
                 Reporter.reportTuYaError("getOtaInfo", error, code)
             }
         })
@@ -1016,6 +1023,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 环信登录
      */
     fun easeLogin(uname: String, upwd: String) {
+        if (EMClient.getInstance().context == null) return
         ChatClient.getInstance().login(uname, upwd, object : Callback {
             override fun onSuccess() {
                 logI("ChatClient Login")
