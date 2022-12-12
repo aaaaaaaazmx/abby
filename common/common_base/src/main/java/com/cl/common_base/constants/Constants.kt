@@ -113,6 +113,8 @@ object Constants {
         const val KEY_IN_APP = "key_in_app"
 
         const val KEY_IN_APP_VIP = "key_in_app_vip"
+        // 开始种植了。
+        const val KEY_IN_APP_START_RUNNING = "key_in_app_start_running"
     }
 
     // 极光

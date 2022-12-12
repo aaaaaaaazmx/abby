@@ -1482,6 +1482,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                     // 获取植物基本信息
                     mViewMode.plantInfo()
+
+                    // 发送植物种植消息、主要用来判断消息小红点是否展示
+                    LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
+                        .postEvent(
+                            GSON.toJson(hashMapOf(Constants.APP.KEY_IN_APP_START_RUNNING to "true"))
+                        )
                 }
                 error { errorMsg, _ ->
                     hideProgressLoading()

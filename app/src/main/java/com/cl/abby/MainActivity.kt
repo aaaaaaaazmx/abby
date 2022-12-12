@@ -108,7 +108,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         // 为null的情况下就是用户第一次种植
         logI(plantGuideFlag)
         // 查看是否需要显示红点
-        mViewModel.userDetail()
+        mViewModel.setIsPlants(plantFlag != "0")
     }
 
     private val bubblePop by lazy {
@@ -174,12 +174,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 判断当前是处于种植状态
+            isPlant.observe(this@MainActivity) {
+                if (it == true) {
+                    mViewModel.userDetail()
+                } else {
+                    // 直接删除
+                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    //获取第1个itemView
+                    val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                    if (itemView.contains(badgeView)) {
+                        itemView.removeView(badgeView)
+                    }
+                }
+            }
+
             // 前提是判断是否是会员
-            userDetail.observe(this@MainActivity, resourceObserver { 
+            userDetail.observe(this@MainActivity, resourceObserver {
                 success {
-                   logI("1231231231userDetailuserDetailuserDetailuserDetailuserDetail")
                     if (null == data) return@success
-                    if (data?.isVip != 1) {
+                    if (data?.isVip != 1 || mViewModel.isPlant.value == false) {
                         val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                         //获取第1个itemView
                         val itemView = menuView.getChildAt(0) as BottomNavigationItemView
@@ -192,7 +206,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     }
                 }
             })
-            
+
             // 消息统计
             getHomePageNumber.observe(this@MainActivity, resourceObserver {
                 loading {}
@@ -221,8 +235,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         if (mIndex != 0) {
                             // 弹窗
                             if (!bubblePop.isShow && Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                                if ((data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value == 0) || (mViewModel.unReadMessageNumber.value == 0 && data?.calendarMsgCount == 0)) {
-                                    bubblePop.show()
+                                bubblePop.show()
+                             /*   if ((data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0)) {
+
                                 } else {
                                     XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
                                         .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
@@ -235,7 +250,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                                         .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
                                             asPop
                                         ).show()
-                                }
+                                }*/
                             }
                             // 不再显示气泡
                             Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
@@ -308,10 +323,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
         }
 
-        // 设备状态监听变化
+        // 环信消息变化监听
         LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
             .observe(this) {
-                // 如果不是等于0、那么是不要展示的
+                mViewModel.userDetail()
+                /*// 如果不是等于0、那么是不要展示的
                 // 如果是设备在线状态 && 并且是已经开始种植的。
                 if (mIndex == 0) {
                     // 当选中第0个的时候
@@ -332,7 +348,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         //  查询接口
                         mViewModel.userDetail()
                     }
-                }
+                }*/
             }
     }
 
@@ -491,12 +507,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         }
     }
 
-    /*override fun inAppInfoChange(status: String) {
+    override fun inAppInfoChange(status: String) {
         val map = GSON.parseObject(status, Map::class.java)
         map?.forEach { (key, value) ->
             when (key) {
                 // 是否是Vip
-                Constants.APP.KEY_IN_APP_VIP -> {
+                /*Constants.APP.KEY_IN_APP_VIP -> {
                     logI("KEY_IN_APP_VIP： $value")
                     if (value != "1") {
                         val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
@@ -509,8 +525,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         // 刷新小红点
                         mViewModel.userDetail()
                     }
+                }*/
+                // 开始种植
+                Constants.APP.KEY_IN_APP_START_RUNNING -> {
+                    logI("KEY_IN_APP_START_RUNNING: $value")
+                    mViewModel.setIsPlants(value == "true")
                 }
             }
         }
-    }*/
+    }
 }
