@@ -94,6 +94,7 @@ class BaseTimeChoosePop(
      */
     private var hour: Int? = null
     override fun onHourSelected(hour: Int?) {
+        logI("onHourSelected: $hour")
         this.hour = hour
     }
 
@@ -102,6 +103,7 @@ class BaseTimeChoosePop(
      */
     private var minute: Int? = 0
     override fun onMinuteSelected(minute: Int) {
+        logI("onMinuteSelected: $hour")
         this.minute = minute
     }
 }
