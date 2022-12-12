@@ -49,11 +49,11 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
             .onStart {
             }
             .catch {
-                logD("catch $it")
+                logD("catch ${it.message}")
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {

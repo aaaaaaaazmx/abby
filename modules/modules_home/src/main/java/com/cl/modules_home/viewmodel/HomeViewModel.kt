@@ -123,7 +123,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -155,7 +155,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -214,7 +214,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -244,7 +244,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -275,7 +275,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -304,7 +304,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -332,7 +332,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -364,7 +364,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -396,7 +396,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -426,7 +426,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -457,7 +457,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -486,7 +486,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -518,7 +518,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -550,7 +550,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -574,6 +574,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 } else {
                     // 获取环信消息数量
                     getEaseUINumber()
+                    // 获取设备环境消息
+                    plantInfo()
                     Resource.Success(it.data)
                 }
             }.flowOn(Dispatchers.IO).onStart {
@@ -581,7 +583,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -614,7 +616,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -645,7 +647,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -675,7 +677,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -705,7 +707,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -736,7 +738,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -868,7 +870,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1, "$it"
+                        -1, "${it.message}"
                     )
                 )
             }.collectLatest {

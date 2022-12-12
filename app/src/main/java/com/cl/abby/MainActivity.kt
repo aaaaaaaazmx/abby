@@ -161,8 +161,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
             val itemView = menuView.getChildAt(0) as BottomNavigationItemView
             if (itemView.contains(badgeView)) {
-                mViewModel.plantInfo()
-                mViewModel.getHomePageNumber()
+                mViewModel.getMessageNumber()
             }
         }
     }
@@ -182,7 +181,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
-                    val menuView =  binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
                     if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarMsgCount
@@ -215,11 +214,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             // 不再显示气泡
                             Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
                         }
+                        // 学院消息
                     } else if ((data?.academyMsgCount ?: 0) > 0) {
                         if (!itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
                         }
+                        // 环信消息
                     } else if ((mViewModel.unReadMessageNumber.value
                             ?: 0) == 0 && (data?.calendarMsgCount
                             ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
@@ -239,6 +240,35 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             Handler().postDelayed({
                                 bubblePop.dismiss()
                             }, 10000)
+                        }
+                    }
+                }
+            })
+
+            // 环境消息的统计
+            plantInfo.observe(this@MainActivity, resourceObserver {
+                success {
+                    if (null == data) return@success
+                    /**
+                     * 只有2个中有一个是不等于0、那么就可以添加弹窗
+                     */
+                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                    //获取第1个itemView
+                    val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                    if (data?.healthStatus != "Ideal") {
+                        if (!itemView.contains(badgeView)) {
+                            itemView.addView(badgeView)
+                        }
+                    } else {
+                        // 表示健康的
+                        // 需要判断上面的消息还有没有没有的话那就直接消除
+                        val easeMessage = mViewModel.unReadMessageNumber.value
+                        val calendarMessage = mViewModel.getHomePageNumber.value?.data?.calendarMsgCount
+                        val acadeMessage = mViewModel.getHomePageNumber.value?.data?.academyMsgCount
+                        if (easeMessage == 0 && calendarMessage == 0 && acadeMessage == 0) {
+                            if (itemView.contains(badgeView)) {
+                                itemView.removeView(badgeView)
+                            }
                         }
                     }
                 }

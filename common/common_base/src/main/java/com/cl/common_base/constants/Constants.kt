@@ -13,6 +13,8 @@ object Constants {
 
     // 网络常量
     const val APP_SUCCESS = 200
+    // 服务器错误
+    const val APP_SERVER = 500
 
     // H5相关
     object H5 {

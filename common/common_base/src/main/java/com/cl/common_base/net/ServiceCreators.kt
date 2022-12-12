@@ -47,7 +47,6 @@ object ServiceCreators {
         .addInterceptor(TokenInterceptor())
         .addInterceptor(MultiBaseUrlInterceptor())
         .addInterceptor(LoggingInterceptor())
-        .cache(cache)
         .addInterceptor(AddHeadInterceptor())
         .addInterceptor(BasicParamsInterceptor())
         /*.hostnameVerifier { hostname, session ->
