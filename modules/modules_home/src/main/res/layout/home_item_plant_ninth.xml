@@ -46,7 +46,7 @@
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:background="@drawable/base_dot_red"
-            android:visibility="@{viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
             app:layout_constraintCircle="@id/iv_academy"
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
@@ -62,7 +62,7 @@
             app:layout_constraintTop_toTopOf="@+id/tv_title" />
 
         <TextView
-            android:visibility="@{viewModel.getHomePageNumber.data.calendarMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
@@ -132,7 +132,7 @@
                 />
 
             <TextView
-                android:visibility='@{viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}'
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
                 android:gravity="center"
                 android:singleLine="true"
                 android:textColor="@color/white"
@@ -487,7 +487,7 @@ Day1" />
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
                     android:background="@mipmap/home_plant_indicator_light"
-                    android:visibility="gone"
+                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.plantInfo.data.healthStatus == "Ideal" ? View.GONE : View.VISIBLE : View.GONE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />
