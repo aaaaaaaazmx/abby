@@ -108,6 +108,13 @@ object Constants {
         const val KEY_TUYA_DEVICE_TO_APP = "key_tuya_device_to_app"
     }
 
+    // APP应用内消息
+    object APP {
+        const val KEY_IN_APP = "key_in_app"
+
+        const val KEY_IN_APP_VIP = "key_in_app_vip"
+    }
+
     // 极光
     object Jpush {
         // 设备内消息

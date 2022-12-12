@@ -1,4 +1,4 @@
-package com.cl.modules_home.viewmodel
+package com.cl.abby.viewmodel
 
 import android.util.Log
 import androidx.camera.core.impl.utils.ContextUtil.getBaseContext
@@ -42,7 +42,7 @@ import javax.inject.Inject
 
 
 @ActivityRetainedScoped
-class HomeViewModel @Inject constructor(private val repository: HomeRepository) : ViewModel() {
+class MainViewModel @Inject constructor(private val repository: HomeRepository) : ViewModel() {
     // 账号
     val account by lazy {
         Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
@@ -1042,10 +1042,18 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+
+    /**
+     * 请求消息数量接口
+     */
+    fun getMessageNumber() {
+        getHomePageNumber()
+    }
+
     /**
      * 环信登录
      */
-   private fun easeLogin(uname: String, upwd: String) {
+    private fun easeLogin(uname: String, upwd: String) {
         if (EMClient.getInstance().context == null) return
         ChatClient.getInstance().login(uname, upwd, object : Callback {
             override fun onSuccess() {

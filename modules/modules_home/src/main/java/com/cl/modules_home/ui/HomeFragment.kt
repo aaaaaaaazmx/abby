@@ -1071,6 +1071,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 首页循环刷新消息
+            /*userDetail.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    if (null == data) return@success
+                    // "pump_water_finished":false
+                    LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
+                        .postEvent(
+                            GSON.toJson(hashMapOf(Constants.APP.KEY_IN_APP_VIP to "${data?.isVip}"))
+                        )
+                }
+            })*/
             // 消息统计
             getHomePageNumber.observe(viewLifecycleOwner, resourceObserver {
                 loading { }
@@ -1806,7 +1817,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 植物的健康程度
                     binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
-                    binding.pplantNinth.ivHealth.visibility = if (data?.healthStatus == "Ideal") View.GONE else View.VISIBLE
 
                     // 植物的period 周期
                     data?.list?.let {

@@ -104,6 +104,10 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
             .observe(this) {
                 onTuYaToAppDataChange(it)
             }
+        LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
+            .observe(this) {
+                inAppInfoChange(it)
+            }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -270,6 +274,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
 
     open fun close(): Boolean = false
 
+    // 嫌麻烦的可以写成一个类用来管理这些。
 
     /**
      * 蓝牙状态改变回调
@@ -287,6 +292,11 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
      * 涂鸦发送给App的信息
      */
     open fun onTuYaToAppDataChange(status: String) {}
+
+    /**
+     * APP相关
+     */
+    open fun inAppInfoChange(status: String) {}
 
 
     override fun onDestroy() {

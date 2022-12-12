@@ -2,6 +2,7 @@ package com.cl.abby
 
 import android.content.Intent
 import android.graphics.Color
+import android.media.midi.MidiDevice
 import android.os.Bundle
 import android.os.Handler
 import android.view.KeyEvent
@@ -13,6 +14,7 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.databinding.ActivityMainBinding
+import com.cl.abby.viewmodel.MainViewModel
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
@@ -22,6 +24,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.showToast
 import com.cl.common_base.pop.CustomBubbleAttachPopup
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
@@ -38,6 +41,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
 import javax.inject.Inject
+import kotlin.math.min
 
 
 /**
@@ -54,7 +58,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     //    }
 
     @Inject
-    lateinit var mViewModel: HomeViewModel
+    lateinit var mViewModel: MainViewModel
 
     // 引导状态
     @Autowired(name = Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG)
@@ -103,6 +107,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         switchFragment(mIndex)
         // 为null的情况下就是用户第一次种植
         logI(plantGuideFlag)
+        // 查看是否需要显示红点
+        mViewModel.userDetail()
     }
 
     private val bubblePop by lazy {
@@ -161,13 +167,32 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
             val itemView = menuView.getChildAt(0) as BottomNavigationItemView
             if (itemView.contains(badgeView)) {
-                mViewModel.getMessageNumber()
+                mViewModel.userDetail()
             }
         }
     }
 
     override fun observe() {
         mViewModel.apply {
+            // 前提是判断是否是会员
+            userDetail.observe(this@MainActivity, resourceObserver { 
+                success {
+                   logI("1231231231userDetailuserDetailuserDetailuserDetailuserDetail")
+                    if (null == data) return@success
+                    if (data?.isVip != 1) {
+                        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                        //获取第1个itemView
+                        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                        if (itemView.contains(badgeView)) {
+                            itemView.removeView(badgeView)
+                        }
+                    } else {
+                        // 刷新小红点
+                        mViewModel.getMessageNumber()
+                    }
+                }
+            })
+            
             // 消息统计
             getHomePageNumber.observe(this@MainActivity, resourceObserver {
                 loading {}
@@ -178,6 +203,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 success {
                     hideProgressLoading()
                     if (null == data) return@success
+
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
@@ -246,9 +272,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             })
 
             // 环境消息的统计
-            plantInfo.observe(this@MainActivity, resourceObserver {
+            plantInfoLoop.observe(this@MainActivity, resourceObserver {
                 success {
                     if (null == data) return@success
+                    logI("1231231231plantInfoLoopplantInfoLoopplantInfoLoop")
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
@@ -303,7 +330,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
                         //  表示有消息要来了，需要查询一遍
                         //  查询接口
-                        mViewModel.getMessageNumber()
+                        mViewModel.userDetail()
                     }
                 }
             }
@@ -315,7 +342,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             if (it.itemId != R.id.action_home) {
                 //  不是首页得时候、都需要请求接口、检查是否有数量
                 if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                    mViewModel.getMessageNumber()
+                    mViewModel.userDetail()
                 }
             }
 
@@ -463,4 +490,27 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             ChatClient.getInstance().logout(true, null)
         }
     }
+
+    /*override fun inAppInfoChange(status: String) {
+        val map = GSON.parseObject(status, Map::class.java)
+        map?.forEach { (key, value) ->
+            when (key) {
+                // 是否是Vip
+                Constants.APP.KEY_IN_APP_VIP -> {
+                    logI("KEY_IN_APP_VIP： $value")
+                    if (value != "1") {
+                        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                        //获取第1个itemView
+                        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                        if (itemView.contains(badgeView)) {
+                            itemView.removeView(badgeView)
+                        }
+                    } else {
+                        // 刷新小红点
+                        mViewModel.userDetail()
+                    }
+                }
+            }
+        }
+    }*/
 }
