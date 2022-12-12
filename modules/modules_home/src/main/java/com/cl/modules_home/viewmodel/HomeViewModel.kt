@@ -1053,7 +1053,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 环信登录
      */
-    fun easeLogin(uname: String, upwd: String) {
+   private fun easeLogin(uname: String, upwd: String) {
         if (EMClient.getInstance().context == null) return
         ChatClient.getInstance().login(uname, upwd, object : Callback {
             override fun onSuccess() {

@@ -47,7 +47,7 @@ class ProfileViewModel @Inject constructor(private val repository: MyRepository)
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -82,7 +82,7 @@ class ProfileViewModel @Inject constructor(private val repository: MyRepository)
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -116,7 +116,7 @@ class ProfileViewModel @Inject constructor(private val repository: MyRepository)
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {

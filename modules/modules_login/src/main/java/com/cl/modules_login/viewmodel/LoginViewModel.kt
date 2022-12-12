@@ -77,7 +77,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                     emit(
                         Resource.DataError(
                             -1,
-                            "$it"
+                            "${it.message}"
                         )
                     )
                 }.collectLatest {
@@ -115,7 +115,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
