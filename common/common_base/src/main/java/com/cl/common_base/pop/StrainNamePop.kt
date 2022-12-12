@@ -1,17 +1,16 @@
 package com.cl.common_base.pop
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Typeface
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.listener.OnItemChildClickListener
-import com.chad.library.adapter.base.listener.OnItemClickListener
 import com.cl.common_base.R
 import com.cl.common_base.adapter.StrainNameSearchAdapter
 import com.cl.common_base.constants.Constants
@@ -22,16 +21,14 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.setVisible
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.service.BaseApiService
+import com.cl.common_base.util.SoftInputUtils
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
-import com.google.common.base.Strings.isNullOrEmpty
 import com.lxj.xpopup.XPopup
-import com.lxj.xpopup.core.AttachPopupView
 import com.lxj.xpopup.core.BottomPopupView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 /**
  * StrainName Pop
@@ -63,6 +60,20 @@ class StrainNamePop(
                 btnSuccess.isEnabled = false
             }
 
+            strainName.setOnEditorActionListener { v, actionId, event ->
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER) {
+                    SoftInputUtils.hideSoftInput(context as Activity, strainName)
+                    // 输入范围为1～24字节
+                    if (getTextLength(strainName.text.toString()) < 1 || getTextLength(strainName.text.toString()) > 24) {
+                        ToastUtil.shortShow(context.getString(R.string.strain_name_desc))
+                    } else {
+                        onConfirmAction?.invoke(strainName.text.toString())
+                    }
+                }
+                false
+            }
+
+
             strainName.textChangeFlow() // 构建输入框文字变化流
                 .filter { it.isNotEmpty() } // 过滤空内容，避免无效网络请求
                 .debounce(300) // 300ms防抖
@@ -78,11 +89,14 @@ class StrainNamePop(
             }
 
             tvHow.setOnClickListener {
-                XPopup.Builder(context)
-                    .isDestroyOnDismiss(false)
-                    .isDestroyOnDismiss(false)
-                    .asCustom(BaseCenterPop(context, content = context.getString(R.string.seed_strain_name), isShowCancelButton = false))
-                    .show()
+                XPopup.Builder(context).isDestroyOnDismiss(false).isDestroyOnDismiss(false)
+                    .asCustom(
+                        BaseCenterPop(
+                            context,
+                            content = context.getString(R.string.seed_strain_name),
+                            isShowCancelButton = false
+                        )
+                    ).show()
             }
 
             clNotKnow.setOnClickListener {
@@ -109,6 +123,7 @@ class StrainNamePop(
                 binding?.strainName?.setSelection(binding?.strainName?.text?.length ?: 0)
                 binding?.rvSearch?.setVisible(false)
                 binding?.clStrain?.setVisible(true)
+                SoftInputUtils.hideSoftInput(context as Activity, binding?.strainName)
             }
         }
     }
@@ -141,27 +156,21 @@ class StrainNamePop(
     private val service = ServiceCreators.create(BaseApiService::class.java)
     private suspend fun getStrainNameList(txt: String): MutableList<String> {
         val mutableList = mutableListOf<String>()
-        service.getStrainName(txt)
-            .map {
+        service.getStrainName(txt).map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(
-                        it.code,
-                        it.msg
+                        it.code, it.msg
                     )
                 } else {
                     Resource.Success(it.data)
                 }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
+            }.flowOn(Dispatchers.IO).onStart {
                 emit(Resource.Loading())
-            }
-            .catch {
+            }.catch {
                 logD("catch $it")
                 emit(
                     Resource.DataError(
-                        -1,
-                        "$it"
+                        -1, "$it"
                     )
                 )
             }.collectLatest {
