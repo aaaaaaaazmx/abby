@@ -484,10 +484,16 @@ public class EaseUiHelper {
      * 未读消息清零、变成已读
      */
     public void UnreadMessagesCleared() {
-        Conversation conversation = ChatClient.getInstance().chatManager().getConversation(Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT);
-        //指定会话消息未读数清零
-        conversation.markAllMessagesAsRead();
-        ChatClient.getInstance().chatManager().markAllConversationsAsRead();
+        try {
+            Conversation conversation = ChatClient.getInstance().chatManager().getConversation(Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT);
+            //指定会话消息未读数清零
+            conversation.markAllMessagesAsRead();
+            ChatClient.getInstance().chatManager().markAllConversationsAsRead();
+            // 程序代码
+        } catch (Exception e1) {
+            //Catch 块
+            Log.e("UnreadMessagesCleared: ", e1.toString());
+        }
     }
 
     /**
