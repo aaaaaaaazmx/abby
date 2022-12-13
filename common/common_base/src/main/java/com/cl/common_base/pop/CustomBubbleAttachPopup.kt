@@ -12,6 +12,7 @@ class CustomBubbleAttachPopup(
     private var easeNumber: Int? = null, // 婚讯啊未读数量
     private val bubbleClickAction: (() -> Unit)? = null,
     private var calendarNumber: Int? = null,
+    private var envNumber: Int? = null,
 ) : BubbleAttachPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_custom_bubble_attach_popup
@@ -37,13 +38,29 @@ class CustomBubbleAttachPopup(
         mBinding?.ivSupport?.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
     }
 
+    /**
+     * 环境消息
+     */
+    fun setEnvNumber(envNumber: Int) {
+        this.envNumber = envNumber
+        mBinding?.tvEnvNumber?.text = "$envNumber"
+        mBinding?.tvEnvNumber?.visibility = if ((envNumber) > 0) View.VISIBLE else View.GONE
+        mBinding?.ivEnv?.visibility = if (envNumber > 0) View.VISIBLE else View.GONE
+    }
+
     override fun beforeShow() {
         super.beforeShow()
         mBinding?.tvCalendarNumber?.text = "$calendarNumber"
         mBinding?.tvCalendarNumber?.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
         mBinding?.ivCalendar?.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+
+        mBinding?.tvSupportNumber?.text = "$easeNumber"
         mBinding?.tvSupportNumber?.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
         mBinding?.ivSupport?.visibility = if ((easeNumber ?: 0) > 0) View.VISIBLE else View.GONE
+
+        mBinding?.tvEnvNumber?.text = "$envNumber"
+        mBinding?.tvEnvNumber?.visibility = if ((envNumber ?: 0) > 0) View.VISIBLE else View.GONE
+        mBinding?.ivEnv?.visibility = if ((envNumber ?: 0) > 0) View.VISIBLE else View.GONE
     }
 
     private var mBinding: BaseCustomBubbleAttachPopupBinding? = null
@@ -57,6 +74,12 @@ class CustomBubbleAttachPopup(
             tvCalendarNumber.text = "$calendarNumber"
             tvCalendarNumber.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
             ivCalendar.visibility = if ((calendarNumber ?: 0) > 0) View.VISIBLE else View.GONE
+
+
+            tvEnvNumber.text = "$envNumber"
+            tvEnvNumber.visibility = if ((envNumber ?: 0) > 0) View.VISIBLE else View.GONE
+            ivEnv.visibility = if ((envNumber ?: 0) > 0) View.VISIBLE else View.GONE
+
 
 
             clRoot.setOnClickListener {

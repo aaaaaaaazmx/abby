@@ -61,13 +61,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tv_title" />
 
+
         <TextView
-            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="11sp"
-            android:text="@{String.valueOf(viewModel.getHomePageNumber.data.calendarMsgCount)}"
+            android:text="@{String.valueOf(viewModel.getHomePageNumber.data.calendarLowMsgCount)}"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/red_bg"
+            app:layout_constraintCircle="@id/iv_calendar"
+            app:layout_constraintCircleAngle="50"
+            app:layout_constraintCircleRadius="20dp" />
+
+        <TextView
+            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:text="@{String.valueOf(viewModel.getHomePageNumber.data.calendarHighMsgCount)}"
             android:id="@+id/vv_calendar_number"
             android:layout_width="wrap_content"
             android:layout_height="17dp"
@@ -481,13 +496,14 @@ Day1" />
                     app:layout_constraintStart_toEndOf="@+id/iv_temperature_bg"
                     app:layout_constraintTop_toTopOf="@+id/iv_temperature_bg" />
 
-                <ImageView
+                <TextView
+                    android:text="@{String.valueOf(viewModel.plantInfo.data.environmentCount)}"
                     android:id="@+id/iv_health"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="17dp"
                     android:layout_marginEnd="12dp"
-                    android:background="@mipmap/home_plant_indicator_light"
-                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.plantInfo.data.healthStatus == "Ideal" ? View.GONE : View.VISIBLE : View.GONE}'
+                    android:background="@drawable/red_bg"
+                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.plantInfo.data.environmentCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />

@@ -1,95 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:paddingEnd="12dp"
         android:id="@+id/cl_root"
-        tools:ignore="MissingConstraints"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/background_red_r8"
-        android:layout_height="wrap_content">
+        android:paddingEnd="12dp"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/iv_env"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@mipmap/base_env_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_env_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_env"
+            app:layout_constraintStart_toEndOf="@+id/iv_env"
+            app:layout_constraintTop_toTopOf="@+id/iv_env"
+            tools:text="122" />
+
 
         <ImageView
             android:id="@+id/iv_calendar"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="12dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@mipmap/base_calendar_bg"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@mipmap/base_calendar_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_env_number"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_calendar_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_calendar"
-            app:layout_constraintTop_toTopOf="@+id/iv_calendar"
             app:layout_constraintStart_toEndOf="@+id/iv_calendar"
-            tools:text="122"
-            android:textColor="@color/white"
-            android:textSize="13sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintTop_toTopOf="@+id/iv_calendar"
+            tools:text="122" />
 
         <ImageView
-            app:layout_constraintStart_toEndOf="@+id/tv_calendar_number"
             android:id="@+id/iv_support"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@mipmap/base_support_bg"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@mipmap/base_support_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_calendar_number"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/tv_support_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_support"
-            app:layout_constraintTop_toTopOf="@+id/iv_support"
-            app:layout_constraintStart_toEndOf="@+id/iv_support"
-            tools:text="122"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintBottom_toBottomOf="@+id/iv_support"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_support"
+            app:layout_constraintTop_toTopOf="@+id/iv_support"
+            tools:text="122" />
 
 
         <ImageView
-            android:visibility="gone"
-            app:layout_constraintStart_toEndOf="@+id/tv_support_number"
             android:id="@+id/iv_collage"
-            android:layout_marginStart="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@mipmap/base_college_bg"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@mipmap/base_college_bg"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_support_number"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_collage"
-            app:layout_constraintTop_toTopOf="@+id/iv_collage"
-            app:layout_constraintStart_toEndOf="@+id/iv_collage"
-            tools:text="122"
             android:textColor="@color/white"
             android:textSize="13sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_collage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iv_collage"
+            app:layout_constraintTop_toTopOf="@+id/iv_collage"
+            tools:text="122" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -224,7 +224,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarMsgCount
+                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarHighMsgCount
                             ?: 0) > 0
                     ) {
                         if (!itemView.contains(badgeView)) {
@@ -263,7 +263,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         }
                         // 环信消息
                     } else if ((mViewModel.unReadMessageNumber.value
-                            ?: 0) == 0 && (data?.calendarMsgCount
+                            ?: 0) == 0 && (data?.calendarHighMsgCount
                             ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
                     ) {
                         if (itemView.contains(badgeView)) {
@@ -272,7 +272,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             if (bubblePop.isShow) bubblePop.dismiss()
                         }
                     }
-                    data?.calendarMsgCount?.let { asPop.setCalendarNumbers(it) }
+                    data?.calendarHighMsgCount?.let { asPop.setCalendarNumbers(it) }
 
                     // 选中其他TAb的时候、请求这个接口、弹出弹窗、然后在10秒内隐藏。
                     if (mIndex != 0) {
@@ -290,7 +290,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             plantInfoLoop.observe(this@MainActivity, resourceObserver {
                 success {
                     if (null == data) return@success
-                    logI("1231231231plantInfoLoopplantInfoLoopplantInfoLoop")
+                    // 设置环境数量
+                    data?.environmentCount?.let { asPop.setEnvNumber(it) }
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
@@ -305,7 +306,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         // 表示健康的
                         // 需要判断上面的消息还有没有没有的话那就直接消除
                         val easeMessage = mViewModel.unReadMessageNumber.value
-                        val calendarMessage = mViewModel.getHomePageNumber.value?.data?.calendarMsgCount
+                        val calendarMessage = mViewModel.getHomePageNumber.value?.data?.calendarHighMsgCount
                         val acadeMessage = mViewModel.getHomePageNumber.value?.data?.academyMsgCount
                         if (easeMessage == 0 && calendarMessage == 0 && acadeMessage == 0) {
                             if (itemView.contains(badgeView)) {

@@ -4,5 +4,6 @@ import com.cl.common_base.BaseBean
 
 data class HomePageNumberData(
     var academyMsgCount: Int? = null,
-    var calendarMsgCount: Int? = null,
+    var calendarHighMsgCount: Int? = null,
+    var calendarLowMsgCount: Int? = null,
 ) : BaseBean()
