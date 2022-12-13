@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.databinding.DataBindingUtil
@@ -61,7 +62,7 @@ class StrainNamePop(
             }
 
             strainName.setOnEditorActionListener { v, actionId, event ->
-                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || actionId == EditorInfo.IME_ACTION_NEXT || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER) {
                     SoftInputUtils.hideSoftInput(context as Activity, strainName)
                     // 输入范围为1～24字节
                     if (getTextLength(strainName.text.toString()) < 1 || getTextLength(strainName.text.toString()) > 24) {
@@ -157,32 +158,43 @@ class StrainNamePop(
     private suspend fun getStrainNameList(txt: String): MutableList<String> {
         val mutableList = mutableListOf<String>()
         service.getStrainName(txt).map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code, it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }.flowOn(Dispatchers.IO).onStart {
-                emit(Resource.Loading())
-            }.catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1, "$it"
-                    )
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
                 )
-            }.collectLatest {
-                logI(it.toString())
-                it.data?.let { it1 -> mutableList.addAll(it1) }
+            } else {
+                Resource.Success(it.data)
             }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            logI(it.toString())
+            it.data?.let { it1 -> mutableList.addAll(it1) }
+        }
         return mutableList
     }
 
     // 更新界面
     private fun updateUi(it: List<String>) {
         searchAdapter.setList(it)
+//        if (it.size > 1) {
+//            binding?.nes?.post {
+//                //滚到底部
+//                binding?.nes?.fullScroll(View.FOCUS_DOWN)
+//            }
+//        }
+//        SoftInputUtils.showSoftInput(context as Activity, binding?.strainName)
+//        binding?.strainName?.isFocusable = true
+//        binding?.strainName?.isFocusableInTouchMode = true
+//        binding?.strainName?.requestFocus()
+//        binding?.strainName?.setSelection(binding?.strainName?.text?.length ?: 0)
     }
 
     // 访问网络进行搜索

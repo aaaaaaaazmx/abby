@@ -301,7 +301,8 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                                 // 种植属性
                                 mViewModel.upPlantInfoReq.value?.attribute = attribute
                                 XPopup.Builder(this@MyCloneAndReplantActivity)
-                                    .maxHeight(dp2px(600))
+                                    .maxHeight(dp2px(700))
+                                    .maxWidth(dp2px(700))
                                     .enableDrag(false)
                                     .moveUpToKeyboard(false)
                                     .dismissOnTouchOutside(false)
