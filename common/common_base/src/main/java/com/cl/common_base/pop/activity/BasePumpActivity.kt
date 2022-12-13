@@ -167,7 +167,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                             theme
                         )
                     } else {
-                        ViewUtils.setGone(cbBg)
+                        // ViewUtils.setGone(cbBg)
                         animation.cancel()
                         resources.getDrawable(R.mipmap.base_suspend_bg, theme)
                     }
@@ -310,7 +310,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                                 }
                                 binding.waterPop.btnSuccess.background =
                                     if ((value as? Boolean != true)) {
-                                        ViewUtils.setGone(binding.waterPop.cbBg)
+                                        //  ViewUtils.setGone(binding.waterPop.cbBg)
                                         animation.cancel()
                                         resources.getDrawable(
                                             R.mipmap.base_start_bg,
@@ -463,23 +463,32 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 1 -> {
                     animation.cancel()
                     ViewUtils.setVisible(ivWaterOne)
-                    ViewUtils.setGone(ivWaterTwo, ivWaterThree)
+                    // ViewUtils.setGone(ivWaterTwo, ivWaterThree)
                     ivWaterOne.animation = animation
                     animation.start()
                 }
                 2 -> {
                     animation.cancel()
-                    ViewUtils.setVisible(ivWaterOne, ivWaterTwo)
-                    ViewUtils.setGone(ivWaterThree)
+                    ViewUtils.setVisible(ivWaterTwo)
+                    // ViewUtils.setGone(ivWaterThree)
                     ivWaterOne.animation = null
                     ivWaterTwo.animation = animation
                     animation.start()
                 }
-                else -> {
+                3 -> {
                     animation.cancel()
-                    ViewUtils.setVisible(ivWaterOne, ivWaterTwo, ivWaterThree)
+                    ViewUtils.setVisible(ivWaterThree)
+                    // ViewUtils.setVisible(ivWaterOne, ivWaterTwo, ivWaterThree)
                     ivWaterOne.animation = null
                     ivWaterTwo.animation = null
+                    ivWaterThree.animation = animation
+                    animation.start()
+                }
+                else -> {
+                    animation.cancel()
+                    ViewUtils.setGone(ivWaterThree)
+                    ViewUtils.setVisible(ivWaterThree)
+                    ivWaterThree.animation = null
                     ivWaterThree.animation = animation
                     animation.start()
                 }
