@@ -160,8 +160,8 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                     // 第一帧显示的图
                     val url = item.value?.url
                     helper.getView<SampleCoverVideo>(R.id.video_item_player).apply {
-                        // loadCoverImage(url, R.mipmap.placeholder)
-                        // setUp(url, true, null, null, item.value?.title)
+                         loadCoverImage(url, R.mipmap.placeholder)
+                         setUp(url, true, null, null, item.value?.title)
                         // 暂停状态下显示封面
                         isShowPauseCover = true
                         seekOnStart = item.videoPosition ?: 0L
