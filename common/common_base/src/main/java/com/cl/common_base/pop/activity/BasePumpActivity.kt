@@ -463,22 +463,20 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 1 -> {
                     animation.cancel()
                     ViewUtils.setVisible(ivWaterOne)
-                    // ViewUtils.setGone(ivWaterTwo, ivWaterThree)
+                    ViewUtils.setGone(ivWaterTwo, ivWaterThree)
                     ivWaterOne.animation = animation
                     animation.start()
                 }
                 2 -> {
                     animation.cancel()
-                    ViewUtils.setVisible(ivWaterTwo)
-                    // ViewUtils.setGone(ivWaterThree)
-                    ivWaterOne.animation = null
+                    ViewUtils.setVisible(ivWaterOne, ivWaterTwo)
+                    ViewUtils.setGone(ivWaterThree)
                     ivWaterTwo.animation = animation
                     animation.start()
                 }
                 3 -> {
                     animation.cancel()
                     ViewUtils.setVisible(ivWaterThree)
-                    // ViewUtils.setVisible(ivWaterOne, ivWaterTwo, ivWaterThree)
                     ivWaterOne.animation = null
                     ivWaterTwo.animation = null
                     ivWaterThree.animation = animation
@@ -487,7 +485,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 else -> {
                     animation.cancel()
                     ViewUtils.setGone(ivWaterThree)
-                    ViewUtils.setVisible(ivWaterThree)
+                    ViewUtils.setVisible(ivWaterOne, ivWaterTwo, ivWaterThree)
                     ivWaterThree.animation = null
                     ivWaterThree.animation = animation
                     animation.start()
