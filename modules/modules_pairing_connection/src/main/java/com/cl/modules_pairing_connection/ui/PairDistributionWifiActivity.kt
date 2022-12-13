@@ -243,18 +243,25 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
         // 跳转wifi设置界面
         binding.tvWifiName.setOnClickListener {
-            val i = Intent()
+            kotlin.runCatching {
+                val wifiSettingsIntent = Intent("android.settings.WIFI_SETTINGS")
+                startActivity(wifiSettingsIntent)
+            }.onFailure {
+                ToastUtil.shortShow("Please switch wifi manually")
+            }
+
+            /*val i = Intent()
             if (Build.VERSION.SDK_INT >= 11) {
                 //Honeycomb
                 i.setClassName(
                     "com.android.settings",
-                    "com.android.settings.Settings\$WifiSettingsActivity"
+                    "com.android.settings.Settings\$·"
                 )
             } else {
                 //other versions
                 i.setClassName("com.android.settings", "com.android.settings.wifi.WifiSettings")
             }
-            startActivity(i)
+            startActivity(i)*/
         }
     }
 
