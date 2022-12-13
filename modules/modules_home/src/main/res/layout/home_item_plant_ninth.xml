@@ -93,6 +93,57 @@
                 android:layout_height="459dp"
                 android:background="@mipmap/home_plant_three_bg" />
 
+            <ImageView
+                android:id="@+id/iv_water_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8.5dp"
+                android:alpha="0.15"
+                android:background="@mipmap/home_max_water"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_bowl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@mipmap/home_week_twelve"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintCircle="@+id/iv_bowl"
+                app:layout_constraintCircleAngle="40"
+                app:layout_constraintCircleRadius="135dp"
+                android:background="@mipmap/home_plant_zzz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/iv_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:background="@mipmap/home_plant_ninth_dialog_bg"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@mipmap/home_plant_three_night_bg"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
             <com.cl.common_base.widget.SvTextView
                 android:id="@+id/tv_feef"
                 android:layout_width="42dp"
@@ -164,62 +215,11 @@
                 app:svSolidColor="@color/white"
                 app:svSolidType="solid" />
 
-            <ImageView
-                android:id="@+id/iv_water_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8.5dp"
-                android:alpha="0.15"
-                android:background="@mipmap/home_max_water"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <ImageView
-                android:id="@+id/iv_bowl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@mipmap/home_week_one"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <ImageView
-                android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
-                app:layout_constraintCircle="@+id/iv_bowl"
-                app:layout_constraintCircleAngle="25"
-                app:layout_constraintCircleRadius="95dp"
-                android:background="@mipmap/home_plant_zzz"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <ImageView
-                android:id="@+id/iv_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:background="@mipmap/home_plant_ninth_dialog_bg"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <ImageView
-                android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:background="@mipmap/home_plant_three_night_bg"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"/>
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_continue"
                 android:layout_width="261dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="22dp"
+                android:layout_marginBottom="42dp"
                 android:orientation="vertical"
                 android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
