@@ -79,7 +79,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         // mViewMode.getRichText(txtId = "c3eeb4d2f1332f4869erwqfa912557ae")
         mViewMode.getRichText(txtId = txtId, type = txtType)
         // 学院任务一进来就已读。
-        when(txtType) {
+        when (txtType) {
             CalendarData.TASK_TYPE_TEST -> {
                 mViewMode.finishTask(FinishTaskReq(taskId = taskId))
             }
@@ -204,7 +204,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                             // GSYVideoManager.onPause()
                             // 释放全部
                             GSYVideoManager.releaseAllVideos()
-                            // adapter.notifyItemChanged(position)
+                            adapter.notifyItemChanged(position)
                         }
                     }
                 }

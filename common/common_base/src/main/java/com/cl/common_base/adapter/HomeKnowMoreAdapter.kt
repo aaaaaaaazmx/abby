@@ -156,21 +156,26 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
 
             // 视频播放器设置
             RichTextData.KEY_TYPE_VIDEO -> {
-                if (item.videoTag) {
+                /*if (item.videoTag) {
                     // 第一帧显示的图
                     val url = item.value?.url
                     helper.getView<SampleCoverVideo>(R.id.video_item_player).apply {
-                         loadCoverImage(url, R.mipmap.placeholder)
-                         setUp(url, true, null, null, item.value?.title)
+                        loadCoverImage(url, R.mipmap.placeholder)
+                        setUp(url, true, null, null, item.value?.title)
                         // 暂停状态下显示封面
                         isShowPauseCover = true
                         seekOnStart = item.videoPosition ?: 0L
                     }
                     return
-                }
+                }*/
                 helper.getView<SampleCoverVideo>(R.id.video_item_player).apply {
                     item.videoTag = true
-                    item.value?.url?.let { videoUiHelp(it, helper.layoutPosition) }
+                    item.value?.url?.let {
+                        videoUiHelp(it, helper.layoutPosition)
+                        // 暂停状态下显示封面
+                        isShowPauseCover = true
+                        seekOnStart = item.videoPosition ?: 0L
+                    }
                 }
             }
 
