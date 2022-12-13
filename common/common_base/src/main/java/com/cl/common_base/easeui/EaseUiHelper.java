@@ -195,7 +195,12 @@ public class EaseUiHelper {
                         // 默认显示用户头像
                         String string = Prefs.INSTANCE.getString(Constants.Login.KEY_USER_INFO, "");
                         UserinfoBean.BasicUserBean basicUserBean = GSON.parseObject(string, UserinfoBean.BasicUserBean.class);
-                        Glide.with(context).load(basicUserBean.getAvatarPicture()).apply(RequestOptions.placeholderOf(R.mipmap.head).diskCacheStrategy(DiskCacheStrategy.ALL).bitmapTransform(new CircleCrop())).into(userAvatarView);
+                        if (null == basicUserBean) {
+                            // 如果用户头像未null、那么就直接用系统头像
+                            userAvatarView.setImageResource(R.mipmap.head);
+                        } else {
+                            Glide.with(context).load(basicUserBean.getAvatarPicture()).apply(RequestOptions.placeholderOf(R.mipmap.head).diskCacheStrategy(DiskCacheStrategy.ALL).bitmapTransform(new CircleCrop())).into(userAvatarView);
+                        }
                     }
                 }
             }
