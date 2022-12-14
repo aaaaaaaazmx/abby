@@ -291,7 +291,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 success {
                     if (null == data) return@success
                     // 设置环境数量
-                    data?.environmentCount?.let { asPop.setEnvNumber(it) }
+                    data?.environmentHighCount?.let { asPop.setEnvNumber(it) }
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
