@@ -77,7 +77,7 @@
     <string name="my_hint_strain_name">eg. OG Kush..</string>
     <string name="my_strain_how">Have no idea about the strain?</string>
     <string name="my_not_know">I don’t know</string>
-    <string name="base_pump_start_desc">Abby will pause for every 1 gallon of water drained in case of overflow.</string>
+    <string name="base_pump_start_desc">Abby will pause for every %s of water drained in case of overflow.</string>
     <string name="base_pump_stop_dec">Click to resume draining</string>
     <string name="base_pump_auto_start_desc">Make sure there is enough space for drainage and resume draining</string>
     <string name="strain_name_desc">Please enter a strain name within 24 bytes</string>

@@ -80,6 +80,14 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
+    /**
+     * 是否是英制
+     */
+    private val isFractional by lazy {
+        val iss = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        iss
+    }
+
 
     /**
      * 排水界面视图适配器
@@ -172,8 +180,9 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                         resources.getDrawable(R.mipmap.base_suspend_bg, theme)
                     }
 
+
                     tvAddClockTime.text =
-                        if (btnSuccess.isChecked) getString(R.string.base_pump_start_desc)
+                        if (btnSuccess.isChecked) String.format(getString(R.string.base_pump_start_desc), if (isFractional) "1 gallon" else "4L")
                         else getString(R.string.base_pump_stop_dec)
                 }
             }
@@ -328,14 +337,14 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                                     if (value == false) {
                                         binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_auto_start_desc)
                                     } else {
-                                        binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_start_desc)
+                                        binding.waterPop.tvAddClockTime.text = String.format(getString(R.string.base_pump_start_desc), if (isFractional) "1 gallon" else "4L")
                                     }
                                 } else {
                                     // 暂停
                                     if (value == false) {
                                         binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_stop_dec)
                                     } else {
-                                        binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_start_desc)
+                                        binding.waterPop.tvAddClockTime.text = String.format(getString(R.string.base_pump_start_desc), if (isFractional) "1 gallon" else "4L")
                                     }
                                 }
                                 binding.waterPop.btnSuccess.isChecked = value as Boolean

@@ -5,6 +5,8 @@ import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomePlantTwoPopBinding
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.util.Prefs
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
@@ -19,6 +21,12 @@ class HomePlantTwoPop(
     CompoundButton.OnCheckedChangeListener {
     override fun getImplLayoutId(): Int {
         return R.layout.home_plant_two_pop
+    }
+
+    override fun beforeShow() {
+        super.beforeShow()
+        val isF = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        binding?.tvAddWater?.text = if (isF) "At least 3 gallons of pure water"  else "At least 12L of pure water"
     }
 
     private var binding: HomePlantTwoPopBinding? = null

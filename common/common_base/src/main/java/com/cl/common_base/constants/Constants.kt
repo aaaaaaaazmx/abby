@@ -79,6 +79,7 @@ object Constants {
 
     // 我的界面相关
     object My {
+        // 公英制
         const val KEY_MY_WEIGHT_UNIT = "key_my_weight_unit"
     }
 
