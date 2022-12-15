@@ -227,6 +227,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                     val intent = Intent(this@SettingActivity, WebActivity::class.java)
                                     intent.putExtra(WebActivity.KEY_WEB_URL, data?.url)
                                     startActivity(intent)
+                                    // 点了之后就弹这个
+                                    rePlantPop.show()
                                 },
                                 onCancelAction = {
                                     rePlantPop.show()
