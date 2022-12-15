@@ -6,15 +6,14 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants.Global.KEY_IS_CHOOSE_CLONE
 import com.cl.common_base.constants.Constants.Global.KEY_IS_CHOOSE_SEED
+import com.cl.common_base.constants.Constants.Global.KEY_IS_SHOW_CHOOSER_TIPS
 import com.cl.common_base.constants.Constants.Global.KEY_PLANT_ID
 import com.cl.common_base.constants.Constants.Global.KEY_REFRESH_PLANT_INFO
 import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_ATTRIBUTE
 import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_STRAIN_NAME
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.pop.BasePlantUsuallyGuidePop
-import com.cl.common_base.pop.ChooserSeedPop
-import com.cl.common_base.pop.StrainNamePop
+import com.cl.common_base.pop.*
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyCloneAndReplantBinding
@@ -48,6 +47,14 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
         intent.getBooleanExtra(KEY_USER_NO_ATTRIBUTE, false)
     }
 
+    /**
+     * 是否优先弹出选择tips框
+     * 默认优先弹出的。
+     */
+    private val isShowChooserTips by lazy {
+        intent.getBooleanExtra(KEY_IS_SHOW_CHOOSER_TIPS, false)
+    }
+
     private val plantId by lazy {
         intent.getStringExtra(KEY_PLANT_ID)
     }
@@ -68,10 +75,44 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
         )
     }
 
+    private val chooserTipsPop by lazy {
+        ChooserTipsPop(
+            this@MyCloneAndReplantActivity,
+            onConfirmAction = {
+                XPopup.Builder(this@MyCloneAndReplantActivity)
+                    .isDestroyOnDismiss(false)
+                    .enableDrag(false)
+                    .moveUpToKeyboard(false)
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        chooseSeedOrClonePop
+                    ).show()
+            },
+            onLearnMoreAction = {
+                // todo 跳转post
+            },
+            onNotReadAction = {
+                // todo 跳转post
+            },
+            onCancelAction = {
+                finish()
+            }
+        )
+    }
+
+    private val chooseSeedOrClonePop by lazy {
+        ChooserSeedOrClonePop(
+            this@MyCloneAndReplantActivity,
+            onConfirmAction = { cloneCheck ->
+                // 进行下一步操作
+                startCloneOrSeed(cloneCheck, !cloneCheck)
+            }
+        )
+    }
 
     override fun initView() {
-        // 如果是没名字、没属性那么直接隐藏
-        ViewUtils.setGone(binding.llSeed, isNoAttribute || isNoStrainName)
+        // 如果是没名字、没属性、tips那么直接隐藏
+        ViewUtils.setGone(binding.llSeed, isNoAttribute || isNoStrainName || isShowChooserTips)
 
         binding.title.setLeftClickListener {
             setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, false))
@@ -82,6 +123,17 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
             kotlin.runCatching {
                 mViewModel.upPlantInfoReq.value?.id = it.toInt()
             }
+        }
+        // 没有tips弹窗
+        if (isShowChooserTips) {
+            XPopup.Builder(this@MyCloneAndReplantActivity)
+                .isDestroyOnDismiss(false)
+                .enableDrag(false)
+                .moveUpToKeyboard(false)
+                .dismissOnTouchOutside(false)
+                .asCustom(
+                    chooserTipsPop
+                ).show()
         }
 
         // 没有属性
@@ -225,7 +277,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
     }
 
     override fun initData() {
-        binding.checkClone.setOnCheckedChangeListener { _, b ->
+        /*binding.checkClone.setOnCheckedChangeListener { _, b ->
             if (binding.checkSeed.isChecked) {
                 binding.checkSeed.isChecked = !b
             }
@@ -239,93 +291,102 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
             }
             binding.btnSuccess.isEnabled =
                 binding.checkClone.isChecked || binding.checkSeed.isChecked
-        }
+        }*/
 
         binding.btnSuccess.setOnClickListener {
             // 具体执行哪一步
             val cloneCheck = binding.checkClone.isChecked
             val seedCheck = binding.checkSeed.isChecked
 
-            // 种植方式
-            mViewModel.upPlantInfoReq.value?.plantWay = if (cloneCheck) KEY_CLONE else KEY_SEED
+            startCloneOrSeed(cloneCheck, seedCheck)
+        }
+    }
 
-            // 继承植物
-            if (cloneCheck) {
-                XPopup.Builder(this@MyCloneAndReplantActivity)
-                    .maxHeight(dp2px(700))
-                    .maxWidth(dp2px(700))
-                    .enableDrag(false)
-                    .moveUpToKeyboard(false)
-                    .dismissOnTouchOutside(false)
-                    .isDestroyOnDismiss(false).asCustom(
-                        // 填入Strain名字弹擦混改
-                        StrainNamePop(
-                            this@MyCloneAndReplantActivity,
-                            onConfirmAction = { name ->
-                                mViewModel.upPlantInfoReq.value?.strainName = name
-                                // 这个时候上报一次，然后弹出通用图文弹窗
-                                mViewModel.upPlantInfoReq.value?.let { req ->
-                                    mViewModel.updatePlantInfo(
-                                        req
-                                    )
-                                }
-                                setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, true))
-                                finish()
-                            }, onCancelAction = {
-                                // 如果是直接弹窗的，也就是老用户，但是没输入名字 或者没有属性名
-                                if (isNoAttribute || isNoStrainName) {
-                                    setResultForRefreshPlantInfo()
-                                }
-                            }, isNoStrainName = isNoStrainName
-                        )
-                    ).show()
-                return@setOnClickListener
-            }
+    private fun startCloneOrSeed(cloneCheck: Boolean, seedCheck: Boolean) {
+        // 隐藏弹窗
+        if (chooserTipsPop.isShow) chooserTipsPop.dismiss()
 
-            // 种子
-            if (seedCheck) {
-                // todo 走的是新的逻辑
-                // 选择的是种子阶段
-                XPopup.Builder(this@MyCloneAndReplantActivity)
-                    .isDestroyOnDismiss(false)
-                    .maxHeight(dp2px(600))
-                    .enableDrag(false)
-                    .moveUpToKeyboard(false)
-                    .dismissOnTouchOutside(false).asCustom(
-                        // 选择photo、seed弹擦混改
-                        ChooserSeedPop(
-                            this@MyCloneAndReplantActivity,
-                            onConfirmAction = { attribute ->
-                                // 点击确定之后的跳转
-                                // 跳转到Strain名字填写弹窗
-                                // 种植属性
-                                mViewModel.upPlantInfoReq.value?.attribute = attribute
-                                XPopup.Builder(this@MyCloneAndReplantActivity)
-                                    .maxHeight(dp2px(700))
-                                    .maxWidth(dp2px(700))
-                                    .enableDrag(false)
-                                    .moveUpToKeyboard(false)
-                                    .dismissOnTouchOutside(false)
-                                    .isDestroyOnDismiss(false).asCustom(
-                                        // 填入Strain名字弹擦混改
-                                        StrainNamePop(
-                                            this@MyCloneAndReplantActivity,
-                                            onConfirmAction = { name ->
-                                                // 弹出通用图文弹窗
-                                                // 传入数字8
-                                                mViewModel.upPlantInfoReq.value?.strainName = name
-                                                // 这个时候上报一次，然后弹出通用图文弹窗
-                                                mViewModel.upPlantInfoReq.value?.let { req ->
-                                                    mViewModel.updatePlantInfo(
-                                                        req
-                                                    )
-                                                }
-                                            })
-                                    ).show()
-                            })
-                    ).show()
-            }
+        // 种植方式
+        mViewModel.upPlantInfoReq.value?.plantWay = if (cloneCheck) KEY_CLONE else KEY_SEED
 
+        // 继承植物
+        if (cloneCheck) {
+            XPopup.Builder(this@MyCloneAndReplantActivity)
+                .maxHeight(dp2px(700))
+                .maxWidth(dp2px(700))
+                .enableDrag(false)
+                .moveUpToKeyboard(false)
+                .dismissOnTouchOutside(false)
+                .isDestroyOnDismiss(false).asCustom(
+                    // 填入Strain名字弹擦混改
+                    StrainNamePop(
+                        this@MyCloneAndReplantActivity,
+                        onConfirmAction = { name ->
+                            mViewModel.upPlantInfoReq.value?.strainName = name
+                            // 这个时候上报一次，然后弹出通用图文弹窗
+                            mViewModel.upPlantInfoReq.value?.let { req ->
+                                mViewModel.updatePlantInfo(
+                                    req
+                                )
+                            }
+                            setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_CLONE, true))
+                            finish()
+                        }, onCancelAction = {
+                            // 如果是直接弹窗的，也就是老用户，但是没输入名字 或者没有属性名
+                            if (!isNoAttribute || !isNoStrainName) {
+                                setResultForRefreshPlantInfo()
+                            }
+                        }, isNoStrainName = isNoStrainName
+                    )
+                ).show()
+            return
+        }
+
+        // 种子
+        if (seedCheck) {
+            // todo 走的是新的逻辑
+            // 选择的是种子阶段
+            XPopup.Builder(this@MyCloneAndReplantActivity)
+                .isDestroyOnDismiss(false)
+                .maxHeight(dp2px(600))
+                .enableDrag(false)
+                .moveUpToKeyboard(false)
+                .dismissOnTouchOutside(false).asCustom(
+                    // 选择photo、seed弹擦混改
+                    ChooserSeedPop(
+                        this@MyCloneAndReplantActivity,
+                        onConfirmAction = { attribute ->
+                            // 点击确定之后的跳转
+                            // 跳转到Strain名字填写弹窗
+                            // 种植属性
+                            mViewModel.upPlantInfoReq.value?.attribute = attribute
+                            XPopup.Builder(this@MyCloneAndReplantActivity)
+                                .maxHeight(dp2px(700))
+                                .maxWidth(dp2px(700))
+                                .enableDrag(false)
+                                .moveUpToKeyboard(false)
+                                .dismissOnTouchOutside(false)
+                                .isDestroyOnDismiss(false).asCustom(
+                                    // 填入Strain名字弹擦混改
+                                    StrainNamePop(
+                                        this@MyCloneAndReplantActivity,
+                                        onConfirmAction = { name ->
+                                            // 弹出通用图文弹窗
+                                            // 传入数字8
+                                            mViewModel.upPlantInfoReq.value?.strainName = name
+                                            // 这个时候上报一次，然后弹出通用图文弹窗
+                                            mViewModel.upPlantInfoReq.value?.let { req ->
+                                                mViewModel.updatePlantInfo(
+                                                    req
+                                                )
+                                            }
+                                        })
+                                ).show()
+                        },
+                        onCancelAction = {
+                            finish()
+                        })
+                ).show()
         }
     }
 

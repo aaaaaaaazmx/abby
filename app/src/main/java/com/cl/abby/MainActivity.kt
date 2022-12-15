@@ -2,7 +2,6 @@ package com.cl.abby
 
 import android.content.Intent
 import android.graphics.Color
-import android.media.midi.MidiDevice
 import android.os.Bundle
 import android.os.Handler
 import android.view.KeyEvent
@@ -24,11 +23,9 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.showToast
 import com.cl.common_base.pop.CustomBubbleAttachPopup
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_home.viewmodel.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.hyphenate.chat.ChatClient
@@ -41,7 +38,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
 import javax.inject.Inject
-import kotlin.math.min
 
 
 /**
@@ -111,15 +107,28 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewModel.setIsPlants(plantFlag != "0")
     }
 
-    private val bubblePop by lazy {
+    /**
+     *
+     */
+    private val bubblePopHor by lazy {
+        // 居中显示
         XPopup.Builder(this@MainActivity).isCenterHorizontal(true).popupPosition(PopupPosition.Top)
+            .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
+            .hasShadowBg(false) // 去掉半透明背景
+            //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+            .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
+    }
+
+    private val bubblePopNoHor by lazy {
+        // 不居中显示
+        XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
             .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
             .atView(
                 (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
                     0
                 )
             ).hasShadowBg(false) // 去掉半透明背景
-            //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+            .offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
             .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
                 asPop
             )
@@ -234,23 +243,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         // 不是第0个的时候才显示弹窗、不然只显示下面的小红点
                         if (mIndex != 0) {
                             // 弹窗
-                            if (!bubblePop.isShow && Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                                bubblePop.show()
-                                /*   if ((data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0)) {
-
-                                   } else {
-                                       XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
-                                           .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
-                                           .atView(
-                                               (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
-                                                   0
-                                               )
-                                           ).hasShadowBg(false) // 去掉半透明背景
-                                           .offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
-                                           .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
-                                               asPop
-                                           ).show()
-                                   }*/
+                            if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
+                                if (data?.calendarHighMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0 && mViewModel.plantInfoLoop.value?.data?.environmentHighCount != 0) {
+                                    // 三个及其以上会变形
+                                    // 所以不居中显示
+                                    bubblePopHor.atView(
+                                        (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
+                                    ).isCenterHorizontal(false).asCustom(asPop).show()
+                                } else {
+                                    bubblePopHor.atView(
+                                        (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
+                                    ).isCenterHorizontal(true).asCustom(asPop).show()
+                                }
                             }
                             // 不再显示气泡
                             Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
@@ -284,7 +288,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         if (itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.removeView(badgeView)
-                            if (bubblePop.isShow) bubblePop.dismiss()
+                            if (asPop.isShow) asPop.dismiss()
                         }
                     }
                     data?.calendarHighMsgCount?.let { asPop.setCalendarNumbers(it) }
@@ -292,9 +296,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     // 选中其他TAb的时候、请求这个接口、弹出弹窗、然后在10秒内隐藏。
                     if (mIndex != 0) {
                         // 判断当前的气泡是否弹出
-                        if (bubblePop.isShow) {
+                        if (asPop.isShow) {
                             Handler().postDelayed({
-                                bubblePop.dismiss()
+                                asPop.dismiss()
                             }, 10000)
                         }
                     }
@@ -381,8 +385,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             when (it.itemId) {
                 R.id.action_home -> {
                     // 判断气泡是否弹出
-                    if (bubblePop.isShow) {
-                        bubblePop.dismiss()
+                    if (asPop.isShow) {
+                        bubblePopNoHor.dismiss()
                         Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
                     }
                     switchFragment(Constants.FragmentIndex.HOME_INDEX)

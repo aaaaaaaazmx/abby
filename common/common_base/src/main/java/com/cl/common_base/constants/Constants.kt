@@ -185,6 +185,7 @@ object Constants {
         const val KEY_USER_NO_STRAIN_NAME = "key_user_no_strain_name"
         const val KEY_USER_NO_ATTRIBUTE = "key_user_no_attribute"
         const val KEY_REFRESH_PLANT_INFO = "key_refresh_plant_info"
+        const val KEY_IS_SHOW_CHOOSER_TIPS = "key_is_show_chooser_tips"
 
         // 植物ID
         const val KEY_PLANT_ID = "key_plant_id"

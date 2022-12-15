@@ -1115,7 +1115,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         ).show()
                     } else {
                         // 需要去引导开启订阅
-                        // mViewMode.start()
+                        mViewMode.start()
                     }
                 }
             })
@@ -1570,6 +1570,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // seed or clone
                     ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
                         .withString(Constants.Global.KEY_PLANT_ID, data)
+                        .withBoolean(Constants.Global.KEY_IS_SHOW_CHOOSER_TIPS, true)
                         .navigation(activity, KEY_FOR_CLONE_RESULT)
                 }
             })

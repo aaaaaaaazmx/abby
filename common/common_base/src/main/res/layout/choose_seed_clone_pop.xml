@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_tl_tr"
+        android:orientation="vertical">
+
+        <androidx.core.widget.NestedScrollView
+            android:fillViewport="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/iv_close" />
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_marginEnd="20dp"
+                    android:textColor="#000000"
+                    android:layout_marginTop="18dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Are you starting your planting journey from a seed or clone?"
+                    android:textSize="21sp"
+                    />
+
+               <RelativeLayout
+                   android:layout_marginTop="63dp"
+                   android:orientation="horizontal"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+
+                   <CheckBox
+                       android:id="@+id/check_seed"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:background="@drawable/selector_seed"
+                       android:button="@null"
+                       android:checked="true" />
+
+                   <CheckBox
+                       android:layout_alignParentEnd="true"
+                       android:id="@+id/check_clone"
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:background="@drawable/selector_clone"
+                       android:button="@null" />
+
+               </RelativeLayout>
+
+
+
+                <Button
+                    android:id="@+id/btn_success"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="69dp"
+                    android:background="@drawable/create_state_button"
+                    android:enabled="true"
+                    android:text="@string/my_next"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</layout>
