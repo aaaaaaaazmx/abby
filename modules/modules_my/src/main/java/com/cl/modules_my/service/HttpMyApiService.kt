@@ -181,4 +181,13 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/user/topUpSubscriberNumber")
     fun topUpSubscriberNumber(@Field("subscriberNumber") subscriberNumber: String): Flow<HttpResult<Boolean>>
+
+
+    /**
+     * 充值订阅
+     */
+    @POST("abby/plant/giveUpCheck")
+    fun giveUpCheck(): Flow<HttpResult<GiveUpCheckData>>
+
+
 }

@@ -25,6 +25,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.cache.CacheUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MySettingBinding
 import com.cl.modules_my.request.ModifyUserDetailReq
@@ -208,6 +209,40 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 放弃种子检查
+            giveUpCheck.observe(this@SettingActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    if (null == data) return@success
+                    if (data?.giveUp == true) {
+                        // 弹窗
+                        pop.asCustom(
+                            BaseCenterPop(
+                                this@SettingActivity,
+                                onConfirmAction = {
+                                    val intent = Intent(this@SettingActivity, WebActivity::class.java)
+                                    intent.putExtra(WebActivity.KEY_WEB_URL, data?.url)
+                                    startActivity(intent)
+                                },
+                                onCancelAction = {
+                                    rePlantPop.show()
+                                },
+                                content = "Sorry for the bad experience you had, if you take a moment to complete the questionnaire, we can give you a month's subscription after approve.",
+                                confirmText = "OK",
+                                cancelText = "Replant",
+                            )
+
+                        ).show()
+                    } else {
+                        rePlantPop.show()
+                    }
+                }
+            })
+
             // 监听设备
             deleteDevice.observe(this@SettingActivity, resourceObserver {
                 success {
@@ -352,7 +387,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     override fun initData() {
         // 重新种植
         binding.ftReplant.setOnClickListener {
-            rePlantPop.show()
+            // 请求接口
+            mViewModel.giveUpCheck()
         }
         // 重量单位
         binding.ftWeight.setOnClickListener {

@@ -14,6 +14,7 @@ import com.lxj.xpopup.core.CenterPopupView
 class BaseCenterPop(
     context: Context,
     private val onConfirmAction: (() -> Unit)? = null,
+    private val onCancelAction: (() -> Unit)? = null,
     private val content: String? = null,
     private val confirmText: String? = context.getString(R.string.base_ok),
     private val cancelText: String? = context.getString(R.string.my_cancel),
@@ -57,7 +58,10 @@ class BaseCenterPop(
             // 是否显示和隐藏按钮
             ViewUtils.setVisible(isShowCancelButton, tvCancel, xpopupDivider2)
 
-            tvCancel.setOnClickListener { dismiss() }
+            tvCancel.setOnClickListener {
+                dismiss()
+                onCancelAction?.invoke()
+            }
             tvConfirm.setOnClickListener {
                 dismiss()
                 onConfirmAction?.invoke()

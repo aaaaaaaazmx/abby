@@ -320,6 +320,42 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
         }
     }
 
+    /**
+     * 放弃种子检查
+     */
+    private val _giveUpCheck = MutableLiveData<Resource<GiveUpCheckData>>()
+    val giveUpCheck: LiveData<Resource<GiveUpCheckData>> = _giveUpCheck
+    fun giveUpCheck() {
+        viewModelScope.launch {
+            repository.giveUpCheck()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _giveUpCheck.value = it
+                }
+        }
+    }
+
 
     // 获取SN
     fun getSn() {

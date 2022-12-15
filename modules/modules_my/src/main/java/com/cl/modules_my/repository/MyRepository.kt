@@ -164,4 +164,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
         return remoteRepository.automaticLogin(body)
     }
+
+    fun giveUpCheck(): Flow<HttpResult<GiveUpCheckData>> {
+        return remoteRepository.giveUpCheck()
+    }
 }
