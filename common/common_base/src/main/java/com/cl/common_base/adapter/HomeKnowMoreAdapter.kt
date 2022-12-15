@@ -228,23 +228,13 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
     }
 
     private fun getRealText(txt: String, isF: Boolean): String {
-        /*println("12122121: ${getAllSatisfyStr(txt, """(\[{2})[\w+:\w+\\w+,]+]]""")}")*/
         kotlin.runCatching {
-            val matching = getAllSatisfyStr(txt, """(\[{2})[\w+:\w+\-\w+,]+]]""")?.toMutableList()
+            val matching = getAllSatisfyStr(txt, """(\[\[)InchMetricMode:.*?(\]\])""")?.toMutableList()
             if (matching.isNullOrEmpty()) return txt
-            val matcherList = mutableListOf<String>()
+            val matcherList = getAllSatisfyStr(txt, """(?<=\[{2}InchMetricMode:).+?(?=]{2})""")
 
-            matching.forEach { value ->
-                val pattern: Pattern = Pattern.compile("""\w+\,\w+""")
-                val matcher: Matcher = pattern.matcher(value)
-                while (matcher.find()) {
-                    matcherList.add(matcher.group())
-                    /*println("12312312312: ${matcher.group()}")*/
-                }
-
-            }
-            if (matcherList.isEmpty()) return txt
-            if (matching.size != matcherList.size) return txt
+            if (matcherList?.isEmpty() == true) return txt
+            if (matching.size != matcherList?.size) return txt
             var text: String? = txt
             matcherList.forEachIndexed { index, value ->
                 val split = matcherList[index].split(",")
@@ -252,7 +242,8 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                     text = txt
                     return@forEachIndexed
                 }
-                text = txt.replace(matching[index], if (!isF) split[0] else split[1])
+                /*println("45454545: ${text?.replaceFirst(matching[index], if (!isF) split[0] else split[1])}")*/
+                text = text?.replaceFirst(matching[index], if (!isF) split[0] else split[1])
             }
             return text.toString()
         }.getOrElse {

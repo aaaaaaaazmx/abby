@@ -113,19 +113,12 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
         // 修改密码
         binding.btnSuccess.setOnClickListener {
             kotlin.runCatching {
-                // 用户密码不能输入字符
-                val p = Pattern.compile("[^a-zA-Z0-9]")
-                val m: Matcher = p.matcher(binding.etPassword.text.toString())
-                if (!m.matches()) {
-                    ToastUtil.shortShow("Special symbols cannot be entered")
-                    return@setOnClickListener
-                }
                 // 注册用户
                 if (isRegisterOrForget) {
                     userRegisterBean?.password = AESCipher.aesEncryptString(
                         binding.etPassword.text.toString(),
                         AESCipher.KEY
-                    )
+                     )
                     userRegisterBean?.let { bean -> mViewModel.registerAccount(bean) }
                 } else {
                     // 修改密码

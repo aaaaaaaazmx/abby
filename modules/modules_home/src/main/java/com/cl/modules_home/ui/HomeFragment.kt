@@ -1093,8 +1093,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         mViewMode.startSubscriber()
                                     },
                                     onCancelAction = {
-                                        // 需要去引导开启订阅
-                                        mViewMode.start()
                                     },
                                     spannedString =
                                     buildSpannedString {

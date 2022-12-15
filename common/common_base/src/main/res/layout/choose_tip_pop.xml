@@ -42,7 +42,8 @@
                     />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:background="@drawable/background_main_color_r10"
+                    android:padding="10dp"
+                    android:background="@mipmap/home_plant_bgbg"
                     android:id="@+id/iv_learn_more"
                     android:layout_marginTop="31dp"
                     android:layout_width="match_parent"
