@@ -205,4 +205,16 @@ interface HttpHomeApiService {
      */
     @POST("abby/base/homePage")
     fun getHomePageNumber(): Flow<HttpResult<HomePageNumberData>>
+
+    /**
+     * 开启订阅
+     */
+    @POST("abby/user/startSubscriber")
+    fun startSubscriber(): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 开启订阅
+     */
+    @POST("abby/user/checkFirstSubscriber")
+    fun checkFirstSubscriber(): Flow<HttpResult<Boolean>>
 }

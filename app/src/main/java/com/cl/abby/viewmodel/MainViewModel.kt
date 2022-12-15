@@ -572,10 +572,6 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
                         it.code, it.msg
                     )
                 } else {
-                    // 获取环信消息数量
-                    getEaseUINumber()
-                    // 获取设备环境消息
-                    plantInfoLoop()
                     Resource.Success(it.data)
                 }
             }.flowOn(Dispatchers.IO).onStart {
@@ -1056,6 +1052,10 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
      * 请求消息数量接口
      */
     fun getMessageNumber() {
+        // 获取环信消息数量
+        getEaseUINumber()
+        // 获取设备环境消息
+        plantInfoLoop()
         getHomePageNumber()
     }
 

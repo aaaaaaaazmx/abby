@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
@@ -320,7 +321,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.plantFirst.apply {
             // 跳跳转plant2
             ivStart.setOnClickListener {
-                mViewMode.start()
+                mViewMode.checkFirstSubscriber()
             }
 
         }
@@ -1071,6 +1072,67 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 检查是否是第一次激活订阅码
+            checkFirstSubscriber.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                    /*// 这个检查接口报错、那么就知道跳转到选择界面
+                    // 需要去引导开启订阅
+                    mViewMode.start()*/
+                }
+                success {
+                    hideProgressLoading()
+                    if (data == true) {
+                        pop.asCustom(
+                            context?.let {
+                                BaseCenterPop(
+                                    it,
+                                    onConfirmAction = {
+                                        // 需要去引导开启订阅
+                                        mViewMode.startSubscriber()
+                                    },
+                                    onCancelAction = {
+                                        // 需要去引导开启订阅
+                                        mViewMode.start()
+                                    },
+                                    spannedString =
+                                    buildSpannedString {
+                                        // Add the subscription to the account
+                                        // dee@baypac.com
+                                        // After the confirmation, the time of the digital service will be counted from now on
+                                        bold { append("Add the subscription to the account") }
+                                        appendLine()
+                                        color(it.getColor(com.cl.common_base.R.color.mainColor)) {
+                                            bold {
+                                                appendLine("${mViewMode.refreshToken.value?.data?.email}")
+                                            }
+                                        }
+                                        bold { append("After the confirmation, the time of the digital service will be counted from now on") }
+                                    }
+                                )
+                            }
+                        ).show()
+                    } else {
+                        // 需要去引导开启订阅
+                        // mViewMode.start()
+                    }
+                }
+            })
+
+            // 开始订阅
+            startSubscriber.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 需要去引导开启订阅
+                    mViewMode.start()
+                }
+            })
+
             // 首页循环刷新消息
             /*userDetail.observe(viewLifecycleOwner, resourceObserver {
                 success {

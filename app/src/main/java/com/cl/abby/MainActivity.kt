@@ -225,7 +225,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
                     if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarHighMsgCount
-                            ?: 0) > 0
+                            ?: 0) > 0 || (mViewModel.plantInfoLoop.value?.data?.environmentHighCount ?: 0) > 0
                     ) {
                         if (!itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
@@ -236,21 +236,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             // 弹窗
                             if (!bubblePop.isShow && Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
                                 bubblePop.show()
-                             /*   if ((data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0)) {
+                                /*   if ((data?.calendarMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0)) {
 
-                                } else {
-                                    XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
-                                        .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
-                                        .atView(
-                                            (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
-                                                0
-                                            )
-                                        ).hasShadowBg(false) // 去掉半透明背景
-                                        .offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
-                                        .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
-                                            asPop
-                                        ).show()
-                                }*/
+                                   } else {
+                                       XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
+                                           .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
+                                           .atView(
+                                               (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
+                                                   0
+                                               )
+                                           ).hasShadowBg(false) // 去掉半透明背景
+                                           .offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                                           .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
+                                               asPop
+                                           ).show()
+                                   }*/
                             }
                             // 不再显示气泡
                             Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
@@ -261,10 +261,25 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
                         }
-                        // 环信消息
-                    } else if ((mViewModel.unReadMessageNumber.value
+                    }
+                    // 低优先级环境
+                    else if ((mViewModel.plantInfoLoop.value?.data?.environmentLowCount ?: 0) > 0) {
+                        if (!itemView.contains(badgeView)) {
+                            //把badgeView添加到itemView中
+                            itemView.addView(badgeView)
+                        }
+                    }
+                    // 低优先级日历
+                    else if ((data?.calendarHighMsgCount ?: 0) > 0) {
+                        if (!itemView.contains(badgeView)) {
+                            //把badgeView添加到itemView中
+                            itemView.addView(badgeView)
+                        }
+                    }
+                    // 环信消息、日历、学院、环境 == 0 那么就移除
+                    else if ((mViewModel.unReadMessageNumber.value
                             ?: 0) == 0 && (data?.calendarHighMsgCount
-                            ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
+                            ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0 && (mViewModel.plantInfoLoop.value?.data?.environmentHighCount ?: 0) == 0
                     ) {
                         if (itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
@@ -298,7 +313,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if (data?.healthStatus != "Ideal") {
+                    if (data?.healthStatus != "Ideal" || (data?.environmentLowCount ?: 0) > 0) {
                         if (!itemView.contains(badgeView)) {
                             itemView.addView(badgeView)
                         }

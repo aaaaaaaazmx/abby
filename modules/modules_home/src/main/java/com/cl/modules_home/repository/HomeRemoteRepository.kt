@@ -135,4 +135,12 @@ class HomeRemoteRepository @Inject constructor() {
     fun getHomePageNumber(): Flow<HttpResult<HomePageNumberData>> {
         return service.getHomePageNumber()
     }
+
+    fun startSubscriber(): Flow<HttpResult<BaseBean>> {
+        return service.startSubscriber()
+    }
+
+    fun checkFirstSubscriber(): Flow<HttpResult<Boolean>> {
+        return service.checkFirstSubscriber()
+    }
 }

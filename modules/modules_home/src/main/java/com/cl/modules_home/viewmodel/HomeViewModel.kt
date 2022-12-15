@@ -495,6 +495,66 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+
+    /**
+     * 是否是首次订阅
+     */
+    private val _checkFirstSubscriber = MutableLiveData<Resource<Boolean>>()
+    val checkFirstSubscriber: LiveData<Resource<Boolean>> = _checkFirstSubscriber
+    fun checkFirstSubscriber() {
+        viewModelScope.launch {
+            getUnread
+            repository.checkFirstSubscriber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _checkFirstSubscriber.value = it
+            }
+        }
+    }
+
+    /**
+     * 开启订阅
+     */
+    private val _startSubscriber = MutableLiveData<Resource<BaseBean>>()
+    val startSubscriber: LiveData<Resource<BaseBean>> = _startSubscriber
+    fun startSubscriber() {
+        viewModelScope.launch {
+            getUnread
+            repository.startSubscriber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _startSubscriber.value = it
+            }
+        }
+    }
+
+
     /**
      * 标记已读消息
      */
@@ -1045,7 +1105,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 环信登录
      */
-   private fun easeLogin(uname: String, upwd: String) {
+    private fun easeLogin(uname: String, upwd: String) {
         if (EMClient.getInstance().context == null) return
         ChatClient.getInstance().login(uname, upwd, object : Callback {
             override fun onSuccess() {

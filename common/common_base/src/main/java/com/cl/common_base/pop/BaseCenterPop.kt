@@ -1,6 +1,7 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.text.SpannedString
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -20,6 +21,7 @@ class BaseCenterPop(
     private val cancelText: String? = context.getString(R.string.my_cancel),
     private val isShowCancelButton: Boolean = true,
     private val richText: String? = null, // 富文本
+    private val spannedString: SpannedString? = null,
 ) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_center
@@ -44,6 +46,10 @@ class BaseCenterPop(
             } else {
                 binding?.tvContent?.text = it
             }
+        }
+        // 富文本
+        spannedString?.let {
+            binding?.tvContent?.text = it
         }
     }
 
