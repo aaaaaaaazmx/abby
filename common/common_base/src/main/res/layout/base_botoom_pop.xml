@@ -64,7 +64,6 @@
             tools:text="Next" />
 
         <TextView
-            android:visibility="gone"
             android:id="@+id/tv_show_again"
             android:layout_marginTop="14dp"
             android:layout_centerInParent="true"
@@ -72,7 +71,10 @@
             android:text="@string/base_dont_show"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
-            android:layout_width="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </RelativeLayout>
 </layout>

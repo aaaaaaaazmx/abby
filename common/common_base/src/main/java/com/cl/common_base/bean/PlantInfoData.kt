@@ -21,7 +21,7 @@ data class PlantInfoData(
     var plantStatus: Int? = null,
     var week: Int? = null,
     var totalDay: Int? = null,
-    var lightingStatus: Int? = null, // 0 关灯、1 开灯
+    var lightingStatus: Int? = 1, // 0 关灯、1 开灯
     var environmentLowCount: Int? = null, // 环境有误的数量
     var environmentHighCount: Int? = null, // 环境有误的数量
     var list: MutableList<InfoList>? = null

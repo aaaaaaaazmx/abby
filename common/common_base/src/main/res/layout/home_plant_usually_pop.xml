@@ -75,7 +75,6 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:visibility="gone"
                 android:layout_marginTop="8dp"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/base_remind_me"
@@ -83,7 +82,10 @@
                 android:textSize="15sp"
                 android:textColor="@color/mainColor"
                 tools:ignore=""
-                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:gravity="center"
+                android:padding="10dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
 
