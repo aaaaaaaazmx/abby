@@ -2,6 +2,7 @@ package com.cl.modules_my.ui
 
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
 import com.cl.modules_my.databinding.MyWeightActivityBinding
 
@@ -48,6 +49,7 @@ class WeightActivity : BaseActivity<MyWeightActivityBinding>() {
 
     override fun onPause() {
         super.onPause()
-        Prefs.putBooleanAsync(Constants.My.KEY_MY_WEIGHT_UNIT, binding.metric.isChecked)
+        logI("123123123: ${binding.metric.isChecked}")
+        Prefs.putBooleanAsync(Constants.My.KEY_MY_WEIGHT_UNIT, binding.imperial.isChecked)
     }
 }

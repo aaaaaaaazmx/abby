@@ -66,10 +66,12 @@
 
         <TextView
             android:visibility="gone"
+            android:padding="10dp"
+            android:gravity="center"
             android:textSize="15sp"
             android:textColor="@color/mainColor"
             android:id="@+id/tv_skip_add_water"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/btn_success"
             android:layout_centerInParent="true"
