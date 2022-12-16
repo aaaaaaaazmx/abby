@@ -532,7 +532,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         _guideInfoStatus
 
     fun setGuideInfoStatus(guideInfoStatus: String) {
-        _guideInfoStatus.value = guideInfoStatus
+        _guideInfoStatus.postValue(guideInfoStatus)
     }
 
     private val _guideInfoTaskTime =
@@ -541,6 +541,6 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         _guideInfoTaskTime
 
     fun setGuideInfoTime(guideInfoTaskTime: String) {
-        _guideInfoTaskTime.value = guideInfoTaskTime
+        _guideInfoTaskTime.postValue(guideInfoTaskTime)
     }
 }

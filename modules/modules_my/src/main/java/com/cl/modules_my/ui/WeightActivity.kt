@@ -49,7 +49,6 @@ class WeightActivity : BaseActivity<MyWeightActivityBinding>() {
 
     override fun onPause() {
         super.onPause()
-        logI("123123123: ${binding.metric.isChecked}")
-        Prefs.putBooleanAsync(Constants.My.KEY_MY_WEIGHT_UNIT, binding.imperial.isChecked)
+        Prefs.putBooleanAsync(Constants.My.KEY_MY_WEIGHT_UNIT, !binding.imperial.isChecked)
     }
 }

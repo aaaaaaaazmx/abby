@@ -86,7 +86,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     if (null == data) return@success
 
                     // 标题
-                    binding.tvTitle.text = data.name
+                    data.bar?.let {
+                        binding.tvTitle.text = it
+                    }
 
                     // 动态添加按钮
                     // 不是video的都需要添加

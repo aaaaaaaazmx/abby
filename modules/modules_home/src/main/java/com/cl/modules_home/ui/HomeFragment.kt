@@ -438,7 +438,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             knowMore.setOnClickListener {
                 // todo 跳转新的图文界面
                 val intent = Intent(activity, KnowMoreActivity::class.java)
-                intent.putExtra(Constants.Global.KEY_TXT_ID, KnowMoreActivity.KEY_COLLEGE_TXT_ID)
+                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PAGE_NOT_PURCHASED)
                 startActivity(intent)
             }
             connectDevice.setOnClickListener {
@@ -2054,6 +2054,39 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     errorMsg?.let { ToastUtil.shortShow(it) }
                 }
                 success {
+                    // 解锁完成之后的、弹出图文
+                   /* mViewMode.popPeriodStatus.value?.let { map ->
+                        val intent = Intent(context, BasePopActivity::class.java)
+                        map.forEach {
+                            when (it.key) {
+                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLOWERING)
+                                    startActivity(intent)
+                                }
+                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLUSHING)
+                                    startActivity(intent)
+                                }
+                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING -> {
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_DRYING)
+                                    startActivity(intent)
+                                }
+                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_CURING)
+                                    startActivity(intent)
+                                }
+                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
+                                    //                            intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_CURING)
+                                    //                            startActivity(intent)
+                                }
+                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLOWERING)
+                                    startActivity(intent)
+                                }
+                            }
+                        }
+                    }*/
+
                     if (mViewMode.popPeriodStatus.value?.containsValue(UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING) == true) {
                         showCompletePage()
                         return@success

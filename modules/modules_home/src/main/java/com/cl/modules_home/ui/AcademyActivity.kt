@@ -63,15 +63,15 @@ class AcademyActivity : BaseActivity<HomeAcademyActivityBinding>() {
         if (activityResult.resultCode == Activity.RESULT_OK) {
             val result = activityResult.data?.extras?.getStringArray(AcademyDetailActivity.KEY_ID_LIST)
             if (result.isNullOrEmpty()) return@registerForActivityResult
-            logI("123312 + $result")
-            result.forEach { id ->
+            mViewMode.getAcademyList()
+            /*result.forEach { id ->
                 val index = adapter.data.indexOfFirst { it.id == id }
                 if (index != -1) {
                     // 设置为已读
                     adapter.data[index].isRead = 1
                     adapter.notifyItemChanged(index)
                 }
-            }
+            }*/
         }
     }
 

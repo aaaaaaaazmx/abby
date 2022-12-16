@@ -756,7 +756,7 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                         if (null == result || result.size() == 0) return;
                         LocalMedia media = result.get(0);
                         // todo 大于10M的视频 都需要进行视频压缩
-                        if (media.getSize() >= 10 * 1024 * 100) {
+                        if ((media.getSize() / 1024 / 1000) >= 10) {
                             // 判断当前视频的原始宽高
                             try {
                                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
@@ -775,7 +775,8 @@ public class ChatFragment extends BaseFragment implements ChatManager.MessageLis
                             return;
                         }
                         // 发送视频
-                        sendVideoMessage(Uri.parse(media.getPath()), Integer.parseInt(String.valueOf(media.getDuration())));
+                        Uri uri = UriUtil.getUris(getContext(), new File(media.getPath()));
+                        sendVideoMessage(uri, Integer.parseInt(String.valueOf(media.getDuration())));
                     }
 
                     @Override

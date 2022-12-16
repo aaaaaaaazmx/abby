@@ -10,4 +10,6 @@ data class AcademyDetails(
     val title: String? = null,
     val txtId: String? = null,
     val createTime: Long? = null,
+    val id: String? = null,
+    val academyId: String? = null,
 ): BaseBean()

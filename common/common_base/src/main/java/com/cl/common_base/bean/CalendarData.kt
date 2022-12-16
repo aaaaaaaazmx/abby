@@ -53,6 +53,7 @@ data class CalendarData(
         const val TASK_TYPE_CHECK_CHECK_DRYING = "check_drying"
         const val TASK_TYPE_CHECK_CHECK_CURING = "check_curing"
         const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"
+        const val TASK_TYPE_CHECK_CHECK_AUTOFLOWERING = "check_autoflowering"
         const val TASK_TYPE_TEST = "test" // 学院任务
     }
 }

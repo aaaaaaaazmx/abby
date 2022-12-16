@@ -37,6 +37,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -553,6 +554,26 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             }
                         }
                     }
+
+                    // todo 解锁周期后弹出图文广告
+                    val status = mViewMode.guideInfoStatus.value
+                    if (status.isNullOrEmpty()) return@success
+                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                    when (status) {
+                        CalendarData.TASK_TYPE_CHECK_TRANSPLANT,
+                        CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING,
+                        CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
+                        CalendarData.TASK_TYPE_CHECK_CHECK_CURING,
+                        CalendarData.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
+                            mViewMode.localCalendar.value?.indexOfFirst { data -> data.isChooser }?.let { bean ->
+                                if (bean != -1) {
+                                    intent.putExtra(Constants.Global.KEY_TXT_TYPE, mViewMode.getCalendar.value?.data?.get(bean)?.epochExplain)
+                                    startActivity(intent)
+                                }
+                            }
+                        }
+                        CalendarData.TASK_TYPE_CHECK_CHECK_DRYING -> {}
+                    }
                 }
             })
 
@@ -574,7 +595,13 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         binding.tvCycle.setOnClickListener {
             // 需要小问号
             adapter.data.firstOrNull { it.isChooser }?.apply {
-                this.calendarData.epochExplain?.let { it1 -> mViewMode.getGuideInfo(it1) }
+                this.calendarData.epochExplain?.let {
+                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                    intent.putExtra(Constants.Global.KEY_TXT_TYPE, it)
+                    startActivity(intent)
+                }
+
+
             }
         }
 
@@ -1267,7 +1294,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
-            when(requestCode) {
+            when (requestCode) {
                 // 请求学院页面的返回
                 KEY_REQUEST_KNOW_MORE -> {
                     // 刷新任务

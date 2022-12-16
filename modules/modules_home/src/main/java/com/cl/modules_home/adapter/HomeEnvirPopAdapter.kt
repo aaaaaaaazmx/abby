@@ -7,6 +7,10 @@ import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeEnvirItemPopBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
+import com.cl.common_base.util.Prefs
+import com.google.common.collect.ContiguousSet
 
 /**
  * pop初始化数据
@@ -42,6 +46,27 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData>?) :
             "Error" -> Color.parseColor("#D61744")
             else -> Color.BLACK
         }
+    }
+
+    fun temperatureConversion(text: String?): String {
+        if (text.isNullOrEmpty()) return ""
+        if (text.contains("℉")) {
+            // 默认为false
+            val isF = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+            if (isF) {
+                kotlin.runCatching {
+                    val replace = text.replace("℉", "")
+                    val te = replace.toInt()
+                    // (1°F − 32) × 5/9
+                    // String result1 = String.format("%.2f", d);
+                    return "${String.format("%.1f", (te - 32).times(5f).div(9f))}℃"
+                }.getOrElse {
+                    return text
+                }
+            }
+            return text
+        }
+        return text
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.Intent
 import cn.mtjsoft.barcodescanning.extentions.dp2px
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.Constants.Global.KEY_IS_CHOOSE_CLONE
 import com.cl.common_base.constants.Constants.Global.KEY_IS_CHOOSE_SEED
 import com.cl.common_base.constants.Constants.Global.KEY_IS_SHOW_CHOOSER_TIPS
@@ -14,6 +15,7 @@ import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_STRAIN_NAME
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyCloneAndReplantBinding
@@ -89,10 +91,16 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                     ).show()
             },
             onLearnMoreAction = {
-                // todo 跳转post
+                //  跳转post
+                val intent = Intent(this@MyCloneAndReplantActivity, BasePopActivity::class.java)
+                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_HOW_TO_PICK_STRAIN)
+                startActivity(intent)
             },
             onNotReadAction = {
-                // todo 跳转post
+                //  跳转post
+                val intent = Intent(this@MyCloneAndReplantActivity, BasePopActivity::class.java)
+                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_HOW_TO_PICK_STRAIN)
+                startActivity(intent)
             },
             onCancelAction = {
                 finish()

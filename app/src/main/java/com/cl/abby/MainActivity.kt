@@ -112,26 +112,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
      */
     private val bubblePopHor by lazy {
         // 居中显示
-        XPopup.Builder(this@MainActivity).isCenterHorizontal(true).popupPosition(PopupPosition.Top)
-            .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
+        XPopup.Builder(this@MainActivity)
+            .popupPosition(PopupPosition.Top)
+            .dismissOnTouchOutside(false)
+            .isClickThrough(true)  //点击透传
             .hasShadowBg(false) // 去掉半透明背景
             //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
             .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
-    }
-
-    private val bubblePopNoHor by lazy {
-        // 不居中显示
-        XPopup.Builder(this@MainActivity).popupPosition(PopupPosition.Top)
-            .dismissOnTouchOutside(false).isClickThrough(true)  //点击透传
-            .atView(
-                (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(
-                    0
-                )
-            ).hasShadowBg(false) // 去掉半透明背景
-            .offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
-            .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f)).asCustom(
-                asPop
-            )
     }
 
     private val asPop by lazy {
@@ -155,15 +142,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val badgeView =
             LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
         badgeView
-    }
-
-    /**
-     * 获取用户信息
-     */
-    private val userInfo = {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
-        parseObject
     }
 
     override fun onResume() {
@@ -251,9 +229,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                                         (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
                                     ).isCenterHorizontal(false).asCustom(asPop).show()
                                 } else {
-                                    bubblePopHor.atView(
-                                        (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
-                                    ).isCenterHorizontal(true).asCustom(asPop).show()
+                                    bubblePopHor
+                                        .isCenterHorizontal(true).atView(
+                                            (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
+                                        ).asCustom(asPop).show()
                                 }
                             }
                             // 不再显示气泡
@@ -386,7 +365,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 R.id.action_home -> {
                     // 判断气泡是否弹出
                     if (asPop.isShow) {
-                        bubblePopNoHor.dismiss()
+                        asPop.dismiss()
                         Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
                     }
                     switchFragment(Constants.FragmentIndex.HOME_INDEX)

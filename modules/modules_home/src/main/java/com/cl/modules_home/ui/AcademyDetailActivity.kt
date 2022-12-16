@@ -7,6 +7,7 @@ import com.bbgo.module_home.databinding.HomeAcademyDetailActivityBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AcademyDetails
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.adapter.HomeAcademyDetailAdapter
@@ -86,10 +87,11 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
             val data = adapter.data[position] as? AcademyDetails
 
             // 已读消息
-            id?.let {
+            logI("12312312: ${id}   pos: $position")
+            data?.id?.let {
                 mViewMode.messageRead(it)
                 mViewMode.setReadList(it)
-                data?.isRead = 1
+                data.isRead = 1
                 adapter.notifyItemChanged(position)
             }
 

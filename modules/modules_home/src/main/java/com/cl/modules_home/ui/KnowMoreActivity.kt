@@ -75,8 +75,6 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
-        // mViewMode.getRichText(txtId = "516c590993a041309912ebe16c2eb856")
-        // mViewMode.getRichText(txtId = "c3eeb4d2f1332f4869erwqfa912557ae")
         mViewMode.getRichText(txtId = txtId, type = txtType)
         // 学院任务一进来就已读。
         when (txtType) {
@@ -317,10 +315,5 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         }
         setResult(Activity.RESULT_OK)
         finish()
-    }
-
-
-    companion object {
-        const val KEY_COLLEGE_TXT_ID = "516c590993a041309912ebe16c2eb856"
     }
 }

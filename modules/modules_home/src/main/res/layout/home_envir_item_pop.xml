@@ -52,7 +52,7 @@
             tools:text="Week5 Day5" />
 
         <TextView
-            text="@{data.value}"
+            text="@{adapter.temperatureConversion(data.value)}"
             android:id="@+id/tv_going"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

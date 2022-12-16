@@ -203,6 +203,36 @@ object Constants {
 
     }
 
+    // Fixed Id
+    object Fixed {
+        /**
+         * 刚注册,未绑定设备，未购买页	page_not_purchased	516c590993a041309912ebe16c2eb856
+            日历中记录旅程，发送trend	record_journey	6140e4e5df774d60a2a4029ebff6e1d3
+            如何挑选Strain	how_to_pick_strain	790f39c0b0dd485a86c5f6abd714d65b
+            关于解锁Seed	about_check_transplant	9f87272af9384c9d82136e1dd56587ce
+            关于解锁花期	about_check_flowering	e1e2e7c57e684fe5b7fab82dddd27ea5
+            关于解锁冲刷期	about_check_flushing	24b10272b84a418c9a59fef242324152
+            关于解锁干燥期	about_check_drying	794eac2672074d92816772104ae3dbeb
+            关于解锁装罐	about_check_curing	6ae6f4b03d274898a9c3816e3c4362b8
+            关于解锁AutoFlowering	about_check_auto_flowering	efbec74793ec4fceae3afdd694127022
+         */
+        // 日历记录旅程
+        const val KEY_FIXED_ID_RECORD_JOURNEY = "6140e4e5df774d60a2a4029ebff6e1d3"
+
+        // 刚注册,未绑定设备，未购买页
+        const val KEY_FIXED_ID_PAGE_NOT_PURCHASED = "516c590993a041309912ebe16c2eb856"
+
+        // 如何挑选Strain
+        const val KEY_FIXED_ID_HOW_TO_PICK_STRAIN = "790f39c0b0dd485a86c5f6abd714d65b"
+        // 关于解锁Seed
+        const val KEY_FIXED_ID_ABOUT_CHECK_TRANSPLANT = "9f87272af9384c9d82136e1dd56587ce"
+        const val KEY_FIXED_ID_ABOUT_CHECK_FLOWERING = "e1e2e7c57e684fe5b7fab82dddd27ea5"
+        const val KEY_FIXED_ID_ABOUT_CHECK_FLUSHING = "24b10272b84a418c9a59fef242324152"
+        const val KEY_FIXED_ID_ABOUT_CHECK_DRYING = "794eac2672074d92816772104ae3dbeb"
+        const val KEY_FIXED_ID_ABOUT_CHECK_CURING = "6ae6f4b03d274898a9c3816e3c4362b8"
+        const val KEY_FIXED_ID_ABOUT_CHECK_AUTO_FLOWERING = "efbec74793ec4fceae3afdd694127022"
+    }
+
     object FragmentIndex {
         const val HOME_INDEX = 0
         const val CONTACT_INDEX = 1
