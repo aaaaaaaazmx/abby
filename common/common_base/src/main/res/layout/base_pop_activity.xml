@@ -12,49 +12,85 @@
     </data>
 
     <com.lxj.xpopup.widget.SmartDragLayout
+        android:paddingTop="50dp"
+        android:background="#80000000"
+        android:orientation="vertical"
         android:id="@+id/smart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="MissingConstraints">
 
-        <RelativeLayout
+        <View
+            android:id="@+id/vv_root"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="1dp"
+            android:background="@color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RelativeLayout
             android:background="@drawable/bg_round_tl_tr"
-            android:orientation="vertical">
+            android:layout_below="@+id/vv_root"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
 
-            <RelativeLayout
-                    android:id="@+id/rl_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="20dp"
-                    android:orientation="vertical">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="13dp"
+                android:id="@+id/cl_title"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                >
 
-                    <ImageView
-                        android:id="@+id/iv_close"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@mipmap/iv_close" />
+                <ImageView
+                    android:id="@+id/iv_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="center"
+                    android:background="@mipmap/iv_close"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:layout_toRightOf="@+id/iv_close"
-                        android:id="@+id/tv_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
-                        android:layout_marginEnd="20dp"
-                        android:textColor="#000000"
-                        android:textSize="21sp"
-                        android:textStyle="bold" />
+                <TextView
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iv_close"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:id="@+id/tv_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxEms="7"
+                    android:maxLines="1"
+                    android:textColor="#000000"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                     />
 
 
-                </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.cl.common_base.video.SampleCoverVideo
+                android:visibility="gone"
+                android:id="@+id/video_item_player"
+                android:layout_width="match_parent"
+                android:layout_height="211dp"
+                android:layout_below="@+id/cl_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cl_title"
+                tools:ignore="MissingConstraints" />
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_above="@+id/fl_root"
-                android:layout_below="@+id/rl_title">
+                android:layout_below="@+id/video_item_player">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_list"

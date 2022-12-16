@@ -33,20 +33,22 @@ import com.lxj.xpopup.XPopup.getAnimationDuration
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.widget.SmartDragLayout
 import com.shuyu.gsyvideoplayer.GSYVideoManager
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 /**
  * 通用弹窗
  */
+@AndroidEntryPoint
 class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     override fun initView() {
         // 添加状态蓝高度
-        ViewCompat.setOnApplyWindowInsetsListener(binding.smart) { v, insets ->
-            binding.smart.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                topMargin = insets.systemWindowInsetTop
-            }
-            return@setOnApplyWindowInsetsListener insets
-        }
+//        ViewCompat.setOnApplyWindowInsetsListener(binding.smart) { v, insets ->
+//            binding.smart.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+//                topMargin = insets.systemWindowInsetTop
+//            }
+//            return@setOnApplyWindowInsetsListener insets
+//        }
         binding.smart.setDuration(getAnimationDuration())
         binding.smart.enableDrag(true)
         binding.smart.dismissOnTouchOutside(false)
@@ -54,7 +56,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         binding.smart.open()
         binding.smart.setOnCloseListener(callback)
 
-        binding.ivClose.setOnClickListener { finish() }
+         binding.ivClose.setOnClickListener { finish() }
     }
 
     private val callback by lazy {
@@ -64,7 +66,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             }
 
             override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) {
-                binding.smart.alpha = percent
+                // binding.smart.alpha = percent
             }
 
             override fun onOpen() {
@@ -82,6 +84,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 success {
                     hideProgressLoading()
                     if (null == data) return@success
+
+                    // 标题
+                    binding.tvTitle.text = data.name
 
                     // 动态添加按钮
                     // 不是video的都需要添加
