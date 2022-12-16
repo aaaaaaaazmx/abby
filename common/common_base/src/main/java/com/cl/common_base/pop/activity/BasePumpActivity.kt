@@ -212,7 +212,8 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 theme
             )
         }
-        binding.waterPop.tvAddClockTime.text = "Click to start draining"
+
+        binding.waterPop.tvAddClockTime.text = String.format(getString(R.string.base_pump_start_desc), if (isFractional) "1 gallon" else "4L")
 
 
         val setting = CardSetting()
