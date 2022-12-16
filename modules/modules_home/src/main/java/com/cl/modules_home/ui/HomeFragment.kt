@@ -361,8 +361,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 选中学院
             ivAcademy.setOnClickListener {
-                // 不限制
-                context?.startActivity(Intent(context, AcademyActivity::class.java))
+                // 如果是订阅用户
+                if (mViewMode.userDetail.value?.data?.isVip == 1) {
+                    context?.startActivity(Intent(context, AcademyActivity::class.java))
+                } else {
+                    // 不是订阅用户，直接弹出图文
+                    mViewMode.getGuideInfo("unearned_subscription_explain")
+                }
             }
 
             // 客服支持
