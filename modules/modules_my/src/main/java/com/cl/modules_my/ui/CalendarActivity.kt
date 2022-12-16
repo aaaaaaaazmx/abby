@@ -563,7 +563,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         CalendarData.TASK_TYPE_CHECK_TRANSPLANT,
                         CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING,
                         CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
-                        CalendarData.TASK_TYPE_CHECK_CHECK_CURING,
+                        CalendarData.TASK_TYPE_CHECK_CHECK_DRYING,
                         CalendarData.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
                             mViewMode.localCalendar.value?.indexOfFirst { data -> data.isChooser }?.let { bean ->
                                 if (bean != -1) {
@@ -572,7 +572,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 }
                             }
                         }
-                        CalendarData.TASK_TYPE_CHECK_CHECK_DRYING -> {}
+                        CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
+                        }
                     }
                 }
             })
