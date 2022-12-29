@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -26,6 +27,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.easeui.ui.videoUiHelp
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
 import com.cl.common_base.web.WebActivity
@@ -75,6 +77,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
+        logI("txtId = $txtId, type = $txtType")
         mViewMode.getRichText(txtId = txtId, type = txtType)
         // 学院任务一进来就已读。
         when (txtType) {
@@ -125,6 +128,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
                     // 初始化头部Video
                     data?.topPage?.firstOrNull { it.type == "video" }?.apply {
+                        // 显示头部视频
+                        binding.videoItemPlayer.visibility = View.VISIBLE
                         value?.url?.let { initVideo(it, value?.autoplay == true) }
                     }
                     data?.bar?.let {

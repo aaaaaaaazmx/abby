@@ -87,7 +87,7 @@ class AcademyDetailActivity : BaseActivity<HomeAcademyDetailActivityBinding>() {
             val data = adapter.data[position] as? AcademyDetails
 
             // 已读消息
-            logI("12312312: ${id}   pos: $position")
+            logI("12312312: ${id}   pos: $position,,, data: $data}")
             data?.id?.let {
                 mViewMode.messageRead(it)
                 mViewMode.setReadList(it)
