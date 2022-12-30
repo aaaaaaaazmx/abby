@@ -206,8 +206,8 @@ object Constants {
     // Fixed Id
     object Fixed {
         /**
-         * 刚注册,未绑定设备，未购买页	page_not_purchased	516c590993a041309912ebe16c2eb856
-            日历中记录旅程，发送trend	record_journey	6140e4e5df774d60a2a4029ebff6e1d3
+         *  日历中记录旅程，发送trend	page_not_purchased	516c590993a041309912ebe16c2eb856
+            刚注册,未绑定设备，未购买页	record_journey	6140e4e5df774d60a2a4029ebff6e1d3
             如何挑选Strain	how_to_pick_strain	790f39c0b0dd485a86c5f6abd714d65b
             关于解锁Seed	about_check_transplant	9f87272af9384c9d82136e1dd56587ce
             关于解锁花期	about_check_flowering	e1e2e7c57e684fe5b7fab82dddd27ea5
@@ -216,11 +216,11 @@ object Constants {
             关于解锁装罐	about_check_curing	6ae6f4b03d274898a9c3816e3c4362b8
             关于解锁AutoFlowering	about_check_auto_flowering	efbec74793ec4fceae3afdd694127022
          */
-        // 日历记录旅程
-        const val KEY_FIXED_ID_RECORD_JOURNEY = "6140e4e5df774d60a2a4029ebff6e1d3"
-
         // 刚注册,未绑定设备，未购买页
-        const val KEY_FIXED_ID_PAGE_NOT_PURCHASED = "516c590993a041309912ebe16c2eb856"
+        const val KEY_FIXED_ID_PAGE_NOT_PURCHASED  = "6140e4e5df774d60a2a4029ebff6e1d3"
+
+        // 日历记录旅程
+        const val KEY_FIXED_ID_RECORD_JOURNEY = "516c590993a041309912ebe16c2eb856"
 
         // 如何挑选Strain
         const val KEY_FIXED_ID_HOW_TO_PICK_STRAIN = "790f39c0b0dd485a86c5f6abd714d65b"
