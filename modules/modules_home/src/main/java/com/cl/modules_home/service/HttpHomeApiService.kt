@@ -71,9 +71,8 @@ interface HttpHomeApiService {
      * 获取环境信息
      *  默认0 -> 换水
      */
-    @FormUrlEncoded
-    @POST("abby/plant/environmentInfo")
-    fun environmentInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<EnvironmentInfoData>>>
+    @POST("abby/plant/environment")
+    fun environmentInfo(@Body dev: EnvironmentInfoReq): Flow<HttpResult<EnvironmentInfoData>>
 
     /**
      * 获取未读信息

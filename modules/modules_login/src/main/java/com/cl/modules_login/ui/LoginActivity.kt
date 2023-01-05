@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Build
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
-import android.widget.TextView.OnEditorActionListener
 import androidx.annotation.RequiresApi
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -30,7 +29,7 @@ import com.cl.modules_login.response.LoginData
 import com.cl.modules_login.viewmodel.LoginViewModel
 import com.cl.modules_login.widget.LoginSelectEnvPop
 import com.cl.modules_login.widget.PrivacyPop
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

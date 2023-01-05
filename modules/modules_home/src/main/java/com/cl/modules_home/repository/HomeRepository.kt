@@ -65,7 +65,7 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 获取植物的环境信息
      */
-    fun environmentInfo(type: String): Flow<HttpResult<MutableList<EnvironmentInfoData>>> {
+    fun environmentInfo(type: EnvironmentInfoReq): Flow<HttpResult<EnvironmentInfoData>> {
         return remoteRepository.environmentInfo(type)
     }
 

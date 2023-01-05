@@ -1,19 +1,14 @@
 package com.cl.abby.viewmodel
 
-import android.util.Log
-import androidx.camera.core.impl.utils.ContextUtil.getBaseContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bbgo.module_home.R
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.constants.Constants.Global.KEY_TASK_ID
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.easeui.ui.EaseUiActivity
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -21,15 +16,12 @@ import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
-import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.repository.HomeRepository
-import com.goldentec.android.tools.util.isCanToBigDecimal
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 import com.hyphenate.chat.AgoraMessage
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.chat.EMClient
 import com.hyphenate.helpdesk.callback.Callback
-import com.hyphenate.helpdesk.easeui.widget.ToastHelper
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -316,7 +308,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 获取植物基本信息\Look接口
      */
-    private val _plantInfoLoop = MutableLiveData<Resource<PlantInfoData>>()
+    /*private val _plantInfoLoop = MutableLiveData<Resource<PlantInfoData>>()
     val plantInfoLoop: LiveData<Resource<PlantInfoData>> = _plantInfoLoop
     fun plantInfoLoop() {
         viewModelScope.launch {
@@ -339,7 +331,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
                 _plantInfoLoop.value = it
             }
         }
-    }
+    }*/
 
     /**
      * 获取图文广告
@@ -439,9 +431,9 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 获取植物的环境信息
      */
-    private val _environmentInfo = MutableLiveData<Resource<MutableList<EnvironmentInfoData>>>()
-    val environmentInfo: LiveData<Resource<MutableList<EnvironmentInfoData>>> = _environmentInfo
-    fun environmentInfo(type: String) {
+    private val _environmentInfo = MutableLiveData<Resource<EnvironmentInfoData>>()
+    val environmentInfo: LiveData<Resource<EnvironmentInfoData>> = _environmentInfo
+    fun environmentInfo(type: EnvironmentInfoReq) {
         viewModelScope.launch {
             repository.environmentInfo(type).map {
                 if (it.code != Constants.APP_SUCCESS) {
@@ -1055,7 +1047,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
         // 获取环信消息数量
         getEaseUINumber()
         // 获取设备环境消息
-        plantInfoLoop()
+        environmentInfo(EnvironmentInfoReq(deviceId = tuyaDeviceBean?.devId))
         getHomePageNumber()
     }
 

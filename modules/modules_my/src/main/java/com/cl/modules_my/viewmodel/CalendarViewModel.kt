@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -16,19 +15,15 @@ import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import retrofit2.http.Body
-import java.time.OffsetDateTime
-import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.abs
 
 @ActivityRetainedScoped
 class CalendarViewModel @Inject constructor(private val repository: MyRepository) :

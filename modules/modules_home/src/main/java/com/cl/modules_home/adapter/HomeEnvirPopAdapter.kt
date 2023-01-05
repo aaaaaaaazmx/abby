@@ -2,11 +2,12 @@ package com.cl.modules_home.adapter
 
 import android.graphics.Color
 import androidx.databinding.DataBindingUtil
-import com.cl.common_base.bean.EnvironmentInfoData
+import com.cl.common_base.bean.EnvironmentInfoData.Environment
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeEnvirItemPopBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.cl.common_base.bean.EnvironmentInfoData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
@@ -17,14 +18,14 @@ import com.google.common.collect.ContiguousSet
  *
  * @author 李志军 2022-08-06 18:44
  */
-class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData>?) :
-    BaseQuickAdapter<EnvironmentInfoData, BaseViewHolder>(R.layout.home_envir_item_pop, data) {
+class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
+    BaseQuickAdapter<EnvironmentInfoData.Environment, BaseViewHolder>(R.layout.home_envir_item_pop, data) {
 
     override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
         DataBindingUtil.bind<HomeEnvirItemPopBinding>(viewHolder.itemView);
     }
 
-    override fun convert(helper: BaseViewHolder, item: EnvironmentInfoData) {
+    override fun convert(helper: BaseViewHolder, item: EnvironmentInfoData.Environment) {
         // 获取 Binding
         val binding: HomeEnvirItemPopBinding? = helper.getBinding()
         if (binding != null) {

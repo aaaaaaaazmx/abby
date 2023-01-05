@@ -1,19 +1,14 @@
 package com.cl.modules_home.viewmodel
 
-import android.util.Log
-import androidx.camera.core.impl.utils.ContextUtil.getBaseContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bbgo.module_home.R
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.constants.Constants.Global.KEY_TASK_ID
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.easeui.ui.EaseUiActivity
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -21,15 +16,13 @@ import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
-import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.repository.HomeRepository
-import com.goldentec.android.tools.util.isCanToBigDecimal
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.ext.safeToInt
 import com.hyphenate.chat.AgoraMessage
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.chat.EMClient
 import com.hyphenate.helpdesk.callback.Callback
-import com.hyphenate.helpdesk.easeui.widget.ToastHelper
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -439,9 +432,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 获取植物的环境信息
      */
-    private val _environmentInfo = MutableLiveData<Resource<MutableList<EnvironmentInfoData>>>()
-    val environmentInfo: LiveData<Resource<MutableList<EnvironmentInfoData>>> = _environmentInfo
-    fun environmentInfo(type: String) {
+    private val _environmentInfo = MutableLiveData<Resource<EnvironmentInfoData>>()
+    val environmentInfo: LiveData<Resource<EnvironmentInfoData>> = _environmentInfo
+    fun environmentInfo(type: EnvironmentInfoReq) {
         viewModelScope.launch {
             repository.environmentInfo(type).map {
                 if (it.code != Constants.APP_SUCCESS) {
@@ -1123,6 +1116,43 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             }
 
         })
+    }
+
+    /**
+     * 获取环境信息
+     */
+    var tuYaDps = tuyaDeviceBean?.dps
+    fun getEnvData() {
+        tuYaDeviceBean?.let {
+            val envReq = EnvironmentInfoReq(deviceId = it.devId)
+            tuYaDps?.forEach { (key, value) ->
+                when(key) {
+                    TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE -> {
+                        envReq.waterTemperature = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_VENTILATION -> {
+                        envReq.ventilation = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT -> {
+                        envReq.tempCurrent = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW -> {
+                        envReq.inputAirFlow = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT -> {
+                        envReq.humidityCurrent = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE -> {
+                        envReq.brightValue = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL -> {
+                        envReq.waterLevel = value.toString()
+                    }
+                }
+            }
+            // 请求环境信息
+            environmentInfo(envReq)
+        }
     }
 
     /**

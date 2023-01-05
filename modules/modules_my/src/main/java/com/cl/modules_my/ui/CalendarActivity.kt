@@ -3,8 +3,6 @@ package com.cl.modules_my.ui
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Typeface
-import android.text.TextPaint
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -55,8 +53,7 @@ import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
-import com.goldentec.android.tools.util.let
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter

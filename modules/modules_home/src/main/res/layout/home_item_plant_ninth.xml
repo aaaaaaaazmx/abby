@@ -500,12 +500,12 @@ Day1" />
                     android:layout_height="8dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/red_bg"
-                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.plantInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
+                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />
 
-                <TextView
+                <!--<TextView
                     android:text="@{String.valueOf(viewModel.plantInfo.data.environmentHighCount)}"
                     android:gravity="center"
                     android:textSize="11sp"
@@ -518,7 +518,7 @@ Day1" />
                     android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.plantInfo.data.environmentHighCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tv_temperature" />
+                    app:layout_constraintTop_toTopOf="@+id/tv_temperature" />-->
 
                 <View
                     android:id="@+id/vv_temperature_bg"

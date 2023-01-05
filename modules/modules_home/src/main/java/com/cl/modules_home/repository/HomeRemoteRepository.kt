@@ -48,7 +48,7 @@ class HomeRemoteRepository @Inject constructor() {
         return service.advertising(type)
     }
 
-    fun environmentInfo(type: String): Flow<HttpResult<MutableList<EnvironmentInfoData>>> {
+    fun environmentInfo(type: EnvironmentInfoReq): Flow<HttpResult<EnvironmentInfoData>> {
         return service.environmentInfo(type)
     }
 

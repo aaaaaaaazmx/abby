@@ -1,11 +1,7 @@
 package com.cl.modules_home.ui
 
 import android.app.Activity
-import android.content.ActivityNotFoundException
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Intent
-import android.net.Uri
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
@@ -43,24 +39,20 @@ import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.ext.visible
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
-import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
-import com.goldentec.android.tools.util.letMultiple
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import java.io.Serializable
-import java.util.logging.Handler
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -397,8 +389,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             clEnvir.setOnClickListener {
                 // 刷新植物信息以及环境信息
                 mViewMode.plantInfo()
-                // 每次都获取到了信息
-                mViewMode.tuyaDeviceBean?.devId?.let { devId -> mViewMode.environmentInfo(devId) }
+                // 环境信息弹窗
+                envirPopDelete.show()
             }
 
             // 点击弹窗上面的关闭
@@ -1977,8 +1969,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             environmentInfo.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     // 弹出环境框
-                    data?.let { envirPop?.setData(it) }
-                    envirPopDelete.show()
+                    data?.let { it.environments?.let { it1 -> envirPop?.setData(it1) } }
                 }
                 error { errorMsg, _ ->
                     errorMsg?.let { ToastUtil.shortShow(it) }
@@ -2220,6 +2211,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onResume()
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
+        // 每次都需要刷新环境信息
+        mViewMode.getEnvData()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -2460,9 +2453,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         map?.forEach { (key, value) ->
             when (key) {
                 // 当用户加了水，是需要动态显示当前水的状态的
+                // 返回多少升水
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
                     logI("KEY_DEVICE_WATER_STATUS： $value")
                     mViewMode.setWaterVolume(value.toString())
+                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL, value.toString())
                 }
 
                 // 排水结束
@@ -2473,6 +2468,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
                     logI("KEY_DEVICE_REPAIR_SN： $value")
                 }
+
+                // ----- 开始， 下面的都是需要传给后台的环境信息
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
+                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE, value.toString())
+                }
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
+                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT, value.toString())
+                }
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_INPUT_AIR_FLOW_INSTRUCTION -> {
+                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW, value.toString())
+                }
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TEMP_CURRENT_INSTRUCTION -> {
+                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT, value.toString())
+                }
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_VENTILATION_INSTRUCTION -> {
+                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_VENTILATION, value.toString())
+                }
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_TEMPERATURE_INSTRUCTION -> {
+                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE, value.toString())
+                }
+                // --------- 到这里结束
             }
         }
     }
@@ -2527,6 +2543,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 if (plantFlag != KEY_NEW_PLANT) {
                     // 种植过的才可以请求
                     mViewMode.plantInfo()
+                    // 环境信息
+                    mViewMode.getEnvData()
                 }
                 // 获取用户信息
                 mViewMode.userDetail()

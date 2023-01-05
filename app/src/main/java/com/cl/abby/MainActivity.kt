@@ -211,9 +211,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarHighMsgCount
-                            ?: 0) > 0 || (mViewModel.plantInfoLoop.value?.data?.environmentHighCount ?: 0) > 0
-                    ) {
+                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarHighMsgCount ?: 0) > 0) {
                         if (!itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
@@ -222,7 +220,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         if (mIndex != 0) {
                             // 弹窗
                             if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                                if (data?.calendarHighMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0 && mViewModel.plantInfoLoop.value?.data?.environmentHighCount != 0) {
+                                if (data?.calendarHighMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0) {
                                     // 三个及其以上会变形
                                     // 所以不居中显示
                                     bubblePopHor.atView(
@@ -246,7 +244,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         }
                     }
                     // 低优先级环境
-                    else if ((mViewModel.plantInfoLoop.value?.data?.environmentLowCount ?: 0) > 0) {
+                    else if ((mViewModel.environmentInfo.value?.data?.environmentLowCount ?: 0) > 0) {
                         if (!itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
@@ -262,7 +260,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     // 环信消息、日历、学院、环境 == 0 那么就移除
                     else if ((mViewModel.unReadMessageNumber.value
                             ?: 0) == 0 && (data?.calendarHighMsgCount
-                            ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0 && (mViewModel.plantInfoLoop.value?.data?.environmentHighCount ?: 0) == 0
+                            ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
                     ) {
                         if (itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
@@ -285,11 +283,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             })
 
             // 环境消息的统计
-            plantInfoLoop.observe(this@MainActivity, resourceObserver {
+            environmentInfo.observe(this@MainActivity, resourceObserver {
                 success {
                     if (null == data) return@success
-                    // 设置环境数量
-                    data?.environmentHighCount?.let { asPop.setEnvNumber(it) }
                     /**
                      * 只有2个中有一个是不等于0、那么就可以添加弹窗
                      */
