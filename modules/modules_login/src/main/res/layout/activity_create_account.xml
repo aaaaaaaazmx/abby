@@ -102,7 +102,6 @@
         <Button
             android:id="@+id/btn_continue"
             android:textColor="@color/white"
-            android:enabled="false"
             android:background="@drawable/create_state_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
