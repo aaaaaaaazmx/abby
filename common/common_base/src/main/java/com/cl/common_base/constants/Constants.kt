@@ -231,6 +231,9 @@ object Constants {
         const val KEY_FIXED_ID_ABOUT_CHECK_DRYING = "794eac2672074d92816772104ae3dbeb"
         const val KEY_FIXED_ID_ABOUT_CHECK_CURING = "6ae6f4b03d274898a9c3816e3c4362b8"
         const val KEY_FIXED_ID_ABOUT_CHECK_AUTO_FLOWERING = "efbec74793ec4fceae3afdd694127022"
+
+        // SeedKit 关于纸杯子还是塑料杯子的引导Id
+        const val KEY_FIXED_ID_SEED_KIT_CUP_TYPE = "c11f05670d574634b7d19a8d3abf6192"
     }
 
     object FragmentIndex {

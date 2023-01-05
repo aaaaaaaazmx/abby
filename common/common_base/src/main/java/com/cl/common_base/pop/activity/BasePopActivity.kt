@@ -1,5 +1,6 @@
 package com.cl.common_base.pop.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.util.TypedValue
@@ -56,13 +57,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         binding.smart.open()
         binding.smart.setOnCloseListener(callback)
 
-         binding.ivClose.setOnClickListener { finish() }
+         binding.ivClose.setOnClickListener {  acFinish() }
     }
 
     private val callback by lazy {
         object : SmartDragLayout.OnCloseListener {
             override fun onClose() {
-                finish()
+                acFinish()
             }
 
             override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) {
@@ -111,7 +112,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         tv?.setOnClickListener {
                             list?.firstOrNull { data -> data.value?.txt == tv.text.toString() }?.apply {
                                 when (type) {
-                                    "pageClose" -> this@BasePopActivity.finish()
+                                    "pageClose" -> this@BasePopActivity.acFinish()
                                     "pageDown" -> {
                                         // 跳转下一页
                                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
@@ -281,4 +282,16 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     @Inject
     lateinit var mViewModel: BaseViewModel
+
+
+    // 系统返回键
+    override fun onBackPressed() {
+        acFinish()
+    }
+
+    // 关闭页面的回调
+    private fun acFinish() {
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
 }

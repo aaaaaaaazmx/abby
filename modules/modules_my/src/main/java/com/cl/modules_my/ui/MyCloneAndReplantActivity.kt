@@ -1,6 +1,8 @@
 package com.cl.modules_my.ui
 
+import android.app.Activity
 import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 import cn.mtjsoft.barcodescanning.extentions.dp2px
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
@@ -13,6 +15,7 @@ import com.cl.common_base.constants.Constants.Global.KEY_REFRESH_PLANT_INFO
 import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_ATTRIBUTE
 import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_STRAIN_NAME
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePopActivity
@@ -65,7 +68,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
      * 通用弹窗
      * 网络请求
      */
-    private val custom by lazy {
+    /*private val custom by lazy {
         BasePlantUsuallyGuidePop(
             context = this@MyCloneAndReplantActivity,
             onNextAction = {
@@ -75,7 +78,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                 finish()
             }
         )
-    }
+    }*/
 
     private val chooserTipsPop by lazy {
         ChooserTipsPop(
@@ -114,6 +117,27 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
             onConfirmAction = { cloneCheck ->
                 // 进行下一步操作
                 startCloneOrSeed(cloneCheck, !cloneCheck)
+            }
+        )
+    }
+
+
+    /**
+     * 选择纸杯子还是塑料杯子
+     */
+    private val chooserPaperOrPlasticPop by lazy {
+        ChooserPaperOrPlasticPop(
+            this@MyCloneAndReplantActivity,
+            onConfirmAction = { isPaperCheck ->
+                logI("chooserPaperOrPlasticPop: $isPaperCheck")
+                // 纸杯子还是塑料杯子
+                mViewModel.upPlantInfoReq.value?.cupType = if (!isPaperCheck) 0 else 1
+                // 这个时候上报一次，然后弹出通用图文弹窗
+                mViewModel.upPlantInfoReq.value?.let { req ->
+                    mViewModel.updatePlantInfo(
+                        req
+                    )
+                }
             }
         )
     }
@@ -254,13 +278,21 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                         return@success
                     }
 
-                    // 弹出通用图文页面
-                    mViewModel.getGuideInfo("8")
+                    // 只有选择seed的时候才会弹出、因为选择了种子需要选择种子的属性，那么属性就必定不会为空
+                    if (mViewModel.upPlantInfoReq.value?.attribute?.isNotEmpty() == true) {
+                        // 弹出通用图文页面
+                        /*mViewModel.getGuideInfo("8")*/
+
+                        //  跳转通用post
+                        val intent = Intent(this@MyCloneAndReplantActivity, BasePopActivity::class.java)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_KIT_CUP_TYPE)
+                        myActivityLauncher.launch(intent)
+                    }
                 }
             })
 
             // 图文引导界面
-            getGuideInfo.observe(this@MyCloneAndReplantActivity, resourceObserver {
+           /* getGuideInfo.observe(this@MyCloneAndReplantActivity, resourceObserver {
                 loading { }
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -280,7 +312,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                         .dismissOnTouchOutside(false)
                         .isDestroyOnDismiss(false).asCustom(custom).show()
                 }
-            })
+            })*/
         }
     }
 
@@ -380,14 +412,16 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                                         this@MyCloneAndReplantActivity,
                                         onConfirmAction = { name ->
                                             // 弹出通用图文弹窗
-                                            // 传入数字8
                                             mViewModel.upPlantInfoReq.value?.strainName = name
-                                            // 这个时候上报一次，然后弹出通用图文弹窗
-                                            mViewModel.upPlantInfoReq.value?.let { req ->
-                                                mViewModel.updatePlantInfo(
-                                                    req
-                                                )
-                                            }
+                                            // 需要让用户选择是纸杯子还是塑料杯子
+                                            XPopup.Builder(this@MyCloneAndReplantActivity)
+                                                .isDestroyOnDismiss(false)
+                                                .enableDrag(false)
+                                                .moveUpToKeyboard(false)
+                                                .dismissOnTouchOutside(false)
+                                                .asCustom(
+                                                    chooserPaperOrPlasticPop
+                                                ).show()
                                         })
                                 ).show()
                         },
@@ -397,6 +431,22 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
                 ).show()
         }
     }
+
+
+    /**
+     * 通用pop界面的回调
+     */
+    private val myActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                logI("myActivityLauncher result Code")
+                // seek引导图之后u的回调、
+                // 点击 Done， 需要解锁周期为Seed
+                // 跳转到HomeFragment界面
+                setResult(RESULT_OK, Intent().putExtra(KEY_IS_CHOOSE_SEED, true))
+                finish()
+            }
+        }
 
     companion object {
         const val KEY_CLONE = "Clone"

@@ -15,6 +15,7 @@ data class UpPlantInfoReq(
     var oxygen: Int? = null,
     var plantStatus: Int? = null,
     var week: Int? = null,
+    var cupType: Int? = null, // (0-纸杯，1-塑料杯)
     var list: MutableList<InfoList>? = null
 ) : BaseBean() {
 
