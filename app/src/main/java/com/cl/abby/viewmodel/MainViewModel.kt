@@ -276,63 +276,6 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
-
-    /**
-     * 获取植物基本信息
-     */
-    private val _plantInfo = MutableLiveData<Resource<PlantInfoData>>()
-    val plantInfo: LiveData<Resource<PlantInfoData>> = _plantInfo
-    fun plantInfo() {
-        viewModelScope.launch {
-            repository.plantInfo().map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code, it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }.flowOn(Dispatchers.IO).onStart {}.catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1, "${it.message}"
-                    )
-                )
-            }.collectLatest {
-                _plantInfo.value = it
-            }
-        }
-    }
-
-    /**
-     * 获取植物基本信息\Look接口
-     */
-    /*private val _plantInfoLoop = MutableLiveData<Resource<PlantInfoData>>()
-    val plantInfoLoop: LiveData<Resource<PlantInfoData>> = _plantInfoLoop
-    fun plantInfoLoop() {
-        viewModelScope.launch {
-            repository.plantInfo().map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code, it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }.flowOn(Dispatchers.IO).onStart {}.catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1, "${it.message}"
-                    )
-                )
-            }.collectLatest {
-                _plantInfoLoop.value = it
-            }
-        }
-    }*/
-
     /**
      * 获取图文广告
      */

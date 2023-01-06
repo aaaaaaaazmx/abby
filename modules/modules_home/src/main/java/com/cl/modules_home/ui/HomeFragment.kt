@@ -284,6 +284,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 //  todo 这个显示有问题，会重复隐藏
                 ViewUtils.setGone(binding.pplantNinth.clContinue)
                 mViewMode.plantInfo()
+                mViewMode.getEnvData()
             }
             // 继承
             KEY_EXTEND_PLANT -> {
@@ -1895,7 +1896,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 error { errorMsg, _ ->
                     hideProgressLoading()
-                    errorMsg?.let { ToastUtil.shortShow(it) }
+                    /*errorMsg?.let { ToastUtil.shortShow(it) }*/
                 }
             })
 
@@ -2211,8 +2212,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onResume()
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
-        // 每次都需要刷新环境信息
-        mViewMode.getEnvData()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
