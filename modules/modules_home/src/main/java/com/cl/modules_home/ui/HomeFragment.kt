@@ -1962,7 +1962,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.let { it.environments?.let { it1 -> envirPop?.setData(it1) } }
                 }
                 error { errorMsg, _ ->
-                    errorMsg?.let { ToastUtil.shortShow(it) }
+                    // errorMsg?.let { ToastUtil.shortShow(it) }
                 }
             })
 
