@@ -2202,11 +2202,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
         // 刷新数据
-        mViewMode.refreshToken(AutomaticLoginReq(
-            userName = mViewMode.account,
-            password = mViewMode.psd,
-            token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-        ))
+        mViewMode.refreshToken(
+            AutomaticLoginReq(
+                userName = mViewMode.account,
+                password = mViewMode.psd,
+                token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+            )
+        )
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -2534,12 +2536,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 在线、并且绑定了设备
             if (mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
                 // 如果没有绑定过设备
-                if (plantFlag != KEY_NEW_PLANT) {
-                    // 种植过的才可以请求
-                    mViewMode.plantInfo()
-                    // 环境信息
-                    mViewMode.getEnvData()
-                }
+                // 种植过的才可以请求
+                mViewMode.plantInfo()
+                // 环境信息
+                mViewMode.getEnvData()
                 // 获取用户信息
                 mViewMode.userDetail()
             }
