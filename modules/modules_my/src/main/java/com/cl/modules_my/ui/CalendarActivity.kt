@@ -532,7 +532,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             kotlin.runCatching {
                                 // 加载完整的数据，会有卡顿，需要放到后面去添加
                                 localData.forEachIndexed { index, calendar ->
-                                    calendar.calendarData = data?.get(index)
+                                    if (index < (data?.size ?: 0)) {
+                                        calendar.calendarData = data?.get(index)
+                                    }
                                 }
                                 withContext(Dispatchers.Main) {
                                     // 设置数据

@@ -3,7 +3,7 @@ package com.cl.common_base.pop
 import android.content.Context
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
-import com.cl.common_base.databinding.ChooseSeedClonePopBinding
+import com.cl.common_base.databinding.ChoosePaperClonePlastBinding
 import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.core.CenterPopupView
 
@@ -18,36 +18,34 @@ class ChooserPaperOrPlasticPop(
     private val onNotReadAction: (() -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
-        return R.layout.choose_seed_clone_pop
+        return R.layout.choose_paper_clone_plast
     }
 
-    private lateinit var mBinding: ChooseSeedClonePopBinding
+    private lateinit var mBinding: ChoosePaperClonePlastBinding
     override fun onCreate() {
         super.onCreate()
-        mBinding = DataBindingUtil.bind<ChooseSeedClonePopBinding>(popupImplView)?.apply {
+        mBinding = DataBindingUtil.bind<ChoosePaperClonePlastBinding>(popupImplView)?.apply {
             lifecycleOwner = this@ChooserPaperOrPlasticPop
             executePendingBindings()
 
-            checkClone.setOnCheckedChangeListener { _, b ->
-                if (checkSeed.isChecked) {
-                    checkSeed.isChecked = !b
-                }
+            checkClone.setOnClickListener {
+                checkPlast.isChecked = !checkPlast.isChecked
+                checkParper.isChecked = !checkPlast.isChecked
                 btnSuccess.isEnabled =
-                    checkClone.isChecked || checkSeed.isChecked
+                    checkPlast.isChecked || checkParper.isChecked
             }
 
-            checkSeed.setOnCheckedChangeListener { _, b ->
-                if (checkClone.isChecked) {
-                    checkClone.isChecked = !b
-                }
+            checkSeed.setOnClickListener {
+                checkParper.isChecked = !checkParper.isChecked
+                checkPlast.isChecked = !checkParper.isChecked
                 btnSuccess.isEnabled =
-                    checkClone.isChecked || checkSeed.isChecked
+                    checkPlast.isChecked || checkParper.isChecked
             }
 
             btnSuccess.setOnClickListener {
                 // 具体执行哪一步
-                val cloneCheck = checkClone.isChecked
-                val seedCheck = checkSeed.isChecked
+                val cloneCheck = checkPlast.isChecked
+                val seedCheck = checkParper.isChecked
                 onConfirmAction?.invoke(cloneCheck)
                 dismiss()
             }

@@ -118,6 +118,7 @@
                 app:itemTitle="Message Center" />
 
             <com.cl.common_base.widget.FeatureItemView
+                android:visibility="gone"
                 android:id="@+id/cl_trouble"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -126,6 +127,7 @@
                 app:itemTitleBold="true" />
 
             <View
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
                 android:layout_marginStart="20dp"
@@ -133,6 +135,7 @@
                 android:background="#E5E5E5" />
 
             <com.cl.common_base.widget.FeatureItemView
+                android:visibility="gone"
                 android:id="@+id/cl_how"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

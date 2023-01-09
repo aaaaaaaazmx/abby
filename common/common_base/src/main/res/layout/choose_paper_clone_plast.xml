@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_tl_tr"
+        android:orientation="vertical">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/iv_close" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginEnd="20dp"
+                    android:text="Are you using a single-use or reusable seed kit?"
+                    android:textColor="#000000"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="63dp"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:ignore="MissingConstraints">
+
+                        <FrameLayout
+                            android:id="@+id/fl_paper"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#C4C4C4">
+
+                            <ImageView
+                                android:id="@+id/check_seed"
+                                android:layout_width="120dp"
+                                android:layout_height="120dp"
+                                android:layout_gravity="center"
+                                android:background="@mipmap/home_seed_bg_five"
+                                android:button="@null"
+                                android:checked="true" />
+                        </FrameLayout>
+
+                        <CheckBox
+                            android:id="@+id/check_parper"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="10dp"
+                            android:layout_toRightOf="@+id/fl_paper"
+                            android:background="@drawable/selector_cups"
+                            android:button="@null"
+                            android:checked="false"
+                            android:enabled="false"
+                            android:focusable="false"
+                            app:layout_constraintCircle="@+id/fl_paper"
+                            app:layout_constraintCircleAngle="45"
+                            app:layout_constraintCircleRadius="65dp" />
+                    </RelativeLayout>
+
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        tools:ignore="MissingConstraints">
+
+                        <FrameLayout
+                            android:id="@+id/fl_plast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="#C4C4C4">
+
+                            <ImageView
+                                android:id="@+id/check_clone"
+                                android:layout_width="120dp"
+                                android:layout_height="120dp"
+                                android:layout_gravity="center"
+                                android:background="@mipmap/home_seed_bg_five_plast"
+                                android:button="@null" />
+                        </FrameLayout>
+
+                        <CheckBox
+                            android:id="@+id/check_plast"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="10dp"
+                            android:layout_toRightOf="@+id/fl_plast"
+                            android:background="@drawable/selector_cups"
+                            android:button="@null"
+                            android:checked="true"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:gravity="top" />
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+
+                <Button
+                    android:id="@+id/btn_success"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="69dp"
+                    android:background="@drawable/create_state_button"
+                    android:enabled="true"
+                    android:text="@string/my_next"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+</layout>

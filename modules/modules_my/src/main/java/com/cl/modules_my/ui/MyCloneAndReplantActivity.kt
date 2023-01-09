@@ -129,6 +129,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
         ChooserPaperOrPlasticPop(
             this@MyCloneAndReplantActivity,
             onConfirmAction = { isPaperCheck ->
+                // 前面是纸杯、后面是塑料杯
                 logI("chooserPaperOrPlasticPop: $isPaperCheck")
                 // 纸杯子还是塑料杯子
                 mViewModel.upPlantInfoReq.value?.cupType = if (!isPaperCheck) 0 else 1

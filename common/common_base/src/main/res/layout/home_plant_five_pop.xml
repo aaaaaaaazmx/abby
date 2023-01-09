@@ -33,7 +33,6 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="Fill the water tank"
             android:textColor="#161B19"
             android:textSize="15sp"
             android:textStyle="bold" />

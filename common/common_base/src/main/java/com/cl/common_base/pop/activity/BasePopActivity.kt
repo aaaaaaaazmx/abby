@@ -5,13 +5,12 @@ import android.content.Intent
 import android.graphics.Color
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.ViewCompat
 import androidx.core.view.children
-import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.mtjsoft.barcodescanning.extentions.dp2px
@@ -19,14 +18,12 @@ import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.FinishTaskReq
-import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePopActivityBinding
 import com.cl.common_base.easeui.EaseUiHelper
+import com.cl.common_base.easeui.ui.videoUiHelp
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
-import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
@@ -75,16 +72,33 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         }
     }
 
+    /**
+     * 初始化Video
+     */
+    private fun initVideo(url: String, autoPlay: Boolean) {
+        binding.videoItemPlayer.apply {
+            videoUiHelp(url, -1)
+            if (autoPlay) startPlayLogic()
+        }
+    }
+
     override fun observe() {
         mViewModel.apply {
             richText.observe(this@BasePopActivity, resourceObserver {
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     ToastUtil.shortShow(errorMsg)
                     hideProgressLoading()
                 }
                 success {
                     hideProgressLoading()
                     if (null == data) return@success
+
+                    // 初始化头部Video
+                    data.topPage?.firstOrNull { it.type == "video" }?.apply {
+                        // 显示头部视频
+                        binding.videoItemPlayer.visibility = View.VISIBLE
+                        value?.url?.let { initVideo(it, value.autoplay == true) }
+                    }
 
                     // 标题
                     data.bar?.let {
@@ -93,8 +107,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 动态添加按钮
                     // 不是video的都需要添加
-                    val list = data?.topPage?.filter { it.type != "video" }
-                    list?.forEachIndexed { index, topPage ->
+                    val list = data.topPage?.filter { it.type != "video" }
+                    list?.forEachIndexed { _, topPage ->
                         val tv = TextView(this@BasePopActivity)
                         tv.setBackgroundResource(R.drawable.create_state_button)
                         tv.isEnabled = true
@@ -130,13 +144,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
 
                     // 适配器设置数据
-                    adapter.setList(data?.page)
+                    adapter.setList(data.page)
                 }
             })
 
             // 完成任务
             finishTask.observe(this@BasePopActivity, resourceObserver {
-                error { errorMsg, code ->
+                error { errorMsg, _ ->
                     hideProgressLoading()
                     ToastUtil.shortShow(errorMsg)
                 }
@@ -189,11 +203,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(com.cl.common_base.R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn)
+            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
-                    com.cl.common_base.R.id.iv_pic -> {
+                    R.id.iv_pic -> {
                         // 弹出图片
                         XPopup.Builder(context)
                             .asImageViewer(
@@ -206,7 +220,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 跳转HTML
                     R.id.cl_go_url,
-                    com.cl.common_base.R.id.tv_html -> {
+                    R.id.tv_html -> {
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, bean.value?.title)
@@ -286,6 +300,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     // 系统返回键
     override fun onBackPressed() {
+        if (GSYVideoManager.backFromWindowFull(this)) {
+            return
+        }
         acFinish()
     }
 
@@ -293,5 +310,19 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private fun acFinish() {
         setResult(Activity.RESULT_OK)
         finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        GSYVideoManager.onResume()
+    }
+    override fun onPause() {
+        super.onPause()
+        GSYVideoManager.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        GSYVideoManager.releaseAllVideos()
     }
 }

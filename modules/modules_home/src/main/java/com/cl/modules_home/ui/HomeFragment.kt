@@ -354,13 +354,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 选中学院
             ivAcademy.setOnClickListener {
+                context?.startActivity(Intent(context, AcademyActivity::class.java))
                 // 如果是订阅用户
-                if (mViewMode.userDetail.value?.data?.isVip == 1) {
+                /*if (mViewMode.userDetail.value?.data?.isVip == 1) {
                     context?.startActivity(Intent(context, AcademyActivity::class.java))
                 } else {
                     // 不是订阅用户，直接弹出图文
                     mViewMode.getGuideInfo("unearned_subscription_explain")
-                }
+                }*/
             }
 
             // 客服支持
@@ -1514,6 +1515,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // plant9之后记4
                             ViewUtils.setGone(binding.plantClone.root)
                             ViewUtils.setVisible(binding.pplantNinth.root)
+                            // 开始Clone种植
                             mViewMode.startRunning(botanyId = "", goon = false)
                         }
                     }
@@ -1530,6 +1532,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                     // 获取植物基本信息
                     mViewMode.plantInfo()
+                    mViewMode.plantInfoLoop()
+                    // 获取环境信息
+                    mViewMode.getEnvData()
 
                     // 发送植物种植消息、主要用来判断消息小红点是否展示
                     LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
@@ -1649,38 +1654,78 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         }
                                     }
                                     6, 7 -> {
-                                        context?.let {
-                                            ContextCompat.getDrawable(
-                                                it, R.mipmap.home_seed_bg_five
-                                            )
+                                        if (data?.cupType == 1) {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                   it, com.cl.common_base.R.mipmap.home_seed_bg_five_plast
+                                                )
+                                            }
+                                        } else {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_five
+                                                )
+                                            }
                                         }
                                     }
                                     8, 9 -> {
-                                        context?.let {
-                                            ContextCompat.getDrawable(
-                                                it, R.mipmap.home_seed_bg_six
-                                            )
+                                        if (data?.cupType == 1) {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_six_plast
+                                                )
+                                            }
+                                        } else {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_six
+                                                )
+                                            }
                                         }
                                     }
                                     10, 11 -> {
-                                        context?.let {
-                                            ContextCompat.getDrawable(
-                                                it, R.mipmap.home_seed_bg_seven
-                                            )
+                                        if (data?.cupType == 1) {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_seven_plast
+                                                )
+                                            }
+                                        } else {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_seven
+                                                )
+                                            }
                                         }
                                     }
                                     12 -> {
-                                        context?.let {
-                                            ContextCompat.getDrawable(
-                                                it, R.mipmap.home_seed_bg_eight
-                                            )
+                                        if (data?.cupType == 1) {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight_plast
+                                                )
+                                            }
+                                        } else {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight
+                                                )
+                                            }
                                         }
                                     }
                                     else -> {
-                                        context?.let {
-                                            ContextCompat.getDrawable(
-                                                it, R.mipmap.home_seed_bg_eight
-                                            )
+                                        if (data?.cupType == 1) {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight_plast
+                                                )
+                                            }
+                                        } else {
+                                            context?.let {
+                                                ContextCompat.getDrawable(
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight
+                                                )
+                                            }
                                         }
                                     }
                                 }
