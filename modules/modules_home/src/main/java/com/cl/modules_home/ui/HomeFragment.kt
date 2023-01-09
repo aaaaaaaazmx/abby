@@ -100,7 +100,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun initView(view: View) {
         ARouter.getInstance().inject(this)
         binding.plantOffLine.title.setLeftVisible(false)
-        // 刷新数据以及token
+        /*// 刷新数据以及token
         // 一并检查下当前的状态
         mViewMode.refreshToken(
             AutomaticLoginReq(
@@ -108,7 +108,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 password = mViewMode.psd,
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
-        )
+        )*/
         mViewMode.userDetail()
 
         // getAppVersion 检查版本更新
@@ -315,7 +315,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.plantFirst.apply {
             // 跳跳转plant2
             ivStart.setOnClickListener {
-                mViewMode.checkFirstSubscriber()
+                mViewMode.whetherSubCompensation()
             }
 
         }
@@ -1071,41 +1071,28 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
-            // 检查是否是第一次激活订阅码
-            checkFirstSubscriber.observe(viewLifecycleOwner, resourceObserver {
+            // 检查是否订阅补偿
+            whetherSubCompensation.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
                     hideProgressLoading()
                     ToastUtil.shortShow(errorMsg)
-                    /*// 这个检查接口报错、那么就知道跳转到选择界面
-                    // 需要去引导开启订阅
-                    mViewMode.start()*/
                 }
+                loading { showProgressLoading() }
+
                 success {
                     hideProgressLoading()
-                    if (data == true) {
+                    if (data?.compensation == true) {
                         pop.asCustom(
                             context?.let {
                                 BaseCenterPop(
-                                    it,
-                                    onConfirmAction = {
-                                        // 需要去引导开启订阅
-                                        mViewMode.startSubscriber()
+                                    it, onConfirmAction = {
+                                        // 补偿订阅
+                                        mViewMode.compensatedSubscriber()
                                     },
-                                    onCancelAction = {
-                                    },
-                                    spannedString =
-                                    buildSpannedString {
-                                        // Add the subscription to the account
-                                        // dee@baypac.com
-                                        // After the confirmation, the time of the digital service will be counted from now on
-                                        bold { append("Add the subscription to the account") }
-                                        appendLine()
-                                        color(it.getColor(com.cl.common_base.R.color.mainColor)) {
-                                            bold {
-                                                appendLine("${mViewMode.refreshToken.value?.data?.email}")
-                                            }
-                                        }
-                                        bold { append("After the confirmation, the time of the digital service will be counted from now on") }
+                                    onCancelAction = {},
+                                    spannedString = buildSpannedString {
+                                        bold { append("To ensure your first grow runs smoothly, we will be extending your subscription until ") }
+                                        bold { append(data?.subscriberTime) }
                                     }
                                 )
                             }
@@ -1117,8 +1104,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
-            // 开始订阅
-            startSubscriber.observe(viewLifecycleOwner, resourceObserver {
+            // 订阅补偿
+            compensatedSubscriber.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
                     hideProgressLoading()
@@ -1422,6 +1409,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     // 请求未读消息数据，只有在种植之后才会开始有数据返回
                                     mViewMode.getUnread()
                                     checkOtaUpdateInfo()
+                                    // 请求环境信息
+                                    mViewMode.getEnvData()
                                 }
                                 else -> {}
                             }
@@ -2047,37 +2036,37 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     // 解锁完成之后的、弹出图文
-                   /* mViewMode.popPeriodStatus.value?.let { map ->
-                        val intent = Intent(context, BasePopActivity::class.java)
-                        map.forEach {
-                            when (it.key) {
-                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
-                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLOWERING)
-                                    startActivity(intent)
-                                }
-                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
-                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLUSHING)
-                                    startActivity(intent)
-                                }
-                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING -> {
-                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_DRYING)
-                                    startActivity(intent)
-                                }
-                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
-                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_CURING)
-                                    startActivity(intent)
-                                }
-                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
-                                    //                            intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_CURING)
-                                    //                            startActivity(intent)
-                                }
-                                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
-                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLOWERING)
-                                    startActivity(intent)
-                                }
-                            }
-                        }
-                    }*/
+                    /* mViewMode.popPeriodStatus.value?.let { map ->
+                         val intent = Intent(context, BasePopActivity::class.java)
+                         map.forEach {
+                             when (it.key) {
+                                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
+                                     intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLOWERING)
+                                     startActivity(intent)
+                                 }
+                                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLOWERING -> {
+                                     intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLUSHING)
+                                     startActivity(intent)
+                                 }
+                                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_FLUSHING -> {
+                                     intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_DRYING)
+                                     startActivity(intent)
+                                 }
+                                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
+                                     intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_CURING)
+                                     startActivity(intent)
+                                 }
+                                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
+                                     //                            intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_CURING)
+                                     //                            startActivity(intent)
+                                 }
+                                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
+                                     intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ABOUT_CHECK_FLOWERING)
+                                     startActivity(intent)
+                                 }
+                             }
+                         }
+                     }*/
 
                     if (mViewMode.popPeriodStatus.value?.containsValue(UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING) == true) {
                         showCompletePage()
@@ -2212,6 +2201,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onResume()
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
+        // 刷新数据
+        mViewMode.refreshToken(AutomaticLoginReq(
+            userName = mViewMode.account,
+            password = mViewMode.psd,
+            token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+        ))
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {

@@ -100,6 +100,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 同步设备信息
+            syncDeviceInfo.observe(this@PairDistributionWifiActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.show(errorMsg)
+                }
+            })
             bindDevice.observe(this@PairDistributionWifiActivity, resourceObserver {
                 success {
                     // 开启服务
@@ -373,8 +379,8 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                     Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
                                                     binding.etWifiPwd.text.toString()
                                                 )
-                                                // 调用后台接口绑定
-                                                mViewModel.bindDevice(bean.devId, bean.uuid)
+                                                // 先进行数据同步、后绑定
+                                                mViewModel.getDps(bean)
                                             }.onFailure { hideProgressLoading() }
                                         }
                                     }

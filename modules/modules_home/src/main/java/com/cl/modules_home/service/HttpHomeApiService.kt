@@ -216,4 +216,18 @@ interface HttpHomeApiService {
      */
     @POST("abby/user/checkFirstSubscriber")
     fun checkFirstSubscriber(): Flow<HttpResult<Boolean>>
+
+
+    /**
+     * 检查是否需要补偿订阅
+     */
+    @POST("abby/user/whetherSubCompensation")
+    fun whetherSubCompensation(): Flow<HttpResult<WhetherSubCompensationData>>
+
+    /**
+     * 补偿订阅
+     */
+    @POST("abby/user/compensatedSubscriber")
+    fun compensatedSubscriber(): Flow<HttpResult<BaseBean>>
+
 }

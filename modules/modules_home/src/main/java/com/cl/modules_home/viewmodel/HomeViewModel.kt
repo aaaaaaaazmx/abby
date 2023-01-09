@@ -491,7 +491,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     /**
      * 是否是首次订阅
-     */
+     *//*
     private val _checkFirstSubscriber = MutableLiveData<Resource<Boolean>>()
     val checkFirstSubscriber: LiveData<Resource<Boolean>> = _checkFirstSubscriber
     fun checkFirstSubscriber() {
@@ -518,9 +518,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
-    /**
+    *//**
      * 开启订阅
-     */
+     *//*
     private val _startSubscriber = MutableLiveData<Resource<BaseBean>>()
     val startSubscriber: LiveData<Resource<BaseBean>> = _startSubscriber
     fun startSubscriber() {
@@ -543,6 +543,65 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 )
             }.collectLatest {
                 _startSubscriber.value = it
+            }
+        }
+    }*/
+
+
+    /**
+     * 是否需要补偿订阅
+     */
+    private val _whetherSubCompensation = MutableLiveData<Resource<WhetherSubCompensationData>>()
+    val whetherSubCompensation: LiveData<Resource<WhetherSubCompensationData>> = _whetherSubCompensation
+    fun whetherSubCompensation() {
+        viewModelScope.launch {
+            getUnread
+            repository.whetherSubCompensation().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _whetherSubCompensation.value = it
+            }
+        }
+    }
+
+    /**
+     * 订阅补偿
+     */
+    private val _compensatedSubscriber = MutableLiveData<Resource<BaseBean>>()
+    val compensatedSubscriber: LiveData<Resource<BaseBean>> = _compensatedSubscriber
+    fun compensatedSubscriber() {
+        viewModelScope.launch {
+            getUnread
+            repository.compensatedSubscriber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _compensatedSubscriber.value = it
             }
         }
     }

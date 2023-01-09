@@ -36,12 +36,20 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
         }
     }
 
-    fun getColor(text: String?): Int {
+    /**
+     * @param detectionValue 检测项
+     * @param text 检测具体值
+     */
+    fun getColor(detectionValue: String?, text: String?): Int {
         return when (text) {
             "Too High" -> Color.parseColor("#D61744")
-            "High" -> Color.parseColor("#E3A00D")
+            "High" -> {
+                if (detectionValue == "Water Tank Temperture") Color.parseColor("#006241") else Color.parseColor("#E3A00D")
+            }
             "Ideal" -> Color.parseColor("#006241")
-            "Low" -> Color.parseColor("#E3A00D")
+            "Low" -> {
+                if (detectionValue == "Water Tank Temperture") Color.parseColor("#006241") else Color.parseColor("#E3A00D")
+            }
             "Too Low" -> Color.parseColor("#D61744")
             "OK" -> Color.parseColor("#006241")
             "Error" -> Color.parseColor("#D61744")

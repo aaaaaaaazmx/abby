@@ -143,4 +143,12 @@ class HomeRemoteRepository @Inject constructor() {
     fun checkFirstSubscriber(): Flow<HttpResult<Boolean>> {
         return service.checkFirstSubscriber()
     }
+
+    fun whetherSubCompensation(): Flow<HttpResult<WhetherSubCompensationData>> {
+        return service.whetherSubCompensation()
+    }
+
+    fun compensatedSubscriber(): Flow<HttpResult<BaseBean>> {
+        return service.compensatedSubscriber()
+    }
 }

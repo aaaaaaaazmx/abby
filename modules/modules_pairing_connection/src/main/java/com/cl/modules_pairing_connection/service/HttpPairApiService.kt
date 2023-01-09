@@ -3,6 +3,7 @@ package com.cl.modules_pairing_connection.service
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
+import com.cl.common_base.bean.SyncDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*
@@ -38,4 +39,10 @@ interface HttpPairApiService {
     @FormUrlEncoded
     @POST("abby/userDevice/checkSN")
     fun checkSN(@Field("deviceSn") deviceSn: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 设备信息同步
+     */
+    @POST("abby/userDevice/syncDeviceInfo")
+    fun syncDeviceInfo(@Body req : SyncDeviceInfoReq): Flow<HttpResult<BaseBean>>
 }
