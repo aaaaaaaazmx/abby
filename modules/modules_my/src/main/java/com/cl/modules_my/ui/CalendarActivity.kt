@@ -519,59 +519,81 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    var netWorkList = data
                     // 添加数据。``
                     // todo 是个数组
-                    if (data.isNullOrEmpty()) return@success
+                    if (netWorkList.isNullOrEmpty()) return@success
                     if (mViewMode.localCalendar.value.isNullOrEmpty()) return@success
                     lifecycleScope.launch(Dispatchers.IO) {
-                        // 合并数据
-                        val local = mViewMode.localCalendar.value
-                        local?.let { localData ->
+                        kotlin.runCatching {
+                            // 合并数据
+                            val local = mViewMode.localCalendar.value
+                            if (local.isNullOrEmpty()) return@launch
                             // 加载一年的数据
                             // 添加新数据
-                            kotlin.runCatching {
-                                // 加载完整的数据，会有卡顿，需要放到后面去添加
-                                localData.forEachIndexed { index, calendar ->
-                                    if (index < (data?.size ?: 0)) {
-                                        calendar.calendarData = data?.get(index)
-                                    }
+                            // 判断当前时间是大于还是小于
+                            val after = DateHelper.after(
+                                local[0].timeInMillis,
+                                DateHelper.formatToLong("${netWorkList[0].date}", "yyyy-MM-dd")
+                            )
+                            if (after) {
+                                // 大于
+                                val index = netWorkList.indexOfFirst { it.date == local[0].ymd }
+                                for (i in 0 until index) {
+                                    netWorkList.removeAt(i)
                                 }
-                                withContext(Dispatchers.Main) {
-                                    // 设置数据
-                                    adapter.setList(local)
-                                    if (mViewMode.onlyRefreshLoad.value == true) {
-                                        // 修改选中的数据
-                                        // 二次加载isChooser = true 的日期
-                                        adapter.data.indexOfFirst { it.isChooser }.let { index ->
-                                            showTaskList(adapter.data[index])
-                                        }
-                                    } else {
-                                        showTaskList(mViewMode.mCurrentDate)
-                                    }
-                                }
-
-                            }
-                        }
-                    }
-
-                    // todo 解锁周期后弹出图文广告
-                    val status = mViewMode.guideInfoStatus.value
-                    if (status.isNullOrEmpty()) return@success
-                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
-                    when (status) {
-                        CalendarData.TASK_TYPE_CHECK_TRANSPLANT,
-                        CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING,
-                        CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
-                        CalendarData.TASK_TYPE_CHECK_CHECK_DRYING,
-                        CalendarData.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
-                            mViewMode.localCalendar.value?.indexOfFirst { data -> data.isChooser }?.let { bean ->
-                                if (bean != -1) {
-                                    intent.putExtra(Constants.Global.KEY_TXT_TYPE, mViewMode.getCalendar.value?.data?.get(bean)?.epochExplain)
-                                    startActivity(intent)
+                            } else if (!after) {
+                                // 小于
+                                val index = local.indexOfFirst { it.ymd == netWorkList[0].date }
+                                for (i in 0 until index) {
+                                    local.removeAt(i)
                                 }
                             }
+
+                            // 加载完整的数据，会有卡顿，需要放到后面去添加
+                            local.forEachIndexed { index, calendar ->
+                                // 由于本地时区问题，懒得做本地化兼容了。强制判断、无非2种情况。本地时间》服务器、或者小于
+                                if (index < (netWorkList.size)) {
+                                    if (calendar.ymd == netWorkList[index].date) {
+                                        calendar.calendarData = netWorkList[index]
+                                    }
+                                }
+                            }
+                            withContext(Dispatchers.Main) {
+                                // 设置数据
+                                adapter.setList(local)
+                                if (mViewMode.onlyRefreshLoad.value == true) {
+                                    // 修改选中的数据
+                                    // 二次加载isChooser = true 的日期
+                                    adapter.data.indexOfFirst { it.isChooser }.let { index ->
+                                        showTaskList(adapter.data[index])
+                                    }
+                                } else {
+                                    showTaskList(mViewMode.mCurrentDate)
+                                }
+                            }
+
                         }
-                        CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
+
+                        // todo 解锁周期后弹出图文广告
+                        val status = mViewMode.guideInfoStatus.value
+                        if (status.isNullOrEmpty()) return@launch
+                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                        when (status) {
+                            CalendarData.TASK_TYPE_CHECK_TRANSPLANT,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_DRYING,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
+                                mViewMode.localCalendar.value?.indexOfFirst { data -> data.isChooser }?.let { bean ->
+                                    if (bean != -1) {
+                                        intent.putExtra(Constants.Global.KEY_TXT_TYPE, mViewMode.getCalendar.value?.data?.get(bean)?.epochExplain)
+                                        startActivity(intent)
+                                    }
+                                }
+                            }
+                            CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
+                            }
                         }
                     }
                 }
