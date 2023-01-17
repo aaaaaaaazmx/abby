@@ -158,7 +158,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"/>
 
+            <!--去掉加肥-->
             <com.cl.common_base.widget.SvTextView
+                android:visibility="gone"
                 android:id="@+id/tv_feef"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
@@ -169,7 +171,6 @@
                 android:textColor="@color/mainColor"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.GONE : View.VISIBLE}'
                 app:layout_constraintBottom_toBottomOf="@+id/iv_bowl"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_bowl"

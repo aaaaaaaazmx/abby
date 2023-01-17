@@ -33,7 +33,9 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="Add the fertilizer as instructed"
+            tools:text="Moving forward, you will use a full packet of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.
+\n\n
+*Note: you must cut open the packets first"
             android:textColor="#161B19"
             android:textSize="15sp"
             android:textStyle="bold" />
@@ -47,7 +49,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
-            android:background="@mipmap/home_six_bg" />
+            tools:background="@mipmap/base_six_bg" />
 
 
         <Button

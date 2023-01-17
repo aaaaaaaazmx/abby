@@ -304,10 +304,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                 .asCustom(
                                                                     // 加肥弹窗
                                                                     HomePlantSixPop(
+                                                                        isFattening = true,
                                                                         context = this@CalendarActivity,
                                                                         onNextAction = {
+                                                                            // 如果是在换水的三步当中的最后一步，加肥
+                                                                            // 直接调用完成任务
+                                                                            mViewMode.taskId.value?.let {
+                                                                                mViewMode.finishTask(
+                                                                                    FinishTaskReq(it)
+                                                                                )
+                                                                            }
                                                                             // 需要先发送指令喂食
-                                                                            DeviceControl.get()
+                                                                            /*DeviceControl.get()
                                                                                 .success {
                                                                                     // 如果是在换水的三步当中的最后一步，加肥
                                                                                     // 直接调用完成任务
@@ -326,7 +334,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                                     """.trimIndent()
                                                                                     )
                                                                                 }
-                                                                                .feedAbby(true)
+                                                                                .feedAbby(true)*/
                                                                         }
                                                                     )
                                                                 ).show()
@@ -354,10 +362,19 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 .asCustom(
                                     // 加肥弹窗
                                     HomePlantSixPop(
+                                        isFattening = true,
                                         context = this@CalendarActivity,
                                         onNextAction = {
+                                            // 如果是在换水的三步当中的最后一步，加肥
+                                            // 直接调用完成任务
+                                            mViewMode.taskId.value?.let {
+                                                mViewMode.finishTask(
+                                                    FinishTaskReq(it)
+                                                )
+                                            }
+
                                             // 需要先发送指令喂食
-                                            DeviceControl.get()
+                                            /*DeviceControl.get()
                                                 .success {
                                                     // 加肥掉落弹窗
                                                     if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
@@ -415,7 +432,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         """.trimIndent()
                                                     )
                                                 }
-                                                .feedAbby(true)
+                                                .feedAbby(true)*/
                                         }
                                     )
                                 ).show()

@@ -1,8 +1,10 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
+import com.cl.common_base.bean.UnreadMessageData
 import com.cl.common_base.databinding.HomePlantSixPopBinding
 import com.lxj.xpopup.core.BottomPopupView
 
@@ -14,12 +16,41 @@ import com.lxj.xpopup.core.BottomPopupView
 class HomePlantSixPop(
     context: Context,
     private val onNextAction: (() -> Unit)? = null,
+    var isFattening: Boolean? = false, // 是否是加水、加肥三步中的最后一步加肥 , false 半包、 true 一包。
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_plant_six_pop
     }
 
     private var binding: HomePlantSixPopBinding? = null
+
+    override fun beforeShow() {
+        super.beforeShow()
+        if (isFattening == true) {
+            // 是加肥
+            binding?.tvDec?.text ="""
+                Moving forward, you will use a full packet of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.
+
+                *Note: you must cut open the packets first
+            """.trimIndent()
+
+            binding?.ivAdd?.background = ContextCompat.getDrawable(
+                context,
+                R.mipmap.base_six_feed_bg
+            )
+        }else {
+            binding?.tvDec?.text = """
+                For the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. 
+
+                *Note: you must cut open the packets first
+            """.trimIndent()
+
+            binding?.ivAdd?.background = ContextCompat.getDrawable(
+                context,
+                R.mipmap.base_six_bg
+            )
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()

@@ -1,5 +1,6 @@
 package com.cl.common_base.bean
 
+import com.cl.common_base.BaseBean
 import com.google.gson.annotations.SerializedName
 
 /**

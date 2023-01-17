@@ -46,7 +46,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
-            android:background="@mipmap/home_six_bg" />
+            android:background="@mipmap/base_six_feed_bg" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_marginTop="25dp"
@@ -85,7 +85,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:enabled="false"
             android:id="@+id/btn_success"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -94,6 +93,7 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/create_state_button"
+            android:enabled="false"
             android:text="Next"
             android:textAllCaps="false"
             android:textColor="@color/white"

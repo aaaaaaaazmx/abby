@@ -50,6 +50,7 @@ import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.core.BasePopupView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import java.io.Serializable
@@ -326,7 +327,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 plantFour.show()
             }
             svContinue.setOnClickListener {
-                plantSix.show()
+                plantSix().show()
             }
         }
 
@@ -454,8 +455,46 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         XPopup.Builder(context).isDestroyOnDismiss(false).enableDrag(false).maxHeight(dp2px(600f))
             .dismissOnTouchOutside(false).asCustom(context?.let {
                 HomePlantFeedPop(context = it, onNextAction = {
+                    // 如果是在换水的三步当中的最后一步，加肥
+                    if (mViewMode.getUnreadMessageList()
+                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                    ) {
+                        // 完成任务
+                        mViewMode.popPeriodStatus.value?.let { map ->
+                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                        }
+                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                        mViewMode.getRead(
+                            "${
+                                mViewMode.getUnreadMessageList()
+                                    .firstOrNull()?.messageId
+                            }"
+                        )
+                        return@HomePlantFeedPop
+                    }
+
+                    // 加肥气泡
+                    if (mViewMode.getUnreadMessageList()
+                            .firstOrNull()?.type == UnReadConstants.Device.KEY_ADD_MANURE
+                    ) {
+                        // 完成任务
+                        mViewMode.popPeriodStatus.value?.let { map ->
+                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                        }
+                        mViewMode.getRead(
+                            "${
+                                mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                            }"
+                        )
+                        return@HomePlantFeedPop
+                    }
+
+                    // 第六个弹窗
+                    // plant6后记“3”
+                    mViewMode.setCurrentReqStatus(3)
+                    mViewMode.saveOrUpdate("3")
                     // 涂鸦指令，添加化肥
-                    DeviceControl.get().success {
+                    /*DeviceControl.get().success {
                         if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
                             pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
                                 .dismissOnTouchOutside(false).asCustom(
@@ -541,7 +580,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     errorMsg-> $error
                                 """.trimIndent()
                         )
-                    }.feedAbby(true)
+                    }.feedAbby(true)*/
                 })
             })
     }
@@ -670,7 +709,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
                                 )
                             }
-                            plantSix.show()
+                            plantSix().show()
                             return@HomePlantFivePop
                         }
 
@@ -736,12 +775,37 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     /**
      * plant6 弹窗 加肥
      */
-    private val plantSix by lazy {
-        XPopup.Builder(context).isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
+    private fun plantSix(): BasePopupView {
+       return XPopup.Builder(context).isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
             .dismissOnTouchOutside(false).asCustom(context?.let {
-                HomePlantSixPop(context = it, onNextAction = {
+                HomePlantSixPop(context = it, isFattening = mViewMode.getUnreadMessageList()
+                    .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER, onNextAction = {
+                    // 如果是在换水的三步当中的最后一步，加肥
+                    if (mViewMode.getUnreadMessageList()
+                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                    ) {
+                        // 完成任务
+                        mViewMode.popPeriodStatus.value?.let { map ->
+                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                        }
+                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                        mViewMode.getRead(
+                            "${
+                                mViewMode.getUnreadMessageList()
+                                    .firstOrNull()?.messageId
+                            }"
+                        )
+                        return@HomePlantSixPop
+                    }
+
+                    // 第六个弹窗
+                    // plant6后记“3”
+                    mViewMode.setCurrentReqStatus(3)
+                    mViewMode.saveOrUpdate("3")
+
+
                     // 需要先发送指令喂食
-                    DeviceControl.get().success {
+                   /* DeviceControl.get().success {
                         if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
                             pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
                                 .dismissOnTouchOutside(false).asCustom(
@@ -833,7 +897,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     errorMsg-> $error
                                 """.trimIndent()
                         )
-                    }.feedAbby(true)
+                    }.feedAbby(true)*/
                 })
             })
     }
@@ -1504,7 +1568,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // plant5后记“2”
                             ViewUtils.setVisible(binding.plantAddWater.clContinue)
                             ViewUtils.setGone(binding.plantAddWater.ivAddWater)
-                            plantSix.show()
+                            plantSix().show()
                         }
                         3 -> {
                             // plant6后记“3”
@@ -1657,7 +1721,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         if (data?.cupType == 1) {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                   it, com.cl.common_base.R.mipmap.home_seed_bg_five_plast
+                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_five_plast
                                                 )
                                             }
                                         } else {
@@ -2179,7 +2243,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 it.type = UnReadConstants.StatusManager.VALUE_STATUS_ADD_MANURE
                             }
                             // 加肥的弹窗
-                            plantSix.show()
+                            plantSix().show()
                         }
                     }
 
@@ -2474,12 +2538,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                     else -> {
                         // 加肥的弹窗
-                        plantSix.show()
+                        plantSix().show()
                     }
                 }
             } else if (extension == UnReadConstants.Extension.KEY_EXTENSION_CONTINUE_THREE) {
                 //  加肥的弹窗
-                plantSix.show()
+                plantSix().show()
             } else {
                 logI("specificStep")
             }
