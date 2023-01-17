@@ -83,12 +83,12 @@ dependencies {
     // startUp
     api(Deps.startUp)
     // glide
-    api(Deps.glide)
-    kapt(Deps.glideKapt)
+//    api(Deps.glide)
+//    kapt(Deps.glideKapt)
     // permisslion
     api(Deps.permission)
     // choosePhoto
-    api(Deps.choosePhoto)
+    // api(Deps.choosePhoto)
     // t涂鸦
     api(Deps.tuya)
     api(Deps.fastJson)
@@ -108,11 +108,12 @@ dependencies {
     // bugly
     api("com.tencent.bugly:crashreport:latest.release")
     api(project(mapOf("path" to ":common:BarcodeScanning")))
+    api(project(mapOf("path" to ":common:kefu-easeui")))
     // lottie
     api(Deps.lottie)
     // viewPager指示器
     api("com.github.hackware1993:MagicIndicator:1.7.0")
     // snapHelp
     api("com.github.rubensousa:gravitysnaphelper:2.2.2")
-    api("com.github.limuyang2:LShadowLayout:1.0.3")
+    // api("com.github.limuyang2:LShadowLayout:1.0.3")
 }

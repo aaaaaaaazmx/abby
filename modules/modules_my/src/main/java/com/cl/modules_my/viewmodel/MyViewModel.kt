@@ -47,14 +47,13 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
-                logD("catch $it")
+                logD("catch ${it.message}")
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {

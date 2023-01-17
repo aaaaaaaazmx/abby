@@ -52,6 +52,13 @@ class HomePlantFivePop(
         _getWaterVolume.value = "0"
     }
 
+    override fun beforeShow() {
+        super.beforeShow()
+        // 根据公英制转换加仑还是L
+        val isF = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        binding?.tvDec?.text = if (!isF)  "Fill the tank with three gallons of water. Make sure the water level is between the second and third sensor. " else "Fill the tank with 12L of water. Make sure the water level is between the second and third sensor. "
+    }
+
 
     private var binding: HomePlantFivePopBinding? = null
 

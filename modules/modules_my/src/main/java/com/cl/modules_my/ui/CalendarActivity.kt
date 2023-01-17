@@ -1,9 +1,8 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.graphics.Typeface
-import android.text.TextPaint
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +14,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
@@ -34,6 +35,8 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.Calendar
@@ -50,8 +53,7 @@ import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
-import com.goldentec.android.tools.util.let
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
@@ -61,6 +63,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.Serializable
 import java.lang.reflect.Field
 import java.util.*
 import javax.inject.Inject
@@ -199,7 +202,13 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    pop
+                    android.os.Handler().postDelayed({
+                        // 传递的数据为空
+                        val intent = Intent(this@CalendarActivity, BasePumpActivity::class.java)
+                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                        myActivityLauncher.launch(intent)
+                    }, 50)
+                    /*pop
                         .enableDrag(false)
                         .maxHeight(dp2px(700f))
                         .dismissOnTouchOutside(false)
@@ -237,7 +246,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 },
                                 data = this.data,
                             )
-                        ).show()
+                        ).show()*/
                 }
             })
 
@@ -295,10 +304,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                 .asCustom(
                                                                     // 加肥弹窗
                                                                     HomePlantSixPop(
+                                                                        isFattening = true,
                                                                         context = this@CalendarActivity,
                                                                         onNextAction = {
+                                                                            // 如果是在换水的三步当中的最后一步，加肥
+                                                                            // 直接调用完成任务
+                                                                            mViewMode.taskId.value?.let {
+                                                                                mViewMode.finishTask(
+                                                                                    FinishTaskReq(it)
+                                                                                )
+                                                                            }
                                                                             // 需要先发送指令喂食
-                                                                            DeviceControl.get()
+                                                                            /*DeviceControl.get()
                                                                                 .success {
                                                                                     // 如果是在换水的三步当中的最后一步，加肥
                                                                                     // 直接调用完成任务
@@ -317,7 +334,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                                                     """.trimIndent()
                                                                                     )
                                                                                 }
-                                                                                .feedAbby(true)
+                                                                                .feedAbby(true)*/
                                                                         }
                                                                     )
                                                                 ).show()
@@ -345,10 +362,19 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 .asCustom(
                                     // 加肥弹窗
                                     HomePlantSixPop(
+                                        isFattening = true,
                                         context = this@CalendarActivity,
                                         onNextAction = {
+                                            // 如果是在换水的三步当中的最后一步，加肥
+                                            // 直接调用完成任务
+                                            mViewMode.taskId.value?.let {
+                                                mViewMode.finishTask(
+                                                    FinishTaskReq(it)
+                                                )
+                                            }
+
                                             // 需要先发送指令喂食
-                                            DeviceControl.get()
+                                            /*DeviceControl.get()
                                                 .success {
                                                     // 加肥掉落弹窗
                                                     if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
@@ -406,7 +432,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         """.trimIndent()
                                                     )
                                                 }
-                                                .feedAbby(true)
+                                                .feedAbby(true)*/
                                         }
                                     )
                                 ).show()
@@ -510,35 +536,80 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    var netWorkList = data
                     // 添加数据。``
                     // todo 是个数组
-                    if (data.isNullOrEmpty()) return@success
+                    if (netWorkList.isNullOrEmpty()) return@success
                     if (mViewMode.localCalendar.value.isNullOrEmpty()) return@success
                     lifecycleScope.launch(Dispatchers.IO) {
-                        // 合并数据
-                        val local = mViewMode.localCalendar.value
-                        local?.let { localData ->
+                        kotlin.runCatching {
+                            // 合并数据
+                            val local = mViewMode.localCalendar.value
+                            if (local.isNullOrEmpty()) return@launch
                             // 加载一年的数据
                             // 添加新数据
-                            kotlin.runCatching {
-                                // 加载完整的数据，会有卡顿，需要放到后面去添加
-                                localData.forEachIndexed { index, calendar ->
-                                    calendar.calendarData = data?.get(index)
+                            // 判断当前时间是大于还是小于
+                            val after = DateHelper.after(
+                                local[0].timeInMillis,
+                                DateHelper.formatToLong("${netWorkList[0].date}", "yyyy-MM-dd")
+                            )
+                            if (after) {
+                                // 大于
+                                val index = netWorkList.indexOfFirst { it.date == local[0].ymd }
+                                for (i in 0 until index) {
+                                    netWorkList.removeAt(i)
                                 }
-                                withContext(Dispatchers.Main) {
-                                    // 设置数据
-                                    adapter.setList(local)
-                                    if (mViewMode.onlyRefreshLoad.value == true) {
-                                        // 修改选中的数据
-                                        // 二次加载isChooser = true 的日期
-                                        adapter.data.indexOfFirst { it.isChooser }.let { index ->
-                                            showTaskList(adapter.data[index])
-                                        }
-                                    } else {
-                                        showTaskList(mViewMode.mCurrentDate)
+                            } else if (!after) {
+                                // 小于
+                                val index = local.indexOfFirst { it.ymd == netWorkList[0].date }
+                                for (i in 0 until index) {
+                                    local.removeAt(i)
+                                }
+                            }
+
+                            // 加载完整的数据，会有卡顿，需要放到后面去添加
+                            local.forEachIndexed { index, calendar ->
+                                // 由于本地时区问题，懒得做本地化兼容了。强制判断、无非2种情况。本地时间》服务器、或者小于
+                                if (index < (netWorkList.size)) {
+                                    if (calendar.ymd == netWorkList[index].date) {
+                                        calendar.calendarData = netWorkList[index]
                                     }
                                 }
+                            }
+                            withContext(Dispatchers.Main) {
+                                // 设置数据
+                                adapter.setList(local)
+                                if (mViewMode.onlyRefreshLoad.value == true) {
+                                    // 修改选中的数据
+                                    // 二次加载isChooser = true 的日期
+                                    adapter.data.indexOfFirst { it.isChooser }.let { index ->
+                                        showTaskList(adapter.data[index])
+                                    }
+                                } else {
+                                    showTaskList(mViewMode.mCurrentDate)
+                                }
+                            }
 
+                        }
+
+                        // todo 解锁周期后弹出图文广告
+                        val status = mViewMode.guideInfoStatus.value
+                        if (status.isNullOrEmpty()) return@launch
+                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                        when (status) {
+                            CalendarData.TASK_TYPE_CHECK_TRANSPLANT,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_DRYING,
+                            CalendarData.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
+                                mViewMode.localCalendar.value?.indexOfFirst { data -> data.isChooser }?.let { bean ->
+                                    if (bean != -1) {
+                                        intent.putExtra(Constants.Global.KEY_TXT_TYPE, mViewMode.getCalendar.value?.data?.get(bean)?.epochExplain)
+                                        startActivity(intent)
+                                    }
+                                }
+                            }
+                            CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
                             }
                         }
                     }
@@ -563,7 +634,13 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         binding.tvCycle.setOnClickListener {
             // 需要小问号
             adapter.data.firstOrNull { it.isChooser }?.apply {
-                this.calendarData.epochExplain?.let { it1 -> mViewMode.getGuideInfo(it1) }
+                this.calendarData.epochExplain?.let {
+                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                    intent.putExtra(Constants.Global.KEY_TXT_TYPE, it)
+                    startActivity(intent)
+                }
+
+
             }
         }
 
@@ -821,7 +898,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             // 周期
             binding.tvCycle.text = it.epoch
             // 天数
-            binding.tvDay.text = "Day${it.day}"
+            binding.tvDay.text = "Week ${it.week} Day ${it.day}"
             // 判断当前周期有无任务, 显示空布局 or 展示时间轴
             ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
             ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
@@ -948,6 +1025,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     )
                                 )
                             }
+                            // 学院任务
+                            CalendarData.TYPE_ACADEMY_TASK -> {
+                                holder.imgMark.setImageDrawable(
+                                    ContextCompat.getDrawable(
+                                        this@CalendarActivity,
+                                        com.cl.common_base.R.drawable.base_dot_academy_task
+                                    )
+                                )
+                            }
                         }
 
                     }
@@ -959,6 +1045,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         task:
                         ${listContent[position].taskTime}
                         ${listContent[position].taskName}
+                        ${listContent[position].timeLineState}
                     """.trimIndent()
                     )
                     val tvTaskTime = holder.leftLayout.findViewById<TextView>(R.id.tv_task_time)
@@ -1035,6 +1122,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         mViewMode.plantInfo()
                                                     }
                                                     else -> {
+                                                        // todo、如果是学院任务，那么就直接跳转到学院弹窗
+                                                        if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {
+                                                            ARouter.getInstance().build(RouterPath.Home.PAGE_KNOW)
+                                                                .withString(Constants.Global.KEY_TXT_TYPE, listContent[position].taskType)
+                                                                .withString(Constants.Global.KEY_TASK_ID, listContent[position].taskId)
+                                                                .navigation(this@CalendarActivity, KEY_REQUEST_KNOW_MORE)
+                                                            return@BaseThreeTextPop
+                                                        }
                                                         listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }
                                                     }
                                                 }
@@ -1216,11 +1311,49 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
+
+    /**
+     * 排水界面结束回调
+     */
+    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            // 排水结束，那么直接弹出
+            if (basePumpWaterFinishPop.isShow) return@registerForActivityResult
+            pop
+                .isDestroyOnDismiss(false)
+                .enableDrag(false)
+                .maxHeight(dp2px(600f))
+                .dismissOnTouchOutside(false)
+                .asCustom(
+                    basePumpWaterFinishPop
+                ).show()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                // 请求学院页面的返回
+                KEY_REQUEST_KNOW_MORE -> {
+                    // 刷新任务
+                    mViewMode.refreshTask()
+                }
+            }
+        }
+
+    }
+
     // 手动返回
     override fun onBackPressed() {
         setResult(RESULT_OK)
         finish()
     }
+
+    companion object {
+        const val KEY_REQUEST_KNOW_MORE = 1
+    }
+
 }
 
 

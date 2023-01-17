@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.common_base.bean.RichTextData.Page" />
+    </data>
+
+
+    <com.cl.common_base.video.SampleCoverVideo
+        android:id="@+id/video_item_player"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="21dp"
+        tools:ignore="MissingConstraints" />
+</layout>

@@ -8,6 +8,9 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.RequiresApi;
 
+/**
+ * 键盘工具类
+ */
 public class SoftInputUtils {
 
     @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)

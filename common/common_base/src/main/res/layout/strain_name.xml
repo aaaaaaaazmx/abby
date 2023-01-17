@@ -8,12 +8,13 @@
     </data>
 
     <LinearLayout
-        android:background="@drawable/bg_round_tl_tr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_tl_tr"
         android:orientation="vertical">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/nes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true">
@@ -46,7 +47,9 @@
                     android:background="@drawable/bg_round_gray">
 
                     <EditText
-                        android:textSize="16sp"
+                        android:descendantFocusability="blocksDescendants"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:id="@+id/strain_name"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -55,6 +58,7 @@
                         android:background="@null"
                         android:hint="@string/base_og"
                         android:inputType="text"
+                        android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/curing_delete"
                         app:layout_constraintStart_toStartOf="parent"
@@ -72,39 +76,48 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    tools:ignore="MissingConstraints">
+                    android:layout_marginTop="18dp">
 
-                    <TextView
-                        android:id="@+id/tv_how"
-                        android:layout_width="wrap_content"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_strain"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/mt_about_desc"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                         />
+                        tools:ignore="MissingConstraints">
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="0.7dp"
-                        android:background="@color/black"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_how"
-                        app:layout_constraintStart_toStartOf="@+id/tv_how"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_how" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/tv_how"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/mt_about_desc"
+                            android:textColor="@color/black"
+                            android:textSize="16sp" />
+
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0.7dp"
+                            android:background="@color/black"
+                            app:layout_constraintEnd_toEndOf="@+id/tv_how"
+                            app:layout_constraintStart_toStartOf="@+id/tv_how"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_how" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rv_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </RelativeLayout>
 
 
                 <Button
-                    android:layout_marginTop="212dp"
                     android:id="@+id/btn_success"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_gravity="bottom"
                     android:layout_marginStart="24dp"
+                    android:layout_marginTop="212dp"
                     android:layout_marginEnd="24dp"
                     android:background="@drawable/create_state_button"
                     android:enabled="false"
@@ -114,30 +127,32 @@
                     android:textSize="18sp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_marginBottom="5dp"
                     android:id="@+id/cl_not_know"
-                    android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_marginTop="7dp"
+                    android:layout_marginBottom="5dp"
                     tools:ignore="MissingConstraints">
 
                     <TextView
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        android:padding="10dp"
                         android:id="@+id/tv_dont"
-                        android:layout_width="wrap_content"
+                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/my_not_know"
                         android:textColor="@color/mainColor"
                         android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
                     <View
-                        android:visibility="gone"
                         android:layout_width="0dp"
                         android:layout_height="0.7dp"
                         android:background="@color/black"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="@+id/tv_dont"
                         app:layout_constraintStart_toStartOf="@+id/tv_dont"
                         app:layout_constraintTop_toBottomOf="@+id/tv_dont" />

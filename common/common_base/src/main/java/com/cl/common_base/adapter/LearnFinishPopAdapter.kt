@@ -1,27 +1,21 @@
 package com.cl.common_base.adapter
 
-import android.text.style.UnderlineSpan
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import androidx.core.text.inSpans
 import androidx.core.text.underline
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
-import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.R
 import com.cl.common_base.bean.DetailByLearnMoreIdData
 import com.cl.common_base.databinding.HomeFinishGuideItemBinding
 import com.cl.common_base.databinding.HomeFinishGuideTextItemBinding
 import com.cl.common_base.databinding.HomeFinishGuideUrlItemBinding
-import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
-import com.cl.common_base.ext.px2dp
 import com.cl.common_base.util.AppUtil
-import com.cl.common_base.util.span.appendClickable
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 
 /**
  * 通用图文界面

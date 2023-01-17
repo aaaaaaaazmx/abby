@@ -3,6 +3,7 @@ package com.cl.modules_pairing_connection.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
+import com.cl.common_base.bean.SyncDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.net.ServiceCreators
 import com.cl.modules_pairing_connection.service.HttpPairApiService
@@ -31,5 +32,9 @@ class PairRemoteRepository @Inject constructor() {
 
     fun checkSN(deviceSn: String): Flow<HttpResult<BaseBean>> {
         return service.checkSN(deviceSn)
+    }
+
+    fun syncDeviceInfo(syncDeviceInfo: SyncDeviceInfoReq): Flow<HttpResult<BaseBean>> {
+        return service.syncDeviceInfo(syncDeviceInfo)
     }
 }

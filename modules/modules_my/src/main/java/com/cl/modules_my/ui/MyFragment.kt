@@ -2,6 +2,7 @@ package com.cl.modules_my.ui
 
 import android.content.Intent
 import android.view.View
+import android.widget.Toast
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.bean.UserinfoBean
@@ -76,6 +77,9 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
                 }
                 success {
                     data?.let {
+                        // 缓存信息
+                        GSON.toJson(it)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
+
                         // 头像链接
                         val headUrl = it.avatarPicture
 
@@ -115,6 +119,11 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
         if (!hidden) {
             mViewMode.userDetail()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mViewMode.userDetail()
     }
 
     override fun FragmentMyBinding.initBinding() {

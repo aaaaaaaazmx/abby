@@ -84,6 +84,15 @@
                 android:background="@mipmap/my_calendar_circle_bg"
                 android:layout_width="5dp"
                 android:layout_height="5dp"/>
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_academy_task"
+                android:layout_marginStart="2dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@drawable/base_dot_academy_task"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
         </LinearLayout>
 
         <LinearLayout
@@ -112,6 +121,14 @@
             <ImageView
                 android:visibility="gone"
                 android:id="@+id/iv_change_water_gray"
+                android:layout_marginStart="2dp"
+                android:layout_gravity="center_horizontal|bottom"
+                android:background="@drawable/base_dot_gray"
+                android:layout_width="5dp"
+                android:layout_height="5dp"/>
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_change_academy_task_gray"
                 android:layout_marginStart="2dp"
                 android:layout_gravity="center_horizontal|bottom"
                 android:background="@drawable/base_dot_gray"

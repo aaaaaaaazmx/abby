@@ -9,6 +9,7 @@ import com.joketng.timelinestepview.TimeLineState
 data class CalendarData(
     var date: String? = null,
     var day: String? = null,
+    var week: String? = null,
     var epoch: String? = null,
     var epochEndTime: String? = null,
     var epochExplain: String? = null,
@@ -36,6 +37,7 @@ data class CalendarData(
         const val TYPE_CHANGE_WATER = "change_water_task"
         const val TYPE_TRAIN = "train_task"
         const val TYPE_PERIOD_CHECK = "period_check_task"
+        const val TYPE_ACADEMY_TASK = "academy_task" // 学院任务
 
         // taskType
         // 任务类型
@@ -51,5 +53,7 @@ data class CalendarData(
         const val TASK_TYPE_CHECK_CHECK_DRYING = "check_drying"
         const val TASK_TYPE_CHECK_CHECK_CURING = "check_curing"
         const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"
+        const val TASK_TYPE_CHECK_CHECK_AUTOFLOWERING = "check_autoflowering"
+        const val TASK_TYPE_TEST = "test" // 学院任务
     }
 }

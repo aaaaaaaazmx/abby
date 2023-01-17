@@ -13,6 +13,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
@@ -356,6 +357,7 @@ class CloneAndReplantViewModel @Inject constructor(private val repository: MyRep
                         error: $error
                     """.trimIndent()
                 )
+                ToastUtil.shortShow(error)
             }
         })
     }

@@ -322,7 +322,7 @@ public class VerificationCodeInputView  extends RelativeLayout {
     private void initPopupWindow() {
         mPopupWindow = new PopupWindow(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         TextView tv = new TextView(mContext);
-        tv.setText("粘贴");
+        tv.setText("Paste");
         tv.setTextSize(14.0f);
         tv.setTextColor(Color.BLACK);
         tv.setBackgroundResource(R.drawable.vciv_paste_bg);

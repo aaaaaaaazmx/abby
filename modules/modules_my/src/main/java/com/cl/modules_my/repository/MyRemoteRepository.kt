@@ -98,5 +98,19 @@ class MyRemoteRepository @Inject constructor() {
         return service.deviceOperateFinish(type)
     }
 
+    fun checkSubscriberNumber(number:String): Flow<HttpResult<CheckSubscriberNumberBean>> {
+        return service.checkSubscriberNumber(number)
+    }
 
+    fun topUpSubscriberNumber(number:String): Flow<HttpResult<Boolean>> {
+        return service.topUpSubscriberNumber(number)
+    }
+
+    fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
+        return service.automaticLogin(body)
+    }
+
+    fun giveUpCheck(): Flow<HttpResult<GiveUpCheckData>> {
+        return service.giveUpCheck()
+    }
 }

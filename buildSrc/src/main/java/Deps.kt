@@ -21,8 +21,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 31
-    val versionCode = 12
-    const val versionName = "1.1.1"
+    val versionCode = 20
+    const val versionName = "1.1.6"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"
@@ -79,6 +79,10 @@ object Version {
 
     const val choosePhoto = "v3.10.6"
 
+    const val choosePhotoCamera = "v3.10.6"
+
+    const val epMedia = "v1.0.1"
+
     const val luban = "1.1.8"
 
     const val tuya = "3.36.1"
@@ -91,6 +95,8 @@ object Version {
     const val cardSwip = "1.0.0"
 
     const val lottieVersion = "5.2.0"
+
+    const val videoPlayer = "v8.3.4"
 }
 
 object Deps {
@@ -204,6 +210,11 @@ object Deps {
 
     // chooserPhoto
     const val choosePhoto = "io.github.lucksiege:pictureselector:${Version.choosePhoto}"
+    // camera
+    const val choosePhotoCamera =  "io.github.lucksiege:camerax:${Version.choosePhotoCamera}"
+
+    // ffmpeg
+    const val epMedia = "com.github.yangjie10930:EpMedia:${Version.epMedia}"
 
     //luban
     const val luban = "top.zibin:Luban:${Version.luban}"
@@ -228,6 +239,9 @@ object Deps {
 
     // lottie
     const val lottie = "com.airbnb.android:lottie:${Version.lottieVersion}"
+
+    // VideoPlay
+    const val videoPlayer = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:${Version.videoPlayer}-release-jitpack"
 }
 
 fun String.exec(): String =

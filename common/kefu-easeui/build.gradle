@@ -1,0 +1,71 @@
+apply plugin: 'com.android.library'
+
+
+android {
+    compileSdkVersion 31
+    buildToolsVersion "28.0.2"
+
+    defaultConfig {
+        // 电子白板，最低要求21
+        minSdkVersion 21
+        targetSdkVersion 31
+        versionCode 9
+        versionName "1.2.3"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    sourceSets {
+        main() {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    useLibrary 'org.apache.http.legacy'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+
+dependencies {
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    api fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
+    api 'androidx.appcompat:appcompat:1.2.0'
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0-rc01'
+    api 'com.github.bumptech.glide:glide:4.13.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+
+    api 'com.google.code.gson:gson:2.8.5'
+    api files('libs/kefu-sdk-1.3.2.9.jar')
+    // api project(path: ':common:player')
+
+    // x.y.z，请填写具体的 SDK 版本号，如：3.6.2。
+    // 通过发版说明获取最新版本号。
+    api 'io.agora.rtc:full-sdk:3.7.0'
+    // api 'io.agora.rtc:full-sdk:3.6.2'
+    // 电子白板
+//     api 'com.github.netless-io:whiteboard-android:2.16.7'
+//    api "com.github.netless-io:fastboard-android:4436eeefcb94d5fc38888280f3b2253ddacdd608"
+    api "com.github.netless-io:fastboard-android:1.2.3"
+    // 图片选择
+    api(Deps.choosePhoto)
+    // 拍摄视频
+    api(Deps.choosePhotoCamera)
+    // 视频压缩
+    api(Deps.epMedia)
+    // 视频播放
+    api(Deps.videoPlayer)
+
+    // implementation 'com.easemob:kefu-sdk-lite:1.3.1'
+}
+// apply from: 'jcenter.gradle'

@@ -1,22 +1,20 @@
 package com.cl.common_base.pop
 
 import android.content.Context
-import android.graphics.Color
+import android.os.PowerManager
 import android.util.Log
-import android.view.View
 import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-import androidx.core.content.ContextCompat
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
 import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
 import com.cl.common_base.ext.logI
-import com.cl.common_base.ext.setVisible
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -24,6 +22,7 @@ import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.common_base.video.SampleCoverVideo
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lin.cardlib.CardLayoutManager
 import com.lin.cardlib.CardSetting
@@ -31,6 +30,7 @@ import com.lin.cardlib.CardTouchHelperCallback
 import com.lin.cardlib.OnSwipeCardListener
 import com.lin.cardlib.utils.ReItemTouchHelper
 import com.lxj.xpopup.core.BottomPopupView
+import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
@@ -73,6 +73,7 @@ class BasePumpWaterPop(
     override fun beforeShow() {
         super.beforeShow()
         kotlin.runCatching {
+            mWakeLock?.acquire()
             if (data?.size != 0) {
                 // 卡片布局需要展示3张，所以需要多添加几张
                 if ((data?.size ?: 0) == 1) {
@@ -106,6 +107,8 @@ class BasePumpWaterPop(
         count = 0
         timing = 140 * 3
         ViewUtils.setGone(binding?.ivWaterOne, binding?.ivWaterOne, binding?.ivWaterThree)
+        mWakeLock?.release()
+        GSYVideoManager.releaseAllVideos()
         super.onDismiss()
     }
 
@@ -116,6 +119,12 @@ class BasePumpWaterPop(
         animation.duration = 1000 //执行时间
         animation.repeatCount = -1 //重复执行动画
         animation
+    }
+
+    private val mWakeLock by lazy {
+        val systemService = BaseApplication.getContext().getSystemService(Context.POWER_SERVICE) as? PowerManager
+        val mWakeLock: PowerManager.WakeLock? = systemService?.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Tag")
+        mWakeLock
     }
 
     // 记时器、标准时间为140秒
@@ -177,28 +186,29 @@ class BasePumpWaterPop(
                     o: AdvertisingData?,
                     direction: Int
                 ) {
-                    //                    when (direction) {
-                    //                        ReItemTouchHelper.DOWN -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe down out",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                        ReItemTouchHelper.UP -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe up out ",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                        ReItemTouchHelper.LEFT -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe left out",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                        ReItemTouchHelper.RIGHT -> Toast.makeText(
-                    //                            context,
-                    //                            "swipe right out",
-                    //                            Toast.LENGTH_SHORT
-                    //                        ).show()
-                    //                    }
+                    GSYVideoManager.releaseAllVideos()
+                   /* when (direction) {
+                        ReItemTouchHelper.DOWN -> Toast.makeText(
+                            context,
+                            "swipe down out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ReItemTouchHelper.UP -> Toast.makeText(
+                            context,
+                            "swipe up out ",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ReItemTouchHelper.LEFT -> Toast.makeText(
+                            context,
+                            "swipe left out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        ReItemTouchHelper.RIGHT -> Toast.makeText(
+                            context,
+                            "swipe right out",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }*/
                 }
 
                 override fun onSwipedClear() {
@@ -296,6 +306,7 @@ class BasePumpWaterPop(
                                             error: $error
                                         """.trimIndent()
                                         )
+                                        ToastUtil.shortShow(error)
                                         Reporter.reportTuYaError("newDeviceInstance", error, code)
                                     }
 

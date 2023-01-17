@@ -5,11 +5,12 @@
     tools:ignore="MissingConstraints">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.cl.modules_home.viewmodel.HomeViewModel" />
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,14 +32,63 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/iv_academy"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="24dp"
+            android:background="@mipmap/home_academy"
+            app:layout_constraintEnd_toEndOf="@+id/iv_calendar"
+            app:layout_constraintEnd_toStartOf="@+id/iv_calendar"
+            app:layout_constraintTop_toTopOf="@+id/iv_calendar" />
+
+        <View
+            android:id="@+id/vv_academy"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/base_dot_red"
+            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            app:layout_constraintCircle="@id/iv_academy"
+            app:layout_constraintCircleAngle="50"
+            app:layout_constraintCircleRadius="20dp" />
+
+        <ImageView
             android:id="@+id/iv_calendar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginEnd="26dp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
-            app:layout_constraintTop_toTopOf="@+id/tv_title"
-            app:layout_constraintEnd_toEndOf="parent"
             android:background="@mipmap/home_calendar_bg"
-            android:layout_width="22dp"
-            android:layout_height="22dp"/>
+            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_title" />
+
+
+        <TextView
+            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/red_bg"
+            app:layout_constraintCircle="@id/iv_calendar"
+            app:layout_constraintCircleAngle="50"
+            app:layout_constraintCircleRadius="20dp" />
+
+        <TextView
+            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:text="@{String.valueOf(viewModel.getHomePageNumber.data.calendarHighMsgCount)}"
+            android:id="@+id/vv_calendar_number"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:background="@drawable/red_bg"
+            app:layout_constraintCircle="@id/iv_calendar"
+            app:layout_constraintCircleAngle="50"
+            app:layout_constraintCircleRadius="20dp" />
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,9 +107,60 @@
                 android:layout_height="459dp"
                 android:background="@mipmap/home_plant_three_bg" />
 
+            <ImageView
+                android:id="@+id/iv_water_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8.5dp"
+                android:alpha="0.15"
+                android:background="@mipmap/home_max_water"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_bowl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@mipmap/home_week_twelve"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintCircle="@+id/iv_bowl"
+                app:layout_constraintCircleAngle="40"
+                app:layout_constraintCircleRadius="135dp"
+                android:background="@mipmap/home_plant_zzz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:id="@+id/iv_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="32dp"
+                android:background="@mipmap/home_plant_ninth_dialog_bg"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@mipmap/home_plant_three_night_bg"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"/>
+
+            <!--去掉加肥-->
             <com.cl.common_base.widget.SvTextView
-                android:visibility='@{viewModel.refreshToken.data.isVip == 1 ? View.GONE : View.VISIBLE}'
-                android:textStyle="bold"
+                android:visibility="gone"
                 android:id="@+id/tv_feef"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
@@ -69,6 +170,7 @@
                 android:text="Feed"
                 android:textColor="@color/mainColor"
                 android:textSize="10sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_bowl"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_bowl"
@@ -76,9 +178,10 @@
                 app:svSolidColor="@color/white"
                 app:svSolidType="solid" />
 
+
             <ImageView
                 android:id="@+id/iv_support"
-                android:visibility='@{viewModel.refreshToken.data.isVip == 1 ? View.VISIBLE : View.GONE}'
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}'
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginEnd="12dp"
@@ -94,62 +197,44 @@
                 android:background="@mipmap/home_plant_last_support"
                 />
 
+            <TextView
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
+                android:gravity="center"
+                android:singleLine="true"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:text="@{String.valueOf(viewModel.unReadMessageNumber)}"
+                android:id="@+id/vv_support_number"
+                android:layout_width="wrap_content"
+                android:layout_height="17dp"
+                android:background="@drawable/red_bg"
+                app:layout_constraintCircle="@id/iv_support"
+                app:layout_constraintCircleAngle="50"
+                app:layout_constraintCircleRadius="20dp" />
+
             <com.cl.common_base.widget.SvTextView
-                android:visibility='@{viewModel.refreshToken.data.isVip == 1 ? View.GONE : View.VISIBLE}'
                 android:id="@+id/tv_drain"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
-                android:textStyle="bold"
                 android:text="Drain"
                 android:textColor="@color/mainColor"
                 android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.GONE : View.VISIBLE}'
                 app:layout_constraintBottom_toTopOf="@+id/tv_feef"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:svRadius="180dp"
                 app:svSolidColor="@color/white"
                 app:svSolidType="solid" />
 
-            <ImageView
-                android:alpha="0.15"
-                android:id="@+id/iv_water_status"
-                android:layout_marginBottom="8.5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/home_max_water"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <ImageView
-                android:id="@+id/iv_bowl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@mipmap/home_week_one"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-
-            <ImageView
-                android:id="@+id/iv_start"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="32dp"
-                android:background="@mipmap/home_plant_ninth_dialog_bg"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_continue"
                 android:layout_width="261dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="22dp"
+                android:layout_marginBottom="42dp"
                 android:orientation="vertical"
                 android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
@@ -165,22 +250,22 @@
                     android:visibility="visible">
 
                     <ImageView
-                        android:visibility="gone"
                         android:id="@+id/iv_close"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_gravity="right"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="12dp"
-                        android:background="@mipmap/iv_close" />
+                        android:background="@mipmap/iv_close"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/tv_pop_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:layout_marginEnd="12dp"
                         android:layout_marginTop="10dp"
+                        android:layout_marginEnd="12dp"
                         android:layout_marginBottom="17dp"
                         android:text="Congrats—everything is ready to go. Let’s get started! "
                         android:textColor="#161B19"
@@ -191,9 +276,8 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <com.cl.common_base.widget.SvTextView
-                        android:textStyle="bold"
-                        onSingleClick="@{()-> viewModel.bubbleOnClickEvent()}"
                         android:id="@+id/tv_btn_desc"
+                        onSingleClick="@{()-> viewModel.bubbleOnClickEvent()}"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:layout_gravity="right"
@@ -206,6 +290,7 @@
                         android:text="Start Journey"
                         android:textColor="@color/white"
                         android:textSize="15sp"
+                        android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:svRadius="16dp"
@@ -222,8 +307,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/ll_root" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -289,7 +374,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_period" />
 
                 <TextView
-                    android:textStyle="bold"
                     android:id="@+id/tv_week_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -299,6 +383,7 @@
                     android:text="Week -\nDay -"
                     android:textColor="#161B19"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -308,12 +393,12 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:visibility="gone"
                 android:layout_width="0dp"
                 android:layout_height="112dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_white_r16">
+                android:background="@drawable/background_white_r16"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_ox_bg"
@@ -361,7 +446,6 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_ox" />
 
                 <TextView
-                    android:textStyle="bold"
                     android:id="@+id/tv_oxy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -371,6 +455,7 @@
                     android:text="----"
                     android:textColor="#161B19"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -407,19 +492,34 @@ Day1" />
                     android:textColor="@color/mainColor"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/iv_temperature_bg"
                     app:layout_constraintBottom_toBottomOf="@id/iv_temperature_bg"
+                    app:layout_constraintStart_toEndOf="@+id/iv_temperature_bg"
                     app:layout_constraintTop_toTopOf="@+id/iv_temperature_bg" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
                     android:layout_marginEnd="12dp"
-                    android:background="@mipmap/home_plant_indicator_light"
-                    android:visibility="gone"
+                    android:background="@drawable/red_bg"
+                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />
+
+                <!--<TextView
+                    android:text="@{String.valueOf(viewModel.plantInfo.data.environmentHighCount)}"
+                    android:gravity="center"
+                    android:textSize="11sp"
+                    android:textColor="@color/white"
+                    android:id="@+id/iv_health"
+                    android:layout_width="wrap_content"
+                    android:layout_height="17dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/red_bg"
+                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.plantInfo.data.environmentHighCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_temperature" />-->
 
                 <View
                     android:id="@+id/vv_temperature_bg"
@@ -434,7 +534,6 @@ Day1" />
                     app:layout_constraintTop_toBottomOf="@+id/tv_temperature" />
 
                 <TextView
-                    android:textStyle="bold"
                     android:id="@+id/tv_healthStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -444,6 +543,7 @@ Day1" />
                     android:text="----"
                     android:textColor="#161B19"
                     android:textSize="14sp"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

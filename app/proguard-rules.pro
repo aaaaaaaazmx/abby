@@ -314,4 +314,53 @@
 }
 ##---------------End: proguard configuration for Gson  ----------
 
+
+#环信客服
+-keep class com.hyphenate.** {*;}
+-dontwarn  com.hyphenate.**
+
+-keepclassmembers class * extends android.os.Parcelable {
+    public static ** CREATOR;
+}
+
+#如果使用了实时音视频功能
+-keep class com.superrtc.** {*;}
+-dontwarn  com.superrtc.**
+
+#如添加华为push
+# Huawei push
+-keep class com.huawei.android.pushagent.** {*;}
+-keep class com.huawei.android.pushselfshow.** {*;}
+-keep class com.huawei.android.microkernel.** {*;}
+-keep class com.baidu.mapapi.** {*;}
+-keep class com.hianalytics.android.** {*;}
+-dontwarn com.huawei.android.pushagent.**
+-dontwarn com.huawei.android.pushselfshow.**
+-dontwarn com.huawei.android.microkernel.**
+-dontwarn com.github.mikephil.charting.data.**
+
+# 如果使用到kefu-easeui模块里的音视频，需要加入以下内容
+-keep class io.agora.**{*;}
+# Agora Whiteboard 电子白板功能
+-keep class com.herewhite.** { *; }
+
+#GSYVideo
+-keep class com.shuyu.gsyvideoplayer.video.** { *; }
+-dontwarn com.shuyu.gsyvideoplayer.video.**
+-keep class com.shuyu.gsyvideoplayer.video.base.** { *; }
+-dontwarn com.shuyu.gsyvideoplayer.video.base.**
+-keep class com.shuyu.gsyvideoplayer.utils.** { *; }
+-dontwarn com.shuyu.gsyvideoplayer.utils.**
+-keep class tv.danmaku.ijk.** { *; }
+-dontwarn tv.danmaku.ijk.**
+
+-keep public class * extends android.view.View{
+    *** get*();
+    void set*(***);
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, java.lang.Boolean);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
 ###########################第三方库end#########################################

@@ -375,6 +375,10 @@ class BasePlantUsuallyGuidePop(
                         """.trimIndent()
                         )
                         val isCheck = ((view as? CheckBox))?.isChecked
+                        // bean对象
+                        (adapter.data[position] as? GuideInfoData.PlantInfo)?.apply {
+                            this.isCheck = isCheck == false
+                        }
                         // 没有输入内容，并且勾选跳过了。
                         if (etWeight?.text.isNullOrEmpty()) {
                             if (isCheck == true) {
@@ -416,8 +420,13 @@ class BasePlantUsuallyGuidePop(
                         } else {
                             (view as? CheckBox)
                         }
-                        // 取反
-                        cbBox?.isChecked = cbBox?.isChecked == false
+                        // bean 对象
+                        val check = cbBox?.isChecked
+                        (adapter.data[position] as? GuideInfoData.PlantInfo)?.apply {
+                            // 取反
+                            cbBox?.isChecked = check == false
+                            isCheck = check == false
+                        }
                         // 没有输入内容，并且勾选跳过了。
                         if (etWeight?.text.isNullOrEmpty()) {
                             if (cbBox?.isChecked == true) {

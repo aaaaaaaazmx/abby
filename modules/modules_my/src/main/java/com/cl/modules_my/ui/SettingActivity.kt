@@ -1,25 +1,31 @@
 package com.cl.modules_my.ui
 
+import android.app.Activity
 import android.content.*
 import android.content.Intent.*
 import android.net.Uri
+import android.os.Handler
+import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
-import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.util.cache.CacheUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MySettingBinding
 import com.cl.modules_my.request.ModifyUserDetailReq
@@ -28,11 +34,13 @@ import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.cl.modules_my.widget.MyRePlantPop
 import com.cl.modules_my.widget.SubPop
 import com.lxj.xpopup.XPopup
+import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.Serializable
 import javax.inject.Inject
 
 
@@ -51,15 +59,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
-    // 登录信息
-    private val userinfoBean by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        GSON.parseObject(bean, UserinfoBean::class.java)
-    }
-
     private val tuYaUser by lazy {
         val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
         GSON.parseObject(bean, User::class.java)
+    }
+
+    private val refreshTokenData by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_REFRESH_LOGIN_DATA)
+        GSON.parseObject(bean, AutomaticLoginData::class.java)
     }
 
 
@@ -67,30 +74,19 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      *  replant 弹窗
      */
     private val rePlantPop by lazy {
-        XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(true)
-            .asCustom(
-                MyRePlantPop(
-                    context = this@SettingActivity,
-                    onNextAction = {
-                        tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
-                    }
-                )
-            )
+        XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false).enableDrag(false)
+            .maxHeight(dp2px(600f)).dismissOnTouchOutside(true)
+            .asCustom(MyRePlantPop(context = this@SettingActivity, onNextAction = {
+                tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
+            }))
     }
 
     /**
      * APP检测升级弹窗
      */
     private val versionUpdatePop by lazy {
-        XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .dismissOnTouchOutside(false)
-            .asCustom(versionPop)
+        XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false).enableDrag(false)
+            .dismissOnTouchOutside(false).asCustom(versionPop)
     }
     private val versionPop by lazy {
         VersionUpdatePop(this@SettingActivity)
@@ -100,28 +96,18 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      * 添加排水弹窗
      */
     private val plantDrain by lazy {
-        XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(false)
-            .asCustom(
-                HomePlantDrainPop(
-                    context = this@SettingActivity,
-                    onNextAction = {
-                        // 请求接口
-                        mViewModel.advertising()
-                    }
-                )
-            )
+        XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false).enableDrag(false)
+            .maxHeight(dp2px(600f)).dismissOnTouchOutside(false)
+            .asCustom(HomePlantDrainPop(context = this@SettingActivity, onNextAction = {
+                // 请求接口
+                mViewModel.advertising()
+            }))
     }
 
     // 统一xPopUp
     private val pop by lazy {
         // 升级提示框
-        XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
+        XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false).enableDrag(false)
             .dismissOnTouchOutside(false)
     }
 
@@ -129,12 +115,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      * 排水完成弹窗
      */
     private val plantDrainFinished by lazy {
-        XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(false)
-            .enableDrag(false)
-            .maxHeight(dp2px(600f))
-            .dismissOnTouchOutside(false)
-            .asCustom(
+        XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false).enableDrag(false)
+            .maxHeight(dp2px(600f)).dismissOnTouchOutside(false).asCustom(
                 BasePumpWaterFinishedPop(this@SettingActivity)
             )
     }
@@ -143,7 +125,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      * 换水弹窗-附带其他东西
      */
     private val plantDrainNextCustomPop by lazy {
-        BasePumpWaterPop(
+        /*BasePumpWaterPop(
             this@SettingActivity,
             { status ->
                 logI(
@@ -173,16 +155,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 if (plantDrainFinished.isShow) return@BasePumpWaterPop
                 plantDrainFinished.show()
             }
-        )
+        )*/
     }
 
     /**
      * 删除设备弹窗
      */
     private val confirm by lazy {
-        XPopup.Builder(this@SettingActivity)
-            .isDestroyOnDismiss(false)
-            .dismissOnTouchOutside(true)
+        XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(true)
             .asCustom(MyDeleteDevicePop(this) {
                 TuyaHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
                     .removeDevice(object : IResultCallback {
@@ -217,26 +197,65 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     override fun initView() {
         // 当前版本号
         binding.ftVision.itemValue = AppUtil.appVersionName
-        binding.ftSub.setTitleValueEndDrawable(null)
-            .setPointClickListener {
-                pop.asCustom(SubPop(this@SettingActivity)).show()
-            }
-        userinfoBean?.subscriptionTime?.let {
-            binding.ftSub.itemValue = it
+        binding.ftSub.setTitleValueEndDrawable(null).setPointClickListener {
+            pop.asCustom(SubPop(this@SettingActivity)).show()
         }
+
+        // 是否可以操作设备相关的功能
+        val isBind = mViewModel.deviceInfo?.deviceStatus == "1"
+        val isOnline = mViewModel.deviceInfo?.deviceOnlineStatus == "1"
+        mViewModel.setOffLine(isBind && isOnline)
     }
 
     override fun observe() {
         mViewModel.apply {
+            // 放弃种子检查
+            giveUpCheck.observe(this@SettingActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    if (null == data) return@success
+                    if (data?.giveUp == true) {
+                        // 弹窗
+                        pop.asCustom(
+                            BaseCenterPop(
+                                this@SettingActivity,
+                                onConfirmAction = {
+                                    val intent = Intent(this@SettingActivity, WebActivity::class.java)
+                                    intent.putExtra(WebActivity.KEY_WEB_URL, data?.url)
+                                    startActivity(intent)
+                                    // 点了之后就弹这个
+                                    rePlantPop.show()
+                                },
+                                onCancelAction = {
+                                    rePlantPop.show()
+                                },
+                                content = "Sorry for the bad experience you had, if you take a moment to complete the questionnaire, we can give you a month's subscription after approve.",
+                                confirmText = "OK",
+                                cancelText = "Replant",
+                            )
+
+                        ).show()
+                    } else {
+                        rePlantPop.show()
+                    }
+                }
+            })
+
+            // 监听设备
             deleteDevice.observe(this@SettingActivity, resourceObserver {
                 success {
                     //  删除设备之后应该去哪？
                     // 跳转 Adddevice 界面
                     logI("deleteDevice is Success")
-                    ARouter.getInstance()
-                        .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                    /*ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .navigation()
+                        .navigation()*/
+
+                    tuYaUser?.uid?.let { mViewModel.checkPlant(it) }
                 }
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
@@ -251,7 +270,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
 
                 loading {
-                    showProgressLoading()
+                    // showProgressLoading()
                 }
 
                 success {
@@ -293,6 +312,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             if (netWorkVersion.toInt() > localVersion.toInt()) {
                                 versionPop.setData(versionData)
                                 versionUpdatePop.show()
+                            } else {
+                                ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
                             }
                         }
                     }
@@ -307,8 +328,15 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             userDetail.observe(this@SettingActivity, resourceObserver {
                 success {
                     hideProgressLoading()
+                    // 缓存信息
+                    GSON.toJson(this)
+                        ?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
                     // 是否开启通知(1-开启、0-关闭)
                     binding.ftNotif.setItemSwitch(data?.openNotify == 1)
+                    // 订阅时间
+                    data?.subscriptionTime?.let {
+                        binding.ftSub.itemValue = it
+                    }
                 }
                 loading { }
                 error { errorMsg, code ->
@@ -342,9 +370,17 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                 success {
                     hideProgressLoading()
-                    data?.let { plantDrainNextCustomPop.setData(it) }
+                    // 跳转排水界面
+                    Handler().postDelayed({
+                        // 传递的数据为空
+                        val intent = Intent(this@SettingActivity, BasePumpActivity::class.java)
+                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                        myActivityLauncher.launch(intent)
+                    }, 50)
+
+                    /*data?.let { plantDrainNextCustomPop.setData(it) }
                     pop.maxHeight(dp2px(700f))
-                        .asCustom(plantDrainNextCustomPop).show()
+                        .asCustom(plantDrainNextCustomPop).show()*/
                 }
             })
         }
@@ -353,8 +389,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     override fun initData() {
         // 重新种植
         binding.ftReplant.setOnClickListener {
-            rePlantPop.show()
+            // 请求接口
+            mViewModel.giveUpCheck()
         }
+        // 重量单位
+        binding.ftWeight.setOnClickListener {
+            startActivity(Intent(this@SettingActivity, WeightActivity::class.java))
+        }
+
         // 1v1
         binding.ftSolo.setOnClickListener {
             sendEmail()
@@ -366,8 +408,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
         // 检查更新
         binding.ftNewVision.setOnClickListener {
-            // 直接跳转GooglePlay
-            startGooglePlay()
+            mViewModel.getAppVersion()
         }
         // 关闭还是打开推送
         binding.ftNotif.setSwitchCheckedChangeListener { compoundButton, b ->
@@ -382,31 +423,76 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftWaterTank.setOnClickListener {
             plantDrain.show()
         }
+        // 数字兑换Vip
+        binding.ftChargeTime.setOnClickListener {
+            startActivity(Intent(this@SettingActivity, ReDeemActivity::class.java))
+        }
         // 去激活
         binding.ftSub.setOnClickListener {
             if (binding.ftSub.svtText.isShown) {
                 // 跳转到订阅界面
-                ARouter.getInstance()
-                    .build(RouterPath.PairConnect.PAGE_SCAN_CODE)
-                    .navigation()
+                ARouter.getInstance().build(RouterPath.PairConnect.PAGE_SCAN_CODE).navigation()
             }
+        }
+        binding.ftCache.setOnClickListener {
+            pop.asCustom(
+                BaseCenterPop(this@SettingActivity,
+                    content = "Clean up all the picture and video cache?",
+                    onConfirmAction = {
+                        GSYVideoManager.instance().clearAllDefaultCache(this@SettingActivity)
+                        kotlin.runCatching {
+                            binding.ftCache.itemValue =
+                                CacheUtil.getVideoCache(this@SettingActivity)
+                        }
+                    })
+            ).show()
         }
     }
 
     override fun onResume() {
         super.onResume()
+        // 缓存
+        kotlin.runCatching {
+            binding.ftCache.itemValue =
+                CacheUtil.getVideoCache(this@SettingActivity)
+        }
         mViewModel.userDetail()
-        // 当前固件版本号
-        mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
-            bean?.firstOrNull { it.type == 9 }?.let { data ->
-                binding.ftCurrentFir.itemValue = data.currentVersion
-                binding.ftCurrentFir.setHideArrow(true)
-                binding.ftFirUpdate.setShowRedDot(isShow)
+
+        /**
+         * 当有设备的时候，判断当前设备是否在线
+         *
+         * 1- 绑定状态
+         * 2- 解绑状态
+         */
+        if (refreshTokenData?.deviceStatus == "1") {
+            refreshTokenData?.deviceOnlineStatus?.let {
+                when (it) {
+                    // 	设备在线状态(0-不在线，1-在线)
+                    "0" -> {
+
+                    }
+                    "1" -> {
+                        // 当前固件版本号
+                        mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
+                            bean?.firstOrNull { it.type == 9 }?.let { data ->
+                                binding.ftCurrentFir.itemValue = data.currentVersion
+                                binding.ftCurrentFir.setHideArrow(true)
+                                binding.ftFirUpdate.setShowRedDot(isShow)
+                            }
+                        }
+                        // 获取SN & 并且判断是否是修复了SN的
+                        mViewModel.getSn()
+                        mViewModel.getActivationStatus()
+                    }
+                    else -> {}
+                }
             }
         }
-        // 获取SN & 并且判断是否是修复了SN的
-        mViewModel.getSn()
-        mViewModel.getActivationStatus()
+
+        // 重量单位
+        val weightUnit = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        binding.ftWeight.itemValue =
+            if (weightUnit) getString(com.cl.common_base.R.string.my_metric) else getString(com.cl.common_base.R.string.my_us)
     }
 
 
@@ -417,13 +503,13 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         super.onDeviceChange(status)
         when (status) {
             Constants.Device.KEY_DEVICE_OFFLINE -> {
-                mViewModel.setOffLine(true)
-            }
-            Constants.Device.KEY_DEVICE_ONLINE -> {
                 mViewModel.setOffLine(false)
             }
-            Constants.Device.KEY_DEVICE_REMOVE -> {
+            Constants.Device.KEY_DEVICE_ONLINE -> {
                 mViewModel.setOffLine(true)
+            }
+            Constants.Device.KEY_DEVICE_REMOVE -> {
+                mViewModel.setOffLine(false)
             }
         }
     }
@@ -445,8 +531,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     // 截取, 并且需要置灰
                     kotlin.runCatching {
                         binding.ftSN.setItemValueWithColor(
-                            value.toString().split("#")[1],
-                            "#000000"
+                            value.toString().split("#")[1], "#000000"
                         )
                     }
                 }
@@ -456,7 +541,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     if (value.toString() == "NG") {
                         binding.ftSub.setSvText("Activate")
                     } else {
-                        userinfoBean?.subscriptionTime?.let {
+                        mViewModel.userDetail.value?.data?.subscriptionTime?.let {
                             binding.ftSub.itemValue = it
                         }
                     }
@@ -469,34 +554,36 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
      * 发送支持邮件
      */
     private fun sendEmail() {
-        val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
+        /*val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
         val uri = Uri.parse(uriText)
-        val sendIntent = Intent(ACTION_SENDTO)
+        val sendIntent = Intent(Intent.ACTION_SENDTO)
         sendIntent.data = uri
-        val pm = this.packageManager
+        val pm = context?.packageManager
         // 根据意图查找包
-        val activityList = pm.queryIntentActivities(sendIntent, 0)
-        if (activityList.size == 0) {
+        val activityList = pm?.queryIntentActivities(sendIntent, 0)
+        if (activityList?.size == 0) {
             // 弹出框框
-            val clipboard = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboard =
+                context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
             // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
             val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
             // 把数据集设置（复制）到剪贴板
             clipboard.setPrimaryClip(clipData)
-            XPopup.Builder(this@SettingActivity)
+            XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(this@SettingActivity) { null }).show()
+                .asCustom(SendEmailTipsPop(context!!)).show()
             return
         }
         try {
-            startActivity(createChooser(sendIntent, "Send email"))
+            startActivity(Intent.createChooser(sendIntent, "Send email"))
         } catch (ex: ActivityNotFoundException) {
-            XPopup.Builder(this@SettingActivity)
+            XPopup.Builder(context)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(this@SettingActivity) { null }).show()
-        }
+                .asCustom(context?.let { SendEmailTipsPop(it) }).show()
+        }*/
+        EaseUiHelper.getInstance().startChat(null)
     }
 
     private fun startGooglePlay() {
@@ -516,6 +603,15 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             startActivity(intent)
         }
     }
+
+
+    private val myActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                // 排水结束，那么直接弹出
+                if (!plantDrainFinished.isShow) plantDrainFinished.show()
+            }
+        }
 
 }
 

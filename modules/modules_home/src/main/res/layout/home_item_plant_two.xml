@@ -39,7 +39,7 @@
 
             <ImageView
                 android:id="@+id/iv_img"
-                android:background="@mipmap/home_plant_three_bg"
+                android:background="@mipmap/home_plant_bgs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

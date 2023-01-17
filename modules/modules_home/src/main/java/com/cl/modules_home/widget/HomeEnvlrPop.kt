@@ -16,7 +16,7 @@ import com.lxj.xpopup.core.BottomPopupView
  */
 class HomeEnvlrPop(
     context: Context,
-    private var data: MutableList<EnvironmentInfoData>? = null
+    private var data: MutableList<EnvironmentInfoData.Environment>? = null
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_envlr_pop
@@ -26,7 +26,7 @@ class HomeEnvlrPop(
         HomeEnvirPopAdapter(mutableListOf())
     }
 
-    fun setData(data: MutableList<EnvironmentInfoData>) {
+    fun setData(data: MutableList<EnvironmentInfoData.Environment>) {
         this.data = data
     }
 

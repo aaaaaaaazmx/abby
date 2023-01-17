@@ -1,6 +1,8 @@
 package com.cl.common_base.net.adapter
 
 
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logE
 import com.cl.common_base.report.Reporter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -66,7 +68,15 @@ class BodyCallAdapter<T>(private val responseType: Type) :
 
                         override fun onResponse(call: Call<T>, response: Response<T>) {
                             try {
-                                response.body()?.let { continuation.resume(it) }
+                                /* logE("${response}")
+                                 logE("${response.body()}")*/
+                                if (response.body() == null && response.code() == Constants.APP_SERVER) {
+                                    continuation.resumeWithException(Exception("Internal Server Error"))
+                                    return
+                                }
+                                response.body()?.let {
+                                    continuation.resume(it)
+                                }
                             } catch (e: Exception) {
                                 Reporter.reportCatchError(
                                     e.message,

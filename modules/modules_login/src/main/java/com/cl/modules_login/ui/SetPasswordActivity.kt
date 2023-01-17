@@ -1,12 +1,12 @@
 package com.cl.modules_login.ui
 
+import android.R.attr.editable
 import android.content.Intent
 import android.os.Build
 import android.text.InputType
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
@@ -20,10 +20,11 @@ import com.cl.modules_login.databinding.ActivitySetPasswordBinding
 import com.cl.modules_login.request.UpdatePwdReq
 import com.cl.modules_login.request.UserRegisterReq
 import com.cl.modules_login.viewmodel.SetPassWordViewModel
-import com.tencent.bugly.proguard.s
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
+
 
 /**
  * 设置密码界面
@@ -117,7 +118,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                     userRegisterBean?.password = AESCipher.aesEncryptString(
                         binding.etPassword.text.toString(),
                         AESCipher.KEY
-                    )
+                     )
                     userRegisterBean?.let { bean -> mViewModel.registerAccount(bean) }
                 } else {
                     // 修改密码

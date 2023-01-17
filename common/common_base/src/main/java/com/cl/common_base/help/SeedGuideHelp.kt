@@ -32,12 +32,29 @@ class SeedGuideHelp(val context: Context) {
                     HomePlantFivePop(context, onNextAction = {
                         pop.asCustom(
                             BaseBottomPop(
-                                context, ContextCompat.getDrawable(context, R.mipmap.base_seed_fattening_bg),
-                                context.getString(R.string.base_fertilizer),
+                                context, ContextCompat.getDrawable(context, R.mipmap.base_six_bg),
+                                """
+                                 For the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. 
+
+                                 *Note: you must cut open the packets first
+                               """.trimIndent(),
                                 context.getString(R.string.my_next),
                                 onNextAction = {
+                                    pop.asCustom(HomePlantEightPop(context, onNextAction = {
+                                        pop.asCustom(
+                                            BaseBottomPop(
+                                                context,
+                                                ContextCompat.getDrawable(context, R.mipmap.base_seed_to_veg_bg),
+                                                context.getString(R.string.base_seed_to_veg),
+                                                buttonText = context.getString(R.string.home_done),
+                                                onNextAction = {
+                                                    // 这个用来返回数据
+                                                    onNextAction?.invoke()
+                                                })
+                                        ).show()
+                                    })).show()
                                     // 加肥指令
-                                    DeviceControl.get()
+                                    /*DeviceControl.get()
                                         .success {
                                             pop.asCustom(HomePlantEightPop(context, onNextAction = {
                                                 pop.asCustom(
@@ -62,7 +79,7 @@ class SeedGuideHelp(val context: Context) {
                                                 """.trimIndent()
                                             )
                                         }
-                                        .feedAbby(true)
+                                        .feedAbby(true)*/
                                 }
                             )
                         ).show()

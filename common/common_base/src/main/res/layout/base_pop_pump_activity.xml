@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <com.lxj.xpopup.widget.SmartDragLayout
+        android:background="#80000000"
+        android:gravity="bottom"
+        android:id="@+id/smart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints">
+
+        <include
+            android:id="@+id/water_pop"
+            layout="@layout/base_pump_water_pop" />
+
+    </com.lxj.xpopup.widget.SmartDragLayout>
+</layout>

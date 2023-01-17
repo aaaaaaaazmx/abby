@@ -9,6 +9,8 @@
             name="data"
             type="com.cl.common_base.bean.AdvertisingData" />
 
+        <import type="android.view.View"/>
+
     </data>
 
     <com.lin.cardlib.SwipeTouchLayout
@@ -17,7 +19,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="348dp"
+            android:layout_height="358dp"
             android:background="@mipmap/base_pump_water_bg"
             android:orientation="vertical"
             android:padding="24dp">
@@ -55,17 +57,32 @@
                 android:layout_marginStart="17dp"
                 android:layout_marginTop="28dp"
                 android:layout_marginEnd="17dp"
-                android:visibility="gone"
+                android:visibility="@{null == data.picture ? View.GONE : View.VISIBLE}"
                 tools:background="@mipmap/ic_launcher" />
 
+            <com.cl.common_base.video.SampleCoverVideo
+                android:visibility="@{null == data.video ? View.GONE : View.VISIBLE}"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="17dp"
+                android:id="@+id/video_item_player"
+                android:layout_width="match_parent"
+                android:layout_height="171dp"
+                android:layout_below="@+id/cl_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cl_title"
+                tools:ignore="MissingConstraints" />
+
             <TextView
+                android:maxLines="4"
+                android:ellipsize="end"
                 android:id="@+id/tv_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="17dp"
                 android:layout_marginTop="27dp"
                 android:layout_marginEnd="17dp"
-                android:layout_marginBottom="50dp"
                 android:text="@{data.description}"
                 android:textColor="#161B19"
                 android:textSize="15sp"

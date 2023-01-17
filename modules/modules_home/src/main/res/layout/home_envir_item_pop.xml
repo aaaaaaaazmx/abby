@@ -7,7 +7,11 @@
 
         <variable
             name="data"
-            type="com.cl.common_base.bean.EnvironmentInfoData" />
+            type="com.cl.common_base.bean.EnvironmentInfoData.Environment" />
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_home.adapter.HomeEnvirPopAdapter" />
 
     </data>
 
@@ -41,14 +45,14 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="13dp"
-            android:textColor="@color/black"
+            android:textColor="@{adapter.getColor(data.detectionValue, data.healthStatus)}"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Week5 Day5" />
 
         <TextView
-            text="@{data.value}"
+            text="@{adapter.temperatureConversion(data.value)}"
             android:id="@+id/tv_going"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

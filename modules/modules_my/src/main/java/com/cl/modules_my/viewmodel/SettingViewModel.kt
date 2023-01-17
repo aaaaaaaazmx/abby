@@ -1,14 +1,12 @@
 package com.cl.modules_my.viewmodel
 
+import android.app.Presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
-import com.cl.common_base.bean.AdvertisingData
-import com.cl.common_base.bean.AppVersionData
-import com.cl.common_base.bean.CheckPlantData
-import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -17,6 +15,7 @@ import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
@@ -33,6 +32,15 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class SettingViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
+
+    /**
+     * refreshToken 接口返回
+     */
+    val deviceInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
+    }
 
     /**
      * 删除用户设备
@@ -60,7 +68,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -95,7 +103,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -123,14 +131,13 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
                 logD("catch $it")
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -193,14 +200,13 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
                 logD("catch $it")
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
@@ -227,21 +233,19 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
             .flowOn(Dispatchers.IO)
             .onStart {
-                emit(Resource.Loading())
             }
             .catch {
                 logD("catch $it")
                 emit(
                     Resource.DataError(
                         -1,
-                        "$it"
+                        "${it.message}"
                     )
                 )
             }.collectLatest {
                 _userDetail.value = it
             }
     }
-
 
     // 获取当前设备信息
     private val tuYaDeviceBean by lazy {
@@ -316,6 +320,42 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
         }
     }
 
+    /**
+     * 放弃种子检查
+     */
+    private val _giveUpCheck = MutableLiveData<Resource<GiveUpCheckData>>()
+    val giveUpCheck: LiveData<Resource<GiveUpCheckData>> = _giveUpCheck
+    fun giveUpCheck() {
+        viewModelScope.launch {
+            repository.giveUpCheck()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _giveUpCheck.value = it
+                }
+        }
+    }
+
 
     // 获取SN
     fun getSn() {
@@ -329,6 +369,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                         error: $error
                     """.trimIndent()
                     )
+                    ToastUtil.shortShow(error)
                     Reporter.reportTuYaError("newDeviceInstance", error, code)
                 }
 
@@ -351,6 +392,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
                         error: $error
                     """.trimIndent()
                     )
+                    ToastUtil.shortShow(error)
                     Reporter.reportTuYaError("newDeviceInstance", error, code)
                 }
 
@@ -371,8 +413,9 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
 
     /**
      * 设备是否在线
+     * false、不在线 true、 在线
      */
-    private val _isOffLine = MutableLiveData<Boolean>(false)
+    private val _isOffLine = MutableLiveData<Boolean>(true)
     val isOffLine: LiveData<Boolean> = _isOffLine
     fun setOffLine(offline: Boolean) {
         _isOffLine.value = offline

@@ -3,10 +3,11 @@ package com.cl.modules_home.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
-import com.cl.modules_home.request.AutomaticLoginReq
-import com.cl.modules_home.response.AutomaticLoginData
+import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
+import com.cl.common_base.service.BaseApiService
 import com.cl.modules_home.service.HttpHomeApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +28,10 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getGuideInfo(body)
     }
 
+    fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
+        return service.getRichText(txtId, type)
+    }
+
     fun saveOrUpdate(body: String): Flow<HttpResult<BaseBean>> {
         return service.saveOrUpdate(body)
     }
@@ -43,12 +48,16 @@ class HomeRemoteRepository @Inject constructor() {
         return service.advertising(type)
     }
 
-    fun environmentInfo(type: String): Flow<HttpResult<MutableList<EnvironmentInfoData>>> {
+    fun environmentInfo(type: EnvironmentInfoReq): Flow<HttpResult<EnvironmentInfoData>> {
         return service.environmentInfo(type)
     }
 
     fun getUnread(): Flow<HttpResult<MutableList<UnreadMessageData>>> {
         return service.getUnread()
+    }
+
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return service.userDetail()
     }
 
     fun getRead(messageId: String): Flow<HttpResult<BaseBean>> {
@@ -109,5 +118,37 @@ class HomeRemoteRepository @Inject constructor() {
 
     fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
         return service.updateTask(body)
+    }
+
+    fun getAcademyList(): Flow<HttpResult<MutableList<AcademyListData>>> {
+        return service.getAcademyList()
+    }
+
+    fun getAcademyDetails(academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>> {
+        return service.getAcademyDetails(academyId)
+    }
+
+    fun messageRead(academyDetailsId: String): Flow<HttpResult<BaseBean>> {
+        return service.messageRead(academyDetailsId)
+    }
+
+    fun getHomePageNumber(): Flow<HttpResult<HomePageNumberData>> {
+        return service.getHomePageNumber()
+    }
+
+    fun startSubscriber(): Flow<HttpResult<BaseBean>> {
+        return service.startSubscriber()
+    }
+
+    fun checkFirstSubscriber(): Flow<HttpResult<Boolean>> {
+        return service.checkFirstSubscriber()
+    }
+
+    fun whetherSubCompensation(): Flow<HttpResult<WhetherSubCompensationData>> {
+        return service.whetherSubCompensation()
+    }
+
+    fun compensatedSubscriber(): Flow<HttpResult<BaseBean>> {
+        return service.compensatedSubscriber()
     }
 }

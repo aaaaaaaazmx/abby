@@ -32,7 +32,7 @@
             <com.cl.common_base.widget.FeatureItemView
                 android:id="@+id/ft_head"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="60dp"
                  />
 
             <View
@@ -45,7 +45,7 @@
             <com.cl.common_base.widget.FeatureItemView
                 android:id="@+id/ft_nick_name"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="60dp"
                 />
 
             <View
@@ -56,9 +56,21 @@
                 android:background="@color/lineBg" />
 
             <com.cl.common_base.widget.FeatureItemView
+                app:hideArrow="true"
+                android:id="@+id/ft_email"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@color/lineBg" />
+
+            <com.cl.common_base.widget.FeatureItemView
                 android:id="@+id/ft_id"
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
+                android:layout_height="60dp"
                 />
         </LinearLayout>
 

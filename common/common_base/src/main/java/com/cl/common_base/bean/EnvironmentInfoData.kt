@@ -8,8 +8,13 @@ import com.cl.common_base.BaseBean
  * @author 李志军 2022-08-11 18:04
  */
 class EnvironmentInfoData(
-    val detectionValue: String? = null,
     val healthStatus: String? = null,
-    val value: String? = null,
-): BaseBean() {
+    val environmentLowCount: Int? = null,
+    var environments: MutableList<Environment>? = null,
+) : BaseBean() {
+    data class Environment(
+        val detectionValue: String? = null,
+        val healthStatus: String? = null,
+        val value: String? = null,
+    ) : BaseBean()
 }

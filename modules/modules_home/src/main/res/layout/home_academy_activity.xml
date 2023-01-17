@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints">
+
+        <com.cl.common_base.widget.FeatureTitleBar
+            android:id="@+id/title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="@string/home_academy" />
+
+        <View
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            android:id="@+id/vv"
+            android:background="#C4C4C4"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:background="@color/white"
+            app:layout_constraintTop_toBottomOf="@+id/vv"
+            android:id="@+id/rv_academy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

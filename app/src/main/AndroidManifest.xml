@@ -58,6 +58,7 @@
         </activity>
 
         <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name="com.cl.abby.MainActivity"
             android:launchMode="singleTask" />
@@ -72,7 +73,7 @@
                 android:resource="@xml/file_path" />
         </provider>
 
-        <!--手动初始化-->
+        <!--自动初始化-->
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -81,6 +82,10 @@
             <meta-data
                 android:name="com.cl.common_base.init.AppInitializer"
                 android:value="androidx.startup" />
+            <meta-data
+                android:name="com.cl.common_base.init.PolicyInitializer"
+                android:value="androidx.startup"
+                tools:node="remove"/>
         </provider>
 
 
@@ -101,6 +106,14 @@
             </intent-filter>
         </service>
 
+        <!--环信声网服务-->
+        <activity android:name="io.agora.rtc.ss.impl.ScreenSharing$LocalScreenCaptureAssistantActivity"
+            android:exported="false"
+            tools:node="merge" />
+        <service
+            android:name="io.agora.rtc.ss.impl.LocalScreenSharingService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" tools:node="merge" />
 
         <!-- Required since 3.0.7 -->
         <!-- 新的 tag/alias 接口结果返回需要开发者配置一个自定的广播 -->

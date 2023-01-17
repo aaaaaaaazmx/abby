@@ -3,6 +3,7 @@ package com.cl.modules_pairing_connection.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
+import com.cl.common_base.bean.SyncDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
@@ -37,5 +38,9 @@ class PairRepository @Inject constructor(private var remoteRepository: PairRemot
      */
     fun checkSN(deviceSn: String): Flow<HttpResult<BaseBean>> {
         return remoteRepository.checkSN(deviceSn)
+    }
+
+    fun syncDeviceInfo(syncDeviceInfo: SyncDeviceInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.syncDeviceInfo(syncDeviceInfo)
     }
 }

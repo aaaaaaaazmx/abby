@@ -47,7 +47,7 @@ public class HourPicker extends WheelPicker<Integer> {
             @Override
             public void onWheelSelected(Integer item, int position) {
                 if (mOnHourSelectedListener != null) {
-                    mOnHourSelectedListener.onHourSelected(item);
+                    mOnHourSelectedListener.onHourSelected(item == null ? 0 : item);
                 }
             }
         });
@@ -80,6 +80,9 @@ public class HourPicker extends WheelPicker<Integer> {
 
     public void setSelectedHour(int hour) {
         setSelectedHour(hour, true);
+        if (mOnHourSelectedListener != null) {
+            mOnHourSelectedListener.onHourSelected(getDataList().get(getCurrentPosition()));
+        }
     }
 
     public void setSelectedHour(int hour, boolean smoothScroll) {

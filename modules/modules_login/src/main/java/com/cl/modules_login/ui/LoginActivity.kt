@@ -2,18 +2,21 @@ package com.cl.modules_login.ui
 
 import android.content.Intent
 import android.os.Build
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
-import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.ext.*
+import com.cl.common_base.ext.Resource
+import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
-import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -21,17 +24,15 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.BuildConfig
-import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivityLoginBinding
 import com.cl.modules_login.response.LoginData
 import com.cl.modules_login.viewmodel.LoginViewModel
 import com.cl.modules_login.widget.LoginSelectEnvPop
 import com.cl.modules_login.widget.PrivacyPop
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
 /**
  * 登录界面
@@ -46,6 +47,16 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         ARouter.getInstance().inject(this)
         // 设置默认的账号
         binding.accountEditText.setText(mViewModel.account)
+
+        binding.passwordEditText.imeOptions = EditorInfo.IME_ACTION_DONE
+        binding.passwordEditText.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER) {
+                // 调用Login
+                login()
+            }
+            false
+        }
+
     }
 
     private val plantSix by lazy {
@@ -70,8 +81,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             onConfirmAction = {
                 // 点击同意隐私协议
                 Prefs.putBooleanAsync(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE, true)
-                // 初始化SDK
-                InitSdk.init()
                 checkLogin()
             },
             onTermUsAction = {
@@ -97,7 +106,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         mViewModel.registerLoginLiveData.observe(this@LoginActivity) {
             when (it) {
                 is Resource.Loading -> {
-                    showProgressLoading()
+                     showProgressLoading()
                 }
                 is Resource.Success -> {
                     userInfoBean = it.data!!
@@ -175,20 +184,23 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             success {
                 hideProgressLoading()
                 kotlin.runCatching {
-                    when (userInfoBean.deviceStatus) {
-                        // 1-> 绑定设备、 2-> 未绑定设备
-                        "1" -> {
-                            // 是否种植过
-                            data?.let { PlantCheckHelp().plantStatusCheck(it) }
-                        }
-                        "2" -> {
-                            // 跳转绑定界面
-                            ARouter.getInstance()
-                                .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                                .navigation()
-                        }
-                        else -> {}
-                    }
+                    // 初始化SDK
+                    InitSdk.init()
+                    // 是否种植过
+                    data?.let { PlantCheckHelp().plantStatusCheck(it) }
+//                    when (userInfoBean.deviceStatus) {
+//                        // 1-> 绑定设备、 2-> 未绑定设备
+//                        "1" -> {
+//
+//                        }
+//                        "2" -> {
+//                            // 跳转绑定界面
+//                            ARouter.getInstance()
+//                                .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+//                                .navigation()
+//                        }
+//                        else -> {}
+//                    }
                 }
                 finish()
             }
@@ -217,31 +229,35 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         }
 
         binding.rlBtn.setOnClickListener {
-            // 账号密码
-            val account = binding.accountEditText.text.toString()
-            val password = binding.passwordEditText.text.toString()
-            // 直接劝退
-            if (account.isNullOrEmpty()) {
-                ToastUtil.shortShow(getString(com.cl.common_base.R.string.login_account_empty))
-                return@setOnClickListener
-            }
-            if (password.isNullOrEmpty()) {
-                ToastUtil.shortShow(getString(com.cl.common_base.R.string.login_password_empty))
-                return@setOnClickListener
-            }
-
-            // 需要先同意隐私协议
-            val privatePropertyAgree =
-                Prefs.getBoolean(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE)
-            logI("$privatePropertyAgree")
-            if (!privatePropertyAgree) {
-                pop.asCustom(privacyPop).show()
-                return@setOnClickListener
-            }
-            checkLogin()
+            login()
         }
 
 
+    }
+
+    private fun login() {
+        // 账号密码
+        val account = binding.accountEditText.text.toString()
+        val password = binding.passwordEditText.text.toString()
+        // 直接劝退
+        if (account.isNullOrEmpty()) {
+            ToastUtil.shortShow(getString(R.string.login_account_empty))
+            return
+        }
+        if (password.isNullOrEmpty()) {
+            ToastUtil.shortShow(getString(R.string.login_password_empty))
+            return
+        }
+
+        // 需要先同意隐私协议
+        val privatePropertyAgree =
+            Prefs.getBoolean(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE)
+        logI("$privatePropertyAgree")
+        if (!privatePropertyAgree) {
+            pop.asCustom(privacyPop).show()
+            return
+        }
+        checkLogin()
     }
 
     private fun checkLogin() {

@@ -15,4 +15,5 @@ data class AppVersionData(
     val updateTime: String? = null,
     val version: String? = null,
     val versionNote: String? = null,
+    val downloadAddress: String? = null,
 ) : BaseBean()

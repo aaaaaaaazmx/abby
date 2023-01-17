@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -15,11 +17,12 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
-import com.cl.modules_home.request.AutomaticLoginReq
-import com.cl.modules_home.response.AutomaticLoginData
-import com.cl.common_base.bean.GuideInfoData
-import com.cl.common_base.bean.PlantInfoData
-import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.ext.safeToInt
+import com.hyphenate.chat.AgoraMessage
+import com.hyphenate.chat.ChatClient
+import com.hyphenate.chat.EMClient
+import com.hyphenate.helpdesk.callback.Callback
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -77,14 +80,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 是否需要修复SN
     // 需要在设备在线的情况下才展示修复
-    private val _repairSN = MutableLiveData(
-        if (tuyaDeviceBean?.isOnline == true) {
-            getDeviceDps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN).toString()
-        } else {
-            "OK"
-        }
-    )
+    private val _repairSN = MutableLiveData(if (tuyaDeviceBean?.isOnline == true) {
+        getDeviceDps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
+            ?.get(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN).toString()
+    } else {
+        "OK"
+    })
     val repairSN: LiveData<String> = _repairSN
     fun setRepairSN(sn: String) {
         _repairSN.value = sn
@@ -97,35 +98,32 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
     fun refreshToken(req: AutomaticLoginReq) {
         viewModelScope.launch {
-            repository.automaticLogin(req)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.automaticLogin(req).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _refreshToken.value = it
+                } else {
+                    // 登录环信
+                    letMultiple(
+                        it.data.easemobUserName, it.data.easemobPassword
+                    ) { username, password ->
+                        easeLogin(username, password)
+                    }
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _refreshToken.value = it
+            }
         }
     }
-
 
     /**
      * 获取图文引导
@@ -136,32 +134,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getGuideInfo: LiveData<Resource<GuideInfoData>> = _getGuideInfo
     fun getGuideInfo(req: String) {
         viewModelScope.launch {
-            repository.getGuideInfo(req)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.getGuideInfo(req).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _getGuideInfo.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getGuideInfo.value = it
+            }
         }
     }
 
@@ -171,34 +163,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _updateTask = MutableLiveData<Resource<String>>()
     val updateTask: LiveData<Resource<String>> = _updateTask
     fun updateTask(body: UpdateReq) = viewModelScope.launch {
-        repository.updateTask(body)
-            .map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code,
-                        it.msg
-                    )
-                } else {
-                    // 删除第一条信息
-                    removeFirstUnreadMessage()
-                    Resource.Success(it.data)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
-                emit(Resource.Loading())
-            }
-            .catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1,
-                        "$it"
-                    )
+        repository.updateTask(body).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
                 )
-            }.collectLatest {
-                _updateTask.value = it
+            } else {
+                // 删除第一条信息
+                removeFirstUnreadMessage()
+                Resource.Success(it.data)
             }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            _updateTask.value = it
+        }
     }
 
 
@@ -209,32 +193,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val saveOrUpdate: LiveData<Resource<BaseBean>> = _saveOrUpdate
     fun saveOrUpdate(req: String) {
         viewModelScope.launch {
-            repository.saveOrUpdate(req)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.saveOrUpdate(req).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _saveOrUpdate.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _saveOrUpdate.value = it
+            }
         }
     }
 
@@ -245,32 +223,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val startRunning: LiveData<Resource<Boolean>> = _startRunning
     fun startRunning(botanyId: String?, goon: Boolean) {
         viewModelScope.launch {
-            repository.startRunning(botanyId, goon)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.startRunning(botanyId, goon).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _startRunning.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _startRunning.value = it
+            }
         }
     }
 
@@ -282,32 +254,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val start: LiveData<Resource<String>> = _start
     fun start() {
         viewModelScope.launch {
-            repository.start()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.start().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _start.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _start.value = it
+            }
         }
     }
 
@@ -319,32 +285,52 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val plantInfo: LiveData<Resource<PlantInfoData>> = _plantInfo
     fun plantInfo() {
         viewModelScope.launch {
-            repository.plantInfo()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.plantInfo().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _plantInfo.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _plantInfo.value = it
+            }
+        }
+    }
+
+    /**
+     * 获取植物基本信息\Look接口
+     */
+    private val _plantInfoLoop = MutableLiveData<Resource<PlantInfoData>>()
+    val plantInfoLoop: LiveData<Resource<PlantInfoData>> = _plantInfoLoop
+    fun plantInfoLoop() {
+        viewModelScope.launch {
+            repository.plantInfo().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _plantInfoLoop.value = it
+            }
         }
     }
 
@@ -357,32 +343,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     fun getDetailByLearnMoreId(type: String) {
         viewModelScope.launch {
-            repository.getDetailByLearnMoreId(type)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.getDetailByLearnMoreId(type).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _getDetailByLearnMoreId.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getDetailByLearnMoreId.value = it
+            }
         }
     }
 
@@ -391,37 +371,30 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 获取图文广告
      */
     private val _getMessageDetail = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
-    val getMessageDetail: LiveData<Resource<DetailByLearnMoreIdData>> =
-        _getMessageDetail
+    val getMessageDetail: LiveData<Resource<DetailByLearnMoreIdData>> = _getMessageDetail
 
     fun getMessageDetail(type: String) {
         viewModelScope.launch {
-            repository.getMessageDetail(type)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.getMessageDetail(type).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _getMessageDetail.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getMessageDetail.value = it
+            }
         }
     }
 
@@ -432,32 +405,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
     fun advertising(type: String? = "0") {
         viewModelScope.launch {
-            repository.advertising(type ?: "0")
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.advertising(type ?: "0").map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _advertising.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _advertising.value = it
+            }
         }
     }
 
@@ -465,36 +432,30 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 获取植物的环境信息
      */
-    private val _environmentInfo = MutableLiveData<Resource<MutableList<EnvironmentInfoData>>>()
-    val environmentInfo: LiveData<Resource<MutableList<EnvironmentInfoData>>> = _environmentInfo
-    fun environmentInfo(type: String) {
+    private val _environmentInfo = MutableLiveData<Resource<EnvironmentInfoData>>()
+    val environmentInfo: LiveData<Resource<EnvironmentInfoData>> = _environmentInfo
+    fun environmentInfo(type: EnvironmentInfoReq) {
         viewModelScope.launch {
-            repository.environmentInfo(type)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.environmentInfo(type).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _environmentInfo.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _environmentInfo.value = it
+            }
         }
     }
 
@@ -506,34 +467,145 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getUnread() {
         viewModelScope.launch {
             getUnread
-            repository.getUnread()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.getUnread().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _getUnread.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getUnread.value = it
+            }
         }
     }
+
+
+    /**
+     * 是否是首次订阅
+     *//*
+    private val _checkFirstSubscriber = MutableLiveData<Resource<Boolean>>()
+    val checkFirstSubscriber: LiveData<Resource<Boolean>> = _checkFirstSubscriber
+    fun checkFirstSubscriber() {
+        viewModelScope.launch {
+            getUnread
+            repository.checkFirstSubscriber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _checkFirstSubscriber.value = it
+            }
+        }
+    }
+
+    *//**
+     * 开启订阅
+     *//*
+    private val _startSubscriber = MutableLiveData<Resource<BaseBean>>()
+    val startSubscriber: LiveData<Resource<BaseBean>> = _startSubscriber
+    fun startSubscriber() {
+        viewModelScope.launch {
+            getUnread
+            repository.startSubscriber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _startSubscriber.value = it
+            }
+        }
+    }*/
+
+
+    /**
+     * 是否需要补偿订阅
+     */
+    private val _whetherSubCompensation = MutableLiveData<Resource<WhetherSubCompensationData>>()
+    val whetherSubCompensation: LiveData<Resource<WhetherSubCompensationData>> = _whetherSubCompensation
+    fun whetherSubCompensation() {
+        viewModelScope.launch {
+            getUnread
+            repository.whetherSubCompensation().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _whetherSubCompensation.value = it
+            }
+        }
+    }
+
+    /**
+     * 订阅补偿
+     */
+    private val _compensatedSubscriber = MutableLiveData<Resource<BaseBean>>()
+    val compensatedSubscriber: LiveData<Resource<BaseBean>> = _compensatedSubscriber
+    fun compensatedSubscriber() {
+        viewModelScope.launch {
+            getUnread
+            repository.compensatedSubscriber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _compensatedSubscriber.value = it
+            }
+        }
+    }
+
 
     /**
      * 标记已读消息
@@ -542,34 +614,28 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getRead: LiveData<Resource<BaseBean>> = _getRead
     fun getRead(messageId: String) {
         viewModelScope.launch {
-            repository.getRead(messageId)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        // 删除第一条信息
-                        removeFirstUnreadMessage()
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.getRead(messageId).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _getRead.value = it
+                } else {
+                    // 删除第一条信息
+                    removeFirstUnreadMessage()
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getRead.value = it
+            }
         }
     }
 
@@ -580,34 +646,61 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val unlockJourney: LiveData<Resource<BaseBean>> = _unlockJourney
     fun unlockJourney(name: String, weight: String? = null) {
         viewModelScope.launch {
-            repository.unlockJourney(name, weight)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        // 删除第一条信息
-                        removeFirstUnreadMessage()
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.unlockJourney(name, weight).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _unlockJourney.value = it
+                } else {
+                    // 删除第一条信息
+                    removeFirstUnreadMessage()
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _unlockJourney.value = it
+            }
+        }
+    }
+
+    /**
+     * 获取消息统计
+     */
+    private val _getHomePageNumber = MutableLiveData<Resource<HomePageNumberData>>()
+    val getHomePageNumber: LiveData<Resource<HomePageNumberData>> = _getHomePageNumber
+    fun getHomePageNumber() {
+        viewModelScope.launch {
+            repository.getHomePageNumber().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    // 获取环信消息数量
+                    getEaseUINumber()
+                    // 获取设备环境消息
+                    plantInfoLoop()
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getHomePageNumber.value = it
+            }
         }
     }
 
@@ -619,34 +712,28 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val finishTask: LiveData<Resource<String>> = _finishTask
     fun finishTask(body: FinishTaskReq) {
         viewModelScope.launch {
-            repository.finishTask(body)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        // 删除第一条信息
-                        removeFirstUnreadMessage()
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.finishTask(body).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _finishTask.value = it
+                } else {
+                    // 删除第一条信息
+                    removeFirstUnreadMessage()
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _finishTask.value = it
+            }
         }
     }
 
@@ -658,32 +745,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getAppVersion: LiveData<Resource<AppVersionData>> = _getAppVersion
     fun getAppVersion() {
         viewModelScope.launch {
-            repository.getAppVersion()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.getAppVersion().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _getAppVersion.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getAppVersion.value = it
+            }
         }
     }
 
@@ -694,32 +775,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val deviceOperateFinish: LiveData<Resource<BaseBean>> = _deviceOperateFinish
     fun deviceOperateFinish(type: String) {
         viewModelScope.launch {
-            repository.deviceOperateFinish(type)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.deviceOperateFinish(type).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _deviceOperateFinish.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _deviceOperateFinish.value = it
+            }
         }
     }
 
@@ -730,32 +805,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val deviceOperateStart: LiveData<Resource<BaseBean>> = _deviceOperateStart
     fun deviceOperateStart(business: String, type: String) {
         viewModelScope.launch {
-            repository.deviceOperateStart(business, type)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.deviceOperateStart(business, type).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _deviceOperateStart.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _deviceOperateStart.value = it
+            }
         }
     }
 
@@ -767,32 +836,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val userMessageFlag: LiveData<Resource<BaseBean>> = _userMessageFlag
     fun userMessageFlag(flagId: String, messageId: String) {
         viewModelScope.launch {
-            repository.userMessageFlag(flagId, messageId)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.userMessageFlag(flagId, messageId).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _userMessageFlag.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _userMessageFlag.value = it
+            }
         }
     }
 
@@ -905,32 +968,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getFinishPage: LiveData<Resource<FinishPageData>> = _getFinishPage
     fun getFinishPage() {
         viewModelScope.launch {
-            repository.getFinishPage()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
+            repository.getFinishPage().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
                     )
-                }.collectLatest {
-                    _getFinishPage.value = it
+                } else {
+                    Resource.Success(it.data)
                 }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getFinishPage.value = it
+            }
         }
     }
 
@@ -940,34 +997,28 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _plantFinish = MutableLiveData<Resource<BaseBean>>()
     val plantFinish: LiveData<Resource<BaseBean>> = _plantFinish
     fun plantFinish(botanyId: String) = viewModelScope.launch {
-        repository.plantFinish(botanyId)
-            .map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code,
-                        it.msg
-                    )
-                } else {
-                    // 检查是否种植过
-                    tuYaUser?.uid?.let { uid -> checkPlant(uid) }
-                    Resource.Success(it.data)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
-                emit(Resource.Loading())
-            }
-            .catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1,
-                        "$it"
-                    )
+        repository.plantFinish(botanyId).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
                 )
-            }.collectLatest {
-                _plantFinish.value = it
+            } else {
+                // 检查是否种植过
+                tuYaUser?.uid?.let { uid -> checkPlant(uid) }
+                Resource.Success(it.data)
             }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            _plantFinish.value = it
+        }
     }
 
     /**
@@ -976,32 +1027,52 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
     private fun checkPlant(uuid: String) = viewModelScope.launch {
-        repository.checkPlant(uuid)
-            .map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code,
-                        it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
-                emit(Resource.Loading())
-            }
-            .catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1,
-                        "$it"
-                    )
+        repository.checkPlant(uuid).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
                 )
-            }.collectLatest {
-                _checkPlant.value = it
+            } else {
+                Resource.Success(it.data)
             }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            _checkPlant.value = it
+        }
+    }
+
+    /**
+     * 获取用户信息
+     */
+    private val _userDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()
+    val userDetail: LiveData<Resource<UserinfoBean.BasicUserBean>> = _userDetail
+    fun userDetail() = viewModelScope.launch {
+        repository.userDetail().map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _userDetail.value = it
+        }
     }
 
 
@@ -1024,11 +1095,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _popPeriodStatus = MutableLiveData<HashMap<String, String?>?>(hashMapOf())
     val popPeriodStatus: LiveData<HashMap<String, String?>?> = _popPeriodStatus
-    fun setPopPeriodStatus(guideId: String? = null, taskId: String? = null, taskTime: String? = null) {
+    fun setPopPeriodStatus(
+        guideId: String? = null, taskId: String? = null, taskTime: String? = null
+    ) {
         guideId?.let {
             _popPeriodStatus.value?.set(KEY_GUIDE_ID, it)
             // 获取图文引导，然后解锁。
-            when(it) {
+            when (it) {
                 UnReadConstants.Device.KEY_CHANGING_WATER -> {}
                 UnReadConstants.Device.KEY_ADD_WATER -> {}
                 UnReadConstants.Device.KEY_ADD_MANURE -> {}
@@ -1069,6 +1142,77 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+    /**
+     * 获取环信未读消息
+     */
+    private val _unReadMessageNumber = MutableLiveData<Int>(0)
+    val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
+    fun getEaseUINumber() {
+        // 只有当设备绑定且在线的时候、才去添加
+        if (refreshToken.value?.data?.deviceStatus == "1" && refreshToken.value?.data?.deviceOnlineStatus == "1") {
+            _unReadMessageNumber.postValue(EaseUiHelper.getInstance().unReadMessage)
+        }
+    }
+
+    /**
+     * 环信登录
+     */
+    private fun easeLogin(uname: String, upwd: String) {
+        if (EMClient.getInstance().context == null) return
+        ChatClient.getInstance().login(uname, upwd, object : Callback {
+            override fun onSuccess() {
+                logI("ChatClient Login")
+                AgoraMessage.newAgoraMessage().currentChatUsername =
+                    Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT
+                getEaseUINumber()
+            }
+
+            override fun onError(p0: Int, p1: String?) {
+
+            }
+
+            override fun onProgress(p0: Int, p1: String?) {
+            }
+
+        })
+    }
+
+    /**
+     * 获取环境信息
+     */
+    var tuYaDps = tuyaDeviceBean?.dps
+    fun getEnvData() {
+        tuYaDeviceBean?.let {
+            val envReq = EnvironmentInfoReq(deviceId = it.devId)
+            tuYaDps?.forEach { (key, value) ->
+                when(key) {
+                    TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE -> {
+                        envReq.waterTemperature = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_VENTILATION -> {
+                        envReq.ventilation = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT -> {
+                        envReq.tempCurrent = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW -> {
+                        envReq.inputAirFlow = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT -> {
+                        envReq.humidityCurrent = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE -> {
+                        envReq.brightValue = value.safeToInt()
+                    }
+                    TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL -> {
+                        envReq.waterLevel = value.toString()
+                    }
+                }
+            }
+            // 请求环境信息
+            environmentInfo(envReq)
+        }
+    }
 
     /**
      * 定时器
@@ -1085,11 +1229,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 emit(i)
                 delay(1000)
             }
-        }.flowOn(Dispatchers.Main)
-            .onStart { onStart?.invoke() }
-            .onCompletion { onFinish?.invoke() }
-            .onEach { onTick.invoke(it) }
-            .launchIn(scope)
+        }.flowOn(Dispatchers.Main).onStart { onStart?.invoke() }.onCompletion { onFinish?.invoke() }
+            .onEach { onTick.invoke(it) }.launchIn(scope)
     }
 
     companion object {

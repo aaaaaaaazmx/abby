@@ -28,16 +28,16 @@
             android:background="@mipmap/iv_close" />
 
         <TextView
-            android:textStyle="bold"
             android:id="@+id/tv_dec"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="Prepare a bucket or bottle of at least 1 gallon"
             android:textColor="#161B19"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Prepare a bucket or bottle of at least 1 gallon" />
 
         <ImageView
             android:id="@+id/iv_add"
@@ -66,10 +66,12 @@
 
         <TextView
             android:visibility="gone"
+            android:padding="10dp"
+            android:gravity="center"
             android:textSize="15sp"
             android:textColor="@color/mainColor"
             android:id="@+id/tv_skip_add_water"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/btn_success"
             android:layout_centerInParent="true"

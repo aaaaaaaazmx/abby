@@ -167,8 +167,8 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
         binding.etEmail.doAfterTextChanged {
             val email = it.toString()
             // 按钮是否可用
-            binding.btnContinue.isEnabled =
-                EmailUtil.isEmail(email) && !binding.tvCounttry.text.isNullOrEmpty()
+           /* binding.btnContinue.isEnabled =
+                EmailUtil.isEmail(email) && !binding.tvCounttry.text.isNullOrEmpty()*/
         }
 
         binding.btnContinue.setOnClickListener {

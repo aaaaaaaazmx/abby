@@ -100,6 +100,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 同步设备信息
+            syncDeviceInfo.observe(this@PairDistributionWifiActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.show(errorMsg)
+                }
+            })
             bindDevice.observe(this@PairDistributionWifiActivity, resourceObserver {
                 success {
                     // 开启服务
@@ -120,6 +126,8 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             userDetail.observe(this@PairDistributionWifiActivity, resourceObserver {
                 success {
                     hideProgressLoading()
+                    // 缓存信息
+                    GSON.toJson(this)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
                     // 绑定设备JPUSH的别名
                     thread {
                         logI(
@@ -241,18 +249,25 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
         // 跳转wifi设置界面
         binding.tvWifiName.setOnClickListener {
-            val i = Intent()
+            kotlin.runCatching {
+                val wifiSettingsIntent = Intent("android.settings.WIFI_SETTINGS")
+                startActivity(wifiSettingsIntent)
+            }.onFailure {
+                ToastUtil.shortShow("Please switch wifi manually")
+            }
+
+            /*val i = Intent()
             if (Build.VERSION.SDK_INT >= 11) {
                 //Honeycomb
                 i.setClassName(
                     "com.android.settings",
-                    "com.android.settings.Settings\$WifiSettingsActivity"
+                    "com.android.settings.Settings\$·"
                 )
             } else {
                 //other versions
                 i.setClassName("com.android.settings", "com.android.settings.wifi.WifiSettings")
             }
-            startActivity(i)
+            startActivity(i)*/
         }
     }
 
@@ -364,14 +379,15 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                     Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
                                                     binding.etWifiPwd.text.toString()
                                                 )
-                                                // 调用后台接口绑定
-                                                mViewModel.bindDevice(bean.devId, bean.uuid)
+                                                // 先进行数据同步、后绑定
+                                                mViewModel.getDps(bean)
                                             }.onFailure { hideProgressLoading() }
                                         }
                                     }
 
                                     override fun onError(errorCode: String, errorMsg: String?) {
                                         hideProgressLoading()
+                                        ToastUtil.shortShow(errorMsg)
                                         Reporter.reportTuYaError("newHomeInstance", errorMsg, errorCode)
                                     }
                                 })
@@ -387,6 +403,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 handle: ${(handle as? ConfigErrorBean).toString()}
                             """.trimIndent()
                                 )
+                                ToastUtil.shortShow(msg)
                                 Reporter.reportTuYaError("getActivator", msg, code.toString())
                                 // 3 密码错误 4 路由器连接失败（大概率是密码错误）
                                 runOnUiThread {
@@ -416,6 +433,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
                 override fun onFailure(errorCode: String?, errorMsg: String?) {
                     hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
                     logE("getActivatorToken: errorCode->${errorCode}, Error->$errorMsg")
                     Reporter.reportTuYaError("getActivatorInstance", errorMsg, errorCode)
                 }

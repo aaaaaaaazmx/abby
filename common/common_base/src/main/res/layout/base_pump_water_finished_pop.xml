@@ -25,7 +25,7 @@
             android:id="@+id/tv_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Draining Complete"
+            android:text="@string/draining_complete"
             android:textColor="@color/mainColor"
             android:textSize="18sp" />
 

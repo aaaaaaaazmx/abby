@@ -22,6 +22,16 @@ interface HttpMyApiService {
         @Part partLis: List<MultipartBody.Part>,
     ): Flow<HttpResult<String>>
 
+
+    /**
+     * 自动刷新token,更新token接口
+     * /abby/user/app/automaticLogin
+     */
+    @POST("abby/user/app/automaticLogin")
+    fun automaticLogin(
+        @Body requestBody: AutomaticLoginReq,
+    ): Flow<HttpResult<AutomaticLoginData>>
+
     /**
      * 更新用户信息
      */
@@ -156,4 +166,28 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/deviceOperate/finish")
     fun deviceOperateFinish(@Field("type") type: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 订阅码检查
+     */
+    @FormUrlEncoded
+    @POST("abby/user/checkSubscriberNumber")
+    fun checkSubscriberNumber(@Field("subscriberNumber") subscriberNumber: String): Flow<HttpResult<CheckSubscriberNumberBean>>
+
+
+    /**
+     * 充值订阅
+     */
+    @FormUrlEncoded
+    @POST("abby/user/topUpSubscriberNumber")
+    fun topUpSubscriberNumber(@Field("subscriberNumber") subscriberNumber: String): Flow<HttpResult<Boolean>>
+
+
+    /**
+     * 充值订阅
+     */
+    @POST("abby/plant/giveUpCheck")
+    fun giveUpCheck(): Flow<HttpResult<GiveUpCheckData>>
+
+
 }

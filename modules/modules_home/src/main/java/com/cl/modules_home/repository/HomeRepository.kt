@@ -2,8 +2,8 @@ package com.cl.modules_home.repository
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
-import com.cl.modules_home.request.AutomaticLoginReq
-import com.cl.modules_home.response.AutomaticLoginData
+import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -25,6 +25,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
      */
     fun getGuideInfo(body: String): Flow<HttpResult<GuideInfoData>> {
         return remoteRepository.getGuideInfo(body)
+    }
+
+    /**
+     * 获取富文本、统一图文接口
+     */
+    fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
+        return remoteRepository.getRichText(txtId, type)
     }
 
     /**
@@ -58,7 +65,7 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 获取植物的环境信息
      */
-    fun environmentInfo(type: String): Flow<HttpResult<MutableList<EnvironmentInfoData>>> {
+    fun environmentInfo(type: EnvironmentInfoReq): Flow<HttpResult<EnvironmentInfoData>> {
         return remoteRepository.environmentInfo(type)
     }
 
@@ -67,6 +74,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
      */
     fun getUnread(): Flow<HttpResult<MutableList<UnreadMessageData>>> {
         return remoteRepository.getUnread()
+    }
+
+    /**
+     * 获取用户信息
+     */
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return remoteRepository.userDetail()
     }
 
     /**
@@ -175,4 +189,38 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
         return remoteRepository.updateTask(body)
     }
 
+    fun getAcademyList(): Flow<HttpResult<MutableList<AcademyListData>>> {
+        return remoteRepository.getAcademyList()
+    }
+
+    fun getAcademyDetails(academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>> {
+        return remoteRepository.getAcademyDetails(academyId)
+    }
+
+    /**
+     * 消息已读
+     */
+    fun messageRead(academyDetailsId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.messageRead(academyDetailsId)
+    }
+
+    fun getHomePageNumber(): Flow<HttpResult<HomePageNumberData>> {
+        return remoteRepository.getHomePageNumber()
+    }
+
+    fun startSubscriber(): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.startSubscriber()
+    }
+
+    fun checkFirstSubscriber(): Flow<HttpResult<Boolean>> {
+        return remoteRepository.checkFirstSubscriber()
+    }
+
+    fun whetherSubCompensation(): Flow<HttpResult<WhetherSubCompensationData>> {
+        return remoteRepository.whetherSubCompensation()
+    }
+
+    fun compensatedSubscriber(): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.compensatedSubscriber()
+    }
 }

@@ -2,8 +2,8 @@ package com.cl.modules_home.service
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
-import com.cl.modules_home.request.AutomaticLoginReq
-import com.cl.modules_home.response.AutomaticLoginData
+import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +28,13 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/guide/getGuideInfo")
     fun getGuideInfo(@Field("type") type: String): Flow<HttpResult<GuideInfoData>>
+
+
+    /**
+     * 富文本图文接口 统一
+     */
+    @GET("abby/richText/getRichText")
+    fun getRichText(@Query("txtId")txtId: String? = null, @Query("txtType") txtType: String? = null): Flow<HttpResult<RichTextData>>
 
     /**
      * 上报引导标记
@@ -64,15 +71,20 @@ interface HttpHomeApiService {
      * 获取环境信息
      *  默认0 -> 换水
      */
-    @FormUrlEncoded
-    @POST("abby/plant/environmentInfo")
-    fun environmentInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<EnvironmentInfoData>>>
+    @POST("abby/plant/environment")
+    fun environmentInfo(@Body dev: EnvironmentInfoReq): Flow<HttpResult<EnvironmentInfoData>>
 
     /**
      * 获取未读信息
      */
     @POST("abby/userMessage/getUnread")
     fun getUnread(): Flow<HttpResult<MutableList<UnreadMessageData>>>
+
+    /**
+     * 获取用户信息
+     */
+    @POST("abby/user/userDetail")
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>>
 
     /**
      * 获取已读信息
@@ -171,4 +183,51 @@ interface HttpHomeApiService {
 
     @POST("abby/calendar/updateTask")
     fun updateTask(@Body body: UpdateReq): Flow<HttpResult<String>>
+
+    @POST("abby/academy/getAcademyList")
+    fun getAcademyList(): Flow<HttpResult<MutableList<AcademyListData>>>
+
+
+    @FormUrlEncoded
+    @POST("abby/academy/getAcademyDetails")
+    fun getAcademyDetails(@Field("academyId") academyId: String): Flow<HttpResult<MutableList<AcademyDetails>>>
+
+    /**
+     * 已读学院消息
+     */
+    @FormUrlEncoded
+    @POST("abby/academy/read")
+    fun messageRead(@Field("academyDetailsId") academyDetailsId: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 消息统计
+     */
+    @POST("abby/base/homePage")
+    fun getHomePageNumber(): Flow<HttpResult<HomePageNumberData>>
+
+    /**
+     * 开启订阅
+     */
+    @POST("abby/user/startSubscriber")
+    fun startSubscriber(): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 开启订阅
+     */
+    @POST("abby/user/checkFirstSubscriber")
+    fun checkFirstSubscriber(): Flow<HttpResult<Boolean>>
+
+
+    /**
+     * 检查是否需要补偿订阅
+     */
+    @POST("abby/user/whetherSubCompensation")
+    fun whetherSubCompensation(): Flow<HttpResult<WhetherSubCompensationData>>
+
+    /**
+     * 补偿订阅
+     */
+    @POST("abby/user/compensatedSubscriber")
+    fun compensatedSubscriber(): Flow<HttpResult<BaseBean>>
+
 }

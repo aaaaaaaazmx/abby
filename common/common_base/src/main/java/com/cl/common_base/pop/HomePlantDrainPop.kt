@@ -7,8 +7,10 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.HomePlantDrainPopBinding
 import com.cl.common_base.ext.dp2px
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.span.appendClickable
 import com.lxj.xpopup.XPopup
@@ -47,6 +49,9 @@ class HomePlantDrainPop(
     override fun beforeShow() {
         super.beforeShow()
         isShow?.let { ViewUtils.setVisible(it, binding?.tvSkipAddWater) }
+        // 判断是否是英制
+        val isFractional = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        binding?.tvDec?.text = if (!isFractional) "Prepare a bucket or bottle of at least 1 gallon" else "Prepare a bucket or bottle of at least 4L"
     }
 
     override fun onCreate() {

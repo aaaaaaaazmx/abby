@@ -19,14 +19,16 @@
     <string name="profile_photo">Profile Photo</string>
     <string name="profile_name">Nickname</string>
     <string name="profile_abby_id">Abby ID</string>
+    <string name="profile_email">Email</string>
     <string name="profile_edit_nickname">Enter your nickname</string>
     <string name="base_ok">OK</string>
-    <string name="setting_sub_desc">The subscription starts from the activation time (or when the subscription package is purchased); the activation time is when abby is connected to the internet for the first time</string>
+    <string name="setting_sub_desc">The Digital service starts from the activation time (or when the Digital service package is purchased); the activation time is when abby is connected to the internet for the first time</string>
     <string name="about_learn">Learn about “heyabby”</string>
     <string name="about_rate">Leave a review</string>
     <string name="about_terms">Terms of Use</string>
     <string name="about_policy">Privacy Policy</string>
-    <string name="setting_sub_time">No subscription</string>
+    <string name="setting_sub_time">No Digital Service</string>
+    <string name="setting_sub_charge_time">Extend Digital Service Validity</string>
     <string name="home_great_tips">Great! Now that you\'re prepared, let‘s put the clone in the grow box. </string>
     <string name="home_start">Start</string>
     <string name="setting_delete_device">After selecting \'Delete Device\', this device will no longer be associated with your account and it will be restored to factory settings. Your plant records will not be deleted.</string>
@@ -44,7 +46,7 @@
     <string name="register_email_dont_tips">Didn‘t receive an email?</string>
     <string name="login_account_empty">Please enter username</string>
     <string name="login_password_empty">Please enter password</string>
-    <string name="home_fattening">The tank is filled, now put fertilizer as instructed</string>
+    <string name="home_fattening">Moving forward, you will use a full packet of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.\n\n*Note: you must cut open the packets first</string>
     <string name="home_done">Done</string>
     <string name="deivce_can_not_find">Cannot find your device</string>
     <string name="device_try">You can try the following:</string>
@@ -71,11 +73,11 @@
     <string name="my_sedd_photo">Photo （Recommended）</string>
     <string name="my_auto">Auto</string>
     <string name="mt_about_desc">Have no idea about the strain?</string>
-    <string name="my_strain_name">Strain Name</string>
+    <string name="my_strain_name">Enter Your Strain Name</string>
     <string name="my_hint_strain_name">eg. OG Kush..</string>
     <string name="my_strain_how">Have no idea about the strain?</string>
     <string name="my_not_know">I don’t know</string>
-    <string name="base_pump_start_desc">Abby will pause for every 1 gallon of water drained in case of overflow.</string>
+    <string name="base_pump_start_desc">Abby will pause for every %s of water drained in case of overflow.</string>
     <string name="base_pump_stop_dec">Click to resume draining</string>
     <string name="base_pump_auto_start_desc">Make sure there is enough space for drainage and resume draining</string>
     <string name="strain_name_desc">Please enter a strain name within 24 bytes</string>
@@ -114,6 +116,25 @@
     <string name="base_dont_show">Don’t show it again</string>
     <string name="base_autoflowering_abbreviations">AutoFLW</string>
     <string name="base_job">Job’s Done</string>
-
+    <string name="noti_text_expression">[Expression]</string>
+    <string name="is_contact_customer">Being contact customer service, please wait...</string>
+    <string name="is_contact_customer_failure_seconed">Contact customer service failure:</string>
+    <string name="chat_row_satisfaction_content">Please make evaluation to my service!</string>
+    <string name="chatrow_eval_btn_text">Evaluation</string>
+    <string name="em_notice_sending">Sending</string>
+    <string name="home_bind_device">Know more about hey abby growing box</string>
+    <string name="home_go">Go</string>
+    <string name="my_cache">Cache</string>
+    <string name="home_academy">Academy</string>
+    <string name="home_instrusctors">Abby Instrusctors</string>
+    <string name="my_appversion">The current version is up-to-date.</string>
+    <string name="draining_complete">Draining Complete</string>
+    <string name="my_weight_unit">Measurement System</string>
+    <string name="my_metric">Metric</string>
+    <string name="my_us">Imperial</string>
+    <plurals name="seconds">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
 
 </resources>

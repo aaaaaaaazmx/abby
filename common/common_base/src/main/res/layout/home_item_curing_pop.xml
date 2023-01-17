@@ -9,7 +9,9 @@
         <variable
             name="data"
             type="com.cl.common_base.bean.GuideInfoData.PlantInfo" />
-
+        <variable
+            name="datas"
+            type="com.cl.common_base.bean.RichTextData.Page" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="80dp"
-                android:layout_marginTop="13dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/bg_round_gray">
 
                 <TextView

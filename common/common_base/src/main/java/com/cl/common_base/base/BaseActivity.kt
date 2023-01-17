@@ -2,6 +2,7 @@ package com.cl.common_base.base
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
@@ -15,9 +16,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.ViewDataBinding
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBinding
 import com.cl.common_base.R
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.util.ActivityCollector
 import com.cl.common_base.util.StatusBarUtil
 import com.cl.common_base.util.livedatabus.LiveEventBus
@@ -57,7 +60,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
     /**
      * theme color
      */
-//    private var themeColor: Int = SettingUtil.getColor()
+    //    private var themeColor: Int = SettingUtil.getColor()
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +78,12 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
             initView()
             observe()
             initData()
+        }
+        // 异常了。如设置界面权限切换
+        if (savedInstanceState != null) {
+            ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
+                .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                .navigation()
         }
     }
 
@@ -94,6 +103,10 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
         LiveEventBus.get().with(Constants.Tuya.KEY_TUYA_DEVICE_TO_APP, String::class.java)
             .observe(this) {
                 onTuYaToAppDataChange(it)
+            }
+        LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
+            .observe(this) {
+                inAppInfoChange(it)
             }
     }
 
@@ -135,18 +148,18 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     open fun initColor() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isLightStatusBar()) {
-//            window.decorView.apply {
-//                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-//            }
-//        }
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isLightNavigationBar()) {
-//            window.decorView.apply {
-//                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-//            }
-//        }
-//        window.statusBarColor = getStatusBarColor()
-//        window.navigationBarColor = getNavigationBarColor()
+        //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && isLightStatusBar()) {
+        //            window.decorView.apply {
+        //                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        //            }
+        //        }
+        //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isLightNavigationBar()) {
+        //            window.decorView.apply {
+        //                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+        //            }
+        //        }
+        //        window.statusBarColor = getStatusBarColor()
+        //        window.navigationBarColor = getNavigationBarColor()
 
         StatusBarUtil.setColor(this, Color.TRANSPARENT, 0)
         StatusBarUtil.setLightMode(this)
@@ -261,6 +274,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
 
     open fun close(): Boolean = false
 
+    // 嫌麻烦的可以写成一个类用来管理这些。
 
     /**
      * 蓝牙状态改变回调
@@ -279,10 +293,16 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
      */
     open fun onTuYaToAppDataChange(status: String) {}
 
+    /**
+     * APP相关
+     */
+    open fun inAppInfoChange(status: String) {}
+
 
     override fun onDestroy() {
         super.onDestroy()
         activity = null
+        hideProgressLoading()
         ActivityCollector.removeTask(activityWR)
         binding.let {
             it.unbind()

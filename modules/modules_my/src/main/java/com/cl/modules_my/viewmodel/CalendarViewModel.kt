@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -16,19 +15,15 @@ import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
-import com.goldentec.android.tools.util.letMultiple
+import com.cl.common_base.ext.letMultiple
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import retrofit2.http.Body
-import java.time.OffsetDateTime
-import java.time.ZonedDateTime
 import java.util.*
 import javax.inject.Inject
-import kotlin.math.abs
 
 @ActivityRetainedScoped
 class CalendarViewModel @Inject constructor(private val repository: MyRepository) :
@@ -42,10 +37,12 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         mCurrentDate.month = CalendarUtil.getDate("MM", d)
         mCurrentDate.day = CalendarUtil.getDate("dd", d)
         mCurrentDate.isCurrentDay = true
-        logI("""
+        logI(
+            """
             asdasdasdas:
             ${mCurrentDate.ymd}
-        """.trimIndent())
+        """.trimIndent()
+        )
         mCurrentDate
     }
 
@@ -193,17 +190,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     )
                 } else {
                     // 刷新任务
-                    _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
-                        _localCalendar.value?.let { list ->
-                            setOnlyRefreshLoad(true)
-                            letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
-                                getCalendar(
-                                    first,
-                                    last
-                                )
-                            }
-                        }
-                    }
+                    refreshTask()
                     Resource.Success(it.data)
                 }
             }
@@ -222,6 +209,20 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             }.collectLatest {
                 _updateTask.value = it
             }
+    }
+
+    fun refreshTask() {
+        _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
+            _localCalendar.value?.let { list ->
+                setOnlyRefreshLoad(true)
+                letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
+                    getCalendar(
+                        first,
+                        last
+                    )
+                }
+            }
+        }
     }
 
 
@@ -350,14 +351,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                         )
                     } else {
                         // 刷新任务
-                        _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
-                            _localCalendar.value?.let { list ->
-                                setOnlyRefreshLoad(true)
-                                letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
-                                    getCalendar(first, last)
-                                }
-                            }
-                        }
+                        refreshTask()
                         if (guideInfoStatus.value == CalendarData.TASK_TYPE_CHECK_CHECK_CURING) {
                             // 直接跳转到完成界面
                             _showCompletePage.postValue(true)
@@ -533,7 +527,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         _guideInfoStatus
 
     fun setGuideInfoStatus(guideInfoStatus: String) {
-        _guideInfoStatus.value = guideInfoStatus
+        _guideInfoStatus.postValue(guideInfoStatus)
     }
 
     private val _guideInfoTaskTime =
@@ -542,6 +536,6 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         _guideInfoTaskTime
 
     fun setGuideInfoTime(guideInfoTaskTime: String) {
-        _guideInfoTaskTime.value = guideInfoTaskTime
+        _guideInfoTaskTime.postValue(guideInfoTaskTime)
     }
 }

@@ -22,6 +22,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.BluetoothMonitorReceiver
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.salt.AESCipher
@@ -57,6 +58,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     override fun initView() {
+        // 初始化SDK、需要同意隐私协议
+        InitSdk.init()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             splashScreen?.setKeepOnScreenCondition { true }
         } else {
@@ -122,19 +125,19 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 }
             }
             success {
-                when (userinfoBean?.deviceStatus) {
-                    // 设备状态(1-绑定，2-已解绑)
-                    "1" -> {
-                        // 是否种植过
-                        data?.let { PlantCheckHelp().plantStatusCheck(it) }
-                    }
-                    "2" -> {
-                        // 跳转绑定界面
-                        ARouter.getInstance()
-                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                            .navigation()
-                    }
-                }
+                data?.let { PlantCheckHelp().plantStatusCheck(it) }
+//                when (userinfoBean?.deviceStatus) {
+//                    // 设备状态(1-绑定，2-已解绑)
+//                    "1" -> {
+//                        // 是否种植过
+//                    }
+//                    "2" -> {
+//                        // 跳转绑定界面
+//                        ARouter.getInstance()
+//                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+//                            .navigation()
+//                    }
+//                }
                 finish()
             }
         })
