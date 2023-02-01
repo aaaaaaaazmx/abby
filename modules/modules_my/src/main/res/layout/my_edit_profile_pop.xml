@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_tl_tr"
+        android:orientation="vertical"
+        android:paddingBottom="34dp">
+
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="13dp"
+            android:background="@mipmap/iv_close" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_dec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_close"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:textColor="#006241"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="Which account would you like to merge with [current email address]?" />
+
+        <TextView
+            android:id="@+id/tv_des_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_dec"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:text="Plant Name"
+            android:textColor="#000000"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_desc_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_des_one"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="24dp"
+            android:text="A verification code will be sent to this email address"
+            android:textColor="#837C7C"
+            android:textSize="12sp" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_email_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_desc_two"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/background_gray_r5">
+
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:hint="Enter Plant Name"
+                android:paddingStart="12dp"
+                android:textColorHint="#D0C7C7"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_clear_email"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_clear_email"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="19dp"
+                android:background="@mipmap/iv_close"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cl_email_input"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:text="Strain Name"
+            android:textColor="#000000"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_code_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_code"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="24dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                app:layout_constraintEnd_toStartOf="@+id/btn_send_code"
+                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/cl_code_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_gray_r5">
+
+                <EditText
+                    android:id="@+id/et_code"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:background="@null"
+                    android:hint="eg. OG Kush.."
+                    android:paddingStart="12dp"
+                    android:textColorHint="#D0C7C7"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_clear_code"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_clear_code"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginEnd="19dp"
+                    android:background="@mipmap/iv_close"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/cl_code_input"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                android:id="@+id/btn_send_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Send Now"
+                android:textColor="#000000"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_code_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cl_code_btn"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="24dp"
+            android:text="check you remail for verification code"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+
+        <Button
+            android:id="@+id/btn_success"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/tv_code_desc"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_state_button"
+            android:text="Done"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:text="Done" />
+
+        <TextView
+            android:id="@+id/tv_show_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_success"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="14dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/base_dont_show"
+            android:textColor="@color/mainColor"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </RelativeLayout>
+</layout>

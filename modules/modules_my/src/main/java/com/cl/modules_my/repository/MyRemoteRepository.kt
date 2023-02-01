@@ -3,6 +3,7 @@ package com.cl.modules_my.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
+import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.Reusable
@@ -38,8 +39,8 @@ class MyRemoteRepository @Inject constructor() {
         return service.userDetail()
     }
 
-    fun deleteDevice(): Flow<HttpResult<BaseBean>> {
-        return service.deleteDevice()
+    fun deleteDevice(deviceId: String): Flow<HttpResult<BaseBean>> {
+        return service.deleteDevice(deviceId)
     }
 
     fun plantDelete(uuid: String): Flow<HttpResult<Boolean>> {
@@ -112,5 +113,21 @@ class MyRemoteRepository @Inject constructor() {
 
     fun giveUpCheck(): Flow<HttpResult<GiveUpCheckData>> {
         return service.giveUpCheck()
+    }
+
+    fun verifyEmail(email: String, type: String): Flow<HttpResult<Boolean>> {
+        return service.verifyEmail(email, type)
+    }
+
+    fun mergeAccount(req: MergeAccountReq): Flow<HttpResult<String>> {
+        return service.mergeAccount(req)
+    }
+
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>> {
+        return service.listDevice()
+    }
+
+    fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
+        return service.switchDevice(deviceId)
     }
 }

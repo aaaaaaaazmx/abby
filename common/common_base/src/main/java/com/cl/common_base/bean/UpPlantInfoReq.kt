@@ -5,6 +5,7 @@ import com.cl.common_base.BaseBean
 data class UpPlantInfoReq(
     var attribute: String? = null, // 种植属性(Photo、Auto)
     var strainName: String? = null, // 种植名字
+    var plantName: String? = null, // 种植名字
     var plantWay: String? = null, // 种植方式
     var day: Int? = null,
     var flushingWeight: Int? = null, // 称重重量

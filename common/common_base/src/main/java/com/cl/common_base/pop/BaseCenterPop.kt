@@ -11,12 +11,17 @@ import com.cl.common_base.R
 import com.cl.common_base.databinding.BaseCenterBinding
 import com.cl.common_base.util.ViewUtils
 import com.lxj.xpopup.core.CenterPopupView
+import com.tuya.sdk.device.cache.SmartCacheEntityManager
 
+/**
+ * 可以显示2个按钮、也可以显示1个按钮的弹窗
+ */
 class BaseCenterPop(
     context: Context,
     private val onConfirmAction: (() -> Unit)? = null,
     private val onCancelAction: (() -> Unit)? = null,
     private val content: String? = null,
+    private val titleText: String? = null,
     private val confirmText: String? = context.getString(R.string.base_ok),
     private val cancelText: String? = context.getString(R.string.my_cancel),
     private val isShowCancelButton: Boolean = true,
@@ -60,7 +65,10 @@ class BaseCenterPop(
         binding = DataBindingUtil.bind<BaseCenterBinding>(popupImplView)?.apply {
             tvConfirm.text = confirmText
             tvCancel.text = cancelText
+            tvTitle.text = titleText
 
+            // 是否显示标题
+            ViewUtils.setVisible(titleText.isNullOrEmpty(), tvTitle)
             // 是否显示和隐藏按钮
             ViewUtils.setVisible(isShowCancelButton, tvCancel, xpopupDivider2)
 

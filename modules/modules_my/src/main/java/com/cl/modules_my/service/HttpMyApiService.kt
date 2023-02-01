@@ -3,7 +3,9 @@ package com.cl.modules_my.service
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.bean.DetailByLearnMoreIdData
+import com.cl.modules_my.repository.ListDeviceBean
 import com.cl.modules_my.repository.MyTroubleData
+import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -48,7 +50,7 @@ interface HttpMyApiService {
      * 删除设备
      */
     @POST("abby/userDevice/delete")
-    fun deleteDevice(): Flow<HttpResult<BaseBean>>
+    fun deleteDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<BaseBean>>
 
     /**
      * 删除植物
@@ -189,5 +191,21 @@ interface HttpMyApiService {
     @POST("abby/plant/giveUpCheck")
     fun giveUpCheck(): Flow<HttpResult<GiveUpCheckData>>
 
+    /**
+     * 发送验证码
+     */
+    @GET("abby/user/verify/email")
+    fun verifyEmail(@Query("email") email: String, @Query("type") type: String): Flow<HttpResult<Boolean>>
+
+
+    @POST("abby/user/merge")
+    fun mergeAccount(@Body req: MergeAccountReq): Flow<HttpResult<String>>
+
+    @POST("abby/userDevice/listDevice")
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>>
+
+    @FormUrlEncoded
+    @POST("abby/userDevice/switchDevice")
+    fun switchDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<String>>
 
 }

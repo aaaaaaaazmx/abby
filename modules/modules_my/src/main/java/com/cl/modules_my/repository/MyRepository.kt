@@ -2,6 +2,7 @@ package com.cl.modules_my.repository
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
+import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
@@ -50,8 +51,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     /**
      * 删除设备
      */
-    fun deleteDevice(): Flow<HttpResult<BaseBean>> {
-        return remoteRepository.deleteDevice()
+    fun deleteDevice(deviceId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deleteDevice(deviceId)
     }
 
     /**
@@ -167,5 +168,22 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
 
     fun giveUpCheck(): Flow<HttpResult<GiveUpCheckData>> {
         return remoteRepository.giveUpCheck()
+    }
+
+    fun verifyEmail(email: String, type: String): Flow<HttpResult<Boolean>> {
+        return remoteRepository.verifyEmail(email, type)
+    }
+
+    fun mergeAccount(req: MergeAccountReq): Flow<HttpResult<String>> {
+        return remoteRepository.mergeAccount(req)
+    }
+
+
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>> {
+        return remoteRepository.listDevice()
+    }
+
+    fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
+        return remoteRepository.switchDevice(deviceId)
     }
 }

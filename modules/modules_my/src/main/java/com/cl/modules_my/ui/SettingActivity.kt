@@ -28,6 +28,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MySettingBinding
+import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
@@ -175,12 +176,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     """.trimIndent()
                             )
                             Reporter.reportTuYaError("newDeviceInstance", error, code)
-                            mViewModel.deleteDevice()
+                            // mViewModel.deleteDevice()
                         }
 
                         override fun onSuccess() {
                             //  调用接口请求删除设备
-                            mViewModel.deleteDevice()
+                            // mViewModel.deleteDevice()
                         }
                     })
             })
@@ -434,6 +435,21 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 ARouter.getInstance().build(RouterPath.PairConnect.PAGE_SCAN_CODE).navigation()
             }
         }
+        // 合并账号
+        binding.ftMergeAccount.setOnClickListener {
+            startActivity(Intent(this@SettingActivity, DeviceListActivity::class.java))
+            // 弹出合并账号弹窗
+            /*pop.asCustom(
+                MergeAccountPop(this@SettingActivity, onConfirmAction = { email, code ->
+                    // 跳转到弹窗合并确认界面
+                    val intent = Intent(this@SettingActivity, MergeAccountSureActivity::class.java)
+                    intent.putExtra("email", email)
+                    intent.putExtra("code", code)
+                    startActivity(intent)
+                })
+            ).show()*/
+        }
+
         binding.ftCache.setOnClickListener {
             pop.asCustom(
                 BaseCenterPop(this@SettingActivity,

@@ -365,6 +365,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }*/
             }
 
+            // 设备管理界面
+            ivDeviceList.setOnClickListener {
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                    .navigation(activity)
+            }
+
             // 客服支持
             ivSupport.setOnClickListener {
                 // todo 客服支持
@@ -776,7 +782,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * plant6 弹窗 加肥
      */
     private fun plantSix(): BasePopupView {
-       return XPopup.Builder(context).isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
+        return XPopup.Builder(context).isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
             .dismissOnTouchOutside(false).asCustom(context?.let {
                 HomePlantSixPop(context = it, isFattening = mViewMode.getUnreadMessageList()
                     .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER, onNextAction = {
@@ -805,99 +811,99 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
 
                     // 需要先发送指令喂食
-                   /* DeviceControl.get().success {
-                        if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
-                            pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
-                                .dismissOnTouchOutside(false).asCustom(
-                                    BaseBottomPop(it,
-                                        backGround = ContextCompat.getDrawable(
-                                            it, com.cl.common_base.R.mipmap.base_feet_fall_bg
-                                        ),
-                                        text = getString(com.cl.common_base.R.string.base_feet_fall),
-                                        buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
-                                        bottomText = getString(com.cl.common_base.R.string.base_dont_show),
-                                        onNextAction = {
-                                            // 如果是在换水的三步当中的最后一步，加肥
-                                            if (mViewMode.getUnreadMessageList()
-                                                    .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                                            ) {
-                                                // 完成任务
-                                                mViewMode.popPeriodStatus.value?.let { map ->
-                                                    mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
-                                                }
-                                                // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                mViewMode.getRead(
-                                                    "${
-                                                        mViewMode.getUnreadMessageList()
-                                                            .firstOrNull()?.messageId
-                                                    }"
-                                                )
-                                                return@BaseBottomPop
-                                            }
+                    /* DeviceControl.get().success {
+                         if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
+                             pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
+                                 .dismissOnTouchOutside(false).asCustom(
+                                     BaseBottomPop(it,
+                                         backGround = ContextCompat.getDrawable(
+                                             it, com.cl.common_base.R.mipmap.base_feet_fall_bg
+                                         ),
+                                         text = getString(com.cl.common_base.R.string.base_feet_fall),
+                                         buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
+                                         bottomText = getString(com.cl.common_base.R.string.base_dont_show),
+                                         onNextAction = {
+                                             // 如果是在换水的三步当中的最后一步，加肥
+                                             if (mViewMode.getUnreadMessageList()
+                                                     .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                             ) {
+                                                 // 完成任务
+                                                 mViewMode.popPeriodStatus.value?.let { map ->
+                                                     mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                 }
+                                                 // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                 mViewMode.getRead(
+                                                     "${
+                                                         mViewMode.getUnreadMessageList()
+                                                             .firstOrNull()?.messageId
+                                                     }"
+                                                 )
+                                                 return@BaseBottomPop
+                                             }
 
-                                            // 第六个弹窗
-                                            // plant6后记“3”
-                                            mViewMode.setCurrentReqStatus(3)
-                                            mViewMode.saveOrUpdate("3")
-                                        },
-                                        bottomTextAction = {
-                                            // 如果是在换水的三步当中的最后一步，加肥
-                                            if (mViewMode.getUnreadMessageList()
-                                                    .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                                            ) {
-                                                // 完成任务
-                                                mViewMode.popPeriodStatus.value?.let { map ->
-                                                    mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
-                                                }
-                                                // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                mViewMode.getRead(
-                                                    "${
-                                                        mViewMode.getUnreadMessageList()
-                                                            .firstOrNull()?.messageId
-                                                    }"
-                                                )
-                                                return@BaseBottomPop
-                                            }
+                                             // 第六个弹窗
+                                             // plant6后记“3”
+                                             mViewMode.setCurrentReqStatus(3)
+                                             mViewMode.saveOrUpdate("3")
+                                         },
+                                         bottomTextAction = {
+                                             // 如果是在换水的三步当中的最后一步，加肥
+                                             if (mViewMode.getUnreadMessageList()
+                                                     .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                             ) {
+                                                 // 完成任务
+                                                 mViewMode.popPeriodStatus.value?.let { map ->
+                                                     mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                 }
+                                                 // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                 mViewMode.getRead(
+                                                     "${
+                                                         mViewMode.getUnreadMessageList()
+                                                             .firstOrNull()?.messageId
+                                                     }"
+                                                 )
+                                                 return@BaseBottomPop
+                                             }
 
-                                            // 第六个弹窗
-                                            // plant6后记“3”
-                                            mViewMode.setCurrentReqStatus(3)
-                                            mViewMode.saveOrUpdate("3")
-                                        })
-                                ).show()
-                        } else {
-                            // 如果是在换水的三步当中的最后一步，加肥
-                            if (mViewMode.getUnreadMessageList()
-                                    .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                            ) {
-                                // 完成任务
-                                mViewMode.popPeriodStatus.value?.let { map ->
-                                    mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
-                                }
-                                // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                mViewMode.getRead(
-                                    "${
-                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                                    }"
-                                )
-                                return@success
-                            }
+                                             // 第六个弹窗
+                                             // plant6后记“3”
+                                             mViewMode.setCurrentReqStatus(3)
+                                             mViewMode.saveOrUpdate("3")
+                                         })
+                                 ).show()
+                         } else {
+                             // 如果是在换水的三步当中的最后一步，加肥
+                             if (mViewMode.getUnreadMessageList()
+                                     .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                             ) {
+                                 // 完成任务
+                                 mViewMode.popPeriodStatus.value?.let { map ->
+                                     mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
+                                 }
+                                 // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                 mViewMode.getRead(
+                                     "${
+                                         mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                     }"
+                                 )
+                                 return@success
+                             }
 
-                            // 第六个弹窗
-                            // plant6后记“3”
-                            mViewMode.setCurrentReqStatus(3)
-                            mViewMode.saveOrUpdate("3")
-                        }
+                             // 第六个弹窗
+                             // plant6后记“3”
+                             mViewMode.setCurrentReqStatus(3)
+                             mViewMode.saveOrUpdate("3")
+                         }
 
-                    }.error { code, error ->
-                        ToastUtil.shortShow(
-                            """
-                                    feedAbby:
-                                    code-> $code
-                                    errorMsg-> $error
-                                """.trimIndent()
-                        )
-                    }.feedAbby(true)*/
+                     }.error { code, error ->
+                         ToastUtil.shortShow(
+                             """
+                                     feedAbby:
+                                     code-> $code
+                                     errorMsg-> $error
+                                 """.trimIndent()
+                         )
+                     }.feedAbby(true)*/
                 })
             })
     }

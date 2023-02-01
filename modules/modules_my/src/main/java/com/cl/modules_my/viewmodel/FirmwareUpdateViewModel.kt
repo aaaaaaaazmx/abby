@@ -1,11 +1,14 @@
 package com.cl.modules_my.viewmodel
 
+import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logE
@@ -205,12 +208,20 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
                     """.trimIndent()
                     )
                     Reporter.reportTuYaError("newDeviceInstance", error, code)
-                    deleteDevice()
+                    // deleteDevice()
+                    ARouter.getInstance()
+                        .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                        .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .navigation()
                 }
 
                 override fun onSuccess() {
-                    //  调用接口请求删除设备
-                    deleteDevice()
+                    // 调用接口请求删除设备
+                    // deleteDevice()
+                    ARouter.getInstance()
+                        .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                        .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .navigation()
                 }
             })
     }
@@ -219,7 +230,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
     /**
      * 删除用户设备
      */
-    private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
+   /* private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
     val deleteDevice: LiveData<Resource<BaseBean>> = _deleteDevice
     private fun deleteDevice() = viewModelScope.launch {
         repository.deleteDevice()
@@ -248,5 +259,5 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
             }.collectLatest {
                 _deleteDevice.value = it
             }
-    }
+    }*/
 }
