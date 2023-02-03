@@ -49,6 +49,7 @@ interface HttpMyApiService {
     /**
      * 删除设备
      */
+    @FormUrlEncoded
     @POST("abby/userDevice/delete")
     fun deleteDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<BaseBean>>
 

@@ -1,8 +1,10 @@
 package com.cl.modules_my.ui
 
+import android.app.Activity
 import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.RouterPath
@@ -15,12 +17,15 @@ import com.cl.modules_my.databinding.MyDeviceListActivityBinding
 import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.help.PermissionHelp
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.lxj.xpopup.XPopup
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.FileInputStream
 import javax.inject.Inject
 
 
@@ -41,6 +46,30 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     override fun initView() {
         binding.rvList.layoutManager = LinearLayoutManager(this@DeviceListActivity)
         binding.rvList.adapter = adapter
+
+        binding.title.setLeftClickListener {
+            isSwitchDevice()
+        }
+    }
+
+    override fun onBackPressed() {
+        isSwitchDevice()
+    }
+
+    private fun isSwitchDevice() {
+        val list = adapter.data
+        if (list.isEmpty()) {
+            finish()
+            return
+        }
+        list.firstOrNull { it.isChooser == true }?.apply {
+            if (deviceId == mViewModel.tuyaDeviceBean()?.devId) {
+                finish()
+            } else {
+                setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))
+                finish()
+            }
+        }
     }
 
     /**
@@ -118,15 +147,15 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
     override fun initData() {
         binding.ivAddDevice.setOnClickListener {
-            pop.asCustom(
-                MergeAccountPop(this@DeviceListActivity, onConfirmAction = { email, code ->
-                    // 跳转到弹窗合并确认界面
-                    val intent = Intent(this@DeviceListActivity, MergeAccountSureActivity::class.java)
-                    intent.putExtra("email", email)
-                    intent.putExtra("code", code)
-                    startActivity(intent)
+            PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
+                object : PermissionHelp.OnCheckResultListener {
+                    override fun onResult(result: Boolean) {
+                        if (!result) return
+                        // 如果权限都已经同意了
+                        ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
+                            .navigation()
+                    }
                 })
-            ).show()
         }
 
         mViewModel.listDevice()

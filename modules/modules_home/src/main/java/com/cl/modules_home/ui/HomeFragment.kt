@@ -378,7 +378,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 设备管理界面
             ivDeviceList.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                    .navigation(activity)
+                    .navigation(activity, KEY_IS_SWITCH_DEVICE)
             }
 
             // 客服支持
@@ -454,7 +454,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 设备不在线
         binding.plantOffLine.apply {
-
+            title.setRightButtonImg(R.mipmap.home_device_list)
+                .setRightClickListener {
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                        .navigation(activity, KEY_IS_SWITCH_DEVICE)
+                }
         }
 
         // 解锁完成界面点击事件相关
@@ -1220,7 +1224,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         }
                     })
- 
+
                     // 重新注册服务
                     // 开启服务
                     val intent =
@@ -2822,6 +2826,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.plantInfo()
                 }
 
+                // 主页或者离线页面跳转到设备界面
+                KEY_FOR_USER_NAME -> {
+                    // 切换设备
+                    data?.getStringExtra(Constants.Global.KEY_IS_SWITCH_DEVICE)?.let { mViewMode.switchDevice(it) }
+                }
             }
         }
 
@@ -2869,5 +2878,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 跳转继承界面为了老用户输入属性或者名字
         const val KEY_FOR_USER_NAME = 77
+
+        // 是否是从主页或者离线页面跳转过来的，用于判断是否切换
+        var KEY_IS_SWITCH_DEVICE = 99
     }
 }
