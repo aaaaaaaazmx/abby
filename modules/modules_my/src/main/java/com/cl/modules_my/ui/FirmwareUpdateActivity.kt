@@ -119,7 +119,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
 
     override fun observe() {
         mViewModel.apply {
-            /*deleteDevice.observe(this@FirmwareUpdateActivity, resourceObserver {
+            deleteDevice.observe(this@FirmwareUpdateActivity, resourceObserver {
                 success {
                     //  删除设备之后应该去哪？
                     // 跳转 Adddevice 界面
@@ -132,7 +132,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
                 }
-            })*/
+            })
         }
     }
 

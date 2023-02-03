@@ -42,6 +42,7 @@ import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
+import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.AppUtil
@@ -51,6 +52,10 @@ import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
+import com.tuya.smart.home.sdk.TuyaHomeSdk
+import com.tuya.smart.home.sdk.bean.HomeBean
+import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
+import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import java.io.Serializable
@@ -115,6 +120,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
 
+        // 刷新设备列表
+        mViewMode.listDevice()
+
         liveDataObser()
 
         // 开启定时器，每次20秒刷新未读气泡消息
@@ -124,6 +132,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.getUnread()
                 // 查询植物信息Look
                 mViewMode.plantInfoLoop()
+                // 刷新设备列表
+                mViewMode.listDevice()
             }
             if (it == 0) {
                 job?.cancel()
@@ -384,6 +394,34 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             tvDrain.setOnClickListener {
                 plantDrain.show()
+            }
+
+            // 左滑动
+            imageLeftSwip.setOnClickListener {
+                val listDeviceData = mViewMode.listDevice.value?.data
+                val index = listDeviceData?.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
+                if (index != null) {
+                    kotlin.runCatching {
+                        val deviceBean = listDeviceData[index - 1]
+                        // 切换设备
+                        deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
+                        deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
+                    }
+                }
+            }
+
+            // 右滑动
+            imageRightSwip.setOnClickListener {
+                val listDeviceData = mViewMode.listDevice.value?.data
+                val index = listDeviceData?.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
+                if (index != null) {
+                    kotlin.runCatching {
+                        val deviceBean = listDeviceData[index + 1]
+                        // 切换设备
+                        deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
+                        deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
+                    }
+                }
             }
 
             // 点击弹出周期弹窗
@@ -1142,6 +1180,67 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 设备列表
+            listDevice.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
+                        // 表示已经是第一个了。
+                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, this - 1 == 0)
+                        // 表示是最后一个了
+                        ViewUtils.setGone(binding.pplantNinth.imageRightSwip, this + 1 == data?.size)
+                    }
+                }
+            })
+            // 切换设备列表
+            switchDevice.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    // 更新涂鸦Bean
+                    TuyaHomeSdk.newHomeInstance(mViewMode.homeId).getHomeDetail(object : ITuyaHomeResultCallback {
+                        override fun onSuccess(bean: HomeBean?) {
+                            bean?.let { it ->
+                                val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }?.apply {
+                                    GSON.toJson(this)?.let {
+                                        Prefs.putStringAsync(
+                                            Constants.Tuya.KEY_DEVICE_DATA,
+                                            it
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun onError(errorCode: String?, errorMsg: String?) {
+
+                        }
+                    })
+ 
+                    // 重新注册服务
+                    // 开启服务
+                    val intent =
+                        Intent(context, TuYaDeviceUpdateReceiver::class.java)
+                    context?.startService(intent)
+                    // 切换之后需要重新刷新所有的东西
+                    mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                }
+            })
+            // 刷新设备列表
+            listDevice.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 需要保存当前有多少个设备列表在线
+                }
+            })
             // 检查是否订阅补偿
             whetherSubCompensation.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
@@ -1224,7 +1323,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.removeFirstUnreadMessage()
                     // 清空气泡状态
                     mViewMode.clearPopPeriodStatus()
-
                     // 是否种植过
                     data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
                 }
@@ -1445,6 +1543,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     GSON.toJson(data)?.let { data ->
                         Prefs.putStringAsync(Constants.Login.KEY_REFRESH_LOGIN_DATA, data)
                     }
+
+                    // 设置TuYaDeviceId
+                    data?.deviceId?.let { mViewMode.setDeviceId(it) }
 
                     // 保存当前的信息.
                     GSON.toJson(data)?.let {

@@ -1,4 +1,4 @@
-package com.cl.modules_my.repository
+package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
 
@@ -8,5 +8,7 @@ data class ListDeviceBean(
     var onlineStatus: String? = null,
     var period: String? = null,
     var subscription: String? = null,
+    var isChooser: Boolean? = null,
+    var plantId: Int? = null,
 ) : BaseBean() {
 }

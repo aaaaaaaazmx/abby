@@ -6,7 +6,6 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.widget.toast.ToastUtil
@@ -15,7 +14,7 @@ import com.cl.modules_my.adapter.DeviceListAdapter
 import com.cl.modules_my.databinding.MyDeviceListActivityBinding
 import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
-import com.cl.modules_my.repository.ListDeviceBean
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.lxj.xpopup.XPopup
@@ -62,6 +61,10 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             }
             success {
                 hideProgressLoading()
+                data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean()?.devId }?.apply {
+                    if (data.isNullOrEmpty()) return@success
+                    data?.get(this)?.isChooser = true
+                }
                 adapter.setList(data)
             }
         })
@@ -128,7 +131,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
         mViewModel.listDevice()
 
-        adapter.addChildClickViewIds(R.id.btn_chang, R.id.btn_delete)
+        adapter.addChildClickViewIds(R.id.btn_chang, R.id.btn_delete, R.id.cl_root)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val deviceBean = (adapter.data[position] as? ListDeviceBean)
             when (view.id) {
@@ -138,15 +141,15 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         .asCustom(EditPlantProfilePop(this@DeviceListActivity, plantName = deviceBean?.deviceName, onConfirmAction = { plantName, strainName ->
                             // 修改属性名
                             if (strainName.isNullOrEmpty() && plantName?.isNotEmpty() == true) {
-                                mViewModel.updatePlantInfo(UpPlantInfoReq(plantName = plantName))
+                                mViewModel.updatePlantInfo(UpPlantInfoReq(plantName = plantName, plantId = deviceBean?.plantId))
                             }
                             if (plantName.isNullOrEmpty() && strainName?.isNotEmpty() == true) {
-                                mViewModel.updatePlantInfo(UpPlantInfoReq(strainName = strainName))
+                                mViewModel.updatePlantInfo(UpPlantInfoReq(strainName = strainName, plantId = deviceBean?.plantId))
                             } else {
-                                mViewModel.updatePlantInfo(UpPlantInfoReq(strainName = strainName, plantName = plantName))
+                                mViewModel.updatePlantInfo(UpPlantInfoReq(strainName = strainName, plantName = plantName, plantId = deviceBean?.plantId))
                             }
                         })).show()
-                }   
+                }
                 R.id.btn_delete -> {
                     XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(true)
                         .asCustom(MyDeleteDevicePop(this) {
@@ -166,6 +169,16 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                 })
                         }).show()
 
+                }
+
+                R.id.cl_root -> {
+                    // 更新数据
+                    val bean = (adapter.data as? MutableList<ListDeviceBean>) ?: return@setOnItemChildClickListener
+                    bean.indexOfFirst { it.isChooser == true }.apply {
+                        bean[this].isChooser = false
+                    }
+                    bean[position].isChooser = true
+                    this@DeviceListActivity.adapter.setList(bean)
                 }
             }
         }

@@ -230,4 +230,14 @@ interface HttpHomeApiService {
     @POST("abby/user/compensatedSubscriber")
     fun compensatedSubscriber(): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 设备列表
+     */
+    @POST("abby/userDevice/listDevice")
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>>
+
+    @FormUrlEncoded
+    @POST("abby/userDevice/switchDevice")
+    fun switchDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<String>>
+
 }

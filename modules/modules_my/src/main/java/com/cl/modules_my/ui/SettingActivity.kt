@@ -176,12 +176,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     """.trimIndent()
                             )
                             Reporter.reportTuYaError("newDeviceInstance", error, code)
-                            // mViewModel.deleteDevice()
+                             mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
                         }
 
                         override fun onSuccess() {
                             //  调用接口请求删除设备
-                            // mViewModel.deleteDevice()
+                             mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
                         }
                     })
             })
@@ -437,9 +437,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
         // 合并账号
         binding.ftMergeAccount.setOnClickListener {
-            startActivity(Intent(this@SettingActivity, DeviceListActivity::class.java))
             // 弹出合并账号弹窗
-            /*pop.asCustom(
+            pop.asCustom(
                 MergeAccountPop(this@SettingActivity, onConfirmAction = { email, code ->
                     // 跳转到弹窗合并确认界面
                     val intent = Intent(this@SettingActivity, MergeAccountSureActivity::class.java)
@@ -447,7 +446,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     intent.putExtra("code", code)
                     startActivity(intent)
                 })
-            ).show()*/
+            ).show()
         }
 
         binding.ftCache.setOnClickListener {

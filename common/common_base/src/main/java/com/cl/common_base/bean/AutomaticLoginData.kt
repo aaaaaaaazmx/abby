@@ -7,6 +7,7 @@ import java.io.Serializable
 @Keep
 data class AutomaticLoginData(
     val abbyId: String? = null,
+    val deviceId: String? = null,
     val avatarPicture: String? = null,
     val childLock: String? = null,
     val deviceOnlineStatus: String? = null, // 设备在线状态(0-不在线，1-在线)

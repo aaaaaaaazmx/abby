@@ -140,6 +140,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                      * 登录涂鸦
                      */
                     mViewModel.tuYaLogin(
+                        deviceId = it.data?.deviceId,
                         code = it.data?.tuyaCountryCode,
                         email = it.data?.email,
                         password = AESCipher.aesDecryptString(it.data?.tuyaPassword, AESCipher.KEY),

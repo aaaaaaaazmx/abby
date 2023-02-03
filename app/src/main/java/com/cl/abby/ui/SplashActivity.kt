@@ -96,6 +96,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             val tuyaCountryCode = userinfoBean?.tuyaCountryCode
             val tuyaPassword = userinfoBean?.tuyaPassword
             mViewModel.tuYaLogin(
+                userinfoBean?.deviceId,
                 tuyaCountryCode,
                 email,
                 AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),

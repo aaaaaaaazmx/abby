@@ -138,7 +138,6 @@
 
                 <!--删除设备隐藏、因为现在合并设备了。-->
                 <com.cl.common_base.widget.FeatureItemView
-                    android:visibility="gone"
                     android:id="@+id/dt_delete_device"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"

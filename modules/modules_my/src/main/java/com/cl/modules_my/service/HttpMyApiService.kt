@@ -3,7 +3,7 @@ package com.cl.modules_my.service
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.bean.DetailByLearnMoreIdData
-import com.cl.modules_my.repository.ListDeviceBean
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.modules_my.repository.MyTroubleData
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq

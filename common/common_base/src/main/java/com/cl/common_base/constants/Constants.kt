@@ -1,5 +1,9 @@
 package com.cl.common_base.constants
 
+import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
+
 /**
  *  常量管理
  */

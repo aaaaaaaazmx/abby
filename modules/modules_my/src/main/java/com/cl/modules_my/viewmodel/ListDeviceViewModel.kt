@@ -5,14 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
-import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
-import com.cl.modules_my.repository.ListDeviceBean
+import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
-import com.cl.modules_my.request.MergeAccountReq
+import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -23,6 +24,14 @@ import javax.inject.Inject
 class ListDeviceViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
 
+
+    /**
+     * 设备信息
+     */
+    val tuyaDeviceBean: () -> DeviceBean? = {
+        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
+        GSON.parseObject(homeData, DeviceBean::class.java)
+    }
 
     /**
      * 合并账号

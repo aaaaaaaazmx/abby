@@ -223,4 +223,12 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun compensatedSubscriber(): Flow<HttpResult<BaseBean>> {
         return remoteRepository.compensatedSubscriber()
     }
+
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>> {
+        return remoteRepository.listDevice()
+    }
+
+    fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
+        return remoteRepository.switchDevice(deviceId)
+    }
 }
