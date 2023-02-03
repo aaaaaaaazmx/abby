@@ -1189,7 +1189,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
                         // 表示已经是第一个了。
-                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, this - 1 == 0)
+                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, this - 1 <= 0)
                         // 表示是最后一个了
                         ViewUtils.setGone(binding.pplantNinth.imageRightSwip, this + 1 == data?.size)
                     }

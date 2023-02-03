@@ -167,7 +167,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 R.id.btn_chang -> {
                     //  修改属性、弹窗pop
                     XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(false)
-                        .asCustom(EditPlantProfilePop(this@DeviceListActivity, plantName = deviceBean?.deviceName, onConfirmAction = { plantName, strainName ->
+                        .asCustom(EditPlantProfilePop(this@DeviceListActivity, plantName = deviceBean?.plantName, strainName = deviceBean?.strainName, onConfirmAction = { plantName, strainName ->
                             // 修改属性名
                             if (strainName.isNullOrEmpty() && plantName?.isNotEmpty() == true) {
                                 mViewModel.updatePlantInfo(UpPlantInfoReq(plantName = plantName, plantId = deviceBean?.plantId))

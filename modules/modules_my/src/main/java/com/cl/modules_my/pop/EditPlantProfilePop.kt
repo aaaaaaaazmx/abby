@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 class EditPlantProfilePop(
     context: Context,
     private val plantName: String? = null,
+    private val strainName: String? = null,
     private val onConfirmAction: ((planeName: String?, strainName: String?) -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
@@ -47,6 +48,7 @@ class EditPlantProfilePop(
         super.onCreate()
         binding = DataBindingUtil.bind<MyEditProfilePopBinding>(popupImplView)?.apply {
             etEmail.setText(plantName)
+            etCode.setText(strainName)
 
             ivClose.setOnClickListener { dismiss() }
 
