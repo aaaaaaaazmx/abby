@@ -4,11 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="data"
             type="com.cl.common_base.bean.ListDeviceBean" />
 
-        <import type="android.view.View"/>
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
 
     </data>
 
@@ -19,19 +22,22 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_root"
-            android:padding="19dp"
-            android:background="@{data.isChooser ? @drawable/background_mian_color_r8 : null}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@{data.isChooser ? @drawable/background_mian_color_r8 : null}"
+            android:padding="19dp"
             tools:ignore="MissingConstraints">
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text='@{TextUtils.isEmpty(data.plantName) &amp;&amp; TextUtils.isEmpty(data.strainName) ? ""
+                 : TextUtils.isEmpty(data.plantName) &amp;&amp; !TextUtils.isEmpty(data.strainName) ? data.strainName
+                  : TextUtils.isEmpty(data.strainName) &amp;&amp; !TextUtils.isEmpty(data.plantName) ? data.plantName
+                   : ""}'
                 android:textColor="#006241"
                 android:textSize="15sp"
-                android:text="@{data.deviceName}"
                 tools:text="hey abby#1 | OG Kush" />
 
             <LinearLayout
@@ -49,10 +55,10 @@
                     android:background="@mipmap/my_time" />
 
                 <TextView
-                    android:text="@{data.period}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
+                    android:text="@{data.period}"
                     android:textColor="#000000"
                     android:textSize="11sp"
                     android:textStyle="bold"
@@ -75,10 +81,10 @@
                     android:background="@mipmap/my_wendu" />
 
                 <TextView
-                    android:text="@{data.onlineStatus}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
+                    android:text="@{data.onlineStatus}"
                     android:textColor="#000000"
                     android:textSize="11sp"
                     android:textStyle="bold"
@@ -99,10 +105,10 @@
                     android:background="@mipmap/my_sub" />
 
                 <TextView
-                    android:text="@{data.subscription}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
+                    android:text="@{data.subscription}"
                     android:textColor="#000000"
                     android:textSize="11sp"
                     android:textStyle="bold"
@@ -118,33 +124,33 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
-            android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
-            android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
-            app:layout_constraintTop_toBottomOf="@+id/cl_root"
-            app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/btn_chang"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Change Profile"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:text="Change Profile"
-            android:background="@drawable/background_main_color_r6"
-            android:layout_width="0dp"
-            android:layout_height="35dp"/>
+            android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_root" />
 
         <Button
-            android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
-            android:layout_marginStart="17dp"
-            app:layout_constraintStart_toEndOf="@+id/btn_chang"
-            app:layout_constraintTop_toTopOf="@+id/btn_chang"
-            app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/btn_delete"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_gray_r6"
+            android:text="Delete"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:text="Delete"
-            android:background="@drawable/background_gray_r6"
-            android:layout_width="0dp"
-            android:layout_height="35dp"/>
+            android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_chang"
+            app:layout_constraintTop_toTopOf="@+id/btn_chang" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

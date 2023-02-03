@@ -1328,7 +1328,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 清空气泡状态
                     mViewMode.clearPopPeriodStatus()
                     // 是否种植过
-                    data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
+                    data?.let { PlantCheckHelp().plantStatusCheck(activity, it, true) }
                 }
             })
             // 获取通用图文信息接口

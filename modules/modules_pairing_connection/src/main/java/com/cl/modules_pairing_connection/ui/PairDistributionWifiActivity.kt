@@ -167,7 +167,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                         data: ${data.toString()}
                     """.trimIndent()
                     )
-                    data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
+                    data?.let { PlantCheckHelp().plantStatusCheck(this@PairDistributionWifiActivity, it, true) }
                 }
 
                 error { errorMsg, code ->

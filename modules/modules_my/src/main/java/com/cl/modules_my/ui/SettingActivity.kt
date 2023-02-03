@@ -287,7 +287,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                 success {
                     // 是否种植过
-                    data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
+                    data?.let { PlantCheckHelp().plantStatusCheck(this@SettingActivity, it, true) }
                 }
             })
 

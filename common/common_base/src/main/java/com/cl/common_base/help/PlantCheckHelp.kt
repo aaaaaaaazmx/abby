@@ -1,7 +1,10 @@
 package com.cl.common_base.help
 
+import android.app.Activity
 import android.content.Intent
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.R
+import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
@@ -22,7 +25,7 @@ class PlantCheckHelp {
     /**
      * 检查种植统一跳转
      */
-    fun plantStatusCheck(data: CheckPlantData, isClearTask: Boolean = false) {
+    fun plantStatusCheck(activity: Activity?= null ,data: CheckPlantData, isClearTask: Boolean = false) {
         // 如果是没绑定过设备的 2
         if (userinfoBean?.deviceStatus == "2") {
             // 跳转未种植引导页面
@@ -46,8 +49,9 @@ class PlantCheckHelp {
                     Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
                     userinfoBean?.notBound == 0
                 )
+                .withTransition(R.anim.fade_in,R.anim.fade_out)
                 .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                .navigation()
+                .navigation(activity)
             return
         }
         // 是否种植过
@@ -69,8 +73,9 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
+                    .withTransition(R.anim.fade_in,R.anim.fade_out)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation()
+                    .navigation(activity)
             }
             KEY_PLANTED -> {
                 // 跳转回主页
@@ -88,8 +93,9 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
+                    .withTransition(R.anim.fade_in,R.anim.fade_out)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation()
+                    .navigation(activity)
             }
             KEY_PLANTING_RECORDS -> {
                 // 跳转未种植引导页面
@@ -108,8 +114,9 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
+                    .withTransition(R.anim.fade_in,R.anim.fade_out)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation()
+                    .navigation(activity)
             }
             KEY_PLANTING_COMPLETED -> {
                 //  种植完成
@@ -128,8 +135,9 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
+                    .withTransition(R.anim.fade_in,R.anim.fade_out)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation()
+                    .navigation(activity)
             }
         }
     }
