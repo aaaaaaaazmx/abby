@@ -19,6 +19,7 @@ import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.lxj.xpopup.XPopup
@@ -66,7 +67,14 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             if (deviceId == mViewModel.tuyaDeviceBean()?.devId) {
                 finish()
             } else {
-                setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))
+                // 删除原先的、或者切换了设备
+                // 跳转到主页、加载。
+                // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
+                // 改用Eventbus吧。
+                // 切换了设备，需要重新刷新主页。
+                LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
+                    .postEvent(deviceId)
+                /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
                 finish()
             }
         }

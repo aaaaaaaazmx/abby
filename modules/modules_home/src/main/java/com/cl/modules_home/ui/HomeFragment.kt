@@ -182,6 +182,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.getEaseUINumber()
                 }
             }
+
+        /**
+         * 设备管理界面、切换设备
+         */
+        LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
+            .observe(viewLifecycleOwner) {
+                if (it.isNotEmpty()) {
+                    mViewMode.switchDevice(deviceId = it)
+                }
+            }
     }
 
     /**
@@ -378,7 +388,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 设备管理界面
             ivDeviceList.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                    .navigation(activity, KEY_IS_SWITCH_DEVICE)
+                    .navigation(activity)
             }
 
             // 客服支持
@@ -457,7 +467,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             title.setRightButtonImg(R.mipmap.home_device_list)
                 .setRightClickListener {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                        .navigation(activity, KEY_IS_SWITCH_DEVICE)
+                        .navigation(activity)
                 }
         }
 
@@ -2826,11 +2836,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.plantInfo()
                 }
 
-                // 主页或者离线页面跳转到设备界面
+                /*// 主页或者离线页面跳转到设备界面
                 KEY_FOR_USER_NAME -> {
                     // 切换设备
                     data?.getStringExtra(Constants.Global.KEY_IS_SWITCH_DEVICE)?.let { mViewMode.switchDevice(it) }
-                }
+                }*/
             }
         }
 
@@ -2878,8 +2888,5 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 跳转继承界面为了老用户输入属性或者名字
         const val KEY_FOR_USER_NAME = 77
-
-        // 是否是从主页或者离线页面跳转过来的，用于判断是否切换
-        var KEY_IS_SWITCH_DEVICE = 99
     }
 }

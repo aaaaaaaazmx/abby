@@ -180,4 +180,10 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
         }
     }
 
+
+    // 是否移除了自己
+    var isDeleteSelf = false
+    fun setIsDeleteSelf(delete: Boolean) {
+        isDeleteSelf = delete
+    }
 }

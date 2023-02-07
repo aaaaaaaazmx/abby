@@ -14,6 +14,7 @@ import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyMergeAccountPopBinding
 import com.cl.modules_my.service.HttpMyApiService
@@ -71,9 +72,10 @@ class MergeAccountPop(
             }
 
             btnSuccess.setOnClickListener {
-                // 跳转到合并确认页面
-                onConfirmAction?.invoke(etEmail.text.toString(), etCode.text.toString())
-                dismiss()
+                // 需要验证验证码码
+                lifecycleScope.launch {
+                    verifyCode(etCode.text.toString(), etEmail.text.toString())
+                }
             }
         }
     }
@@ -86,27 +88,13 @@ class MergeAccountPop(
     private suspend fun verifyEmail(email: String) {
         service.verifyEmail(email = email, type = "4").map {
             if (it.code != Constants.APP_SUCCESS) {
-                if (it.msg == "not exist user") {
-                    // todo 弹出没有这个弹窗的pop
-                    XPopup.Builder(context)
-                        .isDestroyOnDismiss(false)
-                        .isDestroyOnDismiss(false)
-                        .asCustom(
-                            BaseCenterPop(context,
-                                content = "The account you entered does not exist", isShowCancelButton = false, onConfirmAction = {
-                                })
-                        )
-                        .show()
-                }
                 Resource.DataError(
                     it.code, it.msg
                 )
             } else {
-                // todo 发送完毕。
-                binding?.btnSendCode?.text = "Send successfully"
                 Resource.Success(it.data)
             }
-        }.flowOn(Dispatchers.Main).onStart {
+        }.flowOn(Dispatchers.IO).onStart {
             emit(Resource.Loading())
         }.catch {
             logD("catch $it")
@@ -116,7 +104,71 @@ class MergeAccountPop(
                 )
             )
         }.collectLatest {
+            when (it) {
+                is Resource.Success -> {
+                    // todo 发送完毕。
+                    binding?.btnSendCode?.text = "Send successfully"
+                }
+                is Resource.DataError -> {
+                    if (it.errorMsg == "not exist user") {
+                        // todo 弹出没有这个弹窗的pop
+                        XPopup.Builder(context)
+                            .isDestroyOnDismiss(false)
+                            .isDestroyOnDismiss(false)
+                            .asCustom(
+                                BaseCenterPop(context,
+                                    content = "The account you entered does not exist", isShowCancelButton = false, onConfirmAction = {
+                                    })
+                            )
+                            .show()
+                    }
+                }
+                else -> {}
+            }
             logI(it.toString())
         }
     }
+
+    /**
+     * 验证验证码
+     */
+    private suspend fun verifyCode(code: String, email: String) =
+        service.verifyCode(code, email)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("verifyEmail: catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                when (it) {
+                    is Resource.Success -> {
+                        // 跳转到合并确认页面
+                        onConfirmAction?.invoke(binding?.etEmail?.text.toString(), binding?.etCode?.text.toString())
+                        dismiss()
+                    }
+                    is Resource.DataError -> {
+                        // 弹出错误提示框
+                        ToastUtil.shortShow(it.errorMsg)
+                    }
+                    else -> {}
+                }
+                logI("verifyCode: $it")
+            }
 }

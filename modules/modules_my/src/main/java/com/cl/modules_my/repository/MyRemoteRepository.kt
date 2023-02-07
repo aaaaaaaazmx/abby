@@ -129,4 +129,8 @@ class MyRemoteRepository @Inject constructor() {
     fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
         return service.switchDevice(deviceId)
     }
+
+    fun verifyCode(code: String, email: String): Flow<HttpResult<Boolean>> {
+        return service.verifyCode(code, email)
+    }
 }

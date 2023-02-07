@@ -209,4 +209,10 @@ interface HttpMyApiService {
     @POST("abby/userDevice/switchDevice")
     fun switchDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<String>>
 
+
+    /**
+     * 邮箱验证码
+     */
+    @GET("abby/user/verify/code")
+    fun verifyCode(@Query("code") code: String, @Query("email") email: String): Flow<HttpResult<Boolean>>
 }
