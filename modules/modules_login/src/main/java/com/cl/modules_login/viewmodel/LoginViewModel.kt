@@ -164,6 +164,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                     TuyaHomeSdk.newHomeInstance(homeId)
                                         .getHomeDetail(object : ITuyaHomeResultCallback {
                                             override fun onSuccess(bean: HomeBean?) {
+                                                logI("DeviceListSize: ${bean?.deviceList?.size}")
                                                 // 取数据
                                                 bean?.let { homeBean ->
                                                     if (homeBean.deviceList.size == 0) {

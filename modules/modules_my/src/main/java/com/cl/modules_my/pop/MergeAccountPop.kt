@@ -86,7 +86,7 @@ class MergeAccountPop(
      */
     private val service = ServiceCreators.create(HttpMyApiService::class.java)
     private suspend fun verifyEmail(email: String) {
-        service.verifyEmail(email = email, type = "4").map {
+        service.verifyEmail(email = userInfoBean?.email.toString(), type = "4", mergeEmail = email).map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg

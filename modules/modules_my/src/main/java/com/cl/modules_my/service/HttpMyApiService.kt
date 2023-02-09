@@ -196,7 +196,7 @@ interface HttpMyApiService {
      * 发送验证码
      */
     @GET("abby/user/verify/email")
-    fun verifyEmail(@Query("email") email: String, @Query("type") type: String): Flow<HttpResult<Boolean>>
+    fun verifyEmail(@Query("email") email: String, @Query("type") type: String, @Query("mergeEmail") mergeEmail: String? = null): Flow<HttpResult<Boolean>>
 
 
     @POST("abby/user/merge")

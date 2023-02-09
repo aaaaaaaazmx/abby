@@ -366,6 +366,8 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                         // 取数据
                                         bean?.let { homeBean ->
                                             kotlin.runCatching {
+                                                    // todo 需要看下是否调用了bindDevice方法。有可能是没调用
+                                                    logI("DeviceListSize: ${homeBean.deviceList?.size}")
                                                     // 重新绑定时、只取最后一个，表示这是新添加的。
                                                     val bean = homeBean.deviceList[homeBean.deviceList.size - 1]
                                                     // 缓存用户第一个设备数据

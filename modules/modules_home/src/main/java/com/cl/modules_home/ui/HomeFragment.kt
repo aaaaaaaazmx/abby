@@ -339,6 +339,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.whetherSubCompensation()
             }
 
+            ivDeviceList.setOnClickListener {
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                    .navigation(activity)
+            }
         }
 
         // 添加水的步骤
