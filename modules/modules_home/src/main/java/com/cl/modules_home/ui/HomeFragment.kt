@@ -1,5 +1,6 @@
 package com.cl.modules_home.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.text.method.LinkMovementMethod
@@ -20,25 +21,17 @@ import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bbgo.module_home.R
+import com.bbgo.module_home.databinding.HomeBinding
+import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseFragment
+import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ViewUtils
-import com.cl.common_base.util.device.DeviceControl
-import com.cl.common_base.util.json.GSON
-import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.common_base.bean.AutomaticLoginReq
-import com.cl.modules_home.viewmodel.HomeViewModel
-import com.cl.modules_home.widget.*
-import com.bbgo.module_home.databinding.HomeBinding
-import com.bumptech.glide.request.RequestOptions
-import com.cl.common_base.bean.*
-import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
@@ -46,10 +39,16 @@ import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.AppUtil
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.TuYaDeviceConstants
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
+import com.cl.modules_home.viewmodel.HomeViewModel
+import com.cl.modules_home.widget.*
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -61,6 +60,7 @@ import kotlinx.coroutines.Job
 import java.io.Serializable
 import javax.inject.Inject
 import kotlin.random.Random
+
 
 /**
  * 种植引导Fragment
@@ -295,6 +295,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         ViewUtils.setVisible(binding.plantClone.root)
                     }
                     "4" -> {
+                        ViewUtils.setGone(binding.plantFirst.root, binding.plantAddWater.root, binding.plantClone.root, binding.plantComplete.root)
                         ViewUtils.setVisible(binding.pplantNinth.root)
                     }
                 }
@@ -332,6 +333,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     /**
      * 各种View 点击方法
      */
+    @SuppressLint("ClickableViewAccessibility")
     override fun lazyLoad() {
         // 跳转到种植引导界面
         binding.plantFirst.apply {
@@ -366,6 +368,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 开始种植
         binding.pplantNinth.apply {
+            //防止点击穿透问题
+            this.root.setOnTouchListener { _, _ -> true }
+
             // 选中日历
             ivCalendar.setOnClickListener {
                 // 如果是订阅用户
@@ -1204,7 +1209,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 success {
-                    if ((data?.size ?: 0) >= 2) {
+                    if ((data?.size ?: 0) > 1) {
                         ViewUtils.setVisible(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
                         return@success
                     }
