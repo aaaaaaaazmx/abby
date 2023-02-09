@@ -28,7 +28,7 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
     /**
      * 设备信息
      */
-    val tuyaDeviceBean: () -> DeviceBean? = {
+    val tuyaDeviceBean by lazy  {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }

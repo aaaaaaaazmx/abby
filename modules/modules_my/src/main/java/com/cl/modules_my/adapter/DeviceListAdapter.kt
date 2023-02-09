@@ -27,14 +27,14 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?) :
     }
 
     // 显示名字。
-    fun showName(planeName: String?, strainName: String?): String {
+    fun showName(deviceName: String?, planeName: String?, strainName: String?): String {
         if (planeName.isNullOrEmpty() && strainName.isNullOrEmpty()) {
-            return ""
+            return deviceName.toString()
         } else if (planeName.isNullOrEmpty() && !strainName.isNullOrEmpty()) {
             return strainName
         } else if (strainName.isNullOrEmpty() && !planeName.isNullOrEmpty()) {
             return planeName
         }
-        return ""
+        return deviceName.toString()
     }
 }

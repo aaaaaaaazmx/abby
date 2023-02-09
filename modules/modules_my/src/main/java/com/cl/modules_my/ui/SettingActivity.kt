@@ -175,8 +175,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         error: $error
                     """.trimIndent()
                             )
+                            ToastUtil.shortShow(error)
                             Reporter.reportTuYaError("newDeviceInstance", error, code)
-                             mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
                         }
 
                         override fun onSuccess() {

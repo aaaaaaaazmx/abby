@@ -1,5 +1,6 @@
 package com.cl.modules_my.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
@@ -64,8 +66,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             return
         }
         list.firstOrNull { it.isChooser == true }?.apply {
-            if (deviceId == mViewModel.tuyaDeviceBean()?.devId) {
-                finish()
+            if (deviceId == mViewModel.tuyaDeviceBean?.devId) {
             } else {
                 // 删除原先的、或者切换了设备
                 // 跳转到主页、加载。
@@ -75,14 +76,15 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
                     .postEvent(deviceId)
                 /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
-                finish()
             }
         }
+        finish()
     }
 
     /**
      * 再次跳转进来
      */
+    @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         mViewModel.listDevice()
@@ -98,8 +100,10 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             }
             success {
                 hideProgressLoading()
-                data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean()?.devId }?.apply {
-                    if (data.isNullOrEmpty()) return@success
+                data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean?.devId }?.apply {
+                    if (this == -1) return@apply
+                    logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
+                    if (data.isNullOrEmpty()) return@apply
                     data?.get(this)?.isChooser = true
                 }
                 adapter.setList(data)
@@ -193,9 +197,8 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             TuyaHomeSdk.newDeviceInstance(deviceBean?.deviceId)
                                 .removeDevice(object : IResultCallback {
                                     override fun onError(code: String?, error: String?) {
+                                        ToastUtil.shortShow(error)
                                         Reporter.reportTuYaError("newDeviceInstance", error, code)
-                                        // 删除设备
-                                        deviceBean?.deviceId?.let { mViewModel.deleteDevice(it) }
                                     }
 
                                     override fun onSuccess() {
@@ -212,6 +215,9 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     // 更新数据
                     val bean = (adapter.data as? MutableList<ListDeviceBean>) ?: return@setOnItemChildClickListener
                     bean.indexOfFirst { it.isChooser == true }.apply {
+                        if (this == -1) {
+                            return@apply
+                        }
                         bean[this].isChooser = false
                     }
                     bean[position].isChooser = true

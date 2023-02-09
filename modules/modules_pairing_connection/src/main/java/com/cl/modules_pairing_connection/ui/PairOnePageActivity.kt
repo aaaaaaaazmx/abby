@@ -133,6 +133,7 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
             // 跳转配网界面,  附带设备名字
             val intent = Intent(this@PairOnePageActivity, PairDistributionWifiActivity::class.java)
             intent.putExtra(KEY_DEVICE_DATA, adapter.data[position])
+            logI("KEY_DEVICE_DATA: ${adapter.data[position]}")
             startActivity(intent)
         }
     }

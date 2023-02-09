@@ -1,5 +1,6 @@
 package com.cl.modules_my.viewmodel
 
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
@@ -204,8 +206,8 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
                         error: $error
                     """.trimIndent()
                     )
+                    ToastUtil.shortShow(error)
                     Reporter.reportTuYaError("newDeviceInstance", error, code)
-                     deleteDevice(tuYaDeviceBean?.devId.toString())
                 }
 
                 override fun onSuccess() {

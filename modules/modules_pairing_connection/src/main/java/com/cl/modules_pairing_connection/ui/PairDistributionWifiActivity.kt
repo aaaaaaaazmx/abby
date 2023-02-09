@@ -367,12 +367,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                         bean?.let { homeBean ->
                                             kotlin.runCatching {
                                                     // todo 需要看下是否调用了bindDevice方法。有可能是没调用
-                                                    logI("DeviceListSize: ${homeBean.deviceList?.size}")
+                                                    // logI("DeviceListSize: ${homeBean.deviceList?.size}")
+                                                    // homeBean.deviceList.forEach { logI("devId: ${it.devId}, $it") }
                                                     // 重新绑定时、只取最后一个，表示这是新添加的。
-                                                    val bean = homeBean.deviceList[homeBean.deviceList.size - 1]
                                                     // 缓存用户第一个设备数据
                                                     // 只取第一个
-                                                    GSON.toJson(bean)?.let {
+                                                    GSON.toJson(deviceBean)?.let {
                                                         Prefs.putStringAsync(
                                                             Constants.Tuya.KEY_DEVICE_DATA,
                                                             it
@@ -388,7 +388,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                         binding.etWifiPwd.text.toString()
                                                     )
                                                     // 先进行数据同步、后绑定
-                                                    mViewModel.getDps(bean)
+                                                    mViewModel.getDps(deviceBean)
 
                                             }.onFailure { hideProgressLoading() }
                                         }

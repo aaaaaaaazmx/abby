@@ -189,6 +189,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
             .observe(viewLifecycleOwner) {
                 if (it.isNotEmpty()) {
+                    mViewMode.setDeviceId(it)
                     mViewMode.switchDevice(deviceId = it)
                 }
             }
@@ -416,7 +417,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 val index = listDeviceData?.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
                 if (index != null) {
                     kotlin.runCatching {
-                        val deviceBean = listDeviceData[index - 1]
+                        val nextIndex = if (index - 1 < 0) listDeviceData.size - 1 else index -1
+                        val deviceBean = listDeviceData[nextIndex]
                         // 切换设备
                         deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
                         deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
@@ -430,7 +432,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 val index = listDeviceData?.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
                 if (index != null) {
                     kotlin.runCatching {
-                        val deviceBean = listDeviceData[index + 1]
+                        val nextIndex = if (index + 1 >= listDeviceData.size) 0 else index + 1
+                        val deviceBean = listDeviceData[nextIndex]
                         // 切换设备
                         deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
                         deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
@@ -1201,12 +1204,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 success {
-                    data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
+                    if ((data?.size ?: 0) >= 2) {
+                        ViewUtils.setVisible(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        return@success
+                    }
+                    /*data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
+                        if (this == -1) {
+                            ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                            return@success
+                        }
                         // 表示已经是第一个了。
-                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, this - 1 <= 0)
+                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, this - 1 < 0)
                         // 表示是最后一个了
                         ViewUtils.setGone(binding.pplantNinth.imageRightSwip, this + 1 == data?.size)
-                    }
+                    }*/
                 }
             })
             // 切换设备列表
@@ -1223,7 +1234,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         override fun onSuccess(bean: HomeBean?) {
                             bean?.let { it ->
                                 val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                logI("123123123: ${arrayList.size}")
                                 arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }?.apply {
+                                    logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
                                     GSON.toJson(this)?.let {
                                         Prefs.putStringAsync(
                                             Constants.Tuya.KEY_DEVICE_DATA,
@@ -2103,6 +2116,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 植物的氧气
                     binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
+
+                    // 植物的名字
+                    binding.pplantNinth.tvTitle.text = data?.plantName
 
                     // 植物的健康程度
                     binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
