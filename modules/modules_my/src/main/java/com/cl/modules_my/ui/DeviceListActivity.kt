@@ -100,14 +100,15 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             success {
                 hideProgressLoading()
                 data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean?.devId }?.apply {
-                    if (this == -1) return@apply
+                    if (this == -1) {
+                        if (data.isNullOrEmpty()) return@apply
+                        // 如果没有找到相对应的, 选中当前第一个。
+                        data?.get(0)?.isChooser = true
+                        return@apply
+                    }
                     logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
                     if (data.isNullOrEmpty()) return@apply
                     data?.get(this)?.isChooser = true
-                }
-                if (data?.size == 1) {
-                    // 如果只有1个了, 选中当前这一个。
-                    data?.get(0)?.isChooser = true
                 }
                 adapter.setList(data)
             }

@@ -1205,6 +1205,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let { LearnIdGuidePop(it) }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
             // 设备列表
@@ -1212,6 +1213,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     if ((data?.size ?: 0) > 1) {
                         ViewUtils.setVisible(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        return@success
+                    } else {
+                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
                         return@success
                     }
                     /*data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
@@ -1829,6 +1833,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 info.journeyName != HomePeriodPop.KEY_SEED,
                                 binding.pplantNinth.ivWaterStatus
                             )
+                            // 显示碗or植物
+                            binding.pplantNinth.ivBowl.visibility = View.VISIBLE
                             if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) {
                                 // 显示种子背景图
                                 // 根据总天数判断
