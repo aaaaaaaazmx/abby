@@ -8,4 +8,5 @@ import com.cl.common_base.bean.BaseBean
 data class MergeAccountReq(
     var code: String? = null,
     var email: String? = null,
+    var mergeEmail: String? = null,
 ): com.cl.common_base.BaseBean()

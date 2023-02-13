@@ -181,7 +181,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                         override fun onSuccess() {
                             //  调用接口请求删除设备
-                             mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
+                            mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
                         }
                     })
             })
@@ -438,15 +438,17 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 合并账号
         binding.ftMergeAccount.setOnClickListener {
             // 弹出合并账号弹窗
-            pop.asCustom(
-                MergeAccountPop(this@SettingActivity, onConfirmAction = { email, code ->
-                    // 跳转到弹窗合并确认界面
-                    val intent = Intent(this@SettingActivity, MergeAccountSureActivity::class.java)
-                    intent.putExtra("email", email)
-                    intent.putExtra("code", code)
-                    startActivity(intent)
-                })
-            ).show()
+            pop.autoOpenSoftInput(false)
+                .autoFocusEditText(false)
+                .asCustom(
+                    MergeAccountPop(this@SettingActivity, onConfirmAction = { email, code ->
+                        // 跳转到弹窗合并确认界面
+                        val intent = Intent(this@SettingActivity, MergeAccountSureActivity::class.java)
+                        intent.putExtra("email", email)
+                        intent.putExtra("code", code)
+                        startActivity(intent)
+                    })
+                ).show()
         }
 
         binding.ftCache.setOnClickListener {

@@ -66,8 +66,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             return
         }
         list.firstOrNull { it.isChooser == true }?.apply {
-            if (deviceId == mViewModel.tuyaDeviceBean?.devId) {
-            } else {
+            if (deviceId != mViewModel.tuyaDeviceBean?.devId) {
                 // 删除原先的、或者切换了设备
                 // 跳转到主页、加载。
                 // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
@@ -105,6 +104,10 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
                     if (data.isNullOrEmpty()) return@apply
                     data?.get(this)?.isChooser = true
+                }
+                if (data?.size == 1) {
+                    // 如果只有1个了, 选中当前这一个。
+                    data?.get(0)?.isChooser = true
                 }
                 adapter.setList(data)
             }

@@ -111,7 +111,7 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
                             isShowCancelButton = true,
                             onConfirmAction = {
                                 // todo 重试合并
-                                mViewModel.mergeAccount(req = MergeAccountReq(this@MergeAccountSureActivity.code, email))
+                                mViewModel.mergeAccount(req = MergeAccountReq(this@MergeAccountSureActivity.code, userinfoBean?.email, email))
                             })
                     )
                     .show()
@@ -144,7 +144,7 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
         binding.btnMeger.setOnClickListener {
             // todo 调用接口、还差一个合并失败的弹窗
             mViewModel.mergeAccount(
-                req = MergeAccountReq(code, email)
+                req = MergeAccountReq(code, userinfoBean?.email, email)
             )
         }
     }

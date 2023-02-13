@@ -65,6 +65,7 @@ class MergeAccountPop(
             }
 
             btnSendCode.setOnClickListener {
+                if (etEmail.text.toString().isEmpty()) return@setOnClickListener
                 // 发送验证码
                 lifecycleScope.launch {
                     verifyEmail(etEmail.text.toString())
@@ -72,6 +73,9 @@ class MergeAccountPop(
             }
 
             btnSuccess.setOnClickListener {
+                if (etCode.text.toString().isEmpty() && etEmail.text.toString().isEmpty()) {
+                    return@setOnClickListener
+                }
                 // 需要验证验证码码
                 lifecycleScope.launch {
                     verifyCode(etCode.text.toString(), etEmail.text.toString())

@@ -57,6 +57,7 @@ import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import java.io.FileOutputStream
 import java.io.Serializable
 import javax.inject.Inject
 import kotlin.random.Random
