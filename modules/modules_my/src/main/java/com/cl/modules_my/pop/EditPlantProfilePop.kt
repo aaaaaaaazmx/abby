@@ -11,13 +11,11 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
-import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyEditProfilePopBinding
 import com.cl.modules_my.service.HttpMyApiService
-import com.google.gson.annotations.Until
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import kotlinx.coroutines.Dispatchers
@@ -55,12 +53,11 @@ class EditPlantProfilePop(
             tvDec.text = "Which account would you like to merge with ${userInfoBean?.email}?"
 
             etEmail.doAfterTextChanged {
-
-                // btnSuccess.isEnabled = !(etCode.text.toString().isEmpty() || it.toString().isEmpty())
+                (etEmail.text.toString().isNotEmpty()).also { btnSuccess.isEnabled = it }
             }
 
             etCode.doAfterTextChanged {
-                // btnSuccess.isEnabled = !(etEmail.text.toString().isEmpty() || it.toString().isEmpty())
+                (etEmail.text.toString().isNotEmpty()).also { btnSuccess.isEnabled = it }
             }
 
             ivClearEmail.setOnClickListener {

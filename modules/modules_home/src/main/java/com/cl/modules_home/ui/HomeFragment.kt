@@ -190,6 +190,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
             .observe(viewLifecycleOwner) {
                 if (it.isNotEmpty()) {
+                    logI("123123123: $it")
                     mViewMode.setDeviceId(it)
                     mViewMode.switchDevice(deviceId = it)
                 }
@@ -420,30 +421,30 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 左滑动
             imageLeftSwip.setOnClickListener {
                 val listDeviceData = mViewMode.listDevice.value?.data
-                val index = listDeviceData?.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
-                if (index != null) {
-                    kotlin.runCatching {
-                        val nextIndex = if (index - 1 < 0) listDeviceData.size - 1 else index -1
-                        val deviceBean = listDeviceData[nextIndex]
-                        // 切换设备
-                        deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
-                        deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
-                    }
+                listDeviceData?.filter { it.isSwitch == 1 }?.apply {
+                    if (this.isEmpty()) return@apply
+                    val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
+                    val nextIndex = if (index - 1 < 0) this.size - 1 else index - 1
+                    val deviceBean = this[nextIndex]
+                    mViewMode.setLeftSwaps(true)
+                    // 切换设备
+                    deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
+                    deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
                 }
             }
 
             // 右滑动
             imageRightSwip.setOnClickListener {
                 val listDeviceData = mViewMode.listDevice.value?.data
-                val index = listDeviceData?.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
-                if (index != null) {
-                    kotlin.runCatching {
-                        val nextIndex = if (index + 1 >= listDeviceData.size) 0 else index + 1
-                        val deviceBean = listDeviceData[nextIndex]
-                        // 切换设备
-                        deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
-                        deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
-                    }
+                listDeviceData?.filter { it.isSwitch == 1 }?.apply {
+                    if (this.isEmpty()) return@apply
+                    val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
+                    val nextIndex = if (index + 1 >= this.size) 0 else index + 1
+                    val deviceBean = this[nextIndex]
+                    mViewMode.setLeftSwaps(false)
+                    // 切换设备
+                    deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
+                    deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
                 }
             }
 
@@ -1211,7 +1212,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 success {
-                    if ((data?.size ?: 0) > 1) {
+                    if (data.isNullOrEmpty()) {
+                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        return@success
+                    }
+                    // 表示有多个设备
+                    val size = data?.filter { it.isSwitch == 1 }?.size ?: 0
+                    if (size > 1) {
                         ViewUtils.setVisible(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
                         return@success
                     } else {
@@ -1245,8 +1252,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             bean?.let { it ->
                                 val arrayList = it.deviceList as ArrayList<DeviceBean>
                                 logI("123123123: ${arrayList.size}")
-                                arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }?.apply {
+                                arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }.apply {
                                     logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
+                                    if (null == this) {
+                                        val aa = mViewMode.tuyaDeviceBean
+                                        aa?.devId = mViewMode.deviceId.value
+                                        GSON.toJson(aa)?.let {
+                                            Prefs.putStringAsync(
+                                                Constants.Tuya.KEY_DEVICE_DATA,
+                                                it
+                                            )
+                                        }
+                                        return@apply
+                                    }
                                     GSON.toJson(this)?.let {
                                         Prefs.putStringAsync(
                                             Constants.Tuya.KEY_DEVICE_DATA,
@@ -1365,7 +1383,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 清空气泡状态
                     mViewMode.clearPopPeriodStatus()
                     // 是否种植过
-                    data?.let { PlantCheckHelp().plantStatusCheck(activity, it, true) }
+                    data?.let { PlantCheckHelp().plantStatusCheck(activity, it, true, isLeftSwapAnim = mViewMode.isLeftSwap, isNoAnim = false) }
                 }
             })
             // 获取通用图文信息接口
@@ -2196,7 +2214,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             .error { code, error ->
                                                 ToastUtil.shortShow(
                                                     """
-                                    pumpWater: 
+                                    pumpWater:
                                     code-> $code
                                     errorMsg-> $error
                                 """.trimIndent()

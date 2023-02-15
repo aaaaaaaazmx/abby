@@ -19,8 +19,10 @@ import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.isCanToBigDecimal
 import com.cl.common_base.ext.logI
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
@@ -44,7 +46,6 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
     @Inject
     lateinit var mViewModel: ListDeviceViewModel
-
 
     override fun initView() {
         binding.rvList.layoutManager = LinearLayoutManager(this@DeviceListActivity)
@@ -72,6 +73,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
                 // 改用Eventbus吧。
                 // 切换了设备，需要重新刷新主页。
+                logI("123123123: $deviceId")
                 LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
                     .postEvent(deviceId)
                 /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
@@ -89,6 +91,19 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
         mViewModel.listDevice()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // 只弹出一次
+        kotlin.runCatching {
+            if (intent.getBooleanExtra(KEY_SHOW_BIND_POP, false)) {
+                // 升级提示框
+                XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false).enableDrag(false)
+                    .dismissOnTouchOutside(false).asCustom(BaseCenterPop(this@DeviceListActivity, content = "Please note that the merged device needs to be re-paired.", isShowCancelButton = false)).show()
+            }
+        }
+
+    }
+
     override fun observe() {
         // 获取设备列表
         mViewModel.listDevice.observe(this@DeviceListActivity, resourceObserver {
@@ -99,16 +114,37 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             }
             success {
                 hideProgressLoading()
-                data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean?.devId }?.apply {
-                    if (this == -1) {
-                        if (data.isNullOrEmpty()) return@apply
-                        // 如果没有找到相对应的, 选中当前第一个。
-                        data?.get(0)?.isChooser = true
-                        return@apply
+                val dataList = adapter.data
+                if (dataList.isNotEmpty()) {
+                    dataList.indexOfFirst { it.isChooser == true }.apply {
+                        if (this != -1) {
+                            data?.get(this)?.isChooser = true
+                            return@apply
+                        }
+                        data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean?.devId }?.apply {
+                            if (this == -1) {
+                                if (data.isNullOrEmpty()) return@apply
+                                // 如果没有找到相对应的, 选中当前第一个。
+                                data?.get(0)?.isChooser = true
+                                return@apply
+                            }
+                            logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
+                            if (data.isNullOrEmpty()) return@apply
+                            data?.get(this)?.isChooser = true
+                        }
                     }
-                    logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
-                    if (data.isNullOrEmpty()) return@apply
-                    data?.get(this)?.isChooser = true
+                } else {
+                    data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean?.devId }?.apply {
+                        if (this == -1) {
+                            if (data.isNullOrEmpty()) return@apply
+                            // 如果没有找到相对应的, 选中当前第一个。
+                            data?.get(0)?.isChooser = true
+                            return@apply
+                        }
+                        logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
+                        if (data.isNullOrEmpty()) return@apply
+                        data?.get(this)?.isChooser = true
+                    }
                 }
                 adapter.setList(data)
             }
@@ -163,20 +199,24 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
     override fun initData() {
         binding.ivAddDevice.setOnClickListener {
-            PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
-                object : PermissionHelp.OnCheckResultListener {
-                    override fun onResult(result: Boolean) {
-                        if (!result) return
-                        // 如果权限都已经同意了
-                        ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
-                            .navigation()
-                    }
-                })
+            XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                .asCustom(BaseCenterPop(this@DeviceListActivity, content = "You’re about to add a new device", confirmText = "Confirm", onConfirmAction = {
+                    PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
+                        object : PermissionHelp.OnCheckResultListener {
+                            override fun onResult(result: Boolean) {
+                                if (!result) return
+                                // 如果权限都已经同意了
+                                ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
+                                    .navigation()
+                            }
+                        })
+                }, isShowCancelButton = true))
+                .show()
         }
 
         mViewModel.listDevice()
 
-        adapter.addChildClickViewIds(R.id.btn_chang, R.id.btn_delete, R.id.cl_root)
+        adapter.addChildClickViewIds(R.id.btn_chang, R.id.btn_delete, R.id.btn_start, R.id.btn_reconnect, R.id.cl_root)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val deviceBean = (adapter.data[position] as? ListDeviceBean)
             when (view.id) {
@@ -203,6 +243,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                     override fun onError(code: String?, error: String?) {
                                         ToastUtil.shortShow(error)
                                         Reporter.reportTuYaError("newDeviceInstance", error, code)
+                                        deviceBean?.deviceId?.let { mViewModel.deleteDevice(it) }
                                     }
 
                                     override fun onSuccess() {
@@ -227,7 +268,38 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     bean[position].isChooser = true
                     this@DeviceListActivity.adapter.setList(bean)
                 }
+
+                R.id.btn_start -> {
+                    // startJourney
+                    // 直接返回
+                    this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
+                        // 删除原先的、或者切换了设备
+                        // 跳转到主页、加载。
+                        // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
+                        // 改用Eventbus吧。
+                        // 切换了设备，需要重新刷新主页。
+                        ARouter.getInstance()
+                            .build(RouterPath.Main.PAGE_MAIN).navigation()
+                        LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
+                            .postEvent(deviceId)
+                        finish()
+                        /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
+                    }
+                }
+
+                R.id.btn_reconnect -> {
+                    // 如果权限都已经同意了
+                    ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
+                        .navigation()
+                }
+
             }
         }
     }
+
+
+    companion object {
+        const val KEY_SHOW_BIND_POP = "key_show_bind_pop"
+    }
+
 }

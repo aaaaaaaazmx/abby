@@ -1,6 +1,9 @@
 package com.cl.modules_my.pop
 
 import android.content.Context
+import android.os.CountDownTimer
+import android.text.Editable
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -11,19 +14,18 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
-import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyMergeAccountPopBinding
 import com.cl.modules_my.service.HttpMyApiService
-import com.google.gson.annotations.Until
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+
 
 /**
  * 合并账号弹窗
@@ -50,7 +52,7 @@ class MergeAccountPop(
             tvDec.text = "Which account would you like to merge with ${userInfoBean?.email}?"
 
             etEmail.doAfterTextChanged {
-                btnSuccess.isEnabled = !(etCode.text.toString().isEmpty() || it.toString().isEmpty())
+                btnIsEnabel()
             }
 
             etCode.doAfterTextChanged {
@@ -59,6 +61,7 @@ class MergeAccountPop(
 
             ivClearEmail.setOnClickListener {
                 etEmail.setText("")
+                btnIsEnabel()
             }
             ivClearCode.setOnClickListener {
                 etCode.setText("")
@@ -78,9 +81,36 @@ class MergeAccountPop(
                 }
                 // 需要验证验证码码
                 lifecycleScope.launch {
-                    verifyCode(etCode.text.toString(), etEmail.text.toString())
+                    userInfoBean?.email?.let { it1 -> verifyCode(etCode.text.toString(), it1, etEmail.text.toString()) }
                 }
             }
+        }
+    }
+
+    private fun MyMergeAccountPopBinding.btnIsEnabel() {
+        btnSuccess.isEnabled = !(etCode.text.toString().isEmpty() || etEmail.text.toString().isEmpty())
+        if (etEmail.text.toString().isEmpty()) {
+            btnSendCode.setBackgroundColor(
+                ContextCompat.getColor(
+                    context, com.cl.common_base.R.color.buttonGray
+                )
+            )
+            btnSendCode.setTextColor(
+                ContextCompat.getColor(
+                    context, com.cl.common_base.R.color.black
+                )
+            )
+        } else {
+            btnSendCode.setBackgroundColor(
+                ContextCompat.getColor(
+                    context, com.cl.common_base.R.color.mainColor
+                )
+            )
+            btnSendCode.setTextColor(
+                ContextCompat.getColor(
+                    context, com.cl.common_base.R.color.white
+                )
+            )
         }
     }
 
@@ -111,33 +141,56 @@ class MergeAccountPop(
             when (it) {
                 is Resource.Success -> {
                     // todo 发送完毕。
-                    binding?.btnSendCode?.text = "Send successfully"
+                    countDownTime()
                 }
                 is Resource.DataError -> {
-                    if (it.errorMsg == "not exist user") {
-                        // todo 弹出没有这个弹窗的pop
-                        XPopup.Builder(context)
-                            .isDestroyOnDismiss(false)
-                            .isDestroyOnDismiss(false)
-                            .asCustom(
-                                BaseCenterPop(context,
-                                    content = "The account you entered does not exist", isShowCancelButton = false, onConfirmAction = {
-                                    })
-                            )
-                            .show()
-                    }
+                    // todo 弹出没有这个弹窗的pop
+                    XPopup.Builder(context)
+                        .isDestroyOnDismiss(false)
+                        .isDestroyOnDismiss(false)
+                        .asCustom(
+                            BaseCenterPop(context,
+                                content = it.errorMsg, isShowCancelButton = false, onConfirmAction = {
+                                })
+                        )
+                        .show()
                 }
-                else -> {}
+                else -> {
+                }
             }
             logI(it.toString())
         }
     }
 
+    //用安卓自带的CountDownTimer实现
+    private val mTimer: CountDownTimer = object : CountDownTimer((60 * 1000).toLong(), 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            binding?.btnSendCode?.text = (millisUntilFinished / 1000).toString()
+        }
+
+        override fun onFinish() {
+            binding?.btnSendCode?.isEnabled = true
+            binding?.btnSendCode?.text = "Send now"
+            cancel()
+        }
+    }
+
+    // 发送验证码， 倒计时
+    private fun countDownTime() {
+        mTimer.start()
+        binding?.btnSendCode?.isEnabled = false
+    }
+
+    override fun onDismiss() {
+        super.onDismiss()
+        mTimer.cancel()
+    }
+
     /**
      * 验证验证码
      */
-    private suspend fun verifyCode(code: String, email: String) =
-        service.verifyCode(code, email)
+    private suspend fun verifyCode(code: String, email: String, mergeEmail: String? = null) =
+        service.verifyCode(code, email, mergeEmail)
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(

@@ -12,5 +12,6 @@ data class ListDeviceBean(
     var subscription: String? = null,
     var isChooser: Boolean? = null,
     var plantId: Int? = null,
+    var isSwitch: Int? = null,
 ) : BaseBean() {
 }

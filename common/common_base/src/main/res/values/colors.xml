@@ -15,4 +15,5 @@
     <color name="textRed">#D61744</color>
     <color name="mainGray">#E5E5E5</color>
     <color name="calendarGray">#B3B3B3</color>
+    <color name="buttonGray">#D9D9D9</color>
 </resources>

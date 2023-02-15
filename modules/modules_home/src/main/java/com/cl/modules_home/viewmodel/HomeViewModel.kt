@@ -58,7 +58,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 设备信息
      */
-    private val tuyaDeviceBean by lazy {
+    val tuyaDeviceBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
@@ -1309,6 +1309,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             }
         }.flowOn(Dispatchers.Main).onStart { onStart?.invoke() }.onCompletion { onFinish?.invoke() }
             .onEach { onTick.invoke(it) }.launchIn(scope)
+    }
+
+    var isLeftSwap:Boolean = false
+    fun setLeftSwaps(isLeft: Boolean) {
+        isLeftSwap = isLeft
     }
 
     companion object {

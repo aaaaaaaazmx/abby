@@ -27,15 +27,18 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MySettingBinding
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
+import com.cl.modules_my.widget.LoginOutPop
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.cl.modules_my.widget.MyRePlantPop
 import com.cl.modules_my.widget.SubPop
 import com.lxj.xpopup.XPopup
 import com.shuyu.gsyvideoplayer.GSYVideoManager
+import com.tuya.smart.android.user.api.ILogoutCallback
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.sdk.api.IResultCallback
@@ -177,6 +180,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             )
                             ToastUtil.shortShow(error)
                             Reporter.reportTuYaError("newDeviceInstance", error, code)
+                            //  调用接口请求删除设备
+                            mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
                         }
 
                         override fun onSuccess() {
@@ -387,6 +392,40 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
     }
 
+    /**
+     * 确认退出弹窗
+     */
+    private val logOutPop by lazy {
+        XPopup.Builder(this@SettingActivity)
+            .isDestroyOnDismiss(false)
+            .dismissOnTouchOutside(false)
+            .asCustom(LoginOutPop(this) {
+                TuyaHomeSdk.getUserInstance().logout(object : ILogoutCallback {
+                    override fun onSuccess() {
+                        // 清除缓存数据
+                        Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                        // 清除上面所有的Activity
+                        // 跳转到Login页面
+                        ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
+                            .withFlags(FLAG_ACTIVITY_CLEAR_TASK or FLAG_ACTIVITY_NEW_TASK)
+                            .navigation()
+                    }
+
+                    override fun onError(code: String?, error: String?) {
+                        logE(
+                            """
+                           logout -> onError:
+                            code: $code
+                            error: $error
+                        """.trimIndent()
+                        )
+                        ToastUtil.shortShow(error)
+                        Reporter.reportTuYaError("getUserInstance", error, code)
+                    }
+                })
+            })
+    }
+
     override fun initData() {
         // 重新种植
         binding.ftReplant.setOnClickListener {
@@ -449,6 +488,18 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         startActivity(intent)
                     })
                 ).show()
+        }
+
+        // 跳转到设备列表界面
+        binding.ftManageDevice.setOnClickListener {
+            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                .navigation(this@SettingActivity)
+        }
+
+        // 退出账号
+        binding.ftLogOut.setOnClickListener {
+            // 退出账号
+            logOutPop.show()
         }
 
         binding.ftCache.setOnClickListener {

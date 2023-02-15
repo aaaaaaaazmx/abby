@@ -31,7 +31,7 @@
     <string name="setting_sub_charge_time">Extend Digital Service Validity</string>
     <string name="home_great_tips">Great! Now that you\'re prepared, let‘s put the clone in the grow box. </string>
     <string name="home_start">Start</string>
-    <string name="setting_delete_device">After selecting \'Delete Device\', this device will no longer be associated with your account and it will be restored to factory settings. Your plant records will not be deleted.</string>
+    <string name="setting_delete_device">After deleting this device, it will be restored to factory settings and will no longer be associated with your account. Your planting records, however, will not be deleted. </string>
     <string name="setting_replant_tips">After clicking \'Replant\', the device will switch to first week planting mode.</string>
     <string name="firmware_update_compulsion">Please update your firmware to ensure the best user experience</string>
     <string name="setting_update_success">Update Successful</string>

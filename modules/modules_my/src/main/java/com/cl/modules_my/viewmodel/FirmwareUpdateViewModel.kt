@@ -208,6 +208,8 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
                     )
                     ToastUtil.shortShow(error)
                     Reporter.reportTuYaError("newDeviceInstance", error, code)
+                    // 调用接口请求删除设备
+                    deleteDevice(tuYaDeviceBean?.devId.toString())
                 }
 
                 override fun onSuccess() {

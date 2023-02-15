@@ -127,7 +127,9 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
                             confirmText = "Go to Device List",
                             content = "Congrats! The merge is complete. You can now manage all your devices in the device management page", isShowCancelButton = false, onConfirmAction = {
                                 // todo 跳转到设备列表界面
-                                startActivity(Intent(this@MergeAccountSureActivity, DeviceListActivity::class.java))
+                                val intent = Intent(this@MergeAccountSureActivity, DeviceListActivity::class.java)
+                                intent.putExtra(DeviceListActivity.KEY_SHOW_BIND_POP, true)
+                                startActivity(intent)
                                 this@MergeAccountSureActivity.finish()
                             })
                     )

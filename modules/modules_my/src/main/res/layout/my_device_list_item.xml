@@ -36,12 +36,11 @@
             <TextView
                 android:layout_marginEnd="20dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/iv_jiqi"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:textStyle="bold"
                 android:id="@+id/tv_title"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@{adapter.showName(data.deviceName, data.plantName, data.strainName)}"
                 android:textColor="#006241"
@@ -92,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
                     android:text="@{data.onlineStatus}"
-                    android:textColor="#000000"
+                    android:textColor='@{data.onlineStatus.equals("Offline")  ? @color/buttonGray : @color/mainColor}'
                     android:textSize="11sp"
                     android:textStyle="bold"
                     tools:text="#000000" />
@@ -130,10 +129,11 @@
                 android:layout_height="wrap_content"
                 android:background="@mipmap/my_jiqi"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_title" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
+            app:layout_constraintHorizontal_chainStyle="spread"
             android:id="@+id/btn_chang"
             android:layout_width="0dp"
             android:layout_height="35dp"
@@ -142,6 +142,7 @@
             android:background="@drawable/background_main_color_r6"
             android:text="Change Profile"
             android:textAllCaps="false"
+            android:textSize="11sp"
             android:textColor="@color/white"
             android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -150,6 +151,8 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_root" />
 
         <Button
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
             android:id="@+id/btn_delete"
             android:layout_width="0dp"
             android:layout_height="35dp"
@@ -159,8 +162,44 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_start"
             app:layout_constraintStart_toEndOf="@+id/btn_chang"
             app:layout_constraintTop_toTopOf="@+id/btn_chang" />
+
+
+        <Button
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_start"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Start Journey"
+            android:textAllCaps="false"
+            android:visibility='@{(data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE}'
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_reconnect"
+            app:layout_constraintStart_toEndOf="@+id/btn_delete"
+            app:layout_constraintTop_toTopOf="@+id/btn_delete" />
+
+        <Button
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_reconnect"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Reconnect"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:visibility='@{(data.onlineStatus.equals("Offline") &amp;&amp; data.isChooser) ? View.VISIBLE : View.GONE}'
+            app:layout_constraintStart_toEndOf="@+id/btn_start"
+            app:layout_constraintTop_toTopOf="@+id/btn_start" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

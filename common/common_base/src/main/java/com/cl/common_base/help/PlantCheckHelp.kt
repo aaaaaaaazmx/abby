@@ -25,7 +25,23 @@ class PlantCheckHelp {
     /**
      * 检查种植统一跳转
      */
-    fun plantStatusCheck(activity: Activity?= null ,data: CheckPlantData, isClearTask: Boolean = false) {
+    fun plantStatusCheck(activity: Activity?= null ,data: CheckPlantData, isClearTask: Boolean = false, isLeftSwapAnim: Boolean = false, isNoAnim : Boolean = true) {
+        val intAnim = if (isNoAnim) {
+            0
+        } else if (isLeftSwapAnim) {
+            R.anim.left_fade_in
+        } else {
+            R.anim.fade_in
+        }
+
+        val outAnim = if (isNoAnim) {
+            0
+        } else if (isLeftSwapAnim) {
+            R.anim.left_fade_out
+        } else {
+            R.anim.fade_out
+        }
+
         // 如果是没绑定过设备的 2
         if (userinfoBean?.deviceStatus == "2") {
             // 跳转未种植引导页面
@@ -49,7 +65,7 @@ class PlantCheckHelp {
                     Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
                     userinfoBean?.notBound == 0
                 )
-                .withTransition(R.anim.fade_in,R.anim.fade_out)
+                .withTransition(intAnim ,outAnim)
                 .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                 .navigation(activity)
             return
@@ -73,7 +89,7 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
-                    .withTransition(R.anim.fade_in,R.anim.fade_out)
+                    .withTransition(intAnim,outAnim)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                     .navigation(activity)
             }
@@ -93,7 +109,7 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
-                    .withTransition(R.anim.fade_in,R.anim.fade_out)
+                    .withTransition(intAnim,outAnim)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                     .navigation(activity)
             }
@@ -114,7 +130,7 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
-                    .withTransition(R.anim.fade_in,R.anim.fade_out)
+                    .withTransition(intAnim,outAnim)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                     .navigation(activity)
             }
@@ -135,7 +151,7 @@ class PlantCheckHelp {
                         Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
                         userinfoBean?.deviceOnlineStatus
                     )
-                    .withTransition(R.anim.fade_in,R.anim.fade_out)
+                    .withTransition(intAnim,outAnim)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                     .navigation(activity)
             }
