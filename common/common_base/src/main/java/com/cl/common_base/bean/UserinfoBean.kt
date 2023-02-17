@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 
 @Keep
 data class UserinfoBean(
+    val deviceId: String? = null,
     val abbyId: String? = null,
     val avatarPicture: String? = null,
     val childLock: String? = null,
@@ -28,6 +29,7 @@ data class UserinfoBean(
     // 用户基本信息Bean
     // 从用户详情接口返回
     data class BasicUserBean(
+        val deviceId: String? = null,
         val abbyId: String? = null,
         val avatarPicture: String? = null,
         val childLock: String? = null,

@@ -128,6 +128,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
      * 涂鸦登录
      */
     fun tuYaLogin(
+        deviceId: String?,
         code: String?,
         email: String?,
         password: String?,
@@ -163,6 +164,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                     TuyaHomeSdk.newHomeInstance(homeId)
                                         .getHomeDetail(object : ITuyaHomeResultCallback {
                                             override fun onSuccess(bean: HomeBean?) {
+                                                logI("DeviceListSize: ${bean?.deviceList?.size}")
                                                 // 取数据
                                                 bean?.let { homeBean ->
                                                     if (homeBean.deviceList.size == 0) {
@@ -177,29 +179,31 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                         return@let
                                                     }
                                                     kotlin.runCatching {
-                                                        // 目前只允许绑定一个，那么只取第一个
-                                                        val deviceBean = homeBean.deviceList[0]
-                                                        // 缓存用户第一个设备数据
-                                                        // 只取第一个
-                                                        // 缓存的目的是为了下一次接口报错做准备
-                                                        GSON.toJson(deviceBean)?.let {
-                                                            Prefs.putStringAsync(
-                                                                Constants.Tuya.KEY_DEVICE_DATA,
-                                                                it
-                                                            )
-                                                        }
-                                                        // 注册广播
-                                                        onRegisterReceiver?.invoke(deviceBean.devId)
-                                                        logI(
-                                                            """
-                                                            login:
-                                                            DEVICE_BEAN_DPS: ${
-                                                                GSON.toJson(
-                                                                    deviceBean.dps
+                                                        // 根据返回deviceId来判断 目前会有多台设备选择
+                                                        homeBean.deviceList.firstOrNull { it.devId == deviceId }?.apply {
+                                                            val deviceBean = this
+                                                            // 缓存用户第一个设备数据
+                                                            // 只取第一个
+                                                            // 缓存的目的是为了下一次接口报错做准备
+                                                            GSON.toJson(deviceBean)?.let {
+                                                                Prefs.putStringAsync(
+                                                                    Constants.Tuya.KEY_DEVICE_DATA,
+                                                                    it
                                                                 )
                                                             }
+                                                            // 注册广播
+                                                            onRegisterReceiver?.invoke(deviceBean.devId)
+                                                            logI(
+                                                                """
+                                                            login:
+                                                            DEVICE_BEAN_DPS: ${
+                                                                    GSON.toJson(
+                                                                        deviceBean.dps
+                                                                    )
+                                                                }
                                                         """.trimIndent()
-                                                        )
+                                                            )
+                                                        }
 
                                                         // 种植检查
                                                         user?.uid?.let { uid ->

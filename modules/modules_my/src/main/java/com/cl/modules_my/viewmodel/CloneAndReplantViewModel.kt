@@ -83,41 +83,6 @@ class CloneAndReplantViewModel @Inject constructor(private val repository: MyRep
     }
 
     /**
-     * 删除用户设备
-     */
-    private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
-    val deleteDevice: LiveData<Resource<BaseBean>> = _deleteDevice
-    fun deleteDevice() = viewModelScope.launch {
-        repository.deleteDevice()
-            .map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code,
-                        it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
-                emit(Resource.Loading())
-            }
-            .catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1,
-                        "$it"
-                    )
-                )
-            }.collectLatest {
-                _deleteDevice.value = it
-            }
-    }
-
-
-    /**
      * 删除植物
      */
     private val _plantDelete = MutableLiveData<Resource<Boolean>>()

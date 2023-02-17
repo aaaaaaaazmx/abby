@@ -24,6 +24,7 @@ data class PlantInfoData(
     var lightingStatus: Int? = 1, // 0 关灯、1 开灯
     var list: MutableList<InfoList>? = null,
     var cupType: Int? = null, // 塑料杯、纸杯
+    var plantName: String? = null,
 ) : BaseBean() {
 
     data class InfoList(

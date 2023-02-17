@@ -140,6 +140,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                      * 登录涂鸦
                      */
                     mViewModel.tuYaLogin(
+                        deviceId = it.data?.deviceId,
                         code = it.data?.tuyaCountryCode,
                         email = it.data?.email,
                         password = AESCipher.aesDecryptString(it.data?.tuyaPassword, AESCipher.KEY),
@@ -187,7 +188,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     // 初始化SDK
                     InitSdk.init()
                     // 是否种植过
-                    data?.let { PlantCheckHelp().plantStatusCheck(it) }
+                    data?.let { PlantCheckHelp().plantStatusCheck(this@LoginActivity, it) }
 //                    when (userInfoBean.deviceStatus) {
 //                        // 1-> 绑定设备、 2-> 未绑定设备
 //                        "1" -> {

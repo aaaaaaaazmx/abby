@@ -1,5 +1,9 @@
 package com.cl.common_base.constants
 
+import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
+
 /**
  *  常量管理
  */
@@ -201,6 +205,8 @@ object Constants {
         // 只展示一次的消息气泡
         var KEY_IS_ONLY_ONE_SHOW = true
 
+        // 从主页面、离线页面跳转到设备列表界面，设备列表界面切换了设备。
+        var KEY_IS_SWITCH_DEVICE = "key_is_switch_device"
     }
 
     // Fixed Id

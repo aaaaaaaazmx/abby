@@ -31,23 +31,26 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="50dp"
                 android:background="@color/lineBg"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="3.5dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="11dp"
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Device"
+                    android:text="abby"
                     android:textColor="#C4C4C4"
                     android:textSize="14sp" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    isOffline="@{data.isOffLine()}"
                     android:id="@+id/ft_current_fir"
+                    isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     app:itemTitle="Current firmware" />
@@ -120,12 +123,12 @@
                     app:itemTitle="@string/my_solo" />
 
                 <View
-                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height=".5dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="20dp"
-                    android:background="@color/lineBg" />
+                    android:background="@color/lineBg"
+                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}" />
 
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_SN"
@@ -134,20 +137,38 @@
                     app:hideArrow="true"
                     app:itemTitle="SN" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
 
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_manage_device"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    app:itemTitle="Manage Device" />
+
+
+                <!--删除设备隐藏、因为现在合并设备了。-->
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/dt_delete_device"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginTop="7dp"
+                    android:visibility="gone"
                     app:itemTitle="Delete Abby"
                     app:itemTitleColor="#D61744" />
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="3.5dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginTop="16dp"
+                    android:layout_marginBottom="11dp"
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
@@ -199,6 +220,38 @@
                     android:background="@color/white"
                     app:itemTitle="New Version" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="35dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="11dp"
+                    android:text="Account"
+                    android:textColor="#C4C4C4" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_merge_account"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    app:itemTitle="Merge Account" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_log_out"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    android:textStyle="bold"
+                    app:itemTitle="@string/profile_sign_out"
+                    app:itemTitleColor="#D61744" />
             </LinearLayout>
 
         </LinearLayout>

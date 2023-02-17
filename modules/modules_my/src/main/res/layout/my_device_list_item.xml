@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.common_base.bean.ListDeviceBean" />
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_my.adapter.DeviceListAdapter" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@{data.isChooser ? @drawable/background_mian_color_r8 : @drawable/background_white_r6}"
+            android:padding="19dp"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:layout_marginEnd="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{adapter.showName(data.deviceName, data.plantName, data.strainName)}"
+                android:textColor="#006241"
+                android:textSize="15sp"
+                tools:text="hey abby#1 | OG Kushhey " />
+            <LinearLayout
+                android:id="@+id/ll_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title">
+
+                <ImageView
+                    android:id="@+id/iv_time"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:background="@mipmap/my_time" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="@{data.period}"
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="#000000" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll_wendu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/ll_time">
+
+                <ImageView
+                    android:id="@+id/iv_wendu"
+                    android:layout_width="8.4dp"
+                    android:layout_height="14dp"
+                    android:background="@mipmap/my_wendu" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="@{data.onlineStatus}"
+                    android:textColor='@{data.onlineStatus.equals("Offline")  ? @color/buttonGray : @color/mainColor}'
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="#000000" />
+            </LinearLayout>
+
+            <LinearLayout
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_jiqi"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/ll_wendu">
+
+                <ImageView
+                    android:id="@+id/iv_sub"
+                    android:layout_width="12dp"
+                    android:layout_height="13dp"
+                    android:background="@mipmap/my_sub" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="@{data.subscription}"
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="#000000" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_jiqi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/my_jiqi"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:id="@+id/btn_chang"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Change Profile"
+            android:textAllCaps="false"
+            android:textSize="11sp"
+            android:textColor="@color/white"
+            android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_root" />
+
+        <Button
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_delete"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_gray_r6"
+            android:text="Delete"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toStartOf="@+id/btn_start"
+            app:layout_constraintStart_toEndOf="@+id/btn_chang"
+            app:layout_constraintTop_toTopOf="@+id/btn_chang" />
+
+
+        <Button
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_start"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Start Journey"
+            android:textAllCaps="false"
+            android:visibility='@{(data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE}'
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_reconnect"
+            app:layout_constraintStart_toEndOf="@+id/btn_delete"
+            app:layout_constraintTop_toTopOf="@+id/btn_delete" />
+
+        <Button
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_reconnect"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Reconnect"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:visibility='@{(data.onlineStatus.equals("Offline") &amp;&amp; data.isChooser) ? View.VISIBLE : View.GONE}'
+            app:layout_constraintStart_toEndOf="@+id/btn_start"
+            app:layout_constraintTop_toTopOf="@+id/btn_start" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

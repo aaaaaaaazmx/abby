@@ -23,5 +23,6 @@ data class LoginData(
     val tuyaPassword: String? = null,
     val tuyaUserId: String? = null,
     val tuyaUserType: String? = null,
-    val notBound: Int? = null
+    val notBound: Int? = null,
+    val deviceId: String? = null
 ) : Serializable

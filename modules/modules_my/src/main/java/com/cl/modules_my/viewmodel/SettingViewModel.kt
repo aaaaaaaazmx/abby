@@ -47,8 +47,8 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
      */
     private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
     val deleteDevice: LiveData<Resource<BaseBean>> = _deleteDevice
-    fun deleteDevice() = viewModelScope.launch {
-        repository.deleteDevice()
+    fun deleteDevice(deviceId: String) = viewModelScope.launch {
+        repository.deleteDevice(deviceId)
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(

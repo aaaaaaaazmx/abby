@@ -151,4 +151,12 @@ class HomeRemoteRepository @Inject constructor() {
     fun compensatedSubscriber(): Flow<HttpResult<BaseBean>> {
         return service.compensatedSubscriber()
     }
+
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>> {
+        return service.listDevice()
+    }
+
+    fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
+        return service.switchDevice(deviceId)
+    }
 }

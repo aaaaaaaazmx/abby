@@ -29,7 +29,7 @@ class HomePlantSixPop(
         if (isFattening == true) {
             // 是加肥
             binding?.tvDec?.text ="""
-                Moving forward, you will use a full packet of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.
+                Moving forward, you will use a full pod of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.
 
                 *Note: you must cut open the packets first
             """.trimIndent()

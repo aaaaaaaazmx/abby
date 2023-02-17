@@ -29,6 +29,17 @@ class MyDeleteDevicePop(
                 onNextAction?.invoke()
             }
 
+            rlCheck.setOnClickListener {
+                val isCheck = cbBox.isChecked
+                cbBox.isChecked = !isCheck
+                btnSuccess.isEnabled = !isCheck
+            }
+
+            cbBox.setOnCheckedChangeListener { _, isChecked ->
+                btnSuccess.isEnabled = isChecked
+                cbBox.isChecked = isChecked
+            }
+
         }
     }
 }

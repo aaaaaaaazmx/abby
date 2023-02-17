@@ -19,17 +19,33 @@
         android:background="@color/lineBg">
 
         <TextView
+            android:layout_marginEnd="20dp"
+            android:singleLine="true"
+            android:lines="1"
+            android:maxEms="8"
+            android:ellipsize="end"
             android:id="@+id/tv_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
-            android:text="hey abby"
+            android:text="hey Abby"
             android:textColor="@color/mainColor"
             android:textSize="26sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/iv_device_list"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_device_list"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="24dp"
+            android:background="@mipmap/home_device_list"
+            app:layout_constraintEnd_toEndOf="@+id/iv_academy"
+            app:layout_constraintEnd_toStartOf="@+id/iv_academy"
+            app:layout_constraintTop_toTopOf="@+id/iv_academy" />
 
         <ImageView
             android:id="@+id/iv_academy"
@@ -119,6 +135,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
+                android:visibility="invisible"
                 android:id="@+id/iv_bowl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -306,6 +323,33 @@
                     app:layout_constraintStart_toStartOf="@id/ll_root"
                     app:layout_constraintTop_toBottomOf="@+id/ll_root" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <ImageView
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:id="@+id/image_left_swip"
+                android:layout_marginBottom="60dp"
+                android:layout_marginStart="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@mipmap/home_left"
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
+
+            <ImageView
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:id="@+id/image_right_swip"
+                android:layout_marginBottom="60dp"
+                android:layout_marginEnd="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@mipmap/home_right"
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

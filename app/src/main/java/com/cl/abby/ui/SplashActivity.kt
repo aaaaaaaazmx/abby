@@ -96,6 +96,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             val tuyaCountryCode = userinfoBean?.tuyaCountryCode
             val tuyaPassword = userinfoBean?.tuyaPassword
             mViewModel.tuYaLogin(
+                userinfoBean?.deviceId,
                 tuyaCountryCode,
                 email,
                 AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
@@ -125,7 +126,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 }
             }
             success {
-                data?.let { PlantCheckHelp().plantStatusCheck(it) }
+                data?.let { PlantCheckHelp().plantStatusCheck(this@SplashActivity, it) }
 //                when (userinfoBean?.deviceStatus) {
 //                    // 设备状态(1-绑定，2-已解绑)
 //                    "1" -> {

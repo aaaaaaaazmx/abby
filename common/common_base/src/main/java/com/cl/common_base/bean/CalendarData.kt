@@ -55,5 +55,19 @@ data class CalendarData(
         const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"
         const val TASK_TYPE_CHECK_CHECK_AUTOFLOWERING = "check_autoflowering"
         const val TASK_TYPE_TEST = "test" // 学院任务
+
+
+        // 富文本类型
+        const val ABOUT_PAGE_NOT_PURCHASED_TASK = "page_not_purchased"
+        const val ABOUT_RECORD_JOURNEY_TASK = "record_journey"
+        const val ABOUT_HOW_TO_PICK_STRAIN_TASK = "how_to_pick_strain"
+        const val ABOUT_CHECK_TRANSPLANT_TASK = "about_check_transplant"
+        const val ABOUT_CHECK_FLOWERING_TASK = "about_check_flowering"
+        const val ABOUT_CHECK_FLUSHING_TASK = "about_check_flushing"
+        const val ABOUT_CHECK_DRYING_TASK = "about_check_drying"
+        const val ABOUT_CHECK_CURING_TASK = "about_check_curing"
+        const val ABOUT_CHECK_AUTO_FLOWERING_TASK = "about_check_auto_flowering"
+        const val ABOUT_CHECK_FINISH_TASK = "about_check_finish"
+        const val SEED_KIT_CUP_TYPE_TASK = "seed_kit_cup_type"
     }
 }

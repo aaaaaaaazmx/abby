@@ -12,6 +12,7 @@ import androidx.core.widget.doAfterTextChanged
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
@@ -166,7 +167,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                         data: ${data.toString()}
                     """.trimIndent()
                     )
-                    data?.let { PlantCheckHelp().plantStatusCheck(it, true) }
+                    data?.let { PlantCheckHelp().plantStatusCheck(this@PairDistributionWifiActivity, it, true) }
                 }
 
                 error { errorMsg, code ->
@@ -310,6 +311,11 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         getWifiName()
     }
 
+    private val userinfoBean by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        GSON.parseObject(bean, UserinfoBean::class.java)
+    }
+
     /**
      * 开始配网
      *
@@ -360,27 +366,30 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                         // 取数据
                                         bean?.let { homeBean ->
                                             kotlin.runCatching {
-                                                // 目前只允许绑定一个，那么只取第一个
-                                                val bean = homeBean.deviceList[0]
-                                                // 缓存用户第一个设备数据
-                                                // 只取第一个
-                                                GSON.toJson(bean)?.let {
+                                                    // todo 需要看下是否调用了bindDevice方法。有可能是没调用
+                                                    // logI("DeviceListSize: ${homeBean.deviceList?.size}")
+                                                    // homeBean.deviceList.forEach { logI("devId: ${it.devId}, $it") }
+                                                    // 重新绑定时、只取最后一个，表示这是新添加的。
+                                                    // 缓存用户第一个设备数据
+                                                    // 只取第一个
+                                                    GSON.toJson(deviceBean)?.let {
+                                                        Prefs.putStringAsync(
+                                                            Constants.Tuya.KEY_DEVICE_DATA,
+                                                            it
+                                                        )
+                                                    }
+                                                    // 开始存储账号和密码
                                                     Prefs.putStringAsync(
-                                                        Constants.Tuya.KEY_DEVICE_DATA,
-                                                        it
+                                                        Constants.Pair.KEY_PAIR_WIFI_NAME,
+                                                        binding.tvWifiName.text.toString()
                                                     )
-                                                }
-                                                // 开始存储账号和密码
-                                                Prefs.putStringAsync(
-                                                    Constants.Pair.KEY_PAIR_WIFI_NAME,
-                                                    binding.tvWifiName.text.toString()
-                                                )
-                                                Prefs.putStringAsync(
-                                                    Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
-                                                    binding.etWifiPwd.text.toString()
-                                                )
-                                                // 先进行数据同步、后绑定
-                                                mViewModel.getDps(bean)
+                                                    Prefs.putStringAsync(
+                                                        Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
+                                                        binding.etWifiPwd.text.toString()
+                                                    )
+                                                    // 先进行数据同步、后绑定
+                                                    mViewModel.getDps(deviceBean)
+
                                             }.onFailure { hideProgressLoading() }
                                         }
                                     }

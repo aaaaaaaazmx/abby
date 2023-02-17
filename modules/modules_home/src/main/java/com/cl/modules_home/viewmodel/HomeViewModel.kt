@@ -51,6 +51,10 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         GSON.parseObject(bean, User::class.java)
     }
 
+    val homeId by lazy {
+        Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
+    }
+
     /**
      * 设备信息
      */
@@ -59,18 +63,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
+    private val _deviceId =
+        MutableLiveData(tuyaDeviceBean?.devId.toString())
+    val deviceId: LiveData<String> = _deviceId
+    fun setDeviceId(deviceId: String) {
+        // 暂时不做水箱的容积判断，手动赋值默认就是为0L
+        _deviceId.value = deviceId
+    }
+
     /**
      * 返回当前设备所有的dps
      * 这里面的dps都是会变化的，需要实时更新
      * 不能直接用
      */
-    private val getDeviceDps by lazy {
+    private val getDeviceDps = {
         tuyaDeviceBean?.dps
     }
 
     // 水的容积。=， 多少升
     private val _getWaterVolume =
-        MutableLiveData(getDeviceDps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS }
+        MutableLiveData(getDeviceDps()?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_STATUS).toString())
     val getWaterVolume: LiveData<String> = _getWaterVolume
     fun setWaterVolume(volume: String) {
@@ -81,7 +93,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     // 是否需要修复SN
     // 需要在设备在线的情况下才展示修复
     private val _repairSN = MutableLiveData(if (tuyaDeviceBean?.isOnline == true) {
-        getDeviceDps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
+        getDeviceDps()?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN).toString()
     } else {
         "OK"
@@ -518,7 +530,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
-    *//**
+    */
+    /**
      * 开启订阅
      *//*
     private val _startSubscriber = MutableLiveData<Resource<BaseBean>>()
@@ -918,15 +931,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _unreadMessageList.value?.clear()
     }
 
-    // 固件信息
-    // 获取当前设备信息
-    private val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
-    private val tuYaHomeSdk by lazy {
-        TuyaHomeSdk.newOTAInstance(tuYaDeviceBean?.devId)
+    private val tuYaHomeSdk = {
+        TuyaHomeSdk.newOTAInstance(tuyaDeviceBean?.devId)
     }
 
     /**
@@ -935,7 +941,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuYaHomeSdk.getOtaInfo(object : IGetOtaInfoCallback {
+        tuYaHomeSdk().getOtaInfo(object : IGetOtaInfoCallback {
             override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                 logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
                 // 如果可以升级
@@ -1026,7 +1032,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    private fun checkPlant(uuid: String) = viewModelScope.launch {
+    fun checkPlant(uuid: String) = viewModelScope.launch {
         repository.checkPlant(uuid).map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
@@ -1072,6 +1078,78 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             )
         }.collectLatest {
             _userDetail.value = it
+        }
+    }
+
+    /**
+     * 合并账号
+     */
+    private val _switchDevice = MutableLiveData<Resource<String>>()
+    val switchDevice: LiveData<Resource<String>> = _switchDevice
+    fun switchDevice(deviceId: String) {
+        viewModelScope.launch {
+            repository.switchDevice(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _switchDevice.value = it
+                }
+        }
+    }
+
+    /**
+     * 合并账号
+     */
+    private val _listDevice = MutableLiveData<Resource<MutableList<ListDeviceBean>>>()
+    val listDevice: LiveData<Resource<MutableList<ListDeviceBean>>> = _listDevice
+    fun listDevice() {
+        viewModelScope.launch {
+            repository.listDevice()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _listDevice.value = it
+                }
         }
     }
 
@@ -1182,10 +1260,10 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     var tuYaDps = tuyaDeviceBean?.dps
     fun getEnvData() {
-        tuYaDeviceBean?.let {
+        tuyaDeviceBean?.let {
             val envReq = EnvironmentInfoReq(deviceId = it.devId)
             tuYaDps?.forEach { (key, value) ->
-                when(key) {
+                when (key) {
                     TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE -> {
                         envReq.waterTemperature = value.safeToInt()
                     }
@@ -1231,6 +1309,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             }
         }.flowOn(Dispatchers.Main).onStart { onStart?.invoke() }.onCompletion { onFinish?.invoke() }
             .onEach { onTick.invoke(it) }.launchIn(scope)
+    }
+
+    var isLeftSwap:Boolean = false
+    fun setLeftSwaps(isLeft: Boolean) {
+        isLeftSwap = isLeft
     }
 
     companion object {
