@@ -1121,6 +1121,25 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         // 首先调用plantInfo接口去查看当前有无称重
                                                         mViewMode.plantInfo()
                                                     }
+                                                    CalendarData.ABOUT_PAGE_NOT_PURCHASED_TASK,
+                                                    CalendarData.ABOUT_RECORD_JOURNEY_TASK,
+                                                    CalendarData.ABOUT_HOW_TO_PICK_STRAIN_TASK,
+                                                    CalendarData.ABOUT_CHECK_TRANSPLANT_TASK,
+                                                    CalendarData.ABOUT_CHECK_FLOWERING_TASK,
+                                                    CalendarData.ABOUT_CHECK_FLUSHING_TASK,
+                                                    CalendarData.ABOUT_CHECK_DRYING_TASK,
+                                                    CalendarData.ABOUT_CHECK_CURING_TASK,
+                                                    CalendarData.ABOUT_CHECK_AUTO_FLOWERING_TASK,
+                                                    CalendarData.ABOUT_CHECK_FINISH_TASK,
+                                                    CalendarData.SEED_KIT_CUP_TYPE_TASK,
+                                                    -> {
+                                                        // 跳转富文本
+                                                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                                        intent.putExtra(Constants.Global.KEY_TXT_TYPE, listContent[position].taskType)
+                                                        startActivity(intent)
+                                                        // 完成任务
+                                                        mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, null)) }
+                                                    }
                                                     else -> {
                                                         // todo、如果是学院任务，那么就直接跳转到学院弹窗
                                                         if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {

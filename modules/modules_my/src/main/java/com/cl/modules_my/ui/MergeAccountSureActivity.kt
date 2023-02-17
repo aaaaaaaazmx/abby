@@ -95,7 +95,7 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
             loading { showProgressLoading() }
             error { errorMsg, code ->
                 hideProgressLoading()
-                ToastUtil.shortShow(errorMsg)
+                // ToastUtil.shortShow(errorMsg)
 
                 /*The accounts could not be merged, please try again. If you need further assistance, email:support@heyabby.com*/
                 // 合并失败弹窗
@@ -104,10 +104,9 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
                     .isDestroyOnDismiss(false)
                     .asCustom(
                         BaseCenterPop(this@MergeAccountSureActivity,
-                            titleText = "Congratulations!",
                             confirmText = "Try Again",
                             cancelText = "Go Back",
-                            content = "The accounts could not be merged, please try again. If you need further assistance, email:support@heyabby.com",
+                            content = "$errorMsg",
                             isShowCancelButton = true,
                             onConfirmAction = {
                                 // todo 重试合并

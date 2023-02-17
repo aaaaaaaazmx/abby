@@ -74,8 +74,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 // 改用Eventbus吧。
                 // 切换了设备，需要重新刷新主页。
                 logI("123123123: $deviceId")
+                ARouter.getInstance()
+                    .build(RouterPath.Main.PAGE_MAIN).navigation()
                 LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
                     .postEvent(deviceId)
+                finish()
                 /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
             }
         }
