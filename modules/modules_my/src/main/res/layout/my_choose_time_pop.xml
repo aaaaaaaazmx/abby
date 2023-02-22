@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="13dp"
+            android:background="@mipmap/iv_close" />
+
+        <com.cl.common_base.widget.FeatureItemView
+            android:id="@+id/ft_turn_on"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:itemTitle="turn on Night mode" />
+
+        <com.cl.common_base.widget.FeatureItemView
+            android:id="@+id/ft_turn_off"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:itemTitle="turn off Night mode" />
+
+        <TextView
+            android:text="The time span cannot exceed 12 hours."
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/c_main_gray"
+            android:textSize="11sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+
+        <Button
+            android:id="@+id/btn_success"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/tv_code_desc"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_state_button"
+            android:text="Confirm"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:text="Merge" />
+
+    </LinearLayout>
+</layout>

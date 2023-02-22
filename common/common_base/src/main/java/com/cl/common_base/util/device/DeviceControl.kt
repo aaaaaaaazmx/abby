@@ -29,6 +29,16 @@ interface DeviceControl {
     fun pumpWater(startOrStop: Boolean)
 
     /**
+     * 旋钮开门锁
+     */
+    fun doorLock(openOrClose: Boolean)
+
+    /**
+     * 夜间模式
+     */
+    fun nightMode(startOrStop: String)
+
+    /**
      *  134
          Time to feed abby
         timetofeedabby	可下发可上报（rw）	布尔型（Bool）

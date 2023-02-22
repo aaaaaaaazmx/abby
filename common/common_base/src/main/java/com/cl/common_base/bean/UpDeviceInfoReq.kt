@@ -2,7 +2,7 @@ package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
 
-data class UpPlantInfoReq(
+data class UpDeviceInfoReq(
     var attribute: String? = null, // 种植属性(Photo、Auto)
     var strainName: String? = null, // 种植名字
     var plantName: String? = null, // 种植名字
@@ -17,6 +17,7 @@ data class UpPlantInfoReq(
     var nightMode: Int? = null, // 夜间模式
     var plantStatus: Int? = null,
     var week: Int? = null,
+    var deviceId: String? = null,
     var cupType: Int? = null, // (0-纸杯，1-塑料杯)
     var list: MutableList<InfoList>? = null,
     var plantId: Int? = null, // 植物ID， 主要用于在设备列表里面修改植物名称

@@ -9,26 +9,26 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AutomaticLoginData
+import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.ext.dp2px
-import com.cl.common_base.ext.logE
-import com.cl.common_base.ext.logI
-import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.*
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.cache.CacheUtil
+import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MySettingBinding
+import com.cl.modules_my.pop.ChooseTimePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
@@ -45,6 +45,8 @@ import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 
@@ -426,12 +428,101 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             })
     }
 
+    private var muteOn: String? = null
+    private var muteOff: String? = null
+    private fun getEnvData() {
+        tuyaHomeBean?.dps?.let { tuYaDps ->
+            tuYaDps.forEach { (key, value) ->
+                when (key) {
+                    TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE -> {
+                        // 是否打开童锁
+                        DeviceControl.get()
+                            .success {
+                            }
+                            .error { code, error ->
+                                ToastUtil.shortShow(
+                                    """
+                                      nightMode: 
+                                      code-> $code
+                                      errorMsg-> $error
+                                """.trimIndent()
+                                )
+                            }
+                            .nightMode(value.toString())
+
+                        val str = value.toString()
+                        val pattern = "muteOn:(\\d+),muteOff:(\\d+)"
+
+                        val p: Pattern = Pattern.compile(pattern)
+                        val m: Matcher = p.matcher(str)
+
+                        if (m.find()) {
+                            muteOn = m.group(1)
+                            muteOff = m.group(2)
+                        } else {
+                            logE("No match found.")
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
     override fun initData() {
         // 重新种植
         binding.ftReplant.setOnClickListener {
             // 请求接口
             mViewModel.giveUpCheck()
         }
+        // 童锁
+        binding.ftChildLock.setSwitchCheckedChangeListener { buttonView, isChecked ->
+            // 是否打开童锁
+            DeviceControl.get()
+                .success {
+                    binding.ftChildLock.isItemChecked = isChecked
+                }
+                .error { code, error ->
+                    ToastUtil.shortShow(
+                        """
+                      pumpWater: 
+                      code-> $code
+                      errorMsg-> $error
+                """.trimIndent()
+                    )
+                }
+                .doorLock(isChecked)
+        }
+
+        // 夜间模式
+        binding.ftNight.setSwitchCheckedChangeListener { _, isChecked ->
+            // muteOn:00,muteOff:001
+            // 调用接口更新后台夜间模式
+            mViewModel.updatePlantInfo(UpDeviceInfoReq(nightMode = if (isChecked) 1 else 0, deviceId = tuyaHomeBean?.devId))
+            ViewUtils.setVisible(isChecked, binding.ftTimer, binding.tvTimeDesc)
+            getEnvData()
+        }
+
+        binding.ftTimer.setOnClickListener {
+            pop.asCustom(ChooseTimePop(this@SettingActivity, turnOnHour = muteOn?.toInt(), turnOffHour = muteOff?.toInt(), onConfirmAction = { onTime, offMinute, timeOn, timeOff ->
+                binding.ftTimer.itemValue = "$onTime - $offMinute"
+                // 发送dp点
+                DeviceControl.get()
+                    .success {
+                    }
+                    .error { code, error ->
+                        ToastUtil.shortShow(
+                            """
+                              nightMode: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                        )
+                    }
+                    .nightMode("muteOn:$timeOn,muteOff:$timeOff")
+            })).show()
+        }
+
         // 重量单位
         binding.ftWeight.setOnClickListener {
             startActivity(Intent(this@SettingActivity, WeightActivity::class.java))

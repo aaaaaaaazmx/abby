@@ -33,6 +33,10 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.updatePlantInfo(body)
     }
 
+    fun updateDeviceInfo(body: UpDeviceInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateDeviceInfo(body)
+    }
+
     /**
      * 获取植物信息
      */

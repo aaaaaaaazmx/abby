@@ -116,6 +116,14 @@ interface HttpMyApiService {
         @Body body: UpPlantInfoReq
     ): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 夜间模式
+     */
+    @POST("abby/userDevice/updateDeviceInfo")
+    fun updateDeviceInfo(
+        @Body body: UpDeviceInfoReq
+    ): Flow<HttpResult<BaseBean>>
+
 
     /**
      * 获取植物的基本信息

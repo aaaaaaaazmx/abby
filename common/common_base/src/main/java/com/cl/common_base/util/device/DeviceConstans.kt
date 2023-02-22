@@ -49,6 +49,12 @@ class TuYaDeviceConstants {
         // 门的开光状态 (Bool)
         const val KEY_DEVICE_DOOR = "106"
 
+        // 旋钮开门锁
+        const val KEY_DEVICE_DOOR_LOOK = "119"
+
+        // 夜间模式
+        const val KEY_DEVICE_NIGHT_MODE = "141"
+
         // 风干期开门迎宾模式打开
         const val KEY_DEVICE_FAN_ENABLE= "132"
 

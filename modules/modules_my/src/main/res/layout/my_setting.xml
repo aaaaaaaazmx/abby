@@ -91,6 +91,64 @@
                     android:layout_height="60dp"
                     app:itemTitle="Replant" />
 
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_marginTop="7dp"
+                    android:background="@color/white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.cl.common_base.widget.FeatureItemSwitch
+                        android:id="@+id/ft_night"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        app:hideArrow="true"
+                        app:itemTitle="@string/my_night"
+                        app:itemValue="@string/my_night" />
+
+                    <com.cl.common_base.widget.FeatureItemView
+                        android:visibility="gone"
+                        android:id="@+id/ft_timer"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        app:hideArrow="true"
+                        app:itemTitle="@string/my_time"
+                        app:itemValue="@string/setting_sub_time" />
+
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/tv_time_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ft_child_lock"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="20dp"
+                        android:text="While in sleep mode, notifications will be muted, and light strip will be turned off during the sepcified time."
+                        android:textColor="@color/black"
+                        android:textSize="11sp" />
+
+                    <com.cl.common_base.widget.FeatureItemSwitch
+                        android:layout_marginTop="20dp"
+                        android:id="@+id/ft_child_lock"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        app:itemTitle="@string/my_child_lock"
+                        app:itemValue="@string/my_child_lock" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ft_child_lock"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginBottom="10dp"
+                        android:text="After opening, the door will automatically lock when closed.Afterwards, the door can only be opened through the app"
+                        android:textColor="@color/black"
+                        android:textSize="11sp" />
+                </LinearLayout>
+
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_sub"
                     android:layout_width="match_parent"
@@ -99,6 +157,8 @@
                     app:hideArrow="true"
                     app:itemTitle="Digital service"
                     app:itemValue="@string/setting_sub_time" />
+
+
 
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_charge_time"

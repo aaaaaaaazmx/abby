@@ -242,10 +242,12 @@ public class WheelPicker<T> extends View {
         }
     };
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public WheelPicker(Context context) {
         this(context, null);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     public WheelPicker(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }

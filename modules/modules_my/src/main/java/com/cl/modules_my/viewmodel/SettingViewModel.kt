@@ -412,6 +412,42 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     }
 
     /**
+     * 修改植物信息
+     */
+    private val _updatePlantInfo = MutableLiveData<Resource<BaseBean>>()
+    val updatePlantInfo: LiveData<Resource<BaseBean>> = _updatePlantInfo
+    fun updatePlantInfo(body: UpDeviceInfoReq) {
+        viewModelScope.launch {
+            repository.updateDeviceInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _updatePlantInfo.value = it
+                }
+        }
+    }
+
+    /**
      * 设备是否在线
      * false、不在线 true、 在线
      */

@@ -72,8 +72,14 @@ public class HourPicker extends WheelPicker<Integer> {
 
     private void updateHour() {
         List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < 24; i++) {
-            list.add(i);
+        if (is12HourMode()) {
+            for (int i = 1; i < 13; i++) {
+                list.add(i);
+            }
+        } else {
+            for (int i = 0; i < 24; i++) {
+                list.add(i);
+            }
         }
         setDataList(list);
     }

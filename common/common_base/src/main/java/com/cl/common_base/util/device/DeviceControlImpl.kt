@@ -61,6 +61,30 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     }
 
     /**
+     * 旋钮开门
+     */
+    override fun doorLock(openOrClose: Boolean) {
+        map[TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK] = openOrClose
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    /**
+     * 夜间模式
+     */
+    override fun nightMode(startOrStop: String) {
+        map[TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    /**
      * 添加肥料、喂食
      */
     override fun feedAbby(startOrStop: Boolean): DeviceControlImpl {

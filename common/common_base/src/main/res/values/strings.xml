@@ -132,6 +132,9 @@
     <string name="my_weight_unit">Measurement System</string>
     <string name="my_metric">Metric</string>
     <string name="my_us">Imperial</string>
+    <string name="my_child_lock">Child Lock</string>
+    <string name="my_night">Night Mode</string>
+    <string name="my_time">Timer</string>
     <plurals name="seconds">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>
