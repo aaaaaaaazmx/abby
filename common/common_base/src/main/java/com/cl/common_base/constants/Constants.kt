@@ -240,6 +240,11 @@ object Constants {
 
         // SeedKit 关于纸杯子还是塑料杯子的引导Id
         const val KEY_FIXED_ID_SEED_KIT_CUP_TYPE = "c11f05670d574634b7d19a8d3abf6192"
+
+        // 推荐种植箱页
+        const val KEY_FIXED_ID_A_FEW_TIPS = "0aad68f4fd654d86aea07fbcd032abb5"
+        const val KEY_FIXED_ID_PREPARE_THE_SEED = "6a766f22ace142eaa6a95de34ece12c2"
+        const val KEY_FIXED_ID_SEED_GERMINATION_PREVIEW = "bfbc92f6611b489caecfcc4c7476ec00"
     }
 
     object FragmentIndex {

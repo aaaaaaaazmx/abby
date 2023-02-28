@@ -66,5 +66,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:name="com.cl.modules_home.ui.AcademyDetailActivity" />
+        <activity android:name="com.cl.modules_home.activity.HomeNewPlantNameActivity" />
+        <activity android:name="com.cl.modules_home.activity.HomePlantProfileActivity" />
     </application>
 </manifest>

@@ -32,4 +32,18 @@ interface BaseApiService {
     fun finishTask(
         @Body body: FinishTaskReq
     ): Flow<HttpResult<String>>
+
+    /**
+     * 开始种植
+     */
+    @POST("abby/plant/startRuning")
+    fun startRunning(): Flow<HttpResult<Boolean>>
+
+    /**
+     * 是否种植
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/check")
+    fun checkPlant(@Field("deviceUuid") body: String): Flow<HttpResult<CheckPlantData>>
+
 }

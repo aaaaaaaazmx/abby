@@ -240,4 +240,12 @@ interface HttpHomeApiService {
     @POST("abby/userDevice/switchDevice")
     fun switchDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<String>>
 
+    /**
+     * 修改植物信息
+     */
+    @POST("abby/plant/updatePlantInfo")
+    fun updatePlantInfo(
+        @Body body: UpPlantInfoReq
+    ): Flow<HttpResult<BaseBean>>
+
 }

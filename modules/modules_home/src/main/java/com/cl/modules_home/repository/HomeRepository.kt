@@ -231,4 +231,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
         return remoteRepository.switchDevice(deviceId)
     }
+
+    fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updatePlantInfo(body)
+    }
 }

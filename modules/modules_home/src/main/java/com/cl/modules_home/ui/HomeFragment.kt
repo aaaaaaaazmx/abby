@@ -37,6 +37,7 @@ import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
@@ -46,6 +47,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.activity.HomeNewPlantNameActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
@@ -347,6 +349,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             ivDeviceList.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                     .navigation(activity)
+            }
+
+            ivSupport.setOnClickListener {
+                sendEmail()
             }
         }
 
@@ -1787,12 +1793,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    // 保存植物ID
+                    Prefs.putStringAsync(Constants.Global.KEY_PLANT_ID, data.toString())
+
+                    // 跳转富文本
+                    val intent = Intent(context, BasePopActivity::class.java)
+                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
+                    startActivityLauncher.launch(intent)
+
                     // 优先跳转选择种子还是继承界面
                     // seed or clone
-                    ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                  /*  ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
                         .withString(Constants.Global.KEY_PLANT_ID, data)
                         .withBoolean(Constants.Global.KEY_IS_SHOW_CHOOSER_TIPS, true)
-                        .navigation(activity, KEY_FOR_CLONE_RESULT)
+                        .navigation(activity, KEY_FOR_CLONE_RESULT)*/
                 }
             })
 
@@ -1802,6 +1818,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     hideProgressLoading()
                     if (null == data) return@success
+
+
+                        
 
                     // 属性名优先
                     if (data?.attribute.isNullOrEmpty()) {
@@ -2920,6 +2939,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 if (plantDrainFinished?.isShow == false) {
                     plantDrainFinished?.show()
                 }
+            }
+        }
+
+    /**
+     * 点击start跳转到富文本、然后弹窗其他窗户
+     */
+    private val startActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                startActivity(Intent(context, HomeNewPlantNameActivity::class.java))
             }
         }
 

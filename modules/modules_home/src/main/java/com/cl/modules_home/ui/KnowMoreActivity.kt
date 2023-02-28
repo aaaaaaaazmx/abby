@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -97,6 +98,17 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         }
     }
 
+    private fun isHaveCheckBoxViewType(): Boolean {
+        /*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
+        val size = adapter.data.filter { data -> data.value?.isCheck == false && data.type == "option" }.size
+        size.let { checkCount ->
+            if (checkCount != 0) {
+                ToastUtil.shortShow("Please select all item")
+            }
+            return checkCount == 0
+        }
+    }
+
     override fun observe() {
         mViewMode.apply {
             // 完成任务
@@ -160,12 +172,16 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                 when (type) {
                                     "pageClose" -> this@KnowMoreActivity.finish()
                                     "pageDown" -> {
+                                        if (!isHaveCheckBoxViewType()) return@setOnClickListener
+
                                         // 跳转下一页
                                         val intent = Intent(this@KnowMoreActivity, KnowMoreActivity::class.java)
                                         intent.putExtra(Constants.Global.KEY_TXT_ID, value?.txtId)
                                         startActivity(intent)
                                     }
                                     "finishTask" -> {
+                                        if (!isHaveCheckBoxViewType()) return@setOnClickListener
+
                                         // 完成任务
                                         mViewMode.finishTask(FinishTaskReq(taskId = taskId))
                                     }
@@ -221,7 +237,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(com.cl.common_base.R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn)
+            addChildClickViewIds(com.cl.common_base.R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
@@ -277,6 +293,20 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                             intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         }
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "hey abby")
+                        context.startActivity(intent)
+                    }
+                    // 勾选框
+                    R.id.cl_check -> {
+                        adapter.data[position].value?.isCheck = !(bean.value?.isCheck ?: false)
+                        view.findViewById<CheckBox>(R.id.curing_box)?.apply {
+                            isChecked = !isChecked
+                        }
+                    }
+                    // 跳转到HTML
+                    R.id.tv_page_txt -> {
+                        // 跳转到HTML
+                        val intent = Intent(context, WebActivity::class.java)
+                        intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         context.startActivity(intent)
                     }
                 }
