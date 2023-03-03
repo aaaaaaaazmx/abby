@@ -34,6 +34,11 @@ interface DeviceControl {
     fun doorLock(openOrClose: Boolean)
 
     /**
+     * 童锁开关
+     */
+    fun childLock(startOrStop: Boolean)
+
+    /**
      * 夜间模式
      */
     fun nightMode(startOrStop: String)

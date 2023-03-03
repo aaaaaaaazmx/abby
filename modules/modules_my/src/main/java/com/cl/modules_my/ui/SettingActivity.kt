@@ -28,6 +28,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MySettingBinding
+import com.cl.modules_my.pop.AttentionPop
 import com.cl.modules_my.pop.ChooseTimePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.modules_my.request.ModifyUserDetailReq
@@ -473,7 +474,22 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 重新种植
         binding.ftReplant.setOnClickListener {
             // 请求接口
-            mViewModel.giveUpCheck()
+            /*mViewModel.giveUpCheck()*/
+            val isVip = mViewModel.userDetail.value?.data?.isVip == 1
+            pop.isDestroyOnDismiss(false).asCustom(
+                AttentionPop(
+                    this@SettingActivity,
+                    contentText = if (isVip) "You are about to replant. The current session will be lost, and this operation is irreversible. Our growing expert may help you save the plant" else "You are about to replant. The current session will be lost, and this operation is irreversible.",
+                    isShowTalkButton = isVip,
+                    talkButtonAction = {
+                        // 跳转到客服
+                        sendEmail()
+                    },
+                    rePlantAction = {
+                        tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
+                    }
+                )
+            ).show()
         }
         // 童锁
         binding.ftChildLock.setSwitchCheckedChangeListener { buttonView, isChecked ->
@@ -491,7 +507,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 """.trimIndent()
                     )
                 }
-                .doorLock(isChecked)
+                .childLock(isChecked)
         }
 
         // 夜间模式

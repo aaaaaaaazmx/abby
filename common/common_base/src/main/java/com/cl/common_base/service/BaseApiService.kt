@@ -46,4 +46,7 @@ interface BaseApiService {
     @POST("abby/plant/check")
     fun checkPlant(@Field("deviceUuid") body: String): Flow<HttpResult<CheckPlantData>>
 
+    @POST("abby/plant/intoPlantBasket")
+    fun intoPlantBasket(): Flow<HttpResult<BaseBean>>
+
 }

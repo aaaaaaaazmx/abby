@@ -52,6 +52,9 @@ class TuYaDeviceConstants {
         // 旋钮开门锁
         const val KEY_DEVICE_DOOR_LOOK = "119"
 
+        // 童锁
+        const val KEY_DEVICE_CHILD_LOCK = "142"
+
         // 夜间模式
         const val KEY_DEVICE_NIGHT_MODE = "141"
 
@@ -98,6 +101,9 @@ class TuYaDeviceConstants {
         const val KEY_DEVICE_TEMP_CURRENT_INSTRUCTION = "temp_current" // 环境温度
         const val KEY_DEVICE_VENTILATION_INSTRUCTION = "Ventilation" // 排气扇
         const val KEY_DEVICE_WATER_TEMPERATURE_INSTRUCTION = "water_temperature" // 水温
+        const val KEY_DEVICE_CHILD_LOCK_INSTRUCT = "auto_lock" // 童锁
+        const val KEY_DEVICE_DOOR_LOOK_INSTRUCT = "child_lock" // 打开门
+        const val KEY_DEVICE_DOOR = "door" // 门是否是开的， false关闭。
 
         /**
          * brightValue	灯光强度		false

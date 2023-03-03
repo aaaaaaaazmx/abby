@@ -107,9 +107,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         mViewModel.setIsPlants(plantFlag != "0")
     }
 
-    /**
-     *
-     */
     private val bubblePopHor by lazy {
         // 居中显示
         XPopup.Builder(this@MainActivity)

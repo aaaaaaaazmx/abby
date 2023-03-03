@@ -14,6 +14,7 @@
 
 
         <TextView
+            android:layout_gravity="center"
             android:textSize="16sp"
             android:textColor="#111010"
             android:id="@+id/tv_title"
@@ -32,7 +33,19 @@
             android:textSize="16sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/base_no_starin_name_desc" />
+            />
+
+        <ImageView
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingTop="15dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="5dp"
+            android:id="@+id/iv_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <EditText
             android:id="@+id/et_input"

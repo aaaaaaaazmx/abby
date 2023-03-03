@@ -71,6 +71,30 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _deviceId.value = deviceId
     }
 
+    // 童锁的开闭状态
+     val _childLockStatus = MutableLiveData(
+        tuyaDeviceBean?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
+            ?.get(TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK).toString()
+    )
+    val childLockStatus: LiveData<String> = _childLockStatus
+    fun setChildLockStatus(status: String) {
+        _childLockStatus.value = status
+    }
+    // 门的开闭状态
+    private val _openDoorStatus = MutableLiveData(
+        tuyaDeviceBean?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
+            ?.get(TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK).toString()
+    )
+    val openDoorStatus: LiveData<String> = _openDoorStatus
+    fun setOpenDoorStatus(status: String) {
+        _openDoorStatus.value = status
+    }
+
+    fun isShowDoorDrawable(): Boolean {
+        return _openDoorStatus.value == "true" && childLockStatus.value == "true"
+    }
+
+
     /**
      * 返回当前设备所有的dps
      * 这里面的dps都是会变化的，需要实时更新
@@ -931,39 +955,36 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _unreadMessageList.value?.clear()
     }
 
-    private val tuYaHomeSdk = {
-        TuyaHomeSdk.newOTAInstance(tuyaDeviceBean?.devId)
-    }
-
     /**
      * 查询固件升级信息
      */
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuYaHomeSdk().getOtaInfo(object : IGetOtaInfoCallback {
-            override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
-                logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
-                // 如果可以升级
-                if (hasHardwareUpdate(upgradeInfoBeans)) {
-                    onOtaInfo?.invoke(upgradeInfoBeans, true)
-                } else {
-                    // 如果不可以升级过
-                    onOtaInfo?.invoke(upgradeInfoBeans, false)
+        tuyaDeviceBean?.devId?.let {
+            TuyaHomeSdk.newOTAInstance(it)?.getOtaInfo(object : IGetOtaInfoCallback {
+                override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
+                    logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
+                    // 如果可以升级
+                    if (hasHardwareUpdate(upgradeInfoBeans)) {
+                        onOtaInfo?.invoke(upgradeInfoBeans, true)
+                    } else {
+                        // 如果不可以升级过
+                        onOtaInfo?.invoke(upgradeInfoBeans, false)
+                    }
                 }
-            }
-
-            override fun onFailure(code: String?, error: String?) {
-                logI(
-                    """
+                override fun onFailure(code: String?, error: String?) {
+                    logI(
+                        """
                         getOtaInfo:
                         code: $code
                         error: $error
                     """.trimIndent()
-                )
-                Reporter.reportTuYaError("getOtaInfo", error, code)
-            }
-        })
+                    )
+                    Reporter.reportTuYaError("getOtaInfo", error, code)
+                }
+            })
+        }
     }
 
 
@@ -1082,6 +1103,41 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 删除植物
+     */
+    private val _plantDelete = MutableLiveData<Resource<Boolean>>()
+    val plantDelete: LiveData<Resource<Boolean>> = _plantDelete
+    fun plantDelete(uuid: String) = viewModelScope.launch {
+        repository.plantDelete(uuid)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _plantDelete.value = it
+            }
+    }
+
+
+    /**
      * 合并账号
      */
     private val _switchDevice = MutableLiveData<Resource<String>>()
@@ -1162,9 +1218,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         return list.firstOrNull { it.type == 9 }?.upgradeStatus == 1
     }
 
-    /**
-     * 继承之后选择的状态
-     */
+    // transplant 周期回调。
+    private val _transplantPeriodicity = MutableLiveData<String>()
+    val transplantPeriodicity: LiveData<String> = _transplantPeriodicity
 
     /**
      *  周期弹窗时的状态选择，目前此状态只用于周期弹窗，目的是为了解锁，后期可以优化
@@ -1183,6 +1239,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 UnReadConstants.Device.KEY_CHANGING_WATER -> {}
                 UnReadConstants.Device.KEY_ADD_WATER -> {}
                 UnReadConstants.Device.KEY_ADD_MANURE -> {}
+                UnReadConstants.Device.KEY_CHANGE_CUP_WATER -> {}
+                UnReadConstants.Device.KEY_CLOSE_DOOR -> {}
+                UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
+                    // 这个周期目前自行处理、不走guideInfo接口
+                    // 回调出去。自行处理
+                    _transplantPeriodicity.value = taskId
+                }
                 else -> {
                     getGuideInfo(it)
                 }

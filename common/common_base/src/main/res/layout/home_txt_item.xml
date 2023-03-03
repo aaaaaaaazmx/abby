@@ -10,18 +10,29 @@
         <variable
             name="adapter"
             type="com.cl.common_base.adapter.HomeKnowMoreAdapter" />
+
+        <import type="android.graphics.Color"/>
+        <import type="android.text.TextUtils"/>
     </data>
 
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <TextView
+            isBold="@{data.value.bold}"
+            gravityText='@{TextUtils.isEmpty(data.value.left) ? "left" : data.value.left}'
+            colorText='@{TextUtils.isEmpty(data.value.color) ? "#000000" : data.value.color}'
+            sizeText='@{TextUtils.isEmpty(data.value.size) ? "15" : data.value.size}'
+            android:id="@+id/tv_txt"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="21dp"
             android:layout_marginStart="21dp"
             android:text="@{adapter.parseText(data.value.txt)}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="15sp"
             tools:text="123"
             tools:ignore="MissingConstraints" />
+    </LinearLayout>
 </layout>

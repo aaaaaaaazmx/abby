@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_tl_tr">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="13dp"
+                android:background="@mipmap/iv_close"
+                tools:ignore="MissingConstraints" />
+
+            <TextView
+                android:text="Attention"
+                android:textColor="#E9233C"
+                android:textSize="24sp"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:text="You are about to replant. The current session will be lost, and this operation is irreversible."
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:layout_marginBottom="93dp"
+            android:id="@+id/btn_success"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/tv_code_desc"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_state_button"
+            android:text="Talk to the expert"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            tools:text="Talk to the expert" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:id="@+id/cl_check"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/background_gray_r5">
+
+            <TextView
+                android:text="Confirm Replant"
+                android:id="@+id/tv_check_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints"
+                tools:text="123123123" />
+
+            <CheckBox
+                android:enabled="false"
+                android:clickable="false"
+                android:id="@+id/curing_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/create_state_checkbox"
+                android:button="@null"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.cl.common_base.widget.slidetoconfirmlib.SlideToConfirm
+            android:id="@+id/slide_to_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="24dp"
+            app:border_radius="100dp"
+            app:border_width="0dp"
+            app:slider_background_color="#E6EFEC"
+            app:slider_color="@color/translucency_textError"
+            app:slider_lottie="lottie_x.json"
+            app:slider_image="@mipmap/home_unlock"
+            app:slider_width="60dp"
+            app:slider_reset_duration="300"
+            app:slider_vibration_duration="50"
+            app:slider_threshold="1dp"
+            app:engage_text="Replant"
+            app:engage_text_size="18sp"
+            app:engage_text_color="@android:color/white"
+            app:completed_text_color="@android:color/white"
+            app:completed_text_size="18sp"
+            />
+
+    </LinearLayout>
+</layout>

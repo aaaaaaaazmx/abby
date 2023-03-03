@@ -1,11 +1,15 @@
 package com.cl.common_base.util.databinding
 
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -76,7 +80,7 @@ fun setTextViewSelected(view: View, isSelected: Boolean) {
 @BindingAdapter(value = ["urlNoPlaceholder"], requireAll = false)
 fun setImageUrlNoPlaceholder(imageView: ImageView, url: String?) {
     val requestOptions = RequestOptions().apply {
-//        error(R.drawable.bitmap_occupation_tview)
+        //        error(R.drawable.bitmap_occupation_tview)
     }
     Glide.with(imageView.context).load(url)
         .apply(requestOptions)
@@ -108,8 +112,8 @@ fun setImageUrl(imageView: ImageView, url: String?) {
 @BindingAdapter(value = ["url"], requireAll = false)
 fun setImageUrl(imageView: ImageView, resID: Int?) {
     var requestOptions = RequestOptions()
-//    requestOptions.placeholder(R.drawable.bitmap_occupation_tview)
-//    requestOptions.error(R.drawable.bitmap_occupation_tview)
+    //    requestOptions.placeholder(R.drawable.bitmap_occupation_tview)
+    //    requestOptions.error(R.drawable.bitmap_occupation_tview)
     Glide.with(imageView.context).load(resID)
         .apply(requestOptions)
         .into(imageView)
@@ -119,8 +123,8 @@ fun setImageUrl(imageView: ImageView, resID: Int?) {
 @BindingAdapter("circleUrl")
 fun setCircleImageUrl(imageView: ImageView, src: String?) {
     var requestOptions = RequestOptions()
-//    requestOptions.placeholder(R.drawable.bitmap_occupation_tview)
-//    requestOptions.error(R.drawable.bitmap_occupation_tview)
+    //    requestOptions.placeholder(R.drawable.bitmap_occupation_tview)
+    //    requestOptions.error(R.drawable.bitmap_occupation_tview)
     Glide.with(imageView.context).load(src)
         .apply(RequestOptions.circleCropTransform())
         .into(imageView)
@@ -132,8 +136,8 @@ fun setCircleCornerImageUrl(imageView: ImageView, src: String?) {
     //设置图片圆角角度
     val roundedCorners = RoundedCorners(8)
     val circleCornerOptions = RequestOptions.bitmapTransform(roundedCorners)
-//    circleCornerOptions.placeholder(R.drawable.bitmap_occupation_tview)
-//    circleCornerOptions.error(R.drawable.bitmap_occupation_tview)
+    //    circleCornerOptions.placeholder(R.drawable.bitmap_occupation_tview)
+    //    circleCornerOptions.error(R.drawable.bitmap_occupation_tview)
     Glide.with(imageView.context).load(src)
         .apply(circleCornerOptions)
         .into(imageView)
@@ -208,4 +212,26 @@ fun setIsEnable(et: EditText, enable: Boolean) {
     if (enable) {
         et.requestFocus()
     }
+}
+
+
+@BindingAdapter("gravityText")
+fun setGravityText(view: TextView, gravity: String) {
+    val layoutParams = view.layoutParams as? LinearLayout.LayoutParams
+    layoutParams?.gravity = when (gravity) {
+        "left" -> Gravity.START
+        "right" -> Gravity.END
+        "center" -> Gravity.CENTER
+        else -> Gravity.START
+    }
+}
+
+@BindingAdapter("colorText")
+fun setColorText(textView: TextView, color: String) {
+    textView.setTextColor(Color.parseColor(color))
+}
+
+@BindingAdapter("sizeText")
+fun setSizeText(textView: TextView, size: String) {
+    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, size.toFloat())
 }

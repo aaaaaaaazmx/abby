@@ -245,6 +245,14 @@ object Constants {
         const val KEY_FIXED_ID_A_FEW_TIPS = "0aad68f4fd654d86aea07fbcd032abb5"
         const val KEY_FIXED_ID_PREPARE_THE_SEED = "6a766f22ace142eaa6a95de34ece12c2"
         const val KEY_FIXED_ID_SEED_GERMINATION_PREVIEW = "bfbc92f6611b489caecfcc4c7476ec00"
+        const val KEY_FIXED_ID_ACTION_NEEDED = "8020472470434bf4a62ea29b007f8631"
+        const val KEY_FIXED_ID_WATER_CHANGE_GERMINATION = "8b30222d881143c58d4863f9d59d1d47"
+        const val KEY_FIXED_ID_TRANSPLANT_SEED_CHECK = "f7b4364638ae4f93a88b2375a02742dd"
+        const val KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK = "b7b1fd6d4c854339a1e97016c52d2e52"
+        const val KEY_FIXED_ID_TRANSPLANT_1 = "4daf5ac597ec4114acacd00758b71998"
+        const val KEY_FIXED_ID_TRANSPLANT_2 = "4c9f93dae8da4e7dbc780f0eeed74b21"
+        const val KEY_FIXED_ID_TRANSPLANT_3 = "6b05ffbadee746e6979a314613df75b2"
+        const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
     }
 
     object FragmentIndex {

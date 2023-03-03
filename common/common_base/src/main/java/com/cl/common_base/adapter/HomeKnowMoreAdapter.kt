@@ -1,5 +1,11 @@
 package com.cl.common_base.adapter
 
+import android.graphics.Color
+import android.util.TypedValue
+import android.view.Gravity
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -13,6 +19,7 @@ import com.cl.common_base.video.SampleCoverVideo
 import com.cl.common_base.widget.FeatureTitleBar
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 /**
  * 富文本
@@ -292,6 +299,9 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         }
         return allSatisfyStr
     }
+
+
+    // 设置
 
     companion object {
         const val TAG = "ListNormalAdapter22"

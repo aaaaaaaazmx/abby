@@ -20,7 +20,7 @@ data class UpPlantInfoReq(
     var cupType: Int? = null, // (0-纸杯，1-塑料杯)
     var list: MutableList<InfoList>? = null,
     var plantId: Int? = null, // 植物ID， 主要用于在设备列表里面修改植物名称
-    var categoryCode: Int? = null, // 植物种类
+    var categoryCode: String? = null, // 植物种类
 ) : BaseBean() {
 
     data class InfoList(

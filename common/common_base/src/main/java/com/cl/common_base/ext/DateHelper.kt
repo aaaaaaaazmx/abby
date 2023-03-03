@@ -230,6 +230,42 @@ object DateHelper {
         return if (sec != 0L) sec.toString() + "秒" else "0秒"
     }
 
+    /**
+     * 获取time2与time1的差值
+     *
+     * @param time1 时间戳
+     * @param time1 时间戳
+     * @param daySuffix 转换天数的后缀String
+     * @param hourSuffix 转换成分钟的后缀String
+     * @return 差值转化后的日期时间字符串
+     */
+    @JvmStatic
+    fun getDistanceTime(time1: Long, time2:Long, daySuffix: String, hourSuffix: String): String {
+        val day: Long
+        val hour: Long
+        val min: Long
+        val sec: Long
+
+        val diff: Long = if (time1 < time2)
+            time2 - time1
+        else
+            time1 - time2
+
+        day = diff / (24 * 60 * 60 * 1000)
+        hour = diff / (60 * 60 * 1000) - day * 24
+        min = diff / (60 * 1000) - day * 24 * 60 - hour * 60
+        sec = diff / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60
+        if (day != 0L) {
+            return "$day $daySuffix $hour $hourSuffix"
+        }
+        /*if (hour != 0L) {
+            return "$hour $hourSuffix $min $minuteSuffix"
+        }*/
+        return "0 $daySuffix 0 $hourSuffix"
+        /*if (min != 0L) return min.toString() + "分钟" + sec + "秒"
+        return if (sec != 0L) sec.toString() + "秒" else "0秒"*/
+    }
+
     fun Long.getDistanceTimeEx(time2: Long): String {
         return getDistanceTime(this, time2)
     }

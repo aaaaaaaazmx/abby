@@ -9,7 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="mainColor">#006241</color>
-    <color name="translucency_mainColor">#CC006241</color>
+    <color name="translucency_mainColor">#006241</color>
+    <color name="translucency_textError">#F72E47</color>
     <color name="transparent">#00000000</color>
     <color name="textError">#F72E47</color>
     <color name="lineBg">#F7F7F7</color>

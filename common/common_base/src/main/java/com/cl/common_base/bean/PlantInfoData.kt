@@ -1,6 +1,7 @@
 package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
+import com.google.gson.annotations.SerializedName
 
 /**
  * 获取植物基本信息
@@ -25,6 +26,8 @@ data class PlantInfoData(
     var list: MutableList<InfoList>? = null,
     var cupType: Int? = null, // 塑料杯、纸杯
     var plantName: String? = null,
+    @SerializedName("timeRemaining")
+    var germinationTime: String? = null, // 剩余发芽时间
 ) : BaseBean() {
 
     data class InfoList(

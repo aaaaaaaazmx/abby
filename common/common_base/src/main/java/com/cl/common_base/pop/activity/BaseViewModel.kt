@@ -152,6 +152,37 @@ class BaseViewModel @Inject constructor(): ViewModel() {
     }
 
     /**
+     * 插入篮子植物
+     */
+    private val _intoPlantBasket = MutableLiveData<Resource<BaseBean>>()
+    val intoPlantBasket: LiveData<Resource<BaseBean>> = _intoPlantBasket
+    fun intoPlantBasket() {
+        viewModelScope.launch {
+            service.intoPlantBasket().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _intoPlantBasket.value = it
+            }
+        }
+    }
+
+
+    /**
      * 检查是否种植过植物
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()

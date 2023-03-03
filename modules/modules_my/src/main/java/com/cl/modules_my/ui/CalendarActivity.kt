@@ -58,6 +58,7 @@ import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
 import com.joketng.timelinestepview.view.TimeLineStepView
+import com.lin.cardlib.CardLayoutManager
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -186,7 +187,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             } else {
                                 // 展示图文
                                 mViewMode.guideInfoStatus.value?.let {
-                                    mViewMode.getGuideInfo(it)
+                                    /*mViewMode.getGuideInfo(it)*/
+                                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                    intent.putExtra(Constants.Global.KEY_TXT_TYPE, it)
+                                    startActivity(intent)
                                 }
                             }
                         }
@@ -442,6 +446,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             })
 
             // guideInfo
+            // 废弃 这个没地方用了。
             getGuideInfo.observe(this@CalendarActivity, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->
@@ -480,10 +485,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         }
                                         CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                             // todo 这个应该是转周期了，调用图文、然后解锁花期
+                                            // todo 这个需要单独处理逻辑。
+                                            // todo 判断当前是的植物属性
                                             // seed to veg
-                                            SeedGuideHelp(this@CalendarActivity).showGuidePop {
+                                           /* SeedGuideHelp(this@CalendarActivity).showGuidePop {
                                                 mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
-                                            }
+                                            }*/
+                                            // 跳转到富文本
+                                            val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                            intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                                            intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                                            intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                                            intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, taskId.toString())
+                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                                            startActivity(intent)
                                         }
                                         else -> {
                                             mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
@@ -681,6 +697,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     // todo 时间转换，并且需要请求接口
                     data?.timeInMillis?.let {
                         binding.tvTodayDate.text = mViewMode.getYmdForEn(time = it)
+                        binding.abMonth.text = mViewMode.getYmdForEn(time = it)
                     }
 
                     // 显示下面的taskList
@@ -1140,16 +1157,51 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         // 完成任务
                                                         mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, null)) }
                                                     }
+                                                    CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
+                                                        // 跳转到富文本
+                                                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                                                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                                                        intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                                                        intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, taskId.toString())
+                                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                                                        startActivity(intent)
+                                                    }
+                                                    CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
+                                                        // todo 这个应该是转周期了，调用图文、然后解锁花期
+                                                        // todo 这个需要单独处理逻辑。
+                                                        // todo 判断当前是的植物属性
+                                                        // seed to veg
+                                                        /* SeedGuideHelp(this@CalendarActivity).showGuidePop {
+                                                             mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                                         }*/
+                                                        // 跳转到富文本
+                                                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                                                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                                                        intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                                                        intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, taskId.toString())
+                                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                                                        startActivity(intent)
+                                                    }
                                                     else -> {
                                                         // todo、如果是学院任务，那么就直接跳转到学院弹窗
-                                                        if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {
+                                                        /*if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {
                                                             ARouter.getInstance().build(RouterPath.Home.PAGE_KNOW)
                                                                 .withString(Constants.Global.KEY_TXT_TYPE, listContent[position].taskType)
                                                                 .withString(Constants.Global.KEY_TASK_ID, listContent[position].taskId)
                                                                 .navigation(this@CalendarActivity, KEY_REQUEST_KNOW_MORE)
                                                             return@BaseThreeTextPop
                                                         }
-                                                        listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }
+                                                        listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }*/
+                                                        // 跳转富文本
+                                                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                                        intent.putExtra(Constants.Global.KEY_TXT_TYPE, listContent[position].taskType)
+                                                        startActivity(intent)
+                                                        // 完成任务
+                                                        mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, null)) }
                                                     }
                                                 }
                                             },

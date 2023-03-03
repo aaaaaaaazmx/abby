@@ -277,7 +277,6 @@ public class SlideToConfirm extends RelativeLayout {
     private void init() {
         mContext = this.getContext();
         mTotalWidth = getMeasuredWidth();
-        addEngagedTextView();
         addSwipedView();
 
         // bg
@@ -295,7 +294,7 @@ public class SlideToConfirm extends RelativeLayout {
             cornerRadii[index++] = r;
         }
         bg.setCornerRadii(cornerRadii);
-
+        addEngagedTextView();
     }
 
     @Override

@@ -3,9 +3,11 @@ package com.cl.modules_home.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.text.method.LinkMovementMethod
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,6 +17,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jpush.android.api.JPushInterface
@@ -29,6 +32,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.easeui.EaseUiHelper
+import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -42,6 +46,7 @@ import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
@@ -51,8 +56,11 @@ import com.cl.modules_home.activity.HomeNewPlantNameActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
+import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.util.XPopupUtils
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.home.sdk.bean.HomeBean
 import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
@@ -104,6 +112,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     // 默认为false
     private val firstLoginAndNoDevice by lazy {
         arguments?.getBoolean(Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE, false)
+    }
+
+    // 导航气泡
+    private val bubblePopHor by lazy {
+        // 居中显示
+        XPopup.Builder(context)
+            .popupPosition(PopupPosition.Top)
+            .dismissOnTouchOutside(false)
+            .isCenterHorizontal(false)
+            .hasShadowBg(true) // 半透明背景
+            //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+            .offsetY(XPopupUtils.dp2px(context, 6f))
     }
 
     override fun initView(view: View) {
@@ -378,6 +398,29 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.pplantNinth.apply {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
+
+            // 选中门锁开关
+            ivDoorLockStatus.setOnClickListener {
+                pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                    .asCustom(
+                        context?.let { it1 ->
+                            OpenDoorPop(
+                                it1,
+                                onSuccessAction = {
+                                    // 开门成功
+                                    ViewUtils.setVisible(ivDoorToast)
+                                    ivDoorToast.postDelayed({
+                                        ViewUtils.setGone(ivDoorToast)
+                                    }, 2000)
+
+                                    ivDoorLockStatus.postDelayed({
+                                        ViewUtils.setGone(ivDoorLockStatus)
+                                    }, 2000)
+                                }
+                            )
+                        }
+                    ).show()
+            }
 
             // 选中日历
             ivCalendar.setOnClickListener {
@@ -1052,7 +1095,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 判断当前的解锁周期是否需要添加新的引导图
                     // seed -> to veg 周期解锁
-                    if (taskType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
+                    /*if (taskType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
                         context?.let { context ->
                             SeedGuideHelp(context).showGuidePop {
                                 mViewMode.popPeriodStatus.value?.let { map ->
@@ -1061,7 +1104,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                         }
                         return@BasePlantUsuallyGuidePop
-                    }
+                    }*/
 
                     // 解锁接口
                     mViewMode.finishTask(FinishTaskReq(taskId, weight))
@@ -1215,6 +1258,34 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
+            // transPlant周期自行处理逻辑
+            transplantPeriodicity.observe(viewLifecycleOwner) {
+                if (it.isNullOrEmpty()) return@observe
+                // 跳转到富文本
+                val intent = Intent(context, BasePopActivity::class.java)
+                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, it)
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                startActivity(intent)
+            }
+
+            childLockStatus.observe(viewLifecycleOwner) {
+                ViewUtils.setVisible(mViewMode.isShowDoorDrawable(), binding.pplantNinth.ivDoorLockStatus)
+            }
+            openDoorStatus.observe(viewLifecycleOwner) {
+                ViewUtils.setVisible(mViewMode.isShowDoorDrawable(), binding.pplantNinth.ivDoorLockStatus)
+                binding.pplantNinth.ivDoorLockStatus.setImageResource(
+                    if (it == "true") {
+                        R.drawable.home_plant_close_door
+                    } else {
+                        R.drawable.home_plant_open_door
+                    }
+                )
+            }
+
             // 设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 success {
@@ -1521,6 +1592,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                             return@observe
                         }
+                        
+                        // 如果不是以下四种那么就会直接调用guideInfo接口。
                         mViewMode.setPopPeriodStatus(
                             guideId = type,
                             taskId = mViewMode.getUnreadMessageList().firstOrNull()?.taskId,
@@ -1542,6 +1615,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 加肥
                             UnReadConstants.Device.KEY_ADD_MANURE -> {
                                 plantFeed.show()
+                            }
+                            UnReadConstants.Device.KEY_CHANGE_CUP_WATER -> {
+                                // 种子发芽之后的换水
+                                // 跳转到富文本
+                                val intent = Intent(context, BasePopActivity::class.java)
+                                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION)
+                                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION)
+                                intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                startActivityLauncherSeeding.launch(intent)
                             }
                         }
                     }
@@ -1805,10 +1889,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 优先跳转选择种子还是继承界面
                     // seed or clone
-                  /*  ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
-                        .withString(Constants.Global.KEY_PLANT_ID, data)
-                        .withBoolean(Constants.Global.KEY_IS_SHOW_CHOOSER_TIPS, true)
-                        .navigation(activity, KEY_FOR_CLONE_RESULT)*/
+                    /*  ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                          .withString(Constants.Global.KEY_PLANT_ID, data)
+                          .withBoolean(Constants.Global.KEY_IS_SHOW_CHOOSER_TIPS, true)
+                          .navigation(activity, KEY_FOR_CLONE_RESULT)*/
                 }
             })
 
@@ -1819,11 +1903,79 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     hideProgressLoading()
                     if (null == data) return@success
 
+                    // 2. 【获取植物基本信息】接口新增字段 [发芽剩余时间]，类型为时间戳，0为倒计时结束，该字段只在发芽阶段返回，点了Next后返回为NULL。
+                    ViewUtils.setVisible(data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong() ?: 0) > 0, binding.pplantNinth.clSeeding)
+                    if (data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong() ?: 0) > 0) {
+                        binding.pplantNinth.tVHtml.text = buildSpannedString {
+                            /*Check for a tap root in 1 day(s) 23 hrs... Lights should be off at this stage*/
+                            bold { append("Check for a tap root in") }
+                            appendLine()
+                            context?.let { ContextCompat.getColor(it, com.cl.common_base.R.color.textRed) }?.let {
+                                color(it) {
+                                    logI("1231231: ${System.currentTimeMillis()}")
+                                    bold { append(DateHelper.getDistanceTime(System.currentTimeMillis(), (data?.germinationTime?.toLong() ?: 0L), "day(s)", "hrs...")) }
+                                }
+                            }
+                            appendLine()
+                            bold { append("Lights should be off at this stage") }
+                        }
+                        binding.pplantNinth.btnSkip.setOnClickListener {
+                            context?.let {
+                                pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                                    .asCustom(
+                                        BaseCenterPop(it, content = "You're about to skip the waiting period. Please confirm that your tap root has already emerged.", isShowCancelButton = true, confirmText = "Confirm",
+                                            onConfirmAction = {
+                                                // 跳准到富文本页面
+                                                val intent = Intent(context, BasePopActivity::class.java)
+                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
+                                                intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                                                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
+                                                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
+                                                startActivityLauncherCheck.launch(intent)
+                                            })
+                                    ).show()
+                            }
+                        }
+                        binding.pplantNinth.btnCheck.setOnClickListener {
+                            context?.let {
+                                pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                                    .asCustom(
+                                        BaseCenterPop(it, titleText = "The seed has a tap root like this?", contentBackGround = R.mipmap.home_seed_count_down, isShowCancelButton = true, confirmText = "Yes",
+                                            onConfirmAction = {
+                                                // 跳准到富文本页面
+                                                val intent = Intent(context, BasePopActivity::class.java)
+                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
+                                                intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                                                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
+                                                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
+                                                startActivityLauncherCheck.launch(intent)
+                                            },
+                                            onCancelAction = {
+                                                // 删除植物弹窗
+                                                pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                                                    .asCustom(RestartSeedPop(it, onDeletePlant = {
+                                                        tuYaUser?.uid?.let { uid -> plantDelete(uid) }
+                                                    })).show()
+                                            })
+                                    ).show()
+                            }
+                        }
+                        // 发芽倒计时
+                        /*pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                            .asCustom(
+                                context?.let {
+                                    GerminationCountdownPop(it, data,
+                                        onSkipAction = {
+                                        }, onCheckAction = {
+                                        })
+                                }
+                            ).show()*/
+                    }
 
-                        
-
-                    // 属性名优先
-                    if (data?.attribute.isNullOrEmpty()) {
+                    // 不用属性名和名字
+                   /* if (data?.attribute.isNullOrEmpty()) {
                         ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
                             .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
                             .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
@@ -1851,7 +2003,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                             }).show()
                         return@success
-                    }
+                    }*/
 
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
                     data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
@@ -2262,6 +2414,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 error { errorMsg, _ ->
                     // errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+            })
+
+            // 删除植物回调
+            plantDelete.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    // 删除植物、需要更新信息。
+                    mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                }
+                error { errorMsg, _ ->
+                    errorMsg?.let { ToastUtil.shortShow(it) }
                 }
             })
 
@@ -2764,6 +2927,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     logI("KEY_DEVICE_REPAIR_SN： $value")
                 }
 
+                // 童锁开关
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_CHILD_LOCK_INSTRUCT -> {
+                    mViewMode.setChildLockStatus(value.toString())
+                }
+
+                // 打开门
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR_LOOK_INSTRUCT -> {
+                    mViewMode.setOpenDoorStatus(value.toString())
+                }
+
+                // 是否关闭门
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
+                    // 主要用户删除当前的door的气泡消息
+                    // true 开门、 fasle 关门
+                    if (value.toString() == "true") return
+                    if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CLOSE_DOOR) {
+                        // 点击按钮就表示已读，已读会自动查看有没有下一条
+                        mViewMode.getRead("${ mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                    }
+                }
+
                 // ----- 开始， 下面的都是需要传给后台的环境信息
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
                     mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE, value.toString())
@@ -2949,6 +3133,46 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 startActivity(Intent(context, HomeNewPlantNameActivity::class.java))
+            }
+        }
+
+    /**
+     * 种子发芽换水跳转到富文本
+     */
+    private val startActivityLauncherSeeding =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                // 刷新植物信息
+                mViewMode.plantInfo()
+            }
+        }
+
+    /**
+     * 点击Check跳转到富文本\然后需要刷新植物信息
+     */
+    private val startActivityLauncherCheck =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                // 刷新植物信息
+                mViewMode.plantInfo()
+                // 显示三种隐藏提示
+                bubblePopHor
+                    .popupPosition(PopupPosition.Bottom)
+                    .atView(binding.pplantNinth.ivCalendar)
+                    .asCustom(context?.let {
+                        BaseGuidePop(it, confirmText = "Click here to access your growing calendar and view upcoming tasks", onConfirmAction = {
+                            bubblePopHor
+                                .popupPosition(PopupPosition.Top)
+                                .atView(binding.pplantNinth.ivSupport)
+                                .asCustom(
+                                    BaseGuidePop(it, confirmText = "You can access 1-on-1 support and chat with our growing experts here", onConfirmAction = {
+                                        // todo 暂时没有朋友圈，所以暂时不弹出这个guide弹窗
+                                    }).setBubbleBgColor(Color.WHITE)
+                                ).show()
+                        }).setBubbleBgColor(Color.WHITE)  //气泡背景
+                    })
+                    .show()
             }
         }
 

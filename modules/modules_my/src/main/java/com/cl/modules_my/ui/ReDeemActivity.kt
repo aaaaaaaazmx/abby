@@ -137,6 +137,15 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
                 mViewModel.checkSubscriberNumber(codes)
             }
         }
+
+        binding.btnPurchase.setOnClickListener {
+            val url = "https://heyabby.com/pages/subscription?selling_plan=3451781334&variant=42758697582806&utm_source=app&utm_medium=extension+lp&utm_campaign=281"
+            // 跳转到下载界面
+            val intent = Intent(this@ReDeemActivity, WebActivity::class.java)
+            intent.putExtra(WebActivity.KEY_WEB_URL, url)
+            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Purchase")
+            startActivity(intent)
+        }
     }
 
     override fun onComplete(code: String?) {

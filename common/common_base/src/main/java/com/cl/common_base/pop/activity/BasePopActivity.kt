@@ -68,6 +68,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
      */
     private val fixedId by lazy { intent.getStringExtra(KEY_FIXED_TASK_ID) }
 
+    /**
+     * 解锁ID
+     */
+    private val unLockId by lazy { intent.getStringExtra(KEY_UNLOCK_TASK_ID) }
+
 
     override fun initView() {
         // 添加状态蓝高度
@@ -120,33 +125,106 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         if (isJumpPage) {
             fixedId?.let {
                 // 这是个动态界面，我也不知道为什么不做成动态按钮
-                if (it == Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED) {
-                    // 如果是准备种子、那么直接跳转到种子界面
-                    val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
-                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
-                    intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
-                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                    intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
-                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock Germination")
-                    startActivity(intent)
-                    return
+                when (it) {
+                    Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED -> {
+                        // 如果是准备种子、那么直接跳转到种子界面
+                        val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
+                        intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock Germination")
+                        startActivity(intent)
+                    }
+
+                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED -> {
+                        // 这是是直接调用接口
+                        mViewModel.intoPlantBasket()
+                    }
+
+                    // 种植前检查
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK,
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK -> {
+                        val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
+                        intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock Germination")
+                        startActivity(intent)
+                    }
+
+                    // 解锁Veg这个周期\或者重新开始
+                    Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW -> {
+                        if (unLockId.isNullOrEmpty()) {
+                            // startRunning 接口
+                            mViewModel.startRunning(botanyId = "", goon = false)
+                        } else {
+                            // 解锁接口
+                            mViewModel.finishTask(FinishTaskReq(taskId = unLockId))
+                        }
+                    }
+
+                    else -> {
+                        // 跳转下一页
+                        val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, fixedId)
+                        startActivity(intent)
+                    }
                 }
-                // 跳转下一页
-                val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
-                intent.putExtra(Constants.Global.KEY_TXT_ID, fixedId)
-                startActivity(intent)
                 return
             }
         }
 
         if (isUnlockTask) {
             fixedId?.let {
-                // 如果是预览界面、那么直接开始种植、然后关闭界面
-                if (it == Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW) {
-                    mViewModel.startRunning(botanyId = "", goon = false)
-                    return
+                when (it) {
+                    // 如果是预览界面、那么直接开始种植、然后关闭界面
+                    Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW -> {
+                        mViewModel.startRunning(botanyId = "", goon = false)
+                    }
+
+                    // 种子发芽
+                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION -> {
+                        acFinish()
+                    }
+
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1 -> {
+                        val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                        intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2)
+                        intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        startActivity(intent)
+                    }
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2 -> {
+                        val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                        intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3)
+                        intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        startActivity(intent)
+                    }
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
+                        val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                        intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(KEY_IS_SHOW_BUTTON, true)
+                        intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
+                        intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Unlock Veg")
+                        startActivity(intent)
+                    }
+
+                    else -> {
+                        mViewModel.finishTask(FinishTaskReq(taskId = it))
+                    }
                 }
-                mViewModel.finishTask(FinishTaskReq(taskId = it))
                 return
             }
         }
@@ -195,6 +273,18 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 插入篮子植物接口
+            intoPlantBasket.observe(this@BasePopActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    acFinish()
+                }
+            })
             richText.observe(this@BasePopActivity, resourceObserver {
                 error { errorMsg, _ ->
                     ToastUtil.shortShow(errorMsg)
@@ -331,7 +421,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt)
+            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
@@ -400,6 +490,12 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
                     // 跳转到HTML
                     R.id.tv_page_txt -> {
+                        // 跳转到HTML
+                        val intent = Intent(context, WebActivity::class.java)
+                        intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
+                        context.startActivity(intent)
+                    }
+                    R.id.tv_txt -> {
                         // 跳转到HTML
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
@@ -486,8 +582,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         const val KEY_INTENT_JUMP_PAGE = "key_intent_jump_page"
         const val KEY_INTENT_UNLOCK_TASK = "key_intent_unlock_task"
 
-        // 用于固定的跳转和解锁的ID
+        // 用于固定的跳转
         const val KEY_FIXED_TASK_ID = "key_fixed_task_id"
+
+        // 解锁ID
+        const val KEY_UNLOCK_TASK_ID = "key_unlock_id"
 
     }
 }

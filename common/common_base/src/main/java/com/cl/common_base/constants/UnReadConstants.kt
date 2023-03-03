@@ -121,6 +121,8 @@ object UnReadConstants {
         const val KEY_USER_DEFINED = "user_defined"
         const val KEY_CHILD_LOCK = "child_lock"
         const val KEY_ACTIVITY_IN_TREND = "activity_in_trend"
+
+        const val KEY_CLOSE_DOOR = "close_door"
     }
 
     /**

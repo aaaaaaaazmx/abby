@@ -62,6 +62,10 @@ data class RichTextData(
         val icon: String? = null, // 按钮图标
         val autoplay: Boolean? = null, // 自动播放
         var isCheck: Boolean? = false, // 是否选中
+        var color: String? = null,  // 字体颜色
+        var size: String? = null,   // 字体大小
+        var left: String? = null,   // 左边距
+        var bold: Boolean? = false, // 字体是否加粗
     ) : BaseBean()
 
 

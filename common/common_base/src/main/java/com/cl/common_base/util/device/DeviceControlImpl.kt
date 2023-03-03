@@ -72,6 +72,15 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         )
     }
 
+    override fun childLock(startOrStop: Boolean) {
+        map[TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
     /**
      * 夜间模式
      */
