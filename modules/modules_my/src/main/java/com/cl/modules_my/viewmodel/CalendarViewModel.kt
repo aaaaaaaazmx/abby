@@ -403,6 +403,31 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         return ""
     }
 
+    /**
+     * 获取当前年月-- 后面跟着英文的th
+     * 如 12th 2022
+     */
+    fun getYmForEn(dateTime: Date? = null, time: Long? = null): String {
+        dateTime?.let {
+            val mm = CalendarUtil.getFormat("MMM").format(dateTime.time)
+            val dd = CalendarUtil.getFormat("dd").format(dateTime.time) + CalendarUtil.getDaySuffix(
+                dateTime
+            )
+            val yyyy = CalendarUtil.getFormat("yyyy").format(dateTime.time)
+            return "$mm $yyyy"
+        }
+
+        time?.let {
+            val mm = CalendarUtil.getFormat("MMM").format(time)
+            val date = Date()
+            date.time = time
+            val dd = CalendarUtil.getFormat("dd").format(time) + CalendarUtil.getDaySuffix(date)
+            val yyyy = CalendarUtil.getFormat("yyyy").format(time)
+            return "$mm $yyyy"
+        }
+        return ""
+    }
+
 
     // 本地日历数据
     private val _localCalendar =

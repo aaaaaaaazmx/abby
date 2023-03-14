@@ -30,7 +30,7 @@ class BaseViewModel @Inject constructor(): ViewModel() {
     /**
      * 涂鸦信息
      */
-    private val tuYaUser by lazy {
+    val tuYaUser by lazy {
         val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
         GSON.parseObject(bean, User::class.java)
     }

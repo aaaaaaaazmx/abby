@@ -9,6 +9,7 @@ import com.google.gson.annotations.SerializedName
  * @author 李志军 2022-08-08 16:23
  */
 data class PlantInfoData(
+    var categoryCode: String? = null, // 植物标记码
     var attribute: String? = null, // 种植属性(Photo、Auto)
     var strainName: String? = null, // 种植名字
     var plantWay: String? = null, // 种植方式

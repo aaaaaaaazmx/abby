@@ -32,7 +32,7 @@ data class UserinfoBean(
         val deviceId: String? = null,
         val abbyId: String? = null,
         val avatarPicture: String? = null,
-        val childLock: String? = null,
+        val childLock: Int? = null,
         val email: String? = null,
         val newMessage: Boolean? = false,
         val nickName: String? = null,

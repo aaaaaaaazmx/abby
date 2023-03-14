@@ -424,14 +424,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 选中日历
             ivCalendar.setOnClickListener {
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                    .withString(Constants.Global.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
+                    .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                 // 如果是订阅用户
-                if (mViewMode.userDetail.value?.data?.isVip == 1) {
+                /*if (mViewMode.userDetail.value?.data?.isVip == 1) {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
                         .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                 } else {
                     // 不是订阅用户，直接弹出图文
                     mViewMode.getGuideInfo("unearned_subscription_explain")
-                }
+                }*/
             }
 
             // 选中学院
@@ -470,30 +473,30 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 左滑动
             imageLeftSwip.setOnClickListener {
                 val listDeviceData = mViewMode.listDevice.value?.data
-                listDeviceData?.filter { it.isSwitch == 1 }?.apply {
-                    if (this.isEmpty()) return@apply
-                    val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
-                    val nextIndex = if (index - 1 < 0) this.size - 1 else index - 1
-                    val deviceBean = this[nextIndex]
+                listDeviceData?.indexOfFirst { it.currentDevice == 1 }?.apply {
+                    /* if (this.isEmpty()) return@apply
+                     val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }*/
+                    val nextIndex = if (this - 1 < 0) listDeviceData.size - 1 else this - 1
+                    val deviceBean = listDeviceData[nextIndex]
                     mViewMode.setLeftSwaps(true)
                     // 切换设备
-                    deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
                     deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
+                    deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
                 }
             }
 
             // 右滑动
             imageRightSwip.setOnClickListener {
                 val listDeviceData = mViewMode.listDevice.value?.data
-                listDeviceData?.filter { it.isSwitch == 1 }?.apply {
-                    if (this.isEmpty()) return@apply
-                    val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }
-                    val nextIndex = if (index + 1 >= this.size) 0 else index + 1
-                    val deviceBean = this[nextIndex]
+                listDeviceData?.indexOfFirst { it.currentDevice == 1 }?.apply {
+                    /* if (this.isEmpty()) return@apply
+                     val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }*/
+                    val nextIndex = if (this + 1 >= listDeviceData.size) 0 else this + 1
+                    val deviceBean = listDeviceData[nextIndex]
                     mViewMode.setLeftSwaps(false)
                     // 切换设备
-                    deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
                     deviceBean.deviceId?.let { it1 -> mViewMode.setDeviceId(it1) }
+                    deviceBean.deviceId?.let { it1 -> mViewMode.switchDevice(it1) }
                 }
             }
 
@@ -1166,16 +1169,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                     return@HomePeriodPop
                 }*/
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                    .withString(Constants.Global.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
+                    .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                 // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
-                if (mViewMode.userDetail.value?.data?.isVip == 1) {
-                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
-                        .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
-                    return@HomePeriodPop
-                }
-                // todo 此处是用于周期弹窗解锁的
-                mViewMode.setPopPeriodStatus(
-                    guideId = guideType, taskId = taskId, taskTime = taskTime
-                )
+                /* if (mViewMode.userDetail.value?.data?.isVip == 1) {
+                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                         .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
+                     return@HomePeriodPop
+                 }
+                 // todo 此处是用于周期弹窗解锁的
+                 mViewMode.setPopPeriodStatus(
+                     guideId = guideType, taskId = taskId, taskTime = taskTime
+                 )*/
             })
         }
     }
@@ -1268,11 +1274,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                 intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
                 intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, it)
+                intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                 startActivity(intent)
             }
 
             childLockStatus.observe(viewLifecycleOwner) {
+                logI("123123: $it,,,, ${mViewMode.tuyaDeviceBean()?.devId}")
                 ViewUtils.setVisible(mViewMode.isShowDoorDrawable(), binding.pplantNinth.ivDoorLockStatus)
             }
             openDoorStatus.observe(viewLifecycleOwner) {
@@ -1333,7 +1342,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
                                     if (null == this) {
                                         val aa = mViewMode.tuyaDeviceBean
-                                        aa?.devId = mViewMode.deviceId.value
+                                        aa()?.devId = mViewMode.deviceId.value
                                         GSON.toJson(aa)?.let {
                                             Prefs.putStringAsync(
                                                 Constants.Tuya.KEY_DEVICE_DATA,
@@ -1348,6 +1357,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             it
                                         )
                                     }
+
+                                    // 重新注册服务
+                                    // 开启服务
+                                    val intent = Intent(context, TuYaDeviceUpdateReceiver::class.java)
+                                    context?.startService(intent)
+                                    // 切换之后需要重新刷新所有的东西
+                                    mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
                                 }
                             }
                         }
@@ -1356,14 +1372,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         }
                     })
-
-                    // 重新注册服务
-                    // 开启服务
-                    val intent =
-                        Intent(context, TuYaDeviceUpdateReceiver::class.java)
-                    context?.startService(intent)
-                    // 切换之后需要重新刷新所有的东西
-                    mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
                 }
             })
             // 刷新设备列表
@@ -1587,12 +1595,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 周期的解锁
                         // 气泡解锁
                         // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
-                        if (mViewMode.userDetail.value?.data?.isVip == 1) {
+                        /*if (mViewMode.userDetail.value?.data?.isVip == 1) {
                             ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
                                 .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                             return@observe
-                        }
-                        
+                        }*/
+
                         // 如果不是以下四种那么就会直接调用guideInfo接口。
                         mViewMode.setPopPeriodStatus(
                             guideId = type,
@@ -1624,8 +1632,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION)
                                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                                intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
+                                intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, mViewMode.getUnreadMessageList().firstOrNull()?.taskId)
                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
                                 startActivityLauncherSeeding.launch(intent)
+                            }
+                            UnReadConstants.Device.KEY_CLOSE_DOOR -> {
+                                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                            }
+                            else -> {
+                                // 直接跳转到日历
+                                ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                                    .withString(Constants.Global.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
+                                    .navigation(activity, HomeFragment.KEY_FOR_CALENDAR_REFRSH)
                             }
                         }
                     }
@@ -1881,11 +1900,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     Prefs.putStringAsync(Constants.Global.KEY_PLANT_ID, data.toString())
 
                     // 跳转富文本
-                    val intent = Intent(context, BasePopActivity::class.java)
+                    val intent = Intent(context, KnowMoreActivity::class.java)
                     intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS)
+                    intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS)
+                    intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
-                    startActivityLauncher.launch(intent)
+                    context?.startActivity(intent)
 
                     // 优先跳转选择种子还是继承界面
                     // seed or clone
@@ -1906,6 +1927,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 2. 【获取植物基本信息】接口新增字段 [发芽剩余时间]，类型为时间戳，0为倒计时结束，该字段只在发芽阶段返回，点了Next后返回为NULL。
                     ViewUtils.setVisible(data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong() ?: 0) > 0, binding.pplantNinth.clSeeding)
                     if (data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong() ?: 0) > 0) {
+                        // 后台返回的时间
+                        val backTime = data?.germinationTime?.toLong() ?: 0L
                         binding.pplantNinth.tVHtml.text = buildSpannedString {
                             /*Check for a tap root in 1 day(s) 23 hrs... Lights should be off at this stage*/
                             bold { append("Check for a tap root in") }
@@ -1913,12 +1936,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             context?.let { ContextCompat.getColor(it, com.cl.common_base.R.color.textRed) }?.let {
                                 color(it) {
                                     logI("1231231: ${System.currentTimeMillis()}")
-                                    bold { append(DateHelper.getDistanceTime(System.currentTimeMillis(), (data?.germinationTime?.toLong() ?: 0L), "day(s)", "hrs...")) }
+                                    bold { append(DateHelper.getDistanceTime(System.currentTimeMillis(), backTime, "day", "hr", "min", "minute")) }
                                 }
                             }
                             appendLine()
                             bold { append("Lights should be off at this stage") }
                         }
+
+                        // 按钮的背景颜色
+                        if (DateHelper.after(System.currentTimeMillis(), backTime)) {
+                            binding.pplantNinth.btnCheck.setBackgroundResource(com.cl.common_base.R.drawable.background_button_main_color_r100)
+                        } else {
+                            binding.pplantNinth.btnCheck.setBackgroundResource(com.cl.common_base.R.drawable.background_button_gray_r100)
+                        }
+
                         binding.pplantNinth.btnSkip.setOnClickListener {
                             context?.let {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
@@ -1926,7 +1957,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         BaseCenterPop(it, content = "You're about to skip the waiting period. Please confirm that your tap root has already emerged.", isShowCancelButton = true, confirmText = "Confirm",
                                             onConfirmAction = {
                                                 // 跳准到富文本页面
-                                                val intent = Intent(context, BasePopActivity::class.java)
+                                                val intent = Intent(context, KnowMoreActivity::class.java)
                                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
                                                 intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
@@ -1938,13 +1969,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                         }
                         binding.pplantNinth.btnCheck.setOnClickListener {
+                            // 需要判断时间超过48小时了没。
+                            if (DateHelper.before(System.currentTimeMillis(), backTime)) {
+                                ToastUtil.shortShow("it is not time yet")
+                                return@setOnClickListener
+                            }
                             context?.let {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
                                     .asCustom(
-                                        BaseCenterPop(it, titleText = "The seed has a tap root like this?", contentBackGround = R.mipmap.home_seed_count_down, isShowCancelButton = true, confirmText = "Yes",
+                                        BaseCenterPop(it, titleText = "The seed has a tap root like this?", contentBackGround = R.mipmap.home_seed_count_down, isShowCancelButton = true, cancelText = "No", confirmText = "Yes",
                                             onConfirmAction = {
                                                 // 跳准到富文本页面
-                                                val intent = Intent(context, BasePopActivity::class.java)
+                                                val intent = Intent(context, KnowMoreActivity::class.java)
                                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
                                                 intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
@@ -1974,36 +2010,62 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ).show()*/
                     }
 
-                    // 不用属性名和名字
-                   /* if (data?.attribute.isNullOrEmpty()) {
-                        ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
-                            .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
-                            .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
-                            .navigation(activity, KEY_FOR_USER_NAME)
-                        return@success
+                    val isShowGuidePop = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_GUIDE_POP, false)
+                    if (!isShowGuidePop) {
+                        // 只展示一次
+                        Prefs.putBoolean(Constants.Global.KEY_IS_SHOW_GUIDE_POP, true)
+                        // 显示三种隐藏提示
+                        bubblePopHor
+                            .popupPosition(PopupPosition.Bottom)
+                            .atView(binding.pplantNinth.ivCalendar)
+                            .asCustom(context?.let {
+                                BaseGuidePop(it, confirmText = "Click here to access your growing calendar and view upcoming tasks", onConfirmAction = {
+                                    // 如果不是会员那么不需要展示后面2个
+                                    if (mViewMode.userDetail.value?.data?.isVip != 1) return@BaseGuidePop
+                                    bubblePopHor
+                                        .popupPosition(PopupPosition.Top)
+                                        .atView(binding.pplantNinth.ivSupport)
+                                        .asCustom(
+                                            BaseGuidePop(it, confirmText = "You can access 1-on-1 support and chat with our growing experts here", onConfirmAction = {
+                                                // todo 暂时没有朋友圈，所以暂时不弹出这个guide弹窗
+                                            }).setBubbleBgColor(Color.WHITE)
+                                        ).show()
+                                }).setBubbleBgColor(Color.WHITE)  //气泡背景
+                            })
+                            .show()
                     }
 
-                    // 用来判断当前用户是否拥有名字 or 属性名，如果没有拥有名字，那么直接需要选择
-                    if (data?.strainName.isNullOrEmpty()) {
-                        pop.isDestroyOnDismiss(false).isDestroyOnDismiss(false)
-                            .asCustom(context?.let {
-                                // 显示居中弹窗文案
-                                BaseCenterPop(
-                                    it,
-                                    onConfirmAction = {
-                                        ARouter.getInstance()
-                                            .build(RouterPath.My.PAGE_MT_CLONE_SEED).withString(
-                                                Constants.Global.KEY_PLANT_ID, data?.id.toString()
-                                            ).withBoolean(
-                                                Constants.Global.KEY_USER_NO_STRAIN_NAME, true
-                                            ).navigation(activity, KEY_FOR_USER_NAME)
-                                    },
-                                    content = getString(com.cl.common_base.R.string.base_no_starin_name_desc),
-                                    isShowCancelButton = false
-                                )
-                            }).show()
-                        return@success
-                    }*/
+
+                    // 不用属性名和名字
+                    /* if (data?.attribute.isNullOrEmpty()) {
+                         ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
+                             .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
+                             .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
+                             .navigation(activity, KEY_FOR_USER_NAME)
+                         return@success
+                     }
+
+                     // 用来判断当前用户是否拥有名字 or 属性名，如果没有拥有名字，那么直接需要选择
+                     if (data?.strainName.isNullOrEmpty()) {
+                         pop.isDestroyOnDismiss(false).isDestroyOnDismiss(false)
+                             .asCustom(context?.let {
+                                 // 显示居中弹窗文案
+                                 BaseCenterPop(
+                                     it,
+                                     onConfirmAction = {
+                                         ARouter.getInstance()
+                                             .build(RouterPath.My.PAGE_MT_CLONE_SEED).withString(
+                                                 Constants.Global.KEY_PLANT_ID, data?.id.toString()
+                                             ).withBoolean(
+                                                 Constants.Global.KEY_USER_NO_STRAIN_NAME, true
+                                             ).navigation(activity, KEY_FOR_USER_NAME)
+                                     },
+                                     content = getString(com.cl.common_base.R.string.base_no_starin_name_desc),
+                                     isShowCancelButton = false
+                                 )
+                             }).show()
+                         return@success
+                     }*/
 
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
                     data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
@@ -2737,7 +2799,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 按钮
         binding.pplantNinth.tvBtnDesc.text =
-            if (UnReadConstants.plantStatus.contains(unRead?.type)) {
+            if (UnReadConstants.Device.KEY_CHANGE_CUP_WATER == unRead?.type) {
+                "Go"
+            } else if (UnReadConstants.plantStatus.contains(unRead?.type)) {
                 "Unlock"
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_TREND) {
                 "View"
@@ -2748,7 +2812,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             } else if (unRead?.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
                 "Continue"
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_GUIDE) {
-                "Start"
+                "Done"
             } else {
                 ""
             }.toString()
@@ -2944,7 +3008,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     if (value.toString() == "true") return
                     if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CLOSE_DOOR) {
                         // 点击按钮就表示已读，已读会自动查看有没有下一条
-                        mViewMode.getRead("${ mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
                     }
                 }
 
@@ -3143,6 +3207,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                mViewMode.finishTask(FinishTaskReq(taskId = "${mViewMode.getUnreadMessageList().firstOrNull()?.taskId}"))
                 // 刷新植物信息
                 mViewMode.plantInfo()
             }
@@ -3156,23 +3221,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 // 刷新植物信息
                 mViewMode.plantInfo()
-                // 显示三种隐藏提示
-                bubblePopHor
-                    .popupPosition(PopupPosition.Bottom)
-                    .atView(binding.pplantNinth.ivCalendar)
-                    .asCustom(context?.let {
-                        BaseGuidePop(it, confirmText = "Click here to access your growing calendar and view upcoming tasks", onConfirmAction = {
-                            bubblePopHor
-                                .popupPosition(PopupPosition.Top)
-                                .atView(binding.pplantNinth.ivSupport)
-                                .asCustom(
-                                    BaseGuidePop(it, confirmText = "You can access 1-on-1 support and chat with our growing experts here", onConfirmAction = {
-                                        // todo 暂时没有朋友圈，所以暂时不弹出这个guide弹窗
-                                    }).setBubbleBgColor(Color.WHITE)
-                                ).show()
-                        }).setBubbleBgColor(Color.WHITE)  //气泡背景
-                    })
-                    .show()
             }
         }
 

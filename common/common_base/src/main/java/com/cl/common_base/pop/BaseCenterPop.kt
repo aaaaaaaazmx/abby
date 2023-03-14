@@ -73,11 +73,11 @@ class BaseCenterPop(
             // 是否显示中间图拼啊
             ViewUtils.setVisible(contentBackGround != null, ivBackground)
             // 是否显示标题
-            titleText?.isNotEmpty()?.let { ViewUtils.setVisible(it, tvTitle) }
+            ViewUtils.setVisible(titleText?.isNotEmpty() == true, tvTitle)
             // 是否显示和隐藏按钮
             ViewUtils.setVisible(isShowCancelButton, tvCancel, xpopupDivider2)
             // 隐藏中间内容
-            content?.isNotEmpty()?.let { ViewUtils.setVisible(it, tvContent) }
+            ViewUtils.setVisible(content?.isNotEmpty() == true, tvContent)
 
             tvCancel.setOnClickListener {
                 dismiss()

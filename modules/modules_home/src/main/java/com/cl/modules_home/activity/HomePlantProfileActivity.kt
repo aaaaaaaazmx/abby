@@ -28,6 +28,7 @@ import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.SoftInputUtils
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.ui.KnowMoreActivity
 import com.cl.modules_home.viewmodel.HomePlantProfileViewModel
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,10 +75,10 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
                 100001
             }
 
-            if (binding.etEmail.text.toString().isEmpty()) {
+            /*if (binding.etEmail.text.toString().isEmpty()) {
                 ToastUtil.shortShow("Please enter a strain name")
                 return@setOnClickListener
-            }
+            }*/
 
             kotlin.runCatching {
                 mViewModel.updatePlantInfo(
@@ -175,6 +176,10 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
                 }
             }
         }
+
+        binding.ivClearCode.setOnClickListener {
+            binding.etEmail.setText("")
+        }
     }
 
     override fun observe() {
@@ -191,23 +196,26 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
                     hideProgressLoading()
 
                     // 看是否是选了clone、那么直接进入移植
-                    if (category == 100002) {
+                    if (category == 100003 || category == 100004) {
                         val intent = Intent(this@HomePlantProfileActivity, BasePopActivity::class.java)
                         intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK)
                         intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                        intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, "$category")
+                        intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                         startActivity(intent)
                         return@success
                     }
 
                     // 跳转富文本界面
-                    val intent = Intent(this@HomePlantProfileActivity, BasePopActivity::class.java)
+                    val intent = Intent(this@HomePlantProfileActivity, KnowMoreActivity::class.java)
                     intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED)
                     intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED)
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                     intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Done")
                     startActivity(intent)
                 }
             })
@@ -238,28 +246,27 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
                     category = if (binding.checkSeed.isChecked) {
                         100001
                     } else if (binding.checkClone.isChecked) {
-                        100002
-                    } else if (binding.autoCheckSeed.isChecked) {
                         100003
+                    } else if (binding.autoCheckSeed.isChecked) {
+                        100002
                     } else if (binding.autoCheckClone.isChecked) {
                         100004
                     } else {
                         100001
                     }
 
-                    if (binding.etEmail.text.toString().isEmpty()) {
-                        ToastUtil.shortShow("Please enter a strain name")
-                    } else {
-                        kotlin.runCatching {
-                            mViewModel.updatePlantInfo(
-                                UpPlantInfoReq(
-                                    plantId = plantId.toInt(),
-                                    plantName = plantName ?: "",
-                                    strainName = binding.etEmail.text.toString(),
-                                    categoryCode = "$category"
-                                )
+                    /* if (binding.etEmail.text.toString().isEmpty()) {
+                         ToastUtil.shortShow("Please enter a strain name")
+                     } else {*/
+                    kotlin.runCatching {
+                        mViewModel.updatePlantInfo(
+                            UpPlantInfoReq(
+                                plantId = plantId.toInt(),
+                                plantName = plantName ?: "",
+                                strainName = binding.etEmail.text.toString(),
+                                categoryCode = "$category"
                             )
-                        }
+                        )
                     }
                 }
             }
@@ -289,7 +296,7 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
                 binding.rvSearch.setVisible(!s.isNullOrEmpty())
                 if (!s.isNullOrEmpty()) searchAdapter.setList(searching)
                 // 点击按钮状态监听
-                binding.btnSuccess.isEnabled = !s.isNullOrEmpty()
+                // binding.btnSuccess.isEnabled = !s.isNullOrEmpty()
                 trySend(text)
             }
         }
@@ -308,9 +315,9 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
     // 更新界面
     private fun updateUi(it: List<String>) {
         searchAdapter.setList(it)
-        binding?.neSc?.post {
+        binding.neSc.post {
             //滚到底部
-            binding?.neSc?.fullScroll(View.FOCUS_DOWN)
+            binding.neSc.fullScroll(View.FOCUS_DOWN)
         }
     }
 

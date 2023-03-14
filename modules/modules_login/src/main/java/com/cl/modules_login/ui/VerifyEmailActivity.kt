@@ -148,7 +148,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         startActivity(intent)
                     }
                     is Resource.Loading -> {
-                        showProgressLoading()
+                        /*showProgressLoading()*/
                     }
                 }
             }

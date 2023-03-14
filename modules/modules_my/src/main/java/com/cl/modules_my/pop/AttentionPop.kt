@@ -2,6 +2,7 @@ package com.cl.modules_my.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.slidetoconfirmlib.SlideToConfirm
 import com.cl.common_base.widget.toast.ToastUtil
@@ -31,6 +32,14 @@ class AttentionPop(
                 talkButtonAction?.invoke()
                 dismiss()
             }
+
+            ViewUtils.setVisible(isShowTalkButton == true, btnSuccess)
+            tvTitleDesc.text = if (isShowTalkButton == true) "You are about to replant. The current session will be lost, and this operation is irreversible. Our growing expert may help you save the plant." else "You are about to replant. The current session will be lost, and this operation is irreversible."
+
+            clCheck.setOnClickListener {
+                curingBox.isChecked = !curingBox.isChecked
+            }
+
 
             slideToConfirm.slideListener = object : ISlideListener {
                 override fun onSlideStart() {

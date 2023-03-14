@@ -31,8 +31,13 @@ import com.cl.common_base.easeui.ui.videoUiHelp
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
+import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
+import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.activity.HomeNewPlantNameActivity
 import com.cl.modules_home.viewmodel.KnowMoreViewModel
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.util.SmartGlideImageLoader
@@ -47,6 +52,40 @@ import javax.inject.Inject
 @Route(path = RouterPath.Home.PAGE_KNOW)
 @AndroidEntryPoint
 class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
+    /**
+     * 是否展示固定按钮、师傅哦展示滑动解锁按钮、滑动解锁按钮文案
+     */
+    private val isShowButton by lazy { intent.getBooleanExtra(KEY_IS_SHOW_BUTTON, false) }
+    private val showButtonText by lazy { intent.getStringExtra(KEY_IS_SHOW_BUTTON_TEXT) }
+    private val isShowUnlockButton by lazy { intent.getBooleanExtra(KEY_IS_SHOW_UNLOCK_BUTTON, false) }
+    private val unLockButtonEngage by lazy { intent.getStringExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE) }
+
+    /**
+     * 固定按钮的意图、滑动解锁的意图
+     */
+    private val isJumpPage by lazy { intent.getBooleanExtra(KEY_INTENT_JUMP_PAGE, false) }
+    private val isUnlockTask by lazy { intent.getBooleanExtra(KEY_INTENT_UNLOCK_TASK, false) }
+
+    /**
+     * 用于固定解锁的或者跳转的id
+     */
+    private val fixedId by lazy { intent.getStringExtra(KEY_FIXED_TASK_ID) }
+
+    /**
+     * 解锁ID
+     */
+    private val unLockId by lazy { intent.getStringExtra(KEY_UNLOCK_TASK_ID) }
+
+    /**
+     * 文字颜色
+     */
+    private val titleColor by lazy { intent.getStringExtra(BasePopActivity.KEY_TITLE_COLOR) }
+
+    /**
+     * veg、auto展示ID
+     */
+    private val categoryCode by lazy { intent.getStringExtra(BasePopActivity.KEY_CATEGORYCODE) }
+
     @Inject
     lateinit var mViewMode: KnowMoreViewModel
 
@@ -72,7 +111,6 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun initView() {
         binding.ivBack.setOnClickListener {
-            setResult(Activity.RESULT_OK)
             finish()
         }
 
@@ -86,15 +124,163 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 mViewMode.finishTask(FinishTaskReq(taskId = taskId))
             }
         }
+
+        // 是否展示固定按钮、是否展示滑动解锁
+        ViewUtils.setVisible(isShowButton, binding.btnNext)
+        ViewUtils.setVisible(isShowUnlockButton, binding.slideToConfirm)
+        binding.btnNext.text = showButtonText ?: "Next"
+        binding.btnNext.setOnClickListener {
+            fixedProcessingLogic()
+        }
+        binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")
+        binding.slideToConfirm.slideListener = object : ISlideListener {
+            override fun onSlideStart() {
+            }
+
+            override fun onSlideMove(percent: Float) {
+            }
+
+            override fun onSlideCancel() {
+            }
+
+            override fun onSlideDone() {
+                binding.slideToConfirm.postDelayed(Runnable { binding.slideToConfirm.reset() }, 500)
+                // 解锁完毕、调用解锁功能
+                fixedProcessingLogic()
+            }
+
+        }
     }
 
     /**
-     * 初始化Video
+     * 固定跳转逻辑判断
      */
-    private fun initVideo(url: String, autoPlay: Boolean) {
-        binding.videoItemPlayer.apply {
-            videoUiHelp(url, -1)
-            if (autoPlay) startPlayLogic()
+    private fun fixedProcessingLogic() {
+        if (!isHaveCheckBoxViewType()) return
+        if (isJumpPage) {
+            fixedId?.let {
+                // 这是个动态界面，我也不知道为什么不做成动态按钮
+                when (it) {
+                    Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS -> {
+                        startActivity(Intent(this@KnowMoreActivity, HomeNewPlantNameActivity::class.java))
+                    }
+
+                    Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED -> {
+                        // 如果是准备种子、那么直接跳转到种子界面
+                        val intent = Intent(this@KnowMoreActivity, KnowMoreActivity::class.java)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
+                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock Germination")
+                        startActivity(intent)
+                    }
+
+                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED -> {
+                        // 这是是直接调用接口
+                        mViewMode.intoPlantBasket()
+                    }
+
+                    // 种植前检查
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK,
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK -> {
+                        val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
+                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, categoryCode)
+                        intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        startActivity(intent)
+                    }
+
+                    // 解锁Veg\auto这个周期\或者重新开始
+                    Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW,
+                    Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW -> {
+                        if (unLockId.isNullOrEmpty()) {
+                            // startRunning 接口
+                            mViewMode.startRunning(botanyId = "", goon = false)
+                        } else {
+                            // 解锁接口
+                            mViewMode.finishTask(FinishTaskReq(taskId = unLockId))
+                            mViewMode.tuYaUser?.uid?.let { it1 -> mViewMode.checkPlant(it1) }
+                        }
+                    }
+
+
+                    else -> {
+                        // 跳转下一页
+                        val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, fixedId)
+                        startActivity(intent)
+                    }
+                }
+                return
+            }
+        }
+
+        if (isUnlockTask) {
+            fixedId?.let {
+                when (it) {
+                    // 如果是预览界面、那么直接开始种植、然后关闭界面
+                    Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW -> {
+                        mViewMode.startRunning(botanyId = "", goon = false)
+                    }
+
+                    // 种子发芽
+                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION -> {
+                        acFinish()
+                    }
+
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1 -> {
+                        val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
+                        intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2)
+                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, categoryCode)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        startActivity(intent)
+                    }
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2 -> {
+                        val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
+                        intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3)
+                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                        intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, categoryCode)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Done")
+                        startActivity(intent)
+                    }
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
+                        val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
+                        intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                        intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                        intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, if (categoryCode == "100002" || categoryCode == "100004") "Unlock Autoflowering" else "Unlock Veg")
+                        startActivity(intent)
+                    }
+
+                    else -> {
+                        mViewMode.finishTask(FinishTaskReq(taskId = it))
+                    }
+                }
+                return
+            }
+        }
+
+        if (!isJumpPage && !isUnlockTask) {
+            // 如果都不是、那么直接关闭界面
+            acFinish()
         }
     }
 
@@ -109,8 +295,43 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         }
     }
 
+    /**
+     * 初始化Video
+     */
+    private fun initVideo(url: String, autoPlay: Boolean) {
+        binding.videoItemPlayer.apply {
+            videoUiHelp(url, -1)
+            if (autoPlay) startPlayLogic()
+        }
+    }
+
     override fun observe() {
         mViewMode.apply {
+            // 植物检查
+            checkPlant.observe(this@KnowMoreActivity, resourceObserver {
+                error { errorMsg, _ ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+
+                success {
+                    hideProgressLoading()
+                    data?.let { PlantCheckHelp().plantStatusCheck(this@KnowMoreActivity, it, true) }
+                }
+            })
+
+            // 插入篮子植物接口
+            intoPlantBasket.observe(this@KnowMoreActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    acFinish()
+                }
+            })
             // 完成任务
             finishTask.observe(this@KnowMoreActivity, resourceObserver {
                 loading { showProgressLoading() }
@@ -237,7 +458,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(com.cl.common_base.R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt)
+            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
@@ -297,13 +518,23 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     }
                     // 勾选框
                     R.id.cl_check -> {
-                        adapter.data[position].value?.isCheck = !(bean.value?.isCheck ?: false)
                         view.findViewById<CheckBox>(R.id.curing_box)?.apply {
+                            logI("before: ${data[position].value?.isCheck}")
+                            data[position].value?.isCheck = !isChecked
                             isChecked = !isChecked
+                            logI("after: ${data[position].value?.isCheck}")
                         }
                     }
                     // 跳转到HTML
                     R.id.tv_page_txt -> {
+                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
+                        // 跳转到HTML
+                        val intent = Intent(context, WebActivity::class.java)
+                        intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
+                        context.startActivity(intent)
+                    }
+                    R.id.tv_txt -> {
+                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
                         // 跳转到HTML
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
@@ -313,6 +544,18 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
             }
         }
     }
+
+    // 关闭页面的回调
+    private fun acFinish() {
+        setResult(Activity.RESULT_OK)
+        finish()
+    }
+
+    // 直接关闭
+    private fun directShutdown() {
+        finish()
+    }
+
 
     override fun HomeKnowMoreLayoutBinding.initBinding() {
         binding.apply {
@@ -350,5 +593,25 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         }
         setResult(Activity.RESULT_OK)
         finish()
+    }
+
+    companion object {
+        const val KEY_IS_SHOW_BUTTON = "key_is_show_button"
+        const val KEY_IS_SHOW_UNLOCK_BUTTON = "key_is_show_unlock_button"
+        const val KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE = "key_is_show_unlock_button_engage"
+        const val KEY_IS_SHOW_BUTTON_TEXT = "key_is_show_button_text"
+
+        // 意图
+        const val KEY_INTENT_JUMP_PAGE = "key_intent_jump_page"
+        const val KEY_INTENT_UNLOCK_TASK = "key_intent_unlock_task"
+
+        // 用于固定的跳转
+        const val KEY_FIXED_TASK_ID = "key_fixed_task_id"
+
+        // 解锁ID
+        const val KEY_UNLOCK_TASK_ID = "key_unlock_id"
+
+        // Title颜色
+        const val KEY_TITLE_COLOR = "key_title_color"
     }
 }

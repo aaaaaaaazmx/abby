@@ -14,6 +14,9 @@ class HomeNewPlantNameActivity : BaseActivity<HomeNewPlantBinding>() {
             intent.putExtra(HomePlantProfileActivity.KEY_PLANT_NAME, binding.etEmail.text.toString())
             startActivity(intent)
         }
+        binding.ivClearCode.setOnClickListener {
+            binding.etEmail.setText("")
+        }
     }
 
     override fun observe() {

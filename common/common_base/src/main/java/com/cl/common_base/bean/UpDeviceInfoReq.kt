@@ -15,6 +15,8 @@ data class UpDeviceInfoReq(
     var id: Int? = null,
     var oxygen: Int? = null,
     var nightMode: Int? = null, // 夜间模式
+    var childLock: Int? = null, // 童锁
+    var nightTimer: String? = null, // 夜间模式时间
     var plantStatus: Int? = null,
     var week: Int? = null,
     var deviceId: String? = null,

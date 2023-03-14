@@ -44,11 +44,9 @@ class GerminationCountdownPop(
             }
             btnSkip.setOnClickListener {
                 onSkipAction.invoke()
-                dismiss()
             }
             btnCheck.setOnClickListener {
                 onCheckAction.invoke()
-                dismiss()
             }
         }
     }

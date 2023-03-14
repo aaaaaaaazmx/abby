@@ -1,10 +1,13 @@
 package com.cl.common_base.adapter
 
 import android.graphics.Color
+import android.text.Html
+import android.text.Spanned
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.text.toSpannable
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
@@ -208,6 +211,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                         // 暂停状态下显示封面
                         isShowPauseCover = true
                         seekOnStart = item.videoPosition ?: 0L
+                        if (item.value.autoplay == true) startPlayLogic()
                     }
                 }
             }
@@ -273,8 +277,30 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         /*println("45454545: $text")*/
     }
 
-    fun parseText(txt: String?): String? {
-        return txt?.let { getRealText(it, isF) }
+    fun parseText(txt: String?, bolds: MutableList<String>?): Spanned? {
+        return  txt?.let {
+            val realText = getRealText(it, isF)
+            var str = realText
+            val targets = bolds
+            if (targets.isNullOrEmpty()) return str.toSpannable()
+            val boldStart = "<b>"
+            val boldEnd = "</b>"
+            for (target in targets) {
+                if (str.contains(target)) {
+                    val parts = str.split(target.toRegex()).toTypedArray()
+                    val builder = StringBuilder()
+                    builder.append(parts[0])
+                    for (i in 1 until parts.size) {
+                        builder.append(boldStart)
+                        builder.append(target)
+                        builder.append(boldEnd)
+                        builder.append(parts[i])
+                    }
+                    str = builder.toString()
+                }
+            }
+            Html.fromHtml(str)
+        }
     }
 
     /**

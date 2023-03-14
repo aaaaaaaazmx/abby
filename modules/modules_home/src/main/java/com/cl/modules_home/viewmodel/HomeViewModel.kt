@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.Resource
@@ -19,6 +21,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.safeToInt
+import com.cl.modules_home.ui.HomeFragment
 import com.hyphenate.chat.AgoraMessage
 import com.hyphenate.chat.ChatClient
 import com.hyphenate.chat.EMClient
@@ -58,13 +61,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 设备信息
      */
-    val tuyaDeviceBean by lazy {
+    val tuyaDeviceBean = {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
     private val _deviceId =
-        MutableLiveData(tuyaDeviceBean?.devId.toString())
+        MutableLiveData(tuyaDeviceBean()?.devId.toString())
     val deviceId: LiveData<String> = _deviceId
     fun setDeviceId(deviceId: String) {
         // 暂时不做水箱的容积判断，手动赋值默认就是为0L
@@ -73,7 +76,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 童锁的开闭状态
      val _childLockStatus = MutableLiveData(
-        tuyaDeviceBean?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
+        tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK).toString()
     )
     val childLockStatus: LiveData<String> = _childLockStatus
@@ -82,7 +85,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
     // 门的开闭状态
     private val _openDoorStatus = MutableLiveData(
-        tuyaDeviceBean?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
+        tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK).toString()
     )
     val openDoorStatus: LiveData<String> = _openDoorStatus
@@ -101,7 +104,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 不能直接用
      */
     private val getDeviceDps = {
-        tuyaDeviceBean?.dps
+        tuyaDeviceBean()?.dps
     }
 
     // 水的容积。=， 多少升
@@ -116,7 +119,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 是否需要修复SN
     // 需要在设备在线的情况下才展示修复
-    private val _repairSN = MutableLiveData(if (tuyaDeviceBean?.isOnline == true) {
+    private val _repairSN = MutableLiveData(if (tuyaDeviceBean()?.isOnline == true) {
         getDeviceDps()?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN).toString()
     } else {
@@ -806,6 +809,36 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 跳过种子阶段
+     */
+    private val _skipGerminate = MutableLiveData<Resource<BaseBean>>()
+    val skipGerminate: LiveData<Resource<BaseBean>> = _skipGerminate
+    fun skipGerminate() {
+        viewModelScope.launch {
+            repository.skipGerminate().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _skipGerminate.value = it
+            }
+        }
+    }
+
+    /**
      * 设备操作结束
      */
     private val _deviceOperateFinish = MutableLiveData<Resource<BaseBean>>()
@@ -961,7 +994,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuyaDeviceBean?.devId?.let {
+        tuyaDeviceBean()?.devId?.let {
             TuyaHomeSdk.newOTAInstance(it)?.getOtaInfo(object : IGetOtaInfoCallback {
                 override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                     logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
@@ -1247,7 +1280,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     _transplantPeriodicity.value = taskId
                 }
                 else -> {
-                    getGuideInfo(it)
+                    // getGuideInfo(it)
                 }
             }
         }
@@ -1321,9 +1354,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 获取环境信息
      */
-    var tuYaDps = tuyaDeviceBean?.dps
+    var tuYaDps = tuyaDeviceBean()?.dps
     fun getEnvData() {
-        tuyaDeviceBean?.let {
+        tuyaDeviceBean()?.let {
             val envReq = EnvironmentInfoReq(deviceId = it.devId)
             tuYaDps?.forEach { (key, value) ->
                 when (key) {

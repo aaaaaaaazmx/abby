@@ -191,7 +191,7 @@ public class TimePicker extends LinearLayout implements ScopePicker.OnScopeSelec
      * @param smoothScroll the smooth scroll
      */
     public void setTime(int hour, int minute, boolean smoothScroll) {
-        scopePicker.setSelectedScope(hour >= 12 ? 1 : 0, false);
+        scopePicker.setSelectedScope(hour > 12 ? 1 : 0, false);
         mHourPicker.setSelectedScope(hour, smoothScroll);
         mMinutePicker.setSelectedMinute(minute, smoothScroll);
     }
@@ -208,7 +208,7 @@ public class TimePicker extends LinearLayout implements ScopePicker.OnScopeSelec
         if (true) {
             if (scope == 0 && scopes == 12) {
                 scopes = 0;
-            } else if (scope == 1 && scopes < 12) {
+            } else if (scope == 1 && scopes <= 12) {
                 scopes += 12;
             }
         }

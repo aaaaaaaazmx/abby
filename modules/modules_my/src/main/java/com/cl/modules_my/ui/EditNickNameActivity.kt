@@ -63,6 +63,10 @@ class EditNickNameActivity : BaseActivity<MyEditNickNameBinding>() {
                 ToastUtil.shortShow(getString(com.cl.common_base.R.string.profile_nickname_tips))
                 return@setOnClickListener
             }
+            if (name.length > 24) {
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.profile_nickname_tips))
+                return@setOnClickListener
+            }
             modifyUserDetailReq.nickName = name
             mViewModel.modifyUserDetail(modifyUserDetailReq)
         }

@@ -5,6 +5,7 @@ import androidx.databinding.DataBindingUtil
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
@@ -22,7 +23,7 @@ class ChooseTimePop(
     context: Context,
     var turnOnHour: Int? = null,
     var turnOffHour: Int? = null,
-    private val onConfirmAction: ((onTime: String?, onMinute: String?, timeOn:Int?, timeOff: Int?) -> Unit)? = null,
+    private val onConfirmAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?) -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.my_choose_time_pop
@@ -51,7 +52,7 @@ class ChooseTimePop(
                 } else if (it < 12) {
                     "${it}:00 AM"
                 } else if (it == 12) {
-                    "12:00 PM"
+                    "12:00 AM"
                 } else {
                     "12:00 AM"
                 }
@@ -63,47 +64,51 @@ class ChooseTimePop(
                 } else if (it < 12) {
                     "${it}:00 AM"
                 } else if (it == 12) {
-                    "12:00 PM"
+                    "12:00 AM"
                 } else {
                     "12:00 AM"
                 }
             } ?: "12:00 PM"
 
-            letMultiple(turnOnHour, turnOffHour) { onTime, offTime ->
+            /*letMultiple(turnOnHour, turnOffHour) { onTime, offTime ->
                 btnSuccess.isEnabled = (offTime - onTime) >= 12
-            }
+            }*/
 
             ftTurnOn.setOnClickListener {
                 // 时间开启
                 XPopup.Builder(context)
                     .asCustom(TimePickerPop(context, onConfirmAction = { time, timeMis ->
                         val hour = if (time.toInt() == 0) 12 else time.toInt()
-                        turnOffHour?.let {
+                        /*turnOffHour?.let {
                             if (it < 12) { // 表示是AM、也就是第二天
                                 // val turnOff = format24Hour(24 + it, 0).toInt()
                                 if (hour < 12) {
+                                    btnSuccess.isEnabled = false
                                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                                     return@TimePickerPop
                                 }
                                 val is12Exceed = ((24 + it) - hour) < 12
                                 if (is12Exceed) {
+                                    btnSuccess.isEnabled = false
                                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                                     return@TimePickerPop
                                 }
                             } else if (it > 12) { // 表示是PM
                                 val is12Exceed = (it - hour) < 12
-                                if (is12Exceed) {
+                                if (!is12Exceed) {
+                                    btnSuccess.isEnabled = false
                                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                                     return@TimePickerPop
                                 }
                             } else if (it == 12) {
                                 val is12Exceed = (24 - hour) == 12
                                 if (!is12Exceed) {
+                                    btnSuccess.isEnabled = false
                                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                                     return@TimePickerPop
                                 }
                             }
-                        }
+                        }*/
 
                         if (hour > 12) {
                             ftTurnOn.itemValue = "${hour - 12}:00 PM"
@@ -112,9 +117,9 @@ class ChooseTimePop(
                         } else if (hour == 12) {
                             ftTurnOn.itemValue = "12:00 AM"
                         }
-
+                        btnSuccess.isEnabled = true
                         // 赋值给他
-                        turnOnHour = time.toInt()
+                        turnOnHour = hour
                     }, chooseTime = turnOnHour ?: 12))
                     .show()
             }
@@ -124,38 +129,40 @@ class ChooseTimePop(
                     .asCustom(TimePickerPop(context, onConfirmAction = { time, timeMis ->
                         val hour = time.toInt()
 
-                        turnOnHour?.let {
+                        /*turnOnHour?.let {
                             if (it < 12) {
                                 val is12Exceed = (hour - it) < 12
-                                if (is12Exceed) {
+                                if (!is12Exceed) {
+                                    btnSuccess.isEnabled = false
                                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                                     return@TimePickerPop
                                 }
                             } else if (it >= 12) {
                                 val is12Exceed = (it - hour) < 12
-                                if (is12Exceed) {
+                                if (!is12Exceed) {
+                                    btnSuccess.isEnabled = false
                                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                                     return@TimePickerPop
                                 }
-                            }/* else if (it == 12) {
+                            }*//* else if (it == 12) {
                                 val is12Exceed = hour - it < 0
                                 if (is12Exceed) {
                                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                                     return@TimePickerPop
                                 }
-                            }*/
-                        }
+                            }*//*
+                        }*/
 
                         if (hour > 12) {
                             ftTurnOff.itemValue = "${hour - 12}:00 PM"
                         } else if (hour < 12) {
-                            ftTurnOff.itemValue = "${hour}:00 AM"
+                            ftTurnOff.itemValue = "${if (time.toInt() == 0) 12 else time.toInt()}:00 AM"
                         } else if (hour == 12) {
                             ftTurnOff.itemValue = "12:00 PM"
                         }
-
+                        btnSuccess.isEnabled = true
                         // 赋值给他
-                        turnOffHour = time.toInt()
+                        turnOffHour =  if (time.toInt() == 0) 12 else time.toInt()
                     }, chooseTime = turnOffHour ?: 12))
                     .show()
             }
@@ -171,8 +178,29 @@ class ChooseTimePop(
                  onConfirmAction?.invoke(ftTurnOn.itemValue, ftTurnOff.itemValue)
                  dismiss()*/
 
-                onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour)
-                dismiss()
+                logI("turnOnHour: $turnOnHour,,,turnOffHour: $turnOffHour")
+                if ((turnOffHour?.minus(turnOnHour ?: 0) ?: 0) <= 12) {
+
+                    val timeOpenHour = turnOnHour?.let {
+                        if (it > 12) {
+                            "$it:00 PM"
+                        } else {
+                            "$it:00 AM"
+                        }
+                    }
+
+                    val timeCloseHour = turnOffHour?.let {
+                        if (it > 12) {
+                            "$it:00 PM"
+                        } else {
+                            "$it:00 AM"
+                        }
+                    }
+                    onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
+                    dismiss()
+                } else {
+                    ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
+                }
             }
         }
     }

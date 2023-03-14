@@ -235,4 +235,12 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.updatePlantInfo(body)
     }
+
+    fun skipGerminate(): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.skipGerminate()
+    }
+
+    fun intoPlantBasket(): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.intoPlantBasket()
+    }
 }

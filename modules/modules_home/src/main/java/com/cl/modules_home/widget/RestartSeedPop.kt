@@ -8,6 +8,7 @@ import com.bbgo.module_home.databinding.HomePopRestartSeedBinding
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.slidetoconfirmlib.SlideToConfirm
+import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.core.CenterPopupView
 
 /**
@@ -15,9 +16,8 @@ import com.lxj.xpopup.core.CenterPopupView
  */
 class RestartSeedPop(
     context: Context,
-    private val plantInfoData: PlantInfoData? = null,
     private val onDeletePlant: () -> Unit = {},
-) : CenterPopupView(context) {
+) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_pop_restart_seed
     }

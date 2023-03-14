@@ -248,4 +248,11 @@ interface HttpHomeApiService {
         @Body body: UpPlantInfoReq
     ): Flow<HttpResult<BaseBean>>
 
+    @POST("abby/plant/skipGerminate")
+    fun skipGerminate(): Flow<HttpResult<BaseBean>>
+
+
+    @POST("abby/plant/intoPlantBasket")
+    fun intoPlantBasket(): Flow<HttpResult<BaseBean>>
+
 }

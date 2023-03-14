@@ -23,17 +23,13 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePopActivityBinding
 import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.easeui.ui.videoUiHelp
-import com.cl.common_base.ext.isCanToBigDecimal
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
 import com.cl.common_base.help.PlantCheckHelp
-import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
-import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
-import com.cl.common_base.widget.slidetoconfirmlib.SlideToConfirm
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.XPopup.getAnimationDuration
@@ -73,6 +69,16 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
      */
     private val unLockId by lazy { intent.getStringExtra(KEY_UNLOCK_TASK_ID) }
 
+    /**
+     * 文字颜色
+     */
+    private val titleColor by lazy { intent.getStringExtra(KEY_TITLE_COLOR) }
+
+    /**
+     * veg、auto展示ID
+     */
+    private val categoryCode by lazy { intent.getStringExtra(KEY_CATEGORYCODE) }
+
 
     override fun initView() {
         // 添加状态蓝高度
@@ -110,6 +116,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             }
 
             override fun onSlideDone() {
+                binding.slideToConfirm.postDelayed(Runnable { binding.slideToConfirm.reset() }, 500)
                 // 解锁完毕、调用解锁功能
                 fixedProcessingLogic()
             }
@@ -151,11 +158,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock Germination")
+                        intent.putExtra(KEY_CATEGORYCODE, categoryCode)
+                        intent.putExtra(KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
                         startActivity(intent)
                     }
 
-                    // 解锁Veg这个周期\或者重新开始
+                    // 解锁Veg\auto这个周期\或者重新开始
+                    Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW,
                     Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW -> {
                         if (unLockId.isNullOrEmpty()) {
                             // startRunning 接口
@@ -163,6 +173,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         } else {
                             // 解锁接口
                             mViewModel.finishTask(FinishTaskReq(taskId = unLockId))
+                            mViewModel.tuYaUser?.uid?.let { it1 -> mViewModel.checkPlant(it1) }
                         }
                     }
 
@@ -185,7 +196,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         mViewModel.startRunning(botanyId = "", goon = false)
                     }
 
-                    // 种子发芽
+                    // 种子换水
                     Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION -> {
                         acFinish()
                     }
@@ -197,6 +208,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2)
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                        intent.putExtra(KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(KEY_CATEGORYCODE, categoryCode)
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
                         startActivity(intent)
                     }
@@ -207,17 +220,20 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3)
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        intent.putExtra(KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(KEY_CATEGORYCODE, categoryCode)
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Done")
                         startActivity(intent)
                     }
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
-                        intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(Constants.Global.KEY_TXT_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(KEY_FIXED_TASK_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
                         intent.putExtra(KEY_IS_SHOW_BUTTON, true)
                         intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
-                        intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Unlock Veg")
+                        intent.putExtra(KEY_TITLE_COLOR, "#006241")
+                        intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, if (categoryCode == "100002" || categoryCode == "100004") "Unlock Autoflowering" else "Unlock Veg")
                         startActivity(intent)
                     }
 
@@ -304,6 +320,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     // 标题
                     data.bar?.let {
                         binding.tvTitle.text = it
+                        binding.tvTitle.setTextColor(Color.parseColor(titleColor ?: "#000000"))
                     }
 
                     // 动态添加按钮
@@ -362,6 +379,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                 success {
                     hideProgressLoading()
+                    // finishTask 需要直接关闭页面
+                    mViewModel.richText.value?.data?.topPage?.firstOrNull { it.type == "finishTask" }?.apply {
+                        acFinish()
+                    }
                 }
             })
 
@@ -490,12 +511,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
                     // 跳转到HTML
                     R.id.tv_page_txt -> {
+                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
                         // 跳转到HTML
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         context.startActivity(intent)
                     }
                     R.id.tv_txt -> {
+                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
                         // 跳转到HTML
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
@@ -588,5 +611,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         // 解锁ID
         const val KEY_UNLOCK_TASK_ID = "key_unlock_id"
 
+        // Title颜色
+        const val KEY_TITLE_COLOR = "key_title_color"
+
+        // 调用哪个解锁Veg\auto的ID
+        const val KEY_CATEGORYCODE = "key_categorycode"
     }
 }

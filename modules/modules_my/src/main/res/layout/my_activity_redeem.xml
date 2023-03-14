@@ -34,7 +34,7 @@
 
                 <TextView
                     android:text="If you would like to extend your growing service, please go to our official website to purchase the option most suitable for you.
-This service includes our one-on-one support, growing pack (fertilizers, basket, carbon filters, etc), and device connectivity to our server."
+This service includes our one-on-one support and growing supply pack."
                     android:id="@+id/tv_html"
                     android:layout_marginTop="19dp"
                     android:layout_marginEnd="20dp"

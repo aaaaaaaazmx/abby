@@ -62,7 +62,7 @@
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:background="@drawable/base_dot_red"
-            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintCircle="@id/iv_academy"
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
@@ -79,7 +79,7 @@
 
 
         <TextView
-            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE }"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
@@ -92,7 +92,7 @@
             app:layout_constraintCircleRadius="20dp" />
 
         <TextView
-            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
@@ -256,7 +256,9 @@
                 app:layout_constraintCircleAngle="50"
                 app:layout_constraintCircleRadius="20dp" />
 
+            <!--去掉加水-->
             <com.cl.common_base.widget.SvTextView
+                android:visibility="gone"
                 android:id="@+id/tv_drain"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
@@ -267,7 +269,6 @@
                 android:textColor="@color/mainColor"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.GONE : View.VISIBLE}'
                 app:layout_constraintBottom_toTopOf="@+id/tv_feef"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:svRadius="180dp"
@@ -634,7 +635,7 @@ Day1" />
                     android:layout_height="8dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/red_bg"
-                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
+                    android:visibility='@{viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />

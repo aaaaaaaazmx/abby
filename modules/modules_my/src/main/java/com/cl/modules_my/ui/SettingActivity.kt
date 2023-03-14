@@ -214,10 +214,73 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         val isBind = mViewModel.deviceInfo?.deviceStatus == "1"
         val isOnline = mViewModel.deviceInfo?.deviceOnlineStatus == "1"
         mViewModel.setOffLine(isBind && isOnline)
+
+        mViewModel.listDevice()
     }
 
     override fun observe() {
         mViewModel.apply {
+            listDevice.observe(this@SettingActivity, resourceObserver {
+                success {
+                    data?.firstOrNull { it.deviceId == tuyaHomeBean?.devId }?.let { deviceInfo ->
+                        binding.ftChildLock.isItemChecked = deviceInfo.childLock == 1
+                        binding.ftNight.isItemChecked = deviceInfo.nightMode == 1
+                        ViewUtils.setVisible(deviceInfo.nightMode == 1, binding.ftTimer, binding.tvTimeDesc)
+                            val str = deviceInfo.nightTimer.toString()
+                            val pattern = "(\\d{1,2}):\\d{2} [AP]M-(\\d{1,2}):\\d{2} [AP]M"
+
+                            val p: Pattern = Pattern.compile(pattern)
+                            val m: Matcher = p.matcher(str)
+                            var openTime: String? = null
+                            var closeTime: String? = null
+                            if (m.find()) {
+                                muteOn = m.group(1)
+                                muteOff = m.group(2)
+                                var onHour = muteOn?.toInt() ?: 0
+                                var offHour = muteOff?.toInt() ?: 0
+
+                                // 判断前缀是AM还是PM
+                                val pattern = Pattern.compile("(PM|AM)")
+                                val matcher = pattern.matcher(str)
+                                var i = 0
+                                var openTimeIsAmOrPm: String? = null
+                                var closeTimeIsAmOrPm: String? = null
+                                while (matcher.find()) {
+                                    val group = matcher.group()
+                                    if (i == 0) {
+                                        if (group == "PM") {
+                                            muteOn = "${(m.group(1)?.toInt() ?: 0) + 12}"
+                                        }
+                                        openTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
+                                        i++
+                                        continue
+                                    }
+
+                                    if (i > 0) {
+                                        if (group == "PM") {
+                                            muteOff = "${(m.group(2)?.toInt() ?: 0) + 12}"
+                                        }
+                                        closeTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
+                                        i = 0
+                                    }
+                                }
+                                openTime = "$onHour:00 $openTimeIsAmOrPm"
+                                closeTime = "$offHour:00 $closeTimeIsAmOrPm"
+
+                            } else {
+                                logE("No match found.")
+                                muteOn = "22"
+                                muteOff = "7"
+
+                                openTime = "10:00 PM"
+                                closeTime = "7:00 AM"
+                            }
+
+                            binding.ftTimer.itemValue = "$openTime-$closeTime"
+                    }
+                }
+            })
+
             // 放弃种子检查
             giveUpCheck.observe(this@SettingActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -431,44 +494,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
     private var muteOn: String? = null
     private var muteOff: String? = null
-    private fun getEnvData() {
-        tuyaHomeBean?.dps?.let { tuYaDps ->
-            tuYaDps.forEach { (key, value) ->
-                when (key) {
-                    TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE -> {
-                        // 是否打开童锁
-                        DeviceControl.get()
-                            .success {
-                            }
-                            .error { code, error ->
-                                ToastUtil.shortShow(
-                                    """
-                                      nightMode: 
-                                      code-> $code
-                                      errorMsg-> $error
-                                """.trimIndent()
-                                )
-                            }
-                            .nightMode(value.toString())
-
-                        val str = value.toString()
-                        val pattern = "muteOn:(\\d+),muteOff:(\\d+)"
-
-                        val p: Pattern = Pattern.compile(pattern)
-                        val m: Matcher = p.matcher(str)
-
-                        if (m.find()) {
-                            muteOn = m.group(1)
-                            muteOff = m.group(2)
-                        } else {
-                            logE("No match found.")
-                        }
-
-                    }
-                }
-            }
-        }
-    }
 
     override fun initData() {
         // 重新种植
@@ -496,6 +521,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             // 是否打开童锁
             DeviceControl.get()
                 .success {
+                    mViewModel.updatePlantInfo(UpDeviceInfoReq(childLock = if (isChecked) 1 else 0, deviceId = tuyaHomeBean?.devId))
                     binding.ftChildLock.isItemChecked = isChecked
                 }
                 .error { code, error ->
@@ -504,7 +530,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                       pumpWater: 
                       code-> $code
                       errorMsg-> $error
-                """.trimIndent()
+                     """.trimIndent()
                     )
                 }
                 .childLock(isChecked)
@@ -513,18 +539,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 夜间模式
         binding.ftNight.setSwitchCheckedChangeListener { _, isChecked ->
             // muteOn:00,muteOff:001
-            // 调用接口更新后台夜间模式
-            mViewModel.updatePlantInfo(UpDeviceInfoReq(nightMode = if (isChecked) 1 else 0, deviceId = tuyaHomeBean?.devId))
-            ViewUtils.setVisible(isChecked, binding.ftTimer, binding.tvTimeDesc)
-            getEnvData()
-        }
 
-        binding.ftTimer.setOnClickListener {
-            pop.asCustom(ChooseTimePop(this@SettingActivity, turnOnHour = muteOn?.toInt(), turnOffHour = muteOff?.toInt(), onConfirmAction = { onTime, offMinute, timeOn, timeOff ->
-                binding.ftTimer.itemValue = "$onTime - $offMinute"
-                // 发送dp点
+            if (!isChecked) {
                 DeviceControl.get()
                     .success {
+                        // "141":"muteOn:10,muteOff:22"
                     }
                     .error { code, error ->
                         ToastUtil.shortShow(
@@ -535,7 +554,52 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .nightMode("muteOn:$timeOn,muteOff:$timeOff")
+                    .nightMode("muteOn:00,muteOff:00")
+            } else {
+                DeviceControl.get()
+                    .success {
+                        // "141":"muteOn:10,muteOff:22"
+                    }
+                    .error { code, error ->
+                        ToastUtil.shortShow(
+                            """
+                              nightMode: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                        )
+                    }
+                    .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if(muteOff?.toInt() == 24) 12 else muteOff}")
+            }
+
+            // 调用接口更新后台夜间模式
+            mViewModel.updatePlantInfo(UpDeviceInfoReq(nightMode = if (isChecked) 1 else 0, deviceId = tuyaHomeBean?.devId))
+            ViewUtils.setVisible(isChecked, binding.ftTimer, binding.tvTimeDesc)
+        }
+
+        binding.ftTimer.setOnClickListener {
+            pop.asCustom(ChooseTimePop(this@SettingActivity, turnOnHour = muteOn?.toInt(), turnOffHour = muteOff?.toInt(), onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
+                binding.ftTimer.itemValue = "$onTime-$offMinute"
+                muteOn = "$timeOn"
+                muteOff = "$timeOff"
+                // todo 这个时间和上面解析时间有问题，需要传递24小时制度
+                mViewModel.updatePlantInfo(UpDeviceInfoReq(nightTimer = binding.ftTimer.itemValue.toString(), deviceId = tuyaHomeBean?.devId))
+                // 发送dp点
+                DeviceControl.get()
+                    .success {
+                        // "141":"muteOn:10,muteOff:22"
+                        logI("123312313: muteOn:$timeOn,muteOff:$timeOff")
+                    }
+                    .error { code, error ->
+                        ToastUtil.shortShow(
+                            """
+                              nightMode: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                        )
+                    }
+                    .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn},muteOff:${if(timeOff == 24) 12 else timeOff}")
             })).show()
         }
 
@@ -719,6 +783,15 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         mViewModel.userDetail.value?.data?.subscriptionTime?.let {
                             binding.ftSub.itemValue = it
                         }
+                    }
+                }
+
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_CHILD_LOCK_INSTRUCT -> {
+                    // 童锁
+                    kotlin.runCatching {
+                        binding.ftChildLock.isItemChecked = value.toString().toBoolean()
+                    }.onFailure {
+                        binding.ftChildLock.isItemChecked = false
                     }
                 }
             }

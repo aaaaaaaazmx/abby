@@ -207,6 +207,12 @@ object Constants {
 
         // 从主页面、离线页面跳转到设备列表界面，设备列表界面切换了设备。
         var KEY_IS_SWITCH_DEVICE = "key_is_switch_device"
+
+        // 只展示一次引导
+        var KEY_IS_SHOW_GUIDE_POP = "key_is_show_guide_pop"
+
+        // 当前植物的标记ID
+        var KEY_CATEGORYCODE = "categoryCode"
     }
 
     // Fixed Id
@@ -253,6 +259,7 @@ object Constants {
         const val KEY_FIXED_ID_TRANSPLANT_2 = "4c9f93dae8da4e7dbc780f0eeed74b21"
         const val KEY_FIXED_ID_TRANSPLANT_3 = "6b05ffbadee746e6979a314613df75b2"
         const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
+        const val KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW  = "d966091a08c048db962b710212eb223d"
     }
 
     object FragmentIndex {

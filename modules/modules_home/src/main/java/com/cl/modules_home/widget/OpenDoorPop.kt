@@ -7,12 +7,13 @@ import com.bbgo.module_home.databinding.HomePopOpenDoorBinding
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
+import com.lxj.xpopup.core.BottomPopupView
 import com.lxj.xpopup.core.CenterPopupView
 
 class OpenDoorPop(
     context: Context,
     private val onSuccessAction: (() -> Unit)? = null,
-) : CenterPopupView(context) {
+) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_pop_open_door
     }
@@ -33,9 +34,11 @@ class OpenDoorPop(
                 }
 
                 override fun onSlideDone() {
+                    // 打开门传false 关闭门传true
                     // 旋钮开门
                     DeviceControl.get()
                         .success {
+                            onSuccessAction?.invoke()
                             dismiss()
                         }
                         .error { code, error ->
@@ -47,7 +50,7 @@ class OpenDoorPop(
                           """.trimIndent()
                             )
                         }
-                        .doorLock(true)
+                        .doorLock(false)
                 }
 
             }
