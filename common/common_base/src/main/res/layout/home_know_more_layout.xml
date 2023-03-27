@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.cl.common_base.base.KnowMoreViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+        <View
+            android:id="@+id/vv_root"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_title"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/vv_root"
+            android:background="@color/white">
+
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="50dp"
+                android:layout_height="0dp"
+                android:scaleType="center"
+                android:src="@mipmap/left"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxEms="7"
+                android:maxLines="1"
+                android:textColor="#000000"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.cl.common_base.video.SampleCoverVideo
+            android:visibility="gone"
+            android:id="@+id/video_item_player"
+            android:layout_width="match_parent"
+            android:layout_height="211dp"
+            android:layout_below="@+id/cl_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_title"
+            tools:ignore="MissingConstraints" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rl_bottom"
+            android:layout_below="@+id/video_item_player">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_know"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/rl_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!--动态添加按钮-->
+            <LinearLayout
+                android:id="@+id/fl_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/base_bg_button_translucence"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!--固定跳转逻辑、滑动解锁逻辑。-->
+            <RelativeLayout
+                android:layout_marginBottom="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!--固定按钮-->
+                <Button
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:visibility="gone"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/btn_next"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/create_state_button"
+                    android:enabled="true"
+                    android:text="Extend"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    tools:ignore="MissingConstraints" />
+
+                <!--滑动解锁按钮-->
+                <com.cl.common_base.widget.slidetoconfirmlib.SlideToConfirm
+                    android:visibility="gone"
+                    android:id="@+id/slide_to_confirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="20dp"
+                    app:border_radius="100dp"
+                    app:border_width="0dp"
+                    app:slider_background_color="#E6EFEC"
+                    app:slider_color="@color/translucency_mainColor"
+                    app:slider_lottie="lottie_x.json"
+                    app:slider_image="@mipmap/home_unlock"
+                    app:slider_width="60dp"
+                    app:slider_reset_duration="300"
+                    app:slider_vibration_duration="50"
+                    app:slider_threshold="1dp"
+                    app:completed_text=""
+                    app:engage_text="Slide to Unlock"
+                    app:engage_text_size="18sp"
+                    app:engage_text_color="@android:color/white"
+                    app:completed_text_color="@android:color/white"
+                    app:completed_text_size="18sp"
+                    />
+
+            </RelativeLayout>
+        </FrameLayout>
+
+    </RelativeLayout>
+</layout>

@@ -58,6 +58,7 @@ import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
 import com.joketng.timelinestepview.view.TimeLineStepView
+import com.lin.cardlib.CardLayoutManager
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -105,7 +106,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     binding.rvList.scrollToPosition(currentPosition - 7)
                 }
                 // 设置今天的日子
-                binding.abMonth.text = CalendarUtil.getMonthFromLocation(Date().time)
+                binding.abMonth.text = mViewMode.getYmForEn(Date())
                 binding.tvTodayDate.text = mViewMode.getYmdForEn(Date())
             }.setLeftClickListener {
                 setResult(RESULT_OK)
@@ -161,7 +162,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             showCompletePage.observe(this@CalendarActivity) {
                 if (it) {
                     // 直接跳转到首页、展示种植完成界面
-                    setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, true))
+                    setResult(
+                        RESULT_OK,
+                        Intent().putExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, true)
+                    )
                     finish()
                 }
             }
@@ -179,9 +183,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     when (mViewMode.guideInfoStatus.value) {
                         UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
                             if ((data?.flushingWeight ?: 0) <= 0) {
-                                mViewMode.taskId.value?.let { mViewMode.finishTask(FinishTaskReq(taskId = it)) }
+                                mViewMode.taskId.value?.let {
+                                    mViewMode.finishTask(
+                                        FinishTaskReq(
+                                            taskId = it
+                                        )
+                                    )
+                                }
                                 // 直接跳转到首页、展示种植完成界面
-                                setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, true))
+                                setResult(
+                                    RESULT_OK,
+                                    Intent().putExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, true)
+                                )
                                 finish()
                             } else {
                                 // 展示图文
@@ -467,26 +480,93 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         CalendarData.TASK_TYPE_CHANGE_WATER -> {
                                         }
                                         CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                            mViewMode.taskId.value?.let { taskId ->
+                                                mViewMode.finishTask(
+                                                    FinishTaskReq(taskId, weight)
+                                                )
+                                            }
                                         }
                                         CalendarData.TASK_TYPE_LST -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                            mViewMode.taskId.value?.let { taskId ->
+                                                mViewMode.finishTask(
+                                                    FinishTaskReq(taskId, weight)
+                                                )
+                                            }
                                         }
                                         CalendarData.TASK_TYPE_TOPPING -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                            mViewMode.taskId.value?.let { taskId ->
+                                                mViewMode.finishTask(
+                                                    FinishTaskReq(taskId, weight)
+                                                )
+                                            }
                                         }
                                         CalendarData.TASK_TYPE_TRIM -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                            mViewMode.taskId.value?.let { taskId ->
+                                                mViewMode.finishTask(
+                                                    FinishTaskReq(taskId, weight)
+                                                )
+                                            }
                                         }
                                         CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                             // todo 这个应该是转周期了，调用图文、然后解锁花期
+                                            // todo 这个需要单独处理逻辑。
+                                            // todo 判断当前是的植物属性
                                             // seed to veg
                                             SeedGuideHelp(this@CalendarActivity).showGuidePop {
-                                                mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                                mViewMode.taskId.value?.let { taskId ->
+                                                    mViewMode.finishTask(
+                                                        FinishTaskReq(taskId, weight)
+                                                    )
+                                                }
                                             }
+                                            // 跳转到富文本
+                                            val categoryCode =
+                                                intent.getStringExtra(Constants.Global.KEY_CATEGORYCODE)
+                                                    ?: ""
+                                            val intent = Intent(
+                                                this@CalendarActivity,
+                                                BasePopActivity::class.java
+                                            )
+                                            intent.putExtra(
+                                                Constants.Global.KEY_TXT_ID,
+                                                Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK
+                                            )
+                                            intent.putExtra(
+                                                BasePopActivity.KEY_FIXED_TASK_ID,
+                                                Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK
+                                            )
+                                            intent.putExtra(
+                                                BasePopActivity.KEY_IS_SHOW_BUTTON,
+                                                true
+                                            )
+                                            intent.putExtra(
+                                                BasePopActivity.KEY_INTENT_JUMP_PAGE,
+                                                true
+                                            )
+                                            intent.putExtra(
+                                                BasePopActivity.KEY_TITLE_COLOR,
+                                                "#006241"
+                                            )
+                                            intent.putExtra(
+                                                BasePopActivity.KEY_UNLOCK_TASK_ID,
+                                                mViewMode.taskId.value
+                                            )
+                                            intent.putExtra(
+                                                BasePopActivity.KEY_CATEGORYCODE,
+                                                categoryCode
+                                            )
+                                            intent.putExtra(
+                                                BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
+                                                "I am ready"
+                                            )
+                                            startActivity(intent)
                                         }
                                         else -> {
-                                            mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                            mViewMode.taskId.value?.let { taskId ->
+                                                mViewMode.finishTask(
+                                                    FinishTaskReq(taskId, weight)
+                                                )
+                                            }
                                         }
                                     }
                                 },
@@ -519,8 +599,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 // todo 但是后续添加不需要滚到到现在这一行
                 binding.rvList.scrollToPosition(it.indexOf(mViewMode.mCurrentDate) - 7)
                 // todo  初始化当月,, 固定写法只加7，会出现时间差错问题
-                binding.abMonth.text =
-                    CalendarUtil.getMonthFromLocation(adapter.data[it.indexOf(mViewMode.mCurrentDate) + 7].timeInMillis)
+                /*binding.abMonth.text =
+                    CalendarUtil.getMonthFromLocation(adapter.data[it.indexOf(mViewMode.mCurrentDate) + 7].timeInMillis)*/
+                binding.abMonth.text = getYmForEn(Date())
                 // 添加网络数据
                 letMultiple(it.firstOrNull()?.ymd, it.lastOrNull()?.ymd) { first, last ->
                     mViewMode.getCalendar(first, last)
@@ -602,12 +683,16 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
                             CalendarData.TASK_TYPE_CHECK_CHECK_DRYING,
                             CalendarData.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING -> {
-                                mViewMode.localCalendar.value?.indexOfFirst { data -> data.isChooser }?.let { bean ->
-                                    if (bean != -1) {
-                                        intent.putExtra(Constants.Global.KEY_TXT_TYPE, mViewMode.getCalendar.value?.data?.get(bean)?.epochExplain)
-                                        startActivity(intent)
+                                mViewMode.localCalendar.value?.indexOfFirst { data -> data.isChooser }
+                                    ?.let { bean ->
+                                        if (bean != -1) {
+                                            intent.putExtra(
+                                                Constants.Global.KEY_TXT_TYPE,
+                                                mViewMode.getCalendar.value?.data?.get(bean)?.epochExplain
+                                            )
+                                            startActivity(intent)
+                                        }
                                     }
-                                }
                             }
                             CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
                             }
@@ -681,6 +766,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     // todo 时间转换，并且需要请求接口
                     data?.timeInMillis?.let {
                         binding.tvTodayDate.text = mViewMode.getYmdForEn(time = it)
+                        binding.abMonth.text = mViewMode.getYmForEn(time = it)
                     }
 
                     // 显示下面的taskList
@@ -1107,9 +1193,17 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     )
                                                 }
                                                 // 记录taskTime
-                                                listContent[position].taskTime?.let { mViewMode.setGuideInfoTime(it) }
+                                                listContent[position].taskTime?.let {
+                                                    mViewMode.setGuideInfoTime(
+                                                        it
+                                                    )
+                                                }
                                                 // 记录TaskType
-                                                listContent[position].taskType?.let { mViewMode.setGuideInfoStatus(it) }
+                                                listContent[position].taskType?.let {
+                                                    mViewMode.setGuideInfoStatus(
+                                                        it
+                                                    )
+                                                }
                                                 // todo 解锁周期图文引导弹窗
                                                 when (listContent[position].taskType) {
                                                     CalendarData.TASK_TYPE_CHANGE_WATER -> {
@@ -1134,22 +1228,151 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     CalendarData.SEED_KIT_CUP_TYPE_TASK,
                                                     -> {
                                                         // 跳转富文本
-                                                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
-                                                        intent.putExtra(Constants.Global.KEY_TXT_TYPE, listContent[position].taskType)
+                                                        val intent = Intent(
+                                                            this@CalendarActivity,
+                                                            BasePopActivity::class.java
+                                                        )
+                                                        intent.putExtra(
+                                                            Constants.Global.KEY_TXT_TYPE,
+                                                            listContent[position].taskType
+                                                        )
                                                         startActivity(intent)
                                                         // 完成任务
-                                                        mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, null)) }
+                                                        mViewMode.taskId.value?.let { taskId ->
+                                                            mViewMode.finishTask(
+                                                                FinishTaskReq(taskId, null)
+                                                            )
+                                                        }
+                                                    }
+                                                    CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
+                                                        // 跳转到富文本
+                                                        val intent = Intent(
+                                                            this@CalendarActivity,
+                                                            BasePopActivity::class.java
+                                                        )
+                                                        intent.putExtra(
+                                                            Constants.Global.KEY_TXT_ID,
+                                                            Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_FIXED_TASK_ID,
+                                                            Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_INTENT_UNLOCK_TASK,
+                                                            true
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
+                                                            true
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_TITLE_COLOR,
+                                                            "#006241"
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_UNLOCK_TASK_ID,
+                                                            mViewMode.taskId.value
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                                                            "Next"
+                                                        )
+                                                        startActivityLauncherSeeding.launch(intent)
+                                                    }
+                                                    CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
+                                                        // todo 这个应该是转周期了，调用图文、然后解锁花期
+                                                        // todo 这个需要单独处理逻辑。
+                                                        // todo 判断当前是的植物属性
+                                                        // seed to veg
+                                                        /* SeedGuideHelp(this@CalendarActivity).showGuidePop {
+                                                             mViewMode.taskId.value?.let { taskId -> mViewMode.finishTask(FinishTaskReq(taskId, weight)) }
+                                                         }*/
+                                                        // 跳转到富文本
+                                                        val categoryCode =
+                                                            intent.getStringExtra(Constants.Global.KEY_CATEGORYCODE)
+                                                                ?: ""
+                                                        val intent = Intent(
+                                                            this@CalendarActivity,
+                                                            BasePopActivity::class.java
+                                                        )
+                                                        intent.putExtra(
+                                                            Constants.Global.KEY_TXT_ID,
+                                                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_FIXED_TASK_ID,
+                                                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_IS_SHOW_BUTTON,
+                                                            true
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_INTENT_JUMP_PAGE,
+                                                            true
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_TITLE_COLOR,
+                                                            "#006241"
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_UNLOCK_TASK_ID,
+                                                            mViewMode.taskId.value
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_CATEGORYCODE,
+                                                            categoryCode
+                                                        )
+                                                        intent.putExtra(
+                                                            BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
+                                                            "I am ready"
+                                                        )
+                                                        startActivity(intent)
+                                                    }
+                                                    CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING,
+                                                    CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
+                                                    CalendarData.TASK_TYPE_CHECK_CHECK_HARVEST,
+                                                    CalendarData.TASK_TYPE_CHECK_CHECK_DRYING,
+                                                    CalendarData.TASK_TYPE_CHECK_CHECK_CURING,
+                                                    CalendarData.TASK_TYPE_CHECK_CHECK_AUTOFLOWERING,
+                                                    CalendarData.TASK_TYPE_LST,
+                                                    CalendarData.TASK_TYPE_TOPPING,
+                                                    CalendarData.TASK_TYPE_TRIM,
+                                                    -> {
+                                                        // todo 这5个周期解锁还是用guideInfo
+                                                        listContent[position].taskType?.let { type ->
+                                                            mViewMode.getGuideInfo(
+                                                                type
+                                                            )
+                                                        }
                                                     }
                                                     else -> {
                                                         // todo、如果是学院任务，那么就直接跳转到学院弹窗
-                                                        if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {
+                                                        /*if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {
                                                             ARouter.getInstance().build(RouterPath.Home.PAGE_KNOW)
                                                                 .withString(Constants.Global.KEY_TXT_TYPE, listContent[position].taskType)
                                                                 .withString(Constants.Global.KEY_TASK_ID, listContent[position].taskId)
                                                                 .navigation(this@CalendarActivity, KEY_REQUEST_KNOW_MORE)
                                                             return@BaseThreeTextPop
                                                         }
-                                                        listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }
+                                                        listContent[position].taskType?.let { type -> mViewMode.getGuideInfo(type) }*/
+                                                        // 跳转富文本
+                                                        val intent = Intent(
+                                                            this@CalendarActivity,
+                                                            BasePopActivity::class.java
+                                                        )
+                                                        intent.putExtra(
+                                                            Constants.Global.KEY_TXT_TYPE,
+                                                            listContent[position].taskType
+                                                        )
+                                                        startActivity(intent)
+                                                        mViewMode.finishTask(
+                                                            FinishTaskReq(
+                                                                listContent[position].taskId,
+                                                                null
+                                                            )
+                                                        )
                                                     }
                                                 }
                                             },
@@ -1187,52 +1410,55 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 }
                                                 // remind me
                                                 // 需要授权日历权限弹窗
-                                                pop.asCustom(BaseCenterPop(
-                                                    this@CalendarActivity,
-                                                    content = getString(com.cl.common_base.R.string.my_calendar_permisson),
-                                                    confirmText = getString(com.cl.common_base.R.string.my_confirm),
-                                                    onConfirmAction = {
-                                                        // 如果有权限那么就直接弹出
-                                                        // 授权日历弹窗
-                                                        PermissionHelp().applyPermissionHelp(
-                                                            this@CalendarActivity,
-                                                            getString(com.cl.common_base.R.string.my_calendar_permisson),
-                                                            object :
-                                                                PermissionHelp.OnCheckResultListener {
-                                                                override fun onResult(result: Boolean) {
-                                                                    if (!result) return
-                                                                    // 跳转选择事件弹窗
-                                                                    pop.asCustom(
-                                                                        BaseTimeChoosePop(
-                                                                            this@CalendarActivity,
-                                                                            currentTime = listContent[position].taskTime?.toLong(),
-                                                                            onConfirmAction = { time, timeMis ->
-                                                                                // 时间
-                                                                                // 传给后台 & 上报给手机本地日历
-                                                                                // todo 传给后台
-                                                                                mViewMode.updateTask(
-                                                                                    UpdateReq(
-                                                                                        taskId = listContent[position].taskId,
-                                                                                        taskTime = timeMis.toString()
+                                                XPopup.Builder(this@CalendarActivity)
+                                                    .asCustom(BaseCenterPop(
+                                                        isShowCancelButton = true,
+                                                        context = this@CalendarActivity,
+                                                        content = getString(com.cl.common_base.R.string.my_calendar_permisson),
+                                                        confirmText = getString(com.cl.common_base.R.string.my_confirm),
+                                                        onConfirmAction = {
+                                                            // 如果有权限那么就直接弹出
+                                                            // 授权日历弹窗
+                                                            PermissionHelp().applyPermissionHelp(
+                                                                this@CalendarActivity,
+                                                                getString(com.cl.common_base.R.string.my_calendar_permisson),
+                                                                object :
+                                                                    PermissionHelp.OnCheckResultListener {
+                                                                    override fun onResult(result: Boolean) {
+                                                                        if (!result) return
+                                                                        // 跳转选择事件弹窗
+                                                                        pop.asCustom(
+                                                                            BaseTimeChoosePop(
+                                                                                this@CalendarActivity,
+                                                                                currentTime = listContent[position].taskTime?.toLong(),
+                                                                                onConfirmAction = { time, timeMis ->
+                                                                                    // 时间
+                                                                                    // 传给后台 & 上报给手机本地日历
+                                                                                    // todo 传给后台
+                                                                                    mViewMode.updateTask(
+                                                                                        UpdateReq(
+                                                                                            taskId = listContent[position].taskId,
+                                                                                            taskTime = timeMis.toString()
+                                                                                        )
                                                                                     )
-                                                                                )
-                                                                                // todo 上报给手机本地日历
-                                                                                CalendarEventUtil.addCalendarEvent(
-                                                                                    this@CalendarActivity,
-                                                                                    listContent[position].taskName,
-                                                                                    listContent[position].taskName,
-                                                                                    timeMis, 2
-                                                                                )
-                                                                            })
-                                                                    ).show()
-                                                                }
-                                                            },
-                                                            Manifest.permission.READ_CALENDAR,
-                                                            Manifest.permission.WRITE_CALENDAR,
-                                                        )
+                                                                                    // todo 上报给手机本地日历
+                                                                                    CalendarEventUtil.addCalendarEvent(
+                                                                                        this@CalendarActivity,
+                                                                                        listContent[position].taskName,
+                                                                                        listContent[position].taskName,
+                                                                                        timeMis,
+                                                                                        2
+                                                                                    )
+                                                                                })
+                                                                        ).show()
+                                                                    }
+                                                                },
+                                                                Manifest.permission.READ_CALENDAR,
+                                                                Manifest.permission.WRITE_CALENDAR,
+                                                            )
 
-                                                    }
-                                                )).show()
+                                                        }
+                                                    )).show()
 
                                             },
                                             threeLineCLickEventAction = {
@@ -1334,20 +1560,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     /**
      * 排水界面结束回调
      */
-    private val myActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-        if (activityResult.resultCode == Activity.RESULT_OK) {
-            // 排水结束，那么直接弹出
-            if (basePumpWaterFinishPop.isShow) return@registerForActivityResult
-            pop
-                .isDestroyOnDismiss(false)
-                .enableDrag(false)
-                .maxHeight(dp2px(600f))
-                .dismissOnTouchOutside(false)
-                .asCustom(
-                    basePumpWaterFinishPop
-                ).show()
+    private val myActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                // 排水结束，那么直接弹出
+                if (basePumpWaterFinishPop.isShow) return@registerForActivityResult
+                pop
+                    .isDestroyOnDismiss(false)
+                    .enableDrag(false)
+                    .maxHeight(dp2px(600f))
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        basePumpWaterFinishPop
+                    ).show()
+            }
         }
-    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -1362,6 +1589,20 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
 
     }
+
+    private val startActivityLauncherSeeding =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                mViewMode.taskId.value?.let { taskId ->
+                    mViewMode.finishTask(
+                        FinishTaskReq(
+                            taskId,
+                            null
+                        )
+                    )
+                }
+            }
+        }
 
     // 手动返回
     override fun onBackPressed() {

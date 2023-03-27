@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.databinding.BindingAdapter;
 
 import com.cl.common_base.R;
 
@@ -132,6 +133,11 @@ public class FeatureItemSwitch extends FrameLayout {
     public FeatureItemSwitch setItemChecked(boolean checked) {
         setItemChecked(checked, false, false);
         return this;
+    }
+
+    @BindingAdapter("isItemCheck")
+    public static void setIsItemCheck(FeatureItemSwitch view, boolean isOffline) {
+        view.setItemChecked(isOffline);
     }
 
     /**

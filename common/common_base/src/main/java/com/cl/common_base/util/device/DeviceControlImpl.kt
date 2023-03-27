@@ -10,6 +10,7 @@ import com.tuya.smart.sdk.api.IResultCallback
 import com.tuya.smart.sdk.api.ITuyaDevice
 import com.tuya.smart.sdk.bean.DeviceBean
 import com.tuya.smart.sdk.enums.TYDevicePublishModeEnum
+import kotlin.math.log
 
 /**
  * 设备控制中心
@@ -53,6 +54,93 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun pumpWater(startOrStop: Boolean) {
         map[TuYaDeviceConstants.KAY_PUMP_WATER] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun airPump(startOrStop: Boolean) {
+        map[TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun fanIntake(gear: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_INTAKE] = gear
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun fanExhaust(gear: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_EXHAUST] = gear
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun lightIntensity(gear: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT] = gear
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    /**
+     * 旋钮开门
+     */
+    override fun doorLock(openOrClose: Boolean) {
+        map[TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK] = openOrClose
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun childLock(startOrStop: Boolean) {
+        map[TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    /**
+     * 夜间模式
+     */
+    override fun nightMode(startOrStop: String) {
+        map[TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun lightTime(time: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME] = time
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun closeLightTime(time: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME] = time
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
             TYDevicePublishModeEnum.TYDevicePublishModeAuto,

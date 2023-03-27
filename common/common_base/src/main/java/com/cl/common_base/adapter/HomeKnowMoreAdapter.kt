@@ -1,5 +1,14 @@
 package com.cl.common_base.adapter
 
+import android.graphics.Color
+import android.text.Html
+import android.text.Spanned
+import android.util.TypedValue
+import android.view.Gravity
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.core.text.toSpannable
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -13,6 +22,7 @@ import com.cl.common_base.video.SampleCoverVideo
 import com.cl.common_base.widget.FeatureTitleBar
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
 
 /**
  * 富文本
@@ -43,6 +53,8 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         addItemType(RichTextData.KEY_TYPE_FLUSHING_WEIGH, R.layout.home_item_edit_pop) // 清洗期、重量
         addItemType(RichTextData.KEY_TYPE_DRYING_WEIGH, R.layout.home_item_curing_pop) // 干燥期、重量
         addItemType(RichTextData.KEY_TYPE_BUTTON_JUMP, R.layout.home_itme_button_jump) // 按钮跳转
+        addItemType(RichTextData.KEY_TYPE_CHECK_BOX, R.layout.home_item_chexk_box)
+        /*addItemType(RichTextData.KEY_TYPE_PAGE_TXT, R.layout.home_itme_page_txt)*/
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -148,6 +160,18 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                     it.executePendingBindings()
                 }
             }
+            RichTextData.KEY_TYPE_CHECK_BOX -> {
+                DataBindingUtil.bind<HomeItemChexkBoxBinding>(holder.itemView)?.let {
+                    it.data = data[position]
+                    it.executePendingBindings()
+                }
+            }
+            /*RichTextData.KEY_TYPE_PAGE_TXT -> {
+                DataBindingUtil.bind<HomeItmePageTxtBinding>(holder.itemView)?.let {
+                    it.data = data[position]
+                    it.executePendingBindings()
+                }
+            }*/
         }
     }
 
@@ -187,6 +211,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                         // 暂停状态下显示封面
                         isShowPauseCover = true
                         seekOnStart = item.videoPosition ?: 0L
+                        if (item.value.autoplay == true) startPlayLogic()
                     }
                 }
             }
@@ -252,8 +277,30 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         /*println("45454545: $text")*/
     }
 
-    fun parseText(txt: String?): String? {
-        return txt?.let { getRealText(it, isF) }
+    fun parseText(txt: String?, bolds: MutableList<String>?): Spanned? {
+        return  txt?.let {
+            val realText = getRealText(it, isF)
+            var str = realText
+            val targets = bolds
+            if (targets.isNullOrEmpty()) return str.toSpannable()
+            val boldStart = "<b>"
+            val boldEnd = "</b>"
+            for (target in targets) {
+                if (str.contains(target)) {
+                    val parts = str.split(target.toRegex()).toTypedArray()
+                    val builder = StringBuilder()
+                    builder.append(parts[0])
+                    for (i in 1 until parts.size) {
+                        builder.append(boldStart)
+                        builder.append(target)
+                        builder.append(boldEnd)
+                        builder.append(parts[i])
+                    }
+                    str = builder.toString()
+                }
+            }
+            Html.fromHtml(str)
+        }
     }
 
     /**
@@ -278,6 +325,9 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         }
         return allSatisfyStr
     }
+
+
+    // 设置
 
     companion object {
         const val TAG = "ListNormalAdapter22"

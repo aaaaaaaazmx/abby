@@ -247,6 +247,42 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
     }
 
+    /**
+     * 合并账号
+     */
+    private val _listDevice = MutableLiveData<Resource<MutableList<ListDeviceBean>>>()
+    val listDevice: LiveData<Resource<MutableList<ListDeviceBean>>> = _listDevice
+    fun listDevice() {
+        viewModelScope.launch {
+            repository.listDevice()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _listDevice.value = it
+                }
+        }
+    }
+
     // 获取当前设备信息
     private val tuYaDeviceBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
@@ -409,6 +445,42 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     private fun hasHardwareUpdate(list: MutableList<UpgradeInfoBean>?): Boolean {
         if (null == list || list.size == 0) return false
         return list.firstOrNull { it.type == 9 }?.upgradeStatus == 1
+    }
+
+    /**
+     * 修改植物信息
+     */
+    private val _updatePlantInfo = MutableLiveData<Resource<BaseBean>>()
+    val updatePlantInfo: LiveData<Resource<BaseBean>> = _updatePlantInfo
+    fun updatePlantInfo(body: UpDeviceInfoReq) {
+        viewModelScope.launch {
+            repository.updateDeviceInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _updatePlantInfo.value = it
+                }
+        }
     }
 
     /**

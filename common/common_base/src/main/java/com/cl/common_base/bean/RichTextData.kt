@@ -2,6 +2,7 @@ package com.cl.common_base.bean
 
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.cl.common_base.BaseBean
+import com.google.gson.annotations.SerializedName
 
 data class RichTextData(
     val flushingWeigh: String? = null, // 冲刷期重量
@@ -37,6 +38,7 @@ data class RichTextData(
                 "flushingWeigh" -> KEY_TYPE_FLUSHING_WEIGH
                 "dryingWeigh" -> KEY_TYPE_DRYING_WEIGH
                 "buttonJump" -> KEY_TYPE_BUTTON_JUMP
+                "option" -> KEY_TYPE_CHECK_BOX
                 else -> KEY_TYPE_BAR
             }
     }
@@ -60,7 +62,15 @@ data class RichTextData(
         val width: String? = null, // 宽度
         val icon: String? = null, // 按钮图标
         val autoplay: Boolean? = null, // 自动播放
-        ) : BaseBean()
+        var isCheck: Boolean? = false, // 是否选中
+        @SerializedName("colour")
+        var color: String? = null,  // 字体颜色
+        var size: String? = null,   // 字体大小
+        @SerializedName("textAlign")
+        var left: String? = null,   // 左边距
+        var bold: Boolean? = false, // 字体是否加粗
+        var bolds: MutableList<String>? = null,
+    ) : BaseBean()
 
 
     companion object {
@@ -108,6 +118,12 @@ data class RichTextData(
 
         // 跳转到webView
         const val KEY_TYPE_BUTTON_JUMP = 15
+
+        // 设置checkbox勾选项类型
+        const val KEY_TYPE_CHECK_BOX = 16
+
+        // 设置文本类型
+        const val KEY_TYPE_PAGE_TXT = 17
 
         // 自己创建的类型
         // 与商民的无关

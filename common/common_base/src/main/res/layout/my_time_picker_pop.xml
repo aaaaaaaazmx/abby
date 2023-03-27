@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@drawable/bg_round"
+        tools:ignore="MissingConstraints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <com.cl.common_base.widget.wheel.time.TimePicker
+        android:id="@+id/tp_time"
+        android:layout_width="wrap_content"
+        android:layout_height="280dp"
+        android:layout_gravity="center_horizontal"
+        app:itemTextColor="#AAAAAA"
+        app:itemTextSize="24sp"
+        app:force12Hour="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:selectedTextColor="#313131"
+        app:selectedTextSize="30sp"
+        app:wheelCyclic="true"
+         />
+
+        <View
+            app:layout_constraintTop_toBottomOf="@+id/tp_time"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:id="@+id/xpopup_divider1"
+            android:background="@color/_xpopup_list_divider"
+            android:layout_height=".5dp" />
+
+        <LinearLayout
+            app:layout_constraintTop_toBottomOf="@+id/xpopup_divider1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textColor="@color/mainColor"
+                android:id="@+id/tv_cancel"
+                android:textSize="18sp"
+                android:text="Cancel"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+
+            <View
+                android:layout_width=".5dp"
+                android:id="@+id/xpopup_divider2"
+                android:background="@color/_xpopup_list_divider"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:textColor="@color/mainColor"
+                android:textSize="18sp"
+                android:id="@+id/tv_confirm"
+                android:text="Confirm"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

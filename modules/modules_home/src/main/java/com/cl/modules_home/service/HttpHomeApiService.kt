@@ -23,6 +23,14 @@ interface HttpHomeApiService {
     ): Flow<HttpResult<AutomaticLoginData>>
 
     /**
+     * 夜间模式
+     */
+    @POST("abby/userDevice/updateDeviceInfo")
+    fun updateDeviceInfo(
+        @Body body: UpDeviceInfoReq
+    ): Flow<HttpResult<BaseBean>>
+
+    /**
      * 种植引导图文获取
      */
     @FormUrlEncoded
@@ -239,5 +247,20 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/userDevice/switchDevice")
     fun switchDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<String>>
+
+    /**
+     * 修改植物信息
+     */
+    @POST("abby/plant/updatePlantInfo")
+    fun updatePlantInfo(
+        @Body body: UpPlantInfoReq
+    ): Flow<HttpResult<BaseBean>>
+
+    @POST("abby/plant/skipGerminate")
+    fun skipGerminate(): Flow<HttpResult<BaseBean>>
+
+
+    @POST("abby/plant/intoPlantBasket")
+    fun intoPlantBasket(): Flow<HttpResult<BaseBean>>
 
 }

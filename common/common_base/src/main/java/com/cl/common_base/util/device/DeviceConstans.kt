@@ -30,16 +30,22 @@ class TuYaDeviceConstants {
 
         // 水温
         const val KEY_DEVICE_WATER_TEMPERATURE = "104"
+
         // 排气扇
-        const val KEY_DEVICE_VENTILATION =  "103"
+        const val KEY_DEVICE_VENTILATION = "103"
+
         // 环境温度
-        const val KEY_DEVICE_TEMP_CURRENT =  "6"
+        const val KEY_DEVICE_TEMP_CURRENT = "6"
+
         // 进气扇
-        const val KEY_DEVICE_INPUT_AIR_FLOW =  "115"
+        const val KEY_DEVICE_INPUT_AIR_FLOW = "115"
+
         // 湿度
-        const val KEY_DEVICE_HUMIDITY_CURRENT =  "7"
+        const val KEY_DEVICE_HUMIDITY_CURRENT = "7"
+
         // 灯光亮度
         const val KEY_DEVICE_BRIGHT_VALUE = "5"
+
         // 水位
         const val KEY_DEVICE_WATER_LEVEL = "105"
 
@@ -49,14 +55,29 @@ class TuYaDeviceConstants {
         // 门的开光状态 (Bool)
         const val KEY_DEVICE_DOOR = "106"
 
+        // 旋钮开门锁
+        const val KEY_DEVICE_DOOR_LOOK = "119"
+
+        // 童锁
+        const val KEY_DEVICE_CHILD_LOCK = "142"
+
+        // 夜间模式
+        const val KEY_DEVICE_NIGHT_MODE = "141"
+
         // 风干期开门迎宾模式打开
-        const val KEY_DEVICE_FAN_ENABLE= "132"
+        const val KEY_DEVICE_FAN_ENABLE = "132"
 
         // 植物高度 0-800 int
         const val KEY_DEVICE_PLANT_HEIGHT = "107"
 
+        // 温度 0-200 华氏度
+        const val KEY_DEVICE_WENDU = "6"
+
         // 湿度  Humidity 0-200 int
         const val KEY_DEVICE_HUMIDITY = "7"
+
+        // 水温 0-200 int
+        const val KEY_DEVICE_WATER_WENDU = "104"
 
         // 进气扇  int 0-10
         const val KEY_DEVICE_INTAKE = "115"
@@ -72,6 +93,18 @@ class TuYaDeviceConstants {
 
         // 开灯
         const val KEY_DEVICE_TURN_ON_THE_LIGHT = "116"
+
+        // 排气扇  int  1-10
+        const val KEY_DEVICE_EXHAUST = "103"
+
+        // 植物灯光 int 1-10
+        const val KEY_DEVICE_GROW_LIGHT = "5"
+
+        // 开灯时间	数值范围: 0-23, 间距: 1, 倍数: 0, 单位:
+        const val KEY_DEVICE_LIGHT_TIME = "116"
+
+        // 关灯时间	数值范围: 0-23, 间距: 1, 倍数: 0, 单位:
+        const val KEY_DEVICE_LIGHT_OFF_TIME = "117"
     }
 
     /**
@@ -92,7 +125,13 @@ class TuYaDeviceConstants {
         const val KEY_DEVICE_TEMP_CURRENT_INSTRUCTION = "temp_current" // 环境温度
         const val KEY_DEVICE_VENTILATION_INSTRUCTION = "Ventilation" // 排气扇
         const val KEY_DEVICE_WATER_TEMPERATURE_INSTRUCTION = "water_temperature" // 水温
-
+        const val KEY_DEVICE_CHILD_LOCK_INSTRUCT = "auto_lock" // 童锁
+        const val KEY_DEVICE_DOOR_LOOK_INSTRUCT = "child_lock" // 打开门
+        const val KEY_DEVICE_DOOR = "door" // 门是否是开的， false关闭。
+        const val KEY_DEVICE_PLANT_HEIGHT_INSTRUCTION = "height" // 植物高度
+        const val KEY_DEVICE_AIR_PUMP_INSTRUCTION = "air_pump" // 气泵
+        const val KEY_DEVICE_LIGHT_TIME_INSTRUCTION = "turn_on_the_light" // 开灯时间
+        const val KEY_DEVICE_LIGHT_OFF_TIME_INSTRUCTION = "turn_off_light" // 关灯时间
         /**
          * brightValue	灯光强度		false
         integer
@@ -100,15 +139,15 @@ class TuYaDeviceConstants {
         string
         humidityCurrent	湿度		false
         integer
-        			false
+        false
         integer
-        			false
+        false
         integer
-        			false
+        false
         integer
-        	水位		false
+        水位		false
         string
-        			false
+        false
         integer
          */
 

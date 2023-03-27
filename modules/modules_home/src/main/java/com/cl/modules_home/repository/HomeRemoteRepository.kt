@@ -28,6 +28,10 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getGuideInfo(body)
     }
 
+    fun updateDeviceInfo(body: UpDeviceInfoReq): Flow<HttpResult<BaseBean>> {
+        return service.updateDeviceInfo(body)
+    }
+
     fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
         return service.getRichText(txtId, type)
     }
@@ -158,5 +162,16 @@ class HomeRemoteRepository @Inject constructor() {
 
     fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
         return service.switchDevice(deviceId)
+    }
+
+    fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
+        return service.updatePlantInfo(body)
+    }
+    fun skipGerminate(): Flow<HttpResult<BaseBean>> {
+        return service.skipGerminate()
+    }
+
+    fun intoPlantBasket(): Flow<HttpResult<BaseBean>> {
+        return service.intoPlantBasket()
     }
 }

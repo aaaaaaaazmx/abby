@@ -34,7 +34,7 @@
 
                 <TextView
                     android:text="If you would like to extend your growing service, please go to our official website to purchase the option most suitable for you.
-This service includes our one-on-one support, growing pack (fertilizers, basket, carbon filters, etc), and device connectivity to our server."
+This service includes our one-on-one support and growing supply pack."
                     android:id="@+id/tv_html"
                     android:layout_marginTop="19dp"
                     android:layout_marginEnd="20dp"
@@ -50,6 +50,22 @@ This service includes our one-on-one support, growing pack (fertilizers, basket,
                     android:background="@mipmap/my_redeem_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/btn_purchase"
+                    android:layout_marginBottom="58dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_below="@+id/cl_three"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/create_state_button"
+                    android:enabled="true"
+                    android:text="Purchase"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:layout_marginTop="10dp"

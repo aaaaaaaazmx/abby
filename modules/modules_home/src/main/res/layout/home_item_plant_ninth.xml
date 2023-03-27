@@ -62,7 +62,7 @@
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:background="@drawable/base_dot_red"
-            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintCircle="@id/iv_academy"
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
@@ -79,7 +79,7 @@
 
 
         <TextView
-            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE }"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
@@ -92,7 +92,7 @@
             app:layout_constraintCircleRadius="20dp" />
 
         <TextView
-            android:visibility="@{viewModel.userDetail.data.isVip == 1 ? viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
@@ -195,6 +195,33 @@
                 app:svSolidColor="@color/white"
                 app:svSolidType="solid" />
 
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_door_toast"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@mipmap/home_plant_door_toast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_door_lock_status"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginBottom="45dp"
+                android:gravity="center"
+                android:textColor="@color/mainColor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_bowl"
+                app:layout_constraintTop_toTopOf="@+id/iv_bowl"
+                app:svRadius="180dp"
+                app:svSolidColor="@color/white"
+                app:svSolidType="solid"
+                />
 
             <ImageView
                 android:id="@+id/iv_support"
@@ -229,7 +256,9 @@
                 app:layout_constraintCircleAngle="50"
                 app:layout_constraintCircleRadius="20dp" />
 
+            <!--去掉加水-->
             <com.cl.common_base.widget.SvTextView
+                android:visibility="gone"
                 android:id="@+id/tv_drain"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
@@ -240,7 +269,6 @@
                 android:textColor="@color/mainColor"
                 android:textSize="10sp"
                 android:textStyle="bold"
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.GONE : View.VISIBLE}'
                 app:layout_constraintBottom_toTopOf="@+id/tv_feef"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:svRadius="180dp"
@@ -251,9 +279,9 @@
                 android:id="@+id/cl_continue"
                 android:layout_width="261dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="42dp"
                 android:orientation="vertical"
                 android:visibility="visible"
+                android:layout_marginBottom="42dp"
                 app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -324,12 +352,75 @@
                     app:layout_constraintTop_toBottomOf="@+id/ll_root" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <!--种子发芽阶段才会显示的倒计时-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="gone"
+                android:id="@+id/cl_seeding"
+                android:layout_marginBottom="52dp"
+                app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:background="@mipmap/home_pair_bg"
+                android:layout_width="261dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textColor="@color/black"
+                    android:gravity="center"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="18dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="12332123123"
+                    android:id="@+id/tV_html"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/iv_seed"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:background="@mipmap/home_seed_count_down"
+                    app:layout_constraintTop_toBottomOf="@+id/tV_html" />
+
+                <Button
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="31dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_seed"
+                    android:id="@+id/btn_skip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/background_button_red_r100"
+                    android:text="Skip"
+                    android:textSize="15sp" />
+
+                <Button
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="31dp"
+                    app:layout_constraintTop_toTopOf="@+id/btn_skip"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/btn_check"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:background="@drawable/background_button_gray_r100"
+                    android:text="Check"
+                    android:textSize="15sp" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <ImageView
                 tools:visibility="visible"
                 android:visibility="gone"
                 android:id="@+id/image_left_swip"
-                android:layout_marginBottom="60dp"
                 android:layout_marginStart="12dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -342,7 +433,6 @@
                 tools:visibility="visible"
                 android:visibility="gone"
                 android:id="@+id/image_right_swip"
-                android:layout_marginBottom="60dp"
                 android:layout_marginEnd="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -545,7 +635,7 @@ Day1" />
                     android:layout_height="8dp"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/red_bg"
-                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
+                    android:visibility='@{viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />

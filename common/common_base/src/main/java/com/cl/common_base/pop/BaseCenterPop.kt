@@ -27,6 +27,7 @@ class BaseCenterPop(
     private val isShowCancelButton: Boolean = true,
     private val richText: String? = null, // 富文本
     private val spannedString: SpannedString? = null,
+    private val contentBackGround: Int? = null,
 ) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_center
@@ -66,11 +67,17 @@ class BaseCenterPop(
             tvConfirm.text = confirmText
             tvCancel.text = cancelText
             tvTitle.text = titleText
+            contentBackGround?.let { ivBackground.setImageResource(it) }
 
+
+            // 是否显示中间图拼啊
+            ViewUtils.setVisible(contentBackGround != null, ivBackground)
             // 是否显示标题
-            ViewUtils.setVisible(titleText.isNullOrEmpty(), tvTitle)
+            ViewUtils.setVisible(titleText?.isNotEmpty() == true, tvTitle)
             // 是否显示和隐藏按钮
             ViewUtils.setVisible(isShowCancelButton, tvCancel, xpopupDivider2)
+            // 隐藏中间内容
+            ViewUtils.setVisible(content?.isNotEmpty() == true, tvContent)
 
             tvCancel.setOnClickListener {
                 dismiss()

@@ -228,6 +228,12 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         return this;
     }
 
+    @BindingAdapter("itemValues")
+    public static void setItemValues(FeatureItemView view, String itemvalue) {
+        view.setItemValue(itemvalue);
+    }
+
+
     // 设置箭头改为圆角
     public FeatureItemView setSvText(String itemValue) {
         svtText.setText(itemValue);

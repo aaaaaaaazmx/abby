@@ -28,7 +28,13 @@ android {
     viewBinding.isEnabled = true
     dataBinding.isEnabled = true
 
+    /*repositories {
+        flatDir {
+            dirs("libs")
+        }
+    }*/
 }
+
 
 kapt {
     arguments {
@@ -37,6 +43,7 @@ kapt {
 }
 
 dependencies {
+    implementation(fileTree("libs").include("*.jar", "*.aar"))
     // 必需
     api(Deps.coreKtx)
     api(Deps.appcompat)
@@ -104,11 +111,12 @@ dependencies {
     api(Deps.jpushGoogle)
     api(Deps.jPushCodeGoogle)
     // 启动
-    api ("androidx.core:core-splashscreen:1.0.0-beta02")
+    api("androidx.core:core-splashscreen:1.0.0-beta02")
     // bugly
     api("com.tencent.bugly:crashreport:latest.release")
     api(project(mapOf("path" to ":common:BarcodeScanning")))
     api(project(mapOf("path" to ":common:kefu-easeui")))
+    api(project(mapOf("path" to ":common:mylibrary")))
     // lottie
     api(Deps.lottie)
     // viewPager指示器
@@ -116,4 +124,9 @@ dependencies {
     // snapHelp
     api("com.github.rubensousa:gravitysnaphelper:2.2.2")
     // api("com.github.limuyang2:LShadowLayout:1.0.3")
+
+    // 指示器
+    // api(files("libs/indicatorseekbar.aar"))
+    // api (group="",name="indicatorseekbar",ext = "aar")
+    // api(mapOf("name" to "indicatorseekbar.aar", "ext" to "aar"))
 }

@@ -4,40 +4,41 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cl.common_base.bean.FinishTaskReq
-import com.cl.common_base.bean.RichTextData
-import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
-import dagger.hilt.android.scopes.ActivityRetainedScoped
+import com.tuya.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@ActivityRetainedScoped
-class KnowMoreViewModel @Inject constructor(private val repository: HomeRepository) : ViewModel() {
+class HomePlantProfileViewModel  @Inject constructor(private val repository: HomeRepository) :
+    ViewModel() {
 
 
-    // 用户信息
-    val userInfo by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
-        parseObject
+    /**
+     * 设备信息
+     */
+    val tuyaDeviceBean by lazy  {
+        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
+        GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
     /**
-     * 富文本图文图文接口、所用东西都是从接口拉取
+     * 合并账号
      */
-    private val _richText = MutableLiveData<Resource<RichTextData>>()
-    val richText: LiveData<Resource<RichTextData>> = _richText
-    fun getRichText(txtId: String? = null, type: String? = null) {
+    private val _listDevice = MutableLiveData<Resource<MutableList<ListDeviceBean>>>()
+    val listDevice: LiveData<Resource<MutableList<ListDeviceBean>>> = _listDevice
+    fun listDevice() {
         viewModelScope.launch {
-            repository.getRichText(txtId, type)
+            repository.listDevice()
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -61,20 +62,23 @@ class KnowMoreViewModel @Inject constructor(private val repository: HomeReposito
                         )
                     )
                 }.collectLatest {
-                    _richText.value = it
+                    _listDevice.value = it
                 }
         }
     }
 
 
+
+
+
     /**
-     * 任务完成
+     * 修改植物信息
      */
-    private val _finishTask = MutableLiveData<Resource<String>>()
-    val finishTask: LiveData<Resource<String>> = _finishTask
-    fun finishTask(body: FinishTaskReq) {
+    private val _updatePlantInfo = MutableLiveData<Resource<BaseBean>>()
+    val updatePlantInfo: LiveData<Resource<BaseBean>> = _updatePlantInfo
+    fun updatePlantInfo(body: UpPlantInfoReq) {
         viewModelScope.launch {
-            repository.finishTask(body)
+            repository.updatePlantInfo(body)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -98,9 +102,15 @@ class KnowMoreViewModel @Inject constructor(private val repository: HomeReposito
                         )
                     )
                 }.collectLatest {
-                    _finishTask.value = it
+                    _updatePlantInfo.value = it
                 }
         }
     }
 
+
+    // 是否移除了自己
+    var isDeleteSelf = false
+    fun setIsDeleteSelf(delete: Boolean) {
+        isDeleteSelf = delete
+    }
 }

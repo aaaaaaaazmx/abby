@@ -13,5 +13,11 @@ data class ListDeviceBean(
     var isChooser: Boolean? = null,
     var plantId: Int? = null,
     var isSwitch: Int? = null,
+    var childLock: Int? = null,
+    var nightMode: Int? = null,
+    var nightTimer: String? = null,
+    var currentDevice: Int? = null,
+    var proMode: String? = null, // 是否是手动、自动模式
+    var fanAuto: Int?= null,
 ) : BaseBean() {
 }

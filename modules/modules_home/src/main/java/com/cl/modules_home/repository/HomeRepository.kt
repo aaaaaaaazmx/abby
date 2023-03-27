@@ -28,6 +28,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     }
 
     /**
+     * 更新设备信息
+     */
+    fun updateDeviceInfo(body: UpDeviceInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateDeviceInfo(body)
+    }
+
+    /**
      * 获取富文本、统一图文接口
      */
     fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
@@ -230,5 +237,17 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
 
     fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
         return remoteRepository.switchDevice(deviceId)
+    }
+
+    fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updatePlantInfo(body)
+    }
+
+    fun skipGerminate(): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.skipGerminate()
+    }
+
+    fun intoPlantBasket(): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.intoPlantBasket()
     }
 }

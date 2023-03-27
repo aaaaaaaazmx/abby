@@ -54,17 +54,26 @@
 
     <application>
         <activity
+            android:name="com.cl.common_base.base.KnowMoreActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:name="com.cl.modules_home.ui.KnowMoreActivity"
             android:screenOrientation="portrait" />
 
         <activity
+            android:name="com.cl.modules_home.ui.AcademyActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:screenOrientation="portrait"
-            android:name="com.cl.modules_home.ui.AcademyActivity" />
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.cl.modules_home.ui.AcademyDetailActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait" />
         <activity
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
-            android:name="com.cl.modules_home.ui.AcademyDetailActivity" />
+            android:name="com.cl.modules_home.activity.HomeNewPlantNameActivity" />
+        <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait"
+            android:name="com.cl.modules_home.activity.HomePlantProfileActivity"
+                android:windowSoftInputMode="adjustPan" />
     </application>
 </manifest>

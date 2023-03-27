@@ -1,6 +1,7 @@
 package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
+import com.google.gson.annotations.SerializedName
 
 /**
  * 获取植物基本信息
@@ -8,6 +9,7 @@ import com.cl.common_base.BaseBean
  * @author 李志军 2022-08-08 16:23
  */
 data class PlantInfoData(
+    var categoryCode: String? = null, // 植物标记码
     var attribute: String? = null, // 种植属性(Photo、Auto)
     var strainName: String? = null, // 种植名字
     var plantWay: String? = null, // 种植方式
@@ -25,6 +27,8 @@ data class PlantInfoData(
     var list: MutableList<InfoList>? = null,
     var cupType: Int? = null, // 塑料杯、纸杯
     var plantName: String? = null,
+    @SerializedName("timeRemaining")
+    var germinationTime: String? = null, // 剩余发芽时间
 ) : BaseBean() {
 
     data class InfoList(
