@@ -8,6 +8,7 @@ import android.os.Handler
 import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
@@ -16,6 +17,7 @@ import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.*
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.pop.*
+import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
@@ -29,7 +31,7 @@ import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MySettingBinding
 import com.cl.modules_my.pop.AttentionPop
-import com.cl.modules_my.pop.ChooseTimePop
+import com.cl.common_base.pop.ChooseTimePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
@@ -165,36 +167,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         )*/
     }
 
-    /**
-     * 删除设备弹窗
-     */
-    private val confirm by lazy {
-        XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(true)
-            .asCustom(MyDeleteDevicePop(this) {
-                TuyaHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
-                    .removeDevice(object : IResultCallback {
-                        override fun onError(code: String?, error: String?) {
-                            logE(
-                                """
-                        removeDevice:
-                        code: $code
-                        error: $error
-                    """.trimIndent()
-                            )
-                            ToastUtil.shortShow(error)
-                            Reporter.reportTuYaError("newDeviceInstance", error, code)
-                            //  调用接口请求删除设备
-                            mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
-                        }
-
-                        override fun onSuccess() {
-                            //  调用接口请求删除设备
-                            mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
-                        }
-                    })
-            })
-    }
-
     override fun MySettingBinding.initBinding() {
         binding.apply {
             lifecycleOwner = this@SettingActivity
@@ -223,60 +195,67 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             listDevice.observe(this@SettingActivity, resourceObserver {
                 success {
                     data?.firstOrNull { it.deviceId == tuyaHomeBean?.devId }?.let { deviceInfo ->
+                        // 显示当前的是否是手动模式
+                        binding.itemTitle.text = if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
+
                         binding.ftChildLock.isItemChecked = deviceInfo.childLock == 1
                         binding.ftNight.isItemChecked = deviceInfo.nightMode == 1
-                        ViewUtils.setVisible(deviceInfo.nightMode == 1, binding.ftTimer, binding.tvTimeDesc)
-                            val str = deviceInfo.nightTimer.toString()
-                            val pattern = "(\\d{1,2}):\\d{2} [AP]M-(\\d{1,2}):\\d{2} [AP]M"
+                        ViewUtils.setVisible(
+                            deviceInfo.nightMode == 1,
+                            binding.ftTimer,
+                            binding.tvTimeDesc
+                        )
+                        val str = deviceInfo.nightTimer.toString()
+                        val pattern = "(\\d{1,2}):\\d{2} [AP]M-(\\d{1,2}):\\d{2} [AP]M"
 
-                            val p: Pattern = Pattern.compile(pattern)
-                            val m: Matcher = p.matcher(str)
-                            var openTime: String? = null
-                            var closeTime: String? = null
-                            if (m.find()) {
-                                muteOn = m.group(1)
-                                muteOff = m.group(2)
-                                var onHour = muteOn?.toInt() ?: 0
-                                var offHour = muteOff?.toInt() ?: 0
+                        val p: Pattern = Pattern.compile(pattern)
+                        val m: Matcher = p.matcher(str)
+                        var openTime: String? = null
+                        var closeTime: String? = null
+                        if (m.find()) {
+                            muteOn = m.group(1)
+                            muteOff = m.group(2)
+                            var onHour = muteOn?.toInt() ?: 0
+                            var offHour = muteOff?.toInt() ?: 0
 
-                                // 判断前缀是AM还是PM
-                                val pattern = Pattern.compile("(PM|AM)")
-                                val matcher = pattern.matcher(str)
-                                var i = 0
-                                var openTimeIsAmOrPm: String? = null
-                                var closeTimeIsAmOrPm: String? = null
-                                while (matcher.find()) {
-                                    val group = matcher.group()
-                                    if (i == 0) {
-                                        if (group == "PM") {
-                                            muteOn = "${(m.group(1)?.toInt() ?: 0) + 12}"
-                                        }
-                                        openTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
-                                        i++
-                                        continue
+                            // 判断前缀是AM还是PM
+                            val pattern = Pattern.compile("(PM|AM)")
+                            val matcher = pattern.matcher(str)
+                            var i = 0
+                            var openTimeIsAmOrPm: String? = null
+                            var closeTimeIsAmOrPm: String? = null
+                            while (matcher.find()) {
+                                val group = matcher.group()
+                                if (i == 0) {
+                                    if (group == "PM") {
+                                        muteOn = "${(m.group(1)?.toInt() ?: 0) + 12}"
                                     }
-
-                                    if (i > 0) {
-                                        if (group == "PM") {
-                                            muteOff = "${(m.group(2)?.toInt() ?: 0) + 12}"
-                                        }
-                                        closeTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
-                                        i = 0
-                                    }
+                                    openTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
+                                    i++
+                                    continue
                                 }
-                                openTime = "$onHour:00 $openTimeIsAmOrPm"
-                                closeTime = "$offHour:00 $closeTimeIsAmOrPm"
 
-                            } else {
-                                logE("No match found.")
-                                muteOn = "22"
-                                muteOff = "7"
-
-                                openTime = "10:00 PM"
-                                closeTime = "7:00 AM"
+                                if (i > 0) {
+                                    if (group == "PM") {
+                                        muteOff = "${(m.group(2)?.toInt() ?: 0) + 12}"
+                                    }
+                                    closeTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
+                                    i = 0
+                                }
                             }
+                            openTime = "$onHour:00 $openTimeIsAmOrPm"
+                            closeTime = "$offHour:00 $closeTimeIsAmOrPm"
 
-                            binding.ftTimer.itemValue = "$openTime-$closeTime"
+                        } else {
+                            logE("No match found.")
+                            muteOn = "22"
+                            muteOff = "7"
+
+                            openTime = "10:00 PM"
+                            closeTime = "7:00 AM"
+                        }
+
+                        binding.ftTimer.itemValue = "$openTime-$closeTime"
                     }
                 }
             })
@@ -296,7 +275,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             BaseCenterPop(
                                 this@SettingActivity,
                                 onConfirmAction = {
-                                    val intent = Intent(this@SettingActivity, WebActivity::class.java)
+                                    val intent =
+                                        Intent(this@SettingActivity, WebActivity::class.java)
                                     intent.putExtra(WebActivity.KEY_WEB_URL, data?.url)
                                     startActivity(intent)
                                     // 点了之后就弹这个
@@ -521,7 +501,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             // 是否打开童锁
             DeviceControl.get()
                 .success {
-                    mViewModel.updatePlantInfo(UpDeviceInfoReq(childLock = if (isChecked) 1 else 0, deviceId = tuyaHomeBean?.devId))
+                    mViewModel.updatePlantInfo(
+                        UpDeviceInfoReq(
+                            childLock = if (isChecked) 1 else 0,
+                            deviceId = tuyaHomeBean?.devId
+                        )
+                    )
                     binding.ftChildLock.isItemChecked = isChecked
                 }
                 .error { code, error ->
@@ -534,6 +519,43 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     )
                 }
                 .childLock(isChecked)
+        }
+
+        // 手动模式还是自动模式
+        binding.ftManualRoot.setOnClickListener {
+            val isChecked = binding.itemTitle.text.contains("ON")
+            if (!isChecked) {
+                // 如果是关闭的
+                val intent = Intent(this@SettingActivity, KnowMoreActivity::class.java)
+                intent.putExtra(
+                    Constants.Global.KEY_TXT_ID,
+                    Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
+                )
+                intent.putExtra(
+                    BasePopActivity.KEY_FIXED_TASK_ID,
+                    Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
+                )
+                intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock")
+                startActivity(intent)
+            } else {
+                // 删除植物、弹出提示框
+                XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(true)
+                    .asCustom(
+                        MyDeleteDevicePop(
+                            isShowUnlockButton = true,
+                            unLockText = "Turn Off",
+                            titleText = "Notice",
+                            context = this,
+                            contentText = "Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
+                        ) {
+                            mViewModel.updatePlantInfo(UpDeviceInfoReq(deviceId = tuyaHomeBean?.devId, proMode = "Off"))
+                            tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
+                        }).show()
+            }
+
         }
 
         // 夜间模式
@@ -569,38 +591,54 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if(muteOff?.toInt() == 24) 12 else muteOff}")
+                    .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.toInt() == 24) 12 else muteOff}")
             }
 
             // 调用接口更新后台夜间模式
-            mViewModel.updatePlantInfo(UpDeviceInfoReq(nightMode = if (isChecked) 1 else 0, deviceId = tuyaHomeBean?.devId))
+            mViewModel.updatePlantInfo(
+                UpDeviceInfoReq(
+                    nightMode = if (isChecked) 1 else 0,
+                    deviceId = tuyaHomeBean?.devId
+                )
+            )
             ViewUtils.setVisible(isChecked, binding.ftTimer, binding.tvTimeDesc)
         }
 
         binding.ftTimer.setOnClickListener {
-            pop.asCustom(ChooseTimePop(this@SettingActivity, turnOnHour = muteOn?.toInt(), turnOffHour = muteOff?.toInt(), onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
-                binding.ftTimer.itemValue = "$onTime-$offMinute"
-                muteOn = "$timeOn"
-                muteOff = "$timeOff"
-                // todo 这个时间和上面解析时间有问题，需要传递24小时制度
-                mViewModel.updatePlantInfo(UpDeviceInfoReq(nightTimer = binding.ftTimer.itemValue.toString(), deviceId = tuyaHomeBean?.devId))
-                // 发送dp点
-                DeviceControl.get()
-                    .success {
-                        // "141":"muteOn:10,muteOff:22"
-                        logI("123312313: muteOn:$timeOn,muteOff:$timeOff")
-                    }
-                    .error { code, error ->
-                        ToastUtil.shortShow(
-                            """
+            pop.asCustom(
+                ChooseTimePop(
+                    this@SettingActivity,
+                    turnOnHour = muteOn?.toInt(),
+                    turnOffHour = muteOff?.toInt(),
+                    onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
+                        binding.ftTimer.itemValue = "$onTime-$offMinute"
+                        muteOn = "$timeOn"
+                        muteOff = "$timeOff"
+                        // todo 这个时间和上面解析时间有问题，需要传递24小时制度
+                        mViewModel.updatePlantInfo(
+                            UpDeviceInfoReq(
+                                nightTimer = binding.ftTimer.itemValue.toString(),
+                                deviceId = tuyaHomeBean?.devId
+                            )
+                        )
+                        // 发送dp点
+                        DeviceControl.get()
+                            .success {
+                                // "141":"muteOn:10,muteOff:22"
+                                logI("123312313: muteOn:$timeOn,muteOff:$timeOff")
+                            }
+                            .error { code, error ->
+                                ToastUtil.shortShow(
+                                    """
                               nightMode: 
                               code-> $code
                               errorMsg-> $error
                                 """.trimIndent()
-                        )
-                    }
-                    .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn},muteOff:${if(timeOff == 24) 12 else timeOff}")
-            })).show()
+                                )
+                            }
+                            .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn},muteOff:${if (timeOff == 24) 12 else timeOff}")
+                    })
+            ).show()
         }
 
         // 重量单位
@@ -615,7 +653,31 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 删除设备
         binding.dtDeleteDevice.setOnClickListener {
             // 删除设备、弹出提示框
-            confirm.show()
+            XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(true)
+                .asCustom(MyDeleteDevicePop(this) {
+                    TuyaHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
+                        .removeDevice(object : IResultCallback {
+                            override fun onError(code: String?, error: String?) {
+                                logE(
+                                    """
+                                        removeDevice:
+                                        code: $code
+                                        error: $error
+                                    """.trimIndent()
+                                )
+                                ToastUtil.shortShow(error)
+                                Reporter.reportTuYaError("newDeviceInstance", error, code)
+                                //  调用接口请求删除设备
+                                mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
+                            }
+
+                            override fun onSuccess() {
+                                //  调用接口请求删除设备
+                                mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
+                            }
+                        })
+                }).show()
         }
         // 检查更新
         binding.ftNewVision.setOnClickListener {
@@ -653,7 +715,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 .asCustom(
                     MergeAccountPop(this@SettingActivity, onConfirmAction = { email, code ->
                         // 跳转到弹窗合并确认界面
-                        val intent = Intent(this@SettingActivity, MergeAccountSureActivity::class.java)
+                        val intent =
+                            Intent(this@SettingActivity, MergeAccountSureActivity::class.java)
                         intent.putExtra("email", email)
                         intent.putExtra("code", code)
                         startActivity(intent)

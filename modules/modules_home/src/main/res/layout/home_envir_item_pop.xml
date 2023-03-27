@@ -24,7 +24,6 @@
 
         <TextView
             android:textStyle="bold"
-            text="@{data.detectionValue}"
             android:id="@+id/period_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,21 +37,18 @@
 
         <TextView
             android:textStyle="bold"
-            text="@{data.healthStatus}"
             android:id="@+id/period_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="13dp"
-            android:textColor="@{adapter.getColor(data.detectionValue, data.healthStatus)}"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Week5 Day5" />
 
         <TextView
-            text="@{adapter.temperatureConversion(data.value)}"
             android:id="@+id/tv_going"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

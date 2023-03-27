@@ -84,6 +84,7 @@ object Constants {
     // 我的界面相关
     object My {
         // 公英制
+        // false 英制 inc、 true 公制 cm
         const val KEY_MY_WEIGHT_UNIT = "key_my_weight_unit"
     }
 
@@ -213,6 +214,9 @@ object Constants {
 
         // 当前植物的标记ID
         var KEY_CATEGORYCODE = "categoryCode"
+
+        // 是否是手动模式
+        const val KEY_MANUAL_MODE = "key_manual_mode"
     }
 
     // Fixed Id
@@ -260,6 +264,9 @@ object Constants {
         const val KEY_FIXED_ID_TRANSPLANT_3 = "6b05ffbadee746e6979a314613df75b2"
         const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
         const val KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW  = "d966091a08c048db962b710212eb223d"
+
+        // 手动模式自动模式
+        const val KEY_FIXED_ID_MANUAL_MODE = "6f5c5f54f3515fe9c744980e39583e95"
     }
 
     object FragmentIndex {

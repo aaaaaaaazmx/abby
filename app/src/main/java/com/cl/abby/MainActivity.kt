@@ -76,6 +76,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     @JvmField
     var firstLoginAndNoDevice = false
 
+    // 是否是手动模式
+    @Autowired(name = Constants.Global.KEY_MANUAL_MODE)
+    @JvmField
+    var manualMode = false
+
     // fragments
     private var homeFragment: Fragment? = null
     private var contactFragment: Fragment? = null
@@ -110,24 +115,24 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private val bubblePopHor by lazy {
         // 居中显示
         XPopup.Builder(this@MainActivity)
-            .popupPosition(PopupPosition.Top)
-            .dismissOnTouchOutside(false)
-            .isClickThrough(true)  //点击透传
-            .hasShadowBg(false) // 去掉半透明背景
-            //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
-            .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
+                .popupPosition(PopupPosition.Top)
+                .dismissOnTouchOutside(false)
+                .isClickThrough(true)  //点击透传
+                .hasShadowBg(false) // 去掉半透明背景
+                //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                .offsetY(XPopupUtils.dp2px(this@MainActivity, 6f))
     }
 
     private val asPop by lazy {
         val pop = CustomBubbleAttachPopup(this@MainActivity, bubbleClickAction = {
             switchFragment(0)
         })
-            //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
-            .setBubbleBgColor(Color.RED) //气泡背景
-            .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 6f))
-            .setArrowHeight(XPopupUtils.dp2px(this@MainActivity, 6f))
-            //.setBubbleRadius(100)
-            .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 2f))
+                //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
+                .setBubbleBgColor(Color.RED) //气泡背景
+                .setArrowWidth(XPopupUtils.dp2px(this@MainActivity, 6f))
+                .setArrowHeight(XPopupUtils.dp2px(this@MainActivity, 6f))
+                //.setBubbleRadius(100)
+                .setArrowRadius(XPopupUtils.dp2px(this@MainActivity, 2f))
         pop as CustomBubbleAttachPopup
     }
 
@@ -137,7 +142,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val itemView = menuView.getChildAt(0) as BottomNavigationItemView
         //引入badgeView
         val badgeView =
-            LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
+                LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
         badgeView
     }
 
@@ -208,7 +213,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                     //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if ((mViewModel.unReadMessageNumber.value ?: 0) > 0 || (data?.calendarHighMsgCount ?: 0) > 0) {
+                    if ((mViewModel.unReadMessageNumber.value
+                                    ?: 0) > 0 || (data?.calendarHighMsgCount ?: 0) > 0) {
                         if (!itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
@@ -221,13 +227,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                                     // 三个及其以上会变形
                                     // 所以不居中显示
                                     bubblePopHor.atView(
-                                        (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
+                                            (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
                                     ).isCenterHorizontal(false).asCustom(asPop).show()
                                 } else {
                                     bubblePopHor
-                                        .isCenterHorizontal(true).atView(
-                                            (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
-                                        ).asCustom(asPop).show()
+                                            .isCenterHorizontal(true).atView(
+                                                    (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
+                                            ).asCustom(asPop).show()
                                 }
                             }
                             // 不再显示气泡
@@ -241,7 +247,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         }
                     }
                     // 低优先级环境
-                    else if ((mViewModel.environmentInfo.value?.data?.environmentLowCount ?: 0) > 0) {
+                    else if ((mViewModel.environmentInfo.value?.data?.environmentLowCount
+                                    ?: 0) > 0) {
                         if (!itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
                             itemView.addView(badgeView)
@@ -256,8 +263,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     }
                     // 环信消息、日历、学院、环境 == 0 那么就移除
                     else if ((mViewModel.unReadMessageNumber.value
-                            ?: 0) == 0 && (data?.calendarHighMsgCount
-                            ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
+                                    ?: 0) == 0 && (data?.calendarHighMsgCount
+                                    ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
                     ) {
                         if (itemView.contains(badgeView)) {
                             //把badgeView添加到itemView中
@@ -317,31 +324,31 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
         // 环信消息变化监听
         LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
-            .observe(this) {
-                mViewModel.userDetail()
-                /*// 如果不是等于0、那么是不要展示的
-                // 如果是设备在线状态 && 并且是已经开始种植的。
-                if (mIndex == 0) {
-                    // 当选中第0个的时候
-                    // 主要是消除小红点
-                    val menuView =
-                        binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
-                    val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if (!itemView.contains(badgeView)) {
-                        itemView.addView(badgeView)
+                .observe(this) {
+                    mViewModel.userDetail()
+                    /*// 如果不是等于0、那么是不要展示的
+                    // 如果是设备在线状态 && 并且是已经开始种植的。
+                    if (mIndex == 0) {
+                        // 当选中第0个的时候
+                        // 主要是消除小红点
+                        val menuView =
+                            binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+                        if (!itemView.contains(badgeView)) {
+                            itemView.addView(badgeView)
+                        }
+                        return@observe
                     }
-                    return@observe
+                    // 不等于0
+                    if (it) {
+                        // 只展示一次
+                        if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
+                            //  表示有消息要来了，需要查询一遍
+                            //  查询接口
+                            mViewModel.userDetail()
+                        }
+                    }*/
                 }
-                // 不等于0
-                if (it) {
-                    // 只展示一次
-                    if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                        //  表示有消息要来了，需要查询一遍
-                        //  查询接口
-                        mViewModel.userDetail()
-                    }
-                }*/
-            }
     }
 
     override fun initData() {
@@ -401,18 +408,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             Constants.FragmentIndex.HOME_INDEX -> {
                 val bundle = Bundle()
                 bundle.putString(
-                    Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG, plantGuideFlag
+                        Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG, plantGuideFlag
                 )
                 bundle.putString(
-                    Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE, plantFlag
+                        Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE, plantFlag
                 )
                 bundle.putString(
-                    Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE, deviceOffLineState
+                        Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE, deviceOffLineState
                 )
                 // 是否是第一次登录注册、并且是从未绑定过设备
                 bundle.putBoolean(
-                    Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
-                    firstLoginAndNoDevice
+                        Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
+                        firstLoginAndNoDevice
+                )
+                // 是否是手动模式
+                bundle.putBoolean(
+                        Constants.Global.KEY_MANUAL_MODE,
+                        manualMode
                 )
                 // todo 跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
                 // todo RouterPath.Home.PAGE_HOME 种植引导页面
@@ -431,26 +443,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
 
             Constants.FragmentIndex.CONTACT_INDEX -> contactFragment?.let { transaction.show(it) }
-                ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()?.let {
-                        contactFragment = it as Fragment
-                        contactFragment?.let {
-                            contactFragment = it
-                            transaction.add(R.id.container, it, null)
+                    ?: kotlin.run {
+                        ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()?.let {
+                            contactFragment = it as Fragment
+                            contactFragment?.let {
+                                contactFragment = it
+                                transaction.add(R.id.container, it, null)
+                            }
                         }
                     }
-                }
 
             Constants.FragmentIndex.MY_INDEX -> myFragment?.let { transaction.show(it) }
-                ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.My.PAGE_MY).navigation()?.let {
-                        myFragment = it as Fragment
-                        myFragment?.let {
-                            myFragment = it
-                            transaction.add(R.id.container, it, null)
+                    ?: kotlin.run {
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY).navigation()?.let {
+                            myFragment = it as Fragment
+                            myFragment?.let {
+                                myFragment = it
+                                transaction.add(R.id.container, it, null)
+                            }
                         }
                     }
-                }
         }
         mIndex = position
         transaction.commitAllowingStateLoss()

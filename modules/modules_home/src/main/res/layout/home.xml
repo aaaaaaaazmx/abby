@@ -68,7 +68,12 @@
                         layout="@layout/home_item_plant_complete"
                         android:visibility="gone" />
                 </RelativeLayout>
-
+                <!--手动模式-->
+                <include
+                    app:viewModel="@{viewModel}"
+                    android:id="@+id/plant_manual"
+                    layout="@layout/home_item_plant_manual"
+                    android:visibility="gone" />
                 <!--绑定设备界面-->
                 <include
                     android:id="@+id/bind_device"

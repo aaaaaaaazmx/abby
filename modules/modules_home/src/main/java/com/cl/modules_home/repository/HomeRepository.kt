@@ -28,6 +28,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     }
 
     /**
+     * 更新设备信息
+     */
+    fun updateDeviceInfo(body: UpDeviceInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateDeviceInfo(body)
+    }
+
+    /**
      * 获取富文本、统一图文接口
      */
     fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {

@@ -75,7 +75,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     // 童锁的开闭状态
-     val _childLockStatus = MutableLiveData(
+    val _childLockStatus = MutableLiveData(
         tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK).toString()
     )
@@ -83,6 +83,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun setChildLockStatus(status: String) {
         _childLockStatus.value = status
     }
+
     // 门的开闭状态
     private val _openDoorStatus = MutableLiveData(
         tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
@@ -128,6 +129,43 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val repairSN: LiveData<String> = _repairSN
     fun setRepairSN(sn: String) {
         _repairSN.value = sn
+    }
+
+
+    /**
+     * 修改植物信息
+     */
+    private val _updatePlantInfo = MutableLiveData<Resource<BaseBean>>()
+    val updatePlantInfo: LiveData<Resource<BaseBean>> = _updatePlantInfo
+    fun updatePlantInfo(body: UpDeviceInfoReq) {
+        viewModelScope.launch {
+            repository.updateDeviceInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _updatePlantInfo.value = it
+                }
+        }
     }
 
     /**
@@ -493,7 +531,23 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     )
                 )
             }.collectLatest {
-                _environmentInfo.value = it
+                when (it) {
+                    is Resource.Success -> {
+                        val originalData = it.data
+                        val envList = it.data?.environments
+                        if (envList.isNullOrEmpty()) {
+                            _environmentInfo.value = it
+                            return@collectLatest
+                        }
+                        envList.forEach { data ->
+                            data.fanIntake = type.inputAirFlow
+                            data.fanExhaust = type.ventilation
+                        }
+                        originalData?.environments = envList
+                        _environmentInfo.value = originalData?.let { it1 -> Resource.Success(it1) }
+                    }
+                    else -> _environmentInfo.value = it
+                }
             }
         }
     }
@@ -592,7 +646,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 是否需要补偿订阅
      */
     private val _whetherSubCompensation = MutableLiveData<Resource<WhetherSubCompensationData>>()
-    val whetherSubCompensation: LiveData<Resource<WhetherSubCompensationData>> = _whetherSubCompensation
+    val whetherSubCompensation: LiveData<Resource<WhetherSubCompensationData>> =
+        _whetherSubCompensation
+
     fun whetherSubCompensation() {
         viewModelScope.launch {
             getUnread
@@ -1006,6 +1062,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         onOtaInfo?.invoke(upgradeInfoBeans, false)
                     }
                 }
+
                 override fun onFailure(code: String?, error: String?) {
                     logI(
                         """
@@ -1407,10 +1464,280 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             .onEach { onTick.invoke(it) }.launchIn(scope)
     }
 
-    var isLeftSwap:Boolean = false
+    var isLeftSwap: Boolean = false
     fun setLeftSwaps(isLeft: Boolean) {
         isLeftSwap = isLeft
     }
+
+
+    /**
+     * 手动模式相关数据
+     */
+    private val _getPlantHeight = MutableLiveData<String>()
+    val plantHeights: LiveData<String> = _getPlantHeight
+
+    // 获取植物高度
+    fun getPlantHeight() {
+        _getPlantHeight.value = String.format(
+            "%.1f",
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat().div(25.4))
+    }
+
+    fun setPlantHeight(height: String) {
+        _getPlantHeight.value = height
+    }
+
+    private val _getWenDu = MutableLiveData<Int>()
+    val getWenDu: LiveData<Int> = _getWenDu
+
+    // 获取温度
+    fun getWenDu() {
+        _getWenDu.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().toInt()
+    }
+
+    fun setWenDu(wendu: String?) {
+        _getWenDu.value = wendu?.toDouble()?.toInt()
+    }
+
+
+    private val _getHumidity = MutableLiveData<Int>()
+    val getHumidity: LiveData<Int> = _getHumidity
+
+    // 获取湿度
+    fun getHumidity() {
+        _getHumidity.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().toInt()
+    }
+
+    fun setHumidity(humidity: String?) {
+        _getHumidity.value = humidity?.toDouble()?.toInt()
+    }
+
+    private val _getWaterWenDu = MutableLiveData<Int>()
+    val getWaterWenDu: LiveData<Int> = _getWaterWenDu
+
+    // 获取水温
+    fun getWaterWenDu() {
+        _getWaterWenDu.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().toInt()
+    }
+
+    fun setWaterWenDu(waterWenDu: String?) {
+        _getWaterWenDu.value = waterWenDu?.toDouble()?.toInt()
+    }
+
+    private val _getFanIntake = MutableLiveData<Int>()
+    val getFanIntake: LiveData<Int> = _getFanIntake
+
+    // 进气风扇
+    fun getFanIntake() {
+        _getFanIntake.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().toInt()
+    }
+
+    fun setFanIntake(gear: String) {
+        _getFanIntake.value = gear.toDouble().toInt()
+    }
+
+    private val _getFanExhaust = MutableLiveData<Int>()
+    val getFanExhaust: LiveData<Int> = _getFanExhaust
+
+    fun getFanExhaust() {
+        _getFanExhaust.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().toInt()
+    }
+
+    fun setFanExhaust(gear: String) {
+        _getFanExhaust.value = gear.toDouble().toInt()
+    }
+
+    // 植物灯光
+    private val _getGrowLight = MutableLiveData<Int>()
+    val getGrowLight: LiveData<Int> = _getGrowLight
+
+    fun getGrowLight() {
+        _getGrowLight.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().toInt()
+    }
+
+    fun setGrowLight(gear: String) {
+        _getGrowLight.value = gear.toDouble().toInt()
+    }
+
+    // 气泵
+    private val _getAirPump = MutableLiveData<Boolean>()
+    val getAirPump: LiveData<Boolean> = _getAirPump
+    fun getAirPump() {
+        _getAirPump.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP).toString().toBoolean()
+    }
+
+    fun setAirPump(gear: String?) {
+        kotlin.runCatching {
+            (gear == "true").also { _getAirPump.value = it }
+        }
+    }
+
+    // 开灯时间
+    private val _getLightTime = MutableLiveData<String>()
+    val getLightTime: LiveData<String> = _getLightTime
+    fun getLightTime() {
+        _getLightTime.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME).toString()
+    }
+
+    // 关灯时间
+    private val _getCloseLightTime = MutableLiveData<String>()
+    val getCloseLightTime: LiveData<String> = _getCloseLightTime
+    fun getCloseLightTime() {
+        _getCloseLightTime.value =
+            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME).toString()
+        getTimeText()
+        logI("getLightTime:${_getLightTime.value} -- ${_getCloseLightTime.value} --- ${getTimeText.value}")
+    }
+
+    private val timeText = MutableLiveData<String>("")
+    val getTimeText: LiveData<String> = timeText
+    private fun setTimeText(text: String) {
+        timeText.value = text
+    }
+
+    private fun getTimeText(): String {
+        kotlin.runCatching {
+            val lightTime = _getLightTime.value?.toDouble()?.toInt() ?: 0
+            val closeLightTime = _getCloseLightTime.value?.toDouble()?.toInt() ?: 0
+
+            muteOn = lightTime.toString()
+            muteOff = closeLightTime.toString()
+
+            if (lightTime == 0) {
+                muteOn = "12"
+            }
+
+            if (closeLightTime == 0) {
+                muteOff = "12"
+            }
+
+            val startTime = if ((muteOn?.toInt() ?: 12) <= 12) {
+                "${(muteOn?.toInt() ?: 12)}:00 AM"
+            } else {
+                "${((muteOn?.toInt() ?: 12) -12)}:00 PM"
+            }
+
+            val closeTime = if ((muteOff?.toInt() ?: 12) <= 12) {
+                "${(muteOff?.toInt() ?: 12)}:00 AM"
+            } else {
+                "${((muteOff?.toInt() ?: 12) -12)}:00 PM"
+            }
+            setTimeText("$startTime-$closeTime")
+            return "$startTime-$closeTime"
+        }
+        return ""
+    }
+
+    var muteOn: String? = null
+    fun setmuteOn(muteOn: String?) {
+        this.muteOn = muteOn
+    }
+
+    var muteOff: String? = null
+    fun setmuteOff(muteOff: String?) {
+        this.muteOff = muteOff
+    }
+
+    // 水的Level
+    private val _getWaterLevel = MutableLiveData<String>()
+    val getWaterLevel: LiveData<String> = _getWaterLevel
+    fun setWaterLevel(level: String) {
+        // 0L 1L 2L 3L
+        _getWaterLevel.value = when (level) {
+            "0L" -> "Low"
+            "2L", "1L" -> "OK"
+            "3L" -> "Max"
+            else -> "Low"
+        }
+    }
+
+    // 公英制转换
+    fun temperatureConversion(text: Int?): Int? {
+        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        // 默认为false
+        if (isMetric) {
+            kotlin.runCatching {
+                // (1°F − 32) × 5/9
+                // String result1 = String.format("%.2f", d);
+                return String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble()
+                    .toInt()
+            }.getOrElse {
+                return text
+            }
+        }
+        return text
+    }
+
+    fun textCovert(): String {
+        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        return if (isMetric) "Temperature (°C)" else "Temperature (°F)"
+    }
+
+    fun incCovert(): String {
+        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        return if (isMetric) "Plant Height" else "Plant Height"
+    }
+
+    private val _loadFirst = MutableLiveData<Boolean>(false)
+    val loadFirst: LiveData<Boolean> = _loadFirst
+    fun setLoadFirst(loadFirst: Boolean) {
+        _loadFirst.value = loadFirst
+    }
+
+    // 格式化植物的高度
+    fun formatIncPlant(inc: String?): String {
+        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        if (isMetric) {
+            kotlin.runCatching {
+                val incPlant = inc?.toFloat()?.times(2.54f)
+                if (incPlant != null) {
+                    return if (incPlant <= 20) {
+                        "<20 cm"
+                    } else {
+                        "${incPlant.toInt()} cm"
+                    }
+                }
+            }
+        } else {
+            kotlin.runCatching {
+                val incPlant = inc?.toFloat()
+                if (incPlant != null) {
+                    return if (incPlant <= 8) {
+                        "<8 inch"
+                    } else {
+                        "$inc inch"
+                    }
+                }
+            }
+        }
+        return inc ?: ""
+    }
+
+    // 排水的状态Flag
+    private val _getDrainageFlag = MutableLiveData<Boolean>(false)
+    val getDrainageFlag: LiveData<Boolean> = _getDrainageFlag
+    fun setDrainageFlag(flag: Boolean) {
+        _getDrainageFlag.value = flag
+    }
+
 
     companion object {
         const val KEY_GUIDE_ID = "key_guide_id"

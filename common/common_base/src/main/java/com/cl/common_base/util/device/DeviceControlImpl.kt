@@ -61,6 +61,42 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         )
     }
 
+    override fun airPump(startOrStop: Boolean) {
+        map[TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun fanIntake(gear: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_INTAKE] = gear
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun fanExhaust(gear: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_EXHAUST] = gear
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun lightIntensity(gear: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT] = gear
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
     /**
      * 旋钮开门
      */
@@ -87,6 +123,24 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun nightMode(startOrStop: String) {
         map[TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE] = startOrStop
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun lightTime(time: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME] = time
+        getCurrentDevice()?.publishDps(
+            GSON.toJson(map),
+            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            this
+        )
+    }
+
+    override fun closeLightTime(time: Int) {
+        map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME] = time
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
             TYDevicePublishModeEnum.TYDevicePublishModeAuto,

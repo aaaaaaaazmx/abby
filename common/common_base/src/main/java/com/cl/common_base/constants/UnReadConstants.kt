@@ -123,6 +123,7 @@ object UnReadConstants {
         const val KEY_ACTIVITY_IN_TREND = "activity_in_trend"
 
         const val KEY_CLOSE_DOOR = "close_door"
+        const val KEY_REMIND_LIGHT_UP = "remind_light_up"
     }
 
     /**

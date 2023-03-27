@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -92,11 +93,11 @@
                     app:itemTitle="Replant" />
 
                 <LinearLayout
-                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="7dp"
                     android:background="@color/white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:orientation="vertical">
 
                     <com.cl.common_base.widget.FeatureItemSwitch
                         android:id="@+id/ft_night"
@@ -106,16 +107,15 @@
                         app:itemTitle="@string/my_night" />
 
                     <com.cl.common_base.widget.FeatureItemView
-                        android:visibility="gone"
                         android:id="@+id/ft_timer"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
+                        android:visibility="gone"
                         app:hideArrow="true"
                         app:itemTitle="@string/my_time"
                         app:itemValue="@string/setting_sub_time" />
 
                     <TextView
-                        android:visibility="gone"
                         android:id="@+id/tv_time_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -125,13 +125,14 @@
                         android:layout_marginEnd="20dp"
                         android:text="While in sleep mode, notifications will be muted, and light strip will be turned off during the sepcified time."
                         android:textColor="@color/black"
-                        android:textSize="11sp" />
+                        android:textSize="11sp"
+                        android:visibility="gone" />
 
                     <com.cl.common_base.widget.FeatureItemSwitch
-                        android:layout_marginTop="20dp"
                         android:id="@+id/ft_child_lock"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
+                        android:layout_marginTop="20dp"
                         app:itemTitle="@string/my_child_lock"
                         app:itemValue="@string/my_child_lock" />
 
@@ -146,6 +147,66 @@
                         android:text="After opening, the door will automatically lock when closed.Afterwards, the door can only be opened through the app"
                         android:textColor="@color/black"
                         android:textSize="11sp" />
+
+                    <!--开关手动和自动模式-->
+                    <com.cl.common_base.widget.FeatureItemSwitch
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="gone"
+                        app:itemTitle="Pro Mode" />
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:visibility="visible"
+                        android:id="@+id/ft_manual_root"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        tools:ignore="MissingConstraints">
+
+                        <TextView
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:visibility="visible"
+                            android:id="@+id/item_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:singleLine="true"
+                            android:text="Pro Mode: Off"
+                            tools:text="123123"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:text="Beta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="30dp"
+                            android:textColor="#9C2626"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/item_title"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Beat" />
+
+                        <ImageView
+                            android:id="@+id/fiv_item_switch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@mipmap/iv_right"
+                            android:paddingStart="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
                 <com.cl.common_base.widget.FeatureItemView
@@ -156,7 +217,6 @@
                     app:hideArrow="true"
                     app:itemTitle="Digital service"
                     app:itemValue="@string/setting_sub_time" />
-
 
 
                 <com.cl.common_base.widget.FeatureItemView

@@ -16,22 +16,24 @@
         android:layout_marginTop="20dp"
         android:id="@+id/cl_check"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:minHeight="45dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/background_gray_r5">
 
         <TextView
             android:text="@{data.value.txt}"
             android:id="@+id/tv_check_desc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:textColor="@color/black"
             android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/curing_box"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints"
-            tools:text="123123123" />
+            tools:text="123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123" />
 
         <CheckBox
             android:enabled="false"

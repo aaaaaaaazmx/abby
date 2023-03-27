@@ -25,7 +25,7 @@ class PlantCheckHelp {
     /**
      * 检查种植统一跳转
      */
-    fun plantStatusCheck(activity: Activity?= null ,data: CheckPlantData, isClearTask: Boolean = false, isLeftSwapAnim: Boolean = false, isNoAnim : Boolean = true) {
+    fun plantStatusCheck(activity: Activity? = null, data: CheckPlantData, isClearTask: Boolean = false, isLeftSwapAnim: Boolean = false, isNoAnim: Boolean = true) {
         val intAnim = if (isNoAnim) {
             0
         } else if (isLeftSwapAnim) {
@@ -47,6 +47,35 @@ class PlantCheckHelp {
             // 跳转未种植引导页面
             // 附带引导flag过去
             ARouter.getInstance()
+                    .build(RouterPath.Main.PAGE_MAIN)
+                    .withString(
+                            Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
+                            data.plantGuideFlag
+                    )
+                    .withString(
+                            Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
+                            data.plantExistingStatus
+                    )
+                    .withString(
+                            Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
+                            userinfoBean?.deviceOnlineStatus
+                    )
+                    .withBoolean(
+                            // 是否是第一次登录注册、并且是从未绑定过设备
+                            Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
+                            userinfoBean?.notBound == 0
+                    )
+                    .withTransition(intAnim, outAnim)
+                    .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
+                    .navigation(activity)
+            return
+        }
+
+        // 表示是自动模式 && 不是未种植状态
+        if (data.proMode == "On" && data.plantExistingStatus != KEY_NOT_PLANTED) {
+            // 跳转未种植引导页面
+            // 附带引导flag过去
+            ARouter.getInstance()
                 .build(RouterPath.Main.PAGE_MAIN)
                 .withString(
                     Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
@@ -62,98 +91,99 @@ class PlantCheckHelp {
                 )
                 .withBoolean(
                     // 是否是第一次登录注册、并且是从未绑定过设备
-                    Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE,
-                    userinfoBean?.notBound == 0
+                    Constants.Global.KEY_MANUAL_MODE,
+                    data.proMode == "On"
                 )
-                .withTransition(intAnim ,outAnim)
+                .withTransition(intAnim, outAnim)
                 .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                 .navigation(activity)
             return
         }
+
         // 是否种植过
         when (data.plantExistingStatus) {
             KEY_NOT_PLANTED -> {
                 // 跳转未种植引导页面
                 // 附带引导flag过去
                 ARouter.getInstance()
-                    .build(RouterPath.Main.PAGE_MAIN)
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
-                        data.plantGuideFlag
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
-                        data.plantExistingStatus
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
-                        userinfoBean?.deviceOnlineStatus
-                    )
-                    .withTransition(intAnim,outAnim)
-                    .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation(activity)
+                        .build(RouterPath.Main.PAGE_MAIN)
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
+                                data.plantGuideFlag
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
+                                data.plantExistingStatus
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
+                                userinfoBean?.deviceOnlineStatus
+                        )
+                        .withTransition(intAnim, outAnim)
+                        .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
+                        .navigation(activity)
             }
             KEY_PLANTED -> {
                 // 跳转回主页
                 // 已种植
                 ARouter.getInstance().build(RouterPath.Main.PAGE_MAIN)
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
-                        data.plantGuideFlag
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
-                        data.plantExistingStatus
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
-                        userinfoBean?.deviceOnlineStatus
-                    )
-                    .withTransition(intAnim,outAnim)
-                    .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation(activity)
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
+                                data.plantGuideFlag
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
+                                data.plantExistingStatus
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
+                                userinfoBean?.deviceOnlineStatus
+                        )
+                        .withTransition(intAnim, outAnim)
+                        .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
+                        .navigation(activity)
             }
             KEY_PLANTING_RECORDS -> {
                 // 跳转未种植引导页面
                 // 附带引导flag过去
                 ARouter.getInstance()
-                    .build(RouterPath.Main.PAGE_MAIN)
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
-                        data.plantGuideFlag
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
-                        data.plantExistingStatus
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
-                        userinfoBean?.deviceOnlineStatus
-                    )
-                    .withTransition(intAnim,outAnim)
-                    .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation(activity)
+                        .build(RouterPath.Main.PAGE_MAIN)
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
+                                data.plantGuideFlag
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
+                                data.plantExistingStatus
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
+                                userinfoBean?.deviceOnlineStatus
+                        )
+                        .withTransition(intAnim, outAnim)
+                        .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
+                        .navigation(activity)
             }
             KEY_PLANTING_COMPLETED -> {
                 //  种植完成
                 // 跳转回主页
                 // 已种植
                 ARouter.getInstance().build(RouterPath.Main.PAGE_MAIN)
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
-                        data.plantGuideFlag
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
-                        data.plantExistingStatus
-                    )
-                    .withString(
-                        Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
-                        userinfoBean?.deviceOnlineStatus
-                    )
-                    .withTransition(intAnim,outAnim)
-                    .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation(activity)
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG,
+                                data.plantGuideFlag
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_PLANT_STATE,
+                                data.plantExistingStatus
+                        )
+                        .withString(
+                                Constants.Global.KEY_GLOBAL_PLANT_DEVICE_IS_OFF_LINE,
+                                userinfoBean?.deviceOnlineStatus
+                        )
+                        .withTransition(intAnim, outAnim)
+                        .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
+                        .navigation(activity)
             }
         }
     }

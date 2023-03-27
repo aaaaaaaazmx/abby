@@ -145,8 +145,8 @@ class BaseViewModel @Inject constructor(): ViewModel() {
                        // 检查是否种植
                        tuYaUser?.uid?.let { uid -> checkPlant(uid) }
                     }
+                    else -> _startRunning.value = it
                 }
-                _startRunning.value = it
             }
         }
     }

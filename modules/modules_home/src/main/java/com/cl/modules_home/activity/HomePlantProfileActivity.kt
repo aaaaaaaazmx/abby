@@ -1,6 +1,5 @@
 package com.cl.modules_home.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,12 +8,8 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.core.content.ContextCompat
-import androidx.core.widget.NestedScrollView
-import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeNewPlantBinding
 import com.bbgo.module_home.databinding.HomePlantProfileBinding
 import com.cl.common_base.adapter.StrainNameSearchAdapter
 import com.cl.common_base.base.BaseActivity
@@ -28,7 +23,7 @@ import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.SoftInputUtils
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_home.ui.KnowMoreActivity
+import com.cl.common_base.base.KnowMoreActivity
 import com.cl.modules_home.viewmodel.HomePlantProfileViewModel
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint

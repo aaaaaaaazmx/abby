@@ -54,7 +54,7 @@
 
     <application>
         <activity
-            android:name="com.cl.modules_home.ui.KnowMoreActivity"
+            android:name="com.cl.common_base.base.KnowMoreActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait" />
 

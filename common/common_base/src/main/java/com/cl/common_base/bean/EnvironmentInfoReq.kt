@@ -11,4 +11,6 @@ data class EnvironmentInfoReq(
     var ventilation: Int? = null,
     var waterLevel: String? = null,
     var waterTemperature: Int? = null,
+    var proMode: String? = null, // 专业模式
+    var fanAuto: Int? = null, // 风扇是否自动
 ): BaseBean()

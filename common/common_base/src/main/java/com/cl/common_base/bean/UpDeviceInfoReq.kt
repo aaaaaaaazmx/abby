@@ -19,10 +19,12 @@ data class UpDeviceInfoReq(
     var nightTimer: String? = null, // 夜间模式时间
     var plantStatus: Int? = null,
     var week: Int? = null,
-    var deviceId: String? = null,
+    var deviceId: String?,
     var cupType: Int? = null, // (0-纸杯，1-塑料杯)
     var list: MutableList<InfoList>? = null,
     var plantId: Int? = null, // 植物ID， 主要用于在设备列表里面修改植物名称
+    var proMode: String? = null, // 专业模式
+    var fanAuto: Int? = null, // 风扇是否自动
 ) : BaseBean() {
 
     data class InfoList(

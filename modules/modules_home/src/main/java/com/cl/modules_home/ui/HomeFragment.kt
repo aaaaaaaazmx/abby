@@ -5,9 +5,9 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,7 +17,6 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jpush.android.api.JPushInterface
@@ -27,18 +26,15 @@ import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseFragment
+import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.ext.DateHelper
-import com.cl.common_base.ext.dp2px
-import com.cl.common_base.ext.logI
-import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.*
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
-import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePopActivity
@@ -47,6 +43,7 @@ import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.util.device.DeviceControlImpl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
@@ -56,7 +53,6 @@ import com.cl.modules_home.activity.HomeNewPlantNameActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
-import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
@@ -65,11 +61,17 @@ import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.home.sdk.bean.HomeBean
 import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
+import com.warkiz.widget.ColorCollector
+import com.warkiz.widget.IndicatorSeekBar
+import com.warkiz.widget.OnSeekChangeListener
+import com.warkiz.widget.SeekParams
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
-import java.io.FileOutputStream
 import java.io.Serializable
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 import javax.inject.Inject
+import kotlin.math.log
 import kotlin.random.Random
 
 
@@ -110,8 +112,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     // 传过来的设备状态
     // 默认为false
+    // 是否是第一次登录注册、并且是从未绑定过设备
     private val firstLoginAndNoDevice by lazy {
         arguments?.getBoolean(Constants.Global.KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE, false)
+    }
+
+    // 是否是手动模式
+    private val isManual by lazy {
+        arguments?.getBoolean(Constants.Global.KEY_MANUAL_MODE, false)
     }
 
     // 导航气泡
@@ -289,6 +297,25 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             return
         }
 
+        // 是否是手动模式
+        if (isManual == true && mViewMode.loadFirst.value == false) {
+            ViewUtils.setVisible(binding.plantManual.root)
+            ViewUtils.setGone(binding.plantOffLine.root)
+            ViewUtils.setGone(binding.clRoot)
+            // 加载手动模式相关数据
+            mViewMode.getPlantHeight()
+            mViewMode.getWenDu()
+            mViewMode.getHumidity()
+            mViewMode.getWaterWenDu()
+            mViewMode.getFanIntake()
+            mViewMode.getFanExhaust()
+            mViewMode.getGrowLight()
+            mViewMode.getAirPump()
+            mViewMode.getLightTime()
+            mViewMode.getCloseLightTime()
+            mViewMode.setLoadFirst(true)
+        }
+
         // 判断当前植物存在状态
         when (viewPlantFlag) {
             // 从来没有种植过
@@ -319,7 +346,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         ViewUtils.setVisible(binding.plantClone.root)
                     }
                     "4" -> {
-                        ViewUtils.setGone(binding.plantFirst.root, binding.plantAddWater.root, binding.plantClone.root, binding.plantComplete.root)
+                        ViewUtils.setGone(
+                            binding.plantFirst.root,
+                            binding.plantAddWater.root,
+                            binding.plantClone.root,
+                            binding.plantComplete.root
+                        )
                         ViewUtils.setVisible(binding.pplantNinth.root)
                     }
                 }
@@ -425,7 +457,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 选中日历
             ivCalendar.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
-                    .withString(Constants.Global.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
+                    .withString(
+                        Constants.Global.KEY_CATEGORYCODE,
+                        mViewMode.plantInfo.value?.data?.categoryCode
+                    )
                     .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                 // 如果是订阅用户
                 /*if (mViewMode.userDetail.value?.data?.isVip == 1) {
@@ -528,6 +563,310 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
         }
 
+        //  手动模式
+        binding.plantManual.apply {
+            ivDeviceList.setOnClickListener {
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                    .navigation(activity)
+            }
+
+            tvAirPumpDesc.setOnClickListener {
+                pop.isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        context?.let { it1 ->
+                            BaseCenterPop(
+                                it1,
+                                content = "The air pump will be turned off in the following conditions:\n" +
+                                        "1.When draining is on\n" +
+                                        "2.When the tank has no water.",
+                                isShowCancelButton = false,
+                                confirmText = "OK"
+                            )
+                        }
+                    ).show()
+            }
+
+            ivExclamationMark.setOnClickListener {
+                pop.isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        context?.let { it1 ->
+                            BaseCenterPop(
+                                it1, content =
+                                "The minimum height that can be measured starts from 8 inches (20cm)." +
+                                        "\n" +
+                                        "\n" +
+                                        "To ensure accurate measurement of plant height, please remove all objects above the plant (e.g., the fan, towels, etc.).",
+                                isShowCancelButton = false,
+                                confirmText = "OK"
+                            )
+                        }
+                    ).show()
+
+            }
+
+            // 时间模式
+            ftTimer.setOnClickListener {
+                pop.asCustom(context?.let { it1 ->
+                    ChooseTimePop(
+                        it1,
+                        turnOnText = "Turn on Light",
+                        turnOffText = "Turn off Light",
+                        isShowNightMode = false,
+                        isTheSpacingHours = false,
+                        turnOnHour = mViewMode.muteOn?.toInt(),
+                        turnOffHour = mViewMode.muteOff?.toInt(),
+                        onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
+                            ftTimer.itemValue = "$onTime-$offMinute"
+                            mViewMode.setmuteOn("$timeOn")
+                            mViewMode.setmuteOff("$timeOff")
+
+                            // 开灯时间
+                            when (timeOn) {
+                                12 -> 0
+                                24 -> 12
+                                else -> timeOn
+                            }?.let { it2 ->
+                                DeviceControl.get()
+                                    .success { }
+                                    .error { code, error -> }
+                                    .lightTime(it2)
+                            }
+
+                            // 关灯时间
+                            when (timeOff) {
+                                12 -> 0
+                                24 -> 12
+                                else -> timeOff
+                            }?.let { it2 ->
+                                DeviceControl.get()
+                                    .success { }
+                                    .error { code, error -> }
+                                    .closeLightTime(it2)
+                            }
+                        })
+                }).show()
+            }
+
+            fanIntakeSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
+                override fun onSeeking(p0: SeekParams?) {
+
+                }
+
+                override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                    DeviceControl.get()
+                        .success {
+                            mViewMode.setFanIntake(seekbar?.progress.toString())
+                        }
+                        .error { code, error ->
+                            ToastUtil.shortShow(
+                                """
+                              fanIntake: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                            )
+                            mViewMode.setFanIntake("${mViewMode.getFanIntake.value}")
+                        }
+                        .fanIntake(seekbar?.progress ?: 0)
+                }
+            }
+
+            fanExhaustSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
+                override fun onSeeking(p0: SeekParams?) {
+                }
+
+                override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                    DeviceControl.get()
+                        .success {
+                            mViewMode.setFanExhaust(seekbar?.progress.toString())
+                        }
+                        .error { code, error ->
+                            ToastUtil.shortShow(
+                                """
+                              fanExhaust: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                            )
+                            mViewMode.setFanExhaust("${mViewMode.getFanExhaust.value}")
+                        }
+                        .fanExhaust(seekbar?.progress ?: 0)
+                }
+            }
+            lightIntensitySeekbar.customSectionTrackColor { colorIntArr ->
+                //the length of colorIntArray equals section count
+                //                colorIntArr[0] = Color.parseColor("#008961");
+                //                colorIntArr[1] = Color.parseColor("#008961");
+                // 当刻度为最后4段时才显示红色
+                colorIntArr[6] = Color.parseColor("#F72E47")
+                colorIntArr[7] = Color.parseColor("#F72E47")
+                colorIntArr[8] = Color.parseColor("#F72E47")
+                true //true if apply color , otherwise no change
+            }
+            lightIntensitySeekbar.onSeekChangeListener = object : OnSeekChangeListener {
+                override fun onSeeking(p0: SeekParams?) {
+                }
+
+                override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                    val progress = seekbar?.progress ?: 0
+                    val growLightValue = mViewMode.getGrowLight.value ?: 0
+                    // 应该只提示一次
+                    if (growLightValue <= 7 && progress > 7) {
+                        pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                            .asCustom(context?.let {
+                                BaseCenterPop(
+                                    it,
+                                    content = "Caution! Increasing the light intensity level above 7 may cause damage to the flowers. Are you sure you want to continue?",
+                                    cancelText = "No",
+                                    confirmText = "Yes",
+                                    onCancelAction = {
+                                        // 需要恢复到之前到档位
+                                        mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
+                                    },
+                                    onConfirmAction = {
+                                        DeviceControl.get()
+                                            .success {
+                                                mViewMode.setGrowLight(seekbar?.progress.toString())
+                                            }
+                                            .error { code, error ->
+                                                ToastUtil.shortShow(
+                                                    """
+                                                  lightIntensity: 
+                                                  code-> $code
+                                                  errorMsg-> $error
+                                                    """.trimIndent()
+                                                )
+                                                mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
+                                            }
+                                            .lightIntensity(seekbar?.progress ?: 0)
+                                    }
+                                )
+                            }).show()
+                    } else {
+                        DeviceControl.get()
+                            .success {
+                                mViewMode.setGrowLight(seekbar?.progress.toString())
+                            }
+                            .error { code, error ->
+                                mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
+                            }
+                            .lightIntensity(seekbar?.progress ?: 0)
+                    }
+                }
+            }
+
+            ivDrainStatus.setOnClickListener {
+                with(DeviceControl) {
+                    get()
+                        .success {
+                            with(mViewMode) { setDrainageFlag(!(getDrainageFlag.value ?: false)) }
+                        }
+                        .error { code, error ->
+                            ToastUtil.shortShow(
+                                """
+                                      pumpWater: 
+                                      code-> $code
+                                      errorMsg-> $error
+                                """.trimIndent()
+                            )
+                        }
+                        .pumpWater(!(mViewMode.getDrainageFlag.value ?: false))
+                }
+                // 背景颜色
+                synchronized(this@HomeFragment) {
+                    if (mViewMode.getDrainageFlag.value == true) {
+                        ivDrainStatus.setBackgroundResource(R.mipmap.home_drain_pause)
+                    } else {
+                        ivDrainStatus.setBackgroundResource(R.mipmap.home_drain_start)
+                    }
+                }
+            }
+
+            ftAirPump.setSwitchCheckedChangeListener { _, isChecked ->
+                if (!isChecked) {
+                    pop.isDestroyOnDismiss(false)
+                        .dismissOnTouchOutside(false)
+                        .asCustom(context?.let {
+                            BaseCenterPop(
+                                it,
+                                content = "Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?",
+                                cancelText = "No",
+                                confirmText = "Yes",
+                                onCancelAction = {
+                                    // 需要恢复到之前到档位
+                                    mViewMode.setAirPump("true")
+                                },
+                                onConfirmAction = {
+                                    // 什么都不做
+                                    with(DeviceControl) {
+                                        get()
+                                            .success {
+                                                mViewMode.setAirPump("$isChecked")
+                                            }
+                                            .error { code, error ->
+                                                ToastUtil.shortShow(
+                                                    """
+                                                      airPump: 
+                                                      code-> $code
+                                                      errorMsg-> $error
+                                                """.trimIndent()
+                                                )
+                                            }
+                                            .airPump(isChecked)
+                                    }
+                                })
+                        }).show()
+                    return@setSwitchCheckedChangeListener
+                }
+                if (mViewMode.getWaterLevel.value == "Low") {
+                    pop.isDestroyOnDismiss(false)
+                        .dismissOnTouchOutside(false)
+                        .asCustom(
+                            context?.let {
+                                BaseCenterPop(
+                                    it,
+                                    content = "The air pump cannot be turned on when the tank has no water. Please fill the tank with water before turning on the air pump.",
+                                    isShowCancelButton = false,
+                                    confirmText = "OK",
+                                    onCancelAction = {
+                                    },
+                                    onConfirmAction = {
+                                        // 需要恢复到之前到档位
+                                        mViewMode.setAirPump("false")
+                                    })
+                            }).show()
+                    return@setSwitchCheckedChangeListener
+                }
+                with(DeviceControl) {
+                    get()
+                        .success {
+                            mViewMode.setAirPump("$isChecked")
+                        }
+                        .error { code, error ->
+                            ToastUtil.shortShow(
+                                """
+                                      airPump: 
+                                      code-> $code
+                                      errorMsg-> $error
+                                """.trimIndent()
+                            )
+                        }
+                        .airPump(isChecked)
+                }
+            }
+        }
+
         // 设备不在线
         binding.plantOffLine.apply {
             title.setRightButtonImg(R.mipmap.home_device_list)
@@ -557,7 +896,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             knowMore.setOnClickListener {
                 // todo 跳转新的图文界面
                 val intent = Intent(activity, KnowMoreActivity::class.java)
-                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PAGE_NOT_PURCHASED)
+                intent.putExtra(
+                    Constants.Global.KEY_TXT_ID,
+                    Constants.Fixed.KEY_FIXED_ID_PAGE_NOT_PURCHASED
+                )
                 startActivity(intent)
             }
             connectDevice.setOnClickListener {
@@ -900,129 +1242,132 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * plant6 弹窗 加肥
      */
     private fun plantSix(): BasePopupView {
-        return XPopup.Builder(context).isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
+        return XPopup.Builder(context).isDestroyOnDismiss(false).maxHeight(dp2px(600f))
+            .enableDrag(false)
             .dismissOnTouchOutside(false).asCustom(context?.let {
-                HomePlantSixPop(context = it, isFattening = mViewMode.getUnreadMessageList()
-                    .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER, onNextAction = {
-                    // 如果是在换水的三步当中的最后一步，加肥
-                    if (mViewMode.getUnreadMessageList()
-                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                    ) {
-                        // 完成任务
-                        mViewMode.popPeriodStatus.value?.let { map ->
-                            mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                HomePlantSixPop(context = it,
+                    isFattening = mViewMode.getUnreadMessageList()
+                        .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER,
+                    onNextAction = {
+                        // 如果是在换水的三步当中的最后一步，加肥
+                        if (mViewMode.getUnreadMessageList()
+                                .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                        ) {
+                            // 完成任务
+                            mViewMode.popPeriodStatus.value?.let { map ->
+                                mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                            }
+                            // 点击按钮就表示已读，已读会自动查看有没有下一条
+                            mViewMode.getRead(
+                                "${
+                                    mViewMode.getUnreadMessageList()
+                                        .firstOrNull()?.messageId
+                                }"
+                            )
+                            return@HomePlantSixPop
                         }
-                        // 点击按钮就表示已读，已读会自动查看有没有下一条
-                        mViewMode.getRead(
-                            "${
-                                mViewMode.getUnreadMessageList()
-                                    .firstOrNull()?.messageId
-                            }"
-                        )
-                        return@HomePlantSixPop
-                    }
 
-                    // 第六个弹窗
-                    // plant6后记“3”
-                    mViewMode.setCurrentReqStatus(3)
-                    mViewMode.saveOrUpdate("3")
+                        // 第六个弹窗
+                        // plant6后记“3”
+                        mViewMode.setCurrentReqStatus(3)
+                        mViewMode.saveOrUpdate("3")
 
 
-                    // 需要先发送指令喂食
-                    /* DeviceControl.get().success {
-                         if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
-                             pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
-                                 .dismissOnTouchOutside(false).asCustom(
-                                     BaseBottomPop(it,
-                                         backGround = ContextCompat.getDrawable(
-                                             it, com.cl.common_base.R.mipmap.base_feet_fall_bg
-                                         ),
-                                         text = getString(com.cl.common_base.R.string.base_feet_fall),
-                                         buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
-                                         bottomText = getString(com.cl.common_base.R.string.base_dont_show),
-                                         onNextAction = {
-                                             // 如果是在换水的三步当中的最后一步，加肥
-                                             if (mViewMode.getUnreadMessageList()
-                                                     .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                                             ) {
-                                                 // 完成任务
-                                                 mViewMode.popPeriodStatus.value?.let { map ->
-                                                     mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                        // 需要先发送指令喂食
+                        /* DeviceControl.get().success {
+                             if (Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FEET_POP, true)) {
+                                 pop.isDestroyOnDismiss(false).maxHeight(dp2px(600f)).enableDrag(false)
+                                     .dismissOnTouchOutside(false).asCustom(
+                                         BaseBottomPop(it,
+                                             backGround = ContextCompat.getDrawable(
+                                                 it, com.cl.common_base.R.mipmap.base_feet_fall_bg
+                                             ),
+                                             text = getString(com.cl.common_base.R.string.base_feet_fall),
+                                             buttonText = getString(com.cl.common_base.R.string.base_feet_fall_button_text),
+                                             bottomText = getString(com.cl.common_base.R.string.base_dont_show),
+                                             onNextAction = {
+                                                 // 如果是在换水的三步当中的最后一步，加肥
+                                                 if (mViewMode.getUnreadMessageList()
+                                                         .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                 ) {
+                                                     // 完成任务
+                                                     mViewMode.popPeriodStatus.value?.let { map ->
+                                                         mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                     }
+                                                     // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                     mViewMode.getRead(
+                                                         "${
+                                                             mViewMode.getUnreadMessageList()
+                                                                 .firstOrNull()?.messageId
+                                                         }"
+                                                     )
+                                                     return@BaseBottomPop
                                                  }
-                                                 // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                 mViewMode.getRead(
-                                                     "${
-                                                         mViewMode.getUnreadMessageList()
-                                                             .firstOrNull()?.messageId
-                                                     }"
-                                                 )
-                                                 return@BaseBottomPop
-                                             }
 
-                                             // 第六个弹窗
-                                             // plant6后记“3”
-                                             mViewMode.setCurrentReqStatus(3)
-                                             mViewMode.saveOrUpdate("3")
-                                         },
-                                         bottomTextAction = {
-                                             // 如果是在换水的三步当中的最后一步，加肥
-                                             if (mViewMode.getUnreadMessageList()
-                                                     .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                                             ) {
-                                                 // 完成任务
-                                                 mViewMode.popPeriodStatus.value?.let { map ->
-                                                     mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                 // 第六个弹窗
+                                                 // plant6后记“3”
+                                                 mViewMode.setCurrentReqStatus(3)
+                                                 mViewMode.saveOrUpdate("3")
+                                             },
+                                             bottomTextAction = {
+                                                 // 如果是在换水的三步当中的最后一步，加肥
+                                                 if (mViewMode.getUnreadMessageList()
+                                                         .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                                 ) {
+                                                     // 完成任务
+                                                     mViewMode.popPeriodStatus.value?.let { map ->
+                                                         mViewMode.finishTask(FinishTaskReq(map[HomeViewModel.KEY_TASK_ID]))
+                                                     }
+                                                     // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                                     mViewMode.getRead(
+                                                         "${
+                                                             mViewMode.getUnreadMessageList()
+                                                                 .firstOrNull()?.messageId
+                                                         }"
+                                                     )
+                                                     return@BaseBottomPop
                                                  }
-                                                 // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                                 mViewMode.getRead(
-                                                     "${
-                                                         mViewMode.getUnreadMessageList()
-                                                             .firstOrNull()?.messageId
-                                                     }"
-                                                 )
-                                                 return@BaseBottomPop
-                                             }
 
-                                             // 第六个弹窗
-                                             // plant6后记“3”
-                                             mViewMode.setCurrentReqStatus(3)
-                                             mViewMode.saveOrUpdate("3")
-                                         })
-                                 ).show()
-                         } else {
-                             // 如果是在换水的三步当中的最后一步，加肥
-                             if (mViewMode.getUnreadMessageList()
-                                     .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                             ) {
-                                 // 完成任务
-                                 mViewMode.popPeriodStatus.value?.let { map ->
-                                     mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
+                                                 // 第六个弹窗
+                                                 // plant6后记“3”
+                                                 mViewMode.setCurrentReqStatus(3)
+                                                 mViewMode.saveOrUpdate("3")
+                                             })
+                                     ).show()
+                             } else {
+                                 // 如果是在换水的三步当中的最后一步，加肥
+                                 if (mViewMode.getUnreadMessageList()
+                                         .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
+                                 ) {
+                                     // 完成任务
+                                     mViewMode.popPeriodStatus.value?.let { map ->
+                                         mViewMode.finishTask(FinishTaskReq(map.get(HomeViewModel.KEY_TASK_ID)))
+                                     }
+                                     // 点击按钮就表示已读，已读会自动查看有没有下一条
+                                     mViewMode.getRead(
+                                         "${
+                                             mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                         }"
+                                     )
+                                     return@success
                                  }
-                                 // 点击按钮就表示已读，已读会自动查看有没有下一条
-                                 mViewMode.getRead(
-                                     "${
-                                         mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                                     }"
-                                 )
-                                 return@success
+
+                                 // 第六个弹窗
+                                 // plant6后记“3”
+                                 mViewMode.setCurrentReqStatus(3)
+                                 mViewMode.saveOrUpdate("3")
                              }
 
-                             // 第六个弹窗
-                             // plant6后记“3”
-                             mViewMode.setCurrentReqStatus(3)
-                             mViewMode.saveOrUpdate("3")
-                         }
-
-                     }.error { code, error ->
-                         ToastUtil.shortShow(
-                             """
-                                     feedAbby:
-                                     code-> $code
-                                     errorMsg-> $error
-                                 """.trimIndent()
-                         )
-                     }.feedAbby(true)*/
-                })
+                         }.error { code, error ->
+                             ToastUtil.shortShow(
+                                 """
+                                         feedAbby:
+                                         code-> $code
+                                         errorMsg-> $error
+                                     """.trimIndent()
+                             )
+                         }.feedAbby(true)*/
+                    })
             })
     }
 
@@ -1170,7 +1515,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     return@HomePeriodPop
                 }*/
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
-                    .withString(Constants.Global.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
+                    .withString(
+                        Constants.Global.KEY_CATEGORYCODE,
+                        mViewMode.plantInfo.value?.data?.categoryCode
+                    )
                     .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
                 // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
                 /* if (mViewMode.userDetail.value?.data?.isVip == 1) {
@@ -1212,7 +1560,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val envirPop by lazy {
         context?.let {
             HomeEnvlrPop(
-                it
+                it,
+                disMissAction = {
+                    // 消失之后，刷新数据
+                    mViewMode.getEnvData()
+                }
             )
         }
     }
@@ -1264,17 +1616,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
+            getFanIntake.observe(viewLifecycleOwner) {
+                binding.plantManual.fanIntakeSeekbar.setProgress(it.toFloat())
+            }
+            getFanExhaust.observe(viewLifecycleOwner) {
+                binding.plantManual.fanExhaustSeekbar.setProgress(it.toFloat())
+            }
+            getGrowLight.observe(viewLifecycleOwner) {
+                binding.plantManual.lightIntensitySeekbar.setProgress(it.toFloat())
+            }
+
             // transPlant周期自行处理逻辑
             transplantPeriodicity.observe(viewLifecycleOwner) {
                 if (it.isNullOrEmpty()) return@observe
                 // 跳转到富文本
                 val intent = Intent(context, BasePopActivity::class.java)
-                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
-                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK)
+                intent.putExtra(
+                    Constants.Global.KEY_TXT_ID,
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK
+                )
+                intent.putExtra(
+                    BasePopActivity.KEY_FIXED_TASK_ID,
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK
+                )
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                 intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
                 intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, it)
-                intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
+                intent.putExtra(
+                    BasePopActivity.KEY_CATEGORYCODE,
+                    mViewMode.plantInfo.value?.data?.categoryCode
+                )
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
                 intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                 startActivity(intent)
@@ -1282,10 +1653,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             childLockStatus.observe(viewLifecycleOwner) {
                 logI("123123: $it,,,, ${mViewMode.tuyaDeviceBean()?.devId}")
-                ViewUtils.setVisible(mViewMode.isShowDoorDrawable(), binding.pplantNinth.ivDoorLockStatus)
+                ViewUtils.setVisible(
+                    mViewMode.isShowDoorDrawable(),
+                    binding.pplantNinth.ivDoorLockStatus
+                )
             }
             openDoorStatus.observe(viewLifecycleOwner) {
-                ViewUtils.setVisible(mViewMode.isShowDoorDrawable(), binding.pplantNinth.ivDoorLockStatus)
+                ViewUtils.setVisible(
+                    mViewMode.isShowDoorDrawable(),
+                    binding.pplantNinth.ivDoorLockStatus
+                )
                 binding.pplantNinth.ivDoorLockStatus.setImageResource(
                     if (it == "true") {
                         R.drawable.home_plant_close_door
@@ -1295,20 +1672,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 )
             }
 
+            /* getCloseLightTime.observe(viewLifecycleOwner) {
+                 if (it.isNullOrEmpty()) return@observe
+                 if (getLightTime.value.isNullOrEmpty()) return@observe
+                 binding.plantManual.ftTimer.itemValue = mViewMode.getTimeText()
+             }*/
+
             // 设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     if (data.isNullOrEmpty()) {
-                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        ViewUtils.setGone(
+                            binding.pplantNinth.imageLeftSwip,
+                            binding.pplantNinth.imageRightSwip
+                        )
                         return@success
                     }
+
                     // 表示有多个设备
                     val size = data?.filter { it.isSwitch == 1 }?.size ?: 0
                     if (size > 1) {
-                        ViewUtils.setVisible(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        ViewUtils.setVisible(
+                            binding.pplantNinth.imageLeftSwip,
+                            binding.pplantNinth.imageRightSwip
+                        )
                         return@success
                     } else {
-                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        ViewUtils.setGone(
+                            binding.pplantNinth.imageLeftSwip,
+                            binding.pplantNinth.imageRightSwip
+                        )
                         return@success
                     }
                     /*data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
@@ -1333,45 +1726,50 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     hideProgressLoading()
                     // 更新涂鸦Bean
-                    TuyaHomeSdk.newHomeInstance(mViewMode.homeId).getHomeDetail(object : ITuyaHomeResultCallback {
-                        override fun onSuccess(bean: HomeBean?) {
-                            bean?.let { it ->
-                                val arrayList = it.deviceList as ArrayList<DeviceBean>
-                                logI("123123123: ${arrayList.size}")
-                                arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }.apply {
-                                    logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
-                                    if (null == this) {
-                                        val aa = mViewMode.tuyaDeviceBean
-                                        aa()?.devId = mViewMode.deviceId.value
-                                        GSON.toJson(aa)?.let {
-                                            Prefs.putStringAsync(
-                                                Constants.Tuya.KEY_DEVICE_DATA,
-                                                it
-                                            )
-                                        }
-                                        return@apply
-                                    }
-                                    GSON.toJson(this)?.let {
-                                        Prefs.putStringAsync(
-                                            Constants.Tuya.KEY_DEVICE_DATA,
-                                            it
-                                        )
-                                    }
+                    TuyaHomeSdk.newHomeInstance(mViewMode.homeId)
+                        .getHomeDetail(object : ITuyaHomeResultCallback {
+                            override fun onSuccess(bean: HomeBean?) {
+                                bean?.let { it ->
+                                    val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                    logI("123123123: ${arrayList.size}")
+                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
+                                        .apply {
+                                            logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
+                                            if (null == this) {
+                                                val aa = mViewMode.tuyaDeviceBean
+                                                aa()?.devId = mViewMode.deviceId.value
+                                                GSON.toJson(aa)?.let {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                                        it
+                                                    )
+                                                }
+                                                return@apply
+                                            }
+                                            GSON.toJson(this)?.let {
+                                                Prefs.putStringAsync(
+                                                    Constants.Tuya.KEY_DEVICE_DATA,
+                                                    it
+                                                )
+                                            }
 
-                                    // 重新注册服务
-                                    // 开启服务
-                                    val intent = Intent(context, TuYaDeviceUpdateReceiver::class.java)
-                                    context?.startService(intent)
-                                    // 切换之后需要重新刷新所有的东西
-                                    mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                            // 重新注册服务
+                                            // 开启服务
+                                            val intent = Intent(
+                                                context,
+                                                TuYaDeviceUpdateReceiver::class.java
+                                            )
+                                            context?.startService(intent)
+                                            // 切换之后需要重新刷新所有的东西
+                                            mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                        }
                                 }
                             }
-                        }
 
-                        override fun onError(errorCode: String?, errorMsg: String?) {
+                            override fun onError(errorCode: String?, errorMsg: String?) {
 
-                        }
-                    })
+                            }
+                        })
                 }
             })
             // 刷新设备列表
@@ -1468,7 +1866,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 清空气泡状态
                     mViewMode.clearPopPeriodStatus()
                     // 是否种植过
-                    data?.let { PlantCheckHelp().plantStatusCheck(activity, it, true, isLeftSwapAnim = mViewMode.isLeftSwap, isNoAnim = false) }
+                    data?.let {
+                        PlantCheckHelp().plantStatusCheck(
+                            activity,
+                            it,
+                            true,
+                            isLeftSwapAnim = mViewMode.isLeftSwap,
+                            isNoAnim = false
+                        )
+                    }
                 }
             })
             // 获取通用图文信息接口
@@ -1628,22 +2034,51 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 // 种子发芽之后的换水
                                 // 跳转到富文本
                                 val intent = Intent(context, BasePopActivity::class.java)
-                                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION)
-                                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION)
+                                intent.putExtra(
+                                    Constants.Global.KEY_TXT_ID,
+                                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
+                                )
+                                intent.putExtra(
+                                    BasePopActivity.KEY_FIXED_TASK_ID,
+                                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
+                                )
                                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                                 intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
-                                intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, mViewMode.getUnreadMessageList().firstOrNull()?.taskId)
-                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                intent.putExtra(
+                                    BasePopActivity.KEY_UNLOCK_TASK_ID,
+                                    mViewMode.getUnreadMessageList().firstOrNull()?.taskId
+                                )
+                                intent.putExtra(
+                                    BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                                    "Next"
+                                )
                                 startActivityLauncherSeeding.launch(intent)
                             }
                             UnReadConstants.Device.KEY_CLOSE_DOOR -> {
-                                mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
                             }
+
+                            // 灯光
+                            UnReadConstants.Device.KEY_REMIND_LIGHT_UP -> {
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
+                            }
+
                             else -> {
                                 // 直接跳转到日历
                                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
-                                    .withString(Constants.Global.KEY_CATEGORYCODE, mViewMode.plantInfo.value?.data?.categoryCode)
+                                    .withString(
+                                        Constants.Global.KEY_CATEGORYCODE,
+                                        mViewMode.plantInfo.value?.data?.categoryCode
+                                    )
                                     .navigation(activity, HomeFragment.KEY_FOR_CALENDAR_REFRSH)
                             }
                         }
@@ -1668,6 +2103,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 水的容积
             getWaterVolume.observe(viewLifecycleOwner) {
                 setWaterStatus(it)
+                if (isManual != true) return@observe
+                mViewMode.setWaterLevel(it)
             }
 
             // 检查app版本更新
@@ -1901,8 +2338,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 跳转富文本
                     val intent = Intent(context, KnowMoreActivity::class.java)
-                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS)
-                    intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS)
+                    intent.putExtra(
+                        Constants.Global.KEY_TXT_ID,
+                        Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
+                    )
+                    intent.putExtra(
+                        BasePopActivity.KEY_FIXED_TASK_ID,
+                        Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
+                    )
                     intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
@@ -1925,18 +2368,39 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     if (null == data) return@success
 
                     // 2. 【获取植物基本信息】接口新增字段 [发芽剩余时间]，类型为时间戳，0为倒计时结束，该字段只在发芽阶段返回，点了Next后返回为NULL。
-                    ViewUtils.setVisible(data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong() ?: 0) > 0, binding.pplantNinth.clSeeding)
-                    if (data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong() ?: 0) > 0) {
+                    ViewUtils.setVisible(
+                        data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong()
+                            ?: 0) > 0, binding.pplantNinth.clSeeding
+                    )
+                    if (data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong()
+                            ?: 0) > 0
+                    ) {
                         // 后台返回的时间
                         val backTime = data?.germinationTime?.toLong() ?: 0L
                         binding.pplantNinth.tVHtml.text = buildSpannedString {
                             /*Check for a tap root in 1 day(s) 23 hrs... Lights should be off at this stage*/
                             bold { append("Check for a tap root in") }
                             appendLine()
-                            context?.let { ContextCompat.getColor(it, com.cl.common_base.R.color.textRed) }?.let {
+                            context?.let {
+                                ContextCompat.getColor(
+                                    it,
+                                    com.cl.common_base.R.color.textRed
+                                )
+                            }?.let {
                                 color(it) {
                                     logI("1231231: ${System.currentTimeMillis()}")
-                                    bold { append(DateHelper.getDistanceTime(System.currentTimeMillis(), backTime, "day", "hr", "min", "minute")) }
+                                    bold {
+                                        append(
+                                            DateHelper.getDistanceTime(
+                                                System.currentTimeMillis(),
+                                                backTime,
+                                                "day",
+                                                "hr",
+                                                "min",
+                                                "minute"
+                                            )
+                                        )
+                                    }
                                 }
                             }
                             appendLine()
@@ -1954,15 +2418,34 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             context?.let {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
                                     .asCustom(
-                                        BaseCenterPop(it, content = "You're about to skip the waiting period. Please confirm that your tap root has already emerged.", isShowCancelButton = true, confirmText = "Confirm",
+                                        BaseCenterPop(it,
+                                            content = "You're about to skip the waiting period. Please confirm that your tap root has already emerged.",
+                                            isShowCancelButton = true,
+                                            confirmText = "Confirm",
                                             onConfirmAction = {
                                                 // 跳准到富文本页面
-                                                val intent = Intent(context, KnowMoreActivity::class.java)
-                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
-                                                intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                                                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
-                                                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
+                                                val intent =
+                                                    Intent(context, KnowMoreActivity::class.java)
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_IS_SHOW_BUTTON,
+                                                    true
+                                                )
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
+                                                    "Next"
+                                                )
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_INTENT_JUMP_PAGE,
+                                                    true
+                                                )
+                                                intent.putExtra(
+                                                    Constants.Global.KEY_TXT_ID,
+                                                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED
+                                                )
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_FIXED_TASK_ID,
+                                                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED
+                                                )
                                                 startActivityLauncherCheck.launch(intent)
                                             })
                                     ).show()
@@ -1977,20 +2460,42 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             context?.let {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
                                     .asCustom(
-                                        BaseCenterPop(it, titleText = "The seed has a tap root like this?", contentBackGround = R.mipmap.home_seed_count_down, isShowCancelButton = true, cancelText = "No", confirmText = "Yes",
+                                        BaseCenterPop(it,
+                                            titleText = "The seed has a tap root like this?",
+                                            contentBackGround = R.mipmap.home_seed_count_down,
+                                            isShowCancelButton = true,
+                                            cancelText = "No",
+                                            confirmText = "Yes",
                                             onConfirmAction = {
                                                 // 跳准到富文本页面
-                                                val intent = Intent(context, KnowMoreActivity::class.java)
-                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
-                                                intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                                                intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
-                                                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED)
+                                                val intent =
+                                                    Intent(context, KnowMoreActivity::class.java)
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_IS_SHOW_BUTTON,
+                                                    true
+                                                )
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
+                                                    "Next"
+                                                )
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_INTENT_JUMP_PAGE,
+                                                    true
+                                                )
+                                                intent.putExtra(
+                                                    Constants.Global.KEY_TXT_ID,
+                                                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED
+                                                )
+                                                intent.putExtra(
+                                                    BasePopActivity.KEY_FIXED_TASK_ID,
+                                                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED
+                                                )
                                                 startActivityLauncherCheck.launch(intent)
                                             },
                                             onCancelAction = {
                                                 // 删除植物弹窗
-                                                pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                                                pop.isDestroyOnDismiss(false)
+                                                    .dismissOnTouchOutside(false)
                                                     .asCustom(RestartSeedPop(it, onDeletePlant = {
                                                         tuYaUser?.uid?.let { uid -> plantDelete(uid) }
                                                     })).show()
@@ -2010,7 +2515,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ).show()*/
                     }
 
-                    val isShowGuidePop = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_GUIDE_POP, false)
+                    val isShowGuidePop =
+                        Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_GUIDE_POP, false)
                     if (!isShowGuidePop) {
                         // 只展示一次
                         Prefs.putBoolean(Constants.Global.KEY_IS_SHOW_GUIDE_POP, true)
@@ -2019,18 +2525,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             .popupPosition(PopupPosition.Bottom)
                             .atView(binding.pplantNinth.ivCalendar)
                             .asCustom(context?.let {
-                                BaseGuidePop(it, confirmText = "Click here to access your growing calendar and view upcoming tasks", onConfirmAction = {
-                                    // 如果不是会员那么不需要展示后面2个
-                                    if (mViewMode.userDetail.value?.data?.isVip != 1) return@BaseGuidePop
-                                    bubblePopHor
-                                        .popupPosition(PopupPosition.Top)
-                                        .atView(binding.pplantNinth.ivSupport)
-                                        .asCustom(
-                                            BaseGuidePop(it, confirmText = "You can access 1-on-1 support and chat with our growing experts here", onConfirmAction = {
-                                                // todo 暂时没有朋友圈，所以暂时不弹出这个guide弹窗
-                                            }).setBubbleBgColor(Color.WHITE)
-                                        ).show()
-                                }).setBubbleBgColor(Color.WHITE)  //气泡背景
+                                BaseGuidePop(
+                                    it,
+                                    confirmText = "Click here to access your growing calendar and view upcoming tasks",
+                                    onConfirmAction = {
+                                        // 如果不是会员那么不需要展示后面2个
+                                        if (mViewMode.userDetail.value?.data?.isVip != 1) return@BaseGuidePop
+                                        bubblePopHor
+                                            .popupPosition(PopupPosition.Top)
+                                            .atView(binding.pplantNinth.ivSupport)
+                                            .asCustom(
+                                                BaseGuidePop(
+                                                    it,
+                                                    confirmText = "You can access 1-on-1 support and chat with our growing experts here",
+                                                    onConfirmAction = {
+                                                        // todo 暂时没有朋友圈，所以暂时不弹出这个guide弹窗
+                                                    }).setBubbleBgColor(Color.WHITE)
+                                            ).show()
+                                    }).setBubbleBgColor(Color.WHITE)  //气泡背景
                             })
                             .show()
                     }
@@ -2080,6 +2592,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 Week ${data?.week ?: "-"}
                                 Day ${data?.day ?: "-"}
                             """.trimIndent()
+
+                            // 植物信息数据显示
+                            binding.plantManual.tvWeekDay.text = """
+                                Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
+                            """.trimIndent()
+
                             ViewUtils.setVisible(
                                 info.journeyName != HomePeriodPop.KEY_SEED,
                                 binding.pplantNinth.ivWaterStatus
@@ -2122,13 +2640,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         if (data?.cupType == 1) {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_five_plast
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_five_plast
                                                 )
                                             }
                                         } else {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_five
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_five
                                                 )
                                             }
                                         }
@@ -2137,7 +2657,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         if (data?.cupType == 1) {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_six_plast
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_six_plast
                                                 )
                                             }
                                         } else {
@@ -2152,13 +2673,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         if (data?.cupType == 1) {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_seven_plast
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_seven_plast
                                                 )
                                             }
                                         } else {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_seven
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_seven
                                                 )
                                             }
                                         }
@@ -2167,13 +2690,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         if (data?.cupType == 1) {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight_plast
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_eight_plast
                                                 )
                                             }
                                         } else {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_eight
                                                 )
                                             }
                                         }
@@ -2182,13 +2707,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         if (data?.cupType == 1) {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight_plast
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_eight_plast
                                                 )
                                             }
                                         } else {
                                             context?.let {
                                                 ContextCompat.getDrawable(
-                                                    it, com.cl.common_base.R.mipmap.home_seed_bg_eight
+                                                    it,
+                                                    com.cl.common_base.R.mipmap.home_seed_bg_eight
                                                 )
                                             }
                                         }
@@ -2382,6 +2909,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 植物的名字
                     binding.pplantNinth.tvTitle.text = data?.plantName
+                    binding.plantManual.tvTitle.text = data?.plantName
 
                     // 植物的健康程度
                     binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
@@ -2979,11 +3507,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
                     logI("KEY_DEVICE_WATER_STATUS： $value")
                     mViewMode.setWaterVolume(value.toString())
-                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL, value.toString())
+                    mViewMode.tuYaDps?.put(
+                        TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL,
+                        value.toString()
+                    )
                 }
 
                 // 排水结束
                 TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
+                    if (isManual != true) return
+                    binding.plantManual.ivDrainStatus.background =
+                        resources.getDrawable(
+                            R.mipmap.home_drain_start,
+                            context?.theme
+                        )
+                }
+                // 排水暂停
+                TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
+                    if (isManual != true) return
+                    binding.plantManual.ivDrainStatus.background =
+                        if ((value as? Boolean != true)) {
+                            resources.getDrawable(
+                                R.mipmap.home_drain_start,
+                                context?.theme
+                            )
+                        } else {
+                            resources.getDrawable(
+                                R.mipmap.home_drain_pause,
+                                context?.theme
+                            )
+                        }
                 }
 
                 // SN修复的通知
@@ -3006,32 +3559,71 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 主要用户删除当前的door的气泡消息
                     // true 开门、 fasle 关门
                     if (value.toString() == "true") return
-                    if (mViewMode.getUnreadMessageList().firstOrNull()?.type == UnReadConstants.Device.KEY_CLOSE_DOOR) {
+                    if (mViewMode.getUnreadMessageList()
+                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CLOSE_DOOR
+                    ) {
                         // 点击按钮就表示已读，已读会自动查看有没有下一条
-                        mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
+                        mViewMode.getRead(
+                            "${
+                                mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                            }"
+                        )
                     }
                 }
 
                 // ----- 开始， 下面的都是需要传给后台的环境信息
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE, value.toString())
+                    mViewMode.tuYaDps?.put(
+                        TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
+                        value.toString()
+                    )
+                    mViewMode.setGrowLight(value.toString())
                 }
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT, value.toString())
+                    mViewMode.tuYaDps?.put(
+                        TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT,
+                        value.toString()
+                    )
+                    mViewMode.setHumidity(value.toString())
                 }
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_INPUT_AIR_FLOW_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW, value.toString())
+                    mViewMode.tuYaDps?.put(
+                        TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW,
+                        value.toString()
+                    )
+                    mViewMode.setFanIntake(value.toString())
                 }
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TEMP_CURRENT_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT, value.toString())
+                    mViewMode.tuYaDps?.put(
+                        TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT,
+                        value.toString()
+                    )
+                    mViewMode.setWenDu(value.toString())
                 }
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_VENTILATION_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_VENTILATION, value.toString())
+                    mViewMode.tuYaDps?.put(
+                        TuYaDeviceConstants.KEY_DEVICE_VENTILATION,
+                        value.toString()
+                    )
+                    mViewMode.setFanExhaust(value.toString())
                 }
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_TEMPERATURE_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE, value.toString())
+                    mViewMode.tuYaDps?.put(
+                        TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE,
+                        value.toString()
+                    )
+                    mViewMode.setWaterWenDu(value.toString())
                 }
                 // --------- 到这里结束
+                // 植物高度
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_PLANT_HEIGHT_INSTRUCTION -> {
+                    mViewMode.setPlantHeight(value.toString())
+                }
+
+                // 气泵
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_AIR_PUMP_INSTRUCTION -> {
+                    mViewMode.setAirPump(value.toString())
+                }
             }
         }
     }
@@ -3089,6 +3681,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.getEnvData()
                 // 获取用户信息
                 mViewMode.userDetail()
+            }
+
+            // 手动模式
+            if (isManual == true) {
+                mViewMode.apply {
+                    binding.plantManual.tvInc.text = incCovert()
+                    binding.plantManual.tvTemperature.text = textCovert()
+                    binding.plantManual.tvWaterTemperature.text = textCovert()
+                    binding.plantManual.tvPlantHeight.text = formatIncPlant(plantHeights.value)
+                    binding.plantManual.tvTemperatureValue.text =
+                        temperatureConversion(getWenDu.value).toString()
+                    binding.plantManual.tvWaterTemperatureValue.text =
+                        temperatureConversion(getWaterWenDu.value).toString()
+                }
             }
         }
     }
@@ -3207,7 +3813,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 mViewMode.getRead("${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}")
-                mViewMode.finishTask(FinishTaskReq(taskId = "${mViewMode.getUnreadMessageList().firstOrNull()?.taskId}"))
+                mViewMode.finishTask(
+                    FinishTaskReq(
+                        taskId = "${
+                            mViewMode.getUnreadMessageList().firstOrNull()?.taskId
+                        }"
+                    )
+                )
                 // 刷新植物信息
                 mViewMode.plantInfo()
             }

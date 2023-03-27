@@ -2,6 +2,9 @@ package com.cl.modules_my.widget
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
+import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDeleteDevicePopBinding
 import com.lxj.xpopup.core.BottomPopupView
@@ -13,7 +16,12 @@ import com.lxj.xpopup.core.BottomPopupView
  */
 class MyDeleteDevicePop(
     context: Context,
-    private val onNextAction: (() -> Unit)? = null
+    private val isShowUnlockButton: Boolean? = false,
+    private val unLockText: String? = null,
+    private val titleText: String? = null,
+    private val checkText: String? = "I understand",
+    private val contentText: String? = context.getString(com.cl.common_base.R.string.setting_delete_device),
+    private val onNextAction: (() -> Unit)? = null,
 ) : BottomPopupView(context) {
 
     override fun getImplLayoutId(): Int {
@@ -24,6 +32,34 @@ class MyDeleteDevicePop(
         super.onCreate()
         DataBindingUtil.bind<MyDeleteDevicePopBinding>(popupImplView)?.apply {
             ivClose.setOnClickListener { dismiss() }
+            tvDec.text = contentText
+            // 勾选狂的文案
+            tvThree.text = checkText
+            tvTitle.text = titleText
+            ViewUtils.setVisible(!titleText.isNullOrEmpty(), tvTitle)
+            ViewUtils.setVisible(isShowUnlockButton ?: false, slideToConfirm)
+            ViewUtils.setVisible(!(isShowUnlockButton ?: false), btnSuccess)
+            slideToConfirm.setEngageText(unLockText ?: "Slide to unlock")
+            slideToConfirm.slideListener = object : ISlideListener {
+                override fun onSlideStart() {
+                }
+
+                override fun onSlideMove(percent: Float) {
+                }
+
+                override fun onSlideCancel() {
+                }
+
+                override fun onSlideDone() {
+                    if (!cbBox.isChecked) {
+                        ToastUtil.shortShow("Please select all item")
+                        return
+                    }
+                    dismiss()
+                    onNextAction?.invoke()
+                }
+            }
+
             btnSuccess.setOnClickListener {
                 dismiss()
                 onNextAction?.invoke()

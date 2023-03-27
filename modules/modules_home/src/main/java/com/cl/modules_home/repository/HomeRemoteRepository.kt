@@ -28,6 +28,10 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getGuideInfo(body)
     }
 
+    fun updateDeviceInfo(body: UpDeviceInfoReq): Flow<HttpResult<BaseBean>> {
+        return service.updateDeviceInfo(body)
+    }
+
     fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
         return service.getRichText(txtId, type)
     }

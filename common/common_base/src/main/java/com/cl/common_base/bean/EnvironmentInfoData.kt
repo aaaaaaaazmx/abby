@@ -1,5 +1,6 @@
 package com.cl.common_base.bean
 
+import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.cl.common_base.BaseBean
 
 /**
@@ -10,11 +11,30 @@ import com.cl.common_base.BaseBean
 class EnvironmentInfoData(
     val healthStatus: String? = null,
     val environmentLowCount: Int? = null,
+    var proMode: String? = null, // 专业模式
+    var fanAuto: Int? = null, // 风扇是否自动
     var environments: MutableList<Environment>? = null,
 ) : BaseBean() {
     data class Environment(
+        var fanIntake: Int? = null,
+        var fanExhaust: Int? = null,
         val detectionValue: String? = null,
         val healthStatus: String? = null,
         val value: String? = null,
-    ) : BaseBean()
+        var automation: Int? = null, // 是否是自动模式
+    ) : BaseBean(), MultiItemEntity {
+        override val itemType: Int
+            get() = when (detectionValue) {
+                "Fan" -> KEY_TYPE_FAN
+                else -> KEY_TYPE_NORMAL
+            }
+    }
+
+    companion object {
+        // 这是Activity页面的标题
+        const val KEY_TYPE_NORMAL = 0
+
+        // 这是内容的标题
+        const val KEY_TYPE_FAN = 1
+    }
 }

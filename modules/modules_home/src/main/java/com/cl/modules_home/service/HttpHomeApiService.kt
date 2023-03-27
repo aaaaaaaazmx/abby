@@ -23,6 +23,14 @@ interface HttpHomeApiService {
     ): Flow<HttpResult<AutomaticLoginData>>
 
     /**
+     * 夜间模式
+     */
+    @POST("abby/userDevice/updateDeviceInfo")
+    fun updateDeviceInfo(
+        @Body body: UpDeviceInfoReq
+    ): Flow<HttpResult<BaseBean>>
+
+    /**
      * 种植引导图文获取
      */
     @FormUrlEncoded

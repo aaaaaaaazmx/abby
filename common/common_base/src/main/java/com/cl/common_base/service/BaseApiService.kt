@@ -49,4 +49,12 @@ interface BaseApiService {
     @POST("abby/plant/intoPlantBasket")
     fun intoPlantBasket(): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 夜间模式
+     */
+    @POST("abby/userDevice/updateDeviceInfo")
+    fun updateDeviceInfo(
+        @Body body: UpDeviceInfoReq
+    ): Flow<HttpResult<BaseBean>>
+
 }
