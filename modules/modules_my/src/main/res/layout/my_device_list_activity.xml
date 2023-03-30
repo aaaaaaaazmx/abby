@@ -8,19 +8,19 @@
     </data>
 
     <RelativeLayout
+        android:background="#80C4C4C4"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:paddingBottom="45dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#80C4C4C4"
+                android:paddingBottom="45dp"
                 tools:ignore="MissingConstraints">
 
                 <com.cl.common_base.widget.FeatureTitleBar

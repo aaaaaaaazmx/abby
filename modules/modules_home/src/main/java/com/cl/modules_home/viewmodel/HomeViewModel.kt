@@ -1478,10 +1478,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 获取植物高度
     fun getPlantHeight() {
-        _getPlantHeight.value = String.format(
-            "%.1f",
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat().div(25.4))
+        kotlin.runCatching {
+            _getPlantHeight.value = String.format(
+                "%.1f",
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat().div(25.4))
+        }
     }
 
     fun setPlantHeight(height: String) {
@@ -1493,9 +1495,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 获取温度
     fun getWenDu() {
-        _getWenDu.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().toInt()
+        kotlin.runCatching {
+            _getWenDu.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().toInt()
+        }
     }
 
     fun setWenDu(wendu: String?) {
@@ -1508,9 +1512,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 获取湿度
     fun getHumidity() {
-        _getHumidity.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().toInt()
+        kotlin.runCatching {
+            _getHumidity.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().toInt()
+        }
     }
 
     fun setHumidity(humidity: String?) {
@@ -1522,9 +1528,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 获取水温
     fun getWaterWenDu() {
-        _getWaterWenDu.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().toInt()
+        kotlin.runCatching {
+            _getWaterWenDu.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().toInt()
+        }
     }
 
     fun setWaterWenDu(waterWenDu: String?) {
@@ -1536,9 +1544,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 进气风扇
     fun getFanIntake() {
-        _getFanIntake.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().toInt()
+        kotlin.runCatching {
+            _getFanIntake.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().toInt()
+        }
     }
 
     fun setFanIntake(gear: String) {
@@ -1549,9 +1559,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getFanExhaust: LiveData<Int> = _getFanExhaust
 
     fun getFanExhaust() {
-        _getFanExhaust.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().toInt()
+        kotlin.runCatching {
+            _getFanExhaust.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().toInt()
+        }
     }
 
     fun setFanExhaust(gear: String) {
@@ -1563,9 +1575,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getGrowLight: LiveData<Int> = _getGrowLight
 
     fun getGrowLight() {
-        _getGrowLight.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().toInt()
+        kotlin.runCatching {
+            _getGrowLight.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().toInt()
+        }
     }
 
     fun setGrowLight(gear: String) {
@@ -1576,9 +1590,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getAirPump = MutableLiveData<Boolean>()
     val getAirPump: LiveData<Boolean> = _getAirPump
     fun getAirPump() {
-        _getAirPump.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP).toString().toBoolean()
+        kotlin.runCatching {
+            _getAirPump.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP).toString().toBoolean()
+        }
     }
 
     fun setAirPump(gear: String?) {
@@ -1600,11 +1616,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getCloseLightTime = MutableLiveData<String>()
     val getCloseLightTime: LiveData<String> = _getCloseLightTime
     fun getCloseLightTime() {
-        _getCloseLightTime.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME).toString()
-        getTimeText()
-        logI("getLightTime:${_getLightTime.value} -- ${_getCloseLightTime.value} --- ${getTimeText.value}")
+        kotlin.runCatching {
+            _getCloseLightTime.value =
+                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME).toString()
+            getTimeText()
+            logI("getLightTime:${_getLightTime.value} -- ${_getCloseLightTime.value} --- ${getTimeText.value}")
+        }
     }
 
     private val timeText = MutableLiveData<String>("")

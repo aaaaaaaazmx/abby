@@ -17,13 +17,19 @@ interface BaseApiService {
 
     @FormUrlEncoded
     @POST("abby/deviceOperate/start")
-    fun deviceOperateStart(@Field("businessId")businessId: String, @Field("type")type: String): Flow<HttpResult<BaseBean>>
+    fun deviceOperateStart(
+        @Field("businessId") businessId: String,
+        @Field("type") type: String
+    ): Flow<HttpResult<BaseBean>>
 
     /**
      * 富文本图文接口 统一
      */
     @GET("abby/richText/getRichText")
-    fun getRichText(@Query("txtId")txtId: String? = null, @Query("txtType") txtType: String? = null): Flow<HttpResult<RichTextData>>
+    fun getRichText(
+        @Query("txtId") txtId: String? = null,
+        @Query("txtType") txtType: String? = null
+    ): Flow<HttpResult<RichTextData>>
 
     /**
      * 日历-完成任务
@@ -57,4 +63,13 @@ interface BaseApiService {
         @Body body: UpDeviceInfoReq
     ): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 新增配件接口
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/add")
+    fun accessoryAdd(
+        @Field("accessoryId") accessoryId: String,
+        @Field("deviceId") deviceId: String
+    ): Flow<HttpResult<BaseBean>>
 }

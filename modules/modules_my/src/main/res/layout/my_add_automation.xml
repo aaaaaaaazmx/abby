@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints">
+
+        <com.cl.common_base.widget.FeatureTitleBar
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Add Automation" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nes"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_marginTop="14dp"
+                    android:layout_marginStart="24dp"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:textColor="@color/black"
+                    android:text="If"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_if"
+                        android:background="@drawable/background_white_r6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:textStyle="bold"
+                            android:layout_marginBottom="12dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="7dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:id="@+id/tv_if_type"
+                            android:textColor="@color/mainColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <View
+                            android:id="@+id/if_vv"
+                            android:background="#99E4E4E4"
+                            android:layout_marginStart="11dp"
+                            app:layout_constraintStart_toEndOf="@+id/tv_if_type"
+                            android:layout_marginBottom="9dp"
+                            android:layout_marginTop="9dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_width="1dp"
+                            android:layout_height="0dp"/>
+
+                        <TextView
+                            android:textStyle="bold"
+                            android:text=">"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginStart="11dp"
+                            app:layout_constraintStart_toEndOf="@+id/if_vv"
+                            android:layout_marginEnd="17dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:textColor="@color/mainColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        tools:text="40"
+                        android:id="@+id/tv_if_text"
+                        android:textSize="17sp"
+                        android:layout_marginStart="43dp"
+                        app:layout_constraintStart_toEndOf="@id/cl_if"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:textColor="@color/black"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <TextView
+                    android:layout_marginTop="54dp"
+                    android:layout_marginStart="24dp"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:text="Then"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_then"
+                        android:background="@drawable/background_white_r6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:textStyle="bold"
+                            android:layout_marginBottom="12dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginStart="7dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:id="@+id/tv_then_type"
+                            tools:text="Then Type"
+                            android:textColor="@color/mainColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <View
+                            android:id="@+id/then_vv"
+                            android:background="#99E4E4E4"
+                            android:layout_marginStart="11dp"
+                            app:layout_constraintStart_toEndOf="@+id/tv_then_type"
+                            android:layout_marginBottom="9dp"
+                            android:layout_marginTop="9dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_width="1dp"
+                            android:layout_height="0dp"/>
+
+                        <TextView
+                            android:textStyle="bold"
+                            android:text=">"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:layout_marginStart="11dp"
+                            app:layout_constraintStart_toEndOf="@+id/then_vv"
+                            android:layout_marginEnd="17dp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:textColor="@color/mainColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <TextView
+                        android:textSize="17sp"
+                        android:id="@+id/then_text"
+                        android:layout_marginStart="43dp"
+                        app:layout_constraintStart_toEndOf="@id/cl_then"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:textColor="@color/black"
+                        tools:text="the smart fan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <ImageView
+                        android:layout_marginStart="19dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/then_text"
+                        tools:background="@mipmap/my_humidifier"
+                        android:id="@+id/iv_then_img"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:textColor="@color/black"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="24dp"
+                    android:text="Automation Name"
+                    android:textStyle="bold"
+                    android:textSize="17sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_email_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_desc_two"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/background_white_r6">
+
+                    <EditText
+                        android:maxLength="10"
+                        android:id="@+id/et_email"
+                        android:layout_width="0dp"
+                        android:layout_height="60dp"
+                        android:background="@null"
+                        android:hint="Optional "
+                        android:paddingStart="12dp"
+                        android:textColorHint="#80000000"
+                        android:textSize="16sp"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_clear_email"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_clear_email"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginEnd="19dp"
+                        android:background="@mipmap/iv_close"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <Button
+                    android:id="@+id/btn_success"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_below="@+id/ll_night"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="245dp"
+                    android:layout_marginBottom="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@drawable/create_state_button"
+                    android:text="Done"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    tools:text="Done" />
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

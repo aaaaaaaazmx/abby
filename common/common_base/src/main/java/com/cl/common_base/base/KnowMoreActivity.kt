@@ -29,6 +29,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.databinding.HomeKnowMoreLayoutBinding
 import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.easeui.ui.videoUiHelp
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
@@ -56,7 +57,12 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private val isShowButton by lazy { intent.getBooleanExtra(KEY_IS_SHOW_BUTTON, false) }
     private val showButtonText by lazy { intent.getStringExtra(KEY_IS_SHOW_BUTTON_TEXT) }
-    private val isShowUnlockButton by lazy { intent.getBooleanExtra(KEY_IS_SHOW_UNLOCK_BUTTON, false) }
+    private val isShowUnlockButton by lazy {
+        intent.getBooleanExtra(
+            KEY_IS_SHOW_UNLOCK_BUTTON,
+            false
+        )
+    }
     private val unLockButtonEngage by lazy { intent.getStringExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE) }
 
     /**
@@ -84,6 +90,16 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      * veg、auto展示ID
      */
     private val categoryCode by lazy { intent.getStringExtra(BasePopActivity.KEY_CATEGORYCODE) }
+
+    /**
+     * 设备Id
+     */
+    private val deviceId by lazy { intent.getStringExtra(BasePopActivity.KEY_DEVICE_ID) }
+
+    /**
+     * 配件Id
+     */
+    private val accessoryId by lazy { intent.getStringExtra(BasePopActivity.KEY_PART_ID) }
 
     @Inject
     lateinit var mViewMode: KnowMoreViewModel
@@ -168,11 +184,20 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED -> {
                         // 如果是准备种子、那么直接跳转到种子界面
                         val intent = Intent(this@KnowMoreActivity, KnowMoreActivity::class.java)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
-                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
+                        intent.putExtra(
+                            Constants.Global.KEY_TXT_ID,
+                            Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW
+                        )
+                        intent.putExtra(
+                            BasePopActivity.KEY_FIXED_TASK_ID,
+                            Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW
+                        )
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock Germination")
+                        intent.putExtra(
+                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                            "Unlock Germination"
+                        )
                         startActivity(intent)
                     }
 
@@ -185,8 +210,14 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK,
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK -> {
                         val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
-                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
+                        intent.putExtra(
+                            Constants.Global.KEY_TXT_ID,
+                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1
+                        )
+                        intent.putExtra(
+                            BasePopActivity.KEY_FIXED_TASK_ID,
+                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1
+                        )
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
@@ -237,8 +268,14 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1 -> {
                         val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
                         intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2)
-                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2)
+                        intent.putExtra(
+                            Constants.Global.KEY_TXT_ID,
+                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2
+                        )
+                        intent.putExtra(
+                            BasePopActivity.KEY_FIXED_TASK_ID,
+                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2
+                        )
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
@@ -249,8 +286,14 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2 -> {
                         val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
                         intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3)
-                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3)
+                        intent.putExtra(
+                            Constants.Global.KEY_TXT_ID,
+                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3
+                        )
+                        intent.putExtra(
+                            BasePopActivity.KEY_FIXED_TASK_ID,
+                            Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3
+                        )
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
@@ -261,19 +304,40 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
                         val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
                         intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
-                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(
+                            Constants.Global.KEY_TXT_ID,
+                            if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW
+                        )
+                        intent.putExtra(
+                            BasePopActivity.KEY_FIXED_TASK_ID,
+                            if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW
+                        )
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
                         intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, if (categoryCode == "100002" || categoryCode == "100004") "Unlock Autoflowering" else "Unlock Veg")
+                        intent.putExtra(
+                            BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
+                            if (categoryCode == "100002" || categoryCode == "100004") "Unlock Autoflowering" else "Unlock Veg"
+                        )
                         startActivity(intent)
                     }
                     // 自动模式
                     Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE -> {
                         // 打开手动模式
-                        mViewMode.updateDeviceInfo(UpDeviceInfoReq(proMode = "On", deviceId = mViewMode.tuyaHomeBean?.devId))
+                        mViewMode.updateDeviceInfo(
+                            UpDeviceInfoReq(
+                                proMode = "On",
+                                deviceId = mViewMode.tuyaHomeBean?.devId
+                            )
+                        )
                         mViewMode.startRunning(botanyId = "", goon = false)
+                    }
+                    // 新增配件
+                    Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES -> {
+                        letMultiple(accessoryId, deviceId) { a, b ->
+                            // 新增配件接口
+                            mViewMode.addAccessory(a, b)
+                        }
                     }
 
                     else -> {
@@ -292,7 +356,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     private fun isHaveCheckBoxViewType(): Boolean {
         /*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
-        val size = adapter.data.filter { data -> data.value?.isCheck == false && data.type == "option" }.size
+        val size =
+            adapter.data.filter { data -> data.value?.isCheck == false && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
                 ToastUtil.shortShow("Please select all item")
@@ -313,6 +378,20 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 新增配件
+            addAccessory.observe(this@KnowMoreActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                        .navigation()
+                }
+            })
+
             // 植物检查
             checkPlant.observe(this@KnowMoreActivity, resourceObserver {
                 error { errorMsg, _ ->
@@ -384,7 +463,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         tv.setBackgroundResource(R.drawable.create_state_button)
                         tv.isEnabled = true
                         tv.text = topPage.value?.txt
-                        val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(60))
+                        val lp = LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            dp2px(60)
+                        )
                         lp.setMargins(dp2px(20), dp2px(5), dp2px(20), dp2px(5))
                         tv.layoutParams = lp
                         tv.gravity = Gravity.CENTER
@@ -395,25 +477,32 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     binding.flRoot.children.forEach {
                         val tv = (it as? TextView)
                         tv?.setOnClickListener {
-                            list?.firstOrNull { data -> data.value?.txt == tv.text.toString() }?.apply {
-                                when (type) {
-                                    "pageClose" -> this@KnowMoreActivity.finish()
-                                    "pageDown" -> {
-                                        if (!isHaveCheckBoxViewType()) return@setOnClickListener
+                            list?.firstOrNull { data -> data.value?.txt == tv.text.toString() }
+                                ?.apply {
+                                    when (type) {
+                                        "pageClose" -> this@KnowMoreActivity.finish()
+                                        "pageDown" -> {
+                                            if (!isHaveCheckBoxViewType()) return@setOnClickListener
 
-                                        // 跳转下一页
-                                        val intent = Intent(this@KnowMoreActivity, KnowMoreActivity::class.java)
-                                        intent.putExtra(Constants.Global.KEY_TXT_ID, value?.txtId)
-                                        startActivity(intent)
-                                    }
-                                    "finishTask" -> {
-                                        if (!isHaveCheckBoxViewType()) return@setOnClickListener
+                                            // 跳转下一页
+                                            val intent = Intent(
+                                                this@KnowMoreActivity,
+                                                KnowMoreActivity::class.java
+                                            )
+                                            intent.putExtra(
+                                                Constants.Global.KEY_TXT_ID,
+                                                value?.txtId
+                                            )
+                                            startActivity(intent)
+                                        }
+                                        "finishTask" -> {
+                                            if (!isHaveCheckBoxViewType()) return@setOnClickListener
 
-                                        // 完成任务
-                                        mViewMode.finishTask(FinishTaskReq(taskId = taskId))
+                                            // 完成任务
+                                            mViewMode.finishTask(FinishTaskReq(taskId = taskId))
+                                        }
                                     }
                                 }
-                            }
                         }
 
                     }
@@ -444,7 +533,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         //如果滑出去了上面和下面就是否，和今日头条一样
                         //是否全屏
                         if (!GSYVideoManager.isFullState(this@KnowMoreActivity)) {
-                            adapter.data[position].videoPosition = GSYVideoManager.instance().currentPosition
+                            adapter.data[position].videoPosition =
+                                GSYVideoManager.instance().currentPosition
                             // 不释放全部
                             // GSYVideoManager.instance().setListener(this@KnowMoreActivity)
                             // GSYVideoManager.onPause()
@@ -464,7 +554,18 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt)
+            addChildClickViewIds(
+                R.id.iv_pic,
+                R.id.tv_html,
+                R.id.tv_learn,
+                R.id.cl_go_url,
+                R.id.cl_support,
+                R.id.cl_discord,
+                R.id.cl_learn,
+                R.id.cl_check,
+                R.id.tv_page_txt,
+                R.id.tv_txt
+            )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
@@ -515,7 +616,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     R.id.cl_discord -> {
                         val intent = Intent(context, WebActivity::class.java)
                         if (bean.value?.url.isNullOrEmpty()) {
-                            intent.putExtra(WebActivity.KEY_WEB_URL, "https://discord.gg/FCj6UGCNtU")
+                            intent.putExtra(
+                                WebActivity.KEY_WEB_URL,
+                                "https://discord.gg/FCj6UGCNtU"
+                            )
                         } else {
                             intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         }

@@ -3,9 +3,12 @@ package com.cl.modules_my.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
+import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.modules_my.service.HttpMyApiService
+import com.hyphenate.helpdesk.easeui.agora.board.misc.flat.ConverterStatus
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -78,7 +81,10 @@ class MyRemoteRepository @Inject constructor() {
         return service.getDetailByLearnMoreId(learnMoreId)
     }
 
-    fun getCalendar(startDate: String, endDate: String): Flow<HttpResult<MutableList<CalendarData>>> {
+    fun getCalendar(
+        startDate: String,
+        endDate: String
+    ): Flow<HttpResult<MutableList<CalendarData>>> {
         return service.getCalendar(startDate, endDate)
     }
 
@@ -98,15 +104,15 @@ class MyRemoteRepository @Inject constructor() {
         return service.deviceOperateStart(businessId, type)
     }
 
-    fun deviceOperateFinish(type:String): Flow<HttpResult<BaseBean>> {
+    fun deviceOperateFinish(type: String): Flow<HttpResult<BaseBean>> {
         return service.deviceOperateFinish(type)
     }
 
-    fun checkSubscriberNumber(number:String): Flow<HttpResult<CheckSubscriberNumberBean>> {
+    fun checkSubscriberNumber(number: String): Flow<HttpResult<CheckSubscriberNumberBean>> {
         return service.checkSubscriberNumber(number)
     }
 
-    fun topUpSubscriberNumber(number:String): Flow<HttpResult<Boolean>> {
+    fun topUpSubscriberNumber(number: String): Flow<HttpResult<Boolean>> {
         return service.topUpSubscriberNumber(number)
     }
 
@@ -134,7 +140,44 @@ class MyRemoteRepository @Inject constructor() {
         return service.switchDevice(deviceId)
     }
 
+    fun automationList(
+        accessoryId: String,
+        deviceId: String
+    ): Flow<HttpResult<AutomationListBean>> {
+        return service.automationList(accessoryId, deviceId)
+    }
+
+    fun statusSwitch(
+        accessoryId: String,
+        deviceId: String,
+        status: String
+    ): Flow<HttpResult<BaseBean>> {
+        return service.statusSwitch(accessoryId, deviceId, status)
+    }
+
+    fun openAutomation(req: OpenAutomationReq): Flow<HttpResult<BaseBean>> {
+        return service.openAutomation(req)
+    }
+
+    fun getAutomationRule(automationId: String?, accessoryId: String?): Flow<HttpResult<GetAutomationRuleBean>> {
+        return service.getAutomationRule(automationId, accessoryId)
+    }
+
+    fun deleteAutomation(automationId: String): Flow<HttpResult<BaseBean>> {
+        return service.deleteAutomation(automationId)
+    }
+
+    fun configuationExecuteRule(req: ConfiguationExecuteRuleReq): Flow<HttpResult<BaseBean>> {
+        return service.configuationExecuteRule(req)
+    }
+
     fun verifyCode(code: String, email: String): Flow<HttpResult<Boolean>> {
         return service.verifyCode(code, email)
     }
+
+    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>> {
+        return service.accessoryList()
+    }
+
+
 }

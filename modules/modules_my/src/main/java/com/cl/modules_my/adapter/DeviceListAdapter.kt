@@ -7,9 +7,12 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDeviceListItemBinding
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.widget.FeatureItemSwitch
+import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylist
+import com.luck.picture.lib.animators.ViewHelper
 import dagger.Reusable
 
-class DeviceListAdapter(data: MutableList<ListDeviceBean>?) :
+class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchListener: ((accessoryId: String, deviceId: String, isCheck: Boolean) -> Unit)? = null) :
     BaseQuickAdapter<ListDeviceBean, BaseViewHolder>(R.layout.my_device_list_item, data) {
 
     override fun onItemViewHolderCreated(viewHolder: BaseViewHolder, viewType: Int) {
@@ -23,6 +26,12 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?) :
             data = item
             adapter = this@DeviceListAdapter
             executePendingBindings()
+        }
+
+        holder.getView<FeatureItemSwitch>(R.id.ft_check).apply {
+            setSwitchCheckedChangeListener { buttonView, isChecked ->
+                switchListener?.invoke(item.accessoryList?.get(0)?.accessoryId.toString(), item.deviceId ?: "", isChecked)
+            }
         }
     }
 

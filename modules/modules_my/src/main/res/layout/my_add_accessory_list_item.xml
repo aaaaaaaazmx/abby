@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_my.adapter.AddAccessoryAdapter" />
+
+        <variable
+            name="data"
+            type="com.cl.modules_my.repository.AccessoryListBean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_white_r10"
+        tools:ignore="MissingConstraints">
+
+
+        <ImageView
+            url="@{data.image}"
+            android:id="@+id/iv_add_accessory"
+            android:layout_width="85dp"
+            android:layout_height="90dp"
+            android:layout_margin="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@mipmap/my_night_model" />
+
+        <TextView
+            android:text="@{data.accessoryName}"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:background="@drawable/background_blr_main_color_r10"
+            android:layout_marginTop="26dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_add_accessory"
+            android:id="@+id/tv_add_accessory"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            tools:text="Smart Fan" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

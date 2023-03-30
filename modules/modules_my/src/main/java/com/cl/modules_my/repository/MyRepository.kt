@@ -2,8 +2,10 @@ package com.cl.modules_my.repository
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
+import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.modules_my.request.OpenAutomationReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
@@ -187,11 +189,39 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.listDevice()
     }
 
+    fun automationList(accessoryId: String, deviceId: String): Flow<HttpResult<AutomationListBean>> {
+        return remoteRepository.automationList(accessoryId, deviceId)
+    }
+
     fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
         return remoteRepository.switchDevice(deviceId)
     }
 
+    fun statusSwitch(accessoryId: String, deviceId: String, status: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.statusSwitch(accessoryId, deviceId, status)
+    }
+
+    fun openAutomation(req: OpenAutomationReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.openAutomation(req)
+    }
+
+    fun getAutomationRule(automationId: String?, accessoryId: String?): Flow<HttpResult<GetAutomationRuleBean>> {
+        return remoteRepository.getAutomationRule(automationId, accessoryId)
+    }
+
+    fun deleteAutomation(automationId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deleteAutomation(automationId)
+    }
+
+    fun configuationExecuteRule(req: ConfiguationExecuteRuleReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.configuationExecuteRule(req)
+    }
+
     fun verifyCode(code: String, email: String): Flow<HttpResult<Boolean>> {
         return remoteRepository.verifyCode(code, email)
+    }
+
+    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>> {
+        return remoteRepository.accessoryList()
     }
 }

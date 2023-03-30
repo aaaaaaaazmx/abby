@@ -154,6 +154,8 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+
             <Button
                 android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/cl_code_input"
@@ -184,11 +186,46 @@
             android:textSize="12sp" />
 
 
+        <LinearLayout
+            android:id="@+id/ll_night"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="30dp"
+            android:layout_below="@+id/tv_code_desc"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.cl.common_base.widget.FeatureItemSwitch
+                android:id="@+id/ft_night"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:hideArrow="true"
+                app:itemTitle="@string/my_night" />
+
+            <com.cl.common_base.widget.FeatureItemView
+                android:id="@+id/ft_timer"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:visibility="gone"
+                app:hideArrow="true"
+                app:itemTitle="@string/my_time"
+                app:itemValue="@string/setting_sub_time" />
+
+            <com.cl.common_base.widget.FeatureItemSwitch
+                android:id="@+id/ft_child_lock"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                app:itemTitle="@string/my_child_lock"
+                app:itemValue="@string/my_child_lock" />
+        </LinearLayout>
+
+
         <Button
             android:id="@+id/btn_success"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_below="@+id/tv_code_desc"
+            android:layout_below="@+id/ll_night"
             android:layout_marginStart="24dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"

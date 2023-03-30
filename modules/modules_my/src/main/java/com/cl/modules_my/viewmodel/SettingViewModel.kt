@@ -295,29 +295,32 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        TuyaHomeSdk.newOTAInstance(tuYaDeviceBean?.devId).getOtaInfo(object : IGetOtaInfoCallback {
-            override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
-                logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
-                // 如果可以升级
-                if (hasHardwareUpdate(upgradeInfoBeans)) {
-                    onOtaInfo?.invoke(upgradeInfoBeans, true)
-                } else {
-                    // 如果不可以升级过
-                    onOtaInfo?.invoke(upgradeInfoBeans, false)
+        tuYaDeviceBean?.devId?.let {
+            TuyaHomeSdk.newOTAInstance(it).getOtaInfo(object : IGetOtaInfoCallback {
+                override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
+                    logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
+                    // 如果可以升级
+                    if (hasHardwareUpdate(upgradeInfoBeans)) {
+                        onOtaInfo?.invoke(upgradeInfoBeans, true)
+                    } else {
+                        // 如果不可以升级过
+                        onOtaInfo?.invoke(upgradeInfoBeans, false)
+                    }
                 }
-            }
 
-            override fun onFailure(code: String?, error: String?) {
-                logI(
-                    """
+                override fun onFailure(code: String?, error: String?) {
+                    logI(
+                        """
                         getOtaInfo:
                         code: $code
                         error: $error
                     """.trimIndent()
-                )
-                Reporter.reportTuYaError("newOTAInstance", error, code)
-            }
-        })
+                    )
+                    Reporter.reportTuYaError("newOTAInstance", error, code)
+                }
+            })
+        }
+
     }
 
     /**

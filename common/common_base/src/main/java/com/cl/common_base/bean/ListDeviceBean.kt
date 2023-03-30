@@ -18,6 +18,14 @@ data class ListDeviceBean(
     var nightTimer: String? = null,
     var currentDevice: Int? = null,
     var proMode: String? = null, // 是否是手动、自动模式
-    var fanAuto: Int?= null,
+    var fanAuto: Int? = null,
+    var accessoryList: MutableList<AccessoryList>? = null,
 ) : BaseBean() {
+    data class AccessoryList(
+        val accessoryId: Int? = null,
+        val accessoryName: String? = null,
+        val image: String? = null,
+        val textId: String? = null,
+        val status: Int? = null,
+    ) : BaseBean()
 }
