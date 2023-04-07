@@ -210,7 +210,7 @@
             app:layout_constraintTop_toTopOf="@+id/btn_add_accessory" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:visibility="@{data.accessoryList.size() > 0 ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.isChooser &amp;&amp; data.accessoryList.size() > 0 ? View.VISIBLE : View.GONE}"
             android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:id="@+id/cl_device"
@@ -236,6 +236,7 @@
                 android:layout_height="35dp"/>
 
             <TextView
+                android:textStyle="bold"
                 android:text='@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).accessoryName : ""}'
                 android:layout_marginStart="17.8dp"
                 app:layout_constraintBottom_toBottomOf="parent"

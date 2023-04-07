@@ -258,6 +258,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
         )
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val deviceBean = (adapter.data[position] as? ListDeviceBean)
+            logI("123131231: ${deviceBean?.deviceId},,,,${deviceBean?.nightTimer}")
             when (view.id) {
                 R.id.iv_luosi -> {
                     val intent =

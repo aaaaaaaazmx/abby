@@ -8,7 +8,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="#80C4C4C4"
+        android:background="#F7F7F7"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="MissingConstraints">
@@ -44,6 +44,7 @@
                 android:layout_height="62dp"/>
 
             <TextView
+                android:textStyle="bold"
                 android:layout_marginStart="17.8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_icon"

@@ -8,6 +8,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="#F7F7F7"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="MissingConstraints">
@@ -169,7 +170,7 @@
                     <TextView
                         android:textSize="17sp"
                         android:id="@+id/then_text"
-                        android:layout_marginStart="43dp"
+                        android:layout_marginStart="23dp"
                         app:layout_constraintStart_toEndOf="@id/cl_then"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -211,7 +212,7 @@
                     android:background="@drawable/background_white_r6">
 
                     <EditText
-                        android:maxLength="10"
+                        android:maxLength="24"
                         android:id="@+id/et_email"
                         android:layout_width="0dp"
                         android:layout_height="60dp"

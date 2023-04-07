@@ -14,6 +14,10 @@ pluginManagement {
         maven {
             setUrl("https://maven.google.com")
         }
+
+        maven { setUrl("https://maven-other.tuya.com/repository/maven-commercial-releases/") }
+        maven { setUrl("https://central.maven.org/maven2/")}
+        maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
     }
 }
 dependencyResolutionManagement {
@@ -29,6 +33,9 @@ dependencyResolutionManagement {
         maven {
             setUrl("https://maven-other.tuya.com/repository/maven-releases/")
         }
+        maven { setUrl("https://maven-other.tuya.com/repository/maven-commercial-releases/") }
+        maven { setUrl("https://central.maven.org/maven2/")}
+        maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
     }
 }
 rootProject.name = "abby"

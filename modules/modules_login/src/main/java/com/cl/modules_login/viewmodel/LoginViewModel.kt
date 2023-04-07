@@ -214,21 +214,28 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                         /**
                                                          * 从IOS-Android时本地缓存不一致的问题
                                                          */
-                                                        if (homeBean.deviceList.firstOrNull { it.devId == deviceId } == null) {
-                                                            /**
+                                                        /*if (homeBean.deviceList.firstOrNull { it.devId == deviceId } == null) {
+                                                            *//*
                                                              * 调用设备列表来查看当前选中的是哪一台
-                                                             * 来更新设备列表
-                                                             */
+                                                             *  来更新设备列表
+                                                             *//*
+
                                                             // 清除缓存数据
                                                             Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
                                                             // 清除上面所有的Activity
                                                             // 跳转到Login页面
-                                                            ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
+                                                            ARouter.getInstance()
+                                                                .build(RouterPath.LoginRegister.PAGE_LOGIN)
                                                                 .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                                                                 .navigation()
-                                                            /*getListDevice(user, onRegisterReceiver)*/
+                                                            getListDevice(user, onRegisterReceiver)
                                                             return@let
-                                                        }
+                                                        }*/
+
+                                                        // 上面的不能这么写
+                                                        // 1、如果上面的ID和涂鸦返回的ID不一致，那么为Null，就会跳转到登录页面，这是理想情况下，在数量和涂鸦的设备数量一致的情况。
+                                                        // 2、但是涂鸦的设备情况只取决于在线，如果设备离线，涂鸦那边是获取不到的，但是用户App会有状态表示是离线的。所以并不能判断id是否一致的情况。还是得直接跳转到主页面，
+                                                        // 3、最终的显示结果还是由后台那边返回为准。故取消掉上面的跳转到登录界面的操作。
 
                                                         // 种植检查
                                                         user?.uid?.let { uid ->
@@ -326,12 +333,12 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                 // 缓存用户第一个设备数据
                                 // 只取第一个
                                 // 缓存的目的是为了下一次接口报错做准备
-                                 GSON.toJson(deviceBean)?.let {
-                                     Prefs.putStringAsync(
-                                         Constants.Tuya.KEY_DEVICE_DATA,
-                                         it
-                                     )
-                                 }
+                                GSON.toJson(deviceBean)?.let {
+                                    Prefs.putStringAsync(
+                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                        it
+                                    )
+                                }
                                 // 注册广播
                                 onRegisterReceiver?.invoke(
                                     this.deviceId

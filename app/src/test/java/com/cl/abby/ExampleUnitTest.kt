@@ -12,7 +12,6 @@ class ExampleUnitTest {
     fun addition_isCorrect() {
         val celsius = 38.0
         val fahrenheit = celsius * 1.8 + 32
-        println("1231231231231::: $fahrenheit")
     }
 
 }

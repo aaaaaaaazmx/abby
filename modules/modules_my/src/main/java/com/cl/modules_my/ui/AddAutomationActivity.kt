@@ -195,20 +195,21 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                         ?.minus(32))?.times(5f)
                                                         ?.div(9f))?.roundToInt()
                                                 }°C" else "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} 70F"
-                                            return@apply
-                                        }
-                                        binding.tvIfText.text = if (mViewModel.isMetricSystem) {
-                                            // 摄氏度
-                                            "${if (operator == ">=") "≥" else "≤"} ${
-                                                ((value?.minus(32))?.times(5f)
-                                                    ?.div(9f))?.roundToInt()
-                                            }°C"
                                         } else {
-                                            // 华氏度
-                                            "${if (operator == ">=") "≥" else "≤"} ${value}F"
+                                            binding.tvIfText.text = if (mViewModel.isMetricSystem) {
+                                                // 摄氏度
+                                                "${if (operator == ">=") "≥" else "≤"} ${
+                                                    ((value?.minus(32))?.times(5f)
+                                                        ?.div(9f))?.roundToInt()
+                                                }°C"
+                                            } else {
+                                                // 华氏度
+                                                "${if (operator == ">=") "≥" else "≤"} ${value}F"
+                                            }
+                                            mViewModel.setTemperature("$value")
+                                            mViewModel.setTemperatureType(if (operator == ">=") 0 else 1)
                                         }
-                                        mViewModel.setTemperature("$value")
-                                        mViewModel.setTemperatureType(if (operator == ">=") 0 else 1)
+                                        valueCLickPop()
                                     }
                                 }
                         },
@@ -220,13 +221,15 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                     if (this == null) {
                                         binding.tvIfText.text =
                                             "${if (mViewModel.setHumidityType.value == 0) "≥" else "≤"} ${mViewModel.setHumidity.value}%"
-                                        return@apply
-                                    }
-                                    binding.tvIfText.text =
-                                        "${if (operator == ">=") "≥" else "≤"} $value%"
 
-                                    mViewModel.setHumidity("$value")
-                                    mViewModel.setHumidityType(if (operator == ">=") 0 else 1)
+                                    } else {
+                                        binding.tvIfText.text =
+                                            "${if (operator == ">=") "≥" else "≤"} $value%"
+
+                                        mViewModel.setHumidity("$value")
+                                        mViewModel.setHumidityType(if (operator == ">=") 0 else 1)
+                                    }
+                                    valueCLickPop()
                                 }
                         },
                         threeLineCLickEventAction = {
@@ -236,10 +239,11 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                 .apply {
                                     if (this == null) {
                                         binding.tvIfText.text = "${mViewModel.setTime.value}:00"
-                                        return@apply
+                                    } else {
+                                        binding.tvIfText.text = "$value:00"
+                                        mViewModel.setTime("$value")
                                     }
-                                    binding.tvIfText.text = "$value:00"
-                                    mViewModel.setTime("$value")
+                                    valueCLickPop()
                                 }
                         }
                     )
@@ -267,93 +271,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
             // 判断是大于还是小雨
             // 需要根据当前的文案来选择
             // 由于是写死的。所以这里就不做判断了。
-            when (binding.tvIfType.text) {
-                "Temperature" -> {
-                    XPopup.Builder(this@AddAutomationActivity)
-                        .isDestroyOnDismiss(false)
-                        .dismissOnTouchOutside(false)
-                        .asCustom(
-                            ChooseTemperaturePop(
-                                this@AddAutomationActivity,
-                                scope = mViewModel.setTemperatureType.value ?: 0,
-                                value = mViewModel.setTemperature.value ?: "70",
-                                onConfirmAction = { scope, value ->
-                                    logI("1231231231: $scope, $value")
-                                    mViewModel.setTemperatureType(scope)
-                                    mViewModel.setTemperature(value)
-                                    kotlin.runCatching {
-                                        when (scope) {
-                                            0 -> {
-                                                binding.tvIfText.text =
-                                                    if (mViewModel.isMetricSystem) {
-                                                        // 摄氏度
-                                                        "≥ ${
-                                                            ((value.toInt().minus(32)).times(5f).div(9f)).roundToInt()
-                                                        }°C"
-                                                    } else {
-                                                        // 华氏度
-                                                        "≥ ${value}F"
-                                                    }
-                                            }
-                                            1 -> {
-                                                binding.tvIfText.text =
-                                                    if (mViewModel.isMetricSystem) {
-                                                        // 摄氏度
-                                                        "≤ ${
-                                                            ((value.toInt().minus(32)).times(5f)
-                                                                .div(9f)).roundToInt()
-                                                        }°C"
-                                                    } else {
-                                                        // 华氏度
-                                                        "≤ ${value}F"
-                                                    }
-                                            }
-                                        }
-                                    }
-                                },
-                                onCancelAction = {})
-                        ).show()
-                }
-                "Humidity" -> {
-                    XPopup.Builder(this@AddAutomationActivity)
-                        .isDestroyOnDismiss(false)
-                        .dismissOnTouchOutside(false)
-                        .asCustom(
-                            ChooseHumidityPop(
-                                this@AddAutomationActivity,
-                                scope = mViewModel.setHumidityType.value ?: 0,
-                                value = mViewModel.setHumidity.value ?: "40",
-                                onConfirmAction = { scope, value ->
-                                    mViewModel.setHumidityType(scope)
-                                    mViewModel.setHumidity(value)
-                                    when (scope) {
-                                        0 -> {
-                                            binding.tvIfText.text = "≥ $value%"
-                                        }
-                                        1 -> {
-                                            binding.tvIfText.text = "≤ $value%"
-                                        }
-                                    }
-                                },
-                                onCancelAction = {})
-                        ).show()
-                }
-                "Timer" -> {
-                    XPopup.Builder(this@AddAutomationActivity)
-                        .dismissOnTouchOutside(false)
-                        .isDestroyOnDismiss(false)
-                        .asCustom(
-                            ChooseTimerPop(
-                                this@AddAutomationActivity,
-                                time = mViewModel.setTime.value?.toInt() ?: 7,
-                                onConfirmAction = {
-                                    binding.tvIfText.text = "$it:00"
-                                    mViewModel.setTime("$it")
-                                },
-                                onCancelAction = {}
-                            )).show()
-                }
-            }
+            valueCLickPop()
         }
         binding.thenText.setOnClickListener { }
 
@@ -372,7 +290,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                         GetAutomationRuleBean.AutomationRuleListBean(
                             operator = if (binding.tvIfType.text.toString() == "Temperature") if (mViewModel.setTemperatureType.value == 0) ">=" else "<=" else if (mViewModel.setHumidityType.value == 0) ">=" else "<=",
                             type = binding.tvIfType.text.toString(),
-                            value = when (binding.tvIfText.text.toString()) {
+                            value = when (binding.tvIfType.text.toString()) {
                                 "Temperature" -> mViewModel.setTemperature.value?.toInt()
                                 "Humidity" -> mViewModel.setHumidity.value?.toInt()
                                 else -> mViewModel.setTime.value?.toInt()
@@ -385,6 +303,97 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
         }
         binding.ivClearEmail.setOnClickListener {
             binding.etEmail.setText("")
+        }
+    }
+
+    private fun valueCLickPop() {
+        when (binding.tvIfType.text) {
+            "Temperature" -> {
+                XPopup.Builder(this@AddAutomationActivity)
+                    .isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        ChooseTemperaturePop(
+                            this@AddAutomationActivity,
+                            scope = mViewModel.setTemperatureType.value ?: 0,
+                            value = mViewModel.setTemperature.value ?: "70",
+                            onConfirmAction = { scope, value ->
+                                logI("1231231231: $scope, $value")
+                                mViewModel.setTemperatureType(scope)
+                                mViewModel.setTemperature(value)
+                                kotlin.runCatching {
+                                    when (scope) {
+                                        0 -> {
+                                            binding.tvIfText.text =
+                                                if (mViewModel.isMetricSystem) {
+                                                    // 摄氏度
+                                                    "≥ ${
+                                                        ((value.toInt().minus(32)).times(5f)
+                                                            .div(9f)).roundToInt()
+                                                    }°C"
+                                                } else {
+                                                    // 华氏度
+                                                    "≥ ${value}F"
+                                                }
+                                        }
+                                        1 -> {
+                                            binding.tvIfText.text =
+                                                if (mViewModel.isMetricSystem) {
+                                                    // 摄氏度
+                                                    "≤ ${
+                                                        ((value.toInt().minus(32)).times(5f)
+                                                            .div(9f)).roundToInt()
+                                                    }°C"
+                                                } else {
+                                                    // 华氏度
+                                                    "≤ ${value}F"
+                                                }
+                                        }
+                                    }
+                                }
+                            },
+                            onCancelAction = {})
+                    ).show()
+            }
+            "Humidity" -> {
+                XPopup.Builder(this@AddAutomationActivity)
+                    .isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        ChooseHumidityPop(
+                            this@AddAutomationActivity,
+                            scope = mViewModel.setHumidityType.value ?: 0,
+                            value = mViewModel.setHumidity.value ?: "40",
+                            onConfirmAction = { scope, value ->
+                                mViewModel.setHumidityType(scope)
+                                mViewModel.setHumidity(value)
+                                when (scope) {
+                                    0 -> {
+                                        binding.tvIfText.text = "≥ $value%"
+                                    }
+                                    1 -> {
+                                        binding.tvIfText.text = "≤ $value%"
+                                    }
+                                }
+                            },
+                            onCancelAction = {})
+                    ).show()
+            }
+            "Timer" -> {
+                XPopup.Builder(this@AddAutomationActivity)
+                    .dismissOnTouchOutside(false)
+                    .isDestroyOnDismiss(false)
+                    .asCustom(
+                        ChooseTimerPop(
+                            this@AddAutomationActivity,
+                            time = mViewModel.setTime.value?.toInt() ?: 7,
+                            onConfirmAction = {
+                                binding.tvIfText.text = "$it:00"
+                                mViewModel.setTime("$it")
+                            },
+                            onCancelAction = {}
+                        )).show()
+            }
         }
     }
 }

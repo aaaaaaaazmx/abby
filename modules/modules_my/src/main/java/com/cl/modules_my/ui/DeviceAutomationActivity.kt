@@ -103,6 +103,17 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     }
                 }
             })
+            // 自动化开关
+            automationSwitch.observe(this@DeviceAutomationActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    letMultiple(accessoryId, deviceId) { a, b ->
+                        mViewModel.getRuleList(a, b)
+                    }
+                }
+            })
             // 规则列表
             ruleList.observe(this@DeviceAutomationActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -143,7 +154,11 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
                 }
-                success {}
+                success {
+                    letMultiple(accessoryId, deviceId) { a, b ->
+                        mViewModel.getRuleList(a, b)
+                    }
+                }
             })
         }
     }

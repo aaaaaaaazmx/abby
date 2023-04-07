@@ -14,6 +14,7 @@ import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.ChooseTimePop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
@@ -24,10 +25,10 @@ import com.cl.modules_my.databinding.MyEditProfilePopBinding
 import com.cl.modules_my.service.HttpMyApiService
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
+import com.tuya.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import retrofit2.http.Body
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -102,11 +103,13 @@ class EditPlantProfilePop(
              */
             ftNight.isItemChecked = beanData?.nightMode == 1
             ftChildLock.isItemChecked = beanData?.childLock == 1
-            getNightTimer()
+            ViewUtils.setVisible(beanData?.nightMode == 1, ftTimer)
+            getNightTimer(this)
 
             // 夜间模式
             ftNight.setSwitchCheckedChangeListener { _, isChecked ->
                 // muteOn:00,muteOff:001
+                ViewUtils.setVisible(isChecked, ftTimer)
                 if (!isChecked) {
                     DeviceControl.get()
                         .success {
@@ -121,7 +124,7 @@ class EditPlantProfilePop(
                                 """.trimIndent()
                             )
                         }
-                        .nightMode("muteOn:00,muteOff:00")
+                        .nightMode("muteOn:00,muteOff:00", devId = beanData?.deviceId)
                 } else {
                     DeviceControl.get()
                         .success {
@@ -136,7 +139,7 @@ class EditPlantProfilePop(
                                 """.trimIndent()
                             )
                         }
-                        .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.toInt() == 24) 12 else muteOff}")
+                        .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.toInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
                 }
 
                 // 调用接口更新后台夜间模式
@@ -148,6 +151,51 @@ class EditPlantProfilePop(
                         )
                     )
                 }
+            }
+
+            /**
+             * 夜间模式选择时间
+             */
+            ftTimer.setOnClickListener {
+                XPopup.Builder(context)
+                    .isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        ChooseTimePop(
+                            context,
+                            turnOnHour = muteOn?.toInt(),
+                            turnOffHour = muteOff?.toInt(),
+                            onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
+                                ftTimer.itemValue = "$onTime-$offMinute"
+                                muteOn = "$timeOn"
+                                muteOff = "$timeOff"
+                                // todo 这个时间和上面解析时间有问题，需要传递24小时制度
+                                lifecycleScope.launch {
+                                    updateDeviceInfo(
+                                        UpDeviceInfoReq(
+                                            nightTimer = binding?.ftTimer?.itemValue.toString(),
+                                            deviceId = beanData?.deviceId
+                                        )
+                                    )
+                                }
+                                // 发送dp点
+                                DeviceControl.get()
+                                    .success {
+                                        // "141":"muteOn:10,muteOff:22"
+                                        logI("123312313: muteOn:$timeOn,muteOff:$timeOff")
+                                    }
+                                    .error { code, error ->
+                                        ToastUtil.shortShow(
+                                            """
+                                          nightMode: 
+                                          code-> $code
+                                          errorMsg-> $error
+                                            """.trimIndent()
+                                        )
+                                    }
+                                    .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn},muteOff:${if (timeOff == 24) 12 else timeOff}", devId = beanData?.deviceId)
+                            })
+                    ).show()
             }
 
             /**
@@ -177,7 +225,7 @@ class EditPlantProfilePop(
                              """.trimIndent()
                         )
                     }
-                    .childLock(isChecked)
+                    .childLock(isChecked, beanData?.deviceId)
             }
 
         }
@@ -185,14 +233,14 @@ class EditPlantProfilePop(
 
     private var muteOn: String? = null
     private var muteOff: String? = null
-    private fun getNightTimer() {
+    private fun getNightTimer(bindings: MyEditProfilePopBinding?) {
         val str = beanData?.nightTimer.toString()
         val pattern = "(\\d{1,2}):\\d{2} [AP]M-(\\d{1,2}):\\d{2} [AP]M"
 
         val p: Pattern = Pattern.compile(pattern)
         val m: Matcher = p.matcher(str)
-        var openTime: String? = null
-        var closeTime: String? = null
+        var openTime: String? = "10:00 PM"
+        var closeTime: String? = "7:00 AM"
         if (m.find()) {
             muteOn = m.group(1)
             muteOff = m.group(2)
@@ -235,8 +283,8 @@ class EditPlantProfilePop(
             openTime = "10:00 PM"
             closeTime = "7:00 AM"
         }
-
-        binding?.ftTimer?.itemValue = "$openTime-$closeTime"
+        logI("11111: ${"$openTime-$closeTime"}")
+        bindings?.ftTimer?.itemValue = "$openTime-$closeTime"
     }
 
 
@@ -263,7 +311,7 @@ class EditPlantProfilePop(
             )
         }.collect {
             logI(it.toString())
-            when(it) {
+            when (it) {
                 is Resource.Success -> {
                     // todo 更新成功
                     onDeviceChanged?.invoke()
