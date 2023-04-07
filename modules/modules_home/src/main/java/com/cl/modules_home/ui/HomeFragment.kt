@@ -2517,7 +2517,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     val isShowGuidePop =
                         Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_GUIDE_POP, false)
-                    if (!isShowGuidePop) {
+                    if (!isShowGuidePop && isManual == false) {
                         // 只展示一次
                         Prefs.putBoolean(Constants.Global.KEY_IS_SHOW_GUIDE_POP, true)
                         // 显示三种隐藏提示

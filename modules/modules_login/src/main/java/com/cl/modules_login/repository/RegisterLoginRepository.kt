@@ -2,6 +2,7 @@ package com.cl.modules_login.repository
 
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
 import com.cl.modules_login.response.LoginData
@@ -17,6 +18,14 @@ class RegisterLoginRepository @Inject constructor(private var remoteRepository: 
      */
     fun loginAbby(body: LoginReq): Flow<HttpResult<LoginData>> {
         return remoteRepository.loginAbby(body)
+    }
+
+
+    /**
+     * 设备列表
+     */
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>> {
+        return remoteRepository.listDevice()
     }
 
     /**

@@ -69,6 +69,42 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
         }
     }
 
+    /**
+     * 配件状态
+     */
+    private val _deviceStatus = MutableLiveData<Resource<BaseBean>>()
+    val deviceStatus: LiveData<Resource<BaseBean>> = _deviceStatus
+    fun setDeviceStatus(accessoryId: String, deviceId: String, status: String) {
+        viewModelScope.launch {
+            repository.statusSwitch(accessoryId, deviceId, status)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _deviceStatus.value = it
+                }
+        }
+    }
+
 
     /**
      * 合并账号

@@ -4,9 +4,13 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.bean.DetailByLearnMoreIdData
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.modules_my.repository.AccessoryListBean
+import com.cl.modules_my.repository.GetAutomationRuleBean
 import com.cl.modules_my.repository.MyTroubleData
+import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.modules_my.request.OpenAutomationReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -168,7 +172,10 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/deviceOperate/start")
-    fun deviceOperateStart(@Field("businessId") businessId: String, @Field("type") type: String): Flow<HttpResult<BaseBean>>
+    fun deviceOperateStart(
+        @Field("businessId") businessId: String,
+        @Field("type") type: String
+    ): Flow<HttpResult<BaseBean>>
 
 
     /**
@@ -204,7 +211,11 @@ interface HttpMyApiService {
      * 发送验证码
      */
     @GET("abby/user/verify/email")
-    fun verifyEmail(@Query("email") email: String, @Query("type") type: String, @Query("mergeEmail") mergeEmail: String? = null): Flow<HttpResult<Boolean>>
+    fun verifyEmail(
+        @Query("email") email: String,
+        @Query("type") type: String,
+        @Query("mergeEmail") mergeEmail: String? = null
+    ): Flow<HttpResult<Boolean>>
 
 
     @POST("abby/user/merge")
@@ -222,5 +233,63 @@ interface HttpMyApiService {
      * 邮箱验证码
      */
     @GET("abby/user/verify/code")
-    fun verifyCode(@Query("code") code: String, @Query("email") email: String, @Query("mergeEmail") mergeEmail: String? = null): Flow<HttpResult<Boolean>>
+    fun verifyCode(
+        @Query("code") code: String,
+        @Query("email") email: String,
+        @Query("mergeEmail") mergeEmail: String? = null
+    ): Flow<HttpResult<Boolean>>
+
+    /**
+     * 配件列表
+     */
+    @POST("abby/accessory/list")
+    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>>
+
+    /**
+     * 配件规则列表
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/automationList")
+    fun automationList(
+        @Field("accessoryId") accessoryId: String,
+        @Field("deviceId") deviceId: String
+    ): Flow<HttpResult<AutomationListBean>>
+
+    /**
+     * 配件状态开关
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/statusSwitch")
+    fun statusSwitch(
+        @Field("accessoryId") accessoryId: String,
+        @Field("deviceId") deviceId: String,
+        @Field("status") status: String
+    ): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 自动化规则开关
+     */
+    @POST("abby/accessory/openAutomation")
+    fun openAutomation(@Body req: OpenAutomationReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取自动化信息
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/getAutomationRule")
+    fun getAutomationRule(@Field("automationId") automationId: String?, @Field("accessoryId") accessoryId: String?): Flow<HttpResult<GetAutomationRuleBean>>
+
+    /**
+     * 删除自动化
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/deleteAutomation")
+    fun deleteAutomation(@Field("automationId") automationId: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 配置自动执行规划
+     */
+    @POST("abby/accessory/configuationExecuteRule")
+    fun configuationExecuteRule(@Body req: ConfiguationExecuteRuleReq): Flow<HttpResult<BaseBean>>
+
 }

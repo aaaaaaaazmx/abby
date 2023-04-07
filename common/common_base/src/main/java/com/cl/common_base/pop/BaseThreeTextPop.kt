@@ -31,6 +31,11 @@ class BaseThreeTextPop(
 
         binding = DataBindingUtil.bind<BaseThreePopBinding>(popupImplView)?.apply {
             tvContent.text = content
+            ViewUtils.setVisible(!content.isNullOrEmpty(), tvContent, xpopupDivider1)
+            ViewUtils.setVisible(!oneLineText.isNullOrEmpty(), tvOne)
+            ViewUtils.setVisible(!twoLineText.isNullOrEmpty(), tvTwo)
+            ViewUtils.setVisible(!threeLineText.isNullOrEmpty(), tvThree, vvThree)
+
             tvOne.text = oneLineText
             tvTwo.text = twoLineText
             tvThree.text = threeLineText

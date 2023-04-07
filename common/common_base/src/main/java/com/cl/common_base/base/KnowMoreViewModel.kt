@@ -119,6 +119,41 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * 新增配件
+     */
+    private val _addAccessory = MutableLiveData<Resource<BaseBean>>()
+    val addAccessory: LiveData<Resource<BaseBean>> = _addAccessory
+    fun addAccessory(accessoryId: String, deviceId: String) {
+        viewModelScope.launch {
+            service.accessoryAdd(accessoryId, deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _addAccessory.value = it
+                }
+        }
+    }
 
     /**
      * 旧的开始种植植物

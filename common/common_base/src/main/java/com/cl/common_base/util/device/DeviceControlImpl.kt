@@ -109,25 +109,42 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         )
     }
 
-    override fun childLock(startOrStop: Boolean) {
+    override fun childLock(startOrStop: Boolean, devId: String?) {
         map[TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK] = startOrStop
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
-            this
-        )
+        if (!devId.isNullOrEmpty()) {
+            TuyaHomeSdk.newDeviceInstance(devId)?.publishDps(
+                GSON.toJson(map),
+                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                this
+            )
+        }else {
+            getCurrentDevice()?.publishDps(
+                GSON.toJson(map),
+                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                this
+            )
+        }
     }
 
     /**
      * 夜间模式
      */
-    override fun nightMode(startOrStop: String) {
+    override fun nightMode(startOrStop: String, devId: String?) {
         map[TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE] = startOrStop
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
-            this
-        )
+        if (!devId.isNullOrEmpty()) {
+            TuyaHomeSdk.newDeviceInstance(devId)?.publishDps(
+                GSON.toJson(map),
+                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                this
+            )
+        } else {
+            getCurrentDevice()?.publishDps(
+                GSON.toJson(map),
+                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                this
+            )
+        }
+
     }
 
     override fun lightTime(time: Int) {
@@ -169,7 +186,11 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     override fun onError(code: String?, error: String?) {
         onErrorAction?.invoke(this@DeviceControlImpl, code, error)
         kotlin.runCatching {
-            Reporter.reportTuYaError(map.keys.firstOrNull() ?: "DeviceControlImpl", map.values.firstOrNull().toString(), code)
+            Reporter.reportTuYaError(
+                map.keys.firstOrNull() ?: "DeviceControlImpl",
+                map.values.firstOrNull().toString(),
+                code
+            )
             map.clear()
         }
     }

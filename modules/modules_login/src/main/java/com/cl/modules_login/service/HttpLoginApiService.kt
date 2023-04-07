@@ -2,6 +2,7 @@ package com.cl.modules_login.service
 
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
 import com.cl.modules_login.response.LoginData
@@ -20,6 +21,10 @@ interface HttpLoginApiService {
     fun loginAbby(
         @Body requestBody: LoginReq,
     ): Flow<HttpResult<LoginData>>
+
+
+    @POST("abby/userDevice/listDevice")
+    fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>>
 
 
     /**

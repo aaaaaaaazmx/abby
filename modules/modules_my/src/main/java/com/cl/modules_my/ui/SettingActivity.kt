@@ -497,7 +497,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             ).show()
         }
         // 童锁
-        binding.ftChildLock.setSwitchCheckedChangeListener { buttonView, isChecked ->
+        binding.ftChildLock.setSwitchCheckedChangeListener { _, isChecked ->
             // 是否打开童锁
             DeviceControl.get()
                 .success {

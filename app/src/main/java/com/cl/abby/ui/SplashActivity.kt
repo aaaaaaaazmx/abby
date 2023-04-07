@@ -90,28 +90,84 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
             finish()
         } else {
-            // 登录涂鸦 & 跳转到哪个界面
-            val email = userinfoBean?.email
-            val tuyaCountryCode = userinfoBean?.tuyaCountryCode
-            val tuyaPassword = userinfoBean?.tuyaPassword
-            mViewModel.tuYaLogin(
-                userinfoBean?.deviceId,
-                tuyaCountryCode,
-                email,
-                AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
-                onRegisterReceiver = { devId ->
-                    val intent = Intent(this@SplashActivity, TuYaDeviceUpdateReceiver::class.java)
-                    startService(intent)
-                },
-                onError = { code, error ->
-                    hideProgressLoading()
-                    error?.let { ToastUtil.shortShow(it) }
-                }
-            )
+            // 从设备列表当中获取当前选中设备
+            mViewModel.listDevice()
         }
     }
 
     override fun observe() {
+        /**
+         * 设备列表
+         */
+        mViewModel.listDevice.observe(this@SplashActivity, resourceObserver {
+            loading { }
+            error { errorMsg, code ->
+                errorMsg?.let { msg -> ToastUtil.shortShow(msg) }
+            }
+            success {
+                // 登录涂鸦 & 跳转到哪个界面
+                val email = userinfoBean?.email
+                val tuyaCountryCode = userinfoBean?.tuyaCountryCode
+                val tuyaPassword = userinfoBean?.tuyaPassword
+                if (data.isNullOrEmpty()) {
+                    mViewModel.tuYaLogin(
+                        null,
+                        tuyaCountryCode,
+                        email,
+                        AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
+                        onRegisterReceiver = { devId ->
+                            val intent =
+                                Intent(this@SplashActivity, TuYaDeviceUpdateReceiver::class.java)
+                            startService(intent)
+                        },
+                        onError = { code, error ->
+                            hideProgressLoading()
+                            error?.let { ToastUtil.shortShow(it) }
+                        }
+                    )
+                } else {
+                    val currentDeviceInfo = data?.firstOrNull { it.currentDevice == 1 }
+                    if (null == currentDeviceInfo) {
+                        mViewModel.tuYaLogin(
+                            null,
+                            tuyaCountryCode,
+                            email,
+                            AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
+                            onRegisterReceiver = { devId ->
+                                val intent = Intent(
+                                    this@SplashActivity,
+                                    TuYaDeviceUpdateReceiver::class.java
+                                )
+                                startService(intent)
+                            },
+                            onError = { code, error ->
+                                hideProgressLoading()
+                                error?.let { ToastUtil.shortShow(it) }
+                            }
+                        )
+                    } else {
+                        mViewModel.tuYaLogin(
+                            currentDeviceInfo.deviceId,
+                            tuyaCountryCode,
+                            email,
+                            AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
+                            onRegisterReceiver = { devId ->
+                                val intent = Intent(
+                                    this@SplashActivity,
+                                    TuYaDeviceUpdateReceiver::class.java
+                                )
+                                startService(intent)
+                            },
+                            onError = { code, error ->
+                                hideProgressLoading()
+                                error?.let { ToastUtil.shortShow(it) }
+                            }
+                        )
+                    }
+                }
+            }
+        })
+
         /**
          * 检查是否种植过
          */

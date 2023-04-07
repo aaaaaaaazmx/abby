@@ -616,5 +616,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 调用哪个解锁Veg\auto的ID
         const val KEY_CATEGORYCODE = "key_categorycode"
+
+        // 设备ID
+        const val KEY_DEVICE_ID = "key_device_id"
+
+        // 配件ID
+        const val KEY_PART_ID = "key_part_id"
+
+        // 自动化Id
+        const val KEY_AUTOMATION_ID = "key_auto_id"
     }
 }

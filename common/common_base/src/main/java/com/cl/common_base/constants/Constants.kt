@@ -265,6 +265,9 @@ object Constants {
         const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
         const val KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW  = "d966091a08c048db962b710212eb223d"
 
+        // 新增配件
+        const val KEY_FIXED_ID_NEW_ACCESSORIES = "xxxxx"
+
         // 手动模式自动模式
         const val KEY_FIXED_ID_MANUAL_MODE = "6f5c5f54f3515fe9c744980e39583e95"
     }

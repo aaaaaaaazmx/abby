@@ -10,9 +10,8 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        val str = "3.0"
-        val num = str.toInt()
-        println("123123123: $num")
+        val celsius = 38.0
+        val fahrenheit = celsius * 1.8 + 32
     }
 
 }

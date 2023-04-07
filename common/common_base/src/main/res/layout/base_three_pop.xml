@@ -72,6 +72,7 @@
                 android:textSize="18sp" />
 
             <View
+                android:id="@+id/vv_three"
                 android:layout_width="match_parent"
                 android:layout_height=".5dp"
                 android:background="@color/_xpopup_list_divider" />
@@ -85,7 +86,7 @@
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:text="Cancel"
-                android:textColor="#C4C4C4"
+                android:textColor="@color/mainColor"
                 android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>

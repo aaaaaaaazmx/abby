@@ -49,6 +49,14 @@ public class ScopeTimePicker extends WheelPicker<String> {
         });
     }
 
+    public void set24Hour() {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < 24; i++) {
+            list.add(i + ":00");
+        }
+        setDataList(list);
+    }
+
     private void updateHour() {
         List<String> list = new ArrayList<>();
         if (true) {
@@ -74,7 +82,7 @@ public class ScopeTimePicker extends WheelPicker<String> {
         if (scope > 12) {
             for (String s : dataList) {
                 String hour = s.split(":")[0];
-                if (hour.equals((scope - 12)+"")) {
+                if (hour.equals((scope - 12) + "")) {
                     setCurrentPosition(dataList.indexOf(s), smootScroll);
                     return;
                 }
@@ -84,13 +92,21 @@ public class ScopeTimePicker extends WheelPicker<String> {
         if (scope <= 12) {
             for (String s : dataList) {
                 String hour = s.split(":")[0];
-                if (hour.equals(scope+"")) {
+                if (hour.equals(scope + "")) {
                     setCurrentPosition(dataList.indexOf(s), smootScroll);
                     return;
                 }
             }
         }
         setCurrentPosition(scope, smootScroll);
+    }
+
+    //统一返回24小时制
+    public int getHour() {
+        //统一返回24小时制
+        String hour = getDataList().get(getCurrentPosition());
+        int scopes = Integer.parseInt(hour.split(":")[0]);
+        return scopes;
     }
 
     public void setOnHourSelectedListener(OnScopeTimeSelectedListener onHourSelectedListener) {

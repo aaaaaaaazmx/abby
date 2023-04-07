@@ -36,12 +36,12 @@ interface DeviceControl {
     /**
      * 童锁开关
      */
-    fun childLock(startOrStop: Boolean)
+    fun childLock(startOrStop: Boolean, devId: String? = null)
 
     /**
      * 夜间模式
      */
-    fun nightMode(startOrStop: String)
+    fun nightMode(startOrStop: String, devId: String? = null)
 
     /**
      * 开灯时间

@@ -98,6 +98,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_sub"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/iv_jiqi"
                 android:layout_width="0dp"
@@ -123,6 +124,32 @@
                     tools:text="#000000" />
             </LinearLayout>
 
+
+            <RelativeLayout
+                android:layout_marginTop="21dp"
+                app:layout_constraintTop_toBottomOf="@+id/ll_sub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_marginEnd="10dp"
+                    android:id="@+id/iv_child"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/my_child_model"
+                    android:visibility="@{data.childLock == 1 ? View.VISIBLE : View.GONE}" />
+
+                <ImageView
+                    android:id="@+id/iv_night"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/iv_child"
+                    android:src="@mipmap/my_night_model"
+                    android:visibility="@{data.nightMode == 1 ? View.VISIBLE : View.GONE}" />
+            </RelativeLayout>
+
             <ImageView
                 android:id="@+id/iv_jiqi"
                 android:layout_width="wrap_content"
@@ -140,34 +167,110 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="24dp"
             android:background="@drawable/background_main_color_r6"
-            android:text="Change Profile"
+            android:text="Quick Settings"
             android:textAllCaps="false"
             android:textSize="11sp"
             android:textColor="@color/white"
             android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+            app:layout_constraintEnd_toStartOf="@+id/btn_add_accessory"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cl_root" />
 
         <Button
             app:layout_constraintHorizontal_chainStyle="spread"
             android:textSize="11sp"
-            android:id="@+id/btn_delete"
+            android:id="@+id/btn_add_accessory"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginStart="17dp"
-            android:background="@drawable/background_gray_r6"
-            android:text="Delete"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Add Accessory"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
-            app:layout_constraintEnd_toStartOf="@+id/btn_start"
+            app:layout_constraintEnd_toStartOf="@+id/btn_jump_to_device"
             app:layout_constraintStart_toEndOf="@+id/btn_chang"
             app:layout_constraintTop_toTopOf="@+id/btn_chang" />
 
 
         <Button
+            android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_jump_to_device"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Jump to Device"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_add_accessory"
+            app:layout_constraintTop_toTopOf="@+id/btn_add_accessory" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="@{data.isChooser &amp;&amp; data.accessoryList.size() > 0 ? View.VISIBLE : View.GONE}"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/cl_device"
+            android:layout_marginTop="13dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_chang"
+            android:background="@drawable/background_white_r6"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <ImageView
+                url='@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).image : ""}'
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@mipmap/my_night_model"
+                android:id="@+id/iv_icon"
+                android:layout_width="32dp"
+                android:layout_height="35dp"/>
+
+            <TextView
+                android:textStyle="bold"
+                android:text='@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).accessoryName : ""}'
+                android:layout_marginStart="17.8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/mainColor"
+                android:textSize="11sp"
+                tools:text="Smart humidifier"
+                android:id="@+id/tv_device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.cl.common_base.widget.FeatureItemSwitch
+                isItemCheck="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).status == 1 : false}"
+                android:id="@+id/ft_check"
+                android:layout_width="wrap_content"
+                app:hideArrow="true"
+                android:layout_height="40dp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_luosi"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:layout_marginEnd="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/iv_luosi"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@mipmap/my_luosi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!--<Button
             app:layout_constraintHorizontal_chainStyle="spread"
             android:textSize="11sp"
             android:id="@+id/btn_start"
@@ -198,7 +301,7 @@
             android:textColor="@color/white"
             android:visibility='@{(data.onlineStatus.equals("Offline") &amp;&amp; data.isChooser) ? View.VISIBLE : View.GONE}'
             app:layout_constraintStart_toEndOf="@+id/btn_start"
-            app:layout_constraintTop_toTopOf="@+id/btn_start" />
+            app:layout_constraintTop_toTopOf="@+id/btn_start" />-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
