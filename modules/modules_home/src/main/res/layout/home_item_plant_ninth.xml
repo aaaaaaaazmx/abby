@@ -223,23 +223,45 @@
                 app:svSolidType="solid"
                 />
 
+
+            <com.cl.common_base.widget.ripple.RippleView
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
+                app:layout_constraintEnd_toEndOf="@+id/iv_support"
+                app:layout_constraintStart_toStartOf="@+id/iv_support"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_support"
+                app:layout_constraintTop_toTopOf="@+id/iv_support"
+                android:layout_width="61dp"
+                android:layout_height="61dp"
+                android:layout_gravity="center"
+                android:button="@null"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                app:ripple_circle_color="@color/white"
+                app:ripple_circle_count="2"
+                app:ripple_circle_min_radius="10dp"
+                app:ripple_circle_style="FILL"
+                app:ripple_circle_start="true"
+                app:ripple_speed="0.3" />
+
             <ImageView
                 android:id="@+id/iv_support"
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}'
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="45dp"
+                android:background="@mipmap/home_plant_last_support"
                 android:gravity="center"
                 android:textColor="@color/mainColor"
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}'
                 app:layout_constraintBottom_toBottomOf="@+id/iv_bowl"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_bowl"
                 app:svRadius="180dp"
                 app:svSolidColor="@color/white"
-                app:svSolidType="solid"
-                android:background="@mipmap/home_plant_last_support"
-                />
+                app:svSolidType="solid" />
+
+
 
             <TextView
                 android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
@@ -459,16 +481,15 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_white_r16">
+                android:background="@mipmap/home_shadow_bg">
 
                 <ImageView
                     android:id="@+id/iv_time_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="13dp"
-                    android:layout_marginTop="9dp"
+                    android:layout_marginTop="18dp"
                     android:background="@mipmap/home_plant_time_bg"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/vv_period_bg"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -499,9 +520,9 @@
                     android:id="@+id/vv_period_bg"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@color/lineBg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -531,7 +552,7 @@
                 android:layout_height="112dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_white_r16"
+                android:background="@mipmap/background_white_r16"
                 android:visibility="gone">
 
                 <ImageView
@@ -605,16 +626,15 @@ Day1" />
                 android:layout_height="112dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_white_r16">
+                android:background="@mipmap/home_shadow_bg">
 
                 <ImageView
                     android:id="@+id/iv_temperature_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="13dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="18dp"
                     android:background="@mipmap/home_plant_temperature_bg"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/vv_temperature_bg"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
@@ -633,11 +653,11 @@ Day1" />
                 <TextView
                     android:layout_width="8dp"
                     android:layout_height="8dp"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="5dp"
                     android:background="@drawable/red_bg"
                     android:visibility='@{viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE}'
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/vv_temperature_bg"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />
 
                 <!--<TextView
@@ -659,9 +679,9 @@ Day1" />
                     android:id="@+id/vv_temperature_bg"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@color/lineBg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
