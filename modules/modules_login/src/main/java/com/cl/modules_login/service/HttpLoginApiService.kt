@@ -3,6 +3,7 @@ package com.cl.modules_login.service
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
 import com.cl.modules_login.response.LoginData
@@ -26,6 +27,11 @@ interface HttpLoginApiService {
     @POST("abby/userDevice/listDevice")
     fun listDevice(): Flow<HttpResult<MutableList<ListDeviceBean>>>
 
+    /**
+     * 获取用户信息
+     */
+    @POST("abby/user/userDetail")
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>>
 
     /**
      * 获取国家列表

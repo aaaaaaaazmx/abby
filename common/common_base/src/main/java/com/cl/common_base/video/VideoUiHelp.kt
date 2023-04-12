@@ -1,11 +1,10 @@
-package com.cl.common_base.easeui.ui
+package com.cl.common_base.video
 
 import android.app.Activity
 import android.content.Context
 import android.view.View
 import com.cl.common_base.R
 import com.cl.common_base.ext.logI
-import com.cl.common_base.video.SampleCoverVideo
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.shuyu.gsyvideoplayer.listener.GSYSampleCallBack
 import com.shuyu.gsyvideoplayer.utils.Debuger

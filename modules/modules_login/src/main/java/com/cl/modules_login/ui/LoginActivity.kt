@@ -9,6 +9,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.Resource
@@ -140,6 +141,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                      * 登录涂鸦
                      */
                     mViewModel.tuYaLogin(
+                        interComeUserId = it.data?.userId,
+                        userInfo = UserinfoBean.BasicUserBean(userId = it.data?.userId, email = it.data?.email, userName = it.data?.nickName),
                         deviceId = it.data?.deviceId,
                         code = it.data?.tuyaCountryCode,
                         email = it.data?.email,

@@ -9,7 +9,6 @@ import androidx.annotation.RequiresApi;
 import com.cl.common_base.constants.Constants;
 import com.cl.common_base.util.Prefs;
 import com.cl.common_base.widget.wheel.WheelPicker;
-import com.hyphenate.helpdesk.util.Log;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

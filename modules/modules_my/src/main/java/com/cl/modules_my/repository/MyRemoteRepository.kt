@@ -8,7 +8,6 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.modules_my.service.HttpMyApiService
-import com.hyphenate.helpdesk.easeui.agora.board.misc.flat.ConverterStatus
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody

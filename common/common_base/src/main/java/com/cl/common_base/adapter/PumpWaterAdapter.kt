@@ -1,16 +1,13 @@
 package com.cl.common_base.adapter
 
-import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.databinding.BaseItemPumpWaterBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.cl.common_base.easeui.ui.videoUiHelp
+import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.video.SampleCoverVideo
-import com.cl.common_base.widget.toast.ToastUtil
-import com.hyphenate.helpdesk.easeui.ui.GSYPlayVideoActivity
 
 /**
  * 排水适配器

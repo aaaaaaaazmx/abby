@@ -13,8 +13,8 @@ data class AutomaticLoginData(
     val deviceOnlineStatus: String? = null, // 设备在线状态(0-不在线，1-在线)
     val deviceStatus: String? = null,    // 设备状态(1-绑定，2-已解绑)
     val easemobId: String? = null,
-    val easemobPassword: String? = null,
-    val easemobUserName: String? = null,
+    // val easemobPassword: String? = null,
+    // val easemobUserName: String? = null,
     val email: String? = null,
     val eventCount: String? = null,
     val isVip: Int? = 0,
@@ -27,4 +27,5 @@ data class AutomaticLoginData(
     val tuyaUserType: String? = null,
     val notBound: Int? = null, // 是否绑定过
     var timeZone: String? = DateHelper.getTimeZOneNumber().toString(),
+    val userId: String? = null
     ) : Serializable

@@ -13,9 +13,9 @@ import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.*
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
@@ -894,7 +894,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 .dismissOnTouchOutside(true)
                 .asCustom(context?.let { SendEmailTipsPop(it) }).show()
         }*/
-        EaseUiHelper.getInstance().startChat(null)
+        InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Messages)
     }
 
     private fun startGooglePlay() {

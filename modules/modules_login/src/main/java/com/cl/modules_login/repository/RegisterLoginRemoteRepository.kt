@@ -3,6 +3,7 @@ package com.cl.modules_login.repository
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.net.ServiceCreators
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
@@ -50,5 +51,9 @@ class RegisterLoginRemoteRepository @Inject constructor() {
 
     fun checkPlant(body: String): Flow<HttpResult<CheckPlantData>> {
         return service.checkPlant(body)
+    }
+
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return service.userDetail()
     }
 }

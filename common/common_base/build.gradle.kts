@@ -90,12 +90,10 @@ dependencies {
     // startUp
     api(Deps.startUp)
     // glide
-//    api(Deps.glide)
-//    kapt(Deps.glideKapt)
+    api(Deps.glide)
+    kapt(Deps.glideKapt)
     // permisslion
     api(Deps.permission)
-    // choosePhoto
-    // api(Deps.choosePhoto)
     // t涂鸦
     api(Deps.tuya)
     api(Deps.fastJson)
@@ -115,7 +113,7 @@ dependencies {
     // bugly
     api("com.tencent.bugly:crashreport:latest.release")
     api(project(mapOf("path" to ":common:BarcodeScanning")))
-    api(project(mapOf("path" to ":common:kefu-easeui")))
+    /*api(project(mapOf("path" to ":common:kefu-easeui")))*/
     api(project(mapOf("path" to ":common:mylibrary")))
     // lottie
     api(Deps.lottie)
@@ -125,8 +123,15 @@ dependencies {
     api("com.github.rubensousa:gravitysnaphelper:2.2.2")
     // api("com.github.limuyang2:LShadowLayout:1.0.3")
 
-    // 指示器
-    // api(files("libs/indicatorseekbar.aar"))
-    // api (group="",name="indicatorseekbar",ext = "aar")
-    // api(mapOf("name" to "indicatorseekbar.aar", "ext" to "aar"))
+    // 图片选择
+    api(Deps.choosePhoto)
+    // 拍摄视频
+    api(Deps.choosePhotoCamera)
+    // 视频压缩
+    // api(Deps.epMedia)
+    // 视频播放
+    api(Deps.videoPlayer)
+
+    // interCome
+    api(Deps.interCome)
 }

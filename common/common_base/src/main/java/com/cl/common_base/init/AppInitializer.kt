@@ -7,10 +7,6 @@ import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.ext.logI
-import com.cl.common_base.util.AppUtil
-import com.cl.common_base.util.Prefs
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
@@ -22,7 +18,6 @@ import com.tuya.smart.home.sdk.TuyaHomeSdk
 
 /**
  * 可以手动初始化，因为有些第三方库，需要同意隐私协议之后才可以初始化
- *
  */
 class AppInitializer : Initializer<Unit> {
     override fun create(context: Context) {

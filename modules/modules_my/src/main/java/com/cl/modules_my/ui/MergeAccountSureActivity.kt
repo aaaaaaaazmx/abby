@@ -11,15 +11,10 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.showToast
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.Prefs.getString
-import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.json.GSON.parseObject
-import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyMergrAccountBinding
 import com.cl.modules_my.request.MergeAccountReq
-import com.cl.modules_my.viewmodel.CloneAndReplantViewModel
 import com.cl.modules_my.viewmodel.MergeAccountSureViewModel
-import com.hyphenate.helpdesk.easeui.agora.board.misc.flat.FileConverter
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

@@ -21,12 +21,12 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePopActivityBinding
-import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.easeui.ui.videoUiHelp
+import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
@@ -483,7 +483,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         // 如果是会员、那么直接跳转过去
                         if (mViewModel.userInfo?.isVip == 1) {
                             // 跳转聊天界面
-                            EaseUiHelper.getInstance().startChat(null)
+                            InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Messages)
                         } else {
                             // todo 不是会员那么显示弹窗、和日历界面一样
                         }

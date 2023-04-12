@@ -2,26 +2,19 @@ package com.cl.modules_my.ui
 
 import android.content.*
 import android.graphics.Typeface
-import android.net.Uri
 import android.util.TypedValue
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.cl.common_base.base.BaseActivity
-import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.easeui.ui.EaseUiActivity
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.pop.SendEmailTipsPop
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyTroubleShootingBinding
 import com.cl.modules_my.ui.fragment.MyTroubleShootingFragment
 import com.cl.modules_my.viewmodel.MyTroubleViewModel
-import com.hyphenate.helpdesk.easeui.util.Config
-import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.CommonNavigator
 import net.lucode.hackware.magicindicator.buildins.commonnavigator.abs.CommonNavigatorAdapter
@@ -172,6 +165,6 @@ class MyTroubleShootingActivity : BaseActivity<MyTroubleShootingBinding>() {
      */
     private fun sendEmail() {
         // 跳转聊天界面
-        EaseUiHelper.getInstance().startChat(null)
+        InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Messages)
     }
 }

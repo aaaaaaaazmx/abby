@@ -7,7 +7,6 @@ import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
@@ -18,6 +17,7 @@ import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.bugly.crashreport.CrashReport.UserStrategy
 import com.tencent.mmkv.MMKV
 import com.tuya.smart.home.sdk.TuyaHomeSdk
+import io.intercom.android.sdk.Intercom
 
 
 /**
@@ -40,9 +40,6 @@ class PolicyInitializer : Initializer<Unit> {
             // 极光，需要同意隐私协议
             JPushInterface.setDebugMode(true)
             JPushInterface.init(context.applicationContext as? Application)
-
-            // 环信
-            EaseUiHelper.getInstance().init(context.applicationContext as? Application)
         }
 
         return Unit
