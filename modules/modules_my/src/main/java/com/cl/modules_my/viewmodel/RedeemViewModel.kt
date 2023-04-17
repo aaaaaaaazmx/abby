@@ -66,6 +66,42 @@ class RedeemViewModel @Inject constructor(private val repository: MyRepository) 
     }
 
 
+
+    /**
+     * 获取InterCome同步数据
+     */
+    private val _getInterComeData = MutableLiveData<Resource<Map<String, Any>>>()
+    val getInterComeData: LiveData<Resource<Map<String, Any>>> = _getInterComeData
+    fun getInterComeData() = viewModelScope.launch {
+        repository.intercomDataAttributeSync()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getInterComeData.value = it
+            }
+    }
+
+
     /**
      * 订阅码激活
      */

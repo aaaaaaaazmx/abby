@@ -241,7 +241,7 @@
                     android:id="@+id/ft_solo"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.GONE : View.GONE}"
                     app:hideArrow="true"
                     app:itemTitle="@string/my_solo" />
 

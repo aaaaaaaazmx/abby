@@ -165,6 +165,6 @@ class MyTroubleShootingActivity : BaseActivity<MyTroubleShootingBinding>() {
      */
     private fun sendEmail() {
         // 跳转聊天界面
-        InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Messages)
+        InterComeHelp.INSTANCE.openInterComeHome()
     }
 }

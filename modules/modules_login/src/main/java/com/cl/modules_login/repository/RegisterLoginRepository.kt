@@ -1,9 +1,6 @@
 package com.cl.modules_login.repository
 
-import com.cl.common_base.bean.CheckPlantData
-import com.cl.common_base.bean.HttpResult
-import com.cl.common_base.bean.ListDeviceBean
-import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.*
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
 import com.cl.modules_login.response.LoginData
@@ -73,5 +70,9 @@ class RegisterLoginRepository @Inject constructor(private var remoteRepository: 
 
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
         return remoteRepository.userDetail()
+    }
+
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
+        return remoteRepository.intercomDataAttributeSync()
     }
 }

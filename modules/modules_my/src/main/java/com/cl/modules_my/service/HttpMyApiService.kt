@@ -292,4 +292,11 @@ interface HttpMyApiService {
     @POST("abby/accessory/configuationExecuteRule")
     fun configuationExecuteRule(@Body req: ConfiguationExecuteRuleReq): Flow<HttpResult<BaseBean>>
 
+
+    /**
+     * 获取InterCome同步信息
+     */
+    @POST("abby/user/intercomDataAttributeSync")
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>>
+
 }

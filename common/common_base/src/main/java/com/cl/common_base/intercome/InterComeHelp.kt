@@ -1,12 +1,24 @@
 package com.cl.common_base.intercome
 
+import android.content.Context
+import android.util.DisplayMetrics
+import android.view.WindowManager
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.dp2px
+import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.px2dp
+import com.cl.common_base.ext.screenHeight
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.luck.lib.camerax.utils.DensityUtil
 import io.intercom.android.sdk.*
 import io.intercom.android.sdk.identity.Registration
+import io.intercom.android.sdk.push.IntercomPushClient
 
 /**
  * InterCome 功能实现类
@@ -24,8 +36,13 @@ class InterComeHelp {
         // 初始化时做的事情
         // 是否显示右下角悬浮图标
         // Intercom.client().setLauncherVisibility(Intercom.Visibility.VISIBLE)
+        // 设置底部弹窗的高度
+        Intercom.client().setBottomPadding((px2dp(screenHeight.toFloat()) * 2.5).toInt())
+        // 消息显示。
+        Intercom.client().setInAppMessageVisibility(Intercom.Visibility.VISIBLE)
         // 添加未读消息监听
         Intercom.client().addUnreadConversationCountListener {
+            logI("addUnreadConversationCountListener Count = $it")
             // Handle count update
             LiveEventBus.get()
                 .with(Constants.InterCome.KEY_INTER_COME_UNREAD_MESSAGE, Int::class.java)
@@ -35,8 +52,16 @@ class InterComeHelp {
 
     /**
      * 登录InterCome、并且更新用户信息
+     *
+     * @param map 后台返回的设备信息，需要同步到InterCome用户属性上
+     * @param interComeUserId InterCome 唯一ID
+     * @param userInfo 用户信息
+     * @param refreshUserInfo 刷新用户信息
+     * @param updateSuccess 更新成功回调
+     * @param updateFail 更新失败回调
      */
     fun successfulLogin(
+        map: Map<String, Any>?,
         interComeUserId: String?,
         userInfo: UserinfoBean.BasicUserBean? = null,
         refreshUserInfo: AutomaticLoginData? = null,
@@ -45,36 +70,41 @@ class InterComeHelp {
     ) {
         // 登录不明身份的用户 访客模式。
         // Intercom.client().loginUnidentifiedUser()
-
         /* For best results, use a unique user_id if you have one. */
-        interComeUserId?.let { Registration.create().withUserId(it) }?.apply {
-            Intercom.client().loginIdentifiedUser(
-                userRegistration = this,
-                intercomStatusCallback = object : IntercomStatusCallback {
-                    override fun onSuccess() {
-                        // Handle success
-                        // todo 登录成功之后更新用户信息。
-                        updateInterComeUserInfo(
-                            userInfo = userInfo,
-                            refreshUserInfo = refreshUserInfo,
-                            updateSuccess = updateSuccess,
-                            updateFail = updateFail
-                        )
-                    }
+        Intercom.client().logout()
+        interComeUserId?.let { Registration().withUserId(if (BuildConfig.DEBUG) "test_$it" else it) }
+            ?.apply {
+                Intercom.client().loginIdentifiedUser(
+                    userRegistration = this,
+                    intercomStatusCallback = object : IntercomStatusCallback {
+                        override fun onSuccess() {
+                            // Handle successl
+                            logI("InterCome: Login success")
+                            // todo 登录成功之后更新用户信息。
+                            updateInterComeUserInfo(
+                                map = map,
+                                userInfo = userInfo,
+                                refreshUserInfo = refreshUserInfo,
+                                updateSuccess = updateSuccess,
+                                updateFail = updateFail
+                            )
+                        }
 
-                    override fun onFailure(intercomError: IntercomError) {
-                        // Handle failure
-                        updateFail?.invoke(intercomError)
+                        override fun onFailure(intercomError: IntercomError) {
+                            // Handle failure
+                            logI("InterCome: Login onFailure ${intercomError.errorMessage}")
+                            updateFail?.invoke(intercomError)
+                        }
                     }
-                }
-            )
-        }
+                )
+            }
     }
 
     /**
      * 更新interCOme用户信息
      */
     fun updateInterComeUserInfo(
+        map: Map<String, Any>?,
         userInfo: UserinfoBean.BasicUserBean? = null,
         refreshUserInfo: AutomaticLoginData? = null,
         updateSuccess: (() -> Unit)? = null,
@@ -84,15 +114,22 @@ class InterComeHelp {
         var userAttributes: UserAttributes? = null
         userAttributes = if (null == userInfo) {
             UserAttributes.Builder()
+                .withCustomAttributes(map ?: mapOf<String, Any>())
                 .withName(refreshUserInfo?.nickName)
                 .withEmail(refreshUserInfo?.email)
                 .withUserId(if (BuildConfig.DEBUG) "test_${refreshUserInfo?.userId}" else refreshUserInfo?.userId.toString())
+                // .withUserId(refreshUserInfo?.userId.toString())
                 .build()
-        } else {
+        } else if (null == refreshUserInfo) {
             UserAttributes.Builder()
+                .withCustomAttributes(map ?: mapOf<String, String>())
                 .withName(userInfo.nickName)
                 .withEmail(userInfo.email)
                 .withUserId(if (BuildConfig.DEBUG) "test_${userInfo.userId}" else userInfo.userId.toString())
+                .build()
+        } else {
+            UserAttributes.Builder()
+                .withCustomAttributes(map ?: mapOf<String, Any>())
                 .build()
         }
 
@@ -100,11 +137,13 @@ class InterComeHelp {
             userAttributes = userAttributes,
             intercomStatusCallback = object : IntercomStatusCallback {
                 override fun onSuccess() {
+                    logI("InterCome updateUser : onSuccess")
                     // Handle success
                     updateSuccess?.invoke()
                 }
 
                 override fun onFailure(intercomError: IntercomError) {
+                    logI("InterCome updateUser : failure ${intercomError.errorMessage}")
                     // Handle failure
                     updateFail?.invoke(intercomError)
                 }
@@ -114,11 +153,12 @@ class InterComeHelp {
 
     // 获取InterCome未读消息数量
     fun getUnreadConversationCount(): Int {
+        logI("getUnreadConversationCount Count = ${Intercom.client().unreadConversationCount}")
         return Intercom.client().unreadConversationCount
     }
 
     // 通过InterCome打开各种空间、比如打开文章
-    fun openInterComeSpace(space: InterComeSpace, id: String? = null) {
+    fun openInterComeSpace(space: InterComeSpace? = InterComeSpace.Home, id: String? = null) {
         when (space) {
             // 打开具体文章
             is InterComeSpace.Article -> {
@@ -172,7 +212,14 @@ class InterComeHelp {
 
     // 打开主页面
     fun openInterComeHome() {
-        Intercom.client().present(space = IntercomSpace.Home)
+        // 用户信息
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        if (parseObject?.isVip == 1) {
+            Intercom.client().present(space = IntercomSpace.Home)
+        } else {
+            Intercom.client().present(space = IntercomSpace.HelpCenter)
+        }
     }
 
     /**

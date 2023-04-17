@@ -1276,7 +1276,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         )
                                                         intent.putExtra(
                                                             BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                                            "Next"
+                                                            "Slide to Next"
                                                         )
                                                         startActivityLauncherSeeding.launch(intent)
                                                     }

@@ -7,6 +7,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -65,6 +66,7 @@ class TokenInterceptor : Interceptor {
             }
         }.onSuccess {
             if (it?.code == 401) {
+                InterComeHelp.INSTANCE.logout()
                 //token过期 发通知
                 Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
                 ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)

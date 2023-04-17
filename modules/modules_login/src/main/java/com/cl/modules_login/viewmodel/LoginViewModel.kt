@@ -1,6 +1,5 @@
 package com.cl.modules_login.viewmodel
 
-import android.content.Intent
 import androidx.lifecycle.*
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.bean.CheckPlantData
@@ -25,10 +24,6 @@ import com.tuya.smart.home.sdk.bean.HomeBean
 import com.tuya.smart.home.sdk.callback.ITuyaGetHomeListCallback
 import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import io.intercom.android.sdk.Intercom
-import io.intercom.android.sdk.IntercomError
-import io.intercom.android.sdk.IntercomStatusCallback
-import io.intercom.android.sdk.identity.Registration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -132,13 +127,46 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
             }
     }
 
-
+    /**
+     * 获取InterCome同步数据
+     */
+    private val _getInterComeData = MutableLiveData<Resource<Map<String, Any>>>()
+    val getInterComeData: LiveData<Resource<Map<String, Any>>> = _getInterComeData
+    fun getInterComeData() = viewModelScope.launch {
+        repository.intercomDataAttributeSync()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getInterComeData.value = it
+            }
+    }
 
 
     /**
      * 涂鸦登录
      */
     fun tuYaLogin(
+        map: Map<String, Any>? = null,
         interComeUserId: String?,
         userInfo: UserinfoBean.BasicUserBean?,
         deviceId: String?,
@@ -150,7 +178,11 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
         onRegisterReceiver: ((homeId: String?) -> Unit)? = null
     ) {
         // 登录InterCome
-        InterComeHelp.INSTANCE.successfulLogin(interComeUserId = interComeUserId, userInfo = userInfo)
+        InterComeHelp.INSTANCE.successfulLogin(
+            map = map,
+            interComeUserId = interComeUserId,
+            userInfo = userInfo
+        )
         TuyaHomeSdk.getUserInstance()
             .loginWithEmail(
                 code,

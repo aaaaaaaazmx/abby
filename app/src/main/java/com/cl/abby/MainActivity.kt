@@ -503,7 +503,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         // 注销InterCome
-        InterComeHelp.INSTANCE.logout()
+        // InterComeHelp.INSTANCE.logout()
     }
 
     override fun inAppInfoChange(status: String) {

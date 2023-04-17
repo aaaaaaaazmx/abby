@@ -1,6 +1,7 @@
 package com.cl.common_base.widget.toast;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -69,6 +70,7 @@ public class ToastUtil {
         if (sToastUtil == null) {
             sToastUtil = new ToastUtil(BaseApplication.Companion.getContext());
         }
+        if (TextUtils.isEmpty(msg)) return;
         sToastUtil.setText(msg);
         sToastUtil.createShort().show();
     }

@@ -263,4 +263,10 @@ interface HttpHomeApiService {
     @POST("abby/plant/intoPlantBasket")
     fun intoPlantBasket(): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 获取InterCome同步信息
+     */
+    @POST("abby/user/intercomDataAttributeSync")
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>>
+
 }

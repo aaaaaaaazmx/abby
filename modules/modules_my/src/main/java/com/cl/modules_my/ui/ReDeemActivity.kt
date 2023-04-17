@@ -8,6 +8,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -28,7 +29,8 @@ import javax.inject.Inject
  *  赎回界面
  */
 @AndroidEntryPoint
-class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputView.OnInputListener {
+class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
+    RedeemCodeInputView.OnInputListener {
     @Inject
     lateinit var mViewModel: RedeemViewModel
 
@@ -114,7 +116,26 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
                 }
                 success {
                     hideProgressLoading()
-                    finish()
+                    // 充值成功之后、更新消息
+                    mViewModel.getInterComeData()
+                }
+            })
+
+            // 更新消息
+            getInterComeData.observe(this@ReDeemActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    // 更新消息
+                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
+                        map = this.data,
+                        updateSuccess = { finish() },
+                        updateFail = {
+                            ToastUtil.shortShow(it.errorMessage)
+                            finish()
+                        }
+                    )
                 }
             })
         }
@@ -139,7 +160,8 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(), RedeemCodeInputV
         }
 
         binding.btnPurchase.setOnClickListener {
-            val url = "https://heyabby.com/pages/subscription?selling_plan=3451781334&variant=42758697582806&utm_source=app&utm_medium=extension+lp&utm_campaign=281"
+            val url =
+                "https://heyabby.com/pages/subscription?selling_plan=3451781334&variant=42758697582806&utm_source=app&utm_medium=extension+lp&utm_campaign=281"
             // 跳转到下载界面
             val intent = Intent(this@ReDeemActivity, WebActivity::class.java)
             intent.putExtra(WebActivity.KEY_WEB_URL, url)

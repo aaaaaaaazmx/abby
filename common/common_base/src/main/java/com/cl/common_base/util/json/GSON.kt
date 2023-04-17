@@ -33,7 +33,7 @@ object GSON {
     /**
      * json字符串转List集合
      */
-    fun <T> parseObjectList(json: String?, cls: Class<T>?): List<T>? {
+    fun <T> parseObjectList(json: String?, cls: Class<T>?): List<T> {
         if (!TextUtils.isEmpty(json)) {
             val list: MutableList<T> = ArrayList()
             try {

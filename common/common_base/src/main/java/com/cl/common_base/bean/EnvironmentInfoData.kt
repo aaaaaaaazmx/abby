@@ -21,11 +21,14 @@ class EnvironmentInfoData(
         val detectionValue: String? = null,
         val healthStatus: String? = null,
         val value: String? = null,
+        val currentSwitch: String? = null,
+        val explain: String? = null,
         var automation: Int? = null, // 是否是自动模式
     ) : BaseBean(), MultiItemEntity {
         override val itemType: Int
             get() = when (detectionValue) {
                 "Fan" -> KEY_TYPE_FAN
+                "Grow light" -> KEY_TYPE_LIGHT
                 else -> KEY_TYPE_NORMAL
             }
     }
@@ -36,5 +39,8 @@ class EnvironmentInfoData(
 
         // 这是内容的标题
         const val KEY_TYPE_FAN = 1
+
+        // 这是开关灯状态的Item
+        const val KEY_TYPE_LIGHT = 2
     }
 }

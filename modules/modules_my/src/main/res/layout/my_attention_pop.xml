@@ -117,7 +117,7 @@
             app:slider_reset_duration="300"
             app:slider_vibration_duration="50"
             app:slider_threshold="1dp"
-            app:engage_text="Replant"
+            app:engage_text="Slide to Replant"
             app:engage_text_size="18sp"
             app:engage_text_color="@android:color/white"
             app:completed_text_color="@android:color/white"

@@ -100,13 +100,27 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 ToastUtil.shortShow(errorMsg)
             }
             success {
+
+                // 获取InterCome信息
+                mViewModel.getInterComeData()
+            }
+        })
+
+        mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
+            error { errorMsg, code ->
+                ToastUtil.shortShow(errorMsg)
+            }
+            success {
+                val map = this.data
+
                 val email = userinfoBean?.email
                 val tuyaCountryCode = userinfoBean?.tuyaCountryCode
                 val tuyaPassword = userinfoBean?.tuyaPassword
                 mViewModel.tuYaLogin(
-                    this.data?.userId,
-                    this.data,
-                    this.data?.deviceId,
+                    map = map,
+                    mViewModel.userDetail.value?.data?.userId,
+                    mViewModel.userDetail.value?.data,
+                    mViewModel.userDetail.value?.data?.deviceId,
                     tuyaCountryCode,
                     email,
                     AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),

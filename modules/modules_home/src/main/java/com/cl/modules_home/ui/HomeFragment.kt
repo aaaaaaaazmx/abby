@@ -148,9 +148,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 刷新设备列表
         mViewMode.listDevice()
 
-        // 检查固件
-        checkOtaUpdateInfo()
-
         liveDataObser()
 
         // 开启定时器，每次20秒刷新未读气泡消息
@@ -1720,6 +1717,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    // 获取InterCome信息
+                    getInterComeData()
+                }
+            })
+            // InterCome信息
+            getInterComeData.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    // 更新InterCome用户信息
+                    val map = this.data
+                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
+                        map = map, userDetail.value?.data, refreshToken.value?.data,
+                    )
+
                     // 更新涂鸦Bean
                     TuyaHomeSdk.newHomeInstance(mViewMode.homeId)
                         .getHomeDetail(object : ITuyaHomeResultCallback {
@@ -1767,6 +1780,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         })
                 }
             })
+
             // 刷新设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
@@ -2046,7 +2060,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                                 intent.putExtra(
                                     BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                    "Next"
+                                    "Slide to Next"
                                 )
                                 startActivityLauncherSeeding.launch(intent)
                             }
@@ -2182,6 +2196,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     mViewMode.getUnread()
                                     // 请求环境信息
                                     mViewMode.getEnvData()
+                                    // 检查固件
+                                    checkOtaUpdateInfo()
                                 }
                                 else -> {}
                             }
@@ -3660,7 +3676,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 .dismissOnTouchOutside(true)
                 .asCustom(context?.let { SendEmailTipsPop(it) }).show()
         }*/
-        InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Messages)
+        InterComeHelp.INSTANCE.openInterComeHome()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {

@@ -1,9 +1,6 @@
 package com.cl.modules_login.service
 
-import com.cl.common_base.bean.CheckPlantData
-import com.cl.common_base.bean.HttpResult
-import com.cl.common_base.bean.ListDeviceBean
-import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.*
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
 import com.cl.modules_login.response.LoginData
@@ -70,5 +67,11 @@ interface HttpLoginApiService {
     @FormUrlEncoded
     @POST("abby/plant/check")
     fun checkPlant(@Field("deviceUuid") body: String): Flow<HttpResult<CheckPlantData>>
+
+    /**
+     * 获取InterCome同步信息
+     */
+    @POST("abby/user/intercomDataAttributeSync")
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>>
 
 }

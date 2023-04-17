@@ -250,4 +250,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun intoPlantBasket(): Flow<HttpResult<BaseBean>> {
         return remoteRepository.intoPlantBasket()
     }
+
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
+        return remoteRepository.intercomDataAttributeSync()
+    }
 }

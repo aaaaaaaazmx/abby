@@ -178,5 +178,9 @@ class MyRemoteRepository @Inject constructor() {
         return service.accessoryList()
     }
 
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
+        return service.intercomDataAttributeSync()
+    }
+
 
 }
