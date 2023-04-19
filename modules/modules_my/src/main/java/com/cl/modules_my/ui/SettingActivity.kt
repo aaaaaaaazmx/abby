@@ -13,9 +13,9 @@ import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.*
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
@@ -446,6 +446,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             .isDestroyOnDismiss(false)
             .dismissOnTouchOutside(false)
             .asCustom(LoginOutPop(this) {
+                InterComeHelp.INSTANCE.logout()
                 TuyaHomeSdk.getUserInstance().logout(object : ILogoutCallback {
                     override fun onSuccess() {
                         // 清除缓存数据
@@ -537,7 +538,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 )
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                 startActivity(intent)
             } else {
                 // 删除植物、弹出提示框
@@ -546,7 +547,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     .asCustom(
                         MyDeleteDevicePop(
                             isShowUnlockButton = true,
-                            unLockText = "Turn Off",
+                            unLockText = "Slide to Turn Off",
                             titleText = "Notice",
                             context = this,
                             contentText = "Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
@@ -894,7 +895,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 .dismissOnTouchOutside(true)
                 .asCustom(context?.let { SendEmailTipsPop(it) }).show()
         }*/
-        EaseUiHelper.getInstance().startChat(null)
+        InterComeHelp.INSTANCE.openInterComeHome()
     }
 
     private fun startGooglePlay() {

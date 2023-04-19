@@ -31,6 +31,7 @@
 
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:usesCleartextTraffic="true"
@@ -107,13 +108,13 @@
         </service>
 
         <!--环信声网服务-->
-        <activity android:name="io.agora.rtc.ss.impl.ScreenSharing$LocalScreenCaptureAssistantActivity"
+       <!-- <activity android:name="io.agora.rtc.ss.impl.ScreenSharing$LocalScreenCaptureAssistantActivity"
             android:exported="false"
             tools:node="merge" />
         <service
             android:name="io.agora.rtc.ss.impl.LocalScreenSharingService"
             android:exported="false"
-            android:foregroundServiceType="mediaProjection" tools:node="merge" />
+            android:foregroundServiceType="mediaProjection" tools:node="merge" />-->
 
         <!-- Required since 3.0.7 -->
         <!-- 新的 tag/alias 接口结果返回需要开发者配置一个自定的广播 -->

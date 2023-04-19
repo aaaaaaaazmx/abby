@@ -94,7 +94,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         )
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Done")
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                         intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                         intent.putExtra(BasePopActivity.KEY_PART_ID, "${itemData?.accessoryId}")
                         startActivity(intent)
@@ -144,7 +144,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                         )
                                         intent.putExtra(
                                             BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                            "Done"
+                                            "Slide to Unlock"
                                         )
                                         intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                         intent.putExtra(

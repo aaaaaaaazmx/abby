@@ -14,15 +14,6 @@
         <activity android:name="com.cl.common_base.web.BaseWebActivity" />
         <activity android:name="com.cl.common_base.web.WebActivity" />
         <activity
-            android:name=".easeui.ui.ChatActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".easeui.ui.EaseUiActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:screenOrientation="portrait" />
-
-        <activity
             android:name=".pop.activity.BasePopActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
@@ -35,16 +26,6 @@
             android:theme="@style/TranslucentTheme" />
 
         <service android:name=".listener.TuYaDeviceUpdateReceiver" />
-
-        <provider
-            android:name="com.hyphenate.helpdesk.easeui.provider.RyeexProvider"
-            android:authorities="${applicationId}.share.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/app_share_provider_paths" />
-        </provider>
 
     </application>
 </manifest>

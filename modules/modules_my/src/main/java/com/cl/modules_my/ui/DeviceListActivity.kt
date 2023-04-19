@@ -187,18 +187,6 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             }
         })
 
-        // 切换设备
-        mViewModel.switchDevice.observe(this@DeviceListActivity, resourceObserver {
-            loading { showProgressLoading() }
-            error { errorMsg, code ->
-                ToastUtil.shortShow(errorMsg)
-                hideProgressLoading()
-            }
-            success {
-                hideProgressLoading()
-            }
-        })
-
         // 修改植物属性
         mViewModel.updatePlantInfo.observe(this@DeviceListActivity, resourceObserver {
             loading { showProgressLoading() }

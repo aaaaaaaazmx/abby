@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="13dp"
+            android:paddingBottom="13dp"
             android:text="Fan"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
@@ -40,6 +41,7 @@
             tools:text="Fan" />
 
         <TextView
+            android:paddingBottom="13dp"
             android:id="@+id/tv_desc"
             android:layout_marginEnd="15dp"
             app:layout_constraintBottom_toBottomOf="@+id/fis_item_switch"
@@ -53,6 +55,7 @@
             android:layout_height="wrap_content"/>
 
         <com.cl.common_base.widget.SwitchButton
+            android:paddingBottom="13dp"
             app:layout_constraintBottom_toBottomOf="@+id/tv_fan_title"
             app:layout_constraintTop_toTopOf="@+id/tv_fan_title"
             android:layout_marginEnd="13dp"

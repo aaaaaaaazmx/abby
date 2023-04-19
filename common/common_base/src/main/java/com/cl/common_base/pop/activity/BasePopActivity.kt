@@ -21,12 +21,12 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePopActivityBinding
-import com.cl.common_base.easeui.EaseUiHelper
-import com.cl.common_base.easeui.ui.videoUiHelp
+import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
@@ -140,7 +140,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Unlock Germination")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                         startActivity(intent)
                     }
 
@@ -160,7 +160,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
                         intent.putExtra(KEY_CATEGORYCODE, categoryCode)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Next")
                         startActivity(intent)
                     }
 
@@ -210,7 +210,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
                         intent.putExtra(KEY_CATEGORYCODE, categoryCode)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Next")
                         startActivity(intent)
                     }
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2 -> {
@@ -222,7 +222,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
                         intent.putExtra(KEY_CATEGORYCODE, categoryCode)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Done")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                         startActivity(intent)
                     }
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
@@ -480,13 +480,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 跳转到客服
                     R.id.cl_support -> {
-                        // 如果是会员、那么直接跳转过去
-                        if (mViewModel.userInfo?.isVip == 1) {
-                            // 跳转聊天界面
-                            EaseUiHelper.getInstance().startChat(null)
-                        } else {
-                            // todo 不是会员那么显示弹窗、和日历界面一样
-                        }
+                        InterComeHelp.INSTANCE.openInterComeHome()
                     }
 
                     // 跳转到Discord

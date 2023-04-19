@@ -4,13 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -19,13 +16,9 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
-import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.safeToInt
-import com.cl.modules_home.ui.HomeFragment
-import com.hyphenate.chat.AgoraMessage
-import com.hyphenate.chat.ChatClient
-import com.hyphenate.chat.EMClient
-import com.hyphenate.helpdesk.callback.Callback
+import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.widget.toast.ToastUtil
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -181,12 +174,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         it.code, it.msg
                     )
                 } else {
-                    // 登录环信
-                    letMultiple(
-                        it.data.easemobUserName, it.data.easemobPassword
-                    ) { username, password ->
-                        easeLogin(username, password)
-                    }
+                    // 登录InterCome
+                    // easeLogin(it.data.userId, it.data)
                     Resource.Success(it.data)
                 }
             }.flowOn(Dispatchers.IO).onStart {}.catch {
@@ -1381,31 +1370,43 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getEaseUINumber() {
         // 只有当设备绑定且在线的时候、才去添加
         if (refreshToken.value?.data?.deviceStatus == "1" && refreshToken.value?.data?.deviceOnlineStatus == "1") {
-            _unReadMessageNumber.postValue(EaseUiHelper.getInstance().unReadMessage)
+            _unReadMessageNumber.postValue(InterComeHelp.INSTANCE.getUnreadConversationCount())
         }
     }
 
+
     /**
-     * 环信登录
+     * 获取InterCome同步数据
      */
-    private fun easeLogin(uname: String, upwd: String) {
-        if (EMClient.getInstance().context == null) return
-        ChatClient.getInstance().login(uname, upwd, object : Callback {
-            override fun onSuccess() {
-                logI("ChatClient Login")
-                AgoraMessage.newAgoraMessage().currentChatUsername =
-                    Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT
-                getEaseUINumber()
+    private val _getInterComeData = MutableLiveData<Resource<Map<String, Any>>>()
+    val getInterComeData: LiveData<Resource<Map<String, Any>>> = _getInterComeData
+    fun getInterComeData() = viewModelScope.launch {
+        repository.intercomDataAttributeSync()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
             }
-
-            override fun onError(p0: Int, p1: String?) {
-
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
             }
-
-            override fun onProgress(p0: Int, p1: String?) {
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getInterComeData.value = it
             }
-
-        })
     }
 
     /**
@@ -1482,7 +1483,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             _getPlantHeight.value = String.format(
                 "%.1f",
                 tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat().div(25.4))
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat()
+                    .div(25.4))
         }
     }
 
@@ -1650,13 +1652,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             val startTime = if ((muteOn?.toInt() ?: 12) <= 12) {
                 "${(muteOn?.toInt() ?: 12)}:00 AM"
             } else {
-                "${((muteOn?.toInt() ?: 12) -12)}:00 PM"
+                "${((muteOn?.toInt() ?: 12) - 12)}:00 PM"
             }
 
             val closeTime = if ((muteOff?.toInt() ?: 12) <= 12) {
                 "${(muteOff?.toInt() ?: 12)}:00 AM"
             } else {
-                "${((muteOff?.toInt() ?: 12) -12)}:00 PM"
+                "${((muteOff?.toInt() ?: 12) - 12)}:00 PM"
             }
             setTimeText("$startTime-$closeTime")
             return "$startTime-$closeTime"

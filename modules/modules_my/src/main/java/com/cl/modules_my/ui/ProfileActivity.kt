@@ -21,6 +21,7 @@ import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.file.FileUtil
@@ -82,6 +83,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
             .isDestroyOnDismiss(false)
             .dismissOnTouchOutside(false)
             .asCustom(LoginOutPop(this) {
+                InterComeHelp.INSTANCE.logout()
                 TuyaHomeSdk.getUserInstance().logout(object : ILogoutCallback {
                     override fun onSuccess() {
                         // 清除缓存数据

@@ -19,16 +19,16 @@
         android:background="@color/lineBg">
 
         <TextView
-            android:layout_marginEnd="20dp"
-            android:singleLine="true"
-            android:lines="1"
-            android:maxEms="8"
-            android:ellipsize="end"
             android:id="@+id/tv_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:ellipsize="end"
+            android:lines="1"
+            android:maxEms="8"
+            android:singleLine="true"
             android:text="hey Abby"
             android:textColor="@color/mainColor"
             android:textSize="26sp"
@@ -53,16 +53,18 @@
             android:layout_height="30dp"
             android:layout_marginEnd="24dp"
             android:background="@mipmap/home_academy"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/iv_calendar"
             app:layout_constraintEnd_toStartOf="@+id/iv_calendar"
             app:layout_constraintTop_toTopOf="@+id/iv_calendar" />
 
+        <!--android:visibility="@{viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"-->
         <View
             android:id="@+id/vv_academy"
             android:layout_width="8dp"
             android:layout_height="8dp"
             android:background="@drawable/base_dot_red"
-            android:visibility="@{viewModel.getHomePageNumber.data.academyMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
+            android:visibility="gone"
             app:layout_constraintCircle="@id/iv_academy"
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
@@ -79,29 +81,29 @@
 
 
         <TextView
-            android:visibility="@{viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE }"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/red_bg"
             android:gravity="center"
             android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="11sp"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
-            android:background="@drawable/red_bg"
+            android:visibility="@{viewModel.getHomePageNumber.data.calendarLowMsgCount &lt;= 0 ? View.GONE : View.VISIBLE }"
             app:layout_constraintCircle="@id/iv_calendar"
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
 
         <TextView
-            android:visibility="@{viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
-            android:gravity="center"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textSize="11sp"
-            android:text="@{String.valueOf(viewModel.getHomePageNumber.data.calendarHighMsgCount)}"
             android:id="@+id/vv_calendar_number"
             android:layout_width="wrap_content"
             android:layout_height="17dp"
             android:background="@drawable/red_bg"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="@{String.valueOf(viewModel.getHomePageNumber.data.calendarHighMsgCount)}"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:visibility="@{viewModel.getHomePageNumber.data.calendarHighMsgCount &lt;= 0 ? View.GONE : View.VISIBLE}"
             app:layout_constraintCircle="@id/iv_calendar"
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
@@ -135,24 +137,24 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
-                android:visibility="invisible"
                 android:id="@+id/iv_bowl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:background="@mipmap/home_week_twelve"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/home_plant_zzz"
                 android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
                 app:layout_constraintCircle="@+id/iv_bowl"
                 app:layout_constraintCircleAngle="40"
-                app:layout_constraintCircleRadius="135dp"
-                android:background="@mipmap/home_plant_zzz"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintCircleRadius="135dp" />
 
             <ImageView
                 android:id="@+id/iv_start"
@@ -166,18 +168,17 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@mipmap/home_plant_three_night_bg"
                 android:visibility="@{viewModel.plantInfoLoop.data.lightingStatus == 0 ? View.VISIBLE : View.GONE}"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:background="@mipmap/home_plant_three_night_bg"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <!--去掉加肥-->
             <com.cl.common_base.widget.SvTextView
-                android:visibility="gone"
                 android:id="@+id/tv_feef"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
@@ -188,6 +189,7 @@
                 android:textColor="@color/mainColor"
                 android:textSize="10sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_bowl"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_bowl"
@@ -196,18 +198,17 @@
                 app:svSolidType="solid" />
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_door_toast"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/home_plant_door_toast"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:background="@mipmap/home_plant_door_toast"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:visibility="gone"
                 android:id="@+id/iv_door_lock_status"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
@@ -215,21 +216,42 @@
                 android:layout_marginBottom="45dp"
                 android:gravity="center"
                 android:textColor="@color/mainColor"
-                app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_bowl"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/iv_bowl"
                 app:svRadius="180dp"
                 app:svSolidColor="@color/white"
-                app:svSolidType="solid"
-                />
+                app:svSolidType="solid" />
+
+
+            <com.cl.common_base.widget.ripple.RippleView
+                android:layout_width="61dp"
+                android:layout_height="61dp"
+                android:layout_gravity="center"
+                android:button="@null"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
+                app:layout_constraintBottom_toBottomOf="@+id/iv_support"
+                app:layout_constraintEnd_toEndOf="@+id/iv_support"
+                app:layout_constraintStart_toStartOf="@+id/iv_support"
+                app:layout_constraintTop_toTopOf="@+id/iv_support"
+                app:ripple_circle_color="@color/white"
+                app:ripple_circle_count="2"
+                app:ripple_circle_min_radius="10dp"
+                app:ripple_circle_start="true"
+                app:ripple_circle_style="FILL"
+                app:ripple_speed="0.3" />
 
             <ImageView
                 android:id="@+id/iv_support"
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}'
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="45dp"
+                android:background="@mipmap/home_plant_last_support"
                 android:gravity="center"
                 android:textColor="@color/mainColor"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_bowl"
@@ -237,28 +259,26 @@
                 app:layout_constraintTop_toTopOf="@+id/iv_bowl"
                 app:svRadius="180dp"
                 app:svSolidColor="@color/white"
-                app:svSolidType="solid"
-                android:background="@mipmap/home_plant_last_support"
-                />
+                app:svSolidType="solid" />
+
 
             <TextView
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
-                android:gravity="center"
-                android:singleLine="true"
-                android:textColor="@color/white"
-                android:textSize="11sp"
-                android:text="@{String.valueOf(viewModel.unReadMessageNumber)}"
                 android:id="@+id/vv_support_number"
                 android:layout_width="wrap_content"
                 android:layout_height="17dp"
                 android:background="@drawable/red_bg"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="@{String.valueOf(viewModel.unReadMessageNumber)}"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
                 app:layout_constraintCircle="@id/iv_support"
                 app:layout_constraintCircleAngle="50"
                 app:layout_constraintCircleRadius="20dp" />
 
             <!--去掉加水-->
             <com.cl.common_base.widget.SvTextView
-                android:visibility="gone"
                 android:id="@+id/tv_drain"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
@@ -269,6 +289,7 @@
                 android:textColor="@color/mainColor"
                 android:textSize="10sp"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/tv_feef"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:svRadius="180dp"
@@ -279,9 +300,9 @@
                 android:id="@+id/cl_continue"
                 android:layout_width="261dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="42dp"
                 android:orientation="vertical"
                 android:visibility="visible"
-                android:layout_marginBottom="42dp"
                 app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -354,111 +375,120 @@
 
             <!--种子发芽阶段才会显示的倒计时-->
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:visibility="gone"
                 android:id="@+id/cl_seeding"
+                android:layout_width="261dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="52dp"
+                android:background="@mipmap/home_pair_bg"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/iv_bowl"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:background="@mipmap/home_pair_bg"
-                android:layout_width="261dp"
-                android:layout_height="wrap_content">
+                app:layout_constraintStart_toStartOf="parent">
+
                 <TextView
-                    android:textColor="@color/black"
-                    android:gravity="center"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginTop="18dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:text="12332123123"
                     android:id="@+id/tV_html"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="18dp"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="12332123123" />
+
+                <ImageView
                     android:id="@+id/iv_seed"
                     android:layout_width="45dp"
                     android:layout_height="45dp"
+                    android:layout_marginTop="10dp"
                     android:background="@mipmap/home_seed_count_down"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tV_html" />
 
                 <Button
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:layout_marginBottom="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="31dp"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_seed"
                     android:id="@+id/btn_skip"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
+                    android:layout_marginStart="31dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/background_button_red_r100"
                     android:text="Skip"
-                    android:textSize="15sp" />
-
-                <Button
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:layout_marginEnd="31dp"
-                    app:layout_constraintTop_toTopOf="@+id/btn_skip"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_seed" />
+
+                <Button
                     android:id="@+id/btn_check"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
+                    android:layout_marginEnd="31dp"
                     android:background="@drawable/background_button_gray_r100"
                     android:text="Check"
-                    android:textSize="15sp" />
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/btn_skip" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <ImageView
-                tools:visibility="visible"
-                android:visibility="gone"
                 android:id="@+id/image_left_swip"
-                android:layout_marginStart="12dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:background="@mipmap/home_left"
                 android:layout_width="30dp"
-                android:layout_height="30dp"/>
+                android:layout_height="30dp"
+                android:layout_marginStart="12dp"
+                android:background="@mipmap/home_left"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
             <ImageView
-                tools:visibility="visible"
-                android:visibility="gone"
                 android:id="@+id/image_right_swip"
-                android:layout_marginEnd="12dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@mipmap/home_right"
                 android:layout_width="30dp"
-                android:layout_height="30dp"/>
+                android:layout_height="30dp"
+                android:layout_marginEnd="12dp"
+                android:background="@mipmap/home_right"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
             android:layout_marginBottom="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cl_plant_status">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintEnd_toStartOf="@+id/cl_envir"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                app:l_radius="16dp"
+                app:l_shadowAlpha="1"
+                app:l_shadowElevation="10dp"
                 android:id="@+id/cl_peroid"
-                android:layout_width="0dp"
-                android:layout_height="112dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
-                android:layout_weight="1"
+                android:layout_width="150dp"
+                android:layout_height="120dp"
                 android:background="@drawable/background_white_r16">
 
                 <ImageView
@@ -475,7 +505,7 @@
                     android:id="@+id/tv_period"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="2dp"
                     android:text="Period"
                     android:textColor="@color/mainColor"
                     android:textSize="12sp"
@@ -485,7 +515,6 @@
                     app:layout_constraintTop_toTopOf="@+id/iv_time_bg" />
 
                 <ImageView
-                    android:id="@+id/iv_new_red"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
@@ -508,30 +537,29 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_period" />
 
                 <TextView
+                    android:textStyle="bold"
                     android:id="@+id/tv_week_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
-                    android:layout_marginBottom="39dp"
+                    android:layout_marginBottom="22dp"
                     android:gravity="start"
-                    android:text="Week -\nDay -"
+                    android:text="Week-\nDay-"
                     android:textColor="#161B19"
                     android:textSize="14sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/vv_period_bg"
                     tools:text="Week24\nDay1" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="112dp"
                 android:layout_marginEnd="12dp"
                 android:layout_weight="1"
-                android:background="@drawable/background_white_r16"
                 android:visibility="gone">
 
                 <ImageView
@@ -599,13 +627,21 @@ Day1" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+                android:layout_marginEnd="10dp"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toEndOf="@+id/cl_peroid"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/cl_envir"
-                android:layout_width="0dp"
-                android:layout_height="112dp"
-                android:layout_marginEnd="12dp"
-                android:layout_weight="1"
-                android:background="@drawable/background_white_r16">
+                android:layout_width="150dp"
+                android:layout_height="120dp"
+                android:background="@drawable/background_white_r16"
+                app:l_radius="16dp"
+                app:l_shadowAlpha="1"
+                app:l_shadowElevation="10dp">
 
                 <ImageView
                     android:id="@+id/iv_temperature_bg"
@@ -621,39 +657,25 @@ Day1" />
                     android:id="@+id/tv_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
+                    android:layout_marginStart="2dp"
                     android:text="ENVIR"
                     android:textColor="@color/mainColor"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@id/iv_temperature_bg"
-                    app:layout_constraintStart_toEndOf="@+id/iv_temperature_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/iv_temperature_bg" />
 
-                <TextView
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="12dp"
-                    android:background="@drawable/red_bg"
-                    android:visibility='@{viewModel.environmentInfo.data.environmentLowCount == 0 ? View.GONE : View.VISIBLE}'
+                    android:background="@mipmap/home_plant_indicator_light"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/tv_temperature" />
-
-                <!--<TextView
-                    android:text="@{String.valueOf(viewModel.plantInfo.data.environmentHighCount)}"
-                    android:gravity="center"
-                    android:textSize="11sp"
-                    android:textColor="@color/white"
-                    android:id="@+id/iv_health"
-                    android:layout_width="wrap_content"
-                    android:layout_height="17dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="@drawable/red_bg"
-                    android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.plantInfo.data.environmentHighCount == 0 ? View.GONE : View.VISIBLE : View.GONE}'
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_temperature"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/tv_temperature" />-->
 
                 <View
                     android:id="@+id/vv_temperature_bg"
@@ -668,26 +690,25 @@ Day1" />
                     app:layout_constraintTop_toBottomOf="@+id/tv_temperature" />
 
                 <TextView
+                    android:textStyle="bold"
                     android:id="@+id/tv_healthStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
-                    android:layout_marginBottom="39dp"
+                    android:layout_marginBottom="22dp"
                     android:gravity="center"
                     android:text="----"
                     android:textColor="#161B19"
                     android:textSize="14sp"
-                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/vv_temperature_bg"
                     tools:text="Week24
 Day1" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
 
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

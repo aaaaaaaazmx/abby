@@ -8,7 +8,6 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
@@ -17,11 +16,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
-import com.cl.common_base.ext.letMultiple
-import com.hyphenate.chat.AgoraMessage
-import com.hyphenate.chat.ChatClient
-import com.hyphenate.chat.EMClient
-import com.hyphenate.helpdesk.callback.Callback
+import com.cl.common_base.intercome.InterComeHelp
 import com.tuya.smart.android.device.bean.UpgradeInfoBean
 import com.tuya.smart.android.user.bean.User
 import com.tuya.smart.home.sdk.TuyaHomeSdk
@@ -88,40 +83,6 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
     val repairSN: LiveData<String> = _repairSN
     fun setRepairSN(sn: String) {
         _repairSN.value = sn
-    }
-
-    /**
-     * refreshToken
-     */
-    private val _refreshToken = MutableLiveData<Resource<AutomaticLoginData>>()
-    val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
-    fun refreshToken(req: AutomaticLoginReq) {
-        viewModelScope.launch {
-            repository.automaticLogin(req).map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code, it.msg
-                    )
-                } else {
-                    // 登录环信
-                    letMultiple(
-                        it.data.easemobUserName, it.data.easemobPassword
-                    ) { username, password ->
-                        easeLogin(username, password)
-                    }
-                    Resource.Success(it.data)
-                }
-            }.flowOn(Dispatchers.IO).onStart {}.catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1, "${it.message}"
-                    )
-                )
-            }.collectLatest {
-                _refreshToken.value = it
-            }
-        }
     }
 
     /**
@@ -975,10 +936,10 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _unReadMessageNumber = MutableLiveData<Int>(0)
     val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
-    fun getEaseUINumber() {
+    private fun getEaseUINumber() {
         // 只有当设备绑定且在线的时候、才去添加
         // if (refreshToken.value?.data?.deviceStatus == "1" && refreshToken.value?.data?.deviceOnlineStatus == "1") {
-            _unReadMessageNumber.postValue(EaseUiHelper.getInstance().unReadMessage)
+            _unReadMessageNumber.postValue(InterComeHelp.INSTANCE.getUnreadConversationCount())
         // }
     }
 
@@ -992,29 +953,6 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
         // 获取设备环境消息
         environmentInfo(EnvironmentInfoReq(deviceId = tuyaDeviceBean?.devId))
         getHomePageNumber()
-    }
-
-    /**
-     * 环信登录
-     */
-    private fun easeLogin(uname: String, upwd: String) {
-        if (EMClient.getInstance().context == null) return
-        ChatClient.getInstance().login(uname, upwd, object : Callback {
-            override fun onSuccess() {
-                logI("ChatClient Login")
-                AgoraMessage.newAgoraMessage().currentChatUsername =
-                    Constants.EaseUi.DEFAULT_CUSTOMER_ACCOUNT
-                getEaseUINumber()
-            }
-
-            override fun onError(p0: Int, p1: String?) {
-
-            }
-
-            override fun onProgress(p0: Int, p1: String?) {
-            }
-
-        })
     }
 
     /**

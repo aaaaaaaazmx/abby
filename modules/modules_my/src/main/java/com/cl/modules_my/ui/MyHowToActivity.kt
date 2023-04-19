@@ -1,21 +1,11 @@
 package com.cl.modules_my.ui
 
-import android.content.ActivityNotFoundException
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Intent
-import android.net.Uri
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.LearnIdGuidePop
-import com.cl.common_base.pop.SendEmailTipsPop
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyTroubleAdapter
@@ -137,6 +127,6 @@ class MyHowToActivity : BaseActivity<MyHowToBinding>() {
                 .dismissOnTouchOutside(true)
                 .asCustom(context?.let { SendEmailTipsPop(it) }).show()
         }*/
-        EaseUiHelper.getInstance().startChat(null)
+        InterComeHelp.INSTANCE.openInterComeHome()
     }
 }

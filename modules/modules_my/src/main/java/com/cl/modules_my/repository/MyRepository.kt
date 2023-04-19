@@ -224,4 +224,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>> {
         return remoteRepository.accessoryList()
     }
+
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
+        return remoteRepository.intercomDataAttributeSync()
+    }
 }

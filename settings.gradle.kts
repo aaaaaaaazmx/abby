@@ -47,6 +47,6 @@ include(":modules:modules_my")
 include(":common:common_service")
 include(":common:common_base")
 include(":common:BarcodeScanning")
-include(":common:kefu-easeui")
+/*include(":common:kefu-easeui")*/
 include(":modules:modules_pairing_connection")
 include(":common:mylibrary")

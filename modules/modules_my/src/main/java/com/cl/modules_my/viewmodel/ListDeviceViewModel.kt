@@ -142,44 +142,6 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
         }
     }
 
-
-    /**
-     * 合并账号
-     */
-    private val _switchDevice = MutableLiveData<Resource<String>>()
-    val switchDevice: LiveData<Resource<String>> = _switchDevice
-    fun switchDevice(deviceId: String) {
-        viewModelScope.launch {
-            repository.switchDevice(deviceId)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _switchDevice.value = it
-                }
-        }
-    }
-
-
     /**
      * 修改植物信息
      */

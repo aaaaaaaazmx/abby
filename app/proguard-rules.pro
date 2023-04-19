@@ -363,4 +363,9 @@
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 
+
+#InterCome
+-keep class io.intercom.android.** { *; }
+-keep class com.intercom.** { *; }
+
 ###########################第三方库end#########################################

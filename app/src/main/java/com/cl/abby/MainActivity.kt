@@ -15,20 +15,18 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.abby.viewmodel.MainViewModel
 import com.cl.common_base.base.BaseActivity
-import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.showToast
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.CustomBubbleAttachPopup
-import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
-import com.hyphenate.chat.ChatClient
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
@@ -322,8 +320,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
         }
 
-        // 环信消息变化监听
-        LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
+        // InterCome消息变化监听
+        LiveEventBus.get().with(Constants.InterCome.KEY_INTER_COME_UNREAD_MESSAGE, Int::class.java)
                 .observe(this) {
                     mViewModel.userDetail()
                     /*// 如果不是等于0、那么是不要展示的
@@ -504,11 +502,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //  需要判断先登录
-        if (ChatClient.getInstance().isLoggedInBefore) {
-            // 注销环信
-            ChatClient.getInstance().logout(true, null)
-        }
+        // 注销InterCome
+        // InterComeHelp.INSTANCE.logout()
     }
 
     override fun inAppInfoChange(status: String) {

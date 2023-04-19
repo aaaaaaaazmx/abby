@@ -14,7 +14,6 @@ import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.cl.abby.BuildConfig
 import com.cl.abby.databinding.ActivitySplashBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
@@ -91,82 +90,55 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             finish()
         } else {
             // 从设备列表当中获取当前选中设备
-            mViewModel.listDevice()
+            mViewModel.userDetail()
         }
     }
 
     override fun observe() {
-        /**
-         * 设备列表
-         */
-        mViewModel.listDevice.observe(this@SplashActivity, resourceObserver {
-            loading { }
+        mViewModel.userDetail.observe(this@SplashActivity, resourceObserver {
             error { errorMsg, code ->
-                errorMsg?.let { msg -> ToastUtil.shortShow(msg) }
+                ToastUtil.shortShow(errorMsg)
             }
             success {
-                // 登录涂鸦 & 跳转到哪个界面
+
+                // 获取InterCome信息
+                mViewModel.getInterComeData()
+            }
+        })
+
+        mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
+            error { errorMsg, code ->
+                ToastUtil.shortShow(errorMsg)
+            }
+            success {
+                val map = this.data
+
                 val email = userinfoBean?.email
                 val tuyaCountryCode = userinfoBean?.tuyaCountryCode
                 val tuyaPassword = userinfoBean?.tuyaPassword
-                if (data.isNullOrEmpty()) {
-                    mViewModel.tuYaLogin(
-                        null,
-                        tuyaCountryCode,
-                        email,
-                        AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
-                        onRegisterReceiver = { devId ->
-                            val intent =
-                                Intent(this@SplashActivity, TuYaDeviceUpdateReceiver::class.java)
-                            startService(intent)
-                        },
-                        onError = { code, error ->
-                            hideProgressLoading()
-                            error?.let { ToastUtil.shortShow(it) }
-                        }
-                    )
-                } else {
-                    val currentDeviceInfo = data?.firstOrNull { it.currentDevice == 1 }
-                    if (null == currentDeviceInfo) {
-                        mViewModel.tuYaLogin(
-                            null,
-                            tuyaCountryCode,
-                            email,
-                            AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
-                            onRegisterReceiver = { devId ->
-                                val intent = Intent(
-                                    this@SplashActivity,
-                                    TuYaDeviceUpdateReceiver::class.java
-                                )
-                                startService(intent)
-                            },
-                            onError = { code, error ->
-                                hideProgressLoading()
-                                error?.let { ToastUtil.shortShow(it) }
-                            }
+                mViewModel.tuYaLogin(
+                    map = map,
+                    mViewModel.userDetail.value?.data?.userId,
+                    mViewModel.userDetail.value?.data,
+                    mViewModel.userDetail.value?.data?.deviceId,
+                    tuyaCountryCode,
+                    email,
+                    AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
+                    onRegisterReceiver = { devId ->
+                        val intent = Intent(
+                            this@SplashActivity,
+                            TuYaDeviceUpdateReceiver::class.java
                         )
-                    } else {
-                        mViewModel.tuYaLogin(
-                            currentDeviceInfo.deviceId,
-                            tuyaCountryCode,
-                            email,
-                            AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
-                            onRegisterReceiver = { devId ->
-                                val intent = Intent(
-                                    this@SplashActivity,
-                                    TuYaDeviceUpdateReceiver::class.java
-                                )
-                                startService(intent)
-                            },
-                            onError = { code, error ->
-                                hideProgressLoading()
-                                error?.let { ToastUtil.shortShow(it) }
-                            }
-                        )
+                        startService(intent)
+                    },
+                    onError = { code, error ->
+                        hideProgressLoading()
+                        error?.let { ToastUtil.shortShow(it) }
                     }
-                }
+                )
             }
         })
+
 
         /**
          * 检查是否种植过

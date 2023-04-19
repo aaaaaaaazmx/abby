@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,10 +30,10 @@ import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.easeui.EaseUiHelper
 import com.cl.common_base.ext.*
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePopActivity
@@ -43,7 +42,6 @@ import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
-import com.cl.common_base.util.device.DeviceControlImpl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
@@ -61,17 +59,13 @@ import com.tuya.smart.home.sdk.TuyaHomeSdk
 import com.tuya.smart.home.sdk.bean.HomeBean
 import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
 import com.tuya.smart.sdk.bean.DeviceBean
-import com.warkiz.widget.ColorCollector
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import java.io.Serializable
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 import javax.inject.Inject
-import kotlin.math.log
 import kotlin.random.Random
 
 
@@ -205,13 +199,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
         /**
-         * 环信消息
+         * InterCome消息监听
          */
-        LiveEventBus.get().with(Constants.Global.KEY_MAIN_SHOW_BUBBLE, Boolean::class.java)
+        LiveEventBus.get().with(Constants.InterCome.KEY_INTER_COME_UNREAD_MESSAGE, Int::class.java)
             .observe(viewLifecycleOwner) {
-                if (it) {
-                    mViewMode.getEaseUINumber()
-                }
+                mViewMode.getEaseUINumber()
             }
 
         /**
@@ -1725,6 +1717,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    // 获取InterCome信息
+                    getInterComeData()
+                }
+            })
+            // InterCome信息
+            getInterComeData.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    // 更新InterCome用户信息
+                    val map = this.data
+                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
+                        map = map, userDetail.value?.data, refreshToken.value?.data,
+                    )
+
                     // 更新涂鸦Bean
                     TuyaHomeSdk.newHomeInstance(mViewMode.homeId)
                         .getHomeDetail(object : ITuyaHomeResultCallback {
@@ -1772,6 +1780,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         })
                 }
             })
+
             // 刷新设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
@@ -2051,7 +2060,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                                 intent.putExtra(
                                     BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                    "Next"
+                                    "Slide to Next"
                                 )
                                 startActivityLauncherSeeding.launch(intent)
                             }
@@ -2185,9 +2194,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     showView(plantFlag, plantGuideFlag)
                                     // 请求未读消息数据，只有在种植之后才会开始有数据返回
                                     mViewMode.getUnread()
-                                    checkOtaUpdateInfo()
                                     // 请求环境信息
                                     mViewMode.getEnvData()
+                                    // 检查固件
+                                    checkOtaUpdateInfo()
                                 }
                                 else -> {}
                             }
@@ -2217,7 +2227,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     showView(plantFlag, plantGuideFlag)
                     // 请求未读消息数据，只有在种植之后才会开始有数据返回
                     mViewMode.getUnread()
-                    checkOtaUpdateInfo()
                 }
                 loading {
                     showProgressLoading()
@@ -3667,7 +3676,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 .dismissOnTouchOutside(true)
                 .asCustom(context?.let { SendEmailTipsPop(it) }).show()
         }*/
-        EaseUiHelper.getInstance().startChat(null)
+        InterComeHelp.INSTANCE.openInterComeHome()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {

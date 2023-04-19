@@ -174,4 +174,8 @@ class HomeRemoteRepository @Inject constructor() {
     fun intoPlantBasket(): Flow<HttpResult<BaseBean>> {
         return service.intoPlantBasket()
     }
+
+    fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
+        return service.intercomDataAttributeSync()
+    }
 }

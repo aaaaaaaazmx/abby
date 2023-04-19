@@ -1,14 +1,8 @@
 package com.cl.common_base.adapter
 
-import android.graphics.Color
 import android.text.Html
 import android.text.Spanned
-import android.util.TypedValue
-import android.view.Gravity
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.core.text.toSpannable
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -16,7 +10,7 @@ import com.cl.common_base.R
 import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.*
-import com.cl.common_base.easeui.ui.videoUiHelp
+import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.video.SampleCoverVideo
 import com.cl.common_base.widget.FeatureTitleBar

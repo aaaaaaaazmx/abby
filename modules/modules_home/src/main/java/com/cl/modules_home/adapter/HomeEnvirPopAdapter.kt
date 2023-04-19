@@ -6,6 +6,7 @@ import androidx.databinding.DataBindingUtil
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeEnvirItemFanPopBinding
 import com.bbgo.module_home.databinding.HomeEnvirItemPopBinding
+import com.bbgo.module_home.databinding.HomeGrowLightItemPopBinding
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.EnvironmentInfoData
@@ -30,6 +31,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
     init {
         addItemType(EnvironmentInfoData.KEY_TYPE_NORMAL, R.layout.home_envir_item_pop)
         addItemType(EnvironmentInfoData.KEY_TYPE_FAN, R.layout.home_envir_item_fan_pop)
+        addItemType(EnvironmentInfoData.KEY_TYPE_LIGHT, R.layout.home_grow_light_item_pop)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -45,6 +47,15 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
             }
             EnvironmentInfoData.KEY_TYPE_NORMAL -> {
                 val binding = DataBindingUtil.bind<HomeEnvirItemPopBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
+            EnvironmentInfoData.KEY_TYPE_LIGHT -> {
+                val binding = DataBindingUtil.bind<HomeGrowLightItemPopBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
                     binding.data = data[position]
@@ -136,6 +147,20 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                 helper.setText(R.id.period_time, item.healthStatus)
                 helper.setText(R.id.tv_going, temperatureConversion(item.value))
                 helper.setTextColor(R.id.period_time, getColor(item.detectionValue, item.healthStatus))
+            }
+
+            EnvironmentInfoData.KEY_TYPE_LIGHT -> {
+                helper.setText(R.id.period, item.detectionValue)
+                helper.setText(R.id.period_status, item.explain)
+                helper.setText(R.id.tv_healthStatuss, item.healthStatus)
+                when(item.healthStatus) {
+                    "OK" -> {
+                        helper.setTextColor(R.id.tv_healthStatuss, Color.BLACK)
+                    }
+                    "Error" -> {
+                        helper.setTextColor(R.id.tv_healthStatuss, Color.parseColor("#D61744"))
+                    }
+                }
             }
         }
     }

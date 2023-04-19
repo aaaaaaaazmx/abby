@@ -17,12 +17,12 @@ object Version {
         const val composeMaterial3Version = "1.0.0-alpha14"
     }
 
-    const val compileSdk = 31
+    const val compileSdk = 33
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
-    const val targetSdk = 31
-    val versionCode = 24
-    const val versionName = "1.2.3"
+    const val targetSdk = 33
+    val versionCode = 25
+    const val versionName = "1.3.0"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"
@@ -97,6 +97,8 @@ object Version {
     const val lottieVersion = "5.2.0"
 
     const val videoPlayer = "v8.3.4"
+
+    const val interCome = "14.2.0"
 }
 
 object Deps {
@@ -242,6 +244,9 @@ object Deps {
 
     // VideoPlay
     const val videoPlayer = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:${Version.videoPlayer}-release-jitpack"
+
+    // interCome
+    const val interCome = "io.intercom.android:intercom-sdk:${Version.interCome}"
 }
 
 fun String.exec(): String =
