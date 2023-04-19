@@ -370,7 +370,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
 
                 // todo 这个到时需要放出来
-                /*R.id.action_contact -> switchFragment(Constants.FragmentIndex.CONTACT_INDEX)*/
+                R.id.action_contact -> switchFragment(Constants.FragmentIndex.CONTACT_INDEX)
 
                 R.id.action_my -> {
                     switchFragment(Constants.FragmentIndex.MY_INDEX)

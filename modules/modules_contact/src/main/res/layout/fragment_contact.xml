@@ -8,15 +8,65 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:ignore="MissingConstraints"
         tools:context=".ContactActivity">
 
         <TextView
+            android:id="@+id/tv_trend"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:textStyle="bold"
+            android:textSize="26sp"
+            android:textColor="@color/mainColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hello World!"
-            tools:ignore="MissingConstraints" />
+            android:text="Trend"
+             />
+
+
+        <ImageView
+            android:id="@+id/iv_bells"
+            android:layout_marginEnd="42dp"
+            app:layout_constraintEnd_toStartOf="@+id/iv_head"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_head"
+            app:layout_constraintTop_toTopOf="@+id/iv_head"
+            android:background="@mipmap/contact_bells"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            tools:text="1"
+            android:id="@+id/vv_calendar_number"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:background="@drawable/red_bg"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintCircle="@id/iv_bells"
+            app:layout_constraintCircleAngle="50"
+            app:layout_constraintCircleRadius="20dp" />
+
+        <ImageView
+            app:layout_constraintBottom_toBottomOf="@+id/tv_trend"
+            app:layout_constraintTop_toTopOf="@+id/tv_trend"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/iv_head"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="14dp"
+            tools:background="@mipmap/ic_launcher_round" />
+
+
+        <!--接下来就是具体展示了。-->
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

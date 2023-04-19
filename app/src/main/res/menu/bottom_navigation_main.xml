@@ -7,12 +7,12 @@
         android:icon="@mipmap/main_flow"
         android:title=""
         app:showAsAction="ifRoom" />
-<!--    <item-->
-<!--        android:id="@+id/action_contact"-->
-<!--        android:enabled="true"-->
-<!--        android:icon="@mipmap/ic_launcher"-->
-<!--        android:title=""-->
-<!--        app:showAsAction="ifRoom" />-->
+    <item
+        android:id="@+id/action_contact"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:title=""
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_my"
         android:enabled="true"
