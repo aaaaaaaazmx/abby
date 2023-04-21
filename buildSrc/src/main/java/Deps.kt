@@ -65,7 +65,7 @@ object Version {
 
     const val mmkv = "1.2.13"
 
-    const val rvHelp = "3.0.7"
+    const val rvHelp = "3.0.10"
 
     const val xpopup = "2.8.14"
 

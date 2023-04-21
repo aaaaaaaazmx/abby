@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="171dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_white_r6"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_delete"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="17dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/tv_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold"
+             />
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginStart="84dp"
+                android:background="@mipmap/contact_delete"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_delete"
+                app:layout_constraintStart_toEndOf="@+id/tv_delete"
+                app:layout_constraintTop_toTopOf="@+id/tv_delete" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <View
+            android:id="@+id/vv"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="17dp"
+            android:background="#F7F7F7"
+            app:layout_constraintStart_toStartOf="@+id/cl_delete"
+            app:layout_constraintTop_toBottomOf="@+id/cl_delete" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_share"
+            android:layout_marginStart="14dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/tv_public"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share to public"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold"
+               />
+
+            <com.cl.common_base.widget.SwitchButton
+                android:id="@+id/fis_item_switch"
+                android:layout_width="52dp"
+                android:layout_height="35dp"
+                android:checked="true"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_public"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_public" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:visibility="gone"
+           android:id="@+id/cl_report"
+           android:layout_marginBottom="17dp"
+           android:layout_marginStart="14dp"
+           android:layout_marginTop="17dp"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintBottom_toBottomOf="parent"
+           app:layout_constraintTop_toTopOf="parent"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+           <TextView
+               app:layout_constraintStart_toStartOf="parent"
+               app:layout_constraintTop_toTopOf="parent"
+               android:id="@+id/tv_repoert"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="Report"
+               android:textColor="@color/black"
+               android:textSize="12sp"
+               android:textStyle="bold"
+               />
+
+           <ImageView
+               android:layout_width="15dp"
+               android:layout_height="15dp"
+               android:layout_marginStart="84dp"
+               android:background="@mipmap/contact_gantan"
+               app:layout_constraintBottom_toBottomOf="@+id/tv_repoert"
+               app:layout_constraintStart_toEndOf="@+id/tv_repoert"
+               app:layout_constraintTop_toTopOf="@+id/tv_repoert" />
+       </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

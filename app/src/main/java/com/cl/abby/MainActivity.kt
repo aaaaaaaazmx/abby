@@ -114,7 +114,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         // 居中显示
         XPopup.Builder(this@MainActivity)
                 .popupPosition(PopupPosition.Top)
-                .dismissOnTouchOutside(false)
+                .dismissOnTouchOutside(true)
                 .isClickThrough(true)  //点击透传
                 .hasShadowBg(false) // 去掉半透明背景
                 //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
@@ -123,7 +123,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private val asPop by lazy {
         val pop = CustomBubbleAttachPopup(this@MainActivity, bubbleClickAction = {
-            switchFragment(0)
+            switchFragment(Constants.FragmentIndex.HOME_INDEX)
         })
                 //.setArrowOffset(-XPopupUtils.dp2px(this@MainActivity, 40))  //气泡箭头偏移
                 .setBubbleBgColor(Color.RED) //气泡背景

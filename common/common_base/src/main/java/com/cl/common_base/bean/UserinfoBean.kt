@@ -14,7 +14,7 @@ data class UserinfoBean(
     val easemobPassword: String? = null,
     val easemobUserName: String? = null,
     val email: String? = null,
-    val eventCount: String? = null,
+    val eventCount: Int? = null,
     val isVip: Int? = 0,
     val nickName: String? = null,
     val subscriptionTime: String? = null,
@@ -24,6 +24,7 @@ data class UserinfoBean(
     val tuyaUserId: String? = null,
     val tuyaUserType: String? = null,
     var userDetailData: BasicUserBean? = null,
+    val userId: String? = null,
     val notBound: Int? = null, // 1 是绑定过、其他都是未绑定过
 ) : BaseBean() {
     // 用户基本信息Bean
