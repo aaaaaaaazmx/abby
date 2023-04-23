@@ -43,7 +43,7 @@ class TrendListAdapter(data: MutableList<NewPageData.Records>?) :
                 // 手动添加图片集合
                 val urlList = mutableListOf<String>()
                 it.forEach { data-> data.imageUrl?.let { it1 -> urlList.add(it1) } }
-                NineGridAdapter(context, it, urlList)
+                NineGridAdapter(context, urlList)
             }
         }
     }

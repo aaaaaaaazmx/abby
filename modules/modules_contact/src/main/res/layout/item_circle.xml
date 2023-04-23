@@ -209,7 +209,7 @@
 
         <LinearLayout
             android:id="@+id/ll_action"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/cl_env"
             app:layout_constraintTop_toBottomOf="@+id/cl_env"

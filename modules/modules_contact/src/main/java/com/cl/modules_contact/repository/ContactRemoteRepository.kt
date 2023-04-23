@@ -3,15 +3,25 @@ package com.cl.modules_contact.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
+import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
+import com.cl.modules_contact.request.MomentsDetailsReq
 import com.cl.modules_contact.request.NewPageReq
+import com.cl.modules_contact.request.PublishReq
+import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.modules_contact.request.SyncTrendReq
+import com.cl.modules_contact.response.CommentByMomentData
+import com.cl.modules_contact.response.CommentDetailsData
+import com.cl.modules_contact.response.MessageListData
 import com.cl.modules_contact.response.NewPageData
+import com.cl.modules_contact.response.PublishData
+import com.cl.modules_contact.response.ReplyData
 import com.cl.modules_contact.service.HttpContactApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.processNextEventInCurrentThread
 import okhttp3.MultipartBody
 import javax.inject.Inject
 
@@ -37,6 +47,7 @@ class ContactRemoteRepository @Inject constructor() {
     fun delete(req: DeleteReq): Flow<HttpResult<BaseBean>> {
         return service.delete(req)
     }
+
     fun public(req: SyncTrendReq): Flow<HttpResult<BaseBean>> {
         return service.public(req)
     }
@@ -44,5 +55,26 @@ class ContactRemoteRepository @Inject constructor() {
     fun report(req: ReportReq): Flow<HttpResult<BaseBean>> {
         return service.report(req)
     }
+
+    fun messageList(req: NewPageReq): Flow<HttpResult<MutableList<MessageListData>>> {
+        return service.messageList(req)
+    }
+
+    fun getCommentByMomentId(req: CommentByMomentReq): Flow<HttpResult<MutableList<CommentByMomentData>>> {
+        return service.getCommentByMomentId(req)
+    }
+
+    fun getMomentsDetails(momentsId: Int): Flow<HttpResult<CommentDetailsData>> {
+        return service.getMomentsDetails(momentsId)
+    }
+
+    fun publish(req: PublishReq): Flow<HttpResult<PublishData>> {
+        return service.publish(req)
+    }
+
+    fun reply(req: ReplyReq): Flow<HttpResult<ReplyData>> {
+        return service.reply(req)
+    }
+
 
 }

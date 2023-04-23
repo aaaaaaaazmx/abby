@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.modules_contact.response.CommentByMomentData" />
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_contact.adapter.ContactCommentAdapter" />
+
+        <import type="com.cl.common_base.ext.DateHelper" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivAvatar"
+                    circleUrl="@{data.picture}"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:visibility="@{TextUtils.isEmpty(data.picture) ? View.GONE : View.VISIBLE}"
+                    tools:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/nohead_show"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:text="@{data.commentName.substring(0,1)}"
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="@{TextUtils.isEmpty(data.picture) ? View.VISIBLE : View.GONE}" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toEndOf="@id/cl_avatar"
+                app:layout_constraintTop_toTopOf="@id/cl_avatar"
+                android:id="@+id/tvDesc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:text="这世界总有人在笨拙地爱着你，想把全部的温柔都给你。 希望下一次，能喜欢上一个也喜欢自己的人 ​​​​。" />
+
+
+            <LinearLayout
+                android:id="@+id/ll_action"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tvDesc"
+                app:layout_constraintTop_toBottomOf="@+id/tvDesc">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_love"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <CheckBox
+                        android:id="@+id/curing_box_love"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/create_love_checkbox"
+                        android:button="@null"
+                        android:checked="@{data.isPraise == 0 ? false : true}"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:padding="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_love_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text='@{data.praise == 0 ? "" : String.valueOf(data.praise)}'
+                        android:textColor="#161B19"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/curing_box_love"
+                        app:layout_constraintStart_toEndOf="@+id/curing_box_love"
+                        app:layout_constraintTop_toTopOf="@+id/curing_box_love"
+                        tools:text="520" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_gift"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <CheckBox
+                        android:id="@+id/curing_box_gift"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/create_gift_checkbox"
+                        android:button="@null"
+                        android:checked="@{data.isReward == 0 ? false : true}"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:padding="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text='@{data.reward == 0 ? "" : String.valueOf(data.reward)}'
+                        android:textColor="#161B19"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@+id/curing_box_gift"
+                        app:layout_constraintStart_toEndOf="@+id/curing_box_gift"
+                        app:layout_constraintTop_toTopOf="@id/curing_box_gift"
+                        tools:text="520" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_chat"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1">
+
+                    <CheckBox
+                        android:visibility="gone"
+                        android:id="@+id/curing_box_chat"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/trend_chat_bg"
+                        android:button="@null"
+                        android:checked="false"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:padding="5dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:text="Reply"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textColor="@color/mainColor"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/curing_box_chat"
+                        app:layout_constraintStart_toEndOf="@+id/curing_box_chat"
+                        app:layout_constraintTop_toTopOf="@id/curing_box_chat"
+                        tools:text="Reply" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_point"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_create_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:textColor="#979797"
+                        android:textSize="11sp"
+                        tools:text="2020- 20202-2002" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:background="@drawable/background_main_color_r0"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/ll_action"
+                app:layout_constraintTop_toBottomOf="@+id/ll_action"
+                android:id="@+id/rv_reply"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

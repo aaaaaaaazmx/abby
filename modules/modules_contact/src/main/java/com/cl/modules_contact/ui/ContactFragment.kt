@@ -88,6 +88,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         binding.refreshLayout.apply {
             ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
             ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
+            ClassicsFooter.REFRESH_FOOTER_NOTHING = "No more data"
 
             // 刷新监听
             setOnRefreshListener {
@@ -232,11 +233,15 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         // 头像点击
         binding.clAvatar.setOnClickListener {
             // todo 头像点击啊
+
         }
 
         // 消息点击
         binding.ivBells.setOnClickListener {
-            // todo 消息点击啊
+            // 消息点击啊
+            context?.let {
+                it.startActivity(Intent(it, ContactNotificationActivity::class.java))
+            }
         }
 
     }
@@ -260,14 +265,12 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 success {
                     // 刷新相关
                     if (binding.refreshLayout.isRefreshing) {
-                        logI("123123: refresh")
                         binding.refreshLayout.finishRefresh()
                     }
                     if (binding.refreshLayout.isLoading) {
-                        logI("123123: isLoading")
 
                         // 没有加载了、或者加载完毕
-                        if ((data?.records?.size ?: 0) < REFRESH_SIZE) {
+                        if ((data?.records?.size ?: 0) <= 0) {
                             binding.refreshLayout.finishLoadMoreWithNoMoreData()
                         } else {
                             binding.refreshLayout.finishLoadMore()

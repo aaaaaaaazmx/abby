@@ -53,4 +53,8 @@
 <!--        </activity>-->
 <!--    </application>-->
 
+    <application>
+        <activity android:name=".ui.ContactNotificationActivity" />
+        <activity android:name=".ui.ContactCommentActivity" />
+    </application>
 </manifest>

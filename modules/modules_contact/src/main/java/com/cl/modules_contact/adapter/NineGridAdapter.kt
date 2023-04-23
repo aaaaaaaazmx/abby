@@ -17,12 +17,11 @@ import com.lxj.xpopup.util.SmartGlideImageLoader
 
 class NineGridAdapter(
     private val context: Context? = null,
-    private val items: MutableList<NewPageData.Records.ImageUrls>,
     private val urlList: MutableList<String>,
 ) : NineGridView.Adapter() {
 
     override fun getItemCount(): Int {
-        return items.size
+        return urlList.size
     }
 
     /**
@@ -54,7 +53,7 @@ class NineGridAdapter(
                  */
                 val imageView = itemView.findViewById<ImageView>(R.id.imageView)
                 Glide.with(itemView)
-                    .load(items[position].imageUrl)
+                    .load(urlList[position])
                     .centerCrop()
                     .placeholder(R.drawable.sp_loading)
                     .into(imageView)
@@ -98,10 +97,10 @@ class NineGridAdapter(
 
     override fun onBindExtraView(extraView: View, viewType: Int, position: Int) {
         val tvExtra = extraView.findViewById<TextView>(R.id.tvExtra)
-        val extraCount = items.size - position
+        val extraCount = urlList.size - position
         tvExtra.text = String.format("+%s", extraCount)
         extraView.setOnClickListener {
-            logI("ExtraView click itemSize = ${items.size}")
+            logI("ExtraView click itemSize = ${urlList.size}")
         }
     }
 
@@ -119,7 +118,7 @@ class NineGridAdapter(
                  */
                 val imageView = singleView.findViewById<ImageView>(R.id.imageView)
                 Glide.with(singleView)
-                    .load(items[position].imageUrl)
+                    .load(urlList[position])
                     .centerCrop()
                     .placeholder(R.drawable.sp_loading)
                     .into(imageView)
