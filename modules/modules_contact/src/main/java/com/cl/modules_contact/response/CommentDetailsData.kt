@@ -28,6 +28,6 @@ data class CommentDetailsData(
     val proMode: String,
     val reward: Int,
     val syncTrend: Int,
-    val userId: Int,
+    val userId: String,
     val week: Int
 )

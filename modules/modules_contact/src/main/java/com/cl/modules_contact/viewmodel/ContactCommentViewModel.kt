@@ -17,12 +17,17 @@ import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
 import com.cl.modules_contact.request.MomentsDetailsReq
 import com.cl.modules_contact.request.NewPageReq
+import com.cl.modules_contact.request.PublishReq
+import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
+import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
 import com.cl.modules_contact.response.MessageListData
 import com.cl.modules_contact.response.NewPageData
+import com.cl.modules_contact.response.PublishData
+import com.cl.modules_contact.response.ReplyData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -93,6 +98,7 @@ class ContactCommentViewModel @Inject constructor(private val repository: Contac
             _commentListData.value = it
         }
     }
+
 
     /**
      * 获取动态详情
@@ -226,6 +232,88 @@ class ContactCommentViewModel @Inject constructor(private val repository: Contac
         }
     }
 
+    /**
+     * 发表评论 publish
+     */
+    private val _publishData = MutableLiveData<Resource<PublishData>>()
+    val publishData: LiveData<Resource<PublishData>> = _publishData
+    fun publish(req: PublishReq) = viewModelScope.launch {
+        repository.publish(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _publishData.value = it
+        }
+    }
+
+
+    /**
+     * 发表回复 reply
+     */
+    private val _replyData = MutableLiveData<Resource<ReplyData>>()
+    val replyData: LiveData<Resource<ReplyData>> = _replyData
+    fun reply(req: ReplyReq) = viewModelScope.launch {
+        repository.reply(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _replyData.value = it
+        }
+    }
+
+
+    /**
+     *  打赏
+     */
+    private val _rewardData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val rewardData: LiveData<Resource<com.cl.common_base.BaseBean>> = _rewardData
+    fun reward(req: RewardReq) = viewModelScope.launch {
+        repository.reward(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _rewardData.value = it
+        }
+    }
+
+
+
 
     // 更改Current页码
     private val _updateCurrent = MutableLiveData<Int>(1)
@@ -239,5 +327,14 @@ class ContactCommentViewModel @Inject constructor(private val repository: Contac
     val currentPosition: LiveData<Int> = _currentPosition
     fun updateCurrentPosition(position: Int) {
         _currentPosition.value = position
+    }
+
+    /**
+     * likeData
+     */
+    private val _likeReq = MutableLiveData<LikeReq>()
+    val likeReq: LiveData<LikeReq> = _likeReq
+    fun updateLikeData(req: LikeReq) {
+        _likeReq.value = req
     }
 }

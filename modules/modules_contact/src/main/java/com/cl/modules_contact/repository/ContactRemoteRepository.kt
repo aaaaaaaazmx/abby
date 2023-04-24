@@ -11,6 +11,7 @@ import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
+import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
@@ -74,6 +75,10 @@ class ContactRemoteRepository @Inject constructor() {
 
     fun reply(req: ReplyReq): Flow<HttpResult<ReplyData>> {
         return service.reply(req)
+    }
+
+    fun reward(req: RewardReq): Flow<HttpResult<BaseBean>> {
+        return service.reward(req)
     }
 
 

@@ -6,7 +6,12 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
+import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
+import com.cl.common_base.ext.logI
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactItemCommentBinding
 import com.cl.modules_contact.databinding.ContactItemCommentReplyBinding
@@ -26,18 +31,16 @@ class ContactReplyAdapter(data: MutableList<CommentByMomentData.Replys>?) :
 
         // 设置富文本
         holder.setText(R.id.tvDesc, getContents(item.commentName, item.parentReplyId, item.comment, holder.layoutPosition))
-        holder.setText(R.id.tv_create_time, convertTime(item.createTime))
+        holder.setText(R.id.tv_reply_time, convertTime(item.createTime))
     }
 
     private fun convertTime(createTime: String? = null): String {
-        var text = ""
-        createTime?.let {
-            // 2023-04-20 10:04:52
-            DateHelper.getTimestamp(it, "yyyy-MM-dd HH:mm:ss").apply {
-                text = DateHelper.convert((this)).toString()
-            }
-        }
-        return text
+        return createTime?.let {
+            DateHelper.getTimestamp(it, "yyyy-MM-dd HH:mm:ss").let {
+                logI("1231231: $createTime ,,, ${DateHelper.convert((it)).toString()}")
+                DateHelper.convert((it)).toString()
+            }.toString()
+        } ?: ""
     }
 
     /**

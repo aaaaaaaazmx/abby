@@ -10,6 +10,7 @@ import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
+import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
@@ -103,4 +104,10 @@ interface HttpContactApiService {
      */
     @POST("abby/comment/reply")
     fun reply(@Body requestBody: ReplyReq): Flow<HttpResult<ReplyData>>
+
+    /**
+     * 打赏
+     */
+    @POST("abby/moments/reward")
+    fun reward(@Body requestBody: RewardReq): Flow<HttpResult<BaseBean>>
 }

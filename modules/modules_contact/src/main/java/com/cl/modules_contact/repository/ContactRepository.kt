@@ -10,6 +10,7 @@ import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
+import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
@@ -66,5 +67,9 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
 
     fun reply(req: ReplyReq): Flow<HttpResult<ReplyData>> {
         return remoteRepository.reply(req)
+    }
+
+    fun reward(req: RewardReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.reward(req)
     }
 }
