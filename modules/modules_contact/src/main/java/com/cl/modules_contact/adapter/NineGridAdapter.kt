@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.cl.common_base.ext.logI
 import com.cl.modules_contact.R
 import com.cl.modules_contact.response.NewPageData
@@ -33,10 +34,11 @@ class NineGridAdapter(
 
     override fun onCreateItemView(parent: ViewGroup, viewType: Int): View {
         val layoutInflater = LayoutInflater.from(parent.context)
-        if (viewType == VIEW_TYPE_VIDEO) {
-            return layoutInflater.inflate(R.layout.item_video, parent, false)
+        return if (viewType == VIEW_TYPE_VIDEO) {
+            layoutInflater.inflate(R.layout.item_video, parent, false)
+        } else {
+            layoutInflater.inflate(R.layout.item_image, parent, false)
         }
-        return layoutInflater.inflate(R.layout.item_image, parent, false)
     }
 
     override fun onBindItemView(itemView: View, viewType: Int, position: Int) {
@@ -55,6 +57,7 @@ class NineGridAdapter(
                 Glide.with(itemView)
                     .load(urlList[position])
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.sp_loading)
                     .into(imageView)
                 itemView.setOnClickListener {
@@ -64,7 +67,7 @@ class NineGridAdapter(
                             (it as? ImageView),
                             position,
                             urlList.toList(),
-                            OnSrcViewUpdateListener { _, _ ->  },
+                            OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
                         )
                         .show()
@@ -120,6 +123,7 @@ class NineGridAdapter(
                 Glide.with(singleView)
                     .load(urlList[position])
                     .centerCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.sp_loading)
                     .into(imageView)
                 singleView.setOnClickListener {
@@ -129,7 +133,7 @@ class NineGridAdapter(
                             (it as? ImageView),
                             position,
                             urlList.toList(),
-                            OnSrcViewUpdateListener { _, _ ->  },
+                            OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
                         )
                         .show()

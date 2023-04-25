@@ -37,6 +37,10 @@ class ContactRemoteRepository @Inject constructor() {
         return service.newPage(req)
     }
 
+    fun getTags(): Flow<HttpResult<MutableList<String>>> {
+        return service.getTags()
+    }
+
     fun like(req: LikeReq): Flow<HttpResult<BaseBean>> {
         return service.like(req)
     }

@@ -1,22 +1,17 @@
 package com.cl.modules_contact.adapter
 
 import android.text.SpannedString
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.View
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import androidx.core.text.underline
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.cl.common_base.ext.DateHelper
-import com.cl.common_base.ext.logI
-import com.cl.common_base.util.databinding.setAdapter
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ItemCircleBinding
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.widget.NineGridView
+import kotlin.concurrent.thread
 
 
 /**
@@ -42,7 +37,7 @@ class TrendListAdapter(data: MutableList<NewPageData.Records>?) :
             adapter = item.imageUrls?.let {
                 // 手动添加图片集合
                 val urlList = mutableListOf<String>()
-                it.forEach { data-> data.imageUrl?.let { it1 -> urlList.add(it1) } }
+                it.forEach { data -> data.imageUrl?.let { it1 -> urlList.add(it1) } }
                 NineGridAdapter(context, urlList)
             }
         }
@@ -80,4 +75,8 @@ class TrendListAdapter(data: MutableList<NewPageData.Records>?) :
         }
 
     }
+
+    /*override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }*/
 }

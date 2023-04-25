@@ -14,6 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
@@ -29,10 +30,12 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
+import com.cl.modules_contact.adapter.TagsAdapter
 import com.cl.modules_contact.adapter.TrendListAdapter
 import com.cl.modules_contact.databinding.FragmentContactBinding
 import com.cl.modules_contact.pop.CommentPop
 import com.cl.modules_contact.pop.ContactEnvPop
+import com.cl.modules_contact.pop.ContactPeriodPop
 import com.cl.modules_contact.pop.ContactPotionPop
 import com.cl.modules_contact.pop.ContactReportPop
 import com.cl.modules_contact.pop.RewardPop
@@ -44,6 +47,7 @@ import com.cl.modules_contact.request.ReportReq
 import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.NewPageData
+import com.cl.modules_contact.response.TagsBean
 import com.cl.modules_contact.viewmodel.ContactViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
 import com.lxj.xpopup.XPopup
@@ -68,7 +72,16 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         TrendListAdapter(mutableListOf())
     }
 
+    // 标签适配器
+    private val tagAdapter by lazy {
+        TagsAdapter(mutableListOf())
+    }
+
     override fun initView(view: View) {
+        // 接口调用
+        mViewMode.tagList()
+        mViewMode.getNewPage(NewPageReq(current = 1, size = 10))
+
         binding.superLikeLayout.provider = BitmapProvider.Builder(context)
             .setDrawableArray(
                 intArrayOf(
@@ -94,15 +107,25 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         binding.vvMsgNumber.text = (mViewMode.userinfoBean?.eventCount ?: 0).toString()
         binding.noheadShow.text = mViewMode.userinfoBean?.nickName?.substring(0, 1)
 
-        mViewMode.getNewPage(NewPageReq(current = 1, size = 10))
         binding.rvWxCircle.apply {
+            /* (itemAnimator as? SimpleItemAnimator)?.apply {
+                 changeDuration = 0
+                 supportsChangeAnimations = false
+             }*/
             layoutManager = LinearLayoutManager(activity)
             // 添加分割线
             //添加自定义分割线
             val divider = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
             divider.setDrawable(ContextCompat.getDrawable(context, R.drawable.custom_divider)!!)
             addItemDecoration(divider)
+            /*this@ContactFragment.adapter.setHasStableIds(true)*/
+            this@ContactFragment.adapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.AlphaIn)
             adapter = this@ContactFragment.adapter
+        }
+
+        binding.rvTags.apply {
+            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
+            adapter = this@ContactFragment.tagAdapter
         }
 
         // refresh
@@ -136,6 +159,68 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
         // adapter条目点击时间
         initAdapterClick()
+        initClick()
+    }
+
+    private val choosePeriodPop by lazy {
+        XPopup.Builder(context).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
+            .hasShadowBg(true) // 去掉半透明背景
+            //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+            .atView(binding.tvTrend).isCenterHorizontal(false).asCustom(context?.let {
+                ContactPeriodPop(it, onConfirmAction = { period ->
+                    mViewMode.updateCurrent(1)
+                    mViewMode.updateCurrentPeriod(period = period)
+                    // 需要清空当前选中的tags,并且刷新
+                    tagAdapter.data.indexOfFirst { it.isSelected }.apply {
+                        if (this != -1) {
+                            tagAdapter.data[this].isSelected = false
+                            tagAdapter.notifyItemChanged(this)
+                        }
+                    }
+                    mViewMode.getNewPage(
+                        NewPageReq(
+                            current = mViewMode.updateCurrent.value, size = REFRESH_SIZE, period = mViewMode.currentPeriod.value
+                        )
+                    )
+                }).setBubbleBgColor(Color.WHITE) //气泡背景
+                    .setArrowWidth(XPopupUtils.dp2px(context, 6f)).setArrowHeight(
+                        XPopupUtils.dp2px(
+                            context, 6f
+                        )
+                    ) //.setBubbleRadius(100)
+                    .setArrowRadius(
+                        XPopupUtils.dp2px(
+                            context, 3f
+                        )
+                    )
+            })
+
+    }
+    private fun initClick() {
+        binding.tvTrend.setOnClickListener {
+            // 弹窗显示植物周期
+            choosePeriodPop.show()
+        }
+
+        // floatbutton
+        binding.flButton.setOnClickListener {
+            // todo 跳转到发布动态页面
+            ToastUtil.shortShow("FLAT")
+        }
+
+        // 头像点击
+        binding.clAvatar.setOnClickListener {
+            // todo 头像点击啊
+
+        }
+
+        // 消息点击
+        binding.ivBells.setOnClickListener {
+            // 消息点击啊
+            context?.let {
+                it.startActivity(Intent(it, ContactNotificationActivity::class.java))
+            }
+        }
     }
 
     /**
@@ -283,26 +368,36 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
             }
         }
 
-        // floatbutton
-        binding.flButton.setOnClickListener {
-            // todo 跳转到发布动态页面
-            ToastUtil.shortShow("FLAT")
-        }
 
-        // 头像点击
-        binding.clAvatar.setOnClickListener {
-            // todo 头像点击啊
+        tagAdapter.addChildClickViewIds(R.id.check_tag)
+        tagAdapter.setOnItemChildClickListener { adapter, view, position ->
+            val item = adapter.data[position] as? TagsBean
+            when (view.id) {
+                R.id.check_tag -> {
+                    tagAdapter.data.indexOfFirst {
+                        it.isSelected
+                    }.apply {
+                        if (this != -1) {
+                            tagAdapter.data[this].isSelected = false
+                            tagAdapter.notifyItemChanged(this)
+                        }
+                    }
+                    item?.isSelected = !(item?.isSelected ?: false)
+                    tagAdapter.notifyItemChanged(position)
 
-        }
-
-        // 消息点击
-        binding.ivBells.setOnClickListener {
-            // 消息点击啊
-            context?.let {
-                it.startActivity(Intent(it, ContactNotificationActivity::class.java))
+                    // 选中之后需要刷新动态
+                    mViewMode.updateCurrent(1)
+                    mViewMode.getNewPage(
+                        NewPageReq(
+                            current = mViewMode.updateCurrent.value,
+                            size = REFRESH_SIZE,
+                            period = mViewMode.currentPeriod.value,
+                            tags = item?.number
+                        )
+                    )
+                }
             }
         }
-
     }
 
     private fun toCommentPop(item: NewPageData.Records?, position: Int, adapter: BaseQuickAdapter<*, *>) {
@@ -354,6 +449,18 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 获取标签列表
+            tagListData.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    val list = mutableListOf<TagsBean>()
+                    data?.forEachIndexed { _, s ->
+                        list.add(TagsBean(s, false))
+                    }
+                    tagAdapter.setList(list)
+                }
+            })
+
             // 获取聊天评论列表
             commentListData.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }

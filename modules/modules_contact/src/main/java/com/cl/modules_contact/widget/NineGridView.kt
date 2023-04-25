@@ -1,17 +1,21 @@
 package com.cl.modules_contact.widget
 
+import android.animation.ObjectAnimator
 import android.content.Context
+import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import com.cl.modules_contact.R
 import kotlin.math.ceil
 
+
 open class NineGridView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
+
 
     //横向的item数量
     var spanCount = 3
@@ -485,5 +489,15 @@ open class NineGridView @JvmOverloads constructor(
         ) {
 
         }
+    }
+
+    override fun dispatchDraw(canvas: Canvas?) {
+        // 开始渐变动画
+        val alphaAnimator = ObjectAnimator.ofFloat(this, ALPHA, 0f, 1f)
+        alphaAnimator.duration = 300L
+        alphaAnimator.start()
+
+        // 绘制布局
+        super.dispatchDraw(canvas)
     }
 }

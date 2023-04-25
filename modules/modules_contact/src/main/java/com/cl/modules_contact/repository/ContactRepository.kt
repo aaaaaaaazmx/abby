@@ -30,6 +30,10 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
         return remoteRepository.newPage(req)
     }
 
+    fun getTags(): Flow<HttpResult<MutableList<String>>> {
+        return remoteRepository.getTags()
+    }
+
     fun like(req: LikeReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.like(req)
     }

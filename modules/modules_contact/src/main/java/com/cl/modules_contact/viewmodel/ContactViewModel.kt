@@ -249,6 +249,32 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     }
 
 
+    /**
+     * 获取标签
+     */
+    private val _tagListData = MutableLiveData<Resource<MutableList<String>>>()
+    val tagListData: LiveData<Resource<MutableList<String>>> = _tagListData
+    fun tagList() = viewModelScope.launch {
+        repository.getTags().map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _tagListData.value = it
+        }
+    }
+
     // 更改Current页码
     private val _updateCurrent = MutableLiveData<Int>(1)
     val updateCurrent: LiveData<Int> = _updateCurrent
@@ -277,5 +303,14 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     val rewardOxygen: LiveData<Int> = _rewardOxygen
     fun updateRewardOxygen(oxygen: Int) {
         _rewardOxygen.value = oxygen
+    }
+
+    /**
+     * 记录当前选中周期
+     */
+    private val _currentPeriod = MutableLiveData<String>()
+    val currentPeriod: LiveData<String> = _currentPeriod
+    fun updateCurrentPeriod(period: String) {
+        _currentPeriod.value = period
     }
 }

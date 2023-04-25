@@ -33,6 +33,12 @@ interface HttpContactApiService {
     ): Flow<HttpResult<NewPageData>>
 
     /**
+     * 获取标签
+     */
+    @POST("abby/moments/getTags")
+    fun getTags(): Flow<HttpResult<MutableList<String>>>
+
+    /**
      * 点赞
      */
     @POST("abby/moments/like")

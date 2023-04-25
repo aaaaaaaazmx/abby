@@ -45,7 +45,7 @@ class RewardPop(
                 val data = rewardAdapter.data[position] as? RewardBean
                 when (view.id) {
                     com.cl.common_base.R.id.check_reward -> {
-                        val index = rewardAdapter.data.indexOfFirst {
+                        rewardAdapter.data.indexOfFirst {
                             it.isSelected
                         }.apply {
                             if (this != -1) {
