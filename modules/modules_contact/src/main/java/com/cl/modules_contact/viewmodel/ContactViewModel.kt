@@ -12,11 +12,14 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.repository.ContactRepository
+import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
+import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
+import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.NewPageData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -59,6 +62,32 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
             )
         }.collectLatest {
             _newPageData.value = it
+        }
+    }
+
+    /**
+     *  打赏
+     */
+    private val _rewardData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val rewardData: LiveData<Resource<com.cl.common_base.BaseBean>> = _rewardData
+    fun reward(req: RewardReq) = viewModelScope.launch {
+        repository.reward(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _rewardData.value = it
         }
     }
 
@@ -192,6 +221,34 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
         }
     }
 
+
+    /**
+     * 获取评论列表
+     */
+    private val _commentListData = MutableLiveData<Resource<MutableList<CommentByMomentData>>>()
+    val commentListData: LiveData<Resource<MutableList<CommentByMomentData>>> = _commentListData
+    fun commentList(req: CommentByMomentReq) = viewModelScope.launch {
+        repository.getCommentByMomentId(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _commentListData.value = it
+        }
+    }
+
+
     // 更改Current页码
     private val _updateCurrent = MutableLiveData<Int>(1)
     val updateCurrent: LiveData<Int> = _updateCurrent
@@ -211,5 +268,14 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     val currentLike: LiveData<Int> = _currentLike
     fun updateCurrentLike(like: Int) {
         _currentLike.value = like
+    }
+
+    /**
+     * 打赏了多少氧气币，避免频繁刷新
+     */
+    private val _rewardOxygen = MutableLiveData<Int>(0)
+    val rewardOxygen: LiveData<Int> = _rewardOxygen
+    fun updateRewardOxygen(oxygen: Int) {
+        _rewardOxygen.value = oxygen
     }
 }

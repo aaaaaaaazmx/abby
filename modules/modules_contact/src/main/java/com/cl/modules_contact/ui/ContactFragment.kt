@@ -1,18 +1,24 @@
 package com.cl.modules_contact.ui
 
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Color
 import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
+import android.widget.CheckBox
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.chad.library.adapter.base.BaseQuickAdapter
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
@@ -25,24 +31,26 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.TrendListAdapter
 import com.cl.modules_contact.databinding.FragmentContactBinding
+import com.cl.modules_contact.pop.CommentPop
 import com.cl.modules_contact.pop.ContactEnvPop
 import com.cl.modules_contact.pop.ContactPotionPop
 import com.cl.modules_contact.pop.ContactReportPop
+import com.cl.modules_contact.pop.RewardPop
 import com.cl.modules_contact.request.ContactEnvData
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
+import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.ContactViewModel
+import com.cl.modules_contact.widget.emoji.BitmapProvider
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import dagger.hilt.android.AndroidEntryPoint
-import hilt_aggregated_deps._dagger_hilt_android_internal_managers_ViewComponentManager_ViewWithFragmentComponentBuilderEntryPoint
-import java.util.Date
 import javax.inject.Inject
 
 
@@ -61,6 +69,19 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
     }
 
     override fun initView(view: View) {
+        binding.superLikeLayout.provider = BitmapProvider.Builder(context)
+            .setDrawableArray(
+                intArrayOf(
+                    R.mipmap.emoji_one,
+                    R.mipmap.emoji_two,
+                    R.mipmap.emoji_three,
+                    R.mipmap.emoji_four,
+                    R.mipmap.emoji_five,
+                    R.mipmap.emoji_six,
+                )
+            )
+            .build()
+
         // 数量的显示
         ViewUtils.setVisible(mViewMode.userinfoBean?.eventCount != 0, binding.vvMsgNumber)
         ViewUtils.setVisible(TextUtils.isEmpty(mViewMode.userinfoBean?.avatarPicture), binding.noheadShow)
@@ -121,7 +142,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
      * 条目点击事件
      */
     private fun initAdapterClick() {
-        adapter.addChildClickViewIds(R.id.tv_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_desc)
+        adapter.addChildClickViewIds(R.id.tv_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? NewPageData.Records
             mViewMode.updateCurrentPosition(position)
@@ -151,18 +172,55 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     } else {
                         mViewMode.unlike(LikeReq(learnMoreId = item?.learnMoreId, likeId = item?.id.toString(), type = "moments"))
                     }
+
+                    //  点赞效果
+                    val itemPosition = IntArray(2)
+                    val superLikePosition = IntArray(2)
+                    view.getLocationOnScreen(itemPosition)
+                    binding.superLikeLayout.getLocationOnScreen(superLikePosition)
+                    val x: Int = itemPosition[0] + view.width / 2
+                    val y: Int = itemPosition[1] - superLikePosition[1] + view.height / 2
+                    logI("x = $x, y = $y")
+                    logI("width = ${view.width}, height = ${view.height}")
+                    binding.superLikeLayout.launch(x, y)
+
+                    // 震动
+                    SoundPoolUtil.instance.startVibrator(context = context)
                 }
 
                 R.id.cl_gift -> {
-                    // todo 打赏
+                    //  打赏
+                    if (item?.userId == mViewMode.userinfoBean?.userId) {
+                        extracted(view.findViewById(R.id.curing_box_gift))
+                        return@setOnItemChildClickListener
+                    }
+                    XPopup.Builder(context)
+                        .isDestroyOnDismiss(false)
+                        .dismissOnTouchOutside(true)
+                        .asCustom(
+                            context?.let {
+                                RewardPop(it, onRewardListener = { oxygenNum ->
+                                    mViewMode.updateRewardOxygen(oxygenNum.toInt())
+                                    mViewMode.reward(
+                                        RewardReq(
+                                            momentsId = item?.id.toString(),
+                                            oxygenNum = oxygenNum,
+                                            type = ContactCommentActivity.KEY_MOMENTS,
+                                            relationId = item?.id.toString()
+                                        )
+                                    )
+                                })
+                            }
+                        ).show()
                 }
 
                 R.id.cl_chat -> {
-                    // todo 聊天
+                    // 聊天
+                    toCommentPop(item, position, adapter)
                 }
 
                 R.id.rl_point -> {
-                    // todo 点击三个点
+                    // 点击三个点
                     XPopup.Builder(context)
                         .popupPosition(PopupPosition.Left)
                         .dismissOnTouchOutside(true)
@@ -187,7 +245,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                             .asCustom(
                                                 ContactReportPop(
                                                     it,
-                                                    onConfirmAction = {txt ->
+                                                    onConfirmAction = { txt ->
                                                         // 举报
                                                         mViewMode.report(ReportReq(momentId = item?.id.toString(), reportContent = txt))
                                                     })
@@ -218,8 +276,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         ).show()
                 }
 
-                R.id.tv_desc -> {
-                    // todo 跳转到更多聊天记录弹窗
+                R.id.tv_to_chat -> {
+                    //  跳转到更多聊天记录弹窗
+                    toCommentPop(item, position, adapter)
                 }
             }
         }
@@ -246,11 +305,81 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     }
 
+    private fun toCommentPop(item: NewPageData.Records?, position: Int, adapter: BaseQuickAdapter<*, *>) {
+        XPopup.Builder(context)
+            .isDestroyOnDismiss(false)
+            .dismissOnTouchOutside(false)
+            .moveUpToKeyboard(false)
+            .maxHeight((XPopupUtils.getScreenHeight(context) * 0.9f).toInt())
+            .asCustom(
+                context?.let {
+                    CommentPop(it, item?.id, onDismissAction = { commentListData ->
+                        // 更新当前position
+                        val commentsList = this@ContactFragment.adapter.data[position].comments
+                        if (commentListData?.size == 0) return@CommentPop
+                        if (commentListData?.size == commentsList?.size) return@CommentPop
+                        // 实行替换操作
+                        val newCommentsList = mutableListOf<NewPageData.Records.Comments>()
+                        commentListData?.forEach { data ->
+                            val comment = NewPageData.Records.Comments()
+                            comment.commentName = data.commentName
+                            comment.comment = data.comment
+                            newCommentsList.add(comment)
+                        }
+                        // 更新聊天数目集合
+                        this@ContactFragment.adapter.data[position].comments = newCommentsList
+                        // 更新聊天数量
+                        this@ContactFragment.adapter.data[position].comment = commentListData?.size
+                        adapter.notifyItemChanged(position)
+                    })
+                }
+            ).show()
+    }
+
+
+    /**
+     * 差值器 左右抖动 动画
+     */
+    private fun extracted(checkBox: CheckBox) {
+        ObjectAnimator.ofFloat(checkBox, "translationX", 0f, -20f, 0f, 20f, 0f).apply {
+            duration = 300
+            repeatCount = 5
+            interpolator = LinearInterpolator()
+            repeatMode = ValueAnimator.RESTART
+        }.start()
+    }
+
     override fun lazyLoad() {
     }
 
     override fun observe() {
         mViewMode.apply {
+            // 获取聊天评论列表
+            commentListData.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                }
+            })
+            // 打赏
+            rewardData.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    val oxygenNum = mViewMode.rewardOxygen.value
+                    val position = mViewMode.currentPosition.value ?: -1
+                    if (oxygenNum == 0) return@success
+                    if (position == -1) return@success
+
+                    val data = adapter.data[position]
+                    data.reward = oxygenNum?.let { data.reward?.plus(it) }
+                    data.isReward = 1
+
+                    // 刷新当前
+                    adapter.notifyItemChanged(position)
+                }
+            })
+
             // 获取动态
             newPageData.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->

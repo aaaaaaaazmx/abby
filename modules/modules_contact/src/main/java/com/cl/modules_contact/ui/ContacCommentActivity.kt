@@ -11,21 +11,25 @@ import android.widget.CheckBox
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.recyclerview.widget.LinearLayoutManager
+import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.adapter.ContactCommentAdapter
 import com.cl.modules_contact.adapter.EmojiAdapter
 import com.cl.modules_contact.adapter.NineGridAdapter
 import com.cl.modules_contact.databinding.ContactAddCommentBinding
+import com.cl.modules_contact.pop.ContactEnvPop
 import com.cl.modules_contact.pop.ContactPotionPop
 import com.cl.modules_contact.pop.ContactReportPop
 import com.cl.modules_contact.pop.ReplyCommentPop
 import com.cl.modules_contact.pop.RewardPop
 import com.cl.modules_contact.request.CommentByMomentReq
+import com.cl.modules_contact.request.ContactEnvData
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
 import com.cl.modules_contact.request.PublishReq
@@ -34,11 +38,14 @@ import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.viewmodel.ContactCommentViewModel
+import com.cl.modules_contact.widget.emoji.BitmapProvider
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
+import com.tencent.bugly.proguard.v
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 /**
  * 动态详情页面 Content
@@ -56,51 +63,57 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
         // 包括内部的评论回复点击
         ContactCommentAdapter(mutableListOf(),
             replyAction = { replyData ->
-            // 点击回复
-            XPopup.Builder(this@ContactCommentActivity)
-                .isDestroyOnDismiss(false)
-                .dismissOnTouchOutside(true)
-                .autoOpenSoftInput(true)
-                .hasShadowBg(false)
-                .moveUpToKeyboard(true)
-                .asCustom(ReplyCommentPop(
-                    context = this@ContactCommentActivity,
-                    headPic = mViewModel.momentDetailData.value?.data?.avatarPicture,
-                    nickName = mViewModel.momentDetailData.value?.data?.nickName,
-                    commentContent = SpannedString.valueOf(replyData.comment),
-                    commentText = null
-                ) {
-                    // 回复 评论
-                    binding.tvCommentTxt.text = it
-                    if (TextUtils.isEmpty(binding.tvCommentTxt.text)) return@ReplyCommentPop
-                    mViewModel.reply(ReplyReq(comment = binding.tvCommentTxt.text.toString(), commentId = replyData.commentId, replyId = replyData.replyId))
-                }).show()
-        },
-          likeAction = {
-              mViewModel.updateLikeData(LikeReq(learnMoreId = null, likeId = it.replyId, type = KEY_REPLY))
-              mViewModel.likeReq.value?.let { it1 -> mViewModel.like(it1) }
-          },
-          giftAction = { replyData, checkBox ->
-              if (replyData.userId == mViewModel.userinfoBean?.userId) {
-                  // 指定差值器动画
-                  extracted(checkBox)
-                  return@ContactCommentAdapter
-              }
-              XPopup.Builder(this@ContactCommentActivity)
-                  .isDestroyOnDismiss(false)
-                  .dismissOnTouchOutside(true)
-                  .asCustom(
-                      RewardPop(this@ContactCommentActivity, onRewardListener = {
-                          mViewModel.reward(
-                              RewardReq(
-                                  oxygenNum = it,
-                                  type = KEY_REPLY,
-                                  relationId = replyData.replyId
-                              )
-                          )
-                      })
-                  ).show()
-          }
+                // 点击回复
+                XPopup.Builder(this@ContactCommentActivity)
+                    .isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(true)
+                    .autoOpenSoftInput(true)
+                    .hasShadowBg(false)
+                    .moveUpToKeyboard(true)
+                    .asCustom(ReplyCommentPop(
+                        context = this@ContactCommentActivity,
+                        headPic = mViewModel.momentDetailData.value?.data?.avatarPicture,
+                        nickName = mViewModel.momentDetailData.value?.data?.nickName,
+                        commentContent = SpannedString.valueOf(replyData.comment),
+                        commentText = null
+                    ) {
+                        // 回复 评论
+                        binding.tvCommentTxt.text = it
+                        if (TextUtils.isEmpty(binding.tvCommentTxt.text)) return@ReplyCommentPop
+                        mViewModel.reply(ReplyReq(comment = binding.tvCommentTxt.text.toString(), commentId = replyData.commentId, replyId = replyData.replyId))
+                    }).show()
+            },
+            likeAction = {
+                mViewModel.updateLikeData(LikeReq(learnMoreId = null, likeId = it.replyId, type = KEY_REPLY))
+                if (it.isPraise == 0) {
+                    mViewModel.likeReq.value?.let { req -> mViewModel.like(req) }
+                } else {
+                    mViewModel.likeReq.value?.let { req -> mViewModel.unlike(req) }
+                }
+
+                SoundPoolUtil.instance.startVibrator(this@ContactCommentActivity)
+            },
+            giftAction = { replyData, checkBox ->
+                if (replyData.userId == mViewModel.userinfoBean?.userId) {
+                    // 指定差值器动画
+                    extracted(checkBox)
+                    return@ContactCommentAdapter
+                }
+                XPopup.Builder(this@ContactCommentActivity)
+                    .isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(true)
+                    .asCustom(
+                        RewardPop(this@ContactCommentActivity, onRewardListener = {
+                            mViewModel.reward(
+                                RewardReq(
+                                    oxygenNum = it,
+                                    type = KEY_REPLY,
+                                    relationId = replyData.replyId
+                                )
+                            )
+                        })
+                    ).show()
+            }
         )
     }
 
@@ -126,6 +139,19 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
     }
 
     override fun initView() {
+        binding.superLikeLayout.provider = BitmapProvider.Builder(this@ContactCommentActivity)
+            .setDrawableArray(
+                intArrayOf(
+                    com.cl.modules_contact.R.mipmap.emoji_one,
+                    com.cl.modules_contact.R.mipmap.emoji_two,
+                    com.cl.modules_contact.R.mipmap.emoji_three,
+                    com.cl.modules_contact.R.mipmap.emoji_four,
+                    com.cl.modules_contact.R.mipmap.emoji_five,
+                    com.cl.modules_contact.R.mipmap.emoji_six,
+                )
+            )
+            .build()
+
         // 评论适配器
         binding.rvComment.apply {
             layoutManager = LinearLayoutManager(this@ContactCommentActivity)
@@ -234,7 +260,12 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                 // 点赞
                 com.cl.modules_contact.R.id.cl_reply_love -> {
                     mViewModel.updateLikeData(LikeReq(learnMoreId = null, likeId = item?.commentId, type = KEY_COMMENT))
-                    mViewModel.likeReq.value?.let { mViewModel.like(it) }
+                    if (item?.isPraise == 0) {
+                        mViewModel.likeReq.value?.let { mViewModel.like(it) }
+                    } else {
+                        mViewModel.likeReq.value?.let { mViewModel.unlike(it) }
+                    }
+                    SoundPoolUtil.instance.startVibrator(this@ContactCommentActivity)
                 }
             }
         }
@@ -244,9 +275,9 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
      * 差值器 左右抖动 动画
      */
     private fun extracted(checkBox: CheckBox) {
-        ObjectAnimator.ofFloat(checkBox, "translationX", 0f, -100f, 0f, 100f, 0f).apply {
-            duration = 1000
-            repeatCount = 10
+        ObjectAnimator.ofFloat(checkBox, "translationX", 0f, -20f, 0f, 20f, 0f).apply {
+            duration = 300
+            repeatCount = 5
             interpolator = LinearInterpolator()
             repeatMode = ValueAnimator.RESTART
         }.start()
@@ -336,7 +367,33 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                         } else {
                             mViewModel.likeReq.value?.let { it1 -> mViewModel.unlike(it1) }
                         }
+
+                        //  点赞效果
+                        val itemPosition = IntArray(2)
+                        val superLikePosition = IntArray(2)
+                        it.getLocationOnScreen(itemPosition)
+                        binding.superLikeLayout.getLocationOnScreen(superLikePosition)
+                        val x: Int = itemPosition[0] + it.width / 2
+                        val y: Int = itemPosition[1] - superLikePosition[1] + it.height / 2
+                        logI("x = $x, y = $y")
+                        logI("width = ${it.width}, height = ${it.height}")
+                        binding.superLikeLayout.launch(x, y)
+
+                        // 震动
+                        SoundPoolUtil.instance.startVibrator(context = this@ContactCommentActivity)
                     }
+
+                    /**
+                     * 环境信息
+                     */
+                    binding.clEnv.setOnClickListener {
+                        // 点击环境信息
+                        val envInfoData = GSON.parseObjectList(data?.environment, ContactEnvData::class.java).toMutableList()
+                        // 弹出环境信息
+                        XPopup.Builder(this@ContactCommentActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(this@ContactCommentActivity.let { ContactEnvPop(it, envInfoData, data?.nickName, data?.avatarPicture) }).show()
+                    }
+
+
                     binding.clGift.setOnClickListener {
                         //  打赏
                         if (mViewModel.momentDetailData.value?.data?.userId == mViewModel.userinfoBean?.userId) {
@@ -450,17 +507,19 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
 
                 success {
                     mViewModel.likeReq.value?.let {
-                        when(it.type) {
+                        when (it.type) {
                             KEY_COMMENT -> {
+                                // 点赞成功
+                                mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
+                            }
+
+                            KEY_MOMENTS -> {
                                 // 点赞成功
                                 binding.curingBoxLove.isChecked = true
                                 binding.tvLoveNum.text = (binding.tvLoveNum.text.toString().toInt() + 1).toString()
                                 mViewModel.updateCurrentPosition(1)
                             }
-                            KEY_MOMENTS -> {
-                                mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
-                            }
-                            
+
                             KEY_REPLY -> {
                                 mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
                             }
@@ -477,17 +536,18 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
 
                 success {
                     mViewModel.likeReq.value?.let {
-                        when(it.type) {
+                        when (it.type) {
                             KEY_COMMENT -> {
+                                mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
+                            }
+
+                            KEY_MOMENTS -> {
                                 // 取消点赞成功
                                 binding.curingBoxLove.isChecked = false
                                 binding.tvLoveNum.text = (binding.tvLoveNum.text.toString().toInt() - 1).toString()
                                 mViewModel.updateCurrentPosition(0)
                             }
-                            KEY_MOMENTS -> {
-                                mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
-                            }
-                            
+
                             KEY_REPLY -> {
                                 mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
                             }
@@ -564,8 +624,10 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
 
         // 动态
         const val KEY_MOMENTS = "moments"
+
         // 评论
         const val KEY_COMMENT = "comment"
+
         // 回复
         const val KEY_REPLY = "reply"
     }

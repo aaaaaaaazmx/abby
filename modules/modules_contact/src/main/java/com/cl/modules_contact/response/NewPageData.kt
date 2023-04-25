@@ -23,7 +23,7 @@ data class NewPageData(
 
     data class Records(
         val id: Int? = null,
-        val userId: Int? = null,
+        val userId: String? = null,
         val avatarPicture: String? = null,
         val learnMoreId: String? = null,
         val nickName: String? = null,
@@ -38,12 +38,13 @@ data class NewPageData(
         @set:JvmName("setIsFoo")
         var isPraise: Int? = null,
         val openData: Int? = null,
-        val reward: String? = null,
+        var reward: Int? = null,
         var praise: Int? = null,
         val hot: String? = null,
         val isTop: String? = null,
-        val isReward: Int? = null,
-        val comment: String? = null,
+        @set:JvmName("setIsFod")
+        var isReward: Int? = null,
+        var comment: Int? = null,
         val isComment: String? = null,
         val healthStatus: String? = null,
         val createTime: String? = null,
@@ -53,7 +54,7 @@ data class NewPageData(
         val size: String? = null,
         val current: String? = null,
         val imageUrls: MutableList<ImageUrls>? = null,
-        val comments: MutableList<Comments>? = null,
+        var comments: MutableList<Comments>? = null,
         val mentions: MutableList<Mentions>? = null,
     ) : BaseBean() {
 
@@ -79,9 +80,9 @@ data class NewPageData(
 
         data class Comments(
             val abbyId: String? = null,
-            val comment: String? = null,
+            var comment: String? = null,
             val commentId: String? = null,
-            val commentName: String? = null,
+            var commentName: String? = null,
             val createTime: String? = null,
             val parentComentId: String? = null,
             val picture: String? = null,

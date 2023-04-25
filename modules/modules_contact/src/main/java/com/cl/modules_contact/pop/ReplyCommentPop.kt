@@ -83,6 +83,9 @@ class ReplyCommentPop(
                 dismiss()
             }
 
+            if (tvCommentTxt.text.toString().isNotEmpty()) {
+                tvCommentTxt.setSelection(tvCommentTxt.text.length)
+            }
         }
     }
 }

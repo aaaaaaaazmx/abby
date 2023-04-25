@@ -494,5 +494,14 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <com.cl.modules_contact.widget.emoji.SuperLikeLayout
+            android:id="@+id/super_like_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:eruption_element_amount="10"
+            app:max_eruption_total="100"
+            app:show_emoji="true"
+            app:show_text="false" />
+
     </RelativeLayout>
 </layout>
