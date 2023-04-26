@@ -205,7 +205,10 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         // floatbutton
         binding.flButton.setOnClickListener {
             // todo 跳转到发布动态页面
-            ToastUtil.shortShow("FLAT")
+            // ToastUtil.shortShow("FLAT")
+            context?.let {
+                it.startActivity(Intent(it, PostActivity::class.java))
+            }
         }
 
         // 头像点击

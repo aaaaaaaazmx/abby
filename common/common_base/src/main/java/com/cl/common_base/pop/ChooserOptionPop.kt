@@ -1,9 +1,9 @@
-package com.cl.modules_my.widget
+package com.cl.common_base.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
-import com.cl.modules_my.R
-import com.cl.modules_my.databinding.MyChooserOptionBinding
+import com.cl.common_base.R
+import com.cl.common_base.databinding.MyChooserOptionBinding
 import com.lxj.xpopup.core.BottomPopupView
 
 /**

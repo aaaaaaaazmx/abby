@@ -27,6 +27,10 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.hardware.sensor.accelerometer" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+
     <uses-permission
         android:name="android.permission.REQUEST_INSTALL_PACKAGES"
         tools:node="remove" />
@@ -58,5 +62,6 @@
         <activity
             android:name=".ui.ContactCommentActivity"
             android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".ui.PostActivity" />
     </application>
 </manifest>

@@ -1,7 +1,9 @@
 package com.cl.modules_contact.pop
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.text.SpannedString
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.util.ViewUtils
@@ -44,6 +46,7 @@ class ReplyCommentPop(
         a
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate() {
         super.onCreate()
 
@@ -85,6 +88,12 @@ class ReplyCommentPop(
 
             if (tvCommentTxt.text.toString().isNotEmpty()) {
                 tvCommentTxt.setSelection(tvCommentTxt.text.length)
+            }
+
+            tvCommentTxt.doAfterTextChanged {
+                it?.length.let { length ->
+                    tvEms.text = "$length/140"
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
+import com.cl.modules_contact.response.MentionData
 import com.cl.modules_contact.response.MessageListData
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.PublishData
@@ -116,4 +117,11 @@ interface HttpContactApiService {
      */
     @POST("abby/moments/reward")
     fun reward(@Body requestBody: RewardReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取@人的列表
+     */
+    @FormUrlEncoded
+    @POST("abby/moments/getMentionList")
+    fun getMentionList(@Field("searchName")searchName: String): Flow<HttpResult<MutableList<MentionData>>>
 }

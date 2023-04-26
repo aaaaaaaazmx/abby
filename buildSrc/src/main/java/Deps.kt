@@ -75,11 +75,11 @@ object Version {
 
     const val glide = "4.13.2"
 
-    const val permission = "1.6.4"
+    const val permission = "1.7.1"
 
-    const val choosePhoto = "v3.10.6"
+    const val choosePhoto = "v3.11.1"
 
-    const val choosePhotoCamera = "v3.10.6"
+    const val choosePhotoCamera = "v3.11.1"
 
     const val epMedia = "v1.0.1"
 

@@ -25,7 +25,7 @@
         android:id="@+id/cl_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:padding="10dp"
         tools:ignore="MissingConstraints">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +46,7 @@
                     circleUrl='@{data.avatarPictures.size() > 0 ? data.avatarPictures[0] : ""}'
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:visibility="@{data.avatarPictures.size() > 0 ? TextUtils.isEmpty(data.avatarPictures[0]) ? View.GONE : View.VISIBLE : View.GONE}"
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0])  &amp;&amp; data.avatarPictures[0].contains("http") ? View.VISIBLE : View.GONE : View.GONE}'
                     tools:src="@mipmap/ic_launcher" />
 
 
@@ -56,12 +56,12 @@
                     android:layout_height="40dp"
                     android:background="@drawable/head_bg"
                     android:gravity="center"
-                    android:text='@{data.avatarPictures.size() > 0 ? data.contentBlod[0].substring(0,1) : ""}'
+                    android:text='@{data.avatarPictures.size() > 0 ? data.avatarPictures[0].substring(0,1) : ""}'
                     android:textColor="@color/mainColor"
                     android:textColorHint="@color/mainColor"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:visibility="@{data.avatarPictures.size() > 0 ? TextUtils.isEmpty(data.avatarPictures[0]) ? View.VISIBLE : View.GONE : View.GONE}" />
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0]) &amp;&amp; !data.avatarPictures[0].contains("http") ? View.VISIBLE : View.GONE : View.GONE}' />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!--这个是多个头像才显示的-->
@@ -74,8 +74,22 @@
                     circleUrl='@{data.avatarPictures.size() > 0 ? data.avatarPictures[0] : ""}'
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:visibility="@{data.avatarPictures.size() > 0 ? TextUtils.isEmpty(data.avatarPictures[0]) ? View.GONE : View.VISIBLE : View.GONE}"
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0]) &amp;&amp; data.avatarPictures[0].contains("http") ? View.VISIBLE : View.INVISIBLE : View.INVISIBLE}'
                     tools:src="@mipmap/ic_launcher" />
+
+
+                <TextView
+                    android:text='@{data.avatarPictures.size() > 0 &amp;&amp;  !data.avatarPictures[0].contains("http") ? data.avatarPictures[0].substring(0,1) : ""}'
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0]) &amp;&amp; !data.avatarPictures[0].contains("http") ? View.VISIBLE : View.GONE : View.GONE}' />
+
 
                 <ImageView
                     app:layout_constraintCircle="@id/ivAvatar_one"
@@ -85,8 +99,25 @@
                     circleUrl='@{data.avatarPictures.size() > 1 ? data.avatarPictures[1] : ""}'
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:visibility="@{data.avatarPictures.size() > 1 ? TextUtils.isEmpty(data.avatarPictures[1]) ? View.GONE : View.VISIBLE : View.GONE}"
+                    android:visibility='@{data.avatarPictures.size() > 1 ? !TextUtils.isEmpty(data.avatarPictures[1])  &amp;&amp; data.avatarPictures[1].contains("http") ? View.VISIBLE : View.GONE : View.GONE}'
                     tools:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    app:layout_constraintCircle="@id/ivAvatar_one"
+                    app:layout_constraintCircleAngle="120"
+                    app:layout_constraintCircleRadius="20dp"
+                    android:text='@{data.avatarPictures.size() > 1 &amp;&amp;  !data.avatarPictures[1].contains("http") ? data.avatarPictures[1].substring(0,1) : ""}'
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility='@{data.avatarPictures.size() > 1 ? !TextUtils.isEmpty(data.avatarPictures[1]) &amp;&amp; !data.avatarPictures[1].contains("http") ? View.VISIBLE : View.GONE : View.GONE}' />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
