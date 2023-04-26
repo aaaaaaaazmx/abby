@@ -434,7 +434,7 @@ class CommentPop(
 
             success {
                 // 隐藏和显示空背景
-                ViewUtils.setGone(binding?.ivEmptyBg, null == data)
+                ViewUtils.setGone(binding?.ivEmptyBg, null != data)
                 if (null == data) return@success
 
                 val list = data
