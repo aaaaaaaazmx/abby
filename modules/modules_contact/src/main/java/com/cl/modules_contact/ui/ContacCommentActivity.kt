@@ -3,6 +3,9 @@ package com.cl.modules_contact.ui
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.graphics.Color
 import android.text.SpannedString
 import android.text.TextUtils
@@ -23,6 +26,7 @@ import com.cl.modules_contact.adapter.ContactCommentAdapter
 import com.cl.modules_contact.adapter.EmojiAdapter
 import com.cl.modules_contact.adapter.NineGridAdapter
 import com.cl.modules_contact.databinding.ContactAddCommentBinding
+import com.cl.modules_contact.pop.ContactDeletePop
 import com.cl.modules_contact.pop.ContactEnvPop
 import com.cl.modules_contact.pop.ContactPotionPop
 import com.cl.modules_contact.pop.ContactReportPop
@@ -113,6 +117,18 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                             )
                         })
                     ).show()
+            },
+            onDeleteAction = {
+                // 删除评论
+                mViewModel.deleteReply(it.replyId.toString())
+            },
+            onCopyAction = {
+                // 复制内容
+                val cm: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                // 创建普通字符型ClipData
+                val mClipData = ClipData.newPlainText("Connect", it.comment)
+                // 将ClipData内容放到系统剪贴板里。
+                cm?.setPrimaryClip(mClipData)
             }
         )
     }
@@ -207,6 +223,55 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
             }
         }
 
+        commentAdapter.addChildLongClickViewIds(com.cl.modules_contact.R.id.tvDesc)
+        commentAdapter.setOnItemChildLongClickListener { adapter, view, position ->
+            val item = adapter.getItem(position) as? CommentByMomentData
+            when (view.id) {
+                // 长按评论
+                com.cl.modules_contact.R.id.tvDesc -> {
+                    XPopup.Builder(this@ContactCommentActivity)
+                        .popupPosition(PopupPosition.Top)
+                        .isDestroyOnDismiss(false)
+                        .dismissOnTouchOutside(true)
+                        .isCenterHorizontal(true)
+                        .isClickThrough(false)  //点击透传
+                        .hasShadowBg(false) // 去掉半透明背景
+                        .offsetY(0)
+                        .offsetX(- (view.measuredWidth / 2.2).toInt())
+                        .atView(view)
+                        .asCustom(
+                            ContactDeletePop(this@ContactCommentActivity, onDeleteAction = {
+                                // 删除评论
+                                mViewModel.deleteComment(item?.commentId.toString())
+                            }, onCopyAction = {
+                                // 复制内容
+                                val cm: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                // 创建普通字符型ClipData
+                                val mClipData = ClipData.newPlainText("CommentConnect", item?.comment)
+                                // 将ClipData内容放到系统剪贴板里。
+                                cm?.setPrimaryClip(mClipData)
+                            }).setBubbleBgColor(getColor(R.color.mainColor)) //气泡背景
+                                .setArrowWidth(XPopupUtils.dp2px(this@ContactCommentActivity, 3f))
+                                .setArrowHeight(
+                                    XPopupUtils.dp2px(
+                                        this@ContactCommentActivity,
+                                        3f
+                                    )
+                                )
+                                //.setBubbleRadius(100)
+                                .setArrowRadius(
+                                    XPopupUtils.dp2px(
+                                        this@ContactCommentActivity,
+                                        2f
+                                    )
+                                )
+                        ).show()
+                }
+            }
+            return@setOnItemChildLongClickListener true
+        }
+
+
         // 回复适配器
         commentAdapter.addChildClickViewIds(com.cl.modules_contact.R.id.cl_reply_chat, com.cl.modules_contact.R.id.cl_reply_gift, com.cl.modules_contact.R.id.cl_reply_chat, com.cl.modules_contact.R.id.cl_reply_love)
         commentAdapter.setOnItemChildClickListener { adapter, view, position ->
@@ -286,6 +351,20 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewModel.apply {
+            // 删除回复
+            deleteReplyData.observe(this@ContactCommentActivity, resourceObserver {
+                error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
+                }
+            })
+            // 删除评论
+            deleteCommentData.observe(this@ContactCommentActivity, resourceObserver {
+                error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    mViewModel.commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
+                }
+            })
             // 打赏
             rewardData.observe(this@ContactCommentActivity, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }

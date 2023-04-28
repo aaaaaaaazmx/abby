@@ -4,6 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <variable
+            name="viewModel"
+            type="com.cl.modules_contact.viewmodel.PostViewModel" />
 
     </data>
 
@@ -54,7 +57,7 @@
                 android:background="#F7F7F7"
                 app:layout_constraintTop_toBottomOf="@+id/btn_post" />
 
-            <EditText
+            <com.cl.common_base.widget.edittext.MentionEditText
                 android:id="@+id/et_connect"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
@@ -65,15 +68,20 @@
                 android:maxEms="140"
                 android:padding="10dp"
                 android:textSize="15sp"
+                android:lineSpacingExtra="4dp"
+                android:scrollbars="vertical"
+                android:includeFontPadding="false"
                 app:layout_constraintEnd_toEndOf="@id/btn_post"
                 app:layout_constraintStart_toStartOf="@+id/textView"
                 app:layout_constraintTop_toBottomOf="@+id/vv" />
 
             <TextView
+                app:layout_constraintEnd_toStartOf="@+id/tv_ems"
+                android:maxEms="24"
                 android:id="@+id/tv_link"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginBottom="3dp"
                 android:drawableLeft="@mipmap/trend_link_bg"
                 android:drawablePadding="3dp"
@@ -84,17 +92,19 @@
                 android:textSize="13sp"
                 app:layout_constraintStart_toStartOf="@+id/et_connect"
                 app:layout_constraintTop_toBottomOf="@+id/et_connect"
-                tools:text="Add Link" />
+                tools:text="Add LinkAdd LinkAdd LinkAdd LinkAdd LinkAdd LinkAdd LinkAdd LinkAdd LinkAdd LinkAdd LinkAdd Link" />
 
             <TextView
+                android:gravity="end"
                 android:id="@+id/tv_ems"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="26dp"
                 android:paddingTop="3dp"
                 android:text="0/140"
                 android:textColor="#C4C4C4"
                 android:textSize="15sp"
+                app:layout_constraintStart_toEndOf="@+id/tv_link"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_link"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_link"
@@ -104,7 +114,7 @@
                 android:id="@+id/rv_pic"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="@+id/tv_ems"
                 app:layout_constraintStart_toStartOf="@+id/tv_link"
                 app:layout_constraintTop_toBottomOf="@+id/tv_link" />
@@ -151,6 +161,7 @@
                     android:layout_height="1dp"/>
                 
                 <com.cl.common_base.widget.FeatureItemSwitch
+                    app:itemChecked="true"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
                     app:itemIcon="@mipmap/contact_share_to_public"
@@ -167,6 +178,7 @@
 
                 <!--植物数据-->
                 <com.cl.common_base.widget.FeatureItemSwitch
+                    app:itemChecked="true"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
                     app:itemIcon="@mipmap/contact_share_to_public"
@@ -189,6 +201,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     app:itemTitle="Mention someone" />
+
+                <View
+                    android:background="#F7F7F7"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"/>
+
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

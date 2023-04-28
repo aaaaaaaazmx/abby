@@ -2,6 +2,8 @@ package com.cl.modules_contact.repository
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
+import com.cl.modules_contact.request.AddTrendData
+import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
@@ -75,5 +77,22 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
 
     fun reward(req: RewardReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.reward(req)
+    }
+
+    fun uploadImg(body: List<MultipartBody.Part>): Flow<HttpResult<MutableList<String>>> {
+        return remoteRepository.uploadImages(body)
+    }
+
+    fun add(req: AddTrendReq): Flow<HttpResult<AddTrendData>> {
+        return remoteRepository.add(req)
+    }
+
+
+    fun deleteComment(commentId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deleteComment(commentId)
+    }
+
+    fun deleteReply(replyId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deleteReply(replyId)
     }
 }

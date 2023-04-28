@@ -2,6 +2,7 @@ package com.cl.modules_contact.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -10,25 +11,35 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.TextUtils
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import com.cl.common_base.base.BaseActivity
-import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.ChooserOptionPop
+import com.cl.common_base.util.SoftInputUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
+import com.cl.common_base.widget.edittext.bean.MentionUser
+import com.cl.common_base.widget.edittext.listener.EditDataListener
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactPostActivityBinding
 import com.cl.modules_contact.decoraion.FullyGridLayoutManager
 import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
-import com.cl.modules_contact.decoraion.GridSpacingItemDecoration
+import com.cl.modules_contact.pop.ContactLinkPop
 import com.cl.modules_contact.pop.ContactListPop
+import com.cl.modules_contact.pop.ContactPhPop
+import com.cl.modules_contact.pop.TdsPop
+import com.cl.modules_contact.request.AddTrendReq
+import com.cl.modules_contact.request.ImageUrl
+import com.cl.modules_contact.request.Mention
 import com.cl.modules_contact.response.ChoosePicBean
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.basic.PictureSelector
@@ -42,10 +53,11 @@ import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.utils.DensityUtil
 import com.luck.picture.lib.utils.MediaUtils
 import com.luck.picture.lib.utils.PictureFileUtils
-import com.luck.picture.lib.utils.ToastUtils
 import com.lxj.xpopup.XPopup
-import com.lxj.xpopup.util.XPopupUtils
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.File
 import javax.inject.Inject
 
@@ -94,6 +106,67 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
     }
 
     override fun observe() {
+        viewModel.apply {
+            // 上传图片回调
+            uploadImg.observe(this@PostActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    showProgressLoading()
+                }
+                success {
+                    val imageUrlsList = mutableListOf<ImageUrl>()
+                    data?.forEach {
+                        val oneArray = it.split("com/")
+                        if (oneArray.isNotEmpty()) {
+                            if (oneArray.isNotEmpty()) {
+                                val result = oneArray[1].split("?")
+                                if (result.isNotEmpty()) {
+                                    logI(result[0])
+                                    // 更新用户信息
+                                    imageUrlsList.add(ImageUrl(imageUrl = result[0]))
+                                }
+                            }
+                        }
+                    }
+
+                    // @的人
+                    val mentions: MutableList<Mention> = mutableListOf()
+                    binding.etConnect.formatResult?.userList?.forEach {
+                        mentions.add(Mention(it.abbyId, it.name, it.picture, it.id))
+                    }
+
+                    // 图片上传成功之后，就是发帖
+                    add(
+                        AddTrendReq(
+                            content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
+                            imageUrls = imageUrlsList,
+                            link = if (binding.tvLink.text.toString() == "Add Link") null else binding.tvLink.text.toString(),
+                            mentions = mentions,
+                            openData = if (binding.plantToVisible.isItemChecked) 1 else 0,
+                            ph = viewModel.phValue.value,
+                            syncTrend = if (binding.shareToPublic.isItemChecked) 1 else 0,
+                            taskId = null,
+                            tds = binding.optionTds.itemValue
+                        )
+                    )
+                }
+            })
+
+            // 发帖回调
+            addData.observe(this@PostActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 这个需要回调给Fragment，通知刷新界面
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
+            })
+        }
     }
 
     override fun initData() {
@@ -104,25 +177,171 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
     private fun initClick() {
 
+        binding.etConnect.editDataListener = object : EditDataListener {
+            override fun onEditAddAt(str: String?, start: Int, length: Int) {
+            }
+
+            override fun onEditAddHashtag(start: Int) {
+            }
+
+            override fun onCloseSearchView() {
+            }
+        }
+
+        binding.optionPh.setOnClickListener {
+            XPopup.Builder(this@PostActivity)
+                .dismissOnTouchOutside(true)
+                .isDestroyOnDismiss(false)
+                .asCustom(
+                    ContactPhPop(this@PostActivity,
+                        txt = if (TextUtils.isEmpty(viewModel.phValue.value)) 7.0f else viewModel.phValue.value?.toFloat(),
+                        onConfirmAction = { phValue ->
+                            // tds`
+                            binding.optionPh.itemValue = phValue
+                            viewModel.setPhValue(phValue)
+                        })
+                ).show()
+        }
+
+        // tds
+        binding.optionTds.setOnClickListener {
+            XPopup.Builder(this@PostActivity)
+                .dismissOnTouchOutside(true)
+                .isDestroyOnDismiss(false)
+                .moveUpToKeyboard(true)
+                .asCustom(
+                    TdsPop(this@PostActivity,
+                        txt = binding.optionTds.itemValue,
+                        onConfirmAction = { txt ->
+                            // tds
+                            binding.optionTds.itemValue = txt
+                        })
+                ).show()
+        }
+
+        // 输入超链接
+        binding.tvLink.setOnClickListener {
+            // 超链接
+            XPopup.Builder(this@PostActivity)
+                .isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(false)
+                .moveUpToKeyboard(true)
+                .asCustom(
+                    ContactLinkPop(
+                        this@PostActivity,
+                        onConfirmAction = { txt ->
+                            // 超链接
+                            binding.tvLink.text = txt
+                        })
+                ).show()
+        }
+
+        binding.textView.setOnClickListener { finish() }
+
+        binding.btnPost.setOnClickListener {
+            if (isFastClick()) {
+                // 所有内容都是空的，
+                if (picList.size == 1 && TextUtils.isEmpty(binding.etConnect.text.toString())) {
+                    ToastUtil.shortShow("Cannot post when empty")
+                    return@setOnClickListener
+                }
+                // 图片是空的，但是有文字
+                if (picList.size == 1) {
+                    // @的人
+                    val mentions: MutableList<Mention> = mutableListOf()
+                    binding.etConnect.formatResult?.userList?.forEach {
+                        mentions.add(Mention(it.abbyId, it.name, it.picture, it.id))
+                    }
+
+                    // 图片上传成功之后，就是发帖
+                    viewModel.add(
+                        AddTrendReq(
+                            content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
+                            imageUrls = null,
+                            link = if (binding.tvLink.text.toString() == "Add Link") null else binding.tvLink.text.toString(),
+                            mentions = mentions,
+                            openData = if (binding.plantToVisible.isItemChecked) 1 else 0,
+                            ph = viewModel.phValue.value,
+                            syncTrend = if (binding.shareToPublic.isItemChecked) 1 else 0,
+                            taskId = null,
+                            tds = binding.optionTds.itemValue
+                        )
+                    )
+                    return@setOnClickListener
+                }
+
+                // 上传图片 && 发帖
+                val addType = picList.firstOrNull { it.type == ChoosePicBean.KEY_TYPE_ADD }
+                if (addType == null) {
+                    viewModel.uploadImg(upLoadImage(picList))
+                } else {
+                    picList.filter { it.type != ChoosePicBean.KEY_TYPE_ADD }.apply {
+                        viewModel.uploadImg(upLoadImage(this.toMutableList()))
+                    }
+                }
+            } else {
+                logI("2312312313")
+            }
+        }
+
         binding.peopleAt.setOnClickListener {
             // @人 跳转到联系人列表
             XPopup.Builder(this@PostActivity)
                 .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(false)
-                .moveUpToKeyboard(false)
                 .autoOpenSoftInput(false)
+                .moveUpToKeyboard(false)
+                .autoFocusEditText(false)
                 .asCustom(
                     ContactListPop(this@PostActivity,
                         onConfirmAction = {
-                            // todo 插入话题
+                            //  插入@的人
+                            it.forEach { mentionData ->
+                                val index: Int = binding.etConnect.selectionStart
+                                binding.etConnect.editableText.insert(index, "@")
+                                binding.etConnect.insert(MentionUser(mentionData.userId ?: "", mentionData.nickName ?: "", mentionData.abbyId ?: "", mentionData.nickName ?: "", mentionData.picture ?: ""))
+                            }
                         })
                 ).show()
         }
 
     }
 
-    private fun initAdapter() {
+    /**
+     * 表单提交
+     * 多张表单提交
+     */
+    private fun upLoadImage(path: MutableList<ChoosePicBean>): List<MultipartBody.Part> {
+        //1.创建MultipartBody.Builder对象
+        val builder = MultipartBody.Builder()
+            //表单类型
+            .setType(MultipartBody.FORM)
 
+        path.forEach { bean ->
+            //2.获取图片，创建请求体
+            bean.picAddress?.let {
+                val file = File(it)
+                //表单类x型
+                //表单类型
+                val body: RequestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+
+                //3.调用MultipartBody.Builder的addFormDataPart()方法添加表单数据
+                /**
+                 * ps:builder.addFormDataPart("code","123456");
+                 * ps:builder.addFormDataPart("file",file.getName(),body);
+                 */
+                builder.addFormDataPart("imgType", "trend") //传入服务器需要的key，和相应value值
+                builder.addFormDataPart("files", file.name, body) //添加图片数据，body创建的请求体
+            }
+        }
+        //4.创建List<MultipartBody.Part> 集合，
+        //  调用MultipartBody.Builder的build()方法会返回一个新创建的MultipartBody
+        //  再调用MultipartBody的parts()方法返回MultipartBody.Part集合
+        return builder.build().parts
+    }
+
+
+    private fun initAdapter() {
         chooserAdapter.addChildClickViewIds(R.id.iv_pic_add, R.id.img_contact_pic_delete)
         chooserAdapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? ChoosePicBean
@@ -174,7 +393,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                                         .isMaxSelectEnabledMask(true) // 是否显示蒙层
                                                         .isDisplayCamera(false) //是否显示摄像
                                                         .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                                        .setMaxSelectNum(9)
+                                                        .setMaxSelectNum(9 - chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size)
                                                         .setSelectorUIStyle(style)
                                                         .forResult(PictureConfig.CHOOSE_REQUEST)
                                                 }
@@ -207,7 +426,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                                         .isMaxSelectEnabledMask(true) // 是否显示蒙层
                                                         .isDisplayCamera(false) //是否显示摄像
                                                         .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                                        .setMaxSelectNum(9)
+                                                        .setMaxSelectNum(9 - chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size)
                                                         .setSelectorUIStyle(style)
                                                         .forResult(PictureConfig.CHOOSE_REQUEST)
                                                 }
@@ -221,8 +440,13 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
                 R.id.img_contact_pic_delete -> {
                     this@PostActivity.chooserAdapter.removeAt(position)
-                    if (this@PostActivity.chooserAdapter.data.size == 8) {
-                        this@PostActivity.chooserAdapter.addData(adapter.data.size, ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD, picAddress = ""))
+                    picList.removeAt(position)
+                    // 在最后面添加到ADD
+                    if (this@PostActivity.chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_ADD }.size == 1) {
+                        return@setOnItemChildClickListener
+                    } else {
+                        this@PostActivity.chooserAdapter.addData(ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD, picAddress = ""))
+                        picList.add(ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD, picAddress = ""))
                     }
                 }
             }
@@ -283,40 +507,44 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
+            // camera
             REQUEST_CAPTURE -> {
                 if (resultCode == RESULT_OK && imageUri != null) {
-                    if (picList.size + 1 > 10) {
-                        chooserAdapter.removeAt(0)
-                        return
-                    } else if (1 + picList.size == 10) {
-                        // 隐藏加号。
-                        chooserAdapter.removeAt(chooserAdapter.data.size - 1)
-                    }
                     // gotoClipActivity(imageUri)
                     val cropImagePath = getRealFilePathFromUri(applicationContext, imageUri)
                     val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = cropImagePath)
                     picList.add(0, chooseBean)
                     chooserAdapter.addData(0, chooseBean)
-                }
-            }
 
-            REQUEST_CROP_PHOTO -> {
-                // 根据返回的URi
-                if (resultCode == RESULT_OK && data != null) {
-                    val uri = data.data
-                    uri?.let {
-                        // 上传一张图片
-                        // 图片类型（head-头像、trend-动态）
-                        // mViewModel.uploadImg(upLoadImage(cropImagePath ?: ""))
+                    if (chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 9) {
+                        // 移除最后一张加号
+                        chooserAdapter.data.removeAt(chooserAdapter.data.size - 1)
+                        picList.removeAt(picList.size - 1)
+                    } else {
+
                     }
-                    // 获取到路径
+
+                    /* if (picList.size + 1 > 10) {
+                         chooserAdapter.removeAt(0)
+                         picList.removeAt(0)
+                         return
+                     } else if (1 + picList.size == 10) {
+                         // 隐藏加号。
+                         chooserAdapter.removeAt(chooserAdapter.data.size - 1)
+                         picList.removeAt(chooserAdapter.data.size - 1)
+                     }*/
                 }
             }
 
+            // 选择照片
             PictureConfig.CHOOSE_REQUEST -> {
                 val result = PictureSelector.obtainSelectorList(data)
                 if (result.isNullOrEmpty()) return
                 analyticalSelectResults(result)
+                if (chooserAdapter.data.size == 10) {
+                    chooserAdapter.removeAt(9)
+                    picList.removeAt(9)
+                }
             }
         }
     }
@@ -325,13 +553,11 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
      * 选择照片返回结果
      */
     private fun analyticalSelectResults(result: ArrayList<LocalMedia>) {
-        if (result.size + picList.size > 10) {
-            chooserAdapter.removeAt(0)
-            return
-        } else if (result.size + picList.size == 10) {
-            // 隐藏加号。
-            chooserAdapter.removeAt(chooserAdapter.data.size - 1)
-        }
+        /* if (result.size + chooserAdapter.data.size == 10) {
+             chooserAdapter.data.removeAt(9)
+             picList.removeAt(9)
+         }*/
+
         for (media in result) {
             if (media.width == 0 || media.height == 0) {
                 // 如果是图片
@@ -374,6 +600,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = path)
                 picList.add(0, chooseBean)
                 chooserAdapter.addData(0, chooseBean)
+
                 /*if (PictureMimeType.isContent(path)) {
                     // 调准到裁剪页面
                     gotoClipActivity(
@@ -392,6 +619,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
             }
         }
+
     }
 
     /**
@@ -428,6 +656,35 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         return data
     }
 
+
+    /**
+     * 快速点击
+     */
+    // 两次点击间隔不能少于1000ms
+    private val FAST_CLICK_DELAY_TIME = 1000
+    private var lastClickTime: Long = 0
+
+    private fun isFastClick(): Boolean {
+        var flag = true
+        val currentClickTime = System.currentTimeMillis()
+        if (currentClickTime - lastClickTime <= FAST_CLICK_DELAY_TIME) {
+            flag = false
+        }
+        lastClickTime = currentClickTime
+        return flag
+    }
+
+    override fun onResume() {
+        super.onResume()
+        logI("onResume")
+        SoftInputUtils.hideSoftInput(this@PostActivity)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        logI("onStart")
+        SoftInputUtils.hideSoftInput(this@PostActivity)
+    }
 
     companion object {
         // 请求相机

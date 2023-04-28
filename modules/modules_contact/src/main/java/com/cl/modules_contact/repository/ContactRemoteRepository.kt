@@ -3,6 +3,8 @@ package com.cl.modules_contact.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
+import com.cl.modules_contact.request.AddTrendData
+import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
@@ -83,6 +85,22 @@ class ContactRemoteRepository @Inject constructor() {
 
     fun reward(req: RewardReq): Flow<HttpResult<BaseBean>> {
         return service.reward(req)
+    }
+
+    fun uploadImages(body: List<MultipartBody.Part>): Flow<HttpResult<MutableList<String>>> {
+        return service.uploadImages(body)
+    }
+
+    fun add(req: AddTrendReq): Flow<HttpResult<AddTrendData>> {
+        return service.add(req)
+    }
+
+    fun deleteComment(commentId: String): Flow<HttpResult<BaseBean>> {
+        return service.deleteComment(commentId)
+    }
+
+    fun deleteReply(replyId: String): Flow<HttpResult<BaseBean>> {
+        return service.deleteReply(replyId)
     }
 
 

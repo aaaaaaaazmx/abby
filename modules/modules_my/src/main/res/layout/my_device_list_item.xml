@@ -202,7 +202,7 @@
             android:layout_height="35dp"
             android:layout_marginStart="17dp"
             android:background="@drawable/background_main_color_r6"
-            android:text="Jump to Device"
+            android:text="Go to Device"
             android:textAllCaps="false"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"

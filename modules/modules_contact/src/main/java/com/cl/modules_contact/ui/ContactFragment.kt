@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
@@ -133,6 +135,8 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
             ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
             ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
             ClassicsFooter.REFRESH_FOOTER_NOTHING = "No more data"
+            ClassicsFooter.REFRESH_FOOTER_FINISH = "Loading completed"
+            ClassicsFooter.REFRESH_FOOTER_FAILED = "Loading failed"
 
             // 刷新监听
             setOnRefreshListener {
@@ -204,10 +208,10 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
         // floatbutton
         binding.flButton.setOnClickListener {
-            // todo 跳转到发布动态页面
+            // 跳转到发布动态页面
             // ToastUtil.shortShow("FLAT")
             context?.let {
-                it.startActivity(Intent(it, PostActivity::class.java))
+                startActivityLauncher.launch(Intent(it, PostActivity::class.java))
             }
         }
 
@@ -602,6 +606,18 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 topMargin = insets.systemWindowInsetTop
             }
             return@setOnApplyWindowInsetsListener insets
+        }
+    }
+
+
+
+    /**
+     * 回调刷新页面
+     */
+    private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == AppCompatActivity.RESULT_OK) {
+            // 重新请求数据
+            mViewMode.getNewPage(NewPageReq(current = 1, size = 10))
         }
     }
 

@@ -2,10 +2,11 @@ package com.cl.modules_contact.service
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.HttpResult
+import com.cl.modules_contact.request.AddTrendData
+import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
-import com.cl.modules_contact.request.MomentsDetailsReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
@@ -20,6 +21,7 @@ import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.PublishData
 import com.cl.modules_contact.response.ReplyData
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 /**
@@ -124,4 +126,31 @@ interface HttpContactApiService {
     @FormUrlEncoded
     @POST("abby/moments/getMentionList")
     fun getMentionList(@Field("searchName")searchName: String): Flow<HttpResult<MutableList<MentionData>>>
+
+    /**
+     * 新增动态
+     */
+    @POST("abby/moments/add")
+    fun add(@Body requestBody: AddTrendReq): Flow<HttpResult<AddTrendData>>
+
+    /**
+     * 上传图片多张
+     */
+    @Multipart
+    @POST("abby/base/uploadImgs")
+    fun uploadImages(@Part partLis: List<MultipartBody.Part>): Flow<HttpResult<MutableList<String>>>
+
+    /**
+     * 删除评论
+     */
+    @FormUrlEncoded
+    @POST("abby/comment/delete")
+    fun deleteComment(@Field("commentId") commentId: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 删除回复
+     */
+    @FormUrlEncoded
+    @POST("abby/comment/deleteReply")
+    fun deleteReply(@Field("replyId") replyId: String): Flow<HttpResult<BaseBean>>
 }

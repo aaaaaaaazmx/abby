@@ -1,5 +1,6 @@
 package com.cl.modules_contact.adapter
 
+import android.graphics.Color
 import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.text.SpannedString
 import android.widget.CheckBox
@@ -17,9 +18,13 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactItemCommentBinding
+import com.cl.modules_contact.pop.ContactDeletePop
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.ReplyData
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.util.XPopupUtils
 
 /**
  * 评论适配器
@@ -31,6 +36,8 @@ class ContactCommentAdapter(
     private val replyAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
     private val likeAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
     private val giftAction: ((replyData: CommentByMomentData.Replys, view: CheckBox) -> Unit)? = null,
+    private val onDeleteAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
+    private val onCopyAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
 ) : BaseQuickAdapter<CommentByMomentData, BaseDataBindingHolder<ContactItemCommentBinding>>(R.layout.contact_item_comment, data) {
 
     override fun convert(holder: BaseDataBindingHolder<ContactItemCommentBinding>, item: CommentByMomentData) {
@@ -69,6 +76,47 @@ class ContactCommentAdapter(
                         giftAction?.invoke(reply, view.findViewById(R.id.curing_box_gift))
                     }
                 }
+            }
+            replyAdapter.addChildLongClickViewIds(R.id.tvDesc)
+            replyAdapter.setOnItemChildLongClickListener { adapter, view, position ->
+                val reply = adapter.data[position] as CommentByMomentData.Replys
+                when (view.id) {
+                    R.id.tvDesc -> { // 长按弹窗啥的。
+                        // 长按弹窗
+                        XPopup.Builder(context)
+                            .popupPosition(PopupPosition.Top)
+                            .isDestroyOnDismiss(false)
+                            .dismissOnTouchOutside(true)
+                            .isCenterHorizontal(true)
+                            .isClickThrough(false)  //点击透传
+                            .hasShadowBg(false) // 去掉半透明背景
+                            .offsetY(0)
+                            .offsetX(- (view.measuredWidth / 2.2).toInt())
+                            .atView(view)
+                            .asCustom(
+                                ContactDeletePop(context, onDeleteAction = {
+                                    onDeleteAction?.invoke(reply)
+                                }, onCopyAction = {
+                                    onCopyAction?.invoke(reply)
+                                }).setBubbleBgColor(context.getColor(com.cl.common_base.R.color.mainColor)) //气泡背景
+                                    .setArrowWidth(XPopupUtils.dp2px(context, 3f))
+                                    .setArrowHeight(
+                                        XPopupUtils.dp2px(
+                                            context,
+                                            3f
+                                        )
+                                    )
+                                    //.setBubbleRadius(100)
+                                    .setArrowRadius(
+                                        XPopupUtils.dp2px(
+                                            context,
+                                            2f
+                                        )
+                                    )
+                            ).show()
+                    }
+                }
+                true
             }
         }
 

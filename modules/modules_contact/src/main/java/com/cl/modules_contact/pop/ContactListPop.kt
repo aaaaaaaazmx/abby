@@ -28,6 +28,7 @@ import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.response.MentionData
 import com.cl.modules_contact.service.HttpContactApiService
 import com.lxj.xpopup.core.BottomPopupView
+import com.lxj.xpopup.util.KeyboardUtils
 import com.lxj.xpopup.util.XPopupUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -102,10 +103,19 @@ class ContactListPop(
             btnSuccess.setOnClickListener {
                 val list = this@ContactListPop.adapter.data.filter { data -> data.isSelect == true }
                 onConfirmAction?.invoke(list.toMutableList())
+                dismiss()
+            }
+
+            ivClose.setOnClickListener {
+                dismiss()
             }
         }
-
     }
+
+//    override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
+//        super.onWindowFocusChanged(hasWindowFocus)
+//        KeyboardUtils.hideSoftInput(binding?.tvCommentTxt)
+//    }
 
     private fun initAdapter() {
         adapter.addChildClickViewIds(R.id.cl_root)
@@ -213,6 +223,6 @@ class ContactListPop(
     }
 
     override fun getPopupHeight(): Int {
-        return dp2px(XPopupUtils.getScreenHeight(context) * 0.9f)
+        return dp2px(700f)
     }
 }

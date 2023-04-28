@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
+        android:layout_width="116dp"
+        android:layout_height="32dp"
+        android:background="@drawable/background_main_color_r6"
+        tools:ignore="MissingConstraints">
+
+
+        <TextView
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/vv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Delete"
+            android:id="@+id/tv_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            tools:text="Delete" />
+        <View
+            android:id="@+id/vv"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            android:layout_marginStart="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="1dp"
+            android:layout_height="0dp"/>
+
+
+        <TextView
+            app:layout_constraintStart_toEndOf="@+id/vv"
+            android:layout_marginEnd="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="Copy"
+            android:id="@+id/tv_copy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            tools:text="Copy" />
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

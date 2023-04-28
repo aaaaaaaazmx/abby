@@ -67,7 +67,7 @@ object Version {
 
     const val rvHelp = "3.0.10"
 
-    const val xpopup = "2.8.14"
+    const val xpopup = "2.9.19"
 
     const val web = "v5.0.0-alpha.1"
 

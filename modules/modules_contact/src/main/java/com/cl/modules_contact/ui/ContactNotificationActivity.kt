@@ -52,6 +52,8 @@ class ContactNotificationActivity : BaseActivity<ContactNotificationBinding>() {
             ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
             ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
             ClassicsFooter.REFRESH_FOOTER_NOTHING = "No more data" //"没有更多数据了";
+            ClassicsFooter.REFRESH_FOOTER_FINISH = "Loading completed"
+            ClassicsFooter.REFRESH_FOOTER_FAILED = "Loading failed"
 
             // 刷新监听
             setOnRefreshListener {

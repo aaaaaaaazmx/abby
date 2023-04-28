@@ -312,6 +312,62 @@ class ContactCommentViewModel @Inject constructor(private val repository: Contac
         }
     }
 
+    /**
+     * 删除回复
+     */
+    private val _deleteReplyData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val deleteReplyData: LiveData<Resource<com.cl.common_base.BaseBean>> = _deleteReplyData
+    fun deleteReply(replyId: String) = viewModelScope.launch {
+        repository.deleteReply(replyId).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            _deleteReplyData.value = Resource.Loading()
+        }.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _deleteReplyData.value = it
+        }
+    }
+
+    /**
+     * 删除评论
+     */
+    private val _deleteCommentData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val deleteCommentData: LiveData<Resource<com.cl.common_base.BaseBean>> = _deleteCommentData
+    fun deleteComment(commentId: String) = viewModelScope.launch {
+        repository.deleteComment(commentId).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            _deleteCommentData.value = Resource.Loading()
+        }.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _deleteCommentData.value = it
+        }
+    }
+
 
 
 
