@@ -36,6 +36,12 @@
                 android:background="@color/lineBg"
                 android:orientation="vertical">
 
+                <com.cl.common_base.widget.FeatureItemSwitch
+                    android:id="@+id/ft_notif"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="Notifications" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -45,9 +51,128 @@
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="abby"
+                    android:text="Service"
                     android:textColor="#C4C4C4"
                     android:textSize="14sp" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_sub"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="7dp"
+                    app:hideArrow="true"
+                    app:itemTitle="Digital service"
+                    app:itemValue="@string/setting_sub_time" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_purchase"
+                    app:hideArrow="true"
+                    app:itemTitle="Purchase Growing Supplies"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_charge_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:hideArrow="true"
+                    app:itemTitle="@string/setting_sub_charge_time" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="11dp"
+                    android:background="@color/lineBg"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:text="Device"
+                    android:textColor="#C4C4C4"
+                    android:textSize="14sp" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_name"
+                    app:itemTitle="Name"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+
+                <!--删除设备隐藏、因为现在合并设备了。-->
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/dt_delete_device"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:itemTitle="Delete Abby"
+                    app:itemTitleColor="#D61744" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_manage_device"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    app:itemTitle="Manage Device" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_SN"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:hideArrow="true"
+                    app:itemTitle="SN" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_vision"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    app:itemTitle="Version" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_current_fir"
@@ -70,27 +195,18 @@
                     android:layout_height="60dp"
                     app:itemTitle="Firmware upgrade" />
 
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_water_tank"
-                    isOffline="@{data.isOffLine()}"
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="7dp"
-                    app:itemTitle="Drain" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height=".5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@color/lineBg" />
-
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_replant"
-                    isOffline="@{data.isOffLine()}"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    app:itemTitle="Replant" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="11dp"
+                    android:background="@color/lineBg"
+                    android:gravity="center_vertical"
+                    android:paddingStart="20dp"
+                    android:text="Advanced Features"
+                    android:textColor="#C4C4C4"
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -100,8 +216,8 @@
                     android:orientation="vertical">
 
                     <!--童锁、夜间模式布局、暂时隐藏-->
-                    <RelativeLayout
-                        android:visibility="gone"
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.cl.common_base.widget.FeatureItemSwitch
@@ -112,10 +228,10 @@
                             app:itemTitle="@string/my_night" />
 
                         <com.cl.common_base.widget.FeatureItemView
+                            android:layout_below="@+id/ft_night"
                             android:id="@+id/ft_timer"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
-                            android:visibility="gone"
                             app:hideArrow="true"
                             app:itemTitle="@string/my_time"
                             app:itemValue="@string/setting_sub_time" />
@@ -124,14 +240,14 @@
                             android:id="@+id/tv_time_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/ft_child_lock"
+                            android:layout_below="@+id/ft_timer"
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="20dp"
                             android:text="While in sleep mode, notifications will be muted, and light strip will be turned off during the sepcified time."
                             android:textColor="@color/black"
                             android:textSize="11sp"
-                            android:visibility="gone" />
+                             />
 
                         <com.cl.common_base.widget.FeatureItemSwitch
                             android:id="@+id/ft_child_lock"
@@ -152,20 +268,18 @@
                             android:text="After opening, the door will automatically lock when closed.Afterwards, the door can only be opened through the app"
                             android:textColor="@color/black"
                             android:textSize="11sp" />
-                    </RelativeLayout>
+                    </LinearLayout>
 
                     <!--开关手动和自动模式-->
                     <com.cl.common_base.widget.FeatureItemSwitch
+                        android:visibility="gone"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
-                        android:visibility="gone"
                         app:itemTitle="Pro Mode" />
 
-
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:visibility="visible"
                         android:id="@+id/ft_manual_root"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
@@ -213,22 +327,20 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </LinearLayout>
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
                 <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_sub"
+                    android:id="@+id/ft_water_tank"
+                    isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginTop="7dp"
-                    app:hideArrow="true"
-                    app:itemTitle="Digital service"
-                    app:itemValue="@string/setting_sub_time" />
-
-
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_charge_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    app:hideArrow="true"
-                    app:itemTitle="@string/setting_sub_charge_time" />
+                    app:itemTitle="Drain" />
 
                 <View
                     android:layout_width="match_parent"
@@ -238,52 +350,11 @@
                     android:background="@color/lineBg" />
 
                 <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_solo"
+                    android:id="@+id/ft_replant"
+                    isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.GONE : View.GONE}"
-                    app:hideArrow="true"
-                    app:itemTitle="@string/my_solo" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height=".5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@color/lineBg"
-                    android:visibility="@{data.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE}" />
-
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_SN"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    app:hideArrow="true"
-                    app:itemTitle="SN" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height=".5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@color/lineBg" />
-
-
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_manage_device"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@color/white"
-                    app:itemTitle="Manage Device" />
-
-
-                <!--删除设备隐藏、因为现在合并设备了。-->
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/dt_delete_device"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="7dp"
-                    app:itemTitle="Delete Abby"
-                    app:itemTitleColor="#D61744" />
+                    app:itemTitle="Replant" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -294,39 +365,16 @@
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="hey abby APP"
+                    android:text="Account"
                     android:textColor="#C4C4C4"
                     android:textSize="14sp" />
 
-                <com.cl.common_base.widget.FeatureItemSwitch
-                    android:id="@+id/ft_notif"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    app:itemTitle="Notifications" />
-
-                <!--重量单位-->
                 <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_weight"
+                    android:id="@+id/ft_merge_account"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    app:itemTitle="@string/my_weight_unit" />
-
-                <!--缓存-->
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_cache"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    app:itemTitle="@string/my_cache" />
-
-
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_vision"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="8dp"
                     android:background="@color/white"
-                    app:hideArrow="true"
-                    app:itemTitle="Version" />
+                    app:itemTitle="Merge Account" />
 
                 <View
                     android:layout_width="match_parent"
@@ -335,29 +383,24 @@
                     android:layout_marginEnd="20dp"
                     android:background="@color/lineBg" />
 
+                <!--重量单位-->
                 <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_new_vision"
+                    android:id="@+id/ft_weight"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/white"
-                    app:itemTitle="New Version" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    app:itemTitle="@string/my_weight_unit" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="35dp"
                     android:layout_marginEnd="20dp"
-                    android:layout_marginBottom="11dp"
-                    android:text="Account"
-                    android:textColor="#C4C4C4" />
-
+                    android:background="@color/lineBg" />
+                <!--缓存-->
                 <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_merge_account"
+                    android:id="@+id/ft_cache"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="@color/white"
-                    app:itemTitle="Merge Account" />
+                    app:itemTitle="@string/my_cache" />
 
                 <View
                     android:layout_width="match_parent"
@@ -374,6 +417,7 @@
                     android:textStyle="bold"
                     app:itemTitle="@string/profile_sign_out"
                     app:itemTitleColor="#D61744" />
+
             </LinearLayout>
 
         </LinearLayout>
