@@ -12,9 +12,11 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -54,6 +56,8 @@ import com.luck.picture.lib.utils.DensityUtil
 import com.luck.picture.lib.utils.MediaUtils
 import com.luck.picture.lib.utils.PictureFileUtils
 import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
+import com.lxj.xpopup.util.SmartGlideImageLoader
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -98,6 +102,13 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
             )
             adapter = this@PostActivity.chooserAdapter
             this@PostActivity.chooserAdapter.setList(picList)
+
+            // 拖拽
+           /* isNestedScrollingEnabled = true
+            val itemDragAndSwipeCallback = ItemDragAndSwipeCallback(this@PostActivity.chooserAdapter)
+            val itemTouchHelper = ItemTouchHelper(itemDragAndSwipeCallback)
+            itemTouchHelper.attachToRecyclerView(this)
+            this@PostActivity.chooserAdapter.enableDragItem(itemTouchHelper, R.id.iv_chooser_select, true)*/
         }
 
         binding.etConnect.doAfterTextChanged {
@@ -342,7 +353,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
 
     private fun initAdapter() {
-        chooserAdapter.addChildClickViewIds(R.id.iv_pic_add, R.id.img_contact_pic_delete)
+        chooserAdapter.addChildClickViewIds(R.id.iv_pic_add, R.id.img_contact_pic_delete, R.id.iv_chooser_select)
         chooserAdapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? ChoosePicBean
             when (view.id) {
@@ -448,6 +459,23 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                         this@PostActivity.chooserAdapter.addData(ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD, picAddress = ""))
                         picList.add(ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD, picAddress = ""))
                     }
+                }
+
+                R.id.iv_chooser_select -> {
+                    val picList = mutableListOf<String?>()
+                    chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.forEach {
+                        picList.add(it.picAddress)
+                    }
+                    // 图片浏览
+                    XPopup.Builder(this@PostActivity)
+                        .asImageViewer(
+                            (view as? ImageView),
+                            position,
+                            picList.toList(),
+                            OnSrcViewUpdateListener { _, _ ->  },
+                            SmartGlideImageLoader()
+                        )
+                        .show()
                 }
             }
         }
