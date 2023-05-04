@@ -60,4 +60,10 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
                 _userDetail.value = it
             }
     }
+
+    fun parseTime(time: String?): String {
+        return time?.let {
+            it.split("-")[1]
+        } ?: ""
+    }
 }

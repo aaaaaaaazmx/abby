@@ -26,7 +26,6 @@ import javax.inject.Inject
 /**
  * 我的页面
  */
-@Route(path = RouterPath.My.PAGE_MY)
 @AndroidEntryPoint
 class MyFragment : BaseFragment<FragmentMyBinding>() {
     @Inject

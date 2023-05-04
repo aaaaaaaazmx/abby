@@ -3,6 +3,7 @@ package com.cl.common_base.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -48,6 +49,7 @@ public class FeatureItemSwitch extends FrameLayout {
         String itemHint = typedArray.getString(R.styleable.FeatureItemSwitch_itemHint);
         boolean itemChecked = typedArray.getBoolean(R.styleable.FeatureItemSwitch_itemChecked, false);
         int itemBackgroundColor = typedArray.getColor(R.styleable.FeatureItemSwitch_itemBackgroundColor, Color.WHITE);
+        boolean isItemTitleBold = typedArray.getBoolean(R.styleable.FeatureItemView_itemTitleBold, false);
         typedArray.recycle();
 
         View itemView = LayoutInflater.from(context).inflate(R.layout.layout_item_switch, null);
@@ -66,7 +68,15 @@ public class FeatureItemSwitch extends FrameLayout {
         setItemHint(itemHint);
         setItemSwitch(itemChecked);
         setItemBackgroundColor(itemBackgroundColor);
+        setItemTitleBold(isItemTitleBold);
 
+    }
+
+    public FeatureItemSwitch setItemTitleBold(boolean isBold) {
+        if (isBold) {
+            tvItemTitle.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        }
+        return this;
     }
 
 

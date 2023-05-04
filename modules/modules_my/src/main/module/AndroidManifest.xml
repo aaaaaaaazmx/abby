@@ -133,6 +133,7 @@
             android:name=".ui.DeviceAutomationActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait" />
+        <activity android:name=".ui.FeedbackActivity" />
 
 
     </application>

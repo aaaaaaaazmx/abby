@@ -131,6 +131,7 @@
 
                 <!--PH-->
                 <com.cl.common_base.widget.FeatureItemView
+                    app:itemTitleBold="true"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
                     app:itemIcon="@mipmap/contact_ph"
@@ -146,6 +147,7 @@
 
                 <!--tds-->
                 <com.cl.common_base.widget.FeatureItemView
+                    app:itemTitleBold="true"
                     android:layout_marginTop="10dp"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
@@ -161,6 +163,7 @@
                     android:layout_height="1dp"/>
                 
                 <com.cl.common_base.widget.FeatureItemSwitch
+                    app:itemTitleBold="true"
                     app:itemChecked="true"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
@@ -178,6 +181,7 @@
 
                 <!--植物数据-->
                 <com.cl.common_base.widget.FeatureItemSwitch
+                    app:itemTitleBold="true"
                     app:itemChecked="true"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
@@ -194,6 +198,7 @@
                     android:layout_height="1dp"/>
 
                 <com.cl.common_base.widget.FeatureItemView
+                    app:itemTitleBold="true"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
                     app:itemIcon="@mipmap/contact_at"
