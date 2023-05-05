@@ -23,6 +23,9 @@ class EnvironmentInfoData(
         val value: String? = null,
         val currentSwitch: String? = null,
         val explain: String? = null,
+        val articleId: String? = null,
+        val alert: Int? = null,
+        val articleDetails: String? = null,
         var automation: Int? = null, // 是否是自动模式
     ) : BaseBean(), MultiItemEntity {
         override val itemType: Int

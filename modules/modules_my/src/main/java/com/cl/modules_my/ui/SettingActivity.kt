@@ -180,8 +180,35 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     override fun initView() {
         // 当前版本号
         binding.ftVision.itemValue = AppUtil.appVersionName
-        binding.ftSub.setTitleValueEndDrawable(null).setPointClickListener {
-            pop.asCustom(SubPop(this@SettingActivity)).show()
+        binding.ftSub.setPointClickListener {
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity,
+                    isShowCancelButton = false,
+                    confirmText = "OK",
+                    content = "Digital service includes 1 on 1 expert support, oxygen coins, and exclusive digital assets and deals",
+                )
+            ).show()
+        }
+        binding.ftChildLock.setPointClickListener {
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity,
+                    isShowCancelButton = false,
+                    confirmText = "OK",
+                    content = "When child lock is on, the door will  lock automatically when closed. The door can then only be opened via the app",
+                )
+            ).show()
+        }
+        binding.ftNight.setPointClickListener {
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity,
+                    isShowCancelButton = false,
+                    confirmText = "OK",
+                    content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
+                )
+            ).show()
         }
 
         // 是否可以操作设备相关的功能
@@ -366,10 +393,16 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         // 判断当前的版本号是否需要升级
                         kotlin.runCatching {
                             if (netWorkVersion.toInt() > localVersion.toInt()) {
-                                versionPop.setData(versionData)
-                                versionUpdatePop.show()
+                                if (isClickUpdate.value == true) {
+                                    versionPop.setData(versionData)
+                                    versionUpdatePop.show()
+                                } else {
+                                    binding.ftVision.setShowUpdateRedDot(true)
+                                }
                             } else {
-                                ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
+                                if (isClickUpdate.value == true) {
+                                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
+                                } else {}
                             }
                         }
                     }
@@ -686,6 +719,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
         // 检查更新
         binding.ftVision.setOnClickListener {
+            mViewModel.setClickUpdate(true)
             mViewModel.getAppVersion()
         }
         binding.ftPurchase.setOnClickListener {
@@ -751,9 +785,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             mViewModel.modifyUserDetail(ModifyUserDetailReq(openNotify = if (b) "1" else "0"))
         }
         // 固件升级
-        binding.ftFirUpdate.setOnClickListener {
+        /*binding.ftFirUpdate.setOnClickListener {
             startActivity(Intent(this@SettingActivity, FirmwareUpdateActivity::class.java))
-        }
+        }*/
         // 换水
         binding.ftWaterTank.setOnClickListener {
             plantDrain.show()
@@ -821,6 +855,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 CacheUtil.getVideoCache(this@SettingActivity)
         }
         mViewModel.userDetail()
+        mViewModel.getAppVersion()
 
         /**
          * 当有设备的时候，判断当前设备是否在线
@@ -841,8 +876,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
                             bean?.firstOrNull { it.type == 9 }?.let { data ->
                                 binding.ftCurrentFir.itemValue = data.currentVersion
-                                binding.ftCurrentFir.setHideArrow(true)
-                                binding.ftFirUpdate.setShowRedDot(isShow)
+                                binding.ftCurrentFir.setShowUpdateRedDot(isShow)
                             }
                         }
                         // 获取SN & 并且判断是否是修复了SN的

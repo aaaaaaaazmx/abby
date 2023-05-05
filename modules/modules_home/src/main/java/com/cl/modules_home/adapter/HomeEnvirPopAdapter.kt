@@ -2,6 +2,7 @@ package com.cl.modules_home.adapter
 
 import android.graphics.Color
 import android.widget.CompoundButton
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeEnvirItemFanPopBinding
@@ -140,6 +141,14 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                         }
                     }
                 }
+
+                helper.getView<ImageView>(R.id.iv_gt).apply {
+                    if (item.alert == 0) {
+                        setImageResource(com.cl.common_base.R.mipmap.base_gt)
+                    } else {
+                        setImageResource(com.cl.common_base.R.mipmap.base_error_gt)
+                    }
+                }
             }
 
             EnvironmentInfoData.KEY_TYPE_NORMAL -> {
@@ -147,6 +156,13 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                 helper.setText(R.id.period_time, item.healthStatus)
                 helper.setText(R.id.tv_going, temperatureConversion(item.value))
                 helper.setTextColor(R.id.period_time, getColor(item.detectionValue, item.healthStatus))
+                helper.getView<ImageView>(R.id.iv_gt).apply {
+                    if (item.alert == 0) {
+                        setImageResource(com.cl.common_base.R.mipmap.base_gt)
+                    } else {
+                        setImageResource(com.cl.common_base.R.mipmap.base_error_gt)
+                    }
+                }
             }
 
             EnvironmentInfoData.KEY_TYPE_LIGHT -> {
@@ -159,6 +175,13 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                     }
                     "Error" -> {
                         helper.setTextColor(R.id.tv_healthStatuss, Color.parseColor("#D61744"))
+                    }
+                }
+                helper.getView<ImageView>(R.id.iv_gt).apply {
+                    if (item.alert == 0) {
+                        setImageResource(com.cl.common_base.R.mipmap.base_gt)
+                    } else {
+                        setImageResource(com.cl.common_base.R.mipmap.base_error_gt)
                     }
                 }
             }

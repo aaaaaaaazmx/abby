@@ -28,6 +28,8 @@ data class CalendarData(
         var taskType: String? = null,
         var updateTime: String? = null,
         var taskCategory: String? = null,
+        var articleId: String? = null,
+        var articleDetails: String? = null,
     ) : com.joketng.timelinestepview.bean.BaseBean(timeLineState = TimeLineState.INACTIVE)
 
 

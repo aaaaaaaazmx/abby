@@ -30,12 +30,25 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginStart="0dp">
 
-        <TextView
-            android:id="@+id/fis_item_title"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/fis_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/fis_item_title"
+                android:id="@+id/fis_end_drawable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
 
         <TextView
             android:id="@+id/fis_item_hint"

@@ -3,6 +3,7 @@ package com.cl.modules_my.ui
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -54,6 +56,7 @@ import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.intercome.InterComeHelp
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
@@ -1139,6 +1142,24 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         ?.let { DateHelper.formatTime(it, "HH:mm", Locale.US) }
 
                     val tvTaskName = holder.rightLayout.findViewById<TextView>(R.id.tv_task_name)
+                    val ivGt = holder.rightLayout.findViewById<FrameLayout>(R.id.rl_edit)
+                    ViewUtils.setVisible(!TextUtils.isEmpty(listContent[position].articleId), ivGt)
+                    ivGt.setOnClickListener{
+                        XPopup.Builder(this@CalendarActivity)
+                            .dismissOnTouchOutside(false)
+                            .isDestroyOnDismiss(false)
+                            .asCustom(
+                                BaseCenterPop(
+                                    this@CalendarActivity,
+                                    onConfirmAction = {
+                                        // 跳转到InterCome文章详情里面去
+                                        InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = listContent[position].articleId)
+                                    },
+                                    confirmText = "Detail",
+                                    content = listContent[position].articleDetails,
+                                )
+                            ).show()
+                    }
                     // 按钮
                     val svtWaitUnlock =
                         holder.rightLayout.findViewById<AbTextViewCalendar>(R.id.svt_wait_unlock)

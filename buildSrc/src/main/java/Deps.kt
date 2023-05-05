@@ -81,6 +81,8 @@ object Version {
 
     const val choosePhotoCamera = "v3.11.1"
 
+    const val choosePhotoComporess = "v3.11.1"
+
     const val epMedia = "v1.0.1"
 
     const val luban = "1.1.8"
@@ -214,6 +216,8 @@ object Deps {
     const val choosePhoto = "io.github.lucksiege:pictureselector:${Version.choosePhoto}"
     // camera
     const val choosePhotoCamera =  "io.github.lucksiege:camerax:${Version.choosePhotoCamera}"
+    // 压缩
+    const val choosePhotoComproress =  "io.github.lucksiege:compress:${Version.choosePhotoComporess}"
 
     // ffmpeg
     const val epMedia = "com.github.yangjie10930:EpMedia:${Version.epMedia}"

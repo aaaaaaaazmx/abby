@@ -47,10 +47,19 @@
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:layout_toRightOf="@+id/fiv_item_title"
-                android:background="@mipmap/base_prohibit_bg"
                 android:id="@+id/item_value_end_drawable"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <View
+                android:visibility="gone"
+                android:background="@drawable/base_dot_red"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/fiv_item_title"
+                android:id="@+id/version_update_red_dot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </RelativeLayout>
 
 

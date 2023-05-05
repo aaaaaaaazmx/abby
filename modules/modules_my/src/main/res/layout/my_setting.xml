@@ -37,6 +37,7 @@
                 android:orientation="vertical">
 
                 <com.cl.common_base.widget.FeatureItemSwitch
+                    android:layout_marginTop="4dp"
                     android:id="@+id/ft_notif"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -56,6 +57,7 @@
                     android:textSize="14sp" />
 
                 <com.cl.common_base.widget.FeatureItemView
+                    app:itemValueEndImg="@mipmap/base_gt"
                     android:id="@+id/ft_sub"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
@@ -181,7 +183,7 @@
                     android:layout_height="60dp"
                     app:itemTitle="Current firmware" />
 
-                <View
+               <!-- <View
                     android:layout_width="match_parent"
                     android:layout_height=".5dp"
                     android:layout_marginStart="20dp"
@@ -193,7 +195,7 @@
                     isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    app:itemTitle="Firmware upgrade" />
+                    app:itemTitle="Firmware upgrade" />-->
 
                 <TextView
                     android:layout_width="match_parent"
@@ -221,6 +223,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
                         <com.cl.common_base.widget.FeatureItemSwitch
+                            app:itemValueEndImg="@mipmap/base_gt"
                             android:id="@+id/ft_night"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
@@ -250,6 +253,7 @@
                              />
 
                         <com.cl.common_base.widget.FeatureItemSwitch
+                            app:itemValueEndImg="@mipmap/base_gt"
                             android:id="@+id/ft_child_lock"
                             android:layout_width="match_parent"
                             android:layout_height="40dp"

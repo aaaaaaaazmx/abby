@@ -540,4 +540,12 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
         _devicesInfo.value = info
     }
 
+    /**
+     * 是否是点击采取查询升级信息
+     */
+    private val _isClickUpdate = MutableLiveData<Boolean>(false)
+    val isClickUpdate: LiveData<Boolean> = _isClickUpdate
+    fun setClickUpdate(isClickUpdate: Boolean) {
+        _isClickUpdate.value = isClickUpdate
+    }
 }

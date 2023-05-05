@@ -37,7 +37,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
     private TextView tvItemTitle, tvItemImage;
     private TextView tvItemHint;
     private TextView tvItemValue;
-    private View vRedDot;
+    private View vRedDot, verionUpdateRedDot;
     private ImageView ivItemArrow;
     public SvTextView svtText;
 
@@ -54,6 +54,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FeatureItemView);
         Drawable itemIcon = typedArray.getDrawable(R.styleable.FeatureItemView_itemIcon);
         Drawable itemImg = typedArray.getDrawable(R.styleable.FeatureItemView_itemImg);
+        Drawable itemValueEndImg = typedArray.getDrawable(R.styleable.FeatureItemView_itemValueEndImg);
         float itemIconWidth = typedArray.getDimension(R.styleable.FeatureItemView_itemIconWidth, 0);
         float itemIconHeight = typedArray.getDimension(R.styleable.FeatureItemView_itemIconHeight, 0);
         String itemTitle = typedArray.getString(R.styleable.FeatureItemView_itemTitle);
@@ -77,6 +78,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         tvItemHint = itemView.findViewById(R.id.fiv_item_hint);
         tvItemValue = itemView.findViewById(R.id.fiv_item_value);
         vRedDot = itemView.findViewById(R.id.fiv_red_dot);
+        verionUpdateRedDot = itemView.findViewById(R.id.version_update_red_dot);
         ivItemArrow = itemView.findViewById(R.id.fiv_item_switch);
         svtText = itemView.findViewById(R.id.svt_text);
 
@@ -96,6 +98,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         setHideArrow(hideArrow);
         setItemTitleBold(isItemTitleBold);
         setItemBackgroundColor(itemBackgroundColor);
+        setTitleValueEndDrawable(itemValueEndImg);
     }
 
 
@@ -298,6 +301,11 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
 
     public FeatureItemView setShowRedDot(boolean show) {
         vRedDot.setVisibility(show ? VISIBLE : GONE);
+        return this;
+    }
+
+    public FeatureItemView setShowUpdateRedDot(boolean show) {
+        verionUpdateRedDot.setVisibility(show ? VISIBLE : GONE);
         return this;
     }
 
