@@ -320,7 +320,7 @@
 
                             <ImageView
                                 android:gravity="center"
-                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.VISIBLE : View.GONE}"
+                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}"
                                 android:layout_centerInParent="true"
                                 circleUrl="@{viewModel.userDetail.data.avatarPicture}"
                                 android:layout_width="98dp"
@@ -337,7 +337,7 @@
                                 android:textColor="@color/mainColor"
                                 android:textSize="40sp"
                                 android:textStyle="bold"
-                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}" />
+                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.VISIBLE : View.GONE}" />
                         </RelativeLayout>
 
                         <FrameLayout
