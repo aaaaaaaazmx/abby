@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
+import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -52,8 +53,12 @@ import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.TagsBean
 import com.cl.modules_contact.viewmodel.ContactViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
+import com.cl.modules_contact.widget.nineview.NineGridImageView
+import com.cl.modules_contact.widget.nineview.OnImageItemClickListener
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
+import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.util.XPopupUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,13 +70,13 @@ import javax.inject.Inject
  */
 @Route(path = RouterPath.Contact.PAGE_CONTACT)
 @AndroidEntryPoint
-class ContactFragment : BaseFragment<FragmentContactBinding>() {
+class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClickListener {
     @Inject
     lateinit var mViewMode: ContactViewModel
 
     // 朋友圈适配器
     private val adapter by lazy {
-        TrendListAdapter(mutableListOf())
+        TrendListAdapter(mutableListOf(), this@ContactFragment)
     }
 
     // 标签适配器
@@ -624,5 +629,21 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     companion object {
         const val REFRESH_SIZE = 10
+    }
+
+    /**
+     * 图片点击，九宫格图片
+     */
+    override fun onClick(nineGridView: NineGridImageView, imageView: ImageView, url: String, urlList: List<String>, externalPosition: Int, position: Int) {
+        // 图片浏览
+        XPopup.Builder(context)
+            .asImageViewer(
+                imageView,
+                position,
+                urlList.toList(),
+                OnSrcViewUpdateListener { _, _ -> },
+                SmartGlideImageLoader()
+            )
+            .show()
     }
 }

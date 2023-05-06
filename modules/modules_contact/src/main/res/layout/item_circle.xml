@@ -115,24 +115,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
-        <com.cl.modules_contact.widget.NineGridView
-            android:background="@color/white"
+        <com.cl.modules_contact.widget.nineview.NineGridImageView
+            android:background="@drawable/background_main_color_r0"
+            app:ng_only_one_size="200dp"
+            app:ng_spacing="5dp"
             android:id="@+id/nineGridView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/tvNum"
             app:layout_constraintStart_toStartOf="@id/tvNick"
             app:layout_constraintTop_toBottomOf="@id/tv_link"
-            app:ngv_extra_strategy="show"
-            app:ngv_four_strategy="usual"
-            app:ngv_itemGap="3dp"
-            app:ngv_maxCount="9"
-            app:ngv_single_strategy="custom"
-            app:ngv_spanCount="3"
-            app:ngv_three_strategy="usual"
-            app:ngv_two_strategy="usual" />
-
+            />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:visibility="@{data.openData == 1 ? View.VISIBLE : View.GONE}"
@@ -145,7 +139,7 @@
             android:paddingTop="3dp"
             android:paddingEnd="9dp"
             android:paddingBottom="3dp"
-            app:layout_constraintStart_toStartOf="@+id/nineGridView"
+            app:layout_constraintStart_toStartOf="@+id/tvNick"
             app:layout_constraintTop_toBottomOf="@+id/nineGridView">
 
             <TextView

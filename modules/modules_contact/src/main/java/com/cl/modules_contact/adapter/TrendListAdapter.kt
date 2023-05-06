@@ -2,22 +2,30 @@ package com.cl.modules_contact.adapter
 
 import android.text.SpannedString
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.ext.DateHelper
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ItemCircleBinding
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.widget.NineGridView
+import com.cl.modules_contact.widget.nineview.GlideNineGridImageLoader
+import com.cl.modules_contact.widget.nineview.NineGridImageView
+import com.cl.modules_contact.widget.nineview.OnImageItemClickListener
 import kotlin.concurrent.thread
 
 
 /**
  * 朋友圈首页列表适配器
  */
-class TrendListAdapter(data: MutableList<NewPageData.Records>?) :
+class TrendListAdapter(
+    data: MutableList<NewPageData.Records>?,
+    private val onImageItemClickListener: OnImageItemClickListener
+) :
     BaseQuickAdapter<NewPageData.Records, BaseDataBindingHolder<ItemCircleBinding>>(R.layout.item_circle, data) {
 
     override fun convert(holder: BaseDataBindingHolder<ItemCircleBinding>, item: NewPageData.Records) {
@@ -33,12 +41,22 @@ class TrendListAdapter(data: MutableList<NewPageData.Records>?) :
         holder.setText(R.id.tvNum, convertTime(item.createTime))
 
         // 九宫格
-        holder.getView<NineGridView>(R.id.nineGridView).apply {
-            adapter = item.imageUrls?.let {
+        holder.getView<NineGridImageView>(R.id.nineGridView).apply {
+            item.imageUrls?.let {
                 // 手动添加图片集合
                 val urlList = mutableListOf<String>()
                 it.forEach { data -> data.imageUrl?.let { it1 -> urlList.add(it1) } }
-                NineGridAdapter(context, urlList)
+                externalPosition = holder.bindingAdapterPosition
+                setUrlList(urlList)
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseDataBindingHolder<ItemCircleBinding> {
+        return super.onCreateViewHolder(parent, viewType).apply {
+            getView<NineGridImageView>(R.id.nineGridView).apply {
+                imageLoader = GlideNineGridImageLoader()
+                onImageItemClickListener = this@TrendListAdapter.onImageItemClickListener
             }
         }
     }
