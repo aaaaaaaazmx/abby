@@ -30,6 +30,7 @@ import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.common_base.widget.edittext.bean.MentionUser
 import com.cl.common_base.widget.edittext.listener.EditDataListener
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_contact.ItemTouchHelp
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactPostActivityBinding
@@ -50,7 +51,6 @@ import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.engine.CompressFileEngine
 import com.luck.picture.lib.entity.LocalMedia
-import com.luck.picture.lib.interfaces.OnKeyValueResultCallbackListener
 import com.luck.picture.lib.language.LanguageConfig
 import com.luck.picture.lib.style.BottomNavBarStyle
 import com.luck.picture.lib.style.PictureSelectorStyle
@@ -65,7 +65,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import top.zibin.luban.Luban
-import top.zibin.luban.OnCompressListener
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
 import javax.inject.Inject
@@ -80,7 +79,11 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
     lateinit var viewModel: PostViewModel
 
     private val chooserAdapter by lazy {
-        ChooserAdapter(mutableListOf())
+        ChooserAdapter(mutableListOf(), onItemLongClick = { holder, position, view ->
+            if (holder.itemViewType == ChoosePicBean.KEY_TYPE_PIC) {
+                mItemTouchHelper?.startDrag(holder)
+            }
+        })
     }
 
     // 图片列表
@@ -90,6 +93,8 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         list.add(choosePicBean)
         list
     }
+
+    private var mItemTouchHelper: ItemTouchHelper? = null
 
 
     @SuppressLint("SetTextI18n")
@@ -105,15 +110,19 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                     DensityUtil.dip2px(this@PostActivity, 4f), DensityUtil.dip2px(this@PostActivity, 1f)
                 )
             )
+            // 绑定拖拽事件
+            mItemTouchHelper = ItemTouchHelper(ItemTouchHelp(chooserAdapter, picList))
+            mItemTouchHelper?.attachToRecyclerView(this)
+
             adapter = this@PostActivity.chooserAdapter
             this@PostActivity.chooserAdapter.setList(picList)
 
             // 拖拽
-           /* isNestedScrollingEnabled = true
-            val itemDragAndSwipeCallback = ItemDragAndSwipeCallback(this@PostActivity.chooserAdapter)
-            val itemTouchHelper = ItemTouchHelper(itemDragAndSwipeCallback)
-            itemTouchHelper.attachToRecyclerView(this)
-            this@PostActivity.chooserAdapter.enableDragItem(itemTouchHelper, R.id.iv_chooser_select, true)*/
+            /* isNestedScrollingEnabled = true
+             val itemDragAndSwipeCallback = ItemDragAndSwipeCallback(this@PostActivity.chooserAdapter)
+             val itemTouchHelper = ItemTouchHelper(itemDragAndSwipeCallback)
+             itemTouchHelper.attachToRecyclerView(this)
+             this@PostActivity.chooserAdapter.enableDragItem(itemTouchHelper, R.id.iv_chooser_select, true)*/
         }
 
         binding.etConnect.doAfterTextChanged {
@@ -186,7 +195,6 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
     }
 
     override fun initData() {
-
         initAdapter()
         initClick()
     }
@@ -403,7 +411,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                                         .setImageEngine(GlideEngine.createGlideEngine())
                                                         .setCompressEngine(CompressFileEngine { context, source, call ->
                                                             Luban.with(context).load(source).ignoreBy(100)
-                                                                .setCompressListener(object: OnNewCompressListener {
+                                                                .setCompressListener(object : OnNewCompressListener {
                                                                     override fun onSuccess(source: String?, compressFile: File?) {
                                                                         call?.onCallback(source, compressFile?.absolutePath)
                                                                     }
@@ -424,7 +432,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                                         .isMaxSelectEnabledMask(true) // 是否显示蒙层
                                                         .isDisplayCamera(false) //是否显示摄像
                                                         .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                                        .setMaxSelectNum(9 - chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size)
+                                                        .setMaxSelectNum(1)
                                                         .setSelectorUIStyle(style)
                                                         .forResult(PictureConfig.CHOOSE_REQUEST)
                                                 }
@@ -451,7 +459,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                                         .setImageEngine(GlideEngine.createGlideEngine())
                                                         .setCompressEngine(CompressFileEngine { context, source, call ->
                                                             Luban.with(context).load(source).ignoreBy(100)
-                                                                .setCompressListener(object: OnNewCompressListener {
+                                                                .setCompressListener(object : OnNewCompressListener {
                                                                     override fun onSuccess(source: String?, compressFile: File?) {
                                                                         call?.onCallback(source, compressFile?.absolutePath)
                                                                     }
@@ -472,7 +480,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                                         .isMaxSelectEnabledMask(true) // 是否显示蒙层
                                                         .isDisplayCamera(false) //是否显示摄像
                                                         .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                                        .setMaxSelectNum(9 - chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size)
+                                                        .setMaxSelectNum(1)
                                                         .setSelectorUIStyle(style)
                                                         .forResult(PictureConfig.CHOOSE_REQUEST)
                                                 }
@@ -507,7 +515,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                             (view as? ImageView),
                             position,
                             picList.toList(),
-                            OnSrcViewUpdateListener { _, _ ->  },
+                            OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
                         )
                         .show()
