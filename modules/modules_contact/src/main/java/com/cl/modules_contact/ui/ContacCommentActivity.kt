@@ -11,6 +11,7 @@ import android.text.SpannedString
 import android.text.TextUtils
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
+import android.widget.ImageView
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -43,8 +44,13 @@ import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.viewmodel.ContactCommentViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
+import com.cl.modules_contact.widget.nineview.GlideNineGridImageLoader
+import com.cl.modules_contact.widget.nineview.NineGridImageView
+import com.cl.modules_contact.widget.nineview.OnImageItemClickListener
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
+import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.util.XPopupUtils
 import com.tencent.bugly.proguard.v
 import dagger.hilt.android.AndroidEntryPoint
@@ -426,11 +432,28 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                     binding.tvDesc.text = getContents(data?.content, data?.mentions)
                     binding.tvNum.text = convertTime(data?.createTime)
                     binding.nineGridView.apply {
-                        adapter = data?.imageUrls?.let {
+                        imageLoader = GlideNineGridImageLoader()
+                        onImageItemClickListener = object : OnImageItemClickListener {
+                            // 图片点击事件
+                            override fun onClick(nineGridView: NineGridImageView, imageView: ImageView, url: String, urlList: List<String>, externalPosition: Int, position: Int) {
+                                // 图片浏览
+                                XPopup.Builder(this@ContactCommentActivity)
+                                    .asImageViewer(
+                                        imageView,
+                                        position,
+                                        urlList.toList(),
+                                        OnSrcViewUpdateListener { _, _ -> },
+                                        SmartGlideImageLoader()
+                                    )
+                                    .show()
+                            }
+                        }
+                        data?.imageUrls?.let {
                             // 手动添加图片集合
                             val urlList = mutableListOf<String>()
                             it.forEach { data -> data.imageUrl.let { it1 -> urlList.add(it1) } }
-                            NineGridAdapter(this@ContactCommentActivity, urlList)
+                            // NineGridAdapter(this@ContactCommentActivity, urlList)
+                            setUrlList(urlList)
                         }
                     }
 

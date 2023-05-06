@@ -26,11 +26,9 @@ public class ItemTouchHelp extends ItemTouchHelper.Callback {
     private boolean needScaleBig = true;
     private boolean needScaleSmall = false;
     private boolean isHasLiftDelete;
-    private List<ChoosePicBean> picList;
 
-    public ItemTouchHelp(ChooserAdapter mAdapter, List<ChoosePicBean> picList) {
+    public ItemTouchHelp(ChooserAdapter mAdapter) {
         this.mAdapter = mAdapter;
-        this.picList = picList;
     }
 
     @Override
@@ -64,13 +62,14 @@ public class ItemTouchHelp extends ItemTouchHelper.Callback {
                 if (fromPosition < toPosition) {
                     for (int i = fromPosition; i < toPosition; i++) {
                         Collections.swap(mAdapter.getData(), i, i + 1);
-                        Collections.swap(picList, i, i + 1);
                     }
                 } else {
                     for (int i = fromPosition; i > toPosition; i--) {
                         Collections.swap(mAdapter.getData(), i, i - 1);
-                        Collections.swap(picList, i, i - 1);
                     }
+                }
+                if (mListener != null) {
+                    mListener.onItemSwap(fromPosition, toPosition);
                 }
                 mAdapter.notifyItemMoved(fromPosition, toPosition);
             }
@@ -172,6 +171,15 @@ public class ItemTouchHelp extends ItemTouchHelper.Callback {
         isHasLiftDelete = false;
         /*mDragListener.deleteState(false);
         mDragListener.dragState(false);*/
+    }
+
+    // 添加交换的事件接口
+    public interface OnItemSwapListener {
+        void onItemSwap(int fromPosition, int toPosition);
+    }
+    private OnItemSwapListener mListener;
+    public void setOnItemSwapListener(OnItemSwapListener listener) {
+        mListener = listener;
     }
 }
 

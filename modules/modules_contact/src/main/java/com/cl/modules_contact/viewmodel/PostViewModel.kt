@@ -14,6 +14,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.repository.ContactRepository
 import com.cl.modules_contact.request.AddTrendData
 import com.cl.modules_contact.request.AddTrendReq
+import com.cl.modules_contact.request.ImageUrl
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.response.MessageListData
 import kotlinx.coroutines.Dispatchers
@@ -99,5 +100,17 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
     val phValue: LiveData<String?> = _phValue
     fun setPhValue(value: String?) {
         _phValue.value = value
+    }
+
+    /**
+     * 图片上传船地址结合
+     */
+    private val _picAddress = MutableLiveData<MutableList<ImageUrl>>(mutableListOf())
+    val picAddress: LiveData<MutableList<ImageUrl>> = _picAddress
+    fun setPicAddress(url: ImageUrl) {
+        _picAddress.value?.add(0, url)
+    }
+    fun deletePicAddress(index: Int) {
+        _picAddress.value?.removeAt(index)
     }
 }

@@ -12,7 +12,6 @@ import com.cl.common_base.ext.DateHelper
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ItemCircleBinding
 import com.cl.modules_contact.response.NewPageData
-import com.cl.modules_contact.widget.NineGridView
 import com.cl.modules_contact.widget.nineview.GlideNineGridImageLoader
 import com.cl.modules_contact.widget.nineview.NineGridImageView
 import com.cl.modules_contact.widget.nineview.OnImageItemClickListener

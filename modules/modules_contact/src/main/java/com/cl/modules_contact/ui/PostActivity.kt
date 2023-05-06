@@ -67,6 +67,7 @@ import okhttp3.RequestBody
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
+import java.util.Collections
 import javax.inject.Inject
 
 /**
@@ -111,7 +112,12 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 )
             )
             // 绑定拖拽事件
-            mItemTouchHelper = ItemTouchHelper(ItemTouchHelp(chooserAdapter, picList))
+            val help = ItemTouchHelp(chooserAdapter)
+            help.setOnItemSwapListener { fromPosition, toPosition ->
+                Collections.swap(picList, fromPosition, toPosition)
+                viewModel.picAddress.value?.let { Collections.swap(it, fromPosition, toPosition) }
+            }
+            mItemTouchHelper = ItemTouchHelper(help)
             mItemTouchHelper?.attachToRecyclerView(this)
 
             adapter = this@PostActivity.chooserAdapter
@@ -134,13 +140,12 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         viewModel.apply {
             // 上传图片回调
             uploadImg.observe(this@PostActivity, resourceObserver {
-                loading { showProgressLoading() }
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
-                    showProgressLoading()
+                    hideProgressLoading()
                 }
                 success {
-                    val imageUrlsList = mutableListOf<ImageUrl>()
+                    hideProgressLoading()
                     data?.forEach {
                         val oneArray = it.split("com/")
                         if (oneArray.isNotEmpty()) {
@@ -149,32 +154,14 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                 if (result.isNotEmpty()) {
                                     logI(result[0])
                                     // 更新用户信息
-                                    imageUrlsList.add(ImageUrl(imageUrl = result[0]))
+                                    // 更新集合
+                                    setPicAddress(ImageUrl(imageUrl = result[0]))
                                 }
                             }
                         }
                     }
 
-                    // @的人
-                    val mentions: MutableList<Mention> = mutableListOf()
-                    binding.etConnect.formatResult?.userList?.forEach {
-                        mentions.add(Mention(it.abbyId, it.name, it.picture, it.id))
-                    }
 
-                    // 图片上传成功之后，就是发帖
-                    add(
-                        AddTrendReq(
-                            content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
-                            imageUrls = imageUrlsList,
-                            link = if (binding.tvLink.text.toString() == "Add Link") null else binding.tvLink.text.toString(),
-                            mentions = mentions,
-                            openData = if (binding.plantToVisible.isItemChecked) 1 else 0,
-                            ph = viewModel.phValue.value,
-                            syncTrend = if (binding.shareToPublic.isItemChecked) 1 else 0,
-                            taskId = null,
-                            tds = binding.optionTds.itemValue
-                        )
-                    )
                 }
             })
 
@@ -269,15 +256,15 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                     ToastUtil.shortShow("Cannot post when empty")
                     return@setOnClickListener
                 }
+                // @的人
+                val mentions: MutableList<Mention> = mutableListOf()
+                binding.etConnect.formatResult?.userList?.forEach {
+                    mentions.add(Mention(it.abbyId, it.name, it.picture, it.id))
+                }
+
                 // 图片是空的，但是有文字
                 if (picList.size == 1) {
-                    // @的人
-                    val mentions: MutableList<Mention> = mutableListOf()
-                    binding.etConnect.formatResult?.userList?.forEach {
-                        mentions.add(Mention(it.abbyId, it.name, it.picture, it.id))
-                    }
-
-                    // 图片上传成功之后，就是发帖
+                    // 没有图片，直接发帖
                     viewModel.add(
                         AddTrendReq(
                             content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
@@ -291,17 +278,21 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                             tds = binding.optionTds.itemValue
                         )
                     )
-                    return@setOnClickListener
-                }
-
-                // 上传图片 && 发帖
-                val addType = picList.firstOrNull { it.type == ChoosePicBean.KEY_TYPE_ADD }
-                if (addType == null) {
-                    viewModel.uploadImg(upLoadImage(picList))
                 } else {
-                    picList.filter { it.type != ChoosePicBean.KEY_TYPE_ADD }.apply {
-                        viewModel.uploadImg(upLoadImage(this.toMutableList()))
-                    }
+                    // 直接发帖
+                    viewModel.add(
+                        AddTrendReq(
+                            content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
+                            imageUrls = viewModel.picAddress.value,
+                            link = if (binding.tvLink.text.toString() == "Add Link") null else binding.tvLink.text.toString(),
+                            mentions = mentions,
+                            openData = if (binding.plantToVisible.isItemChecked) 1 else 0,
+                            ph = viewModel.phValue.value,
+                            syncTrend = if (binding.shareToPublic.isItemChecked) 1 else 0,
+                            taskId = null,
+                            tds = binding.optionTds.itemValue
+                        )
+                    )
                 }
             } else {
                 logI("2312312313")
@@ -333,31 +324,27 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
     /**
      * 表单提交
-     * 多张表单提交
+     * 需要循环上传
      */
-    private fun upLoadImage(path: MutableList<ChoosePicBean>): List<MultipartBody.Part> {
+    private fun upLoadImage(path: String): List<MultipartBody.Part> {
         //1.创建MultipartBody.Builder对象
         val builder = MultipartBody.Builder()
             //表单类型
             .setType(MultipartBody.FORM)
 
-        path.forEach { bean ->
-            //2.获取图片，创建请求体
-            bean.picAddress?.let {
-                val file = File(it)
-                //表单类x型
-                //表单类型
-                val body: RequestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+        //2.获取图片，创建请求体
+        val file = File(path)
+        //表单类x型
+        //表单类型
+        val body: RequestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
 
-                //3.调用MultipartBody.Builder的addFormDataPart()方法添加表单数据
-                /**
-                 * ps:builder.addFormDataPart("code","123456");
-                 * ps:builder.addFormDataPart("file",file.getName(),body);
-                 */
-                builder.addFormDataPart("imgType", "trend") //传入服务器需要的key，和相应value值
-                builder.addFormDataPart("files", file.name, body) //添加图片数据，body创建的请求体
-            }
-        }
+        //3.调用MultipartBody.Builder的addFormDataPart()方法添加表单数据
+        /**
+         * ps:builder.addFormDataPart("code","123456");
+         * ps:builder.addFormDataPart("file",file.getName(),body);
+         */
+        builder.addFormDataPart("imgType", "trend") //传入服务器需要的key，和相应value值
+        builder.addFormDataPart("files", file.name, body) //添加图片数据，body创建的请求体
         //4.创建List<MultipartBody.Part> 集合，
         //  调用MultipartBody.Builder的build()方法会返回一个新创建的MultipartBody
         //  再调用MultipartBody的parts()方法返回MultipartBody.Part集合
@@ -494,6 +481,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
                 R.id.img_contact_pic_delete -> {
                     this@PostActivity.chooserAdapter.removeAt(position)
+                    viewModel.deletePicAddress(position)
                     picList.removeAt(position)
                     // 在最后面添加到ADD
                     if (this@PostActivity.chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_ADD }.size == 1) {
@@ -586,7 +574,8 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                     val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = cropImagePath)
                     picList.add(0, chooseBean)
                     chooserAdapter.addData(0, chooseBean)
-
+                    // 直接上传
+                    picList[0].picAddress?.let { upLoadImage(it) }?.let { viewModel.uploadImg(it) }
                     if (chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 9) {
                         // 移除最后一张加号
                         chooserAdapter.data.removeAt(chooserAdapter.data.size - 1)
@@ -612,6 +601,8 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 val result = PictureSelector.obtainSelectorList(data)
                 if (result.isNullOrEmpty()) return
                 analyticalSelectResults(result)
+                // 直接上传
+                picList[0].picAddress?.let { upLoadImage(it) }?.let { viewModel.uploadImg(it) }
                 if (chooserAdapter.data.size == 10) {
                     chooserAdapter.removeAt(9)
                     picList.removeAt(9)

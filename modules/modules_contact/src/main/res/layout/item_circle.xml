@@ -116,7 +116,6 @@
             android:layout_height="wrap_content"/>
 
         <com.cl.modules_contact.widget.nineview.NineGridImageView
-            android:background="@drawable/background_main_color_r0"
             app:ng_only_one_size="200dp"
             app:ng_spacing="5dp"
             android:id="@+id/nineGridView"

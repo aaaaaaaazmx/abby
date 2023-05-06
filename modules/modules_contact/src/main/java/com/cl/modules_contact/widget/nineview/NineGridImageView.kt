@@ -99,7 +99,7 @@ class NineGridImageView @JvmOverloads constructor(
 
         if (size == 1) { // 处理单张图片的情况
             val url: String = imageUrlList[0]
-            val imageView = createImageView(0, url)
+            val imageView = createSignImageView(0, url)
             val singleImageSize: Int = getSingleImageSize()
             // 加载图片前先设置一下图片的大小 (正方形)
             setSingleImageSize(imageView, singleImageSize, singleImageSize)
@@ -209,7 +209,23 @@ class NineGridImageView @JvmOverloads constructor(
 
     private fun createImageView(position: Int, url: String) = ImageView(context).apply {
         id = View.generateViewId()
-        scaleType = ImageView.ScaleType.FIT_CENTER
+        scaleType = ImageView.ScaleType.CENTER_CROP
+        setOnClickListener {
+            onImageItemClickListener?.onClick(
+                this@NineGridImageView,
+                this,
+                url,
+                imageUrlList,
+                externalPosition,
+                position
+            )
+        }
+        setOnLongClickListener { true }
+    }
+
+    private fun createSignImageView(position: Int, url: String) = ImageView(context).apply {
+        id = View.generateViewId()
+        scaleType = ImageView.ScaleType.FIT_START
         setOnClickListener {
             onImageItemClickListener?.onClick(
                 this@NineGridImageView,
