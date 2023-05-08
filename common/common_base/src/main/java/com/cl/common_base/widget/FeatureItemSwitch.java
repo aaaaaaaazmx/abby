@@ -61,6 +61,7 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
         View itemView = LayoutInflater.from(context).inflate(R.layout.layout_item_switch, null);
         ivItemIcon = itemView.findViewById(R.id.fis_item_icon);
         tvItemTitle = itemView.findViewById(R.id.fis_item_title);
+        tvItemTitle.setOnClickListener(this);
         tvItemHint = itemView.findViewById(R.id.fis_item_hint);
         swToggle = itemView.findViewById(R.id.fis_item_switch);
         itemValueEndDrawable = itemView.findViewById(R.id.fis_end_drawable);
@@ -228,6 +229,14 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.ff_end_drawable) {
+            if (pointClickListener != null) {
+                pointClickListener.onClick(view);
+            }
+        } if (view.getId() == R.id.fis_end_drawable) {
+            if (pointClickListener != null) {
+                pointClickListener.onClick(view);
+            }
+        } if (view.getId() == R.id.fis_item_title) {
             if (pointClickListener != null) {
                 pointClickListener.onClick(view);
             }

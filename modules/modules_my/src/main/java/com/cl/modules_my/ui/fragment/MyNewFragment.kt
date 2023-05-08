@@ -45,6 +45,11 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        mViewModel.userDetail()
+    }
+
     override fun lazyLoad() {
         // 只加载一次
         mViewModel.userDetail()

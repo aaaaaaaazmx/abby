@@ -3005,7 +3005,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     // 弹出环境框
                     data?.let { it.environments?.let { it1 -> envirPop?.setData(it1) } }
-                    envirPop?.setStrainName(mViewMode.plantInfo.value?.data?.strainName)
+                    envirPop?.setStrainName(mViewMode.plantInfo.value?.data?.plantName)
                 }
                 error { errorMsg, _ ->
                     // errorMsg?.let { ToastUtil.shortShow(it) }

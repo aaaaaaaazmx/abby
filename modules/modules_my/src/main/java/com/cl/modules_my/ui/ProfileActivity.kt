@@ -38,6 +38,7 @@ import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.config.SelectMimeType
+import com.luck.picture.lib.engine.CompressFileEngine
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.language.LanguageConfig
 import com.luck.picture.lib.style.BottomNavBarStyle
@@ -51,6 +52,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import top.zibin.luban.Luban
+import top.zibin.luban.OnNewCompressListener
 import java.io.File
 import javax.inject.Inject
 
@@ -151,7 +154,22 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                                         PictureSelector.create(this@ProfileActivity)
                                             .openGallery(SelectMimeType.ofImage())
                                             .setImageEngine(GlideEngine.createGlideEngine())
-                                            //                            .setCompressEngine(ImageFileCompressEngine()) //是否压缩
+                                            .setCompressEngine(CompressFileEngine { context, source, call ->
+                                                Luban.with(context).load(source).ignoreBy(100)
+                                                    .setCompressListener(object : OnNewCompressListener {
+                                                        override fun onSuccess(source: String?, compressFile: File?) {
+                                                            call?.onCallback(source, compressFile?.absolutePath)
+                                                        }
+
+                                                        override fun onError(source: String?, e: Throwable?) {
+                                                            call?.onCallback(source, null)
+                                                        }
+
+                                                        override fun onStart() {
+
+                                                        }
+                                                    }).launch();
+                                            })
                                             .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
                                             .isOriginalControl(false) // 原图功能
                                             .isDisplayTimeAxis(true) // 资源轴

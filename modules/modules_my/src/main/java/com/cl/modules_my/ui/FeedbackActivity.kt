@@ -36,7 +36,7 @@ class FeedbackActivity: BaseActivity<MyFeedbackActivityBinding>() {
         binding.ftInstagram.setOnClickListener {
             // https://www.instagram.com/heyabbygrowbox/
             val intent = Intent(this@FeedbackActivity, WebActivity::class.java)
-            intent.putExtra(WebActivity.KEY_WEB_URL, "https://www.instagram.com/heyabbygrowbox/")
+            intent.putExtra(WebActivity.KEY_WEB_URL, "http://www.instagram.com/heyabby_official/")
             intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
             startActivity(intent)
         }
@@ -78,9 +78,9 @@ class FeedbackActivity: BaseActivity<MyFeedbackActivityBinding>() {
                         val smsToUri = Uri.parse("smsto:")
                         val intent = Intent(Intent.ACTION_SENDTO, smsToUri)
                         //"sms_body"必须一样，smsbody是发送短信内容content
-                        intent.putExtra("sms_body", "测试内容，暂时不知道发送什么内容")
+                        intent.putExtra("sms_body", "I'm loving my grow box so far– my plant's growing great! You should check out Hey abby for yourself: [https://heyabby.com/pages/which-hey-abby-is-right-for-you](https://heyabby.com/pages/which-hey-abby-is-right-for-you)")
                         startActivity(intent)
-                    }, content = "Invite your friends to grow together with Hey abby!", confirmText = "SMS")
+                    }, content = "Loving the grow journey? Tell your friends about Hey abby!", confirmText = "SMS")
                 ).show()
         }
     }

@@ -240,6 +240,7 @@
                             app:itemValue="@string/setting_sub_time" />
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/tv_time_desc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -262,6 +263,7 @@
                             app:itemValue="@string/my_child_lock" />
 
                         <TextView
+                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/ft_child_lock"

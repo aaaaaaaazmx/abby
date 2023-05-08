@@ -188,7 +188,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:background="@mipmap/my_calendar_ask" />
+                            android:background="@mipmap/base_gt" />
 
                         <com.cl.common_base.widget.SvTextView
                             android:id="@+id/svt_period_bg"

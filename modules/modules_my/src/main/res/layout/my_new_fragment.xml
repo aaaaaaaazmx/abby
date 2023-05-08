@@ -107,7 +107,6 @@
 
                             <TextView
                                 android:text='@{viewModel.userDetail.data.isVip == 0 ? "membership expired." : "membership valid till " + viewModel.parseTime(viewModel.userDetail.data.subscriptionTime)}'
-                                android:visibility="@{TextUtils.isEmpty(viewModel.userDetail.data.subscriptionTime) ? View.GONE : View.VISIBLE}"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="3dp"

@@ -11,6 +11,8 @@ data class CalendarData(
     var day: String? = null,
     var week: String? = null,
     var epoch: String? = null,
+    var articleId: String? = null,
+    var articleDetails: String? = null,
     var epochEndTime: String? = null,
     var epochExplain: String? = null,
     var epochStartTime: String? = null,

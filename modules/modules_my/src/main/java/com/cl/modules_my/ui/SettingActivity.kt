@@ -227,14 +227,13 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         mViewModel.updateDevicesInfo(deviceInfo)
                         // 显示当前的是否是手动模式
                         binding.itemTitle.text = if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
-                        binding.ftName.itemValue = deviceInfo.deviceName
+                        binding.ftName.itemValue = deviceInfo.plantName
 
                         binding.ftChildLock.isItemChecked = deviceInfo.childLock == 1
                         binding.ftNight.isItemChecked = deviceInfo.nightMode == 1
                         ViewUtils.setVisible(
                             deviceInfo.nightMode == 1,
-                            binding.ftTimer,
-                            binding.tvTimeDesc
+                            binding.ftTimer
                         )
                         val str = deviceInfo.nightTimer.toString()
                         val pattern = "(\\d{1,2}):\\d{2} [AP]M-(\\d{1,2}):\\d{2} [AP]M"
@@ -639,7 +638,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     deviceId = tuyaHomeBean?.devId
                 )
             )
-            ViewUtils.setVisible(isChecked, binding.ftTimer, binding.tvTimeDesc)
+            ViewUtils.setVisible(isChecked, binding.ftTimer)
         }
 
         binding.ftTimer.setOnClickListener {
@@ -746,7 +745,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     plantName = deviceBean?.plantName,
                     strainName = deviceBean?.strainName,
                     onConfirmAction = { plantName, strainName ->
-                        binding.ftName.itemValue = plantName
+                        // 需要刷新UI
+                        mViewModel.listDevice()
                         // 修改属性名
                         if (strainName.isNullOrEmpty() && plantName?.isNotEmpty() == true) {
                             mViewModel.updatePlantInfo(
@@ -788,6 +788,19 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         /*binding.ftFirUpdate.setOnClickListener {
             startActivity(Intent(this@SettingActivity, FirmwareUpdateActivity::class.java))
         }*/
+        binding.ftCurrentFir.setOnClickListener {
+            // 当前固件版本号
+            mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
+                if (!isShow) {
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
+                    return@checkFirmwareUpdateInfo
+                }
+                bean?.firstOrNull { it.type == 9 }?.let { data ->
+                    binding.ftCurrentFir.itemValue = data.currentVersion
+                    binding.ftCurrentFir.setShowUpdateRedDot(isShow)
+                }
+            }
+        }
         // 换水
         binding.ftWaterTank.setOnClickListener {
             plantDrain.show()
