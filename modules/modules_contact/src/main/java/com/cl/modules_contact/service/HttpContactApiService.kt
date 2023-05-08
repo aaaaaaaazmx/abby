@@ -7,6 +7,7 @@ import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
+import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
@@ -153,4 +154,10 @@ interface HttpContactApiService {
     @FormUrlEncoded
     @POST("abby/comment/deleteReply")
     fun deleteReply(@Field("replyId") replyId: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 我的动态
+     */
+    @POST("abby/moments/myPage")
+    fun myMoments(@Body requestBody: MyMomentsReq): Flow<HttpResult<NewPageData>>
 }

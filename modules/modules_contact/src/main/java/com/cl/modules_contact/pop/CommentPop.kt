@@ -341,8 +341,8 @@ class CommentPop(
      */
     private fun extracted(checkBox: CheckBox) {
         ObjectAnimator.ofFloat(checkBox, "translationX", 0f, -20f, 0f, 20f, 0f).apply {
-            duration = 300
-            repeatCount = 5
+            duration = 100
+            repeatCount = 3
             interpolator = LinearInterpolator()
             repeatMode = ValueAnimator.RESTART
         }.start()

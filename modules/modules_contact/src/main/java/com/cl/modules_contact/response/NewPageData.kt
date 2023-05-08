@@ -34,7 +34,7 @@ data class NewPageData(
         val journeyName: String? = null,
         val height: String? = null,
         val environment: String? = null,
-        val syncTrend: String? = null,
+        val syncTrend: Int? = null,
         @set:JvmName("setIsFoo")
         var isPraise: Int? = null,
         val openData: Int? = null,

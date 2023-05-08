@@ -222,8 +222,10 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
 
         // 头像点击
         binding.clAvatar.setOnClickListener {
-            // todo 头像点击啊
-
+            // 个人头像点击啊
+            context?.let {
+                startActivity(Intent(it, MyJourneyActivity::class.java))
+            }
         }
 
         // 消息点击
@@ -449,8 +451,8 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
      */
     private fun extracted(checkBox: CheckBox) {
         ObjectAnimator.ofFloat(checkBox, "translationX", 0f, -20f, 0f, 20f, 0f).apply {
-            duration = 300
-            repeatCount = 5
+            duration = 100
+            repeatCount = 3
             interpolator = LinearInterpolator()
             repeatMode = ValueAnimator.RESTART
         }.start()

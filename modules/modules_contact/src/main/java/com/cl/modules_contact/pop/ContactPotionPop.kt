@@ -10,6 +10,7 @@ import com.lxj.xpopup.core.BubbleAttachPopupView
 class ContactPotionPop(
     private val context: Context,
     private val isShowReport: Boolean = false,
+    private val isShowShareToPublic: Boolean = true,
     private val deleteAction: (() -> Unit)? = null,
     private val reportAction: (() -> Unit)? = null,
     private val shareAction: (() -> Unit)? = null,
@@ -25,9 +26,9 @@ class ContactPotionPop(
             lifecycleOwner = this@ContactPotionPop
             executePendingBindings()
 
-
             ViewUtils.setVisible(!isShowReport, clReport)
             ViewUtils.setVisible(isShowReport, clDelete, clShare, vv)
+            // ViewUtils.setVisible(isShowShareToPublic, clShare)
 
             clDelete.setOnClickListener {
                 deleteAction?.invoke()

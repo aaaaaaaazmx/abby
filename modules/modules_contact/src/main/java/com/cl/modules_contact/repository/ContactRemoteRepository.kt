@@ -9,6 +9,7 @@ import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
 import com.cl.modules_contact.request.MomentsDetailsReq
+import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
@@ -101,6 +102,10 @@ class ContactRemoteRepository @Inject constructor() {
 
     fun deleteReply(replyId: String): Flow<HttpResult<BaseBean>> {
         return service.deleteReply(replyId)
+    }
+
+    fun myMoments(req: MyMomentsReq): Flow<HttpResult<NewPageData>> {
+        return service.myMoments(req)
     }
 
 
