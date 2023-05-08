@@ -27,6 +27,7 @@ import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
@@ -205,6 +206,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
             })
 
     }
+
     private fun initClick() {
         binding.tvTrend.setOnClickListener {
             // 弹窗显示植物周期
@@ -241,7 +243,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
      * 条目点击事件
      */
     private fun initAdapterClick() {
-        adapter.addChildClickViewIds(R.id.tv_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat)
+        adapter.addChildClickViewIds(R.id.tv_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? NewPageData.Records
             mViewMode.updateCurrentPosition(position)
@@ -378,6 +380,10 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
                 R.id.tv_to_chat -> {
                     //  跳转到更多聊天记录弹窗
                     toCommentPop(item, position, adapter)
+                }
+
+                R.id.tv_learn_more -> {
+                    InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = item?.articleId.toString())
                 }
             }
         }
@@ -615,7 +621,6 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
             return@setOnApplyWindowInsetsListener insets
         }
     }
-
 
 
     /**

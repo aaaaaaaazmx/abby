@@ -40,14 +40,21 @@
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <ImageView
-                android:visibility="gone"
+            <FrameLayout
                 android:layout_centerVertical="true"
                 android:layout_marginStart="5dp"
                 android:layout_toRightOf="@+id/fis_item_title"
-                android:id="@+id/fis_end_drawable"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:id="@+id/ff_end_drawable"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/fis_end_drawable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+
+
         </RelativeLayout>
 
         <TextView

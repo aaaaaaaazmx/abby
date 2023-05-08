@@ -50,7 +50,7 @@ object Constants {
         const val DEVELOPMENT_URL = "http://192.168.3.101:9330/"
 
         // 外网
-        const val OUTER_ANG_URL = "https://5c8730c912.oicp.vip/"
+        const val OUTER_ANG_URL = "https://2549m9264b.zicp.fun/"
     }
 
     // Login信息相关

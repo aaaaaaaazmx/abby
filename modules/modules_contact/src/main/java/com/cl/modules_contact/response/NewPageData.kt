@@ -23,6 +23,7 @@ data class NewPageData(
 
     data class Records(
         val id: Int? = null,
+        val articleId: Int? = null,
         val userId: String? = null,
         val avatarPicture: String? = null,
         val learnMoreId: String? = null,

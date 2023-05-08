@@ -72,7 +72,9 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         ivItemIcon = itemView.findViewById(R.id.fiv_item_icon);
         ivItemImage = itemView.findViewById(R.id.fiv_item_img);
         itemValueEndDrawable = itemView.findViewById(R.id.item_value_end_drawable);
+        FrameLayout ffEndDrawable = itemView.findViewById(R.id.ff_end_drawable);
         itemValueEndDrawable.setOnClickListener(this);
+        ffEndDrawable.setOnClickListener(this);
         tvItemImage = itemView.findViewById(R.id.nohead_show);
         tvItemTitle = itemView.findViewById(R.id.fiv_item_title);
         tvItemHint = itemView.findViewById(R.id.fiv_item_hint);
@@ -376,7 +378,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-       if (view.getId() == R.id.item_value_end_drawable) {
+       if (view.getId() == R.id.ff_end_drawable) {
            if (pointClickListener != null) {
                pointClickListener.onClick(view);
            }

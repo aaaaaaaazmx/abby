@@ -119,13 +119,25 @@
             app:ng_only_one_size="200dp"
             app:ng_spacing="5dp"
             android:id="@+id/nineGridView"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="@+id/tvNum"
             app:layout_constraintStart_toStartOf="@id/tvNick"
             app:layout_constraintTop_toBottomOf="@id/tv_link"
             />
+
+        <TextView
+            android:layout_marginTop="10dp"
+            android:visibility="@{data.articleId == 0 ? View.GONE : View.VISIBLE}"
+            android:id="@+id/tv_learn_more"
+            app:layout_constraintStart_toStartOf="@+id/nineGridView"
+            app:layout_constraintTop_toBottomOf="@+id/nineGridView"
+            android:text="Learn More"
+            android:textColor="@color/mainColor"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:visibility="@{data.openData == 1 ? View.VISIBLE : View.GONE}"
@@ -139,7 +151,7 @@
             android:paddingEnd="9dp"
             android:paddingBottom="3dp"
             app:layout_constraintStart_toStartOf="@+id/tvNick"
-            app:layout_constraintTop_toBottomOf="@+id/nineGridView">
+            app:layout_constraintTop_toBottomOf="@+id/tv_learn_more">
 
             <TextView
                 android:visibility="@{TextUtils.isEmpty(data.journeyName)? View.GONE : View.VISIBLE}"

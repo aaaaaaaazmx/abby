@@ -55,7 +55,7 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
         boolean itemChecked = typedArray.getBoolean(R.styleable.FeatureItemSwitch_itemChecked, false);
         int itemBackgroundColor = typedArray.getColor(R.styleable.FeatureItemSwitch_itemBackgroundColor, Color.WHITE);
         boolean isItemTitleBold = typedArray.getBoolean(R.styleable.FeatureItemSwitch_itemTitleBold, false);
-        Drawable itemValueEndImg = typedArray.getDrawable(R.styleable.FeatureItemView_itemValueEndImg);
+        Drawable itemValueEndImg = typedArray.getDrawable(R.styleable.FeatureItemSwitch_itemValueEndImg);
         typedArray.recycle();
 
         View itemView = LayoutInflater.from(context).inflate(R.layout.layout_item_switch, null);
@@ -64,6 +64,7 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
         tvItemHint = itemView.findViewById(R.id.fis_item_hint);
         swToggle = itemView.findViewById(R.id.fis_item_switch);
         itemValueEndDrawable = itemView.findViewById(R.id.fis_end_drawable);
+        itemView.findViewById(R.id.ff_end_drawable).setOnClickListener(this);
         itemValueEndDrawable.setOnClickListener(this);
 
         LayoutParams lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -226,7 +227,7 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.item_value_end_drawable) {
+        if (view.getId() == R.id.ff_end_drawable) {
             if (pointClickListener != null) {
                 pointClickListener.onClick(view);
             }
