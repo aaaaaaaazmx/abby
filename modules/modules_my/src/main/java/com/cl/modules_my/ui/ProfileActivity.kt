@@ -243,6 +243,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         binding.ftNickName.setItemTitle(getString(com.cl.common_base.R.string.profile_name), true)
         binding.ftId.setItemTitle(getString(com.cl.common_base.R.string.profile_abby_id), true)
         binding.ftEmail.setItemTitle(getString(com.cl.common_base.R.string.profile_email), true)
+        binding.ftWall.setItemTitle("Wall", true)
     }
 
     override fun observe() {
@@ -341,6 +342,10 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
             val intent = Intent(this@ProfileActivity, EditNickNameActivity::class.java)
             intent.putExtra(KEY_NICK_NAME, binding.ftNickName.itemValue)
             startActivity(intent)
+        }
+
+        binding.ftWall.setOnClickListener {
+            startActivity(Intent(this@ProfileActivity, WallActivity::class.java))
         }
     }
 

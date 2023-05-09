@@ -34,6 +34,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
+import com.cl.modules_contact.adapter.OtherJourneyAdapter
 import com.cl.modules_contact.adapter.TagsAdapter
 import com.cl.modules_contact.adapter.TrendListAdapter
 import com.cl.modules_contact.databinding.FragmentContactBinding
@@ -257,6 +258,13 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
 
                 R.id.cl_avatar -> {
                     // todo 点击头像、跳转到自己的空间， 用userID来区别是跳转到自己的，还是别人的
+                    if (item?.userId == mViewMode.userinfoBean?.userId) {
+                        context?.startActivity(Intent(context, MyJourneyActivity::class.java))
+                    } else {
+                        val intent = Intent(context, OtherJourneyActivity::class.java)
+                        intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
+                        context?.startActivity(intent)
+                    }
                 }
 
                 R.id.cl_env -> {

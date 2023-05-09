@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="MissingConstraints"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.cl.modules_contact.viewmodel.MyJourneyViewModel" />
+
+        <import type="android.view.View" />
+
+        <import type="android.text.TextUtils" />
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+
+        <com.cl.common_base.widget.scroll.behavior.LinkageScrollLayout
+            android:id="@+id/linkageScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <FrameLayout
+                android:id="@+id/layoutTop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/rvLinkageTop"
+                    android:layout_width="match_parent"
+                    android:layout_height="342dp"
+                    android:background="@mipmap/my_bg"
+                    android:paddingTop="10dp" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/layoutBottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintHeight_min="500dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutTop">
+
+
+                <androidx.core.widget.NestedScrollView
+                    android:fillViewport="true"
+                    android:id="@+id/rvLinkageBottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        tools:ignore="MissingConstraints">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="49dp"
+                            android:background="@color/white"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/iv_head">
+
+                            <TextView
+                                android:layout_marginStart="30dp"
+                                android:textColor="@color/black"
+                                tools:text="1231231231"
+                                android:layout_gravity="start"
+                                android:text="@{viewModel.userDetail.data.personSign}"
+                                android:layout_marginTop="58dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <View
+                                android:layout_marginTop="5dp"
+                                android:background="#F7F7F7"
+                                android:layout_width="match_parent"
+                                android:layout_height="5dp"/>
+
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/rv_journey"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginTop="10dp"
+                                android:background="@color/white"
+                                />
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/iv_head"
+                            android:layout_width="102dp"
+                            android:layout_height="102dp"
+                            android:layout_marginStart="30dp"
+                            android:background="@drawable/my_head_broad_bg"
+                            app:layout_constraintStart_toStartOf="parent">
+
+                            <ImageView
+                                circleUrl="@{viewModel.userDetail.data.avatarPicture}"
+                                android:layout_width="98dp"
+                                android:layout_height="98dp"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}" />
+
+                            <TextView
+                                android:layout_width="98dp"
+                                android:layout_height="98dp"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/my_head_bg"
+                                android:gravity="center"
+                                android:text="@{viewModel.userDetail.data.nickName.substring(0,1)}"
+                                android:textColor="@color/mainColor"
+                                android:textSize="40sp"
+                                android:textStyle="bold"
+                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.VISIBLE : View.GONE}" />
+                        </RelativeLayout>
+
+                        <!--  <FrameLayout
+                              android:id="@+id/rl_edit"
+                              android:layout_width="50dp"
+                              android:layout_height="50dp"
+                              android:layout_marginTop="20dp"
+                              app:layout_constraintEnd_toEndOf="parent">
+
+                              <ImageView
+                                  android:layout_width="26dp"
+                                  android:layout_height="26dp"
+                                  android:layout_gravity="center"
+                                  android:background="@mipmap/my_edit" />
+                          </FrameLayout>-->
+
+
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.core.widget.NestedScrollView>
+
+
+            </FrameLayout>
+
+
+        </com.cl.common_base.widget.scroll.behavior.LinkageScrollLayout>
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:srlEnableAutoLoadMore="true"
+            app:srlEnableFooterFollowWhenLoadFinished="true"
+            app:srlEnableLoadMore="true"
+            app:srlEnableScrollContentWhenLoaded="true">
+
+            <com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
+                android:layout_marginBottom="50dp"
+                android:id="@+id/bottomSheet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+
+        <!--<com.cl.common_base.widget.FeatureTitleBar
+            android:id="@+id/title"
+            app:title="asdasd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+           />-->
+
+
+        <com.cl.modules_contact.widget.emoji.SuperLikeLayout
+            android:id="@+id/super_like_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:eruption_element_amount="10"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:max_eruption_total="100"
+            app:show_emoji="true"
+            app:show_text="false" />
+
+    </FrameLayout>
+</layout>

@@ -67,7 +67,11 @@ class HomeEnvlrPop(
     }
 
     fun setStrainName(strainName: String?) {
-        this.strainName = strainName
+        if (strainName == "I don’t know") {
+            this.strainName = ""
+        } else {
+            this.strainName = strainName
+        }
     }
 
     override fun beforeShow() {

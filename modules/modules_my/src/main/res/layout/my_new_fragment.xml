@@ -35,7 +35,7 @@
                 <ImageView
                     android:id="@+id/rvLinkageTop"
                     android:layout_width="match_parent"
-                    android:layout_height="400dp"
+                    android:layout_height="342dp"
                     android:background="@mipmap/my_bg"
                     android:paddingTop="10dp" />
 

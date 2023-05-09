@@ -108,5 +108,11 @@ class ContactRemoteRepository @Inject constructor() {
         return service.myMoments(req)
     }
 
+    fun getOtherUserInfo(userId: String): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return service.getOtherUserInfo(userId)
+    }
 
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>> {
+        return service.wallpaperList()
+    }
 }

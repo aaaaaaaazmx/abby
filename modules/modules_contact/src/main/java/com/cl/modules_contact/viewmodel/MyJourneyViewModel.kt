@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.WallpaperListBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -37,6 +38,73 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
     val userinfoBean by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         GSON.parseObject(bean, UserinfoBean::class.java)
+    }
+
+
+    /**
+     * 获取壁纸列表
+     */
+    private val _wallpaperList = MutableLiveData<Resource<MutableList<WallpaperListBean>>>()
+    val wallpaperList: LiveData<Resource<MutableList<WallpaperListBean>>> = _wallpaperList
+    fun wallpaperList() = viewModelScope.launch {
+        repository.wallpaperList()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _wallpaperList.value = it
+            }
+    }
+
+    /**
+     * 获取用户信息
+     */
+    private val _userDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()
+    val userDetail: LiveData<Resource<UserinfoBean.BasicUserBean>> = _userDetail
+    fun userDetail(userId: String) = viewModelScope.launch {
+        repository.getOtherUserInfo(userId)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _userDetail.value = it
+            }
     }
 
     /**

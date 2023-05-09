@@ -796,8 +796,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     return@checkFirmwareUpdateInfo
                 }
                 bean?.firstOrNull { it.type == 9 }?.let { data ->
-                    binding.ftCurrentFir.itemValue = data.currentVersion
-                    binding.ftCurrentFir.setShowUpdateRedDot(isShow)
+                    startActivity(Intent(this@SettingActivity, FirmwareUpdateActivity::class.java))
                 }
             }
         }

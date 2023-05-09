@@ -182,5 +182,9 @@ class MyRemoteRepository @Inject constructor() {
         return service.intercomDataAttributeSync()
     }
 
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>> {
+        return service.wallpaperList()
+    }
+
 
 }

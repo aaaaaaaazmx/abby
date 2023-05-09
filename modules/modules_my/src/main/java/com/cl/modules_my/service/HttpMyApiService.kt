@@ -299,4 +299,9 @@ interface HttpMyApiService {
     @POST("abby/user/intercomDataAttributeSync")
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>>
 
+    /**
+     * 获取壁纸列表
+     */
+    @POST("abby/user/getWallList")
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>>
 }

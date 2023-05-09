@@ -228,4 +228,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
         return remoteRepository.intercomDataAttributeSync()
     }
+
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>> {
+        return remoteRepository.wallpaperList()
+    }
 }

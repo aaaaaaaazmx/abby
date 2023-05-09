@@ -2,6 +2,8 @@ package com.cl.modules_contact.service
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.HttpResult
+import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.bean.WallpaperListBean
 import com.cl.modules_contact.request.AddTrendData
 import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.CommentByMomentReq
@@ -160,4 +162,17 @@ interface HttpContactApiService {
      */
     @POST("abby/moments/myPage")
     fun myMoments(@Body requestBody: MyMomentsReq): Flow<HttpResult<NewPageData>>
+
+    /**
+     * 获取他人信息
+     */
+    @FormUrlEncoded
+    @POST("abby/user/otherUserDetail")
+    fun getOtherUserInfo(@Field("userId") userId: String): Flow<HttpResult<UserinfoBean.BasicUserBean>>
+
+    /**
+     * 获取壁纸列表
+     */
+    @POST("abby/user/getWallList")
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>>
 }

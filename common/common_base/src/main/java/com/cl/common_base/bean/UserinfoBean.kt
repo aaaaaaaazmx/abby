@@ -46,7 +46,7 @@ data class UserinfoBean(
         val personSign: String? = null,
         val userName: String? = null,
         val wallAddress: String? = null,
-        val wallId: String? = null,
+        val wallId: Int? = null,
         val subscriptionTime: String? = null,
         val isVip: Int? = 0,
         val userId: String? = null,

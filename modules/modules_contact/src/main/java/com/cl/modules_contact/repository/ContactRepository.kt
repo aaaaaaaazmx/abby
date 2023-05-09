@@ -100,4 +100,12 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
     fun myMoments(req: MyMomentsReq): Flow<HttpResult<NewPageData>> {
         return remoteRepository.myMoments(req)
     }
+
+    fun getOtherUserInfo(userId: String): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return remoteRepository.getOtherUserInfo(userId)
+    }
+
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>> {
+        return remoteRepository.wallpaperList()
+    }
 }

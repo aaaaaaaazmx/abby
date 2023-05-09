@@ -2,8 +2,10 @@ package com.cl.modules_my.ui.fragment
 
 import android.content.Intent
 import android.view.View
+import androidx.core.content.ContextCompat
 import cn.mtjsoft.barcodescanning.extentions.dp
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.bumptech.glide.Glide
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -16,6 +18,7 @@ import com.cl.common_base.widget.scroll.behavior.BehavioralScrollListener
 import com.cl.common_base.widget.scroll.behavior.BehavioralScrollView
 import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyNewFragmentBinding
 import com.cl.modules_my.ui.FeedbackActivity
 import com.cl.modules_my.ui.ProfileActivity
@@ -91,6 +94,22 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            wallpaperList.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    if (data.isNullOrEmpty()) return@success
+
+                    // 替换背景
+                    val wallId = userDetail.value?.data?.wallId
+                    data?.firstOrNull { it.id == wallId }?.let { bean ->
+                        context?.let {
+                            Glide.with(it).load(bean.address)
+                                .placeholder(com.cl.common_base.R.mipmap.my_bg)
+                                .into(binding.rvLinkageTop)
+                        }
+                    }
+                }
+            })
             userDetail.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
@@ -99,6 +118,35 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                     data?.let {
                         // 缓存信息
                         GSON.toJson(it)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
+
+                        // 壁纸
+                        when (data?.wallAddress) {
+                            "banner01" -> {
+                                binding.rvLinkageTop.background = context?.let { cc ->
+                                    ContextCompat.getDrawable(
+                                        cc, com.cl.common_base.R.mipmap.banner01
+                                    )
+                                }
+                            }
+
+                            "banner02" -> {
+                                binding.rvLinkageTop.background = context?.let { cc ->
+                                    ContextCompat.getDrawable(
+                                        cc, com.cl.common_base.R.mipmap.banner02
+                                    )
+                                }
+                            }
+
+                            "banner03" -> {
+                                binding.rvLinkageTop.background = context?.let { cc ->
+                                    ContextCompat.getDrawable(
+                                        cc, com.cl.common_base.R.mipmap.banner03
+                                    )
+                                }
+                            }
+
+                            else -> mViewModel.wallpaperList()
+                        }
                     }
                 }
             })

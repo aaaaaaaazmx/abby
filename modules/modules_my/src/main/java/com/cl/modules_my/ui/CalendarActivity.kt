@@ -727,6 +727,31 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun initData() {
         // 周期点击事件
+        binding.ivAsk.setOnClickListener {
+            // 需要小问号
+            adapter.data.firstOrNull { it.isChooser }?.apply {
+                this.calendarData?.let {calendarData ->
+                    /*val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                    intent.putExtra(Constants.Global.KEY_TXT_TYPE, it)
+                    startActivity(intent)*/
+
+                    XPopup.Builder(this@CalendarActivity)
+                        .dismissOnTouchOutside(false)
+                        .isDestroyOnDismiss(false)
+                        .asCustom(
+                            BaseCenterPop(
+                                this@CalendarActivity,
+                                onConfirmAction = {
+                                    // 跳转到InterCome文章详情里面去
+                                    InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = calendarData.articleId)
+                                },
+                                confirmText = "Detail",
+                                content = calendarData.articleDetails,
+                            )
+                        ).show()
+                }
+            }
+        }
         binding.tvCycle.setOnClickListener {
 
             // 需要小问号

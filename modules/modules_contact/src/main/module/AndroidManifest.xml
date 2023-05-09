@@ -64,5 +64,6 @@
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ui.PostActivity" />
         <activity android:name=".ui.MyJourneyActivity" />
+        <activity android:name=".ui.OtherJourneyActivity" />
     </application>
 </manifest>
