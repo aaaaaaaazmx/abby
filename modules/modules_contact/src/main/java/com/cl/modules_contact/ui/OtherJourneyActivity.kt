@@ -19,6 +19,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.refresh.ClassicsHeader
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.scroll.behavior.BehavioralScrollListener
@@ -254,6 +255,10 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>(), OnImage
                             it.records?.let { it1 -> adapter.addData(adapter.data.size, it1) }
                         }
                     }
+
+                    // 显示与隐藏
+                    ViewUtils.setVisible(adapter.data.size != 0, binding.rvJourney)
+                    ViewUtils.setVisible(adapter.data.size == 0, binding.rvEmpty)
                 }
             })
 

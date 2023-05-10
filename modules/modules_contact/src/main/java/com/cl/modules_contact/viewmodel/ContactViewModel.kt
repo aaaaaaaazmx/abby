@@ -313,4 +313,13 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     fun updateCurrentPeriod(period: String) {
         _currentPeriod.value = period
     }
+
+    /**
+     * 当前标签
+     */
+    private val _currentTag = MutableLiveData<String?>()
+    val currentTag: LiveData<String?> = _currentTag
+    fun updateCurrentTag(tag: String?) {
+        _currentTag.value = tag
+    }
 }

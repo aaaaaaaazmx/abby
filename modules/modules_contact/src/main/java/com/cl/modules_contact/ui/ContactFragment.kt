@@ -150,14 +150,14 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
                 // 重新加载数据
                 logI("setOnRefreshListener: refresh")
                 mViewMode.updateCurrent(1)
-                mViewMode.getNewPage(NewPageReq(current = mViewMode.updateCurrent.value, size = REFRESH_SIZE))
+                mViewMode.getNewPage(NewPageReq(current = mViewMode.updateCurrent.value, size = REFRESH_SIZE, period = mViewMode.currentPeriod.value, tags = mViewMode.currentTag.value))
             }
             // 加载更多监听
             setOnLoadMoreListener {
                 val current = (mViewMode.updateCurrent.value ?: 1) + 1
                 logI("setOnLoadMoreListener: loadMore Current : $current")
                 mViewMode.updateCurrent(current)
-                mViewMode.getNewPage(NewPageReq(current = current, size = REFRESH_SIZE))
+                mViewMode.getNewPage(NewPageReq(current = current, size = REFRESH_SIZE, period = mViewMode.currentPeriod.value, tags = mViewMode.currentTag.value))
             }
             // 刷新头部局
             setRefreshHeader(ClassicsHeader(context))
@@ -181,6 +181,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
                 ContactPeriodPop(it, onConfirmAction = { period ->
                     mViewMode.updateCurrent(1)
                     mViewMode.updateCurrentPeriod(period = period)
+                    mViewMode.updateCurrentTag(null)
                     // 需要清空当前选中的tags,并且刷新
                     tagAdapter.data.indexOfFirst { it.isSelected }.apply {
                         if (this != -1) {
@@ -413,6 +414,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
                     item?.isSelected = !(item?.isSelected ?: false)
                     tagAdapter.notifyItemChanged(position)
 
+                    // 设置当前标签
+                    item?.number?.let { mViewMode.updateCurrentTag(it) }
+
                     // 选中之后需要刷新动态
                     mViewMode.updateCurrent(1)
                     mViewMode.getNewPage(
@@ -637,7 +641,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
     private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == AppCompatActivity.RESULT_OK) {
             // 重新请求数据
-            mViewMode.getNewPage(NewPageReq(current = 1, size = 10))
+            mViewMode.getNewPage(NewPageReq(current = 1, size = 10, period = mViewMode.currentPeriod.value, tags = mViewMode.currentTag.value))
         }
     }
 

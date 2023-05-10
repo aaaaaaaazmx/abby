@@ -1,5 +1,6 @@
 package com.cl.modules_my.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,6 +15,7 @@ import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.adapter.DeviceAutomationAdapter
 import com.cl.modules_my.databinding.MyDeviceAutomationBinding
@@ -66,6 +68,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     /**
      * 重新回到这个界面，需要重新刷新数据
      */
+    @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         letMultiple(accessoryId, deviceId) { a, b ->
@@ -90,6 +93,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
         finish()
     }
 
+    @SuppressLint("CheckResult")
     override fun observe() {
         mViewModel.apply {
             // 删除自动化
@@ -125,7 +129,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                         requestOptions.placeholder(R.mipmap.placeholder)
                         requestOptions.error(R.mipmap.errorholder)
                         requestOptions.override(
-                            com.bumptech.glide.request.target.Target.SIZE_ORIGINAL,
+                            Target.SIZE_ORIGINAL,
                             Target.SIZE_ORIGINAL
                         )
                         Glide.with(this@DeviceAutomationActivity).load(it)
@@ -141,9 +145,14 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                         binding.ftbTitle.setTitle(it)
                     }
 
+                    // 状态显示
+                    val openSize = data?.list?.filter { it.status == 1 }?.size ?: 0
+                    ViewUtils.setVisible(openSize == 0, binding.ftCheck)
+                    ViewUtils.setVisible(openSize != 0, binding.tvAutoDesc)
                     data?.status?.let {
                         binding.ftCheck.setItemChecked(it == 1)
                     }
+                    binding.tvAutoDesc.text = if (openSize == 0) "Auto\nOff" else "Auto\nOn"
 
                     adapter.setList(data?.list)
                 }

@@ -30,11 +30,11 @@ class ContactPeriodPop(
     private val list by lazy {
         val list = mutableListOf<ContactPeriodBean>()
         list.add(ContactPeriodBean("Germination", false))
-        list.add(ContactPeriodBean("Vegetative", false))
+        list.add(ContactPeriodBean("Vegetation", false))
         list.add(ContactPeriodBean("Flowering", false))
         list.add(ContactPeriodBean("Flushing", false))
         list.add(ContactPeriodBean("Drying", false))
-        list.add(ContactPeriodBean("Auto", false))
+        // list.add(ContactPeriodBean("Auto", false))
         list
     }
 

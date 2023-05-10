@@ -22,6 +22,7 @@ data class ListDeviceBean(
     var accessoryList: MutableList<AccessoryList>? = null,
 ) : BaseBean() {
     data class AccessoryList(
+        val isAuto: Int? = null,
         val accessoryId: Int? = null,
         val accessoryName: String? = null,
         val image: String? = null,
