@@ -9,6 +9,8 @@
             name="data"
             type="com.cl.modules_contact.response.ChoosePicBean" />
 
+        <import type="android.view.View"/>
+
     </data>
 
 
@@ -61,17 +63,34 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:background="@mipmap/ic_launcher"
-            android:layout_marginTop="21dp"
             android:id="@+id/iv_chooser_select"
             android:layout_width="63dp"
             android:layout_height="64dp"
             android:layout_centerInParent="true"
             android:layout_gravity="center"
+            android:layout_marginTop="21dp"
+            android:background="@mipmap/ic_launcher"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ProgressBar
+            android:visibility="@{data.isUploading ? View.VISIBLE: View.GONE}"
+            android:layout_centerInParent="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:progress="65"
+            android:id="@+id/game_pro"
+            android:layout_width="43dp"
+            android:layout_height="5dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:background="@null"
+            android:layout_centerHorizontal="true"
+            android:progressDrawable="@drawable/contact_progress_shape"/>
 
 
         <ImageView

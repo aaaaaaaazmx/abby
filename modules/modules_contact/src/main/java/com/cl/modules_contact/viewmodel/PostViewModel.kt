@@ -16,6 +16,7 @@ import com.cl.modules_contact.request.AddTrendData
 import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.ImageUrl
 import com.cl.modules_contact.request.NewPageReq
+import com.cl.modules_contact.response.MentionData
 import com.cl.modules_contact.response.MessageListData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -31,6 +32,14 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
     val userinfoBean by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         GSON.parseObject(bean, UserinfoBean::class.java)
+    }
+
+     val shareToPublic by lazy {
+        Prefs.getBoolean(Constants.Contact.KEY_SHARE_TO_PUBLIC, true)
+    }
+
+     val plantDataIsVisible by lazy {
+        Prefs.getBoolean(Constants.Contact.KEY_PLANT_DATA_IS_VISIBLE, true)
     }
 
     /**
@@ -112,5 +121,15 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
     }
     fun deletePicAddress(index: Int) {
         _picAddress.value?.removeAt(index)
+    }
+
+    /**
+     * 记录已经选的好友
+     */
+    private val _selectFriends = MutableLiveData<MutableList<MentionData>>(mutableListOf())
+    val selectFriends: LiveData<MutableList<MentionData>> = _selectFriends
+    fun setSelectFriends(bean: MutableList<MentionData>) {
+        _selectFriends.value?.clear()
+        _selectFriends.value?.addAll(bean)
     }
 }

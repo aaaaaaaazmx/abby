@@ -15,6 +15,7 @@ class TdsPop(
     context: Context,
     private val txt: String? = null,
     private val onConfirmAction: ((txt: String) -> Unit)? = null,
+    private val onDeleteAction: (() -> Unit)? = null,
 ) : CenterPopupView(context) {
 
     override fun getImplLayoutId(): Int {
@@ -37,6 +38,13 @@ class TdsPop(
                 onConfirmAction?.invoke(tvCommentTxt.text.toString())
                 dismiss()
             }
+
+
+            tvCancel.setOnClickListener {
+                onDeleteAction?.invoke()
+                dismiss()
+            }
+
         }
     }
 }

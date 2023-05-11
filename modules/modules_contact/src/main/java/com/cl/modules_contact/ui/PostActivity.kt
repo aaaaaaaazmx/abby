@@ -12,17 +12,21 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.widget.Adapter
 import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.ChooserOptionPop
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.SoftInputUtils
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.glide.GlideEngine
@@ -134,6 +138,13 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         binding.etConnect.doAfterTextChanged {
             binding.tvEms.text = "${it?.length}/140"
         }
+
+        // 是否勾选数据
+        binding.shareToPublic.isItemChecked = viewModel.shareToPublic
+        binding.plantToVisible.isItemChecked = viewModel.plantDataIsVisible
+        if (!viewModel.shareToPublic) {
+            ViewUtils.setVisible(false, binding.plantToVisible, binding.peopleAt)
+        }
     }
 
     override fun observe() {
@@ -146,6 +157,12 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    // 上传成功,隐藏上传进度条
+                    chooserAdapter.data.firstOrNull { it.isUploading == true }?.let {
+                        it.isUploading = false
+                        chooserAdapter.notifyItemChanged(0)
+                    }
+
                     data?.forEach {
                         val oneArray = it.split("com/")
                         if (oneArray.isNotEmpty()) {
@@ -173,6 +190,10 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    // 放进去
+                    Prefs.putBoolean(Constants.Contact.KEY_SHARE_TO_PUBLIC, binding.shareToPublic.isItemChecked)
+                    Prefs.putBoolean(Constants.Contact.KEY_PLANT_DATA_IS_VISIBLE, binding.plantToVisible.isItemChecked)
+
                     // 这个需要回调给Fragment，通知刷新界面
                     setResult(Activity.RESULT_OK)
                     finish()
@@ -187,6 +208,10 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
     }
 
     private fun initClick() {
+        // 隐藏和显示
+        binding.shareToPublic.setSwitchCheckedChangeListener { buttonView, isChecked ->
+            ViewUtils.setVisible(isChecked, binding.plantToVisible, binding.peopleAt)
+        }
 
         binding.etConnect.editDataListener = object : EditDataListener {
             override fun onEditAddAt(str: String?, start: Int, length: Int) {
@@ -226,7 +251,11 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                         onConfirmAction = { txt ->
                             // tds
                             binding.optionTds.itemValue = txt
-                        })
+                        },
+                    onDeleteAction = {
+                        // tds
+                        binding.optionTds.itemValue = null
+                    })
                 ).show()
         }
 
@@ -240,6 +269,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 .asCustom(
                     ContactLinkPop(
                         this@PostActivity,
+                        txt = if (binding.tvLink.text.toString() == "Add link") "" else binding.tvLink.text.toString(),
                         onConfirmAction = { txt ->
                             // 超链接
                             binding.tvLink.text = txt
@@ -250,6 +280,11 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         binding.textView.setOnClickListener { finish() }
 
         binding.btnPost.setOnClickListener {
+            if (chooserAdapter.data.any { it.isUploading == true }) {
+                ToastUtil.shortShow("Please wait for the picture to finish uploading")
+                return@setOnClickListener
+            }
+
             if (isFastClick()) {
                 // 所有内容都是空的，
                 if (picList.size == 1 && TextUtils.isEmpty(binding.etConnect.text.toString())) {
@@ -309,7 +344,9 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 .autoFocusEditText(false)
                 .asCustom(
                     ContactListPop(this@PostActivity,
+                        alreadyCheckedData = viewModel.selectFriends.value ?: mutableListOf(),
                         onConfirmAction = {
+                            viewModel.setSelectFriends(it)
                             //  插入@的人
                             it.forEach { mentionData ->
                                 val index: Int = binding.etConnect.selectionStart
@@ -571,7 +608,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 if (resultCode == RESULT_OK && imageUri != null) {
                     // gotoClipActivity(imageUri)
                     val cropImagePath = getRealFilePathFromUri(applicationContext, imageUri)
-                    val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = cropImagePath)
+                    val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = cropImagePath, isUploading = true)
                     picList.add(0, chooseBean)
                     chooserAdapter.addData(0, chooseBean)
                     // 直接上传
@@ -583,16 +620,6 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                     } else {
 
                     }
-
-                    /* if (picList.size + 1 > 10) {
-                         chooserAdapter.removeAt(0)
-                         picList.removeAt(0)
-                         return
-                     } else if (1 + picList.size == 10) {
-                         // 隐藏加号。
-                         chooserAdapter.removeAt(chooserAdapter.data.size - 1)
-                         picList.removeAt(chooserAdapter.data.size - 1)
-                     }*/
                 }
             }
 
@@ -659,7 +686,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 // 展示图片
                 val path = media.availablePath
                 // val cropImagePath = getRealFilePathFromUri(applicationContext, imageUri)
-                val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = path)
+                val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = path, isUploading = true)
                 picList.add(0, chooseBean)
                 chooserAdapter.addData(0, chooseBean)
 

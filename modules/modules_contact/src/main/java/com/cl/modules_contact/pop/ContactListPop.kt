@@ -49,9 +49,13 @@ import kotlinx.coroutines.launch
 
 /**
  * Trend 选择@人联系人列表
+ *
+ * @param alreadyCheckedData 已经勾选的人集合
+ * @param onConfirmAction 确认按钮点击事件
  */
 class ContactListPop(
     context: Context,
+    private val alreadyCheckedData: MutableList<MentionData> = mutableListOf(),
     private val onConfirmAction: ((list: MutableList<MentionData>) -> Unit)? = null
 ) : BottomPopupView(context) {
     private val service = ServiceCreators.create(HttpContactApiService::class.java)
@@ -112,18 +116,26 @@ class ContactListPop(
         }
     }
 
-//    override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
-//        super.onWindowFocusChanged(hasWindowFocus)
-//        KeyboardUtils.hideSoftInput(binding?.tvCommentTxt)
-//    }
+    //    override fun onWindowFocusChanged(hasWindowFocus: Boolean) {
+    //        super.onWindowFocusChanged(hasWindowFocus)
+    //        KeyboardUtils.hideSoftInput(binding?.tvCommentTxt)
+    //    }
 
     private fun initAdapter() {
         adapter.addChildClickViewIds(R.id.cl_root)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             when (view.id) {
                 R.id.cl_root -> {
+                    if (((adapter.data as? MutableList<MentionData>)?.filter { it.isSelect == true }?.size ?: 0) >= 9) {
+                        ToastUtil.shortShow("can’t mention select more than 9 users")
+                        return@setOnItemChildClickListener
+                    }
+
                     val item = adapter.getItem(position) as MentionData
                     item.isSelect = !(item.isSelect ?: false)
+                    if (alreadyCheckedData.isNotEmpty()) {
+                        alreadyCheckedData[position].isSelect = !(alreadyCheckedData[position].isSelect ?: false)
+                    }
                     adapter.notifyItemChanged(position)
                 }
             }
@@ -132,7 +144,7 @@ class ContactListPop(
 
     // 更新界面
     private fun updateUi(it: List<MentionData>) {
-        adapter.setList(it)
+        adapter.setList(filterSelectFriends(alreadyCheckedData, it.toMutableList()))
         //        if (it.size > 1) {
         //            binding?.nes?.post {
         //                //滚到底部
@@ -217,9 +229,30 @@ class ContactListPop(
         }.collectLatest {
             if (it is Resource.Success) {
                 // 搜索成功
-                adapter.setList(it.data)
+                adapter.setList(filterSelectFriends(alreadyCheckedData, it.data ?: mutableListOf()))
             }
         }
+    }
+
+    private fun filterSelectFriends(already: MutableList<MentionData>, data: MutableList<MentionData>): MutableList<MentionData> {
+        if (already.isEmpty()) {
+            return data
+        }
+
+        val diffList = already.filter { item1 ->
+            data.any { item2 ->
+                item1.isSelect != item2.isSelect
+            }
+        }
+
+        diffList.forEach { item ->
+            data.forEach { item2 ->
+                if (item.nickName == item2.nickName) {
+                    item2.isSelect = item.isSelect
+                }
+            }
+        }
+        return data
     }
 
     override fun getPopupHeight(): Int {

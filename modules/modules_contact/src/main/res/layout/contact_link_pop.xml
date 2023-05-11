@@ -52,7 +52,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:hint="Please enter your feedback"
+                android:hint="Paste a link"
                 android:paddingStart="12dp"
                 android:textColorHint="#D0C7C7"
                 android:textSize="16sp"

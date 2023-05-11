@@ -83,6 +83,11 @@ object Constants {
         const val KEY_MY_WEIGHT_UNIT = "key_my_weight_unit"
     }
 
+    object Contact {
+        const val KEY_SHARE_TO_PUBLIC = "key_share_to_public"
+        const val KEY_PLANT_DATA_IS_VISIBLE = "key_plant_data_is_visible"
+    }
+
     // 隐私合规相关
     object PrivacyPolicy {
         const val KEY_PRIVACY_POLICY_IS_AGREE = "key_privacy_policy_is_agree"
