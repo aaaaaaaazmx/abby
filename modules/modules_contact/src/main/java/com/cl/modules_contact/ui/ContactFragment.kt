@@ -34,7 +34,6 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
-import com.cl.modules_contact.adapter.OtherJourneyAdapter
 import com.cl.modules_contact.adapter.TagsAdapter
 import com.cl.modules_contact.adapter.TrendListAdapter
 import com.cl.modules_contact.databinding.FragmentContactBinding
@@ -72,13 +71,13 @@ import javax.inject.Inject
  */
 @Route(path = RouterPath.Contact.PAGE_CONTACT)
 @AndroidEntryPoint
-class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClickListener {
+class ContactFragment : BaseFragment<FragmentContactBinding>() {
     @Inject
     lateinit var mViewMode: ContactViewModel
 
     // 朋友圈适配器
     private val adapter by lazy {
-        TrendListAdapter(mutableListOf(), this@ContactFragment)
+        TrendListAdapter(mutableListOf())
     }
 
     // 标签适配器
@@ -362,7 +361,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
                                     },
                                     itemSwitchAction = { isCheck ->
                                         // 关闭分享
-                                        mViewMode.public(SyncTrendReq(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString()))
+                                        mViewMode.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                                     },
                                     isShowReport = item?.userId.toString() == mViewMode.userinfoBean?.userId
                                 )
@@ -647,21 +646,5 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
 
     companion object {
         const val REFRESH_SIZE = 10
-    }
-
-    /**
-     * 图片点击，九宫格图片
-     */
-    override fun onClick(nineGridView: NineGridImageView, imageView: ImageView, url: String, urlList: List<String>, externalPosition: Int, position: Int) {
-        // 图片浏览
-        XPopup.Builder(context)
-            .asImageViewer(
-                imageView,
-                position,
-                urlList.toList(),
-                OnSrcViewUpdateListener { _, _ -> },
-                SmartGlideImageLoader()
-            )
-            .show()
     }
 }

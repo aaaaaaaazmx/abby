@@ -48,10 +48,9 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
         return remoteRepository.delete(req)
     }
 
-    fun public(req: SyncTrendReq): Flow<HttpResult<BaseBean>> {
-        return remoteRepository.public(req)
+    fun public(syncTrend: Int, momentId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.public(syncTrend, momentId)
     }
-
     fun report(req: ReportReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.report(req)
     }

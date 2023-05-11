@@ -59,7 +59,7 @@ import kotlin.math.abs
  * 其他人的空间
  */
 @AndroidEntryPoint
-class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>(), OnImageItemClickListener {
+class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
     @Inject
     lateinit var viewModel: MyJourneyViewModel
@@ -77,7 +77,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>(), OnImage
     }*/
 
     private val adapter by lazy {
-        OtherJourneyAdapter(mutableListOf(), onImageItemClickListener = this@OtherJourneyActivity)
+        OtherJourneyAdapter(mutableListOf())
     }
 
 
@@ -419,7 +419,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>(), OnImage
                                     })
                                 ).show()
                             }, itemSwitchAction = { isCheck -> // 关闭分享
-                                viewModel.public(SyncTrendReq(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString()))
+                                viewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                             }, isShowReport = item?.userId.toString() == viewModel.userinfoBean?.userId
                             ).setBubbleBgColor(Color.WHITE) //气泡背景
                                 .setArrowWidth(XPopupUtils.dp2px(this@OtherJourneyActivity, 3f)).setArrowHeight(
@@ -467,12 +467,6 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>(), OnImage
                 this@OtherJourneyActivity.adapter.data[position].comment = commentListData?.size
                 adapter.notifyItemChanged(position)
             })
-        ).show()
-    }
-
-    override fun onClick(nineGridView: NineGridImageView, imageView: ImageView, url: String, urlList: List<String>, externalPosition: Int, position: Int) { // 图片浏览
-        XPopup.Builder(this@OtherJourneyActivity).asImageViewer(
-            imageView, position, urlList.toList(), { _, _ -> }, SmartGlideImageLoader()
         ).show()
     }
 

@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.ViewGroup
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.lifecycle.LifecycleOwner
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.cl.common_base.ext.DateHelper
@@ -19,11 +20,12 @@ import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.widget.nineview.GlideNineGridImageLoader
 import com.cl.modules_contact.widget.nineview.NineGridImageView
 import com.cl.modules_contact.widget.nineview.OnImageItemClickListener
+import com.youth.banner.Banner
+import com.youth.banner.indicator.CircleIndicator
 import java.util.Locale
 
 class MyJourneyAdapter(
-    data: MutableList<NewPageData.Records>?,
-    private val onImageItemClickListener: OnImageItemClickListener
+    data: MutableList<NewPageData.Records>?
 ) :
     BaseQuickAdapter<NewPageData.Records, BaseDataBindingHolder<ContactItemMyJourneyBinding>>(R.layout.contact_item_my_journey, data) {
 
@@ -37,25 +39,20 @@ class MyJourneyAdapter(
         holder.setText(R.id.tv_time, item.createTime?.let { formatTime(it) })
         holder.setText(R.id.tv_date, item.createTime?.let { formatDate(it) })
 
-        // 九宫格
-        holder.getView<NineGridImageView>(R.id.nineGridView).apply {
+        // 轮播图
+        holder.getView<Banner<String, ImageAdapter>>(R.id.banner).apply {
+            addBannerLifecycleObserver(context as? LifecycleOwner)
+            isAutoLoop(false)
+            setBannerRound(20f)
+            indicator = CircleIndicator(context)
+            val urlList = mutableListOf<String>()
             item.imageUrls?.let {
                 // 手动添加图片集合
-                val urlList = mutableListOf<String>()
                 it.forEach { data -> data.imageUrl?.let { it1 -> urlList.add(it1) } }
-                externalPosition = holder.bindingAdapterPosition
-                setUrlList(urlList)
             }
+            setAdapter(ImageAdapter(urlList, context))
         }
-    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseDataBindingHolder<ContactItemMyJourneyBinding> {
-        return super.onCreateViewHolder(parent, viewType).apply {
-            getView<NineGridImageView>(R.id.nineGridView).apply {
-                imageLoader = GlideNineGridImageLoader()
-                onImageItemClickListener = this@MyJourneyAdapter.onImageItemClickListener
-            }
-        }
     }
 
     fun formatTime(time: String): String {

@@ -56,8 +56,8 @@ class ContactRemoteRepository @Inject constructor() {
         return service.delete(req)
     }
 
-    fun public(req: SyncTrendReq): Flow<HttpResult<BaseBean>> {
-        return service.public(req)
+    fun public(syncTrend: Int, momentId: String): Flow<HttpResult<BaseBean>> {
+        return service.public(syncTrend, momentId)
     }
 
     fun report(req: ReportReq): Flow<HttpResult<BaseBean>> {

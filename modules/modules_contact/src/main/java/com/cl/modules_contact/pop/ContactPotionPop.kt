@@ -40,10 +40,10 @@ class ContactPotionPop(
                 dismiss()
             }
 
-            /*clShare.setOnClickListener {
+            clShare.setOnClickListener {
                 shareAction?.invoke()
                 dismiss()
-            }*/
+            }
 
             fisItemSwitch.setOnCheckedChangeListener { _, isChecked ->
                 itemSwitchAction?.invoke(isChecked)

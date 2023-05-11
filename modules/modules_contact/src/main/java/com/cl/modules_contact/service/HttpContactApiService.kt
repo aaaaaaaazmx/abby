@@ -71,9 +71,10 @@ interface HttpContactApiService {
     /**
      * 公开动态
      */
+    @FormUrlEncoded
     @POST("abby/moments/syncTrend")
     fun public(
-        @Body requestBody: SyncTrendReq,
+        @Field("syncTrend") syncTrend: Int, @Field("momentId") momentId: String,
     ): Flow<HttpResult<BaseBean>>
 
     /**
@@ -128,7 +129,7 @@ interface HttpContactApiService {
      */
     @FormUrlEncoded
     @POST("abby/moments/getMentionList")
-    fun getMentionList(@Field("searchName")searchName: String): Flow<HttpResult<MutableList<MentionData>>>
+    fun getMentionList(@Field("searchName") searchName: String): Flow<HttpResult<MutableList<MentionData>>>
 
     /**
      * 新增动态

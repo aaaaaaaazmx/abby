@@ -211,8 +211,8 @@ class ContactCommentViewModel @Inject constructor(private val repository: Contac
      */
     private val _publicData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
     val publicData: LiveData<Resource<com.cl.common_base.BaseBean>> = _publicData
-    fun public(req: SyncTrendReq) = viewModelScope.launch {
-        repository.public(req).map {
+    fun public(syncTrend: Int, momentId: String) = viewModelScope.launch {
+        repository.public(syncTrend, momentId).map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg

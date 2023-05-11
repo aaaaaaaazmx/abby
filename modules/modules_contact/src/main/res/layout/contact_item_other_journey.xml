@@ -115,23 +115,31 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
 
-        <com.cl.modules_contact.widget.nineview.NineGridImageView
-            app:ng_only_one_size="200dp"
-            app:ng_spacing="5dp"
-            android:id="@+id/nineGridView"
+        <RelativeLayout
+            android:visibility="@{data.imageUrls.size() == 0 ? View.GONE : View.VISIBLE}"
+            android:layout_marginTop="8dp"
+            android:id="@+id/ff_banner"
+            android:background="#EBFAEE"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvNick"
+            app:layout_constraintTop_toBottomOf="@id/tv_link"
+            android:layout_width="0dp"
+            android:layout_height="200dp">
+
+        <com.youth.banner.Banner
+            android:id="@+id/banner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="@id/tvNick"
-            app:layout_constraintTop_toBottomOf="@id/tv_link"
             />
+        </RelativeLayout>
 
         <TextView
             android:layout_marginTop="10dp"
             android:visibility="@{data.articleId == 0 ? View.GONE : View.VISIBLE}"
             android:id="@+id/tv_learn_more"
-            app:layout_constraintStart_toStartOf="@+id/nineGridView"
-            app:layout_constraintTop_toBottomOf="@+id/nineGridView"
+            app:layout_constraintStart_toStartOf="@+id/tvDesc"
+            app:layout_constraintTop_toBottomOf="@+id/ff_banner"
             android:text="Learn More"
             android:textColor="@color/mainColor"
             android:textStyle="bold"

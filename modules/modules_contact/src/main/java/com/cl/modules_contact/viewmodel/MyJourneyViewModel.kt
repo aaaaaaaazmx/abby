@@ -14,12 +14,9 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.repository.ContactRepository
 import com.cl.modules_contact.request.DeleteReq
 import com.cl.modules_contact.request.LikeReq
-import com.cl.modules_contact.request.MomentsDetailsReq
 import com.cl.modules_contact.request.MyMomentsReq
-import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.modules_contact.request.RewardReq
-import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.NewPageData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -288,8 +285,8 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
      */
     private val _publicData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
     val publicData: LiveData<Resource<com.cl.common_base.BaseBean>> = _publicData
-    fun public(req: SyncTrendReq) = viewModelScope.launch {
-        repository.public(req).map {
+    fun public(syncTrend: Int, momentId: String) = viewModelScope.launch {
+        repository.public(syncTrend, momentId).map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg

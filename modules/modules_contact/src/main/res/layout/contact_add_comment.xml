@@ -144,25 +144,25 @@
                         app:layout_constraintTop_toBottomOf="@+id/tvDesc"
                         tools:text="123123123" />
 
-                    <com.cl.modules_contact.widget.nineview.NineGridImageView
-                        app:ng_only_one_size="200dp"
-                        app:ng_spacing="5dp"
-                        android:id="@+id/nineGridView"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                    <RelativeLayout
+                        android:visibility="@{viewModel.momentDetailData.data.imageUrls.size() == 0 ? View.GONE : View.VISIBLE}"
                         android:layout_marginTop="8dp"
-                        android:background="@color/white"
+                        android:id="@+id/ff_banner"
+                        android:background="#EBFAEE"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/tvNick"
                         app:layout_constraintTop_toBottomOf="@id/tv_link"
-                        app:ngv_extra_strategy="show"
-                        app:ngv_four_strategy="usual"
-                        app:ngv_itemGap="3dp"
-                        app:ngv_maxCount="9"
-                        app:ngv_single_strategy="custom"
-                        app:ngv_spanCount="3"
-                        app:ngv_three_strategy="usual"
-                        app:ngv_two_strategy="usual"
+                        android:layout_width="0dp"
+                        android:layout_height="200dp">
+                    <com.youth.banner.Banner
+                        app:ng_only_one_size="200dp"
+                        app:ng_spacing="5dp"
+                        android:id="@+id/banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
                         />
+                    </RelativeLayout>
 
 
 
@@ -177,8 +177,8 @@
                         android:paddingEnd="9dp"
                         android:paddingBottom="3dp"
                         android:visibility="@{viewModel.momentDetailData.data.openData == 1 ? View.VISIBLE : View.GONE}"
-                        app:layout_constraintStart_toStartOf="@+id/nineGridView"
-                        app:layout_constraintTop_toBottomOf="@+id/nineGridView">
+                        app:layout_constraintStart_toStartOf="@+id/ff_banner"
+                        app:layout_constraintTop_toBottomOf="@+id/ff_banner">
 
                         <TextView
                             android:id="@+id/tv_periodicity"

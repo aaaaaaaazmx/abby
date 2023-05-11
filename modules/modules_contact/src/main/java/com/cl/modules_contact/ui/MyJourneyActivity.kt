@@ -33,7 +33,6 @@ import com.cl.modules_contact.request.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.modules_contact.request.RewardReq
-import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -51,14 +50,14 @@ import javax.inject.Inject
  * 个人空间
  */
 @AndroidEntryPoint
-class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>(), OnImageItemClickListener {
+class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
 
 
     @Inject
     lateinit var viewModel: MyJourneyViewModel
 
     private val adapter by lazy {
-        MyJourneyAdapter(mutableListOf(), onImageItemClickListener = this@MyJourneyActivity)
+        MyJourneyAdapter(mutableListOf())
     }
 
     override fun initView() {
@@ -353,7 +352,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>(), OnIma
                                     },
                                     itemSwitchAction = { isCheck ->
                                         // 关闭分享
-                                        viewModel.public(SyncTrendReq(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString()))
+                                        viewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                                     },
                                     isShowReport = item?.userId.toString() == viewModel.userinfoBean?.userId
                                 )
@@ -377,19 +376,6 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>(), OnIma
                 }
             }
         }
-    }
-
-    override fun onClick(nineGridView: NineGridImageView, imageView: ImageView, url: String, urlList: List<String>, externalPosition: Int, position: Int) {
-        // 图片浏览
-        XPopup.Builder(this@MyJourneyActivity)
-            .asImageViewer(
-                imageView,
-                position,
-                urlList.toList(),
-                { _, _ -> },
-                SmartGlideImageLoader()
-            )
-            .show()
     }
 
     /**

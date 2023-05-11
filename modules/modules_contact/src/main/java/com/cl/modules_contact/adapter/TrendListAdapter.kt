@@ -7,8 +7,11 @@ import android.text.SpannedString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.lifecycle.LifecycleOwner
+import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
@@ -19,6 +22,15 @@ import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.widget.nineview.GlideNineGridImageLoader
 import com.cl.modules_contact.widget.nineview.NineGridImageView
 import com.cl.modules_contact.widget.nineview.OnImageItemClickListener
+import com.google.android.exoplayer2.upstream.AssetDataSource
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
+import com.lxj.xpopup.util.SmartGlideImageLoader
+import com.youth.banner.Banner
+import com.youth.banner.adapter.BannerImageAdapter
+import com.youth.banner.holder.BannerImageHolder
+import com.youth.banner.indicator.CircleIndicator
+import com.youth.banner.indicator.RoundLinesIndicator
 import kotlin.concurrent.thread
 
 
@@ -27,7 +39,6 @@ import kotlin.concurrent.thread
  */
 class TrendListAdapter(
     data: MutableList<NewPageData.Records>?,
-    private val onImageItemClickListener: OnImageItemClickListener
 ) :
     BaseQuickAdapter<NewPageData.Records, BaseDataBindingHolder<ItemCircleBinding>>(R.layout.item_circle, data) {
 
@@ -42,25 +53,18 @@ class TrendListAdapter(
         // 设置富文本
         holder.setText(R.id.tvDesc, getContents(item.content, item.mentions))
         holder.setText(R.id.tvNum, convertTime(item.createTime))
-
-        // 九宫格
-        holder.getView<NineGridImageView>(R.id.nineGridView).apply {
+        // 轮播图
+        holder.getView<Banner<String, ImageAdapter>>(R.id.banner).apply {
+            addBannerLifecycleObserver(context as? LifecycleOwner)
+            isAutoLoop(false)
+            setBannerRound(20f)
+            indicator = CircleIndicator(context)
+            val urlList = mutableListOf<String>()
             item.imageUrls?.let {
                 // 手动添加图片集合
-                val urlList = mutableListOf<String>()
                 it.forEach { data -> data.imageUrl?.let { it1 -> urlList.add(it1) } }
-                externalPosition = holder.bindingAdapterPosition
-                setUrlList(urlList)
             }
-        }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseDataBindingHolder<ItemCircleBinding> {
-        return super.onCreateViewHolder(parent, viewType).apply {
-            getView<NineGridImageView>(R.id.nineGridView).apply {
-                imageLoader = GlideNineGridImageLoader()
-                onImageItemClickListener = this@TrendListAdapter.onImageItemClickListener
-            }
+            setAdapter(ImageAdapter(urlList, context))
         }
     }
 

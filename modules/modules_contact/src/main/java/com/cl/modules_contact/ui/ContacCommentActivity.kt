@@ -17,6 +17,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.cl.common_base.R
@@ -28,6 +29,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.adapter.ContactCommentAdapter
 import com.cl.modules_contact.adapter.EmojiAdapter
+import com.cl.modules_contact.adapter.ImageAdapter
 import com.cl.modules_contact.adapter.NineGridAdapter
 import com.cl.modules_contact.databinding.ContactAddCommentBinding
 import com.cl.modules_contact.pop.ContactDeletePop
@@ -56,6 +58,8 @@ import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.util.XPopupUtils
 import com.tencent.bugly.proguard.v
+import com.youth.banner.Banner
+import com.youth.banner.indicator.CircleIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -434,30 +438,19 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                     // 设置富文本
                     binding.tvDesc.text = getContents(data?.content, data?.mentions)
                     binding.tvNum.text = convertTime(data?.createTime)
-                    binding.nineGridView.apply {
-                        imageLoader = GlideNineGridImageLoader()
-                        onImageItemClickListener = object : OnImageItemClickListener {
-                            // 图片点击事件
-                            override fun onClick(nineGridView: NineGridImageView, imageView: ImageView, url: String, urlList: List<String>, externalPosition: Int, position: Int) {
-                                // 图片浏览
-                                XPopup.Builder(this@ContactCommentActivity)
-                                    .asImageViewer(
-                                        imageView,
-                                        position,
-                                        urlList.toList(),
-                                        OnSrcViewUpdateListener { _, _ -> },
-                                        SmartGlideImageLoader()
-                                    )
-                                    .show()
-                            }
-                        }
+
+                    // 轮播图
+                    binding.banner.apply {
+                        addBannerLifecycleObserver(context as? LifecycleOwner)
+                        isAutoLoop(false)
+                        setBannerRound(20f)
+                        indicator = CircleIndicator(context)
+                        val urlList = mutableListOf<String>()
                         data?.imageUrls?.let {
                             // 手动添加图片集合
-                            val urlList = mutableListOf<String>()
                             it.forEach { data -> data.imageUrl.let { it1 -> urlList.add(it1) } }
-                            // NineGridAdapter(this@ContactCommentActivity, urlList)
-                            setUrlList(urlList)
                         }
+                        setAdapter(ImageAdapter(urlList, context))
                     }
 
                     /**
@@ -577,7 +570,7 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                                         },
                                         itemSwitchAction = { isCheck ->
                                             // 关闭分享
-                                            mViewModel.public(SyncTrendReq(syncTrend = if (isCheck) 1 else 0, momentId = data?.id.toString()))
+                                            mViewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = data?.id.toString())
                                         },
                                         isShowReport = data?.userId.toString() == mViewModel.userinfoBean?.userId
                                     )
