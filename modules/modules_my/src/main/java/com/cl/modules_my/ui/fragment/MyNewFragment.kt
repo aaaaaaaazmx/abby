@@ -21,6 +21,7 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyNewFragmentBinding
 import com.cl.modules_my.ui.FeedbackActivity
+import com.cl.modules_my.ui.OxygenListActivity
 import com.cl.modules_my.ui.ProfileActivity
 import com.cl.modules_my.ui.SettingActivity
 import com.cl.modules_my.viewmodel.MyViewModel
@@ -88,7 +89,10 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
             startActivity(Intent(context, SettingActivity::class.java))
         }
         binding.ftOxy.setOnClickListener {
-            // todo 跳转到氧气币种
+            // 跳转到氧气币种
+           /* context?.let {
+                startActivity(Intent(it, OxygenListActivity::class.java))
+            }*/
         }
     }
 

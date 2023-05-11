@@ -135,6 +135,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.FeedbackActivity" />
         <activity android:name=".ui.WallActivity" />
+        <activity android:name=".ui.OxygenListActivity" />
 
 
     </application>
