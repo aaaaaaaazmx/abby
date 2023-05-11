@@ -362,23 +362,22 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>(), OnImage
                 R.id.cl_love -> { // 点赞
                     if (item?.isPraise == 0) {
                         viewModel.like(LikeReq(learnMoreId = item.learnMoreId, likeId = item.id.toString(), type = "moments"))
+                        //  点赞效果
+                        val itemPosition = IntArray(2)
+                        val superLikePosition = IntArray(2)
+                        view.getLocationOnScreen(itemPosition)
+                        binding.superLikeLayout.getLocationOnScreen(superLikePosition)
+                        val x: Int = itemPosition[0] + view.width / 2
+                        val y: Int = itemPosition[1] - superLikePosition[1] + view.height / 2
+                        logI("x = $x, y = $y")
+                        logI("width = ${view.width}, height = ${view.height}")
+                        binding.superLikeLayout.launch(x, y)
+
+                        // 震动
+                        SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
                     } else {
                         viewModel.unlike(LikeReq(learnMoreId = item?.learnMoreId, likeId = item?.id.toString(), type = "moments"))
                     }
-
-                    //  点赞效果
-                    val itemPosition = IntArray(2)
-                    val superLikePosition = IntArray(2)
-                    view.getLocationOnScreen(itemPosition)
-                    binding.superLikeLayout.getLocationOnScreen(superLikePosition)
-                    val x: Int = itemPosition[0] + view.width / 2
-                    val y: Int = itemPosition[1] - superLikePosition[1] + view.height / 2
-                    logI("x = $x, y = $y")
-                    logI("width = ${view.width}, height = ${view.height}")
-                    binding.superLikeLayout.launch(x, y)
-
-                    // 震动
-                    SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
                 }
 
                 R.id.cl_gift -> { //  打赏

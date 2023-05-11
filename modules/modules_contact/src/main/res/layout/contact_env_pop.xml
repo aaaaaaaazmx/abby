@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@color/mainColor"
+                android:textColor="@color/black"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="@+id/cl_avatar"
                 app:layout_constraintStart_toEndOf="@+id/cl_avatar"
@@ -76,6 +76,33 @@
                 android:layout_marginBottom="13dp"
                 android:background="@mipmap/iv_close"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:paddingBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+          >
+
+            <ImageView
+                android:id="@+id/iv_time"
+                android:layout_width="10dp"
+                android:layout_height="17dp"
+                android:background="@mipmap/home_plant_temperature_bg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:text="Plant Environment"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_time"
+                app:layout_constraintStart_toEndOf="@+id/iv_time"
+                app:layout_constraintTop_toTopOf="@+id/iv_time" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

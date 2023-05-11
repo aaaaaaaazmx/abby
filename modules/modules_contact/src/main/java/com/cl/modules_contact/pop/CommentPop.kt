@@ -148,7 +148,7 @@ class CommentPop(
     }
 
     private val _commentListData = MutableLiveData<Resource<MutableList<CommentByMomentData>>>()
-   private val commentListData: LiveData<Resource<MutableList<CommentByMomentData>>> = _commentListData
+    private val commentListData: LiveData<Resource<MutableList<CommentByMomentData>>> = _commentListData
     private fun commentList(req: CommentByMomentReq) = lifecycleScope.launch {
         service.getCommentByMomentId(req).map {
             if (it.code != Constants.APP_SUCCESS) {
@@ -402,24 +402,30 @@ class CommentPop(
             }
 
             tvCommentTxt.setOnClickListener {
-                logI("12312312 tvCommentTxt")
-                XPopup.Builder(context)
-                    .isDestroyOnDismiss(false)
-                    .dismissOnTouchOutside(true)
-                    .autoOpenSoftInput(true)
-                    .hasShadowBg(false)
-                    .moveUpToKeyboard(true)
-                    .asCustom(ReplyCommentPop(
-                        context = context, headPic = userinfoBean?.avatarPicture, nickName = userinfoBean?.nickName,
-                        commentContent = null, commentText = tvCommentTxt.text.toString()
-                    ) {
-                        // 发表评论
-                        tvCommentTxt.text = it
-                        if (TextUtils.isEmpty(tvCommentTxt.text)) return@ReplyCommentPop
-                        publish(PublishReq(comment = tvCommentTxt.text.toString(), learnMoreId = null, momentId = momentId.toString()))
-                    }).show()
+                showSoft()
             }
         }
+    }
+
+    /**
+     * 弹出软键盘、评论
+     */
+   private fun ContactPopCommentBinding.showSoft() {
+        XPopup.Builder(context)
+            .isDestroyOnDismiss(false)
+            .dismissOnTouchOutside(true)
+            .autoOpenSoftInput(true)
+            .hasShadowBg(false)
+            .moveUpToKeyboard(true)
+            .asCustom(ReplyCommentPop(
+                context = context, headPic = userinfoBean?.avatarPicture, nickName = userinfoBean?.nickName,
+                commentContent = null, commentText = tvCommentTxt.text.toString()
+            ) {
+                // 发表评论
+                tvCommentTxt.text = it
+                if (TextUtils.isEmpty(tvCommentTxt.text)) return@ReplyCommentPop
+                publish(PublishReq(comment = tvCommentTxt.text.toString(), learnMoreId = null, momentId = momentId.toString()))
+            }).show()
     }
 
     private fun initClick() {
@@ -436,6 +442,10 @@ class CommentPop(
                 // 隐藏和显示空背景
                 if (null == data) return@success
                 ViewUtils.setVisible(data?.size == 0, binding?.ivEmptyBg)
+                if (data?.size == 0) {
+                    binding?.showSoft()
+                }
+
                 val list = data
                 // 遍历data
                 list?.forEach { item ->

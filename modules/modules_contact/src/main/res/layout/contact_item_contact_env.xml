@@ -33,6 +33,7 @@
             tools:text="Vegetation" />
 
         <TextView
+            android:textColor="@color/mainColor"
             android:text="@{data.healthStatus}"
             android:textStyle="bold"
             android:id="@+id/period_time"

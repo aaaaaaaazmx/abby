@@ -469,23 +469,24 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                         mViewModel.updateLikeData(LikeReq(learnMoreId = data?.learnMoreId, likeId = data?.id.toString(), type = KEY_MOMENTS))
                         if (isPraise == 0) {
                             mViewModel.likeReq.value?.let { it1 -> mViewModel.like(it1) }
+
+                            //  点赞效果
+                            val itemPosition = IntArray(2)
+                            val superLikePosition = IntArray(2)
+                            it.getLocationOnScreen(itemPosition)
+                            binding.superLikeLayout.getLocationOnScreen(superLikePosition)
+                            val x: Int = itemPosition[0] + it.width / 2
+                            val y: Int = itemPosition[1] - superLikePosition[1] + it.height / 2
+                            logI("x = $x, y = $y")
+                            logI("width = ${it.width}, height = ${it.height}")
+                            binding.superLikeLayout.launch(x, y)
+
+                            // 震动
+                            SoundPoolUtil.instance.startVibrator(context = this@ContactCommentActivity)
                         } else {
                             mViewModel.likeReq.value?.let { it1 -> mViewModel.unlike(it1) }
                         }
 
-                        //  点赞效果
-                        val itemPosition = IntArray(2)
-                        val superLikePosition = IntArray(2)
-                        it.getLocationOnScreen(itemPosition)
-                        binding.superLikeLayout.getLocationOnScreen(superLikePosition)
-                        val x: Int = itemPosition[0] + it.width / 2
-                        val y: Int = itemPosition[1] - superLikePosition[1] + it.height / 2
-                        logI("x = $x, y = $y")
-                        logI("width = ${it.width}, height = ${it.height}")
-                        binding.superLikeLayout.launch(x, y)
-
-                        // 震动
-                        SoundPoolUtil.instance.startVibrator(context = this@ContactCommentActivity)
                     }
 
                     /**
