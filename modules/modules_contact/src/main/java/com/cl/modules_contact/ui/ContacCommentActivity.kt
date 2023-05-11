@@ -7,8 +7,11 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannedString
 import android.text.TextUtils
+import android.text.style.ForegroundColorSpan
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -700,22 +703,22 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
     /**
      * 获取内容
      */
-    private fun getContents(content: String?, mentions: MutableList<com.cl.modules_contact.response.Mention>?): SpannedString {
-        var contents = content ?: ""
-        mentions?.forEach {
-            it.nickName.let { nickName ->
-                contents = contents.replace(nickName, "").trim()
-            }
-        }
-
-        return buildSpannedString {
-            color(getColor(R.color.mainColor)) {
-                mentions?.forEach {
-                    append("${it.nickName} ")
+    private fun getContents(content: String?, mentions: MutableList<com.cl.modules_contact.response.Mention>?): SpannableString {
+        content?.let {
+            val spannableString = SpannableString(content)
+            mentions?.forEach {
+                it.nickName?.let { nickName ->
+                    val colorSpan = ForegroundColorSpan(Color.parseColor("#006241"))
+                    val startIndex = spannableString.indexOf(nickName)
+                    var endIndex = spannableString.indexOf(" ", startIndex)
+                    if (endIndex == -1) {
+                        endIndex = spannableString.length
+                    }
+                    spannableString.setSpan(colorSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
             }
-            append(contents)
-        }
+            return spannableString
+        } ?: return SpannableString("")
 
     }
 

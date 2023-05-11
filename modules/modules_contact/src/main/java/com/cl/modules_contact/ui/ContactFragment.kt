@@ -210,7 +210,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>(), OnImageItemClick
     }
 
     private fun initClick() {
-        binding.tvTrend.setOnClickListener {
+        binding.clTrend.setOnClickListener {
             // 弹窗显示植物周期
             choosePeriodPop.show()
         }

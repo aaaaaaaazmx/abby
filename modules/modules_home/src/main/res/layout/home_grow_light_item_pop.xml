@@ -45,24 +45,25 @@
             android:id="@+id/period_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="13dp"
-            android:textSize="17sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@+id/period"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="will turn on at 10PM today" />
+            tools:text="will turn on at 10PM todaywill turn on at 10PM today" />
 
         <FrameLayout
+            android:layout_marginEnd="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/period_status"
             app:layout_constraintTop_toTopOf="@+id/period_status"
             app:layout_constraintStart_toEndOf="@+id/period_status"
             android:id="@+id/rl_edit"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             >
             <ImageView

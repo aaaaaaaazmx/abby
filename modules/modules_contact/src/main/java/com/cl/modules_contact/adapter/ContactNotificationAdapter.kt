@@ -1,6 +1,10 @@
 package com.cl.modules_contact.adapter
 
+import android.graphics.Color
+import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannedString
+import android.text.style.ForegroundColorSpan
 import android.widget.TextView
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -47,25 +51,20 @@ class ContactNotificationAdapter(data: MutableList<MessageListData>?) :
         return text
     }
 
-    private fun getContents(content: String?, mentions: MutableList<String>?): SpannedString {
-        var contents = content ?: ""
-        mentions?.forEach {
-            it.let { nickName ->
-                contents = contents.replace(nickName, "").trim()
-            }
-        }
-
-        return buildSpannedString {
-            color(context.getColor(com.cl.common_base.R.color.black)) {
-                bold {
-                    mentions?.forEach {
-                        append("$it ")
-                    }
+    private fun getContents(content: String?, mentions: MutableList<String>?): SpannableString {
+        content?.let {
+            val spannableString = SpannableString(content)
+            mentions?.forEach { nickName ->
+                val colorSpan = ForegroundColorSpan(Color.BLACK)
+                val startIndex = spannableString.indexOf(nickName)
+                var endIndex = spannableString.indexOf(" ", startIndex)
+                if (endIndex == -1) {
+                    endIndex = spannableString.length
                 }
+                spannableString.setSpan(colorSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
-            append(contents)
-        }
-
+            return spannableString
+        } ?: return SpannableString("")
     }
 
 }
