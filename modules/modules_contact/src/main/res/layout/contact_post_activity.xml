@@ -66,6 +66,7 @@
                 android:gravity="start"
                 android:hint="Record your growth progress"
                 android:maxEms="140"
+                android:maxLength="140"
                 android:padding="10dp"
                 android:textSize="15sp"
                 android:lineSpacingExtra="4dp"
