@@ -1726,7 +1726,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // InterCome信息
             getInterComeData.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
-                    ToastUtil.shortShow(errorMsg)
                 }
                 success {
                     // 更新InterCome用户信息

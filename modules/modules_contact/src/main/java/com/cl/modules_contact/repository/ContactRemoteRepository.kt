@@ -115,4 +115,12 @@ class ContactRemoteRepository @Inject constructor() {
     fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>> {
         return service.wallpaperList()
     }
+
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {
+        return service.userDetail()
+    }
+
+    fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
+        return service.automaticLogin(body)
+    }
 }

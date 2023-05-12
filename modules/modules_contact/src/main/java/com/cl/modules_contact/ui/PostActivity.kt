@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.widget.Adapter
 import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
@@ -31,6 +30,7 @@ import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
+import com.cl.common_base.widget.edittext.bean.FormatItemResult
 import com.cl.common_base.widget.edittext.bean.MentionUser
 import com.cl.common_base.widget.edittext.listener.EditDataListener
 import com.cl.common_base.widget.toast.ToastUtil
@@ -48,6 +48,7 @@ import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.ImageUrl
 import com.cl.modules_contact.request.Mention
 import com.cl.modules_contact.response.ChoosePicBean
+import com.cl.modules_contact.response.MentionData
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -252,10 +253,10 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                             // tds
                             binding.optionTds.itemValue = txt
                         },
-                    onDeleteAction = {
-                        // tds
-                        binding.optionTds.itemValue = null
-                    })
+                        onDeleteAction = {
+                            // tds
+                            binding.optionTds.itemValue = null
+                        })
                 ).show()
         }
 
@@ -269,7 +270,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 .asCustom(
                     ContactLinkPop(
                         this@PostActivity,
-                        txt = if (binding.tvLink.text.toString() == "Add link") "" else binding.tvLink.text.toString(),
+                        txt = if (binding.tvLink.text.toString() == "Add Link") "" else binding.tvLink.text.toString(),
                         onConfirmAction = { txt ->
                             // 超链接
                             binding.tvLink.text = txt
@@ -335,6 +336,24 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         }
 
         binding.peopleAt.setOnClickListener {
+            // 需要删除之后取消勾选，取消勾选之后，需要删除@的人
+            // 首先需要查看当前的@的人，是否和保存的是否一致，有可能用户已经删除了
+            val userList = binding.etConnect.formatResult?.userList ?: mutableListOf()
+            val alreadyList = viewModel.selectFriends.value ?: mutableListOf()
+            if (userList.isEmpty()) {
+                viewModel.setSelectFriendsClear()
+            } else {
+                // 判断他们的size 是否一致
+                if (userList.size == alreadyList?.size) {
+                    // 那么就不用管
+                } else {
+                    // 找出他们之间不同的，并且在alreadyList中删除他
+                    findDifferentItems(alreadyList, userList).forEach {
+                        viewModel.serSelectFriendsRemove(it)
+                    }
+                }
+            }
+
             // @人 跳转到联系人列表
             XPopup.Builder(this@PostActivity)
                 .isDestroyOnDismiss(false)
@@ -346,17 +365,83 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                     ContactListPop(this@PostActivity,
                         alreadyCheckedData = viewModel.selectFriends.value ?: mutableListOf(),
                         onConfirmAction = {
-                            viewModel.setSelectFriends(it)
                             //  插入@的人
-                            it.forEach { mentionData ->
-                                val index: Int = binding.etConnect.selectionStart
-                                binding.etConnect.editableText.insert(index, "@")
-                                binding.etConnect.insert(MentionUser(mentionData.userId ?: "", mentionData.nickName ?: "", mentionData.abbyId ?: "", mentionData.nickName ?: "", mentionData.picture ?: ""))
+                            // 当保存的人没有，那么说明是第一次插入
+                            if (viewModel.selectFriends.value?.isEmpty() == true) {
+                                it.forEach { mentionData ->
+                                    val index: Int = binding.etConnect.selectionStart
+                                    binding.etConnect.editableText.insert(index, "@")
+                                    binding.etConnect.insert(MentionUser(mentionData.userId ?: "", mentionData.nickName ?: "", mentionData.abbyId ?: "", mentionData.nickName ?: "", mentionData.picture ?: ""))
+                                }
+                            } else {
+                                // 在第二次插入时，需要判断是插入还是删除
+                                // 在勾选之后取消、需要删除相对应的人，那么userList.size > it.size
+                                if ((binding.etConnect.formatResult?.userList?.size ?: 0) > it.size) {
+                                    // 删除当前的length
+                                    findDifferentItemForuserList(it, binding.etConnect.formatResult?.userList).forEach { userList ->
+                                        // 需要删除当前的userList
+                                        binding.etConnect.remove(MentionUser(userList.id ?: "", userList.name ?: "", userList.abbyId ?: "", userList.name ?: "", userList.picture ?: ""))
+                                    }
+                                } else {
+                                    // 插入用户贵
+                                    findDifferentItems(it, binding.etConnect.formatResult?.userList).forEach { mentionData ->
+                                        val index: Int = binding.etConnect.selectionStart
+                                        binding.etConnect.editableText.insert(index, "@")
+                                        binding.etConnect.insert(MentionUser(mentionData.userId ?: "", mentionData.nickName ?: "", mentionData.abbyId ?: "", mentionData.nickName ?: "", mentionData.picture ?: ""))
+                                    }
+                                }
                             }
+                            // 保存已经勾选的人
+                            viewModel.setSelectFriends(it)
                         })
                 ).show()
         }
 
+    }
+
+    fun findDifferentItems(list1: MutableList<MentionData>, list2: MutableList<FormatItemResult>? = mutableListOf()): MutableList<MentionData> {
+        val result = mutableListOf<MentionData>()
+        if (list2?.isEmpty() == true) return result
+
+        for (item1 in list1) {
+            var found = false
+            for (item2 in list2!!) {
+                if (item1.userId == item2.id) {
+                    found = true
+                    break
+                }
+            }
+            if (!found) {
+                result.add(item1)
+            }
+        }
+        logI("!2312312312: ${result.size}")
+        return result
+    }
+
+
+    fun findDifferentItemForuserList(list1: MutableList<MentionData>, list2: MutableList<FormatItemResult>? = mutableListOf()): MutableList<FormatItemResult> {
+        val result = mutableListOf<FormatItemResult>()
+        if (list2?.isEmpty() == true) return result
+
+        for (item1 in list2!!) {
+            var found = false
+            for (item2 in list1) {
+                if (item1.id == item2.userId) {
+                    found = true
+                    break
+                }
+            }
+            if (!found) {
+                result.add(item1)
+            }
+        }
+
+        result.forEach {
+            logI("12313123: ${it.name}, ${it.id}, ${it.fromIndex}, ${it.length}")
+        }
+
+        return result
     }
 
     /**

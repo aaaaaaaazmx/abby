@@ -24,11 +24,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.cl.common_base.base.BaseFragment
+import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.refresh.ClassicsHeader
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
@@ -102,18 +105,6 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 )
             )
             .build()
-
-        // 数量的显示
-        ViewUtils.setVisible(mViewMode.userinfoBean?.eventCount != 0, binding.vvMsgNumber)
-        ViewUtils.setVisible(TextUtils.isEmpty(mViewMode.userinfoBean?.avatarPicture), binding.noheadShow)
-        ViewUtils.setVisible(!TextUtils.isEmpty(mViewMode.userinfoBean?.avatarPicture), binding.ivAvatar)
-        context?.let {
-            Glide.with(it).load(mViewMode.userinfoBean?.avatarPicture)
-                .apply(RequestOptions.circleCropTransform())
-                .into(binding.ivAvatar)
-        }
-        binding.vvMsgNumber.text = (mViewMode.userinfoBean?.eventCount ?: 0).toString()
-        binding.noheadShow.text = mViewMode.userinfoBean?.nickName?.substring(0, 1)
 
         binding.rvWxCircle.apply {
             /* (itemAnimator as? SimpleItemAnimator)?.apply {
@@ -258,7 +249,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.cl_avatar -> {
                     // todo 点击头像、跳转到自己的空间， 用userID来区别是跳转到自己的，还是别人的
-                    if (item?.userId == mViewMode.userinfoBean?.userId) {
+                    if (item?.userId == mViewMode.refreshToken.value?.data?.userId) {
                         context?.startActivity(Intent(context, MyJourneyActivity::class.java))
                     } else {
                         val intent = Intent(context, OtherJourneyActivity::class.java)
@@ -298,7 +289,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.cl_gift -> {
                     //  打赏
-                    if (item?.userId == mViewMode.userinfoBean?.userId) {
+                    if (item?.userId == mViewMode.refreshToken.value?.data?.userId) {
                         extracted(view.findViewById(R.id.curing_box_gift))
                         return@setOnItemChildClickListener
                     }
@@ -363,7 +354,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                         // 关闭分享
                                         mViewMode.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                                     },
-                                    isShowReport = item?.userId.toString() == mViewMode.userinfoBean?.userId
+                                    isShowReport = item?.userId.toString() == mViewMode.refreshToken.value?.data?.userId
                                 )
                                     .setBubbleBgColor(Color.WHITE) //气泡背景
                                     .setArrowWidth(XPopupUtils.dp2px(context, 3f))
@@ -479,6 +470,26 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            refreshToken.observe(viewLifecycleOwner, resourceObserver {
+                success {
+
+                    data?.let {
+                        // 数量的显示
+                        ViewUtils.setVisible(it.eventCount != 0, binding.vvMsgNumber)
+                        ViewUtils.setVisible(TextUtils.isEmpty(it.avatarPicture), binding.noheadShow)
+                        ViewUtils.setVisible(!TextUtils.isEmpty(it.avatarPicture), binding.ivAvatar)
+                        context?.let { context ->
+                            Glide.with(context).load(it.avatarPicture)
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(binding.ivAvatar)
+                        }
+                        binding.vvMsgNumber.text = (it.eventCount ?: 0).toString()
+                        binding.noheadShow.text = it.nickName?.substring(0, 1)
+                    }
+                }
+
+            })
+
             // 获取标签列表
             tagListData.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
@@ -629,6 +640,19 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 topMargin = insets.systemWindowInsetTop
             }
             return@setOnApplyWindowInsetsListener insets
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            mViewMode.refreshToken(
+                AutomaticLoginReq(
+                    userName = mViewMode.account,
+                    password = mViewMode.psd,
+                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                )
+            )
         }
     }
 

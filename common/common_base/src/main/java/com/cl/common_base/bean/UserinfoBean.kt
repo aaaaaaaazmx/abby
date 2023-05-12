@@ -36,6 +36,7 @@ data class UserinfoBean(
         val deviceId: String? = null,
         val abbyId: String? = null,
         val avatarPicture: String? = null,
+        val eventCount: Int? = null,
         val childLock: Int? = null,
         val email: String? = null,
         val newMessage: Boolean? = false,

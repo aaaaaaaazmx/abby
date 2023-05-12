@@ -28,7 +28,7 @@ class ContactPotionPop(
 
             ViewUtils.setVisible(!isShowReport, clReport)
             ViewUtils.setVisible(isShowReport, clDelete, clShare, vv)
-            // ViewUtils.setVisible(isShowShareToPublic, clShare)
+            ViewUtils.setVisible(isShowShareToPublic, clShare, vv)
 
             clDelete.setOnClickListener {
                 deleteAction?.invoke()

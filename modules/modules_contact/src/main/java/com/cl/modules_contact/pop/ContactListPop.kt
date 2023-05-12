@@ -126,14 +126,16 @@ class ContactListPop(
         adapter.setOnItemChildClickListener { adapter, view, position ->
             when (view.id) {
                 R.id.cl_root -> {
-                    if (((adapter.data as? MutableList<MentionData>)?.filter { it.isSelect == true }?.size ?: 0) >= 9) {
-                        ToastUtil.shortShow("can’t mention select more than 9 users")
-                        return@setOnItemChildClickListener
-                    }
-
                     val item = adapter.getItem(position) as MentionData
+                    // 添加的时候需要判断，取消的时候不需要判断
+                    if (item.isSelect == false) {
+                        if (((adapter.data as? MutableList<MentionData>)?.filter { it.isSelect == true }?.size ?: 0) >= 9) {
+                            ToastUtil.shortShow("can’t mention select more than 9 users")
+                            return@setOnItemChildClickListener
+                        }
+                    }
                     item.isSelect = !(item.isSelect ?: false)
-                    if (alreadyCheckedData.isNotEmpty()) {
+                    if (alreadyCheckedData.isNotEmpty() && alreadyCheckedData.size > position) {
                         alreadyCheckedData[position].isSelect = !(alreadyCheckedData[position].isSelect ?: false)
                     }
                     adapter.notifyItemChanged(position)
@@ -247,7 +249,7 @@ class ContactListPop(
 
         diffList.forEach { item ->
             data.forEach { item2 ->
-                if (item.nickName == item2.nickName) {
+                if (item.userId == item2.userId) {
                     item2.isSelect = item.isSelect
                 }
             }

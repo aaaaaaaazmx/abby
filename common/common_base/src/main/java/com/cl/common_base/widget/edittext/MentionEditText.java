@@ -200,6 +200,33 @@ public class MentionEditText extends AppCompatEditText {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
+
+    public void remove(InsertData insertData) {
+        if (insertData == null) {
+            return;
+        }
+        Editable editable = getText();
+        if (editable == null) {
+            return;
+        }
+
+        String mentionChar = getText().toString();
+        if (insertData instanceof MentionUser) {
+            int start = mentionChar.indexOf((String) ("@" + ((MentionUser) insertData).getUserName()));
+            int end = mentionChar.indexOf(" ", start);
+            editable.delete(start, end + 1);// 多删除后面的空格，不然会导致多个空格
+            for (int i = 0; i < mRangeManager.get().size(); i++) {
+                if (mRangeManager.get().get(i).getInsertData() instanceof MentionUser) {
+                    MentionUser insertData1 = (MentionUser) mRangeManager.get().get(i).getInsertData();
+                    if (insertData1.getUserId() == ((MentionUser) insertData).getUserId()) {
+                        mRangeManager.get().remove(i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 光标位置插入高亮
      */
@@ -405,6 +432,9 @@ public class MentionEditText extends AppCompatEditText {
         }
     }
 
+    /**
+     * 结果 文字的所有集合
+     */
     public FormatResult getFormatResult() {
         String text = getText().toString();
         return mRangeManager.getFormatResult(text);
@@ -480,7 +510,7 @@ public class MentionEditText extends AppCompatEditText {
 
                 @Override
                 public boolean onSingleTapUp(MotionEvent e) {
-    //                upMotionEvent = e;
+                    //                upMotionEvent = e;
                     Log.d(TAG, "-->>点击up " + e.toString());
                     return false;
                 }

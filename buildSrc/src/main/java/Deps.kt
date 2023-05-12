@@ -22,7 +22,7 @@ object Version {
     const val minSdk = 26
     const val targetSdk = 33
     val versionCode = 25
-    const val versionName = "1.3.0"
+    const val versionName = "1.3.1"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"

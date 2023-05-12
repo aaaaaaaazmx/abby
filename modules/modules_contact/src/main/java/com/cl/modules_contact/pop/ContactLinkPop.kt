@@ -31,10 +31,10 @@ class ContactLinkPop(
 
             tvConfirm.setOnClickListener {
                 val txt = etEmail.text.toString()
-                if (txt.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the link")
-                    return@setOnClickListener
-                }
+                /*  if (txt.isEmpty()) {
+                      ToastUtil.shortShow("Please enter the link")
+                      return@setOnClickListener
+                  }*/
                 onConfirmAction?.invoke(txt)
                 dismiss()
             }

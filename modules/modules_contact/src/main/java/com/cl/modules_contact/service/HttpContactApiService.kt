@@ -1,6 +1,8 @@
 package com.cl.modules_contact.service
 
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AutomaticLoginData
+import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.bean.WallpaperListBean
@@ -176,4 +178,15 @@ interface HttpContactApiService {
      */
     @POST("abby/user/getWallList")
     fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>>
+
+    /**
+     * 获取用户信息
+     */
+    @POST("abby/user/userDetail")
+    fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>>
+
+    @POST("abby/user/app/automaticLogin")
+    fun automaticLogin(
+        @Body requestBody: AutomaticLoginReq,
+    ): Flow<HttpResult<AutomaticLoginData>>
 }

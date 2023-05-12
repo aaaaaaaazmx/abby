@@ -108,7 +108,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
             error { errorMsg, code ->
-                ToastUtil.shortShow(errorMsg)
             }
             success {
                 val map = this.data

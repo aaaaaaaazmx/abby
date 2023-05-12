@@ -13,6 +13,10 @@
             name="adapter"
             type="com.cl.modules_home.adapter.HomeEnvirPopAdapter" />
 
+
+        <import type="android.text.TextUtils"/>
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,6 +53,7 @@
             tools:text="Week5 Day5" />
 
         <FrameLayout
+            android:visibility="@{TextUtils.isEmpty(data.articleId) ? View.GONE: View.VISIBLE}"
             android:layout_marginStart="10dp"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
             app:layout_constraintTop_toTopOf="@+id/period_time"

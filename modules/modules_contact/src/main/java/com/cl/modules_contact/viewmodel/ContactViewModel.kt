@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cl.common_base.bean.AutomaticLoginData
+import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.BaseBean
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
@@ -34,10 +36,10 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class ContactViewModel @Inject constructor(private val repository: ContactRepository) : ViewModel() {
 
-    val userinfoBean by lazy {
+  /*  val userinfoBean = {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         GSON.parseObject(bean, UserinfoBean::class.java)
-    }
+    }*/
 
     /**
      * 获取最新动态信息
@@ -114,6 +116,44 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
             )
         }.collectLatest {
             _likeData.value = it
+        }
+    }
+
+    // 账号
+    val account by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
+    }
+
+    // 密码
+    val psd by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_PSD)
+    }
+
+    /**
+     * refreshToken
+     */
+    private val _refreshToken = MutableLiveData<Resource<AutomaticLoginData>>()
+    val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
+    fun refreshToken(req: AutomaticLoginReq) {
+        viewModelScope.launch {
+            repository.automaticLogin(req).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _refreshToken.value = it
+            }
         }
     }
 
@@ -246,6 +286,39 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
         }.collectLatest {
             _commentListData.value = it
         }
+    }
+
+    /**
+     * 获取用户信息
+     */
+    private val _userDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()
+    val userDetail: LiveData<Resource<UserinfoBean.BasicUserBean>> = _userDetail
+    fun userDetail() = viewModelScope.launch {
+        repository.userDetail()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _userDetail.value = it
+            }
     }
 
 

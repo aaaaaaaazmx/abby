@@ -132,4 +132,12 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
         _selectFriends.value?.clear()
         _selectFriends.value?.addAll(bean)
     }
+
+    fun setSelectFriendsClear() {
+        _selectFriends.value?.clear()
+    }
+
+    fun serSelectFriendsRemove(bean: MentionData) {
+        _selectFriends.value?.remove(bean)
+    }
 }

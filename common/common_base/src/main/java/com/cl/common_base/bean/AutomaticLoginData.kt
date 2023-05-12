@@ -16,7 +16,7 @@ data class AutomaticLoginData(
     // val easemobPassword: String? = null,
     // val easemobUserName: String? = null,
     val email: String? = null,
-    val eventCount: String? = null,
+    val eventCount: Int? = null,
     val isVip: Int? = 0,
     val nickName: String? = null,
     val subscriptionTime: String? = null,

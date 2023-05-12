@@ -162,7 +162,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
          */
         mViewModel.getInterComeData.observe(this@LoginActivity, resourceObserver {
             error { errorMsg, code ->
-                ToastUtil.shortShow(errorMsg)
             }
             success {
                 val map = this.data
