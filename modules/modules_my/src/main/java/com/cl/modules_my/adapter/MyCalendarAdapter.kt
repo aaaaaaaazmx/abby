@@ -11,7 +11,6 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.DetailByLearnMoreIdData

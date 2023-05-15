@@ -13,7 +13,10 @@
             name="adapter"
             type="com.cl.modules_home.adapter.HomeEnvirPopAdapter" />
 
+
+        <import type="android.text.TextUtils"/>
         <import type="android.view.View"/>
+
 
     </data>
 
@@ -39,6 +42,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Fan" />
+
+        <FrameLayout
+            android:visibility="@{TextUtils.isEmpty(data.articleId) ? View.GONE: View.VISIBLE}"
+            android:layout_marginBottom="13dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_fan_title"
+            app:layout_constraintTop_toTopOf="@+id/tv_fan_title"
+            app:layout_constraintStart_toEndOf="@+id/tv_fan_title"
+            android:id="@+id/rl_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:id="@+id/iv_gt"
+                android:background="@mipmap/base_gt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </FrameLayout>
+
+
 
         <TextView
             android:paddingBottom="13dp"

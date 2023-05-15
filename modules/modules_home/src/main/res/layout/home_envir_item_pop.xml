@@ -13,6 +13,10 @@
             name="adapter"
             type="com.cl.modules_home.adapter.HomeEnvirPopAdapter" />
 
+
+        <import type="android.text.TextUtils"/>
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,6 +51,26 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Week5 Day5" />
+
+        <FrameLayout
+            android:visibility="@{TextUtils.isEmpty(data.articleId) ? View.GONE: View.VISIBLE}"
+            android:layout_marginStart="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/period_time"
+            app:layout_constraintTop_toTopOf="@+id/period_time"
+            app:layout_constraintStart_toEndOf="@+id/period_time"
+            android:id="@+id/rl_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+            <ImageView
+                android:id="@+id/iv_gt"
+                android:background="@mipmap/base_gt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </FrameLayout>
+
+
 
         <TextView
             android:id="@+id/tv_going"

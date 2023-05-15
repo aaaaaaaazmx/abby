@@ -3,14 +3,17 @@ package com.cl.modules_my.repository
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
+import com.cl.modules_my.request.AccountFlowingReq
 import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
+import com.cl.modules_my.request.OxygenCoinListBean
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
+import retrofit2.http.Body
 import javax.inject.Inject
 
 /**
@@ -182,5 +185,17 @@ class MyRemoteRepository @Inject constructor() {
         return service.intercomDataAttributeSync()
     }
 
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>> {
+        return service.wallpaperList()
+    }
+
+
+    fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>> {
+        return service.oxygenCoinList()
+    }
+
+    fun oxygenCoinBillList(req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>> {
+        return service.oxygenCoinBillList(req)
+    }
 
 }

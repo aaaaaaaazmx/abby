@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="avatarPicture"
+            type="java.lang.String" />
+
+        <variable
+            name="nickName"
+            type="java.lang.String" />
+
+        <import type="android.view.View"/>
+        <import type="android.text.TextUtils"/>
+
+    </data>
+
+    <RelativeLayout
+        android:background="@drawable/background_white_r10"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/btn_success"
+            tools:ignore="MissingConstraints">
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="15dp"
+                android:background="@mipmap/iv_close"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:textColor="@color/black"
+                android:id="@+id/tv_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:text="Comments"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:padding="10dp"
+                android:id="@+id/rv_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_comment" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/btn_success"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            tools:ignore="MissingConstraints">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_emoji"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_avatar_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="19dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_emoji">
+
+                <ImageView
+                    circleUrl="@{avatarPicture}"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:visibility="@{TextUtils.isEmpty(avatarPicture) ? View.GONE : View.VISIBLE}"
+                    tools:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:text="@{nickName.substring(0,1)}"
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="@{TextUtils.isEmpty(avatarPicture) ? View.VISIBLE : View.GONE}" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_code_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@mipmap/contact_comment_bg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cl_avatar_comment"
+                app:layout_constraintTop_toBottomOf="@+id/rv_emoji">
+
+                <TextView
+                    android:id="@+id/tv_comment_txt"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:background="@null"
+                    android:clickable="false"
+                    android:ellipsize="end"
+                    android:focusable="false"
+                    android:gravity="center_vertical"
+                    android:hint="Add a comment"
+                    android:maxLines="1"
+                    android:paddingStart="12dp"
+                    android:textColor="@color/black"
+                    android:textColorHint="#D0C7C7"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_post"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:padding="10dp"
+                    android:text="Post"
+                    android:textColor="@color/mainColor"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
+            android:id="@+id/iv_empty_bg"
+            android:layout_marginTop="90dp"
+            android:layout_centerHorizontal="true"
+            android:background="@mipmap/contact_comment_pop_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <com.cl.modules_contact.widget.emoji.SuperLikeLayout
+            android:id="@+id/super_like_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:eruption_element_amount="10"
+            app:max_eruption_total="100"
+            app:show_emoji="true"
+            app:show_text="false" />
+    </RelativeLayout>
+</layout>

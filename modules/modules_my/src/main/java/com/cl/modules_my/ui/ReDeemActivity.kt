@@ -124,7 +124,6 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
             // 更新消息
             getInterComeData.observe(this@ReDeemActivity, resourceObserver {
                 error { errorMsg, code ->
-                    ToastUtil.shortShow(errorMsg)
                 }
                 success {
                     // 更新消息

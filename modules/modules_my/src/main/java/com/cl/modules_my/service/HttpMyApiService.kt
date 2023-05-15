@@ -7,10 +7,13 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.modules_my.repository.AccessoryListBean
 import com.cl.modules_my.repository.GetAutomationRuleBean
 import com.cl.modules_my.repository.MyTroubleData
+import com.cl.modules_my.repository.OxygenCoinBillList
+import com.cl.modules_my.request.AccountFlowingReq
 import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
+import com.cl.modules_my.request.OxygenCoinListBean
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -299,4 +302,21 @@ interface HttpMyApiService {
     @POST("abby/user/intercomDataAttributeSync")
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>>
 
+    /**
+     * 获取壁纸列表
+     */
+    @POST("abby/user/getWallList")
+    fun wallpaperList(): Flow<HttpResult<MutableList<WallpaperListBean>>>
+
+    /**
+     * 获取氧气币列表
+     */
+    @POST("abby/oxygenGrant/getGrantOxygenList")
+    fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>>
+
+    /**
+     * 获取氧气币账单流水
+     */
+    @POST("abby/account/getAccountFlowing")
+    fun oxygenCoinBillList(@Body req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>>
 }

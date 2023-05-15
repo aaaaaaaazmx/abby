@@ -134,4 +134,15 @@ dependencies {
 
     // interCome
     api(Deps.interCome)
+
+    // refresh
+    api("io.github.scwang90:refresh-layout-kernel:2.0.5")      //核心必须依赖
+    api("io.github.scwang90:refresh-header-classics:2.0.5")//经典刷新头
+    api("io.github.scwang90:refresh-footer-classics:2.0.5")    //经典加载
+
+    // 轮播图
+    api("io.github.youth5201314:banner:2.2.2")
+
+    // 图片压缩
+    api(Deps.choosePhotoComproress)
 }

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.modules_contact.response.ChoosePicBean" />
+
+        <import type="android.view.View"/>
+
+    </data>
+
+
+    <!--<androidx.constraintlayout.widget.ConstraintLayout
+        tools:ignore="MissingConstraints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_chooser_select"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_margin="26dp"
+            tools:background="@mipmap/iv_close"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+
+        <ImageView
+            android:id="@+id/img_contact_pic_delete"
+            android:src="@mipmap/device_chooser_photo_bg"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:gravity="center"
+            android:singleLine="true"
+            android:textColor="@color/white"
+            android:textSize="9sp"
+            app:layout_constraintCircle="@id/iv_chooser_select"
+            app:layout_constraintCircleAngle="46"
+            app:layout_constraintCircleRadius="56dp"
+            tools:text="1"
+             />
+
+        &lt;!&ndash;<ImageView
+            android:id="@+id/img_contact_pic_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/device_chooser_photo_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />&ndash;&gt;
+
+    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_chooser_select"
+            android:layout_width="63dp"
+            android:layout_height="64dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="21dp"
+            android:background="@mipmap/ic_launcher"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ProgressBar
+            android:visibility="@{data.isUploading ? View.VISIBLE: View.GONE}"
+            android:layout_centerInParent="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:progress="65"
+            android:id="@+id/game_pro"
+            android:layout_width="43dp"
+            android:layout_height="5dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:background="@null"
+            android:layout_centerHorizontal="true"
+            android:progressDrawable="@drawable/contact_progress_shape"/>
+
+
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:id="@+id/img_contact_pic_delete"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@mipmap/device_chooser_photo_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </RelativeLayout>
+
+</layout>

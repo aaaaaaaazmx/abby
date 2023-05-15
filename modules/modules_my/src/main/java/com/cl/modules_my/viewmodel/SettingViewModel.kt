@@ -1,6 +1,5 @@
 package com.cl.modules_my.viewmodel
 
-import android.app.Presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -453,11 +452,47 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     /**
      * 修改植物信息
      */
-    private val _updatePlantInfo = MutableLiveData<Resource<BaseBean>>()
-    val updatePlantInfo: LiveData<Resource<BaseBean>> = _updatePlantInfo
-    fun updatePlantInfo(body: UpDeviceInfoReq) {
+    private val _updateDeviceInfo = MutableLiveData<Resource<BaseBean>>()
+    val updateDeviceInfo: LiveData<Resource<BaseBean>> = _updateDeviceInfo
+    fun updateDeviceInfo(body: UpDeviceInfoReq) {
         viewModelScope.launch {
             repository.updateDeviceInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _updateDeviceInfo.value = it
+                }
+        }
+    }
+
+    /**
+     * 修改植物信息
+     */
+    private val _updatePlantInfo = MutableLiveData<Resource<BaseBean>>()
+    val updatePlantInfo: LiveData<Resource<BaseBean>> = _updatePlantInfo
+    fun updatePlantInfo(body: UpPlantInfoReq) {
+        viewModelScope.launch {
+            repository.updatePlantInfo(body)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -496,4 +531,21 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
         _isOffLine.value = offline
     }
 
+    /**
+     * 获取当前设备信息
+     */
+    private val _devicesInfo = MutableLiveData<ListDeviceBean>()
+    val devicesInfo: LiveData<ListDeviceBean> = _devicesInfo
+    fun updateDevicesInfo(info: ListDeviceBean) {
+        _devicesInfo.value = info
+    }
+
+    /**
+     * 是否是点击采取查询升级信息
+     */
+    private val _isClickUpdate = MutableLiveData<Boolean>(false)
+    val isClickUpdate: LiveData<Boolean> = _isClickUpdate
+    fun setClickUpdate(isClickUpdate: Boolean) {
+        _isClickUpdate.value = isClickUpdate
+    }
 }

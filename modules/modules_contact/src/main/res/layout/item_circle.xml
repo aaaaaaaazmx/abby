@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_contact.adapter.TrendListAdapter" />
+
+        <variable
+            name="data"
+            type="com.cl.modules_contact.response.NewPageData.Records" />
+
+        <import type="com.cl.common_base.ext.DateHelper" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="8dp"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivAvatar"
+                circleUrl="@{data.avatarPicture}"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:visibility="@{TextUtils.isEmpty(data.avatarPicture) ? View.GONE : View.VISIBLE}"
+                tools:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/nohead_show"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/head_bg"
+                android:gravity="center"
+                android:text="@{data.nickName.substring(0,1)}"
+                android:textColor="@color/mainColor"
+                android:textColorHint="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:visibility="@{TextUtils.isEmpty(data.avatarPicture) ? View.VISIBLE : View.GONE}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <TextView
+            android:id="@+id/tvNick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="@{data.nickName}"
+            android:textColor="@android:color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/cl_avatar"
+            app:layout_constraintTop_toTopOf="@id/cl_avatar"
+            tools:text="妹纸" />
+
+        <TextView
+            android:id="@+id/tvNum"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="14dp"
+            android:textColor="#979797"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/tvNick"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvNick"
+            tools:text="0" />
+
+        <TextView
+            android:id="@+id/tvDesc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvNick"
+            app:layout_constraintTop_toBottomOf="@id/tvNick"
+            tools:text="这世界总有人在笨拙地爱着你，想把全部的温柔都给你。 希望下一次，能喜欢上一个也喜欢自己的人 ​​​​。" />
+
+        <!--link-->
+        <TextView
+            android:id="@+id/tv_link"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:drawableLeft="@mipmap/trend_link_bg"
+            android:drawablePadding="3dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{data.link}"
+            android:textColor="@color/mainColor"
+            android:textSize="13sp"
+            android:visibility="@{TextUtils.isEmpty(data.link)? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="@id/tvDesc"
+            app:layout_constraintStart_toStartOf="@+id/tvDesc"
+            app:layout_constraintTop_toBottomOf="@+id/tvDesc"
+            tools:text="123123123" />
+
+        <RelativeLayout
+            android:visibility="@{data.imageUrls.size() == 0 ? View.GONE : View.VISIBLE}"
+            android:layout_marginTop="8dp"
+            android:id="@+id/ff_banner"
+            android:background="#EBFAEE"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tvNick"
+            app:layout_constraintTop_toBottomOf="@id/tv_link"
+            android:layout_width="0dp"
+            android:layout_height="250dp">
+        <com.youth.banner.Banner
+            app:banner_indicator_height="6dp"
+            app:banner_indicator_normal_color="#E6EFEC"
+            app:banner_indicator_selected_color="@color/mainColor"
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+         />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tv_learn_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Learn More"
+            android:textColor="@color/mainColor"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:visibility="@{data.articleId == 0 ? View.GONE : View.VISIBLE}"
+            app:layout_constraintStart_toStartOf="@+id/tvDesc"
+            app:layout_constraintTop_toBottomOf="@+id/ff_banner" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_env"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/background_main_color_r0"
+            android:paddingStart="9dp"
+            android:paddingTop="3dp"
+            android:paddingEnd="9dp"
+            android:paddingBottom="3dp"
+            android:visibility="@{data.openData == 1 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintStart_toStartOf="@+id/tvNick"
+            app:layout_constraintTop_toBottomOf="@+id/tv_learn_more">
+
+            <TextView
+                android:id="@+id/tv_periodicity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{data.journeyName}"
+                android:textColor="#000000"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:visibility="@{TextUtils.isEmpty(data.journeyName)? View.GONE : View.VISIBLE}"
+                tools:text="FFFFFF" />
+
+            <TextView
+                android:id="@+id/tv_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:text='@{"Week" + data.week + " Day" + data.day}'
+                android:textColor="#000000"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tv_periodicity"
+                tools:text="Week3 Day5" />
+
+            <TextView
+                android:id="@+id/tv_env"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:drawableStart="@mipmap/v"
+                android:drawablePadding="5dp"
+                android:text="ENVIR"
+                android:textColor="#008961"
+                android:textSize="11sp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_day" />
+
+            <TextView
+                android:id="@+id/tv_env_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="7dp"
+                android:text="@{data.healthStatus}"
+                android:textColor="#161B19"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_env"
+                app:layout_constraintStart_toEndOf="@+id/tv_env"
+                app:layout_constraintTop_toTopOf="@+id/tv_env"
+                tools:text="Ideal" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:background="@mipmap/vv"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_env_value"
+                app:layout_constraintStart_toEndOf="@+id/tv_env_value"
+                app:layout_constraintTop_toTopOf="@+id/tv_env_value" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_action"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/cl_env"
+            app:layout_constraintTop_toBottomOf="@+id/cl_env">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_love"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <CheckBox
+                    android:id="@+id/curing_box_love"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/create_love_checkbox"
+                    android:button="@null"
+                    android:checked="@{data.isPraise == 0 ? false : true}"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:padding="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text='@{data.praise == 0 ? "" : String.valueOf(data.praise)}'
+                    android:textColor="#161B19"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/curing_box_love"
+                    app:layout_constraintStart_toEndOf="@+id/curing_box_love"
+                    app:layout_constraintTop_toTopOf="@+id/curing_box_love"
+                    tools:text="520" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_gift"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <CheckBox
+                    android:id="@+id/curing_box_gift"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/create_gift_checkbox"
+                    android:button="@null"
+                    android:checked="@{data.isReward == 0 ? false : true}"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:padding="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text='@{data.reward == 0 ? "" : String.valueOf(data.reward)}'
+                    android:textColor="#161B19"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/curing_box_gift"
+                    app:layout_constraintStart_toEndOf="@+id/curing_box_gift"
+                    app:layout_constraintTop_toTopOf="@id/curing_box_gift"
+                    tools:text="520" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_chat"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1">
+
+                <CheckBox
+                    android:id="@+id/curing_box_chat"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="12dp"
+                    android:background="@drawable/trend_chat_bg"
+                    android:button="@null"
+                    android:checked="false"
+                    android:clickable="false"
+                    android:enabled="false"
+                    android:padding="5dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text='@{data.comment == 0 ? "" : String.valueOf(data.comment)}'
+                    android:textColor="#161B19"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/curing_box_chat"
+                    app:layout_constraintStart_toEndOf="@+id/curing_box_chat"
+                    app:layout_constraintTop_toTopOf="@id/curing_box_chat"
+                    tools:text="520" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_point"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/trend_point" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/vv_action_line"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:background="#F7F7F7"
+            android:visibility="@{data.comments.size() > 0 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="@+id/ll_action"
+            app:layout_constraintStart_toStartOf="@+id/ll_action"
+            app:layout_constraintTop_toBottomOf="@+id/ll_action" />
+
+        <!--评论列表，只展示2条-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:visibility="@{data.comments.size() > 0 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ll_action"
+            app:layout_constraintStart_toStartOf="@+id/ll_action"
+            app:layout_constraintTop_toBottomOf="@+id/vv_action_line">
+
+            <TextView
+                android:id="@+id/tv_one_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{data.comments.size() > 0 ? data.comments.get(0).commentName : ""}'
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="AAAAA" />
+
+            <TextView
+                android:id="@+id/tv_one_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text='@{data.comments.size() > 0 ? data.comments.get(0).comment : ""}'
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_one_author"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_one_author"
+                app:layout_constraintTop_toTopOf="@+id/tv_one_author"
+                tools:text="BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" />
+
+            <TextView
+                android:id="@+id/tv_two_author"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text='@{data.comments.size() > 1 ? data.comments.get(1).commentName : ""}'
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:visibility="@{data.comments.size() > 1 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintTop_toBottomOf="@+id/tv_one_author"
+                tools:text="AAAAA" />
+
+            <TextView
+                android:id="@+id/tv_two_content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text='@{data.comments.size() > 1 ? data.comments.get(1).comment : ""}'
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:visibility="@{data.comments.size() > 1 ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_two_author"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_two_author"
+                app:layout_constraintTop_toTopOf="@+id/tv_two_author"
+                tools:text="BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB" />
+
+            <!--回复数量大于等于0条,小于等于2条，就显示这玩意，小于等于0不显示-->
+            <TextView
+                android:id="@+id/tv_to_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text='@{data.comments.size() &lt;= 2 ? "Add a comment" : "View all comments"}'
+                android:textColor="@color/mainColor"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tv_two_content"
+                tools:text="Add a comment" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="@mipmap/trend_right_arrow"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_to_chat"
+                app:layout_constraintStart_toEndOf="@+id/tv_to_chat"
+                app:layout_constraintTop_toTopOf="@+id/tv_to_chat" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

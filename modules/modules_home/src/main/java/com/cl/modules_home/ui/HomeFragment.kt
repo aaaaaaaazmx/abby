@@ -275,17 +275,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             firstLoginAndNoDevice: $firstLoginAndNoDevice
         """.trimIndent()
         )
-
         if (firstLoginAndNoDevice == true) {
             // 显示出绑定设备界面
-            ViewUtils.setVisible(binding.bindDevice.root)
-            ViewUtils.setGone(binding.plantOffLine.root)
-            ViewUtils.setGone(binding.clRoot)
-
-            // 如果是第一次、也从未绑定过设备、显示出气泡
-            ViewUtils.setVisible(firstLoginAndNoDevice == true, binding.bindDevice.clContinue)
-            ViewUtils.setVisible(firstLoginAndNoDevice == true, binding.bindDevice.connectDevice)
-            ViewUtils.setGone(binding.bindDevice.tvScan, firstLoginAndNoDevice == true)
+            firstLoginViewVisibile()
             return
         }
 
@@ -376,6 +368,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 ViewUtils.setVisible(binding.plantComplete.root)
             }
         }
+    }
+
+    private fun firstLoginViewVisibile() {
+        ViewUtils.setVisible(binding.bindDevice.root)
+        ViewUtils.setGone(binding.plantOffLine.root)
+        ViewUtils.setGone(binding.clRoot)
+
+        // 如果是第一次、也从未绑定过设备、显示出气泡
+        ViewUtils.setVisible(binding.bindDevice.tvScan)
+        ViewUtils.setGone(binding.bindDevice.clContinue, binding.bindDevice.connectDevice)
     }
 
     /**
@@ -886,7 +888,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 设备绑定界面
         binding.bindDevice.apply {
             knowMore.setOnClickListener {
-                // todo 跳转新的图文界面
+                //  跳转新的图文界面
                 val intent = Intent(activity, KnowMoreActivity::class.java)
                 intent.putExtra(
                     Constants.Global.KEY_TXT_ID,
@@ -896,11 +898,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             connectDevice.setOnClickListener {
                 //  连接设备
-                // todo 删除设备跳转到首页
+                //  删除设备跳转到首页
                 checkPer()
             }
             tvScan.setOnClickListener {
-                // todo 删除设备跳转到首页
+                //  删除设备跳转到首页
                 checkPer()
             }
         }
@@ -1724,7 +1726,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // InterCome信息
             getInterComeData.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
-                    ToastUtil.shortShow(errorMsg)
                 }
                 success {
                     // 更新InterCome用户信息
@@ -2203,15 +2204,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                         }
                     } else {
-                        // 显示出绑定设备界面
-                        ViewUtils.setVisible(binding.bindDevice.root)
-                        ViewUtils.setGone(binding.plantOffLine.root)
-                        ViewUtils.setGone(binding.clRoot)
-
-                        // 如果是第一次、也从未绑定过设备、显示出气泡
-                        ViewUtils.setVisible(data?.notBound == 0, binding.bindDevice.clContinue)
-                        ViewUtils.setVisible(data?.notBound == 0, binding.bindDevice.connectDevice)
-                        ViewUtils.setGone(binding.bindDevice.tvScan, data?.notBound == 0)
+                        // 没绑定的状态下，显示这玩意
+                        firstLoginViewVisibile()
                         // 跳转到绑定设备界面，
                         // 跳转绑定界面
                         //                        ARouter.getInstance()
@@ -3010,6 +3004,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     // 弹出环境框
                     data?.let { it.environments?.let { it1 -> envirPop?.setData(it1) } }
+                    envirPop?.setStrainName(mViewMode.plantInfo.value?.data?.plantName)
                 }
                 error { errorMsg, _ ->
                     // errorMsg?.let { ToastUtil.shortShow(it) }

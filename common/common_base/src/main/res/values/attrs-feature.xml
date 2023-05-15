@@ -3,6 +3,7 @@
 
     <attr name="itemIcon" format="reference" />
     <attr name="itemImg" format="reference" />
+    <attr name="itemValueEndImg" format="reference" />
     <attr name="itemIconWidth" format="dimension|reference" />
     <attr name="itemIconHeight" format="dimension|reference" />
     <attr name="itemTitle" format="string|reference" />
@@ -30,6 +31,7 @@
         <attr name="hideArrow" />
         <attr name="itemBackgroundColor" />
         <attr name="itemTitleBold"/>
+        <attr name="itemValueEndImg"/>
     </declare-styleable>
 
     <declare-styleable name="FeatureItemTimeView">
@@ -48,7 +50,9 @@
 
 
     <declare-styleable name="FeatureItemSwitch">
+        <attr name="itemTitleBold"/>
         <attr name="itemIcon" />
+        <attr name="itemValueEndImg" />
         <attr name="itemIconWidth" />
         <attr name="itemIconHeight" />
         <attr name="itemTitle" />

@@ -3,6 +3,7 @@ package com.cl.modules_my.ui
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
@@ -54,6 +56,7 @@ import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.intercome.InterComeHelp
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
@@ -359,6 +362,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     )
                                 ).show()
                         }
+
                         else -> {
                             // 如果是在换水的三步当中
                             mViewMode.taskId.value?.let {
@@ -479,6 +483,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     when (status) {
                                         CalendarData.TASK_TYPE_CHANGE_WATER -> {
                                         }
+
                                         CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
                                             mViewMode.taskId.value?.let { taskId ->
                                                 mViewMode.finishTask(
@@ -486,6 +491,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 )
                                             }
                                         }
+
                                         CalendarData.TASK_TYPE_LST -> {
                                             mViewMode.taskId.value?.let { taskId ->
                                                 mViewMode.finishTask(
@@ -493,6 +499,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 )
                                             }
                                         }
+
                                         CalendarData.TASK_TYPE_TOPPING -> {
                                             mViewMode.taskId.value?.let { taskId ->
                                                 mViewMode.finishTask(
@@ -500,6 +507,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 )
                                             }
                                         }
+
                                         CalendarData.TASK_TYPE_TRIM -> {
                                             mViewMode.taskId.value?.let { taskId ->
                                                 mViewMode.finishTask(
@@ -507,6 +515,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 )
                                             }
                                         }
+
                                         CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                             // todo 这个应该是转周期了，调用图文、然后解锁花期
                                             // todo 这个需要单独处理逻辑。
@@ -561,6 +570,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             )
                                             startActivity(intent)
                                         }
+
                                         else -> {
                                             mViewMode.taskId.value?.let { taskId ->
                                                 mViewMode.finishTask(
@@ -694,6 +704,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         }
                                     }
                             }
+
                             CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
                             }
                         }
@@ -716,16 +727,55 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun initData() {
         // 周期点击事件
-        binding.tvCycle.setOnClickListener {
+        binding.ivAsk.setOnClickListener {
             // 需要小问号
             adapter.data.firstOrNull { it.isChooser }?.apply {
-                this.calendarData.epochExplain?.let {
-                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                this.calendarData?.let {calendarData ->
+                    /*val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                     intent.putExtra(Constants.Global.KEY_TXT_TYPE, it)
-                    startActivity(intent)
+                    startActivity(intent)*/
+
+                    XPopup.Builder(this@CalendarActivity)
+                        .dismissOnTouchOutside(false)
+                        .isDestroyOnDismiss(false)
+                        .asCustom(
+                            BaseCenterPop(
+                                this@CalendarActivity,
+                                onConfirmAction = {
+                                    // 跳转到InterCome文章详情里面去
+                                    InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = calendarData.articleId)
+                                },
+                                confirmText = "Detail",
+                                content = calendarData.articleDetails,
+                            )
+                        ).show()
                 }
+            }
+        }
+        binding.tvCycle.setOnClickListener {
 
+            // 需要小问号
+            adapter.data.firstOrNull { it.isChooser }?.apply {
+                this.calendarData?.let {calendarData ->
+                    /*val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                    intent.putExtra(Constants.Global.KEY_TXT_TYPE, it)
+                    startActivity(intent)*/
 
+                    XPopup.Builder(this@CalendarActivity)
+                        .dismissOnTouchOutside(false)
+                        .isDestroyOnDismiss(false)
+                        .asCustom(
+                            BaseCenterPop(
+                                this@CalendarActivity,
+                                onConfirmAction = {
+                                    // 跳转到InterCome文章详情里面去
+                                    InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = calendarData.articleId)
+                                },
+                                confirmText = "Detail",
+                                content = calendarData.articleDetails,
+                            )
+                        ).show()
+                }
             }
         }
 
@@ -820,6 +870,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         // 查看当前第三行的中间。
                         scrollByDate()
                     }
+
                     RecyclerView.SCROLL_STATE_DRAGGING -> {
                         //                        logI(
                         //                            """
@@ -831,6 +882,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         //                        """.trimIndent()
                         //                        )
                     }
+
                     RecyclerView.SCROLL_STATE_SETTLING -> {
                         //                        logI(
                         //                            """
@@ -943,9 +995,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     currentPosition -> {
                         adapter.data[i].bgFlag = Calendar.KEY_START
                     }
+
                     currentPosition + diffDay -> {
                         adapter.data[i].bgFlag = Calendar.KEY_END
                     }
+
                     else -> {
                         adapter.data[i].bgFlag = Calendar.KEY_NORMAL
                     }
@@ -1095,6 +1149,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     )
                                 )
                             }
+
                             CalendarData.TYPE_PERIOD_CHECK -> {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
@@ -1103,6 +1158,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     )
                                 )
                             }
+
                             CalendarData.TYPE_TRAIN -> {
                                 holder.imgMark.setImageDrawable(
                                     ContextCompat.getDrawable(
@@ -1139,6 +1195,24 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         ?.let { DateHelper.formatTime(it, "HH:mm", Locale.US) }
 
                     val tvTaskName = holder.rightLayout.findViewById<TextView>(R.id.tv_task_name)
+                    val ivGt = holder.rightLayout.findViewById<FrameLayout>(R.id.rl_edit)
+                    ViewUtils.setVisible(!TextUtils.isEmpty(listContent[position].articleId), ivGt)
+                    ivGt.setOnClickListener {
+                        XPopup.Builder(this@CalendarActivity)
+                            .dismissOnTouchOutside(false)
+                            .isDestroyOnDismiss(false)
+                            .asCustom(
+                                BaseCenterPop(
+                                    this@CalendarActivity,
+                                    onConfirmAction = {
+                                        // 跳转到InterCome文章详情里面去
+                                        InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = listContent[position].articleId)
+                                    },
+                                    confirmText = "Detail",
+                                    content = listContent[position].articleDetails,
+                                )
+                            ).show()
+                    }
                     // 按钮
                     val svtWaitUnlock =
                         holder.rightLayout.findViewById<AbTextViewCalendar>(R.id.svt_wait_unlock)
@@ -1154,12 +1228,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             ViewUtils.setVisible(svtWaitUnlock)
                             svtWaitUnlock.text = "Done"
                         }
+
                         "0" -> {
                             ViewUtils.setVisible(svtUnlock)
                             ViewUtils.setGone(svtWaitUnlock)
                             ViewUtils.setGone(svtGrayUnlock)
                             svtUnlock.text = "GO"
                         }
+
                         "2" -> {
                             ViewUtils.setGone(svtWaitUnlock)
                             ViewUtils.setVisible(svtGrayUnlock)
@@ -1211,10 +1287,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         // 换水、加水、加肥。三步
                                                         changWaterAddWaterAddpump()
                                                     }
+
                                                     CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
                                                         // 首先调用plantInfo接口去查看当前有无称重
                                                         mViewMode.plantInfo()
                                                     }
+
                                                     CalendarData.ABOUT_PAGE_NOT_PURCHASED_TASK,
                                                     CalendarData.ABOUT_RECORD_JOURNEY_TASK,
                                                     CalendarData.ABOUT_HOW_TO_PICK_STRAIN_TASK,
@@ -1244,6 +1322,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                             )
                                                         }
                                                     }
+
                                                     CalendarData.TASK_TYPE_CHANGE_CUP_WATER -> {
                                                         // 跳转到富文本
                                                         val intent = Intent(
@@ -1280,6 +1359,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         )
                                                         startActivityLauncherSeeding.launch(intent)
                                                     }
+
                                                     CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
                                                         // todo 这个应该是转周期了，调用图文、然后解锁花期
                                                         // todo 这个需要单独处理逻辑。
@@ -1330,6 +1410,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                         )
                                                         startActivity(intent)
                                                     }
+
                                                     CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING,
                                                     CalendarData.TASK_TYPE_CHECK_CHECK_FLUSHING,
                                                     CalendarData.TASK_TYPE_CHECK_CHECK_HARVEST,
@@ -1347,6 +1428,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                             )
                                                         }
                                                     }
+
                                                     else -> {
                                                         // todo、如果是学院任务，那么就直接跳转到学院弹窗
                                                         /*if (listContent[position].taskType == CalendarData.TASK_TYPE_TEST) {

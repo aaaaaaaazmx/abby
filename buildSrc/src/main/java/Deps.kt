@@ -21,8 +21,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 33
-    val versionCode = 25
-    const val versionName = "1.3.0"
+    val versionCode = 26
+    const val versionName = "1.3.1"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"
@@ -65,9 +65,9 @@ object Version {
 
     const val mmkv = "1.2.13"
 
-    const val rvHelp = "3.0.7"
+    const val rvHelp = "3.0.10"
 
-    const val xpopup = "2.8.14"
+    const val xpopup = "2.9.19"
 
     const val web = "v5.0.0-alpha.1"
 
@@ -75,11 +75,13 @@ object Version {
 
     const val glide = "4.13.2"
 
-    const val permission = "1.6.4"
+    const val permission = "1.7.1"
 
-    const val choosePhoto = "v3.10.6"
+    const val choosePhoto = "v3.11.1"
 
-    const val choosePhotoCamera = "v3.10.6"
+    const val choosePhotoCamera = "v3.11.1"
+
+    const val choosePhotoComporess = "v3.11.1"
 
     const val epMedia = "v1.0.1"
 
@@ -214,6 +216,8 @@ object Deps {
     const val choosePhoto = "io.github.lucksiege:pictureselector:${Version.choosePhoto}"
     // camera
     const val choosePhotoCamera =  "io.github.lucksiege:camerax:${Version.choosePhotoCamera}"
+    // 压缩
+    const val choosePhotoComproress =  "io.github.lucksiege:compress:${Version.choosePhotoComporess}"
 
     // ffmpeg
     const val epMedia = "com.github.yangjie10930:EpMedia:${Version.epMedia}"

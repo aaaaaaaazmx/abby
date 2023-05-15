@@ -7,6 +7,7 @@ import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDeviceListItemBinding
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.ext.logI
 import com.cl.common_base.widget.FeatureItemSwitch
 import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylist
 import com.luck.picture.lib.animators.ViewHelper
@@ -33,6 +34,8 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
                 switchListener?.invoke(item.accessoryList?.get(0)?.accessoryId.toString(), item.deviceId ?: "", isChecked)
             }
         }
+
+        holder.setText(R.id.tv_auto_desc, if (item.accessoryList?.get(0)?.isAuto == 1) "Auto\nOn" else "Auto\nOff")
     }
 
     // 显示名字。

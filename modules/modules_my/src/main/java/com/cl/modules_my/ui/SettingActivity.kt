@@ -11,6 +11,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.UpDeviceInfoReq
+import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.*
@@ -32,6 +33,7 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MySettingBinding
 import com.cl.modules_my.pop.AttentionPop
 import com.cl.common_base.pop.ChooseTimePop
+import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.SettingViewModel
@@ -178,8 +180,35 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     override fun initView() {
         // 当前版本号
         binding.ftVision.itemValue = AppUtil.appVersionName
-        binding.ftSub.setTitleValueEndDrawable(null).setPointClickListener {
-            pop.asCustom(SubPop(this@SettingActivity)).show()
+        binding.ftSub.setPointClickListener {
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity,
+                    isShowCancelButton = false,
+                    confirmText = "OK",
+                    content = "Digital service includes 1 on 1 expert support, oxygen coins, and exclusive digital assets and deals",
+                )
+            ).show()
+        }
+        binding.ftChildLock.setPointClickListener {
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity,
+                    isShowCancelButton = false,
+                    confirmText = "OK",
+                    content = "When child lock is on, the door will  lock automatically when closed. The door can then only be opened via the app",
+                )
+            ).show()
+        }
+        binding.ftNight.setPointClickListener {
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity,
+                    isShowCancelButton = false,
+                    confirmText = "OK",
+                    content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
+                )
+            ).show()
         }
 
         // 是否可以操作设备相关的功能
@@ -195,15 +224,16 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             listDevice.observe(this@SettingActivity, resourceObserver {
                 success {
                     data?.firstOrNull { it.deviceId == tuyaHomeBean?.devId }?.let { deviceInfo ->
+                        mViewModel.updateDevicesInfo(deviceInfo)
                         // 显示当前的是否是手动模式
                         binding.itemTitle.text = if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
+                        binding.ftName.itemValue = deviceInfo.plantName
 
                         binding.ftChildLock.isItemChecked = deviceInfo.childLock == 1
                         binding.ftNight.isItemChecked = deviceInfo.nightMode == 1
                         ViewUtils.setVisible(
                             deviceInfo.nightMode == 1,
-                            binding.ftTimer,
-                            binding.tvTimeDesc
+                            binding.ftTimer
                         )
                         val str = deviceInfo.nightTimer.toString()
                         val pattern = "(\\d{1,2}):\\d{2} [AP]M-(\\d{1,2}):\\d{2} [AP]M"
@@ -362,10 +392,16 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         // 判断当前的版本号是否需要升级
                         kotlin.runCatching {
                             if (netWorkVersion.toInt() > localVersion.toInt()) {
-                                versionPop.setData(versionData)
-                                versionUpdatePop.show()
+                                if (isClickUpdate.value == true) {
+                                    versionPop.setData(versionData)
+                                    versionUpdatePop.show()
+                                } else {
+                                    binding.ftVision.setShowUpdateRedDot(true)
+                                }
                             } else {
-                                ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
+                                if (isClickUpdate.value == true) {
+                                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
+                                } else {}
                             }
                         }
                     }
@@ -502,7 +538,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             // 是否打开童锁
             DeviceControl.get()
                 .success {
-                    mViewModel.updatePlantInfo(
+                    mViewModel.updateDeviceInfo(
                         UpDeviceInfoReq(
                             childLock = if (isChecked) 1 else 0,
                             deviceId = tuyaHomeBean?.devId
@@ -552,7 +588,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             context = this,
                             contentText = "Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
                         ) {
-                            mViewModel.updatePlantInfo(UpDeviceInfoReq(deviceId = tuyaHomeBean?.devId, proMode = "Off"))
+                            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = tuyaHomeBean?.devId, proMode = "Off"))
                             tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
                         }).show()
             }
@@ -596,13 +632,13 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             }
 
             // 调用接口更新后台夜间模式
-            mViewModel.updatePlantInfo(
+            mViewModel.updateDeviceInfo(
                 UpDeviceInfoReq(
                     nightMode = if (isChecked) 1 else 0,
                     deviceId = tuyaHomeBean?.devId
                 )
             )
-            ViewUtils.setVisible(isChecked, binding.ftTimer, binding.tvTimeDesc)
+            ViewUtils.setVisible(isChecked, binding.ftTimer)
         }
 
         binding.ftTimer.setOnClickListener {
@@ -616,7 +652,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         muteOn = "$timeOn"
                         muteOff = "$timeOff"
                         // todo 这个时间和上面解析时间有问题，需要传递24小时制度
-                        mViewModel.updatePlantInfo(
+                        mViewModel.updateDeviceInfo(
                             UpDeviceInfoReq(
                                 nightTimer = binding.ftTimer.itemValue.toString(),
                                 deviceId = tuyaHomeBean?.devId
@@ -648,9 +684,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
 
         // 1v1
-        binding.ftSolo.setOnClickListener {
+        /*binding.ftSolo.setOnClickListener {
             sendEmail()
-        }
+        }*/
         // 删除设备
         binding.dtDeleteDevice.setOnClickListener {
             // 删除设备、弹出提示框
@@ -681,17 +717,88 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }).show()
         }
         // 检查更新
-        binding.ftNewVision.setOnClickListener {
+        binding.ftVision.setOnClickListener {
+            mViewModel.setClickUpdate(true)
             mViewModel.getAppVersion()
         }
+        binding.ftPurchase.setOnClickListener {
+            // 跳转到购买链接网页
+            val intent = Intent(
+                this@SettingActivity,
+                WebActivity::class.java
+            )
+            intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/subscription")
+            startActivity(
+                intent
+            )
+        }
+
+        binding.ftName.setOnClickListener {
+            val deviceBean = mViewModel.devicesInfo.value
+            //  修改属性、弹窗pop
+            XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(false)
+                .autoOpenSoftInput(false)
+                .autoFocusEditText(false)
+                .asCustom(EditPlantProfilePop(this@SettingActivity,
+                    beanData = deviceBean,
+                    plantName = deviceBean?.plantName,
+                    strainName = deviceBean?.strainName,
+                    onConfirmAction = { plantName, strainName ->
+                        // 需要刷新UI
+                        mViewModel.listDevice()
+                        // 修改属性名
+                        if (strainName.isNullOrEmpty() && plantName?.isNotEmpty() == true) {
+                            mViewModel.updatePlantInfo(
+                                UpPlantInfoReq(
+                                    plantName = plantName,
+                                    plantId = deviceBean?.plantId,
+                                )
+                            )
+                        }
+                        if (plantName.isNullOrEmpty() && strainName?.isNotEmpty() == true) {
+                            mViewModel.updatePlantInfo(
+                                UpPlantInfoReq(
+                                    strainName = strainName,
+                                    plantId = deviceBean?.plantId,
+                                )
+                            )
+                        } else {
+                            mViewModel.updatePlantInfo(
+                                UpPlantInfoReq(
+                                    strainName = strainName,
+                                    plantName = plantName,
+                                    plantId = deviceBean?.plantId,
+                                )
+                            )
+                        }
+                    },
+                    onDeviceChanged = {
+                        mViewModel.listDevice()
+                    }
+                )).show()
+        }
+
         // 关闭还是打开推送
         binding.ftNotif.setSwitchCheckedChangeListener { compoundButton, b ->
             // 是否开启通知(1-开启、0-关闭)
             mViewModel.modifyUserDetail(ModifyUserDetailReq(openNotify = if (b) "1" else "0"))
         }
         // 固件升级
-        binding.ftFirUpdate.setOnClickListener {
+        /*binding.ftFirUpdate.setOnClickListener {
             startActivity(Intent(this@SettingActivity, FirmwareUpdateActivity::class.java))
+        }*/
+        binding.ftCurrentFir.setOnClickListener {
+            // 当前固件版本号
+            mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
+                if (!isShow) {
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
+                    return@checkFirmwareUpdateInfo
+                }
+                bean?.firstOrNull { it.type == 9 }?.let { data ->
+                    startActivity(Intent(this@SettingActivity, FirmwareUpdateActivity::class.java))
+                }
+            }
         }
         // 换水
         binding.ftWaterTank.setOnClickListener {
@@ -760,6 +867,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 CacheUtil.getVideoCache(this@SettingActivity)
         }
         mViewModel.userDetail()
+        mViewModel.getAppVersion()
 
         /**
          * 当有设备的时候，判断当前设备是否在线
@@ -774,19 +882,20 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     "0" -> {
 
                     }
+
                     "1" -> {
                         // 当前固件版本号
                         mViewModel.checkFirmwareUpdateInfo { bean, isShow ->
                             bean?.firstOrNull { it.type == 9 }?.let { data ->
                                 binding.ftCurrentFir.itemValue = data.currentVersion
-                                binding.ftCurrentFir.setHideArrow(true)
-                                binding.ftFirUpdate.setShowRedDot(isShow)
+                                binding.ftCurrentFir.setShowUpdateRedDot(isShow)
                             }
                         }
                         // 获取SN & 并且判断是否是修复了SN的
                         mViewModel.getSn()
                         mViewModel.getActivationStatus()
                     }
+
                     else -> {}
                 }
             }
@@ -808,9 +917,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             Constants.Device.KEY_DEVICE_OFFLINE -> {
                 mViewModel.setOffLine(false)
             }
+
             Constants.Device.KEY_DEVICE_ONLINE -> {
                 mViewModel.setOffLine(true)
             }
+
             Constants.Device.KEY_DEVICE_REMOVE -> {
                 mViewModel.setOffLine(false)
             }

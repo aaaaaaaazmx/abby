@@ -55,8 +55,14 @@ class SoundPoolUtil private constructor() {
         startVibrator()
     }
 
-    private fun startVibrator() {
+    /**
+     * 震动
+     */
+    fun startVibrator(context: Context? = null) {
         try {
+            if (vibrator == null) {
+                vibrator = context?.getSystemService(VIBRATOR_SERVICE) as? Vibrator
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator?.vibrate(VibrationEffect.createOneShot(100, DEFAULT_AMPLITUDE))
             } else {

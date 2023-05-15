@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.cl.modules_my.viewmodel.MyViewModel" />
+
+        <import type="android.view.View"/>
+        <import type="android.text.TextUtils"/>
+
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+
+        <com.cl.common_base.widget.scroll.behavior.LinkageScrollLayout
+            android:id="@+id/linkageScroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <FrameLayout
+                android:id="@+id/layoutTop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/rvLinkageTop"
+                    android:layout_width="match_parent"
+                    android:layout_height="342dp"
+                    android:background="@mipmap/my_bg"
+                    android:paddingTop="10dp" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/layoutBottom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintHeight_min="500dp"
+                app:layout_constraintTop_toBottomOf="@id/layoutTop">
+
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/rvLinkageBottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="200dp">
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        tools:ignore="MissingConstraints">
+
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_marginTop="49dp"
+                            android:background="@color/white"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="@id/iv_head">
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="58dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:text="@{viewModel.userDetail.data.nickName}"
+                                    android:id="@+id/tv_name"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="5dp"
+                                    android:textColor="@color/black"
+                                    android:textSize="17sp"
+                                    android:textStyle="bold"
+                                    app:layout_constraintBottom_toBottomOf="@+id/iv_vip_logo"
+                                    app:layout_constraintEnd_toStartOf="@+id/iv_vip_logo"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="@+id/iv_vip_logo"
+                                    tools:text="Lisa" />
+
+                                <ImageView
+                                    android:visibility="@{viewModel.userDetail.data.isVip == 0 ? View.GONE : View.VISIBLE}"
+                                    android:id="@+id/iv_vip_logo"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@mipmap/my_vip_logo"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent" />
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <TextView
+                                android:text='@{viewModel.userDetail.data.isVip == 0 ? "membership expired." : "membership valid till " + viewModel.parseTime(viewModel.userDetail.data.subscriptionTime)}'
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                tools:text="membership valid till 4/20/2023 / membership expired." />
+
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
+                                android:layout_marginTop="17dp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <!--这不是Vip的时候显示的。-->
+                                <RelativeLayout
+                                    android:id="@+id/rl_vip"
+                                    android:visibility="@{viewModel.userDetail.data.isVip == 0 ? View.VISIBLE : View.GONE}"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="25dp"
+                                    android:layout_marginEnd="25dp"
+                                    android:background="@mipmap/my_no_vip_bg"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerInParent="true"
+                                        android:text="Get your membership"
+                                        android:textColor="@color/white"
+                                        android:textSize="22sp"
+                                        android:textStyle="bold" />
+                                </RelativeLayout>
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:visibility="@{viewModel.userDetail.data.isVip == 0 ? View.GONE : View.VISIBLE}"
+                                    android:id="@+id/cl_day"
+                                    android:layout_width="109dp"
+                                    android:layout_height="90dp"
+                                    android:background="@mipmap/my_vip_broad"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    app:layout_constraintEnd_toStartOf="@+id/cl_unit"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent">
+
+                                    <TextView
+                                        android:text="@{viewModel.userDetail.data.plantDays}"
+                                        android:id="@+id/tv_day"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="15dp"
+                                        android:textColor="@color/mainColor"
+                                        android:textSize="32sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        tools:text="109" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="20dp"
+                                        android:text="days"
+                                        android:textColor="#979797"
+                                        android:textSize="11sp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toBottomOf="@+id/tv_day" />
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:visibility="@{viewModel.userDetail.data.isVip == 0 ? View.GONE : View.VISIBLE}"
+                                    android:id="@+id/cl_unit"
+                                    android:layout_width="109dp"
+                                    android:layout_height="90dp"
+                                    android:background="@mipmap/my_vip_broad"
+                                    app:layout_constraintEnd_toStartOf="@+id/cl_harvest"
+                                    app:layout_constraintStart_toEndOf="@+id/cl_day">
+
+                                    <TextView
+                                        android:text="@{viewModel.userDetail.data.growBoxCount}"
+                                        android:id="@+id/tv_unit"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="15dp"
+                                        android:textColor="@color/mainColor"
+                                        android:textSize="32sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        tools:text="109" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="20dp"
+                                        android:text="unit(s)"
+                                        android:textColor="#979797"
+                                        android:textSize="11sp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toBottomOf="@+id/tv_unit" />
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                                <androidx.constraintlayout.widget.ConstraintLayout
+                                    android:visibility="@{viewModel.userDetail.data.isVip == 0 ? View.GONE : View.VISIBLE}"
+                                    android:id="@+id/cl_harvest"
+                                    android:layout_width="109dp"
+                                    android:layout_height="90dp"
+                                    android:background="@mipmap/my_vip_broad"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toEndOf="@id/cl_unit">
+
+                                    <TextView
+                                        android:text="@{viewModel.userDetail.data.harvestCount}"
+                                        android:id="@+id/tv_harvest"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="15dp"
+                                        android:textColor="@color/mainColor"
+                                        android:textSize="32sp"
+                                        android:textStyle="bold"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        tools:text="109" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginBottom="20dp"
+                                        android:text="Harvest(s)"
+                                        android:textColor="#979797"
+                                        android:textSize="11sp"
+                                        app:layout_constraintBottom_toBottomOf="parent"
+                                        app:layout_constraintEnd_toEndOf="parent"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toBottomOf="@+id/tv_harvest" />
+
+                                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
+
+                            <com.cl.common_base.widget.FeatureItemView
+                                app:itemTitleBold="true"
+                                android:id="@+id/ft_message"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                android:layout_marginTop="17dp"
+                                app:itemIcon="@mipmap/my_message"
+                                app:itemTitle="Help Center" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height=".5dp"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@color/lineBg" />
+                            <com.cl.common_base.widget.FeatureItemView
+                                android:visibility="gone"
+                                app:itemTitleBold="true"
+                                android:id="@+id/ft_oxy"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                app:itemIcon="@mipmap/my_oxy_bg"
+                                app:itemTitle="Oxygen Bag" />
+                            <View
+                                android:visibility="gone"
+                                android:layout_width="match_parent"
+                                android:layout_height=".5dp"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@color/lineBg" />
+                            <com.cl.common_base.widget.FeatureItemView
+                                app:itemTitleBold="true"
+                                android:id="@+id/ft_setting"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                app:itemIcon="@mipmap/my_setting"
+                                app:itemTitle="Settings" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height=".5dp"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@color/lineBg" />
+                            <com.cl.common_base.widget.FeatureItemView
+                                app:itemTitleBold="true"
+                                android:id="@+id/ft_feedback"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                app:itemIcon="@mipmap/my_feedback_bg"
+                                app:itemTitle="Feedback" />
+                        </LinearLayout>
+
+                        <RelativeLayout
+                            android:background="@drawable/my_head_broad_bg"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:id="@+id/iv_head"
+                            android:layout_width="102dp"
+                            android:layout_height="102dp">
+
+                            <ImageView
+                                android:gravity="center"
+                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}"
+                                android:layout_centerInParent="true"
+                                circleUrl="@{viewModel.userDetail.data.avatarPicture}"
+                                android:layout_width="98dp"
+                                android:layout_height="98dp"
+                               />
+
+                            <TextView
+                                android:layout_width="98dp"
+                                android:layout_height="98dp"
+                                android:layout_centerInParent="true"
+                                android:background="@drawable/my_head_bg"
+                                android:gravity="center"
+                                android:text="@{viewModel.userDetail.data.nickName.substring(0,1)}"
+                                android:textColor="@color/mainColor"
+                                android:textSize="40sp"
+                                android:textStyle="bold"
+                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.VISIBLE : View.GONE}" />
+                        </RelativeLayout>
+
+                        <FrameLayout
+                            android:id="@+id/rl_edit"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="20dp"
+                            app:layout_constraintEnd_toEndOf="parent">
+
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:background="@mipmap/my_edit" />
+                        </FrameLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.core.widget.NestedScrollView>
+
+            </FrameLayout>
+
+
+        </com.cl.common_base.widget.scroll.behavior.LinkageScrollLayout>
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:srlDragRate="0.75"
+            app:srlEnableLoadMore="true"
+            app:srlEnablePureScrollMode="true">
+
+            <com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
+                android:id="@+id/bottomSheet"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="100dp" />
+
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+
+    </FrameLayout>
+</layout>

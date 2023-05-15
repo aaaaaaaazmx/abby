@@ -50,7 +50,7 @@ object Constants {
         const val DEVELOPMENT_URL = "http://192.168.3.101:9330/"
 
         // 外网
-        const val OUTER_ANG_URL = "https://5c8730c912.oicp.vip/"
+        const val OUTER_ANG_URL = "https://2549m9264b.zicp.fun/"
     }
 
     // Login信息相关
@@ -81,6 +81,11 @@ object Constants {
         // 公英制
         // false 英制 inc、 true 公制 cm
         const val KEY_MY_WEIGHT_UNIT = "key_my_weight_unit"
+    }
+
+    object Contact {
+        const val KEY_SHARE_TO_PUBLIC = "key_share_to_public"
+        const val KEY_PLANT_DATA_IS_VISIBLE = "key_plant_data_is_visible"
     }
 
     // 隐私合规相关

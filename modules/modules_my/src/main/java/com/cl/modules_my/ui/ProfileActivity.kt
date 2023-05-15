@@ -1,7 +1,6 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
-import android.app.PictureInPictureUiState
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -30,31 +29,31 @@ import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyProfileActivityBinding
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.ProfileViewModel
-import com.cl.modules_my.widget.ChooserOptionPop
+import com.cl.common_base.pop.ChooserOptionPop
 import com.cl.modules_my.widget.LoginOutPop
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.config.SelectMimeType
+import com.luck.picture.lib.engine.CompressFileEngine
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.language.LanguageConfig
 import com.luck.picture.lib.style.BottomNavBarStyle
 import com.luck.picture.lib.style.PictureSelectorStyle
-import com.luck.picture.lib.style.SelectMainStyle
 import com.luck.picture.lib.utils.MediaUtils
 import com.luck.picture.lib.utils.PictureFileUtils
 import com.lxj.xpopup.XPopup
-import com.permissionx.guolindev.PermissionX
 import com.tuya.smart.android.user.api.ILogoutCallback
 import com.tuya.smart.home.sdk.TuyaHomeSdk
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import top.zibin.luban.Luban
+import top.zibin.luban.OnNewCompressListener
 import java.io.File
 import javax.inject.Inject
 
@@ -128,7 +127,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                         PermissionHelp().applyPermissionHelp(
                             this@ProfileActivity,
                             getString(com.cl.common_base.R.string.profile_request_camera),
-                            object : PermissionHelp.OnCheckResultListener{
+                            object : PermissionHelp.OnCheckResultListener {
                                 override fun onResult(result: Boolean) {
                                     if (!result) return
                                     //跳转到调用系统相机
@@ -139,26 +138,85 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                         )
                     },
                     onLibraryAction = {
-                        // 选择照片
-                        // 选择照片，不显示角标
-                        val style = PictureSelectorStyle()
-                        val ss = BottomNavBarStyle()
-                        ss.isCompleteCountTips = false
-                        style.bottomBarStyle = ss
-                        PictureSelector.create(this@ProfileActivity)
-                            .openGallery(SelectMimeType.ofImage())
-                            .setImageEngine(GlideEngine.createGlideEngine())
-//                            .setCompressEngine(ImageFileCompressEngine()) //是否压缩
-                            .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
-                            .isOriginalControl(false)// 原图功能
-                            .isDisplayTimeAxis(true)// 资源轴
-                            .setEditMediaInterceptListener(null)// 是否开启图片编辑功能
-                            .isMaxSelectEnabledMask(true) // 是否显示蒙层
-                            .isDisplayCamera(false)//是否显示摄像
-                            .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                            .setMaxSelectNum(1)
-                            .setSelectorUIStyle(style)
-                            .forResult(PictureConfig.CHOOSE_REQUEST)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            PermissionHelp().applyPermissionHelp(
+                                this@ProfileActivity,
+                                getString(com.cl.common_base.R.string.profile_request_photo),
+                                object : PermissionHelp.OnCheckResultListener {
+                                    override fun onResult(result: Boolean) {
+                                        if (!result) return
+                                        // 选择照片
+                                        // 选择照片，不显示角标
+                                        val style = PictureSelectorStyle()
+                                        val ss = BottomNavBarStyle()
+                                        ss.isCompleteCountTips = false
+                                        style.bottomBarStyle = ss
+                                        PictureSelector.create(this@ProfileActivity)
+                                            .openGallery(SelectMimeType.ofImage())
+                                            .setImageEngine(GlideEngine.createGlideEngine())
+                                            .setCompressEngine(CompressFileEngine { context, source, call ->
+                                                Luban.with(context).load(source).ignoreBy(100)
+                                                    .setCompressListener(object : OnNewCompressListener {
+                                                        override fun onSuccess(source: String?, compressFile: File?) {
+                                                            call?.onCallback(source, compressFile?.absolutePath)
+                                                        }
+
+                                                        override fun onError(source: String?, e: Throwable?) {
+                                                            call?.onCallback(source, null)
+                                                        }
+
+                                                        override fun onStart() {
+
+                                                        }
+                                                    }).launch();
+                                            })
+                                            .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
+                                            .isOriginalControl(false) // 原图功能
+                                            .isDisplayTimeAxis(true) // 资源轴
+                                            .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
+                                            .isMaxSelectEnabledMask(true) // 是否显示蒙层
+                                            .isDisplayCamera(false) //是否显示摄像
+                                            .setLanguage(LanguageConfig.ENGLISH) //显示英语
+                                            .setMaxSelectNum(1)
+                                            .setSelectorUIStyle(style)
+                                            .forResult(PictureConfig.CHOOSE_REQUEST)
+                                    }
+                                },
+                                Manifest.permission.READ_MEDIA_IMAGES,
+                                Manifest.permission.READ_MEDIA_VIDEO,
+                                Manifest.permission.READ_MEDIA_AUDIO,
+                            )
+                        } else {
+                            PermissionHelp().applyPermissionHelp(
+                                this@ProfileActivity,
+                                getString(com.cl.common_base.R.string.profile_request_photo),
+                                object : PermissionHelp.OnCheckResultListener {
+                                    override fun onResult(result: Boolean) {
+                                        if (!result) return
+                                        // 选择照片
+                                        // 选择照片，不显示角标
+                                        val style = PictureSelectorStyle()
+                                        val ss = BottomNavBarStyle()
+                                        ss.isCompleteCountTips = false
+                                        style.bottomBarStyle = ss
+                                        PictureSelector.create(this@ProfileActivity)
+                                            .openGallery(SelectMimeType.ofImage())
+                                            .setImageEngine(GlideEngine.createGlideEngine())
+                                            //                            .setCompressEngine(ImageFileCompressEngine()) //是否压缩
+                                            .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
+                                            .isOriginalControl(false) // 原图功能
+                                            .isDisplayTimeAxis(true) // 资源轴
+                                            .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
+                                            .isMaxSelectEnabledMask(true) // 是否显示蒙层
+                                            .isDisplayCamera(false) //是否显示摄像
+                                            .setLanguage(LanguageConfig.ENGLISH) //显示英语
+                                            .setMaxSelectNum(1)
+                                            .setSelectorUIStyle(style)
+                                            .forResult(PictureConfig.CHOOSE_REQUEST)
+                                    }
+                                }, Manifest.permission.READ_EXTERNAL_STORAGE,
+                            )
+                        }
                     })
             )
     }
@@ -185,6 +243,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         binding.ftNickName.setItemTitle(getString(com.cl.common_base.R.string.profile_name), true)
         binding.ftId.setItemTitle(getString(com.cl.common_base.R.string.profile_abby_id), true)
         binding.ftEmail.setItemTitle(getString(com.cl.common_base.R.string.profile_email), true)
+        binding.ftWall.setItemTitle("Wall", true)
     }
 
     override fun observe() {
@@ -283,6 +342,10 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
             val intent = Intent(this@ProfileActivity, EditNickNameActivity::class.java)
             intent.putExtra(KEY_NICK_NAME, binding.ftNickName.itemValue)
             startActivity(intent)
+        }
+
+        binding.ftWall.setOnClickListener {
+            startActivity(Intent(this@ProfileActivity, WallActivity::class.java))
         }
     }
 

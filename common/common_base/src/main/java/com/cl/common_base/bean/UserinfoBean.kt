@@ -14,7 +14,7 @@ data class UserinfoBean(
     val easemobPassword: String? = null,
     val easemobUserName: String? = null,
     val email: String? = null,
-    val eventCount: String? = null,
+    val eventCount: Int? = null,
     val isVip: Int? = 0,
     val nickName: String? = null,
     val subscriptionTime: String? = null,
@@ -24,6 +24,10 @@ data class UserinfoBean(
     val tuyaUserId: String? = null,
     val tuyaUserType: String? = null,
     var userDetailData: BasicUserBean? = null,
+    val userId: String? = null,
+    val plantDays: String? = null,
+    val growBoxCount: String? = null,
+    val harvestCount: String? = null,
     val notBound: Int? = null, // 1 是绑定过、其他都是未绑定过
 ) : BaseBean() {
     // 用户基本信息Bean
@@ -32,6 +36,7 @@ data class UserinfoBean(
         val deviceId: String? = null,
         val abbyId: String? = null,
         val avatarPicture: String? = null,
+        val eventCount: Int? = null,
         val childLock: Int? = null,
         val email: String? = null,
         val newMessage: Boolean? = false,
@@ -42,9 +47,12 @@ data class UserinfoBean(
         val personSign: String? = null,
         val userName: String? = null,
         val wallAddress: String? = null,
-        val wallId: String? = null,
+        val wallId: Int? = null,
         val subscriptionTime: String? = null,
         val isVip: Int? = 0,
-        val userId: String? = null
+        val userId: String? = null,
+        val plantDays: String? = null,
+        val growBoxCount: String? = null,
+        val harvestCount: String? = null,
     ) : BaseBean()
 }

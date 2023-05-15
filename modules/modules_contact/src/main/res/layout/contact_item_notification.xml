@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.modules_contact.response.MessageListData" />
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_contact.adapter.ContactNotificationAdapter" />
+
+        <import type="com.cl.common_base.ext.DateHelper" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_avatar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!--这是单个头像的-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="@{data.avatarPictures.size() > 1 ? View.GONE : View.VISIBLE}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/ivAvatar"
+                    circleUrl='@{data.avatarPictures.size() > 0 ? data.avatarPictures[0] : ""}'
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0])  &amp;&amp; data.avatarPictures[0].contains("http") ? View.VISIBLE : View.GONE : View.GONE}'
+                    tools:src="@mipmap/ic_launcher" />
+
+
+                <TextView
+                    android:id="@+id/nohead_show"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:text='@{data.avatarPictures.size() > 0 ? data.avatarPictures[0].substring(0,1) : ""}'
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0]) &amp;&amp; !data.avatarPictures[0].contains("http") ? View.VISIBLE : View.GONE : View.GONE}' />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--这个是多个头像才显示的-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="@{data.avatarPictures.size() > 1 ? View.VISIBLE : View.GONE}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/ivAvatar_one"
+                    circleUrl='@{data.avatarPictures.size() > 0 ? data.avatarPictures[0] : ""}'
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0]) &amp;&amp; data.avatarPictures[0].contains("http") ? View.VISIBLE : View.INVISIBLE : View.INVISIBLE}'
+                    tools:src="@mipmap/ic_launcher" />
+
+
+                <TextView
+                    android:text='@{data.avatarPictures.size() > 0 &amp;&amp;  !data.avatarPictures[0].contains("http") ? data.avatarPictures[0].substring(0,1) : ""}'
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility='@{data.avatarPictures.size() > 0 ? !TextUtils.isEmpty(data.avatarPictures[0]) &amp;&amp; !data.avatarPictures[0].contains("http") ? View.VISIBLE : View.GONE : View.GONE}' />
+
+
+                <ImageView
+                    app:layout_constraintCircle="@id/ivAvatar_one"
+                    app:layout_constraintCircleAngle="120"
+                    app:layout_constraintCircleRadius="20dp"
+                    android:id="@+id/ivAvatar_two"
+                    circleUrl='@{data.avatarPictures.size() > 1 ? data.avatarPictures[1] : ""}'
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:visibility='@{data.avatarPictures.size() > 1 ? !TextUtils.isEmpty(data.avatarPictures[1])  &amp;&amp; data.avatarPictures[1].contains("http") ? View.VISIBLE : View.GONE : View.GONE}'
+                    tools:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    app:layout_constraintCircle="@id/ivAvatar_one"
+                    app:layout_constraintCircleAngle="120"
+                    app:layout_constraintCircleRadius="20dp"
+                    android:text='@{data.avatarPictures.size() > 1 &amp;&amp;  !data.avatarPictures[1].contains("http") ? data.avatarPictures[1].substring(0,1) : ""}'
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility='@{data.avatarPictures.size() > 1 ? !TextUtils.isEmpty(data.avatarPictures[1]) &amp;&amp; !data.avatarPictures[1].contains("http") ? View.VISIBLE : View.GONE : View.GONE}' />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <TextView
+            android:id="@+id/tv_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            app:layout_constraintEnd_toStartOf="@+id/iv_pic"
+            app:layout_constraintStart_toEndOf="@+id/cl_avatar"
+            app:layout_constraintTop_toTopOf="@+id/cl_avatar"
+            tools:text="Ken: 008Ken: 008Ken: 008Ken: 008Ken: 008Ken: 008Ken: 008Ken: 008Ken: 008" />
+
+        <TextView
+            android:id="@+id/tV_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:textColor="#C4C4C4"
+            android:textSize="11sp"
+            app:layout_constraintStart_toEndOf="@+id/cl_avatar"
+            app:layout_constraintTop_toBottomOf="@+id/tv_comment"
+            tools:text="123" />
+
+        <ImageView
+            android:scaleType="fitXY"
+            android:visibility="@{TextUtils.isEmpty(data.picture) ? View.GONE : View.VISIBLE}"
+            android:id="@+id/iv_pic"
+            url="@{data.picture}"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cl_avatar"
+            tools:background="@mipmap/ic_launcher" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

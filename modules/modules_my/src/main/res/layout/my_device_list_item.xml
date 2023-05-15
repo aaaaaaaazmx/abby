@@ -202,7 +202,7 @@
             android:layout_height="35dp"
             android:layout_marginStart="17dp"
             android:background="@drawable/background_main_color_r6"
-            android:text="Jump to Device"
+            android:text="Go to Device"
             android:textAllCaps="false"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
@@ -249,15 +249,32 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <com.cl.common_base.widget.FeatureItemSwitch
-                isItemCheck="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).status == 1 : false}"
-                android:id="@+id/ft_check"
-                android:layout_width="wrap_content"
-                app:hideArrow="true"
-                android:layout_height="40dp"
+
+
+            <RelativeLayout
                 app:layout_constraintEnd_toStartOf="@+id/iv_luosi"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.cl.common_base.widget.FeatureItemSwitch
+                    android:visibility="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).isAuto == 1 ? View.GONE : View.VISIBLE : View.VISIBLE}"
+                    isItemCheck="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).status == 1 : false}"
+                    android:id="@+id/ft_check"
+                    android:layout_width="wrap_content"
+                    app:hideArrow="true"
+                    android:layout_height="40dp"
+                   />
+
+                <TextView
+                    android:id="@+id/tv_auto_desc"
+                    android:visibility="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).isAuto == 1 ? View.VISIBLE : View.GONE : View.GONE}"
+                    android:layout_marginEnd="10dp"
+                    tools:text="Auto\non"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
 
             <ImageView
                 android:layout_marginEnd="18dp"

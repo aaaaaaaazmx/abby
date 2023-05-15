@@ -97,7 +97,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     override fun observe() {
         mViewModel.userDetail.observe(this@SplashActivity, resourceObserver {
             error { errorMsg, code ->
-                ToastUtil.shortShow(errorMsg)
+                if (code == -1) {
+                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
+                    finish()
+                }
             }
             success {
 
@@ -108,7 +111,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
             error { errorMsg, code ->
-                ToastUtil.shortShow(errorMsg)
             }
             success {
                 val map = this.data

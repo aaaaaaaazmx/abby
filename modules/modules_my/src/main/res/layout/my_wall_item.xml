@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+
+        <variable
+            name="data"
+            type="com.cl.common_base.bean.WallpaperListBean" />
+
+        <import type="android.view.View"/>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:padding="17dp"
+        android:layout_margin="17dp"
+        android:background="@drawable/background_white_r10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/iv_wall"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:text="@{data.name}"
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/iv_wall"
+            app:layout_constraintTop_toTopOf="@+id/iv_wall"
+            tools:text="Island Paradise" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="@+id/tv_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_oxy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/my_wall_oxy" />
+
+            <TextView
+                app:layout_constraintBottom_toBottomOf="@+id/iv_oxy"
+                app:layout_constraintTop_toTopOf="@+id/iv_oxy"
+                app:layout_constraintStart_toEndOf="@+id/iv_oxy"
+                android:id="@+id/tv_price"
+                tools:text="30 Free"
+                android:layout_marginStart="7dp"
+                android:layout_toRightOf="@+id/iv_oxy"
+                android:textColor="@color/mainColor"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toEndOf="@+id/iv_wall"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_wall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:visibility="@{data.use == 1 ? View.VISIBLE : View.GONE}"
+                android:textStyle="bold"
+                android:id="@+id/tv_use"
+                android:text="Using..."
+                android:textColor="@color/mainColor"
+                android:textSize="15sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.cl.common_base.widget.SvTextView
+                android:id="@+id/tv_apply"
+                android:visibility="@{data.use == 1 ? View.GONE : View.VISIBLE}"
+                android:gravity="center"
+                app:svRadius="18dp"
+                app:svSolidColor="@color/mainColor"
+                android:textColor="@color/white"
+                android:text="apply"
+                android:layout_width="88dp"
+                android:layout_height="36dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
