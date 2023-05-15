@@ -62,6 +62,7 @@
                 app:layout_constraintTop_toTopOf="@+id/cl_avatar" />
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/vv_msg_number"
                 android:layout_width="16dp"
                 android:layout_height="16dp"

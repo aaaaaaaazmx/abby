@@ -275,6 +275,7 @@
                                 android:layout_marginEnd="20dp"
                                 android:background="@color/lineBg" />
                             <com.cl.common_base.widget.FeatureItemView
+                                android:visibility="gone"
                                 app:itemTitleBold="true"
                                 android:id="@+id/ft_oxy"
                                 android:layout_width="match_parent"
@@ -282,6 +283,7 @@
                                 app:itemIcon="@mipmap/my_oxy_bg"
                                 app:itemTitle="Oxygen Bag" />
                             <View
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height=".5dp"
                                 android:layout_marginStart="20dp"

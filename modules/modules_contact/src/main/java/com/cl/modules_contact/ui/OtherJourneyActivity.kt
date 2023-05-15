@@ -361,7 +361,6 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
                 R.id.cl_love -> { // 点赞
                     if (item?.isPraise == 0) {
-                        viewModel.like(LikeReq(learnMoreId = item.learnMoreId, likeId = item.id.toString(), type = "moments"))
                         //  点赞效果
                         val itemPosition = IntArray(2)
                         val superLikePosition = IntArray(2)
@@ -372,12 +371,13 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         logI("x = $x, y = $y")
                         logI("width = ${view.width}, height = ${view.height}")
                         binding.superLikeLayout.launch(x, y)
+                        viewModel.like(LikeReq(learnMoreId = item.learnMoreId, likeId = item.id.toString(), type = "moments"))
 
-                        // 震动
-                        SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
                     } else {
                         viewModel.unlike(LikeReq(learnMoreId = item?.learnMoreId, likeId = item?.id.toString(), type = "moments"))
                     }
+                        // 震动
+                        SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
                 }
 
                 R.id.cl_gift -> { //  打赏
@@ -410,17 +410,22 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         .hasShadowBg(true) // 去掉半透明背景
                         //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
                         .atView(view).isCenterHorizontal(false).asCustom(this@OtherJourneyActivity.let {
-                            ContactPotionPop(it, isShowShareToPublic = item?.syncTrend != 1, deleteAction = { //  删除
-                                viewModel.delete(DeleteReq(momentId = item?.id.toString()))
-                            }, reportAction = { // 举报弹窗
-                                XPopup.Builder(it).isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(
-                                    ContactReportPop(it, onConfirmAction = { txt -> // 举报
-                                        viewModel.report(ReportReq(momentId = item?.id.toString(), reportContent = txt))
-                                    })
-                                ).show()
-                            }, itemSwitchAction = { isCheck -> // 关闭分享
-                                viewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
-                            }, isShowReport = item?.userId.toString() == viewModel.userinfoBean?.userId
+                            ContactPotionPop(
+                                it, isShowShareToPublic = item?.syncTrend != 1,
+                                deleteAction = { //  删除
+                                    viewModel.delete(DeleteReq(momentId = item?.id.toString()))
+                                },
+                                reportAction = { // 举报弹窗
+                                    XPopup.Builder(it).isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(
+                                        ContactReportPop(it, onConfirmAction = { txt -> // 举报
+                                            viewModel.report(ReportReq(momentId = item?.id.toString(), reportContent = txt))
+                                        })
+                                    ).show()
+                                },
+                                itemSwitchAction = { isCheck -> // 关闭分享
+                                    viewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
+                                },
+                                isShowReport = item?.userId.toString() == viewModel.userinfoBean?.userId,
                             ).setBubbleBgColor(Color.WHITE) //气泡背景
                                 .setArrowWidth(XPopupUtils.dp2px(this@OtherJourneyActivity, 3f)).setArrowHeight(
                                     XPopupUtils.dp2px(

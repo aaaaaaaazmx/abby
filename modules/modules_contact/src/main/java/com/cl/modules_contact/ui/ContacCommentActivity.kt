@@ -572,7 +572,8 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                                             // 关闭分享
                                             mViewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = data?.id.toString())
                                         },
-                                        isShowReport = data?.userId.toString() == mViewModel.userinfoBean?.userId
+                                        isShowReport = data?.userId.toString() == mViewModel.userinfoBean?.userId,
+                                        isShowShareToPublic = data?.userId.toString() == mViewModel.userinfoBean?.userId
                                     )
                                         .setBubbleBgColor(Color.WHITE) //气泡背景
                                         .setArrowWidth(XPopupUtils.dp2px(this@ContactCommentActivity, 3f))

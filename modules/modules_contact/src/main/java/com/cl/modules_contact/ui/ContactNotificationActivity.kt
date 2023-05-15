@@ -38,6 +38,11 @@ class ContactNotificationActivity : BaseActivity<ContactNotificationBinding>() {
 
     override fun initView() {
 
+        binding.title.setLeftClickListener {
+            setResult(RESULT_OK)
+            finish()
+        }
+
         binding.rvNotification.apply {
             layoutManager = LinearLayoutManager(this@ContactNotificationActivity)
             //添加自定义分割线
@@ -149,4 +154,10 @@ class ContactNotificationActivity : BaseActivity<ContactNotificationBinding>() {
     companion object {
         const val REFRESH_SIZE = 20
     }
+
+    override fun onBackPressed() {
+        setResult(RESULT_OK)
+        finish()
+    }
+
 }

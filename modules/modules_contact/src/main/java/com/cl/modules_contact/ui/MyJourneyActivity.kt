@@ -269,7 +269,6 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                 R.id.cl_love -> {
                     // 点赞
                     if (item?.isPraise == 0) {
-                        viewModel.like(LikeReq(learnMoreId = item.learnMoreId, likeId = item.id.toString(), type = "moments"))
                         //  点赞效果
                         val itemPosition = IntArray(2)
                         val superLikePosition = IntArray(2)
@@ -280,12 +279,13 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                         logI("x = $x, y = $y")
                         logI("width = ${view.width}, height = ${view.height}")
                         binding.superLikeLayout.launch(x, y)
+                        viewModel.like(LikeReq(learnMoreId = item.learnMoreId, likeId = item.id.toString(), type = "moments"))
 
-                        // 震动
-                        SoundPoolUtil.instance.startVibrator(this@MyJourneyActivity)
                     } else {
                         viewModel.unlike(LikeReq(learnMoreId = item?.learnMoreId, likeId = item?.id.toString(), type = "moments"))
                     }
+                        // 震动
+                        SoundPoolUtil.instance.startVibrator(this@MyJourneyActivity)
                 }
 
                 R.id.cl_gift -> {
@@ -331,7 +331,8 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                             this@MyJourneyActivity.let {
                                 ContactPotionPop(
                                     it,
-                                    isShowShareToPublic = item?.syncTrend != 1,
+                                    isShowShareToPublic = item?.syncTrend == 0,
+                                    fisItemSwitchIsCheck = item?.syncTrend == 1,
                                     deleteAction = {
                                         //  删除
                                         viewModel.delete(DeleteReq(momentId = item?.id.toString()))

@@ -125,7 +125,7 @@
             app:layout_constraintStart_toStartOf="@id/tvNick"
             app:layout_constraintTop_toBottomOf="@id/tv_link"
             android:layout_width="0dp"
-            android:layout_height="200dp">
+            android:layout_height="250dp">
         <com.youth.banner.Banner
             app:banner_indicator_height="6dp"
             app:banner_indicator_normal_color="#E6EFEC"

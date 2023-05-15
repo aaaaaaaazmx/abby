@@ -226,7 +226,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         binding.ivBells.setOnClickListener {
             // 消息点击啊
             context?.let {
-                it.startActivity(Intent(it, ContactNotificationActivity::class.java))
+                startActivityForNotificationLauncher.launch(Intent(it, ContactNotificationActivity::class.java))
             }
         }
     }
@@ -249,13 +249,13 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.cl_avatar -> {
                     // todo 点击头像、跳转到自己的空间， 用userID来区别是跳转到自己的，还是别人的
-                    if (item?.userId == mViewMode.refreshToken.value?.data?.userId) {
+                   /* if (item?.userId == mViewMode.userinfoBean?.userId) {
                         context?.startActivity(Intent(context, MyJourneyActivity::class.java))
                     } else {
                         val intent = Intent(context, OtherJourneyActivity::class.java)
                         intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
                         context?.startActivity(intent)
-                    }
+                    }*/
                 }
 
                 R.id.cl_env -> {
@@ -268,7 +268,6 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 R.id.cl_love -> {
                     // 点赞
                     if (item?.isPraise == 0) {
-                        mViewMode.like(LikeReq(learnMoreId = item.learnMoreId, likeId = item.id.toString(), type = "moments"))
                         //  点赞效果
                         val itemPosition = IntArray(2)
                         val superLikePosition = IntArray(2)
@@ -279,17 +278,17 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         logI("x = $x, y = $y")
                         logI("width = ${view.width}, height = ${view.height}")
                         binding.superLikeLayout.launch(x, y)
-
-                        // 震动
-                        SoundPoolUtil.instance.startVibrator(context = context)
+                        mViewMode.like(LikeReq(learnMoreId = item.learnMoreId, likeId = item.id.toString(), type = "moments"))
                     } else {
                         mViewMode.unlike(LikeReq(learnMoreId = item?.learnMoreId, likeId = item?.id.toString(), type = "moments"))
                     }
+                    // 震动
+                    SoundPoolUtil.instance.startVibrator(context = context)
                 }
 
                 R.id.cl_gift -> {
                     //  打赏
-                    if (item?.userId == mViewMode.refreshToken.value?.data?.userId) {
+                    if (item?.userId == mViewMode.userinfoBean?.userId) {
                         extracted(view.findViewById(R.id.curing_box_gift))
                         return@setOnItemChildClickListener
                     }
@@ -319,6 +318,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 }
 
                 R.id.rl_point -> {
+                    logI("1231231231: ${item?.userId}")
+                    logI("1231231231111: ${mViewMode.userinfoBean?.userId}")
+                    logI("12312312311111111: ${mViewMode.userinfoBean?.userId == item?.userId}")
                     // 点击三个点
                     XPopup.Builder(context)
                         .popupPosition(PopupPosition.Left)
@@ -354,7 +356,8 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                         // 关闭分享
                                         mViewMode.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                                     },
-                                    isShowReport = item?.userId.toString() == mViewMode.refreshToken.value?.data?.userId
+                                    isShowReport = item?.userId.toString() == mViewMode.userinfoBean?.userId,
+                                    isShowShareToPublic = item?.userId.toString() == mViewMode.userinfoBean?.userId,
                                 )
                                     .setBubbleBgColor(Color.WHITE) //气泡背景
                                     .setArrowWidth(XPopupUtils.dp2px(context, 3f))
@@ -664,6 +667,19 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         if (it.resultCode == AppCompatActivity.RESULT_OK) {
             // 重新请求数据
             mViewMode.getNewPage(NewPageReq(current = 1, size = 10, period = mViewMode.currentPeriod.value, tags = mViewMode.currentTag.value))
+        }
+    }
+
+    private val startActivityForNotificationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == AppCompatActivity.RESULT_OK) {
+            // 重新请求数据
+            mViewMode.refreshToken(
+                AutomaticLoginReq(
+                    userName = mViewMode.account,
+                    password = mViewMode.psd,
+                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                )
+            )
         }
     }
 

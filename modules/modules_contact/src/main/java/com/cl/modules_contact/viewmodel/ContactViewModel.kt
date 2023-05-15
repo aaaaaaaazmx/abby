@@ -36,10 +36,10 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class ContactViewModel @Inject constructor(private val repository: ContactRepository) : ViewModel() {
 
-  /*  val userinfoBean = {
+    val userinfoBean by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         GSON.parseObject(bean, UserinfoBean::class.java)
-    }*/
+    }
 
     /**
      * 获取最新动态信息
