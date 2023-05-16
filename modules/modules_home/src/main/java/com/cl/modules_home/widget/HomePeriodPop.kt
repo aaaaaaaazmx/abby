@@ -125,13 +125,14 @@ class HomePeriodPop(
                                 guideType: ${data?.get(position)?.guideType.toString()}
                                 taskId: ${data?.get(position)?.taskId.toString()}
                             """.trimIndent())
-                            unLockAction?.invoke(
-                                data?.get(position)?.guideType.toString(),
-                                data?.get(position)?.taskId.toString(),
-                                if (position != 0) data?.get(position - 1)?.guideType.toString() else data?.get(0)?.guideType.toString(),
-                                data?.get(position)?.taskTime.toString()
-                            )
-
+                            if ((data?.size ?: 0) > 0) {
+                                unLockAction?.invoke(
+                                    data?.get(position)?.guideType.toString(),
+                                    data?.get(position)?.taskId.toString(),
+                                    if (position != 0) data?.get(position - 1)?.guideType.toString() else data?.get(0)?.guideType.toString(),
+                                    data?.get(position)?.taskTime.toString()
+                                )
+                            }
                             dismiss()
                         }
 

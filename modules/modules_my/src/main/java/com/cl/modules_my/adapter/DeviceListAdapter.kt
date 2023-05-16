@@ -31,11 +31,15 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
 
         holder.getView<FeatureItemSwitch>(R.id.ft_check).apply {
             setSwitchCheckedChangeListener { buttonView, isChecked ->
-                switchListener?.invoke(item.accessoryList?.get(0)?.accessoryId.toString(), item.deviceId ?: "", isChecked)
+                if ((item.accessoryList?.size ?: 0) > 0) {
+                    switchListener?.invoke(item.accessoryList?.get(0)?.accessoryId.toString(), item.deviceId ?: "", isChecked)
+                }
             }
         }
 
-        holder.setText(R.id.tv_auto_desc, if (item.accessoryList?.get(0)?.isAuto == 1) "Auto\nOn" else "Auto\nOff")
+        if ((item.accessoryList?.size ?: 0) > 0) {
+            holder.setText(R.id.tv_auto_desc, if (item.accessoryList?.get(0)?.isAuto == 1) "Auto\nOn" else "Auto\nOff")
+        }
     }
 
     // 显示名字。
