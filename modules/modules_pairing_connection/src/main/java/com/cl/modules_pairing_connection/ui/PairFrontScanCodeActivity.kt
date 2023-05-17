@@ -119,8 +119,6 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
                 }
             },
             Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
         )
     }
 
@@ -130,7 +128,7 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
             Config(
                 true,
                 CODE_BAR,
-                GlideEngineForScanCode.createGlideEngine(),
+                null,
                 object : ScanResultListener {
                     override fun onSuccessListener(value: String?) {
                         logI(
