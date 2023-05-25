@@ -41,6 +41,8 @@ import com.cl.modules_my.widget.LoginOutPop
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.cl.modules_my.widget.MyRePlantPop
 import com.cl.modules_my.widget.SubPop
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.tuya.smart.android.user.api.ILogoutCallback
@@ -487,6 +489,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     override fun onSuccess() {
                         // 清除缓存数据
                         Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                        // 推出firbase账号
+                        Firebase.auth.signOut()
                         // 清除上面所有的Activity
                         // 跳转到Login页面
                         ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)

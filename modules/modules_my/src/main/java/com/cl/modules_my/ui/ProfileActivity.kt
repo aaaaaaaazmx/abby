@@ -34,6 +34,8 @@ import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.ProfileViewModel
 import com.cl.common_base.pop.ChooserOptionPop
 import com.cl.modules_my.widget.LoginOutPop
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
@@ -87,6 +89,8 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                     override fun onSuccess() {
                         // 清除缓存数据
                         Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                        // 推出firbase账号
+                        Firebase.auth.signOut()
                         // 清除上面所有的Activity
                         // 跳转到Login页面
                         ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
