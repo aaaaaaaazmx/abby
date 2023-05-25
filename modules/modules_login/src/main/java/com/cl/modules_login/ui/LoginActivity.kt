@@ -66,6 +66,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             false
         }
 
+        // 获取焦点才能弹出密码提示框
+        binding.accountEditText.isFocusable = true;
+        binding.accountEditText.isFocusableInTouchMode = true;
+        binding.accountEditText.requestFocus();
+
+
     }
 
     private val plantSix by lazy {
@@ -190,6 +196,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 hideProgressLoading()
                 kotlin.runCatching { // 初始化SDK
                     InitSdk.init() // 是否种植过
+                    // 保存账号
+                    Prefs.putString(Constants.USER_NAME, binding.accountEditText.text.toString())
                     data?.let { PlantCheckHelp().plantStatusCheck(this@LoginActivity, it) } //                    when (userInfoBean.deviceStatus) {
                     //                        // 1-> 绑定设备、 2-> 未绑定设备
                     //                        "1" -> {
@@ -312,7 +320,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                                         logI("user: login fail")
                                     }
                                 }
-
                         }
 
                         else -> { // Shouldn't happen.

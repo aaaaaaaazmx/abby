@@ -130,6 +130,22 @@
             </intent-filter>
         </receiver>
 
+
+        <service
+            android:name="com.cl.common_base.multidatasetservice.MyAutofillService"
+            android:label="hey Abby"
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE"
+            android:exported="true">
+            <!--安装时佩带的页面-->
+           <!-- <meta-data
+                android:name="android.autofill"
+                android:resource="@xml/multidataset_service" />-->
+
+            <intent-filter>
+                <action android:name="android.service.autofill.AutofillService" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

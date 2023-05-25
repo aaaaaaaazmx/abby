@@ -62,6 +62,8 @@
                 app:passwordToggleDrawable="@mipmap/ic_launcher">
 
                 <EditText
+                    android:importantForAutofill="yes"
+                    android:autofillHints="username"
                     android:id="@+id/account_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
@@ -99,6 +101,8 @@
 
                 <!--this is the actual edit text which takes the input-->
                 <EditText
+                    android:importantForAutofill="yes"
+                    android:autofillHints="password"
                     android:id="@+id/password_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
