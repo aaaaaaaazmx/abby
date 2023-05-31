@@ -124,17 +124,17 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
             // 更新消息
             getInterComeData.observe(this@ReDeemActivity, resourceObserver {
                 error { errorMsg, code ->
-                }
-                success {
                     // 更新消息
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
-                        map = this.data,
+                        map = mapOf(),
                         updateSuccess = { finish() },
                         updateFail = {
                             ToastUtil.shortShow(it.errorMessage)
                             finish()
                         }
                     )
+                }
+                success {
                 }
             })
         }

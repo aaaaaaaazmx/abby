@@ -156,16 +156,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
          */
         mViewModel.getInterComeData.observe(this@LoginActivity, resourceObserver {
             error { errorMsg, code ->
-            }
-            success {
-                val map = this.data
-                logI("123123123123: ${map?.size}")
-
                 /**
                  * 登录涂鸦
                  */
                 val it = mViewModel.registerLoginLiveData.value
-                mViewModel.tuYaLogin(map = map,
+                mViewModel.tuYaLogin(
+                    map = mapOf(),
                     interComeUserId = it?.data?.userId,
                     userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
                     deviceId = it?.data?.deviceId,
@@ -180,6 +176,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                         hideProgressLoading()
                         error?.let { ToastUtil.shortShow(it) }
                     })
+            }
+            success {
             }
         })
 

@@ -111,15 +111,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
         mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
             error { errorMsg, code ->
-            }
-            success {
-                val map = this.data
-
                 val email = userinfoBean?.email
                 val tuyaCountryCode = userinfoBean?.tuyaCountryCode
                 val tuyaPassword = userinfoBean?.tuyaPassword
                 mViewModel.tuYaLogin(
-                    map = map,
+                    map = mapOf(),
                     mViewModel.userDetail.value?.data?.userId,
                     mViewModel.userDetail.value?.data,
                     mViewModel.userDetail.value?.data?.deviceId,
@@ -138,6 +134,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                         error?.let { ToastUtil.shortShow(it) }
                     }
                 )
+            }
+            success {
             }
         })
 

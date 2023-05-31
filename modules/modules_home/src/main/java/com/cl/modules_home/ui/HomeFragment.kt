@@ -1726,12 +1726,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // InterCome信息
             getInterComeData.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
-                }
-                success {
                     // 更新InterCome用户信息
-                    val map = this.data
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
-                        map = map, userDetail.value?.data, refreshToken.value?.data,
+                        map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
                     )
 
                     // 更新涂鸦Bean
@@ -1779,6 +1776,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             }
                         })
+                }
+                success {
                 }
             })
 
