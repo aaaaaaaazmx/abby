@@ -178,6 +178,26 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     })
             }
             success {
+                /**
+                 * 登录涂鸦
+                 */
+                val it = mViewModel.registerLoginLiveData.value
+                mViewModel.tuYaLogin(
+                    map = mapOf(),
+                    interComeUserId = it?.data?.userId,
+                    userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
+                    deviceId = it?.data?.deviceId,
+                    code = it?.data?.tuyaCountryCode,
+                    email = it?.data?.email,
+                    password = AESCipher.aesDecryptString(it?.data?.tuyaPassword, AESCipher.KEY),
+                    onRegisterReceiver = { devId ->
+                        val intent = Intent(this@LoginActivity, TuYaDeviceUpdateReceiver::class.java)
+                        startService(intent)
+                    },
+                    onError = { code, error ->
+                        hideProgressLoading()
+                        error?.let { ToastUtil.shortShow(it) }
+                    })
             }
         })
 

@@ -135,6 +135,15 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
                     )
                 }
                 success {
+                    // 更新消息
+                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
+                        map = mapOf(),
+                        updateSuccess = { finish() },
+                        updateFail = {
+                            ToastUtil.shortShow(it.errorMessage)
+                            finish()
+                        }
+                    )
                 }
             })
         }

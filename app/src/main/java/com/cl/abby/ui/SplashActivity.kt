@@ -136,6 +136,29 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 )
             }
             success {
+                val email = userinfoBean?.email
+                val tuyaCountryCode = userinfoBean?.tuyaCountryCode
+                val tuyaPassword = userinfoBean?.tuyaPassword
+                mViewModel.tuYaLogin(
+                    map = mapOf(),
+                    mViewModel.userDetail.value?.data?.userId,
+                    mViewModel.userDetail.value?.data,
+                    mViewModel.userDetail.value?.data?.deviceId,
+                    tuyaCountryCode,
+                    email,
+                    AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
+                    onRegisterReceiver = { devId ->
+                        val intent = Intent(
+                            this@SplashActivity,
+                            TuYaDeviceUpdateReceiver::class.java
+                        )
+                        startService(intent)
+                    },
+                    onError = { code, error ->
+                        hideProgressLoading()
+                        error?.let { ToastUtil.shortShow(it) }
+                    }
+                )
             }
         })
 

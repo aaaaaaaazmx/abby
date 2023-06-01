@@ -1778,6 +1778,56 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         })
                 }
                 success {
+                    // 更新InterCome用户信息
+                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
+                        map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
+                    )
+
+                    // 更新涂鸦Bean
+                    TuyaHomeSdk.newHomeInstance(mViewMode.homeId)
+                        .getHomeDetail(object : ITuyaHomeResultCallback {
+                            override fun onSuccess(bean: HomeBean?) {
+                                bean?.let { it ->
+                                    val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                    logI("123123123: ${arrayList.size}")
+                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
+                                        .apply {
+                                            logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
+                                            if (null == this) {
+                                                val aa = mViewMode.tuyaDeviceBean
+                                                aa()?.devId = mViewMode.deviceId.value
+                                                GSON.toJson(aa)?.let {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                                        it
+                                                    )
+                                                }
+                                                return@apply
+                                            }
+                                            GSON.toJson(this)?.let {
+                                                Prefs.putStringAsync(
+                                                    Constants.Tuya.KEY_DEVICE_DATA,
+                                                    it
+                                                )
+                                            }
+
+                                            // 重新注册服务
+                                            // 开启服务
+                                            val intent = Intent(
+                                                context,
+                                                TuYaDeviceUpdateReceiver::class.java
+                                            )
+                                            context?.startService(intent)
+                                            // 切换之后需要重新刷新所有的东西
+                                            mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                        }
+                                }
+                            }
+
+                            override fun onError(errorCode: String?, errorMsg: String?) {
+
+                            }
+                        })
                 }
             })
 
