@@ -72,4 +72,12 @@ interface BaseApiService {
         @Field("accessoryId") accessoryId: String,
         @Field("deviceId") deviceId: String
     ): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取广告图文
+     *  默认0 -> 换水
+     */
+    @FormUrlEncoded
+    @POST("abby/advertising/advertising")
+    fun advertising(@Field("type") type: String? = "0"): Flow<HttpResult<MutableList<AdvertisingData>>>
 }

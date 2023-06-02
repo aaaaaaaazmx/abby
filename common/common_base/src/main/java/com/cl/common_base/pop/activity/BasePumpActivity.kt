@@ -17,6 +17,7 @@ import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AdvertisingData
+import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.UnreadMessageData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.UnReadConstants
@@ -87,6 +88,16 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         val iss = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
         iss
     }
+
+    /**
+     * 一系列的TaskId数组
+     */
+    private val taskIdList by lazy  { (intent.getSerializableExtra(BasePopActivity.KEY_TASK_ID_LIST) as? MutableList<CalendarData.TaskList.SubTaskList>) ?: mutableListOf() }
+
+    /**
+     * 用于固定解锁的或者跳转的id
+     */
+    private val fixedId by lazy { intent.getStringExtra(BasePopActivity.KEY_FIXED_TASK_ID) }
 
 
     /**

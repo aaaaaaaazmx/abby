@@ -18,6 +18,7 @@ import cn.mtjsoft.barcodescanning.extentions.dp2px
 import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePopActivityBinding
@@ -37,6 +38,7 @@ import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.widget.SmartDragLayout
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.Serializable
 import javax.inject.Inject
 
 /**
@@ -65,6 +67,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private val fixedId by lazy { intent.getStringExtra(KEY_FIXED_TASK_ID) }
 
     /**
+     * 连续解锁任务包Id
+     */
+    private val isContinueUnlock by lazy { intent.getBooleanExtra(KEY_TASK_PACKAGE_ID, false) }
+
+    /**
      * 解锁ID
      */
     private val unLockId by lazy { intent.getStringExtra(KEY_UNLOCK_TASK_ID) }
@@ -79,6 +86,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
      */
     private val categoryCode by lazy { intent.getStringExtra(KEY_CATEGORYCODE) }
 
+    /**
+     * 一系列的TaskId数组
+     */
+    private val taskIdList by lazy  { (intent.getSerializableExtra(KEY_TASK_ID_LIST) as? MutableList<CalendarData.TaskList.SubTaskList>) ?: mutableListOf() }
 
     override fun initView() {
         // 添加状态蓝高度
@@ -130,6 +141,36 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private fun fixedProcessingLogic() {
         if (!isHaveCheckBoxViewType()) return
         if (isJumpPage) {
+
+            // 如果是连续解锁任务包的ID
+            if (isContinueUnlock) {
+                // 如果还存在连续多个任务，每次完成之后需要减去1
+                if (taskIdList.size - 1 > 0) {
+                    // 移除掉第一个
+                    taskIdList.removeAt(0)
+
+                    // 换水任务
+                    if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
+                        // 换水加载图文数据
+                        mViewModel.advertising()
+                        return
+                    }
+
+                    val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                    intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
+                    intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
+                    intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
+                    intent.putExtra(Constants.Global.KEY_TXT_ID, taskIdList[0].textId)
+                    intent.putExtra(KEY_IS_SHOW_BUTTON, true)
+                    intent.putExtra(KEY_TASK_PACKAGE_ID, true)
+                    intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Next")
+                    startActivity(intent)
+                } else {
+                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId))
+                }
+                return
+            }
+
             fixedId?.let {
                 // 这是个动态界面，我也不知道为什么不做成动态按钮
                 when (it) {
@@ -289,6 +330,20 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            advertising.observe(this@BasePopActivity, resourceObserver {
+                success {
+                    // 跳转到换水页面
+                    android.os.Handler().postDelayed({
+                        // 传递的数据为空
+                        val intent = Intent(this@BasePopActivity, BasePumpActivity::class.java)
+                        intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
+                        intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
+                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                        startActivity(intent)
+                    }, 50)
+                }
+            })
+
             // 插入篮子植物接口
             intoPlantBasket.observe(this@BasePopActivity, resourceObserver {
                 loading { showProgressLoading() }
@@ -619,5 +674,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 自动化Id
         const val KEY_AUTOMATION_ID = "key_auto_id"
+
+        // 传递一个数组，这个数组里面有一系列的taskId
+        const val KEY_TASK_ID_LIST = "key_task_id_list"
+
+        // 连续解锁任务包ID
+        const val KEY_TASK_PACKAGE_ID = "key_task_package_id"
     }
 }

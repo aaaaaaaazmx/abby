@@ -88,6 +88,25 @@
                 android:text="Cancel"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
+
+
+            <View
+                android:id="@+id/vv_four"
+                android:layout_width="match_parent"
+                android:layout_height=".5dp"
+                android:background="@color/_xpopup_list_divider" />
+
+            <TextView
+                android:id="@+id/tv_four"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Cancel"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
         </LinearLayout>
     </LinearLayout>
 </layout>

@@ -563,4 +563,14 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     fun setGuideInfoTime(guideInfoTaskTime: String) {
         _guideInfoTaskTime.postValue(guideInfoTaskTime)
     }
+
+    /**
+     * 保存解锁任务包
+     */
+    private val _saveUnlockTask = MutableLiveData<MutableList<CalendarData.TaskList.SubTaskList>>()
+    val saveUnlockTask: LiveData<MutableList<CalendarData.TaskList.SubTaskList>> = _saveUnlockTask
+    fun setSaveUnlockTask(list: MutableList<CalendarData.TaskList.SubTaskList>) {
+        _saveUnlockTask.value = list
+    }
+
 }

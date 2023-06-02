@@ -32,7 +32,36 @@ data class CalendarData(
         var taskCategory: String? = null,
         var articleId: String? = null,
         var articleDetails: String? = null,
-    ) : com.joketng.timelinestepview.bean.BaseBean(timeLineState = TimeLineState.INACTIVE)
+        var subTaskList: MutableList<SubTaskList>? = null,
+        var packetCondition: PacketCondition? = null,
+    ) : com.joketng.timelinestepview.bean.BaseBean(timeLineState = TimeLineState.INACTIVE) {
+        data class SubTaskList(
+            var jumpType: String? = null,
+            var textId: String? = null,
+            var name: String? = null,
+            var taskNo: String? = null,
+            var description: String? = null,
+            var isDeleted: Boolean? = null,
+            var id: Int? = null,
+        ) : BaseBean()
+
+        data class PacketCondition(
+            var taskPackes: MutableList<TaskPackes>? = null,
+            var conditionNo: String? = null,
+            var content: String? = null,
+        ) : BaseBean() {
+            data class TaskPackes(
+                var condition: String? = null,
+                var packetNo: PacketNo? = null
+            ) : BaseBean() {
+                data class PacketNo(
+                    var subTaskList: MutableList<SubTaskList>? = null,
+                    var name: String? = null,
+                    var packetNo: String? = null,
+                ) : BaseBean()
+            }
+        }
+    }
 
 
     // 主要任务
@@ -73,5 +102,10 @@ data class CalendarData(
         const val ABOUT_CHECK_AUTO_FLOWERING_TASK = "about_check_auto_flowering"
         const val ABOUT_CHECK_FINISH_TASK = "about_check_finish"
         const val SEED_KIT_CUP_TYPE_TASK = "seed_kit_cup_type"
+
+
+        // 跳转类型
+        const val KEY_JUMP_TYPE_TO_RICH = "rich_text"
+        const val KEY_JUMP_TYPE_TO_WATER = "drain_water"
     }
 }
