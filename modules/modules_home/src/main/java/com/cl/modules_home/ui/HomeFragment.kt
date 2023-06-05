@@ -3569,11 +3569,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 排水结束
                 TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
                     if (isManual != true) return
-                    binding.plantManual.ivDrainStatus.background =
+                    /*binding.plantManual.ivDrainStatus.background =
                         resources.getDrawable(
                             R.mipmap.home_drain_start,
                             context?.theme
-                        )
+                        )*/
                 }
                 // 排水暂停
                 TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {

@@ -32,12 +32,18 @@
                 android:layout_marginBottom="13dp"
                 android:background="@mipmap/iv_close" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_add"
+            <com.scwang.smart.refresh.layout.SmartRefreshLayout
+                android:id="@+id/refreshLayout"
                 android:layout_width="match_parent"
-                android:layout_height="368dp"
-                android:layout_below="@+id/iv_close"
-                android:background="@color/white" />
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_add"
+                    android:layout_width="match_parent"
+                    android:layout_height="450dp"
+                    android:layout_below="@+id/iv_close"
+                    android:background="@color/white" />
+            </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
             <TextView
                 android:gravity="center_horizontal"
@@ -48,56 +54,61 @@
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="43dp"
+                android:layout_marginTop="34dp"
                 android:layout_marginEnd="20dp"
                 android:text="@string/base_pump_start_desc"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_add_clock_time"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_centerInParent="true"
                 android:layout_gravity="center"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="24dp"
-                android:gravity="center">
+                android:layout_below="@+id/tv_add_clock_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                <com.cl.common_base.widget.ripple.RippleView
-                    android:layout_width="130dp"
-                    android:layout_height="130dp"
-                    android:layout_gravity="center"
-                    android:button="@null"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    app:ripple_circle_color="@color/mainColor"
-                    app:ripple_circle_count="3"
-                    app:ripple_circle_min_radius="10dp"
-                    app:ripple_circle_style="FILL"
-                    app:ripple_speed="1" />
+                <RelativeLayout
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+
+                    <com.cl.common_base.widget.ripple.RippleView
+                        android:layout_width="130dp"
+                        android:layout_height="130dp"
+                        android:layout_gravity="center"
+                        android:button="@null"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        app:ripple_circle_color="@color/mainColor"
+                        app:ripple_circle_count="3"
+                        app:ripple_circle_min_radius="10dp"
+                        app:ripple_circle_style="FILL"
+                        app:ripple_speed="1" />
 
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:visibility="gone"
-                    android:id="@+id/cb_bg"
-                    android:layout_width="73dp"
-                    android:layout_height="73dp"
-                    android:layout_centerInParent="true"
-                    android:layout_gravity="center"
-                    android:background="@mipmap/home_water_bg">
-
-                    <ImageView
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:visibility="gone"
-                        android:id="@+id/iv_water_one"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:background="@mipmap/one_bg"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:id="@+id/cb_bg"
+                        android:layout_width="73dp"
+                        android:layout_height="73dp"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:background="@mipmap/home_water_bg">
+
+                        <ImageView
+                            android:visibility="gone"
+                            android:id="@+id/iv_water_one"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:background="@mipmap/one_bg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
 
 
                         <ImageView
@@ -111,30 +122,57 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
-                    <ImageView
-                        android:layout_marginStart="-0.3dp"
-                        android:visibility="gone"
-                        android:id="@+id/iv_water_three"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        android:background="@mipmap/three_bg"
+                        <ImageView
+                            android:layout_marginStart="-0.3dp"
+                            android:visibility="gone"
+                            android:id="@+id/iv_water_three"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:background="@mipmap/three_bg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <CheckBox
+                        android:id="@+id/btn_success"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:layout_centerInParent="true"
+                        android:layout_gravity="center"
+                        android:background="@mipmap/base_start_bg"
+                        android:button="@null"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </RelativeLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="6dp"
+                    android:layout_gravity="right"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/tv_skip"
+                        android:text="Skip"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"/>
-
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="1dp"
+                        android:background="@color/mainColor"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_skip"
+                        app:layout_constraintStart_toStartOf="@+id/tv_skip"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_skip" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <CheckBox
-                    android:id="@+id/btn_success"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_centerInParent="true"
-                    android:layout_gravity="center"
-                    android:background="@mipmap/base_start_bg"
-                    android:button="@null"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="18sp" />
-            </RelativeLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

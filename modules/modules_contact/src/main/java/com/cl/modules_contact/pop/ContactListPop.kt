@@ -1,13 +1,9 @@
 package com.cl.modules_contact.pop
 
-import android.app.Activity
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.KeyEvent
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,21 +11,14 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logD
-import com.cl.common_base.ext.logI
-import com.cl.common_base.ext.setVisible
 import com.cl.common_base.net.ServiceCreators
-import com.cl.common_base.util.SoftInputUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ContactListAdapter
 import com.cl.modules_contact.databinding.ContactListPopBinding
-import com.cl.modules_contact.request.CommentByMomentReq
-import com.cl.modules_contact.request.RewardReq
 import com.cl.modules_contact.response.MentionData
 import com.cl.modules_contact.service.HttpContactApiService
 import com.lxj.xpopup.core.BottomPopupView
-import com.lxj.xpopup.util.KeyboardUtils
-import com.lxj.xpopup.util.XPopupUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +26,6 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn

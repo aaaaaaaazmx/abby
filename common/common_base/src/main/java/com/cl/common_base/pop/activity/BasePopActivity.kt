@@ -11,16 +11,19 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.children
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.mtjsoft.barcodescanning.extentions.dp2px
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.databinding.BasePopActivityBinding
 import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.ext.logI
@@ -67,6 +70,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private val fixedId by lazy { intent.getStringExtra(KEY_FIXED_TASK_ID) }
 
     /**
+     * 用于解锁任务包的packetNo
+     */
+    private val packetNo by lazy { intent.getStringExtra(KEY_PACK_NO) }
+
+    /**
      * 连续解锁任务包Id
      */
     private val isContinueUnlock by lazy { intent.getBooleanExtra(KEY_TASK_PACKAGE_ID, false) }
@@ -89,10 +97,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     /**
      * 一系列的TaskId数组
      */
-    private val taskIdList by lazy  { (intent.getSerializableExtra(KEY_TASK_ID_LIST) as? MutableList<CalendarData.TaskList.SubTaskList>) ?: mutableListOf() }
+    private val taskIdList by lazy { (intent.getSerializableExtra(KEY_TASK_ID_LIST) as? MutableList<CalendarData.TaskList.SubTaskList>) ?: mutableListOf() }
 
-    override fun initView() {
-        // 添加状态蓝高度
+    override fun initView() { // 添加状态蓝高度
         //        ViewCompat.setOnApplyWindowInsetsListener(binding.smart) { v, insets ->
         //            binding.smart.updateLayoutParams<ViewGroup.MarginLayoutParams> {
         //                topMargin = insets.systemWindowInsetTop
@@ -127,8 +134,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             }
 
             override fun onSlideDone() {
-                binding.slideToConfirm.postDelayed(Runnable { binding.slideToConfirm.reset() }, 500)
-                // 解锁完毕、调用解锁功能
+                binding.slideToConfirm.postDelayed(Runnable { binding.slideToConfirm.reset() }, 500) // 解锁完毕、调用解锁功能
                 fixedProcessingLogic()
             }
 
@@ -141,41 +147,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private fun fixedProcessingLogic() {
         if (!isHaveCheckBoxViewType()) return
         if (isJumpPage) {
-
-            // 如果是连续解锁任务包的ID
-            if (isContinueUnlock) {
-                // 如果还存在连续多个任务，每次完成之后需要减去1
-                if (taskIdList.size - 1 > 0) {
-                    // 移除掉第一个
-                    taskIdList.removeAt(0)
-
-                    // 换水任务
-                    if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
-                        // 换水加载图文数据
-                        mViewModel.advertising()
-                        return
-                    }
-
-                    val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
-                    intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
-                    intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
-                    intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
-                    intent.putExtra(Constants.Global.KEY_TXT_ID, taskIdList[0].textId)
-                    intent.putExtra(KEY_IS_SHOW_BUTTON, true)
-                    intent.putExtra(KEY_TASK_PACKAGE_ID, true)
-                    intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Next")
-                    startActivity(intent)
-                } else {
-                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId))
-                }
-                return
-            }
-
-            fixedId?.let {
-                // 这是个动态界面，我也不知道为什么不做成动态按钮
+            fixedId?.let { // 这是个动态界面，我也不知道为什么不做成动态按钮
                 when (it) {
-                    Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED -> {
-                        // 如果是准备种子、那么直接跳转到种子界面
+                    Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED -> { // 如果是准备种子、那么直接跳转到种子界面
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
                         intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
@@ -185,14 +159,12 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         startActivity(intent)
                     }
 
-                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED -> {
-                        // 这是是直接调用接口
+                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED -> { // 这是是直接调用接口
                         mViewModel.intoPlantBasket()
                     }
 
                     // 种植前检查
-                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK,
-                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK -> {
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK -> {
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
                         intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_1)
@@ -206,20 +178,16 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
 
                     // 解锁Veg\auto这个周期\或者重新开始
-                    Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW,
-                    Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW -> {
-                        if (unLockId.isNullOrEmpty()) {
-                            // startRunning 接口
+                    Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW, Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW -> {
+                        if (unLockId.isNullOrEmpty()) { // startRunning 接口
                             mViewModel.startRunning(botanyId = "", goon = false)
-                        } else {
-                            // 解锁接口
+                        } else { // 解锁接口
                             mViewModel.finishTask(FinishTaskReq(taskId = unLockId))
                             mViewModel.tuYaUser?.uid?.let { it1 -> mViewModel.checkPlant(it1) }
                         }
                     }
 
-                    else -> {
-                        // 跳转下一页
+                    else -> { // 跳转下一页
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(Constants.Global.KEY_TXT_ID, fixedId)
                         startActivity(intent)
@@ -230,9 +198,35 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         }
 
         if (isUnlockTask) {
+            // 如果是连续解锁任务包的ID
+            if (isContinueUnlock) { // 如果还存在连续多个任务，每次完成之后需要减去1
+                if (taskIdList.size - 1 > 0) { // 移除掉第一个
+                    taskIdList.removeAt(0)
+
+                    // 换水任务
+                    if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) { // 换水加载图文数据
+                        mViewModel.advertising()
+                        return
+                    }
+
+                    val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                    intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
+                    intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                    intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
+                    intent.putExtra(Constants.Global.KEY_TXT_ID, taskIdList[0].textId)
+                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                    intent.putExtra(KEY_TASK_PACKAGE_ID, true)
+                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                    intent.putExtra(KEY_PACK_NO, packetNo)
+                    startActivity(intent)
+                } else {
+                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo))
+                }
+                return
+            }
+
             fixedId?.let {
-                when (it) {
-                    // 如果是预览界面、那么直接开始种植、然后关闭界面
+                when (it) { // 如果是预览界面、那么直接开始种植、然后关闭界面
                     Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW -> {
                         mViewModel.startRunning(botanyId = "", goon = false)
                     }
@@ -254,6 +248,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Next")
                         startActivity(intent)
                     }
+
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2 -> {
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
@@ -266,6 +261,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                         startActivity(intent)
                     }
+
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
@@ -286,14 +282,12 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             }
         }
 
-        if (!isJumpPage && !isUnlockTask) {
-            // 如果都不是、那么直接关闭界面
+        if (!isJumpPage && !isUnlockTask) { // 如果都不是、那么直接关闭界面
             acFinish()
         }
     }
 
-    private fun isHaveCheckBoxViewType(): Boolean {
-        /*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
+    private fun isHaveCheckBoxViewType(): Boolean {/*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
         val size = adapter.data.filter { data -> data.value?.isCheck == false && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
@@ -309,8 +303,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 directShutdown()
             }
 
-            override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) {
-                // binding.smart.alpha = percent
+            override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) { // binding.smart.alpha = percent
             }
 
             override fun onOpen() {
@@ -331,15 +324,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     override fun observe() {
         mViewModel.apply {
             advertising.observe(this@BasePopActivity, resourceObserver {
-                success {
-                    // 跳转到换水页面
-                    android.os.Handler().postDelayed({
-                        // 传递的数据为空
+                success { // 跳转到换水页面
+                    android.os.Handler().postDelayed({ // 传递的数据为空
                         val intent = Intent(this@BasePopActivity, BasePumpActivity::class.java)
                         intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
                         intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
+                        intent.putExtra(KEY_PACK_NO, packetNo)
                         intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
-                        startActivity(intent)
+                        refreshActivityLauncher.launch(intent)
                     }, 50)
                 }
             })
@@ -366,8 +358,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     if (null == data) return@success
 
                     // 初始化头部Video
-                    data.topPage?.firstOrNull { it.type == "video" }?.apply {
-                        // 显示头部视频
+                    data.topPage?.firstOrNull { it.type == "video" }?.apply { // 显示头部视频
                         binding.videoItemPlayer.visibility = View.VISIBLE
                         value?.url?.let { initVideo(it, value.autoplay == true) }
                     }
@@ -408,6 +399,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                                         intent.putExtra(Constants.Global.KEY_TXT_ID, value?.txtId)
                                         startActivity(intent)
                                     }
+
                                     "finishTask" -> {
                                         if (!isHaveCheckBoxViewType()) return@setOnClickListener
 
@@ -433,8 +425,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 }
 
                 success {
-                    hideProgressLoading()
-                    // finishTask 需要直接关闭页面
+                    hideProgressLoading() // finishTask 需要直接关闭页面
                     mViewModel.richText.value?.data?.topPage?.firstOrNull { it.type == "finishTask" }?.apply {
                         acFinish()
                     }
@@ -470,18 +461,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         binding.rvList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition()
-                val lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition()
-                //大于0说明有播放
-                if (GSYVideoManager.instance().playPosition >= 0) {
-                    //当前播放的位置
-                    val position = GSYVideoManager.instance().playPosition
-                    //对应的播放列表TAG
-                    if (GSYVideoManager.instance().playTag == "$position" && (position < firstVisibleItem || position > lastVisibleItem)) {
-                        //如果滑出去了上面和下面就是否，和今日头条一样
+                val lastVisibleItem = linearLayoutManager.findLastVisibleItemPosition() //大于0说明有播放
+                if (GSYVideoManager.instance().playPosition >= 0) { //当前播放的位置
+                    val position = GSYVideoManager.instance().playPosition //对应的播放列表TAG
+                    if (GSYVideoManager.instance().playTag == "$position" && (position < firstVisibleItem || position > lastVisibleItem)) { //如果滑出去了上面和下面就是否，和今日头条一样
                         //是否全屏
                         if (!GSYVideoManager.isFullState(this@BasePopActivity)) {
-                            adapter.data[position].videoPosition = GSYVideoManager.instance().currentPosition
-                            // 不释放全部
+                            adapter.data[position].videoPosition = GSYVideoManager.instance().currentPosition // 不释放全部
                             // GSYVideoManager.instance().setListener(this@KnowMoreActivity)
                             // GSYVideoManager.onPause()
                             // 释放全部
@@ -501,20 +487,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
-                    R.id.iv_pic -> {
-                        // 弹出图片
-                        XPopup.Builder(context)
-                            .asImageViewer(
-                                (view as? ImageView),
-                                bean.value?.url,
-                                SmartGlideImageLoader()
-                            )
-                            .show()
+                    R.id.iv_pic -> { // 弹出图片
+                        XPopup.Builder(context).asImageViewer(
+                                (view as? ImageView), bean.value?.url, SmartGlideImageLoader()
+                            ).show()
                     }
 
                     // 跳转HTML
-                    R.id.cl_go_url,
-                    R.id.tv_html -> {
+                    R.id.cl_go_url, R.id.tv_html -> {
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, bean.value?.title)
@@ -522,11 +502,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
 
                     // 阅读更多
-                    R.id.cl_learn,
-                    R.id.tv_learn -> {
-                        // todo 请求id
-                        bean.value?.txtId?.let {
-                            // 继续请求弹窗
+                    R.id.cl_learn, R.id.tv_learn -> { // todo 请求id
+                        bean.value?.txtId?.let { // 继续请求弹窗
                             val intent = Intent(context, BasePopActivity::class.java)
                             intent.putExtra(Constants.Global.KEY_TXT_ID, it)
                             context.startActivity(intent)
@@ -548,8 +525,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         }
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "hey abby")
                         context.startActivity(intent)
-                    }
-                    // 勾选框
+                    } // 勾选框
                     R.id.cl_check -> {
                         view.findViewById<CheckBox>(R.id.curing_box)?.apply {
                             logI("before: ${data[position].value?.isCheck}")
@@ -557,18 +533,16 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             isChecked = !isChecked
                             logI("after: ${data[position].value?.isCheck}")
                         }
-                    }
-                    // 跳转到HTML
+                    } // 跳转到HTML
                     R.id.tv_page_txt -> {
-                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
-                        // 跳转到HTML
+                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener // 跳转到HTML
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         context.startActivity(intent)
                     }
+
                     R.id.tv_txt -> {
-                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
-                        // 跳转到HTML
+                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener // 跳转到HTML
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         context.startActivity(intent)
@@ -644,6 +618,19 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         GSYVideoManager.releaseAllVideos()
     }
 
+
+    /**
+     *
+     * action： 从富文本界面跳准到排水界面，然后排水界面完成任务，并且返回
+     * 跳转到其他地方，返回的时候刷新任务
+     */
+    private val refreshActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) { // 刷新任务
+            // 跳转到日历界面
+            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+        }
+    }
+
     companion object {
         const val KEY_IS_SHOW_BUTTON = "key_is_show_button"
         const val KEY_IS_SHOW_UNLOCK_BUTTON = "key_is_show_unlock_button"
@@ -680,5 +667,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 连续解锁任务包ID
         const val KEY_TASK_PACKAGE_ID = "key_task_package_id"
+
+        // packNo的id
+        const val KEY_PACK_NO = "key_pack_no"
     }
 }

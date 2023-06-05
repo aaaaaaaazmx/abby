@@ -79,5 +79,28 @@ interface BaseApiService {
      */
     @FormUrlEncoded
     @POST("abby/advertising/advertising")
-    fun advertising(@Field("type") type: String? = "0"): Flow<HttpResult<MutableList<AdvertisingData>>>
+    fun advertising(@Field("type") type: String? = "0", @Field("current") current: Int, @Field("size") size: Int): Flow<HttpResult<MutableList<AdvertisingData>>>
+
+    /**
+     * 点赞
+     */
+    @POST("abby/moments/like")
+    fun like(
+        @Body requestBody: LikeReq,
+    ): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 取消点赞
+     */
+    @POST("abby/moments/dislike")
+    fun unlike(
+        @Body requestBody: LikeReq,
+    ): Flow<HttpResult<BaseBean>>
+
+
+    /**
+     * 打赏
+     */
+    @POST("abby/moments/reward")
+    fun reward(@Body requestBody: RewardReq): Flow<HttpResult<BaseBean>>
 }

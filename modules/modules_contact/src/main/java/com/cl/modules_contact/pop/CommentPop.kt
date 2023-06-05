@@ -11,7 +11,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.cl.common_base.bean.UserinfoBean
@@ -30,10 +29,11 @@ import com.cl.modules_contact.adapter.ContactCommentAdapter
 import com.cl.modules_contact.adapter.EmojiAdapter
 import com.cl.modules_contact.databinding.ContactPopCommentBinding
 import com.cl.modules_contact.request.CommentByMomentReq
-import com.cl.modules_contact.request.LikeReq
+import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
-import com.cl.modules_contact.request.RewardReq
+import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.pop.RewardPop
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.PublishData
 import com.cl.modules_contact.service.HttpContactApiService

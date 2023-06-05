@@ -187,7 +187,7 @@ class BaseViewModel @Inject constructor(): ViewModel() {
     val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
     fun advertising(type: String? = "0") {
         viewModelScope.launch {
-            service.advertising(type ?: "0")
+            service.advertising(type ?: "0", current = 1, size = 10)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

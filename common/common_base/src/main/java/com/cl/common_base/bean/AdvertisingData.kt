@@ -9,15 +9,17 @@ import com.cl.common_base.BaseBean
  */
 @Keep
 data class AdvertisingData(
-    val avatarPicture: String?,
-    val description: String?,
-    val id: Int?,
-    val isPraise: Int?,
-    val isReward: Int?,
-    val nickName: String?,
-    val picture: String?,
-    val praise: Int?,
-    val reward: Int?,
-    val title: String?,
-    val video: String?
+    var avatarPicture: String?,
+    var description: String?,
+    var id: Int?,
+    @set:JvmName("setIsFoo")
+    var isPraise: Int?,
+    @set:JvmName("setIsFod")
+    var isReward: Int?,
+    var nickName: String?,
+    var picture: String?,
+    var praise: Int?,
+    var reward: Int?,
+    var title: String?,
+    var video: String?
 ) : BaseBean()

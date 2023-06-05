@@ -6,5 +6,6 @@ package com.cl.common_base.bean
  */
 data class FinishTaskReq(
     val taskId: String? = null,
-    val weight: String? = null
+    val weight: String? = null,
+    val packetNo: String? = null,
 ) : BaseBean()

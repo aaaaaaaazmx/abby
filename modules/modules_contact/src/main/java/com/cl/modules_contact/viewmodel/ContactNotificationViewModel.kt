@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cl.common_base.bean.BaseBean
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
@@ -12,13 +11,8 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.repository.ContactRepository
-import com.cl.modules_contact.request.DeleteReq
-import com.cl.modules_contact.request.LikeReq
 import com.cl.modules_contact.request.NewPageReq
-import com.cl.modules_contact.request.ReportReq
-import com.cl.modules_contact.request.SyncTrendReq
 import com.cl.modules_contact.response.MessageListData
-import com.cl.modules_contact.response.NewPageData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch

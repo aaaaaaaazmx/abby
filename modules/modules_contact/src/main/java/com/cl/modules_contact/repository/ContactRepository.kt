@@ -6,15 +6,13 @@ import com.cl.modules_contact.request.AddTrendData
 import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.CommentByMomentReq
 import com.cl.modules_contact.request.DeleteReq
-import com.cl.modules_contact.request.LikeReq
-import com.cl.modules_contact.request.MomentsDetailsReq
+import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
-import com.cl.modules_contact.request.RewardReq
-import com.cl.modules_contact.request.SyncTrendReq
+import com.cl.common_base.bean.RewardReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
 import com.cl.modules_contact.response.MessageListData
