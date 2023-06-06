@@ -65,5 +65,6 @@
         <activity android:name=".ui.PostActivity" />
         <activity android:name=".ui.MyJourneyActivity" />
         <activity android:name=".ui.OtherJourneyActivity" />
+        <activity android:name=".ui.ReelPostActivity" />
     </application>
 </manifest>

@@ -2,6 +2,9 @@ package com.cl.modules_contact.ui
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.text.TextUtils
@@ -50,6 +53,9 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
+import com.cl.modules_contact.pop.ContactChooseTipPop
+import com.cl.modules_contact.pop.ContactDeletePop
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.TagsBean
 import com.cl.modules_contact.viewmodel.ContactViewModel
@@ -202,8 +208,40 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         binding.flButton.setOnClickListener {
             // 跳转到发布动态页面
             // ToastUtil.shortShow("FLAT")
-            context?.let {
-                startActivityLauncher.launch(Intent(it, PostActivity::class.java))
+            context?.let { context ->
+                XPopup.Builder(context)
+                    .popupPosition(PopupPosition.Left)
+                    .dismissOnTouchOutside(true)
+                    .isClickThrough(false)  //点击透传
+                    .hasShadowBg(true) // 去掉半透明背景
+                    //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                    .atView(it)
+                    .isCenterHorizontal(false)
+                    .asCustom(
+                        ContactChooseTipPop(
+                            context,
+                            onPhotoPostAction = {
+                                startActivityLauncher.launch(Intent(context, PostActivity::class.java))
+                            },
+                            onReelPostAction = {
+                                startActivityLauncher.launch(Intent(context, ReelPostActivity::class.java))
+                            }
+                        ).setBubbleBgColor(Color.WHITE) //气泡背景
+                            .setArrowWidth(XPopupUtils.dp2px(context, 3f))
+                            .setArrowHeight(
+                                XPopupUtils.dp2px(
+                                    context,
+                                    3f
+                                )
+                            )
+                            //.setBubbleRadius(100)
+                            .setArrowRadius(
+                                XPopupUtils.dp2px(
+                                    context,
+                                    3f
+                                )
+                            )
+                    ).show()
             }
         }
 
@@ -242,13 +280,13 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.cl_avatar -> {
                     // todo 点击头像、跳转到自己的空间， 用userID来区别是跳转到自己的，还是别人的
-                   /* if (item?.userId == mViewMode.userinfoBean?.userId) {
-                        context?.startActivity(Intent(context, MyJourneyActivity::class.java))
-                    } else {
-                        val intent = Intent(context, OtherJourneyActivity::class.java)
-                        intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
-                        context?.startActivity(intent)
-                    }*/
+                    /* if (item?.userId == mViewMode.userinfoBean?.userId) {
+                         context?.startActivity(Intent(context, MyJourneyActivity::class.java))
+                     } else {
+                         val intent = Intent(context, OtherJourneyActivity::class.java)
+                         intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
+                         context?.startActivity(intent)
+                     }*/
                 }
 
                 R.id.cl_env -> {
