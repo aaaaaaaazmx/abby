@@ -84,6 +84,10 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
     private val sendPop by lazy {
         RetransmissionPop(context = this@VerifyEmailActivity, onAgainAction = {
+            if (!thirdSource.isNullOrEmpty()) {
+                emailName?.let { mViewModel.verifyEmail(it, "5") }
+                return@RetransmissionPop
+            }
             // 重新发送验证,
             // 需要判断当前是注册还是忘记密码
             if (isRegister) {
@@ -241,7 +245,9 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
             isBindEmail.observe(this@VerifyEmailActivity, resourceObserver {
                 success {
                     // 不管有没有绑定过，都需要绑定，只是检查是否存在
-                    bindSourceEmail(BindSourceEmailReq(emailName, thirdSource, sourceUserId = Firebase.auth.currentUser?.uid))
+                    bindSourceEmail(BindSourceEmailReq(emailName, thirdSource, sourceUserId = AESCipher.aesEncryptString(
+                        Firebase.auth.currentUser?.uid, AESCipher.KEY
+                    )))
                 }
             })
 
@@ -252,7 +258,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                 success {
 
                     if (isBindEmail.value?.data == true) {
-                        // todo 如果已经绑定过，那么直接使用第三方登录
+                        //  如果已经绑定过，那么直接使用第三方登录
                         when(thirdSource) {
                             "google" -> {
                                 // 如果是谷歌登录
@@ -275,7 +281,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                             Intent(this@VerifyEmailActivity, SetPasswordActivity::class.java)
                         intent.putExtra(
                             KEY_REGISTER_OR_FORGET_PASSWORD,
-                            isRegister
+                            true
                         )
                         // 用户注册的一些必要参数
                         intent.putExtra(

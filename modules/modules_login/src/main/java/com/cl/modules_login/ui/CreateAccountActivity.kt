@@ -17,6 +17,8 @@ import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_EMAIL_NAME
 import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_IS_REGISTER
 import com.cl.modules_login.viewmodel.CreateAccountViewModel
 import com.cl.modules_login.widget.PrivacyPop
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
 import com.tencent.bugly.proguard.ad
 import com.tuya.bouncycastle.asn1.x509.X509ObjectIdentifiers.countryName
@@ -52,6 +54,11 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                 // 点击同意隐私协议
                 // 初始化SDK
                 InitSdk.init()
+                if (!thirdSource.isNullOrEmpty()) {
+                    // 发送验证码
+                    Firebase.auth.currentUser?.email?.let { mViewModel.verifyEmail(email = it, "5") }
+                    return@PrivacyPop
+                }
                 // 发送验证码
                 mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "1")
             },

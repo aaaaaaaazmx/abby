@@ -342,6 +342,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 try {
                     val credential = googleHelp.getOneTapClient().getSignInCredentialFromIntent(data)
                     val idToken = credential.googleIdToken
+                    logI("user: ${credential.id}")
+
                     when {
                         idToken != null -> { // Got an ID token from Google. Use it to authenticate
                             // with your backend.
@@ -354,7 +356,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                                 if (task.isSuccessful) { // Sign in success, update UI with the signed-in user's information
                                     logI("signInWithCredential:success")
                                     val user = Firebase.auth.currentUser
+                                    logI("user: ${user?.uid}")
                                     logI("user: ${user?.email}")
+                                    logI("user: ${user?.providerId}")
+                                    logI("user: ${user?.tenantId}")
                                     mViewModel.setThirdSource("google")
                                     mViewModel.setThirdToken(idToken)
                                     // 调用登录接口
@@ -372,6 +377,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                                 } else { // If sign in fails, display a message to the user.
                                     logI("signInWithCredential:failure ${task.exception}")
                                     logI("user: login fail")
+                                    ToastUtil.shortShow(task.exception?.localizedMessage)
                                 }
                             }
                         }
