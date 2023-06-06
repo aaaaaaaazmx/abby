@@ -34,6 +34,15 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
     @Inject
     lateinit var mViewModel: CreateAccountViewModel
 
+    // 第三方来源
+    private val thirdSource by lazy {
+        intent.getStringExtra(LoginActivity.KEY_SOURCE)
+    }
+    // 第三方登录的token
+    private val thirdToken by lazy {
+        intent.getStringExtra(LoginActivity.KEY_THIRD_TOKEN)
+    }
+
     private val privacyPop by lazy {
         PrivacyPop(
             context = this@CreateAccountActivity,
@@ -82,6 +91,10 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
         // 获取列表
         mViewModel.getCountList()
 
+        // 第三方登录，直接显示绑定邮箱
+        if (!thirdSource.isNullOrEmpty()) {
+            binding.tvCreateLog.text = "Bind Email"
+        }
 
     }
 
@@ -139,6 +152,8 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                         intent.putExtra(KEY_EMAIL_NAME, binding.etEmail.text.toString())
                         intent.putExtra(KEY_IS_REGISTER, true)
                         intent.putExtra(KEY_USER_REGISTER_BEAN, userRegisterBean)
+                        intent.putExtra(LoginActivity.KEY_SOURCE, thirdSource)
+                        intent.putExtra(LoginActivity.KEY_THIRD_TOKEN, thirdToken)
                         startActivity(intent)
                     }
                     is Resource.Loading -> {

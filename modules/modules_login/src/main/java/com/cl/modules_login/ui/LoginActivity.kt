@@ -36,6 +36,8 @@ import com.cl.common_base.util.login.GoogleLoginHelper.Companion.REQ_ONE_TAP
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.luck.picture.lib.utils.ToastUtils
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
@@ -102,6 +104,19 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
     private lateinit var userInfoBean: LoginData
     override fun observe() {
+        mViewModel.noBindEmail.observe(this@LoginActivity) {
+            if (it == false) return@observe
+            when(mViewModel.thirdSource.value) {
+                "google" -> {
+                    // 重新走一遍创建账号流程
+                    val intent = Intent(this@LoginActivity, CreateAccountActivity::class.java)
+                    intent.putExtra(KEY_SOURCE, mViewModel.thirdSource.value)
+                    intent.putExtra(KEY_THIRD_TOKEN, mViewModel.thirdToken.value)
+                    startActivity(intent)
+                }
+            }
+        }
+
         mViewModel.registerLoginLiveData.observe(this@LoginActivity) {
             when (it) {
                 is Resource.Loading -> {
@@ -111,9 +126,9 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 is Resource.Success -> {
                     userInfoBean = it.data!! // 保存当前的信息.
                     GSON.toJson(it.data)?.let { data ->
-                            logI("LoginData: $data")
-                            Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, data)
-                        } // 保存Token
+                        logI("LoginData: $data")
+                        Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, data)
+                    } // 保存Token
                     it.data?.token?.let { it1 ->
                         Prefs.putStringAsync(
                             Constants.Login.KEY_LOGIN_DATA_TOKEN, it1
@@ -257,7 +272,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             login()
         }
 
-        binding.ivGoogle.setOnClickListener { // 谷歌登录
+        binding.ivGoogle.setOnClickListener {
+            // 谷歌登录
+            val privatePropertyAgree = Prefs.getBoolean(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE)
+            logI("$privatePropertyAgree")
+            if (!privatePropertyAgree) {
+                pop.asCustom(privacyPop).show()
+                return@setOnClickListener
+            }
             googleHelp.login()
         }
 
@@ -318,7 +340,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         when (requestCode) {
             REQ_ONE_TAP -> {
                 try {
-                    val credential = googleHelp.oneTapClient.getSignInCredentialFromIntent(data)
+                    val credential = googleHelp.getOneTapClient().getSignInCredentialFromIntent(data)
                     val idToken = credential.googleIdToken
                     when {
                         idToken != null -> { // Got an ID token from Google. Use it to authenticate
@@ -328,16 +350,30 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                             // Got an ID token from Google. Use it to authenticate
                             // with Firebase.
                             val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                            googleHelp.auth.signInWithCredential(firebaseCredential).addOnCompleteListener(this) { task ->
-                                    if (task.isSuccessful) { // Sign in success, update UI with the signed-in user's information
-                                        logI("signInWithCredential:success")
-                                        val user = googleHelp.auth.currentUser
-                                        logI("user: ${user?.email}")
-                                    } else { // If sign in fails, display a message to the user.
-                                        logI("signInWithCredential:failure ${task.exception}")
-                                        logI("user: login fail")
+                            Firebase.auth.signInWithCredential(firebaseCredential).addOnCompleteListener(this) { task ->
+                                if (task.isSuccessful) { // Sign in success, update UI with the signed-in user's information
+                                    logI("signInWithCredential:success")
+                                    val user = Firebase.auth.currentUser
+                                    logI("user: ${user?.email}")
+                                    mViewModel.setThirdSource("google")
+                                    mViewModel.setThirdToken(idToken)
+                                    // 调用登录接口
+                                    mViewModel.loginReq.value?.let {
+                                        it.userName = null
+                                        it.password = null
+                                        it.source = "google"
+                                        it.autoToken = idToken
+                                        it.sourceUserId = AESCipher.aesEncryptString(
+                                            user?.uid, AESCipher.KEY
+                                        )
+                                        mViewModel.login()
                                     }
+
+                                } else { // If sign in fails, display a message to the user.
+                                    logI("signInWithCredential:failure ${task.exception}")
+                                    logI("user: login fail")
                                 }
+                            }
                         }
 
                         else -> { // Shouldn't happen.
@@ -365,5 +401,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         }
     }
 
-
+    companion object {
+        // 来源
+        const val KEY_SOURCE = "source"
+        // 第三方登录token
+        const val KEY_THIRD_TOKEN = "third_token"
+    }
 }

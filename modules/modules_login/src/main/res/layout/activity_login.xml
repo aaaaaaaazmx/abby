@@ -187,6 +187,7 @@
                     android:textSize="12sp" />
 
                 <LinearLayout
+                    android:gravity="center_horizontal"
                     android:layout_marginTop="16dp"
                     android:orientation="horizontal"
                     android:layout_width="100dp"
@@ -194,16 +195,17 @@
 
                     <ImageView
                         android:id="@+id/iv_google"
-                        android:layout_weight="1"
                         android:background="@mipmap/login_google"
                         android:layout_width="40dp"
                         android:layout_height="40dp"/>
 
                     <ImageView
+                        android:visibility="gone"
                         android:layout_width="20dp"
                         android:layout_height="wrap_content"/>
 
                     <ImageView
+                        android:visibility="gone"
                         android:id="@+id/iv_facebook"
                         android:layout_weight="1"
                         android:background="@mipmap/login_face_book"

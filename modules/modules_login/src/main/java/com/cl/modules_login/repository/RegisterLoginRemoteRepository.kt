@@ -1,5 +1,6 @@
 package com.cl.modules_login.repository
 
+import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.net.ServiceCreators
 import com.cl.modules_login.request.*
@@ -56,5 +57,13 @@ class RegisterLoginRemoteRepository @Inject constructor() {
 
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
         return service.intercomDataAttributeSync()
+    }
+
+    fun bindSourceEmail(req: BindSourceEmailReq): Flow<HttpResult<BaseBean>> {
+        return service.bindSourceEmail(req)
+    }
+
+    fun checkUserExists(req: String): Flow<HttpResult<Boolean>> {
+        return service.checkUserExists(req)
     }
 }
