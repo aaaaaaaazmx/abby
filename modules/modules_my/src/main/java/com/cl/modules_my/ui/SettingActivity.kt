@@ -836,6 +836,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 ).show()
         }
 
+        // 修改密码
+        binding.ftPassword.setOnClickListener {
+            // 跳转到重置密码界面
+            startActivity(Intent(this@SettingActivity, ResetPasswordActivity::class.java))
+        }
+
         // 跳转到设备列表界面
         binding.ftManageDevice.setOnClickListener {
             ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)

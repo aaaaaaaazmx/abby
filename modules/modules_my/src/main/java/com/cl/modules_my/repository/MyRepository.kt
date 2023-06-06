@@ -8,6 +8,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.modules_my.request.OxygenCoinListBean
+import com.cl.modules_my.request.ResetPwdReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
@@ -240,5 +241,9 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
 
     fun oxygenCoinBillList(req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>> {
         return remoteRepository.oxygenCoinBillList(req)
+    }
+
+    fun resetPwd(req: ResetPwdReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.resetPwd(req)
     }
 }

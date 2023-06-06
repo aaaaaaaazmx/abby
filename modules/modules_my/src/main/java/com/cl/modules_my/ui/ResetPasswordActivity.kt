@@ -1,73 +1,36 @@
-package com.cl.modules_login.ui
+package com.cl.modules_my.ui
 
-import android.R.attr.editable
-import android.content.Intent
 import android.os.Build
 import android.text.InputType
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
-import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
-import com.cl.common_base.constants.Constants.Global.KEY_REGISTER_OR_FORGET_PASSWORD
-import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_login.R
-import com.cl.modules_login.databinding.ActivitySetPasswordBinding
-import com.cl.modules_login.request.UpdatePwdReq
-import com.cl.modules_login.request.UserRegisterReq
-import com.cl.modules_login.viewmodel.SetPassWordViewModel
+import com.cl.modules_my.R
+import com.cl.modules_my.databinding.MyResetPasswordBinding
+import com.cl.modules_my.request.ResetPwdReq
+import com.cl.modules_my.viewmodel.ResetPassWordViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
 
-
 /**
- * 设置密码界面
+ * 重置密码
  */
 @AndroidEntryPoint
-class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
-    /**
-     * 传过来的用户注册的必要参数
-     */
-    private val userRegisterBean by lazy {
-        val bean =
-            intent.getSerializableExtra(CreateAccountActivity.KEY_USER_REGISTER_BEAN) as? UserRegisterReq
-        bean
-    }
+class ResetPasswordActivity : BaseActivity<MyResetPasswordBinding>() {
 
-    /**
-     * 邮箱号
-     */
-    private val emailName by lazy {
-        val name = intent.getStringExtra(VerifyEmailActivity.KEY_EMAIL_NAME) ?: ""
-        name
-    }
-
-    /**
-     * 判断是否是注册还是忘记密码, 默认是注册
-     */
-    private val isRegisterOrForget by lazy {
-        val isRegister = intent.getBooleanExtra(KEY_REGISTER_OR_FORGET_PASSWORD, true)
-        isRegister
-    }
-
-    /**
-     * 修改密码Bean
-     */
-    private val updatePwdReq by lazy {
-        UpdatePwdReq()
-    }
 
     @Inject
-    lateinit var mViewModel: SetPassWordViewModel
+    lateinit var mViewModel: ResetPassWordViewModel
     override fun initView() {
         ARouter.getInstance().inject(this)
 
@@ -77,35 +40,18 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
 
     override fun observe() {
         mViewModel.apply {
-            // 注册用户
-            isVerifySuccess.observe(this@SetPasswordActivity, resourceObserver {
+            resetPwd.observe(this@ResetPasswordActivity, resourceObserver {
                 success {
                     hideProgressLoading()
-                    startActivity(Intent(this@SetPasswordActivity, LoginActivity::class.java))
                     finish()
-                }
-                error { msg, code ->
-                    hideProgressLoading()
-                    msg?.let { it1 -> ToastUtil.shortShow(it1) }
                 }
                 loading {
                     showProgressLoading()
                 }
-            })
 
-            // 忘记密码
-            updatePwds.observe(this@SetPasswordActivity, resourceObserver {
-                success {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
                     hideProgressLoading()
-                    startActivity(Intent(this@SetPasswordActivity, LoginActivity::class.java))
-                    finish()
-                }
-                error { msg, code ->
-                    hideProgressLoading()
-                    msg?.let { it1 -> ToastUtil.shortShow(it1) }
-                }
-                loading {
-                    showProgressLoading()
                 }
             })
         }
@@ -116,22 +62,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
         // 修改密码
         binding.btnSuccess.setOnClickListener {
             kotlin.runCatching {
-                // 注册用户
-                if (isRegisterOrForget) {
-                    userRegisterBean?.password = AESCipher.aesEncryptString(
-                        binding.etPassword.text.toString(),
-                        AESCipher.KEY
-                     )
-                    userRegisterBean?.let { bean -> mViewModel.registerAccount(bean) }
-                } else {
-                    // 修改密码
-                    updatePwdReq.password = AESCipher.aesEncryptString(
-                        binding.etPassword.text.toString(),
-                        AESCipher.KEY
-                    )
-                    updatePwdReq.userEmail = emailName
-                    mViewModel.updatePwd(updatePwdReq)
-                }
+                mViewModel.resetPwd(ResetPwdReq(newPassword = binding.etPassword.text.toString()))
             }.onFailure {
                 logE("btnSuccess.setOnClickListener < Build.VERSION_CODES.O Catch")
             }
@@ -213,13 +144,13 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                         InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
 
                     binding.cbCheck.background =
-                        ContextCompat.getDrawable(this@SetPasswordActivity, com.cl.common_base.R.mipmap.login_psd_open)
+                        ContextCompat.getDrawable(this@ResetPasswordActivity, com.cl.common_base.R.mipmap.login_psd_open)
                 } else {
                     // 密码
                     binding.etPassword.inputType =
                         InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                     binding.cbCheck.background = ContextCompat.getDrawable(
-                        this@SetPasswordActivity,
+                        this@ResetPasswordActivity,
                         com.cl.common_base.R.mipmap.login_psd_close
                     )
                 }

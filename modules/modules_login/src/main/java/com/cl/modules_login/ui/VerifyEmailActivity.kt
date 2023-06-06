@@ -6,6 +6,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants.Global.KEY_REGISTER_OR_FORGET_PASSWORD
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.widget.code.VerificationCodeInputView
@@ -136,7 +137,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         val intent =
                             Intent(this@VerifyEmailActivity, SetPasswordActivity::class.java)
                         intent.putExtra(
-                            SetPasswordActivity.KEY_REGISTER_OR_FORGET_PASSWORD,
+                            KEY_REGISTER_OR_FORGET_PASSWORD,
                             isRegister
                         )
                         // 用户注册的一些必要参数
