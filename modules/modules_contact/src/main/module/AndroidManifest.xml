@@ -66,5 +66,10 @@
         <activity android:name=".ui.MyJourneyActivity" />
         <activity android:name=".ui.OtherJourneyActivity" />
         <activity android:name=".ui.ReelPostActivity" />
+        <activity
+            android:name=".ui.pic.ChoosePicActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait"
+            android:theme="@style/TranslucentTheme" />
     </application>
 </manifest>

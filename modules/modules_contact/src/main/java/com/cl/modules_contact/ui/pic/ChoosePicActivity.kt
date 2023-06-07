@@ -1,0 +1,290 @@
+package com.cl.modules_contact.ui.pic
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.database.Cursor
+import android.os.Bundle
+import android.provider.MediaStore
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.CursorLoader
+import androidx.loader.content.Loader
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.ext.logI
+import com.cl.modules_contact.R
+import com.cl.modules_contact.databinding.ContactChooserPicActivityBinding
+import com.cl.modules_contact.decoraion.FullyGridLayoutManager
+import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
+import com.google.android.material.tabs.TabLayout
+import com.luck.picture.lib.utils.DensityUtil
+import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.widget.SmartDragLayout
+import java.util.Locale
+
+
+class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
+
+    override fun initView() {
+        binding.smart.setDuration(XPopup.getAnimationDuration())
+        binding.smart.enableDrag(true)
+        binding.smart.dismissOnTouchOutside(false)
+        binding.smart.isThreeDrag(false)
+        binding.smart.open()
+        binding.smart.setOnCloseListener(callback)
+
+        binding.ivClose.setOnClickListener { directShutdown() }
+
+
+        val adapter = MyPagerAdapter(supportFragmentManager)
+        adapter.addFragment(NetworkImagesFragment(), "Trends")
+        adapter.addFragment(LocalImagesFragment(), "Photos")
+        binding.viewPager.adapter = adapter
+
+        binding.tabLayout.setupWithViewPager(binding.viewPager)
+        binding.tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, com.cl.common_base.R.color.mainColor))
+        /*for (i in 0 until binding.tabLayout.tabCount) {
+            binding.tabLayout.getTabAt(i)?.let {
+                var text = it.text.toString()
+                text = text.uppercase(Locale.getDefault())
+                text = text.lowercase(Locale.getDefault())
+                it.text = text
+            }
+        }*/
+        // binding.tabLayout.setSelectedTabIndicatorHeight(resources.getDimensionPixelSize(R.dimen.tab_indicator_height));
+    }
+
+    // 直接关闭
+    private fun directShutdown() {
+        finish()
+    }
+
+    // 系统返回键
+    override fun onBackPressed() {
+        directShutdown()
+    }
+
+
+    private val callback by lazy {
+        object : SmartDragLayout.OnCloseListener {
+            override fun onClose() {
+                directShutdown()
+            }
+
+            override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) {
+               // binding.smart.alpha = percent
+            }
+
+            override fun onOpen() {
+            }
+        }
+    }
+
+    override fun observe() {
+    }
+
+    override fun initData() {
+    }
+
+
+    class MyPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+
+        private val fragments = mutableListOf<Fragment>()
+        private val titles = mutableListOf<String>()
+
+        override fun getItem(position: Int): Fragment {
+            return fragments[position]
+        }
+
+        override fun getCount(): Int {
+            return fragments.size
+        }
+
+        override fun getPageTitle(position: Int): CharSequence? {
+            return titles[position]
+        }
+
+        fun addFragment(fragment: Fragment, title: String) {
+            fragments.add(fragment)
+            titles.add(title)
+        }
+    }
+
+    class NetworkImagesFragment : Fragment() {
+
+        private lateinit var recyclerView: RecyclerView
+        private lateinit var adapter: ImageAdapter
+
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            val view = inflater.inflate(R.layout.contact_fragment_network_images, container, false)
+            recyclerView = view.findViewById(R.id.networkRecyclerView)
+            recyclerView.layoutManager = FullyGridLayoutManager(context, 4)
+            recyclerView.addItemDecoration(
+                GridSpaceItemDecoration(
+                    4,
+                    DensityUtil.dip2px(context, 8f), DensityUtil.dip2px(context, 8f)
+                )
+            )
+            val selectedImages = (activity as? ChoosePicActivity)?.selectedImages ?: mutableListOf()
+            adapter = ImageAdapter(requireContext(), selectedImages) { image ->
+                if (selectedImages.size < 20 || selectedImages.contains(image)) {
+                    if (selectedImages.contains(image)) {
+                        selectedImages.remove(image)
+                        (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
+                    } else {
+                        selectedImages.add(image)
+                        (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
+                    }
+                    adapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(context, "选择的照片数量不能超过20张", Toast.LENGTH_SHORT).show()
+                }
+            }
+            recyclerView.adapter = adapter
+            loadImages()
+            return view
+        }
+
+        private fun loadImages() {
+            val images = listOf(
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+                "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
+            )
+            adapter.setImages(images)
+        }
+    }
+
+    class LocalImagesFragment : Fragment(), LoaderManager.LoaderCallbacks<Cursor> {
+
+        private lateinit var recyclerView: RecyclerView
+        private lateinit var adapter: ImageAdapter
+
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            logI("onCreateView")
+            val view = inflater.inflate(R.layout.contact_fragment_local_images, container, false)
+            recyclerView = view.findViewById(R.id.localRecyclerView)
+            recyclerView.layoutManager = FullyGridLayoutManager(context, 4)
+            recyclerView.addItemDecoration(
+                GridSpaceItemDecoration(
+                    4,
+                    DensityUtil.dip2px(context, 8f), DensityUtil.dip2px(context, 8f)
+                )
+            )
+            val selectedImages = (activity as? ChoosePicActivity)?.selectedImages ?: mutableListOf()
+            adapter = ImageAdapter(requireContext(), selectedImages) { image ->
+                if (selectedImages.size < 20 || selectedImages.contains(image)) {
+                    if (selectedImages.contains(image)) {
+                        selectedImages.remove(image)
+                        (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
+                    } else {
+                        selectedImages.add(image)
+                        (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
+                    }
+                    adapter.notifyDataSetChanged()
+                } else {
+                    Toast.makeText(context, "选择的照片数量不能超过20张", Toast.LENGTH_SHORT).show()
+                }
+            }
+            recyclerView.adapter = adapter
+            loadImages()
+            return view
+        }
+
+        private fun loadImages() {
+            logI("loadImages")
+            loaderManager.initLoader(0, null, this)
+        }
+
+        override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
+            logI("onCreateLoader")
+            val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
+            return CursorLoader(requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null)
+        }
+
+        @SuppressLint("Range")
+        override fun onLoadFinished(loader: Loader<Cursor>, data: Cursor?) {
+            val images = mutableListOf<String>()
+            if (data != null) {
+                while (data.moveToNext()) {
+                    val path = data.getString(data.getColumnIndex(MediaStore.Images.Media.DATA))
+                    images.add(path)
+                }
+            }
+            // 游标向前查找过一次，不能进行二次查询
+            if (images.size > 0) {
+                adapter.setImages(images)
+            }
+        }
+
+        override fun onLoaderReset(loader: Loader<Cursor>) {
+            logI("onLoaderReset")
+            adapter.setImages(emptyList())
+        }
+    }
+
+    class ImageAdapter(private val context: Context, private val selectedImages: List<String>, private val onClickListener: (String) -> Unit) : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
+
+        private var images = emptyList<String>()
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = LayoutInflater.from(context).inflate(R.layout.contact_imageview, parent, false)
+            return ViewHolder(view)
+        }
+
+        @SuppressLint("SetTextI18n")
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val image = images[position]
+            Glide.with(context).load(image).into(holder.imageView)
+            if (selectedImages.contains(image)) {
+                // holder.imageView.setBackgroundResource(R.drawable.ic_launcher_background)
+                holder.tvNumber.visibility = View.VISIBLE
+                holder.tvNumber.text = (selectedImages.indexOf(image) + 1).toString()
+            } else {
+                holder.tvNumber.visibility = View.GONE
+                holder.imageView.setBackgroundResource(0)
+            }
+            holder.itemView.setOnClickListener {
+                onClickListener(image)
+            }
+        }
+
+        override fun getItemCount(): Int {
+            return images.size
+        }
+
+        fun setImages(images: List<String>) {
+            this.images = images
+            notifyDataSetChanged()
+        }
+
+        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            val imageView: ImageView = itemView.findViewById(R.id.iv_imageview)
+            val tvNumber: TextView = itemView.findViewById(R.id.tv_number)
+        }
+    }
+
+    val selectedImages = mutableListOf<String>()
+    private fun updateSelectedIndexes(adapter: ImageAdapter) {
+        selectedImages.forEachIndexed { index, position ->
+            adapter.notifyItemChanged(index)
+        }
+    }
+}
