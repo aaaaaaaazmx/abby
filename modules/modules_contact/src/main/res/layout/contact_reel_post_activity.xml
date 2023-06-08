@@ -116,8 +116,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/contact_gif_time_selector"
                 android:button="@null"
-                android:textColor="@color/mainColor"
-                android:text="13s"
+                android:textColor="@color/white"
+                android:text="3s"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"/>
 
@@ -129,7 +129,7 @@
                 android:background="@drawable/contact_gif_time_selector"
                 android:button="@null"
                 android:textColor="@color/mainColor"
-                android:text="3s"
+                android:text="5s"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"/>
 
@@ -140,7 +140,7 @@
                 android:background="@drawable/contact_gif_time_selector"
                 android:button="@null"
                 android:textColor="@color/mainColor"
-                android:text="3s"
+                android:text="8s"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"/>
         </LinearLayout>

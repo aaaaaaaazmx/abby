@@ -20,20 +20,37 @@ import androidx.loader.content.CursorLoader
 import androidx.loader.content.Loader
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.signature.ObjectKey
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactChooserPicActivityBinding
 import com.cl.modules_contact.decoraion.FullyGridLayoutManager
 import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
-import com.google.android.material.tabs.TabLayout
+import com.cl.modules_contact.response.ChoosePicBean
+import com.cl.modules_contact.ui.ReelPostActivity
 import com.luck.picture.lib.utils.DensityUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.widget.SmartDragLayout
-import java.util.Locale
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.Serializable
 
 
+@AndroidEntryPoint
 class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
+
+    // 接收传递过来的图片,并且转换成String类型
+    private val selectedImages by lazy {
+        val mutableList  = mutableListOf<String>()
+        (intent.getSerializableExtra(ReelPostActivity.KEY_PIC_LIST_RESULT) as? MutableList<*> ?: mutableListOf<ChoosePicBean>()).forEach {
+            if (it is ChoosePicBean) {
+                mutableList.add(it.picAddress ?: "")
+            }
+        }
+        mutableList
+    }
 
     override fun initView() {
         binding.smart.setDuration(XPopup.getAnimationDuration())
@@ -66,7 +83,12 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
 
     // 直接关闭
     private fun directShutdown() {
-        finish()
+        if (selectedImages.size != 0) {
+            setResult(RESULT_OK, intent.putExtra(ReelPostActivity.KEY_PIC_LIST, selectedImages as? Serializable))
+            finish()
+        } else {
+            finish()
+        }
     }
 
     // 系统返回键
@@ -82,7 +104,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             }
 
             override fun onDrag(y: Int, percent: Float, isScrollUp: Boolean) {
-               // binding.smart.alpha = percent
+                // binding.smart.alpha = percent
             }
 
             override fun onOpen() {
@@ -252,7 +274,10 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
         @SuppressLint("SetTextI18n")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val image = images[position]
-            Glide.with(context).load(image).into(holder.imageView)
+            val requestOptions = RequestOptions()
+                .signature(ObjectKey(image))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+            Glide.with(context).load(image).apply(requestOptions).into(holder.imageView)
             if (selectedImages.contains(image)) {
                 // holder.imageView.setBackgroundResource(R.drawable.ic_launcher_background)
                 holder.tvNumber.visibility = View.VISIBLE
@@ -279,9 +304,17 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             val imageView: ImageView = itemView.findViewById(R.id.iv_imageview)
             val tvNumber: TextView = itemView.findViewById(R.id.tv_number)
         }
-    }
 
-    val selectedImages = mutableListOf<String>()
+        override fun onViewAttachedToWindow(holder: ViewHolder) {
+            super.onViewAttachedToWindow(holder)
+            Glide.with(context).resumeRequests()
+        }
+
+        override fun onViewDetachedFromWindow(holder: ViewHolder) {
+            super.onViewDetachedFromWindow(holder)
+            Glide.with(context).pauseRequests()
+        }
+    }
     private fun updateSelectedIndexes(adapter: ImageAdapter) {
         selectedImages.forEachIndexed { index, position ->
             adapter.notifyItemChanged(index)

@@ -147,6 +147,8 @@ dependencies {
     // 轮播图
     api("io.github.youth5201314:banner:2.2.2")
 
+    // ffmpeg
+    api(Deps.epMedia)
     // 图片压缩
     api(Deps.choosePhotoComproress)
 }
