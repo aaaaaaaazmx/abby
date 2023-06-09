@@ -25,25 +25,39 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.signature.ObjectKey
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.refresh.ClassicsHeader
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactChooserPicActivityBinding
 import com.cl.modules_contact.decoraion.FullyGridLayoutManager
 import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
+import com.cl.modules_contact.request.NewPageReq
+import com.cl.modules_contact.request.TrendPictureReq
 import com.cl.modules_contact.response.ChoosePicBean
+import com.cl.modules_contact.ui.ContactFragment
 import com.cl.modules_contact.ui.ReelPostActivity
+import com.cl.modules_contact.viewmodel.ChoosePicViewModel
 import com.luck.picture.lib.utils.DensityUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.widget.SmartDragLayout
+import com.scwang.smart.refresh.footer.ClassicsFooter
+import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
 
+
+    @Inject
+    lateinit var mViewMode: ChoosePicViewModel
+
     // 接收传递过来的图片,并且转换成String类型
     private val selectedImages by lazy {
-        val mutableList  = mutableListOf<String>()
+        val mutableList = mutableListOf<String>()
         (intent.getSerializableExtra(ReelPostActivity.KEY_PIC_LIST_RESULT) as? MutableList<*> ?: mutableListOf<ChoosePicBean>()).forEach {
             if (it is ChoosePicBean) {
                 mutableList.add(it.picAddress ?: "")
@@ -54,7 +68,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
 
     override fun initView() {
         binding.smart.setDuration(XPopup.getAnimationDuration())
-        binding.smart.enableDrag(true)
+        binding.smart.enableDrag(false)
         binding.smart.dismissOnTouchOutside(false)
         binding.smart.isThreeDrag(false)
         binding.smart.open()
@@ -64,7 +78,8 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
 
 
         val adapter = MyPagerAdapter(supportFragmentManager)
-        adapter.addFragment(NetworkImagesFragment(), "Trends")
+        val netWorkFragment = NetworkImagesFragment()
+        adapter.addFragment(netWorkFragment, "Trends")
         adapter.addFragment(LocalImagesFragment(), "Photos")
         binding.viewPager.adapter = adapter
 
@@ -79,6 +94,47 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             }
         }*/
         // binding.tabLayout.setSelectedTabIndicatorHeight(resources.getDimensionPixelSize(R.dimen.tab_indicator_height));
+
+
+        mViewMode.trendHistoryPic.observe(this@ChoosePicActivity, resourceObserver {
+            error { errorMsg, code ->
+                ToastUtil.shortShow(errorMsg)
+                if (netWorkFragment.refreshLayout.isRefreshing) {
+                    netWorkFragment.refreshLayout.finishRefresh()
+                }
+                if (netWorkFragment.refreshLayout.isLoading) {
+                    netWorkFragment.refreshLayout.finishLoadMore()
+                }
+            }
+
+            success {
+                // 刷新相关
+                if (netWorkFragment.refreshLayout.isRefreshing) {
+                    netWorkFragment.refreshLayout.finishRefresh()
+                }
+                if (netWorkFragment.refreshLayout.isLoading) {
+                    // 没有加载了、或者加载完毕
+                    if ((data?.records?.size ?: 0) <= 0) {
+                        netWorkFragment.refreshLayout.finishLoadMoreWithNoMoreData()
+                    } else {
+                        netWorkFragment.refreshLayout.finishLoadMore()
+                    }
+                }
+                if (null == this.data) return@success
+
+
+                logI("123123123: ${data.toString()}")
+                //  添加数据相关
+                data?.let {
+                    val list = mutableListOf<String>()
+                    it.records.forEach { records ->
+                        list.add(records.imageUrl)
+                    }
+                    if (list.isEmpty()) return@success
+                    netWorkFragment.adapter.setImages(list, it.current)
+                }
+            }
+        })
     }
 
     // 直接关闭
@@ -145,11 +201,43 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
     class NetworkImagesFragment : Fragment() {
 
         private lateinit var recyclerView: RecyclerView
-        private lateinit var adapter: ImageAdapter
+        lateinit var adapter: ImageAdapter
+        lateinit var refreshLayout: SmartRefreshLayout
+        private var page = 1
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
             val view = inflater.inflate(R.layout.contact_fragment_network_images, container, false)
             recyclerView = view.findViewById(R.id.networkRecyclerView)
+            refreshLayout = view.findViewById(R.id.refreshLayout)
+            // 设置refresh的规则
+            refreshLayout.apply {
+                ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
+                ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
+                ClassicsFooter.REFRESH_FOOTER_NOTHING = "No more data"
+                ClassicsFooter.REFRESH_FOOTER_FINISH = "Loading completed"
+                ClassicsFooter.REFRESH_FOOTER_FAILED = "Loading failed"
+
+                // 刷新监听
+                setOnRefreshListener {
+                    // 重新加载数据
+                    logI("setOnRefreshListener: refresh")
+                    page = 1
+                    loadImages()
+                }
+                // 加载更多监听
+                setOnLoadMoreListener {
+                    page += 1
+                    loadImages()
+                }
+                // 刷新头部局
+                setRefreshHeader(ClassicsHeader(context))
+                setRefreshFooter(ClassicsFooter(context).setFinishDuration(0))
+                // 刷新高度
+                setHeaderHeight(60f)
+                // 自动刷新
+                // autoRefresh()
+            }
+
             recyclerView.layoutManager = FullyGridLayoutManager(context, 4)
             recyclerView.addItemDecoration(
                 GridSpaceItemDecoration(
@@ -173,12 +261,18 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                 }
             }
             recyclerView.adapter = adapter
+            // 加载网络图片 Trend
             loadImages()
             return view
         }
 
-        private fun loadImages() {
-            val images = listOf(
+        fun loadImages() {
+            // 加载
+            (activity as? ChoosePicActivity)?.mViewMode?.apply {
+                trendHistoryPic(TrendPictureReq(current = page, size = 10))
+            }
+
+            /*val images = listOf(
                 "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
                 "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
                 "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
@@ -190,7 +284,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                 "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
                 "https://img1.baidu.com/it/u=1960110688,1786190632&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=281",
             )
-            adapter.setImages(images)
+            adapter.setImages(images)*/
         }
     }
 
@@ -258,13 +352,13 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
 
         override fun onLoaderReset(loader: Loader<Cursor>) {
             logI("onLoaderReset")
-            adapter.setImages(emptyList())
+            adapter.setImages(mutableListOf())
         }
     }
 
     class ImageAdapter(private val context: Context, private val selectedImages: List<String>, private val onClickListener: (String) -> Unit) : RecyclerView.Adapter<ImageAdapter.ViewHolder>() {
 
-        private var images = emptyList<String>()
+        private var images = mutableListOf<String>()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(context).inflate(R.layout.contact_imageview, parent, false)
@@ -295,8 +389,18 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             return images.size
         }
 
-        fun setImages(images: List<String>) {
+        fun setImages(images: MutableList<String>) {
             this.images = images
+            notifyDataSetChanged()
+        }
+
+        fun setImages(images: MutableList<String>, page: Int) {
+            if (page == 1) {
+                this.images = images
+            } else {
+                this.images.addAll(images)
+            }
+
             notifyDataSetChanged()
         }
 
@@ -315,6 +419,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             Glide.with(context).pauseRequests()
         }
     }
+
     private fun updateSelectedIndexes(adapter: ImageAdapter) {
         selectedImages.forEachIndexed { index, position ->
             adapter.notifyItemChanged(index)

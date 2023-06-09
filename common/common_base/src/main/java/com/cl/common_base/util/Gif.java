@@ -1,5 +1,7 @@
 package com.cl.common_base.util;
 
+import static com.cl.common_base.ext.LogKt.logI;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -95,7 +97,7 @@ public class Gif {
     }
 
 
-    public static void start(Context context, String gifFile, final TypedArray typedArray) {
+   /* public static void start(Context context, String gifFile, final TypedArray typedArray) {
         Gif gifEncoder = new Gif();
         OutputStream os;
         try {
@@ -118,7 +120,7 @@ public class Gif {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 
     protected int width; // image size
@@ -235,6 +237,7 @@ public class Gif {
                 // use first frame's size
                 setSize(im.getWidth(), im.getHeight());
             }
+
             image = im;
             getImagePixels(); // convert to correct format if necessary
             analyzePixels(); // build color table & map pixels
@@ -330,8 +333,9 @@ public class Gif {
      * @param h int frame width.
      */
     public void setSize(int w, int h) {
-        width = w;
-        height = h;
+        // logI("12312312: " + w + "123123123: " + h);
+        width = 440;
+        height = 600;
         if (width < 1)
             width = 320;
         if (height < 1)
@@ -442,7 +446,8 @@ public class Gif {
             // create new image with right size/format
             Bitmap temp = Bitmap.createBitmap(width, height, Config.RGB_565);
             Canvas g = new Canvas(temp);
-            g.drawBitmap(image, 0, 0, new Paint());
+            // 居中显示
+            g.drawBitmap(image, (width - image.getWidth()) / 2, (height - image.getHeight()) / 2, new Paint());
             image = temp;
         }
         int[] data = getImageData(image);

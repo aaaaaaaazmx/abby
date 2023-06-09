@@ -70,6 +70,15 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
     }
 
     /**
+     * 上传之后才发布的标记
+     */
+    private val _uploadImageFlag = MutableLiveData<Boolean>(false)
+    val uploadImageFlag: LiveData<Boolean> = _uploadImageFlag
+    fun setUploadImageFlag(req: Boolean) {
+        _uploadImageFlag.value = req
+    }
+
+    /**
      * 上传多张图片
      */
     private val _uploadImg = MutableLiveData<Resource<MutableList<String>>>()
@@ -121,7 +130,13 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
         _picAddress.value?.add(0, url)
     }
     fun deletePicAddress(index: Int) {
-        _picAddress.value?.removeAt(index)
+        if ((_picAddress.value?.size ?: 0) > 0) {
+            _picAddress.value?.removeAt(index)
+        }
+    }
+
+    fun clearPicAddress() {
+        _picAddress.value?.clear()
     }
 
     /**

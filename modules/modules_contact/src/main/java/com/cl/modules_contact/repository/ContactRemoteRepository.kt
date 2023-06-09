@@ -14,12 +14,14 @@ import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.modules_contact.request.TrendPictureReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
 import com.cl.modules_contact.response.MessageListData
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.PublishData
 import com.cl.modules_contact.response.ReplyData
+import com.cl.modules_contact.response.TrendPictureData
 import com.cl.modules_contact.service.HttpContactApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -119,5 +121,9 @@ class ContactRemoteRepository @Inject constructor() {
 
     fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
         return service.automaticLogin(body)
+    }
+
+    fun getTrendPicture(body: TrendPictureReq): Flow<HttpResult<TrendPictureData>> {
+        return service.getTrendPicture(body)
     }
 }

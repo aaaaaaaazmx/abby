@@ -185,7 +185,7 @@ class BasePumpViewModel @Inject constructor(): ViewModel() {
     val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
     fun advertising(type: String? = "0") {
         viewModelScope.launch {
-            service.advertising(type ?: "0", updateCurrent.value ?: 1, 10)
+            service.advertising(type ?: "0", updateCurrent.value ?: 1, 100)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

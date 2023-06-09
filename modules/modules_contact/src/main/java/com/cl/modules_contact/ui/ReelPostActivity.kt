@@ -1,14 +1,14 @@
 package com.cl.modules_contact.ui
 
-import VideoHandle.EpEditor
-import VideoHandle.OnEditorListener
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
 import android.os.Build
+import android.text.TextUtils
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
@@ -25,17 +25,22 @@ import com.bumptech.glide.signature.ObjectKey
 import com.bumptech.glide.util.Util
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Gif
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.ImageUtil
 import com.cl.common_base.widget.edittext.bean.MentionUser
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactReelPostActivityBinding
 import com.cl.modules_contact.decoraion.FullyGridLayoutManager
 import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
 import com.cl.modules_contact.pop.ContactListPop
+import com.cl.modules_contact.request.AddTrendReq
+import com.cl.modules_contact.request.ImageUrl
+import com.cl.modules_contact.request.Mention
 import com.cl.modules_contact.response.ChoosePicBean
 import com.cl.modules_contact.ui.pic.ChoosePicActivity
 import com.cl.modules_contact.util.DeviceConstants
@@ -48,9 +53,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.File
 import java.io.Serializable
-import java.lang.Float.max
 import java.lang.Float.min
 import java.security.MessageDigest
 import java.util.Collections
@@ -153,6 +160,46 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
     }
 
     override fun observe() {
+        viewModel.apply {
+            // 发帖回调
+            addData.observe(this@ReelPostActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 这个需要回调给Fragment，通知刷新界面
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
+            })
+
+
+            uploadImg.observe(this@ReelPostActivity, resourceObserver {
+                success {
+                    data?.forEach {
+                        val oneArray = it.split("com/")
+                        if (oneArray.isNotEmpty()) {
+                            if (oneArray.isNotEmpty()) {
+                                val result = oneArray[1].split("?")
+                                if (result.isNotEmpty()) {
+                                    logI(result[0])
+                                    // 更新用户信息
+                                    // 更新集合
+                                    setPicAddress(ImageUrl(imageUrl = result[0]))
+
+                                    // 如果上传标记为true， 表示立即发布
+                                    if (uploadImageFlag.value == true) {
+                                        newPost()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        }
     }
 
     override fun initData() {
@@ -202,6 +249,8 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 }
 
                 R.id.img_contact_pic_delete -> {
+                    // 有改动，就需要删除上传的gif
+                    viewModel.clearPicAddress()
                     picList.find { it.picAddress == chooserAdapter.getItem(position).picAddress }?.let {
                         picList.remove(it)
                         chooserAdapter.removeAt(position)
@@ -232,92 +281,65 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
         }
     }
 
+    /**
+     * 表单提交
+     * 需要循环上传
+     */
+    private fun upLoadImage(path: String): List<MultipartBody.Part> {
+        //1.创建MultipartBody.Builder对象
+        val builder = MultipartBody.Builder()
+            //表单类型
+            .setType(MultipartBody.FORM)
+
+        //2.获取图片，创建请求体
+        val file = File(path)
+        //表单类x型
+        //表单类型
+        val body: RequestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+
+        //3.调用MultipartBody.Builder的addFormDataPart()方法添加表单数据
+        /**
+         * ps:builder.addFormDataPart("code","123456");
+         * ps:builder.addFormDataPart("file",file.getName(),body);
+         */
+        builder.addFormDataPart("imgType", "trend") //传入服务器需要的key，和相应value值
+        builder.addFormDataPart("files", file.name, body) //添加图片数据，body创建的请求体
+        //4.创建List<MultipartBody.Part> 集合，
+        //  调用MultipartBody.Builder的build()方法会返回一个新创建的MultipartBody
+        //  再调用MultipartBody的parts()方法返回MultipartBody.Part集合
+        return builder.build().parts
+    }
+
+
     private fun initClick() {
-        // 合成gif
-        binding.tvPreview.setOnClickListener {
-            FileUtil.deleteDirectory(DeviceConstants.getDialPhotoPath(this@ReelPostActivity))
-            val sources: MutableList<Bitmap> = ArrayList()
-            picList.forEachIndexed { index, choosePicBean ->
-                if (choosePicBean.type == ChoosePicBean.KEY_TYPE_PIC) {
-                    var imageBitmap: Bitmap? = null
-                    // 需要区分是否是网络图片
-                    if (choosePicBean.picAddress?.contains("https") == true || choosePicBean.picAddress?.contains("http") == true) {
-                        // 表示是网络图片，
-                        val cacheKey = ObjectKey(choosePicBean.picAddress ?: "")
-                        val cacheFile = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this@ReelPostActivity), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
-                            .get(cacheKey)
-                        // 通过缓存转换成bitmap
-                        if (cacheFile != null && cacheFile.exists()) {
-                            imageBitmap = BitmapFactory.decodeFile(cacheFile.absolutePath)
-                        } else {
-                            // todo 如果没找到缓存，那么就下载图片
-                        }
-                    } else {
-                        // 本地照片
-                        imageBitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, BitmapFactory.Options())
-                    }
-                    // val targetBitmap = ImageUtil.getTargetBitmap(imageBitmap, 450f, 600f)
 
-                    // 读取图片文件
-                    /*val options = BitmapFactory.Options()
-                    options.inJustDecodeBounds = true
-                    BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-                    val imageWidth = options.outWidth
-                    val imageHeight = options.outHeight
-                    val scaleFactor = min(1f, min(450f / imageWidth, 600f / imageHeight))
-                    options.inJustDecodeBounds = false
-                    options.inSampleSize = scaleFactor.toInt()
-                    val bitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-
-                    // 缩放图片
-                    val matrix = Matrix()
-                    matrix.postScale(scaleFactor, scaleFactor)
-                    val scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true)*/
-
-
-                    // 判断图片是否需要放大
-                    // imageWidth < 540 || imageHeight < 720
-                    if (imageBitmap?.width!! < 540 || imageBitmap?.height!! < 720) {
-                        // 需要放大，按照原来的方式进行放大
-                         imageBitmap = ImageUtil.getTargetBitmap(imageBitmap, 450f, 600f)
-                    } else {
-                        // 需要缩小的
-                        val options = BitmapFactory.Options()
-                        options.inJustDecodeBounds = true
-                        BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-                        val imageWidth = options.outWidth
-                        val imageHeight = options.outHeight
-                        val scaleFactor = min(1f, min(450f / imageWidth, 600f / imageHeight))
-                        options.inJustDecodeBounds = false
-                        options.inSampleSize = scaleFactor.toInt()
-                        val bitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-
-                        // 缩放图片
-                        val matrix = Matrix()
-                        matrix.postScale(scaleFactor, scaleFactor)
-                        imageBitmap = Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true)
-                    }
-
-                    val imagePath = DeviceConstants.getDialPhotoPath(this@ReelPostActivity) + File.separator + "image" + index + ".png"
-                    ImageUtil.saveBitmap(imageBitmap, imagePath)
-                    imageBitmap?.let { it1 -> sources.add(it1) }
+        binding.btnPost.setOnClickListener {
+            // 如果没有图片返回true， 找到了返回false
+            // 没有2张图片不能发帖
+            if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC }) {
+                if (picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size < 2) {
+                    ToastUtil.shortShow("You need at least two pictures.")
+                    return@setOnClickListener
                 }
             }
 
-            FileUtil.deleteDirectory(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
-            FileUtil.createDirIfNotExists(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
-            // 保存gif路径
-            val dialCustomGif = DeviceConstants.getDialCustomGif(this@ReelPostActivity) + System.currentTimeMillis() + ".gif"
+            // 同时也需要判断，当前是否上传过gif,判断当前没有gif，但是选择的照片又不为空
+            if ((viewModel.picAddress.value?.size ?: 0) <= 0 && !picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC }) {
+                // 1、先生成gif、并且上传gif, 2、发布
+                viewModel.setUploadImageFlag(true)
+                generateGifAndUploadGif()
+                return@setOnClickListener
+            }
+            // 3、 其他情况直接发布
+            newPost()
+        }
 
-            Gif.Builder().setSources(sources).setDestPath(dialCustomGif).setDelay(200).setRepeat(1).start(object : Gif.ResultCallback {
-                override fun onSuccess(destPath: String?) {
-                    logI("pngToGif >> onSuccess")
-                }
 
-                override fun onError(msg: String?) {
-                    logI("pngToGif >> onFailure")
-                }
-            })
+        // 合成gif
+        binding.tvPreview.setOnClickListener {
+            // 有改动，就需要删除上传的gif
+            viewModel.clearPicAddress()
+            generateGifAndUploadGif()
         }
 
         binding.textView.setOnClickListener { finish() }
@@ -418,12 +440,136 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
         }
     }
 
+    /**
+     * 生成gif 并且上传gif
+     */
+    private fun generateGifAndUploadGif(parm: ((status: Boolean) -> Unit)? = null) {
+        FileUtil.deleteDirectory(DeviceConstants.getDialPhotoPath(this@ReelPostActivity))
+        val sources: MutableList<Bitmap> = ArrayList()
+        picList.forEachIndexed { index, choosePicBean ->
+            if (choosePicBean.type == ChoosePicBean.KEY_TYPE_PIC) {
+                var imageBitmap: Bitmap? = null
+                // 需要区分是否是网络图片
+                if (choosePicBean.picAddress?.contains("https") == true || choosePicBean.picAddress?.contains("http") == true) {
+                    // 表示是网络图片，
+                    val cacheKey = ObjectKey(choosePicBean.picAddress ?: "")
+                    val cacheFile = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this@ReelPostActivity), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
+                        .get(cacheKey)
+                    // 通过缓存转换成bitmap
+                    if (cacheFile != null && cacheFile.exists()) {
+                        imageBitmap = BitmapFactory.decodeFile(cacheFile.absolutePath)
+                    } else {
+                        // todo 如果没找到缓存，那么就下载图片
+                    }
+                } else {
+                    // 本地照片
+                    imageBitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, BitmapFactory.Options())
+                }
+                // val targetBitmap = ImageUtil.getTargetBitmap(imageBitmap, 450f, 600f)
+
+                // 读取图片文件
+                /*val options = BitmapFactory.Options()
+                    options.inJustDecodeBounds = true
+                    BitmapFactory.decodeFile(choosePicBean.picAddress, options)
+                    val imageWidth = options.outWidth
+                    val imageHeight = options.outHeight
+                    val scaleFactor = min(1f, min(450f / imageWidth, 600f / imageHeight))
+                    options.inJustDecodeBounds = false
+                    options.inSampleSize = scaleFactor.toInt()
+                    val bitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, options)
+
+                    // 缩放图片
+                    val matrix = Matrix()
+                    matrix.postScale(scaleFactor, scaleFactor)
+                    val scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true)*/
+
+
+                // 判断图片是否需要放大
+                // imageWidth < 540 || imageHeight < 720
+                if (imageBitmap?.width!! < 540 || imageBitmap?.height!! < 720) {
+                    // 需要放大，按照原来的方式进行放大
+                    /*val w: Int = imageBitmap.width
+                    val h: Int = imageBitmap.height
+                    val scaleW: Float = 540f / w
+                    val scaleH: Float = 720f / h
+
+                    val matrix = Matrix()
+                    // 长和宽放大缩小的比例
+                    // 长和宽放大缩小的比例
+                    matrix.postScale(scaleW, scaleH)
+                    imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, w, h, matrix, true)*/
+                } else {
+                    // 需要缩小的
+                    val options = BitmapFactory.Options()
+                    options.inJustDecodeBounds = true
+                    BitmapFactory.decodeFile(choosePicBean.picAddress, options)
+                    val imageWidth = options.outWidth
+                    val imageHeight = options.outHeight
+                    val scaleFactor = min(1f, min(450f / imageWidth, 600f / imageHeight))
+                    options.inJustDecodeBounds = false
+                    options.inSampleSize = scaleFactor.toInt()
+                    val bitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, options)
+
+                    // 缩放图片
+                    val matrix = Matrix()
+                    matrix.postScale(scaleFactor, scaleFactor)
+                    imageBitmap = Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true)
+                }
+
+                val imagePath = DeviceConstants.getDialPhotoPath(this@ReelPostActivity) + File.separator + "image" + index + ".png"
+                ImageUtil.saveBitmap(imageBitmap, imagePath)
+                imageBitmap?.let { it1 -> sources.add(it1) }
+            }
+        }
+
+        FileUtil.deleteDirectory(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
+        FileUtil.createDirIfNotExists(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
+        // 保存gif路径
+        val dialCustomGif = DeviceConstants.getDialCustomGif(this@ReelPostActivity) + System.currentTimeMillis() + ".gif"
+
+        Gif.Builder().setSources(sources).setDestPath(dialCustomGif).setDelay(200).setRepeat(1).start(object : Gif.ResultCallback {
+            override fun onSuccess(destPath: String?) {
+                logI("pngToGif >> onSuccess")
+                // 上传gif
+                // viewModel.uploadImg(upLoadImage(dialCustomGif))
+            }
+
+            override fun onError(msg: String?) {
+                logI("pngToGif >> onFailure")
+                ToastUtil.shortShow("pngToGif >> onFailure")
+            }
+        })
+    }
+
+    /**
+     * 直接发布
+     */
+    private fun newPost() {
+        // @的人
+        val mentions: MutableList<Mention> = mutableListOf()
+        binding.etConnect.formatResult?.userList?.forEach {
+            mentions.add(Mention(it.abbyId, it.name, it.picture, it.id))
+        }
+        // 直接发帖
+        viewModel.add(
+            AddTrendReq(
+                content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
+                imageUrls = if (viewModel.picAddress.value?.isEmpty() == true) null else viewModel.picAddress.value,
+                mentions = mentions,
+                openData = 0,
+                syncTrend = 1,
+                taskId = null,
+            )
+        )
+    }
 
     /**
      * 回调刷新页面
      */
     private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
+            // 有改动，就需要删除上传的gif
+            viewModel.clearPicAddress()
             // 传递回来的照片集合
             val list = it.data?.getSerializableExtra(KEY_PIC_LIST) as? MutableList<*> ?: mutableListOf<String>()
             // 直接清空，然后在添加数据
