@@ -79,6 +79,15 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
     }
 
     /**
+     * 选择gif的时长
+     */
+    private val _gifCheckBox = MutableLiveData<Boolean>(false)
+    val gifCheckBox: LiveData<Boolean> = _gifCheckBox
+    fun setGifDuration(req: Boolean) {
+        _gifCheckBox.value = req
+    }
+
+    /**
      * 上传多张图片
      */
     private val _uploadImg = MutableLiveData<Resource<MutableList<String>>>()

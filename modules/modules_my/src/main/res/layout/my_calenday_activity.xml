@@ -216,7 +216,7 @@
                         app:svSolidColor="#F8FAF9"
                         app:svSolidType="solid"
                         android:layout_marginTop="5dp"
-                        android:layout_width="70dp"
+                        android:layout_width="80dp"
                         android:layout_height="15dp"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

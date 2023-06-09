@@ -1,16 +1,19 @@
 package com.cl.modules_contact.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Matrix
+import android.media.ExifInterface
 import android.os.Build
 import android.text.TextUtils
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -56,6 +59,8 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.Serializable
 import java.lang.Float.min
@@ -337,6 +342,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
 
         // 合成gif
         binding.tvPreview.setOnClickListener {
+            showProgressLoading()
             // 有改动，就需要删除上传的gif
             viewModel.clearPicAddress()
             generateGifAndUploadGif()
@@ -352,6 +358,10 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 binding.cbTwo.setTextColor(Color.BLACK)
                 binding.cbThree.setTextColor(Color.BLACK)
             }
+            // 如果有图
+            if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2) {
+                generateGifAndUploadGif(delayCheck = true)
+            }
         }
         binding.cbTwo.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -361,6 +371,10 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 binding.cbOne.setTextColor(Color.BLACK)
                 binding.cbThree.setTextColor(Color.BLACK)
             }
+            // 如果有图
+            if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2) {
+                generateGifAndUploadGif(delayCheck = true)
+            }
         }
         binding.cbThree.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -369,6 +383,10 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 binding.cbThree.setTextColor(Color.WHITE)
                 binding.cbTwo.setTextColor(Color.BLACK)
                 binding.cbOne.setTextColor(Color.BLACK)
+            }
+            // 如果有图
+            if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2) {
+                generateGifAndUploadGif(delayCheck = true)
             }
         }
 
@@ -443,7 +461,8 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
     /**
      * 生成gif 并且上传gif
      */
-    private fun generateGifAndUploadGif(parm: ((status: Boolean) -> Unit)? = null) {
+    @SuppressLint("CheckResult")
+    private fun generateGifAndUploadGif(delayCheck: Boolean? = true, parm: ((status: Boolean) -> Unit)? = null) {
         FileUtil.deleteDirectory(DeviceConstants.getDialPhotoPath(this@ReelPostActivity))
         val sources: MutableList<Bitmap> = ArrayList()
         picList.forEachIndexed { index, choosePicBean ->
@@ -452,70 +471,31 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 // 需要区分是否是网络图片
                 if (choosePicBean.picAddress?.contains("https") == true || choosePicBean.picAddress?.contains("http") == true) {
                     // 表示是网络图片，
-                    val cacheKey = ObjectKey(choosePicBean.picAddress ?: "")
+                    val cacheKey = ObjectKey(choosePicBean.picAddress)
                     val cacheFile = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this@ReelPostActivity), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
                         .get(cacheKey)
                     // 通过缓存转换成bitmap
                     if (cacheFile != null && cacheFile.exists()) {
                         imageBitmap = BitmapFactory.decodeFile(cacheFile.absolutePath)
+                        imageBitmap = conversionBitmap(imageBitmap, cacheFile.absolutePath)
                     } else {
-                        // todo 如果没找到缓存，那么就下载图片
+                        // todo 如果没找到缓存，那么就下载图片，并且需要压缩, 其实能看到网络图片那么就完全不需要下载了。
                     }
                 } else {
                     // 本地照片
+                    // 需要判断是否需要旋转照片
+                    /*  imageBitmap = choosePicBean.picAddress?.let {
+                          loadRotatedBitmap(it)
+                      }*/
+//                    val file = File(choosePicBean.picAddress ?: "")
+//                    val uri = FileProvider.getUriForFile(this@ReelPostActivity, "com.cl.abby.fileprovider", file)
                     imageBitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, BitmapFactory.Options())
+                    imageBitmap = conversionBitmap(imageBitmap, choosePicBean.picAddress)
+//                    imageBitmap = ImageUtil.decodeBitmap(this@ReelPostActivity, uri)
                 }
                 // val targetBitmap = ImageUtil.getTargetBitmap(imageBitmap, 450f, 600f)
 
-                // 读取图片文件
-                /*val options = BitmapFactory.Options()
-                    options.inJustDecodeBounds = true
-                    BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-                    val imageWidth = options.outWidth
-                    val imageHeight = options.outHeight
-                    val scaleFactor = min(1f, min(450f / imageWidth, 600f / imageHeight))
-                    options.inJustDecodeBounds = false
-                    options.inSampleSize = scaleFactor.toInt()
-                    val bitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-
-                    // 缩放图片
-                    val matrix = Matrix()
-                    matrix.postScale(scaleFactor, scaleFactor)
-                    val scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true)*/
-
-
-                // 判断图片是否需要放大
-                // imageWidth < 540 || imageHeight < 720
-                if (imageBitmap?.width!! < 540 || imageBitmap?.height!! < 720) {
-                    // 需要放大，按照原来的方式进行放大
-                    /*val w: Int = imageBitmap.width
-                    val h: Int = imageBitmap.height
-                    val scaleW: Float = 540f / w
-                    val scaleH: Float = 720f / h
-
-                    val matrix = Matrix()
-                    // 长和宽放大缩小的比例
-                    // 长和宽放大缩小的比例
-                    matrix.postScale(scaleW, scaleH)
-                    imageBitmap = Bitmap.createBitmap(imageBitmap, 0, 0, w, h, matrix, true)*/
-                } else {
-                    // 需要缩小的
-                    val options = BitmapFactory.Options()
-                    options.inJustDecodeBounds = true
-                    BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-                    val imageWidth = options.outWidth
-                    val imageHeight = options.outHeight
-                    val scaleFactor = min(1f, min(450f / imageWidth, 600f / imageHeight))
-                    options.inJustDecodeBounds = false
-                    options.inSampleSize = scaleFactor.toInt()
-                    val bitmap = BitmapFactory.decodeFile(choosePicBean.picAddress, options)
-
-                    // 缩放图片
-                    val matrix = Matrix()
-                    matrix.postScale(scaleFactor, scaleFactor)
-                    imageBitmap = Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true)
-                }
-
+                // 转化你之后转换图片
                 val imagePath = DeviceConstants.getDialPhotoPath(this@ReelPostActivity) + File.separator + "image" + index + ".png"
                 ImageUtil.saveBitmap(imageBitmap, imagePath)
                 imageBitmap?.let { it1 -> sources.add(it1) }
@@ -527,18 +507,68 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
         // 保存gif路径
         val dialCustomGif = DeviceConstants.getDialCustomGif(this@ReelPostActivity) + System.currentTimeMillis() + ".gif"
 
-        Gif.Builder().setSources(sources).setDestPath(dialCustomGif).setDelay(200).setRepeat(1).start(object : Gif.ResultCallback {
+        // 根据选择的时长
+        val delayTime = if (binding.cbOne.isChecked) {
+            300
+        } else if (binding.cbTwo.isChecked) {
+            500
+        } else if (binding.cbThree.isChecked) {
+            800
+        } else {
+            300 // Default delay time
+        }
+        // .setRepeat(1)
+        Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay(delayTime).start(object : Gif.ResultCallback {
             override fun onSuccess(destPath: String?) {
+                hideProgressLoading()
                 logI("pngToGif >> onSuccess")
-                // 上传gif
-                // viewModel.uploadImg(upLoadImage(dialCustomGif))
+                 if (delayCheck == true || viewModel.uploadImageFlag.value == true) {
+                     // 上传gif
+                     viewModel.uploadImg(upLoadImage(dialCustomGif))
+                     return
+                 }
+                // 并不是什么时候都展示展示Gif图
+                XPopup.Builder(this@ReelPostActivity).asImageViewer(
+                    binding.ivPreview, destPath, SmartGlideImageLoader()
+                ).show()
+
             }
 
             override fun onError(msg: String?) {
+                hideProgressLoading()
                 logI("pngToGif >> onFailure")
                 ToastUtil.shortShow("pngToGif >> onFailure")
             }
         })
+    }
+
+    /**
+     * bitmap\转换
+     * 判断图片是否需要放大
+     * imageWidth < 450 || imageHeight < 1124
+     */
+    private fun conversionBitmap(imageBitmap: Bitmap?, path: String?): Bitmap? {
+        var imageBitmap1 = imageBitmap
+        if (imageBitmap1?.width!! < 828 || imageBitmap1.height < 1124) {
+
+        } else {
+            // 需要缩小的
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeFile(path, options)
+            val imageWidth = options.outWidth
+            val imageHeight = options.outHeight
+            val scaleFactor = min(1f, min(828f / imageWidth, 1124f / imageHeight))
+            options.inJustDecodeBounds = false
+            options.inSampleSize = scaleFactor.toInt()
+            val bitmap = BitmapFactory.decodeFile(path, options)
+
+            // 缩放图片
+            val matrix = Matrix()
+            matrix.postScale(scaleFactor, scaleFactor)
+            imageBitmap1 = Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true)
+        }
+        return imageBitmap1
     }
 
     /**
@@ -585,15 +615,21 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 chooserAdapter.setList(picList)
             }
 
-            //  todo 获取Glide的缓存文件
-            /* val cacheKey = ObjectKey((list[0] ?: "") as String)
-             val cacheFile = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this@ReelPostActivity), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
-                 .get(cacheKey)
-             logI("123123123: ${cacheFile?.absolutePath}")
-             if (cacheFile != null && cacheFile.exists()) {
-                 val bitmap = BitmapFactory.decodeFile(cacheFile.absolutePath)
-                 imageView.setImageBitmap(bitmap)
-             }*/
+            // todo 压缩
+            /*Luban.with(this@ReelPostActivity).load(list[0].toString()).ignoreBy(100)
+                .setCompressListener(object : OnNewCompressListener {
+                    override fun onSuccess(source: String?, compressFile: File?) {
+                        logI("onSuccess >> source = $source, file: ${compressFile?.absolutePath}, filesize: ${compressFile?.length()}")
+                    }
+
+                    override fun onError(source: String?, e: Throwable?) {
+                        logI("onError >> source = $source, e: ${e?.message}")
+                    }
+
+                    override fun onStart() {
+
+                    }
+                }).launch()*/
         }
     }
 
@@ -615,6 +651,52 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
         } catch (e: java.lang.Exception) {
         }
         return null
+    }
+
+    // 是否需要旋转角度
+    private fun loadRotatedBitmap(filePath: String): Bitmap? {
+        // Load the image file into a Bitmap
+        val options = BitmapFactory.Options()
+        options.inPreferredConfig = Bitmap.Config.ARGB_8888
+        val bitmap = BitmapFactory.decodeFile(filePath, options)
+
+        // Check the orientation of the image and rotate it if necessary
+        val exif = ExifInterface(filePath)
+        val orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        val rotationAngle = when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270
+            else -> 0
+        }
+        val rotatedBitmap = if (rotationAngle != 0) {
+            val matrix = Matrix()
+            matrix.postRotate(rotationAngle.toFloat())
+            Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        } else {
+            bitmap
+        }
+
+        return rotatedBitmap
+    }
+
+    fun getRotationAngle(bitmap: Bitmap): Bitmap {
+        val inputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, inputStream)
+        val byteArray = inputStream.toByteArray()
+
+        val exifInterface = ExifInterface(ByteArrayInputStream(byteArray))
+        val orientation = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)
+        val rotationAngle = when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> 90
+            ExifInterface.ORIENTATION_ROTATE_180 -> 180
+            ExifInterface.ORIENTATION_ROTATE_270 -> 270
+            else -> 0
+        }
+
+        val matrix = Matrix()
+        matrix.postRotate(rotationAngle.toFloat())
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
     }
 
     companion object {

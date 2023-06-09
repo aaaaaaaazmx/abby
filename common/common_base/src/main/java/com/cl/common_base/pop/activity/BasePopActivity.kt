@@ -426,6 +426,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                 success {
                     hideProgressLoading() // finishTask 需要直接关闭页面
+
+                    // 如果是连续解锁任务包到最后一个任务，完成之后就直接跳转到日历界面
+                    if (isContinueUnlock) {
+                        // 跳转到日历界面
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+                        return@success
+                    }
+
                     mViewModel.richText.value?.data?.topPage?.firstOrNull { it.type == "finishTask" }?.apply {
                         acFinish()
                     }

@@ -370,6 +370,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             val image = images[position]
             val requestOptions = RequestOptions()
                 .signature(ObjectKey(image))
+                .placeholder(com.cl.common_base.R.mipmap.placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
             Glide.with(context).load(image).apply(requestOptions).into(holder.imageView)
             if (selectedImages.contains(image)) {

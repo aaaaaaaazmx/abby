@@ -1,6 +1,7 @@
 package com.cl.common_base.util;
 
 import static com.cl.common_base.ext.LogKt.logI;
+import static com.cl.common_base.widget.slidetoconfirmlib.Util.sp2px;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,8 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.text.TextUtils;
+import android.util.TypedValue;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,7 +25,9 @@ public class Gif {
     public static class Builder {
 
         private String destPath;
-        private int delay = 200;
+
+        private String nickName;
+        private int delay = 300;
         private int repeat = 0;
         private List<Bitmap> sources;
 
@@ -43,6 +48,11 @@ public class Gif {
 
         public Builder setSources(List<Bitmap> sources) {
             this.sources = sources;
+            return this;
+        }
+
+        public Builder setNickName(String nickName) {
+            this.nickName = nickName;
             return this;
         }
 
@@ -68,7 +78,7 @@ public class Gif {
                 os = new FileOutputStream(destPath);
                 gifEncoder.start(os);
                 for (Bitmap bitmap : sources) {
-                    gifEncoder.addFrame(bitmap);
+                    gifEncoder.addFrame(bitmap, nickName, delay);
                 }
                 gifEncoder.setDelay(delay);
                 gifEncoder.setRepeat(repeat);
@@ -227,7 +237,7 @@ public class Gif {
      * @param im BufferedImage containing frame to write.
      * @return true if successful.
      */
-    public boolean addFrame(Bitmap im) {
+    public boolean addFrame(Bitmap im, String nickName, int delay) {
         if ((im == null) || !started) {
             return false;
         }
@@ -239,7 +249,7 @@ public class Gif {
             }
 
             image = im;
-            getImagePixels(); // convert to correct format if necessary
+            getImagePixels(nickName); // convert to correct format if necessary
             analyzePixels(); // build color table & map pixels
             if (firstFrame) {
                 writeLSD(); // logical screen descriptior
@@ -249,7 +259,7 @@ public class Gif {
                     writeNetscapeExt();
                 }
             }
-            writeGraphicCtrlExt(); // write graphic control extension
+            writeGraphicCtrlExt(delay); // write graphic control extension
             writeImageDesc(); // image descriptor
             if (!firstFrame) {
                 writePalette(); // local color table
@@ -334,8 +344,8 @@ public class Gif {
      */
     public void setSize(int w, int h) {
         // logI("12312312: " + w + "123123123: " + h);
-        width = 440;
-        height = 600;
+        width = 828;
+        height = 1124;
         if (width < 1)
             width = 320;
         if (height < 1)
@@ -439,7 +449,7 @@ public class Gif {
     /**
      * Extracts image pixels into byte array "pixels"
      */
-    protected void getImagePixels() {
+    protected void getImagePixels(String nickName) {
         int w = image.getWidth();
         int h = image.getHeight();
         if ((w != width) || (h != height)) {
@@ -448,6 +458,14 @@ public class Gif {
             Canvas g = new Canvas(temp);
             // 居中显示
             g.drawBitmap(image, (width - image.getWidth()) / 2, (height - image.getHeight()) / 2, new Paint());
+            // 画文字
+            if (!TextUtils.isEmpty(nickName)) {
+                Paint p = new Paint();
+                p.setColor(Color.WHITE);
+                p.setTextSize(sp2px(7));
+                g.drawText("@" + nickName, width - 100, height - 100, p);
+            }
+
             image = temp;
         }
         int[] data = getImageData(image);
@@ -473,7 +491,7 @@ public class Gif {
     /**
      * Writes Graphic Control Extension
      */
-    protected void writeGraphicCtrlExt() throws IOException {
+    protected void writeGraphicCtrlExt(int delay) throws IOException {
         out.write(0x21); // extension introducer
         out.write(0xf9); // GCE label
         out.write(4); // data block size
@@ -496,6 +514,7 @@ public class Gif {
                 0 | // 7 user input - 0 = none
                 transp); // 8 transparency flag
 
+        logI("delay: " + delay);
         writeShort(delay); // delay x 1/100 sec
         out.write(transIndex); // transparent color index
         out.write(0); // block terminator
