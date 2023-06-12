@@ -13,16 +13,21 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.view.View;
 
+import androidx.core.content.FileProvider;
 import androidx.exifinterface.media.ExifInterface;
+
+import com.cl.common_base.constants.Constants;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ImageUtil {
 
@@ -68,8 +73,69 @@ public class ImageUtil {
         }
         return null;
     }
-    
-    
+
+
+    /**
+     * Uri转bitmap
+     *
+     * @param context
+     * @param uri
+     * @return
+     */
+    public static Bitmap rotationZoomingDecodeBitmap(Context context, Uri uri) throws Exception {
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        InputStream inputStream = context.getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, options);
+        inputStream.close();
+
+        //判断是否需要旋转90度（三星手机拍照或者选择照片后返回来的图片居然转了90度）
+        int degree = getExifOrientation(context, uri);
+        if (degree > 0) {
+            bitmap = rotateBitmapByDegree(bitmap, degree);
+        }
+
+        if (degree > 0) {
+            return getTargetBitmap(bitmap, Constants.Global.KEY_GIF_WIDTH, Constants.Global.KEY_GIF_HEIGHT);
+        } else {
+            // 缩放
+            int imageWidth = bitmap.getWidth();
+            int imageHeight = bitmap.getHeight();
+            if (imageWidth < Constants.Global.KEY_GIF_WIDTH || imageHeight < Constants.Global.KEY_GIF_HEIGHT) {
+                return bitmap;
+            } else {
+                // 需要缩小的
+                float scaleFactor = Math.min(1f, Math.min(Constants.Global.KEY_GIF_WIDTH / imageWidth, Constants.Global.KEY_GIF_HEIGHT / imageHeight));
+                Matrix matrix = new Matrix();
+                matrix.postScale(scaleFactor, scaleFactor);
+                return Bitmap.createBitmap(bitmap, 0, 0, imageWidth, imageHeight, matrix, true);
+            }
+        }
+    }
+
+    private static int getExifOrientation(Context context, Uri uri) throws IOException {
+        ExifInterface exif = new ExifInterface(context.getContentResolver().openInputStream(uri));
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return 90;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return 180;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return 270;
+            default:
+                return 0;
+        }
+    }
+
+    private static Bitmap getTargetBitmap(Bitmap bitmap, int targetWidth, int targetHeight) {
+        float scaleWidth = ((float) targetWidth) / bitmap.getWidth();
+        float scaleHeight = ((float) targetHeight) / bitmap.getHeight();
+        float scaleFactor = Math.min(scaleWidth, scaleHeight);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleFactor, scaleFactor);
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        return scaledBitmap;
+    }
 
 
     /**

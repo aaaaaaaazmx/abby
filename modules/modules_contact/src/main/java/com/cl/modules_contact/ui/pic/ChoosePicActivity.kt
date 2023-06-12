@@ -32,10 +32,8 @@ import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactChooserPicActivityBinding
 import com.cl.modules_contact.decoraion.FullyGridLayoutManager
 import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
-import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.TrendPictureReq
 import com.cl.modules_contact.response.ChoosePicBean
-import com.cl.modules_contact.ui.ContactFragment
 import com.cl.modules_contact.ui.ReelPostActivity
 import com.cl.modules_contact.viewmodel.ChoosePicViewModel
 import com.luck.picture.lib.utils.DensityUtil
@@ -332,7 +330,12 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
         override fun onCreateLoader(id: Int, args: Bundle?): Loader<Cursor> {
             logI("onCreateLoader")
             val projection = arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
-            return CursorLoader(requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null)
+            val selection = "${MediaStore.Images.Media.MIME_TYPE}!='image/gif'"
+            val sortOrder = "${MediaStore.Images.Media.DATE_ADDED} DESC"
+            return CursorLoader(requireContext(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI,  projection,
+                selection,
+                null,
+                sortOrder)
         }
 
         @SuppressLint("Range")
@@ -340,12 +343,15 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             val images = mutableListOf<String>()
             if (data != null) {
                 while (data.moveToNext()) {
-                    val path = data.getString(data.getColumnIndex(MediaStore.Images.Media.DATA))
+                    // val path = data.getString(data.getColumnIndex(MediaStore.Images.Media.DATA))
+                    val path = data.getString(data.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
                     images.add(path)
                 }
             }
             // 游标向前查找过一次，不能进行二次查询
             if (images.size > 0) {
+                // 倒序
+                images.reverse()
                 adapter.setImages(images)
             }
         }

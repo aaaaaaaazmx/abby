@@ -141,7 +141,7 @@ public class Gif {
 
     protected int y = 0;
 
-    protected int transparent = -1; // transparent color if given
+    protected int transparent = 1; // transparent color if given
 
     protected int transIndex; // transparent index in color table
 

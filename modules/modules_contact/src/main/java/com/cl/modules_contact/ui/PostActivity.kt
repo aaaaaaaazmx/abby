@@ -559,7 +559,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
                 R.id.img_contact_pic_delete -> {
                     this@PostActivity.chooserAdapter.removeAt(position)
-                    viewModel.deletePicAddress(position)
+                    viewModel.clearPicAddress()
                     picList.removeAt(position)
                     // 在最后面添加到ADD
                     if (this@PostActivity.chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_ADD }.size == 1) {
