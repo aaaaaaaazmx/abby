@@ -39,6 +39,7 @@ data class RichTextData(
                 "dryingWeigh" -> KEY_TYPE_DRYING_WEIGH
                 "buttonJump" -> KEY_TYPE_BUTTON_JUMP
                 "option" -> KEY_TYPE_CHECK_BOX
+                "inputBox" -> KEY_TYPE_INPUT_BOX
                 else -> KEY_TYPE_BAR
             }
     }
@@ -57,6 +58,8 @@ data class RichTextData(
         val title: String? = null, // 标题
         val top: String? = null, // 是否悬浮
         val txt: String? = null, // 文本
+        val inputType: String? = null, // 文本输入类型
+        val inputSize: Int? = null, // 文本输入框长度
         val txtId: String? = null, // 文本ID
         val url: String? = null, // URL
         val width: String? = null, // 宽度
@@ -124,6 +127,9 @@ data class RichTextData(
 
         // 设置文本类型
         const val KEY_TYPE_PAGE_TXT = 17
+
+        // 这是个不知名的类型，ui展示为一个输入框
+        const val KEY_TYPE_INPUT_BOX = 18
 
         // 自己创建的类型
         // 与商民的无关

@@ -476,7 +476,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             dp2px(60)
                         )
-                        lp.setMargins(dp2px(20), dp2px(5), dp2px(20), dp2px(5))
+                        lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
                         tv.layoutParams = lp
                         tv.gravity = Gravity.CENTER
                         tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())

@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -22,6 +23,7 @@ import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
+import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.databinding.BasePopActivityBinding
@@ -99,6 +101,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
      */
     private val taskIdList by lazy { (intent.getSerializableExtra(KEY_TASK_ID_LIST) as? MutableList<CalendarData.TaskList.SubTaskList>) ?: mutableListOf() }
 
+
+    /**
+     * 传入过来的用于FinishTask的ViewDatas
+     */
+    private val viewDatas by lazy {
+        val inputData = intent.getSerializableExtra(KEY_INPUT_BOX) as? MutableList<FinishTaskReq.ViewData>
+        inputData ?: mutableListOf()
+    }
     override fun initView() { // 添加状态蓝高度
         //        ViewCompat.setOnApplyWindowInsetsListener(binding.smart) { v, insets ->
         //            binding.smart.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -200,6 +210,20 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         if (isUnlockTask) {
             // 如果是连续解锁任务包的ID
             if (isContinueUnlock) { // 如果还存在连续多个任务，每次完成之后需要减去1
+
+                // 判断当前任务是否包含input_box类型
+                val dataArray = arrayListOf<String>()
+                adapter.data.filter { it.itemType == RichTextData.KEY_TYPE_INPUT_BOX }.forEachIndexed { index, page ->
+                    // 如果有需要输入的input_box类型，那么就需要判断是否输入了内容
+                    (adapter.getViewByPosition(index, R.id.input_weight) as? EditText)?.let {
+                        dataArray.add(it.text.toString())
+                    }
+                }
+                // 一个任务一个FinishTaskReq.ViewData， 多个任务多个FinishTaskReq.ViewData，但是都保存在viewDatas里面
+                if (dataArray.isNotEmpty()) {
+                    viewDatas.add(FinishTaskReq.ViewData(textId = taskIdList[0].textId, dataArray = dataArray.toMutableList()))
+                }
+
                 if (taskIdList.size - 1 > 0) { // 移除掉第一个
                     taskIdList.removeAt(0)
 
@@ -209,18 +233,20 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         return
                     }
 
+                    // 继续是富文本任务
                     val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                     intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
                     intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                     intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
                     intent.putExtra(Constants.Global.KEY_TXT_ID, taskIdList[0].textId)
+                    intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
                     intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                     intent.putExtra(KEY_TASK_PACKAGE_ID, true)
                     intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
                     intent.putExtra(KEY_PACK_NO, packetNo)
                     startActivity(intent)
                 } else {
-                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo))
+                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas))
                 }
                 return
             }
@@ -330,6 +356,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
                         intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
                         intent.putExtra(KEY_PACK_NO, packetNo)
+                        intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
                         intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
                         refreshActivityLauncher.launch(intent)
                     }, 50)
@@ -378,7 +405,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         tv.isEnabled = true
                         tv.text = topPage.value?.txt
                         val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(60))
-                        lp.setMargins(dp2px(20), dp2px(5), dp2px(20), dp2px(5))
+                        lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
                         tv.layoutParams = lp
                         tv.gravity = Gravity.CENTER
                         tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
@@ -491,14 +518,21 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt)
+            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt, R.id.input_delete)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
+                    R.id.input_delete -> {
+                        // 删除当前的输入框
+                        val etWeight =
+                            adapter.getViewByPosition(position, R.id.input_weight) as? EditText
+                        etWeight?.setText("")
+                    }
+
                     R.id.iv_pic -> { // 弹出图片
                         XPopup.Builder(context).asImageViewer(
-                                (view as? ImageView), bean.value?.url, SmartGlideImageLoader()
-                            ).show()
+                            (view as? ImageView), bean.value?.url, SmartGlideImageLoader()
+                        ).show()
                     }
 
                     // 跳转HTML
@@ -533,7 +567,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         }
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "hey abby")
                         context.startActivity(intent)
-                    } // 勾选框
+                    }
+                    // 勾选框
                     R.id.cl_check -> {
                         view.findViewById<CheckBox>(R.id.curing_box)?.apply {
                             logI("before: ${data[position].value?.isCheck}")
@@ -541,7 +576,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             isChecked = !isChecked
                             logI("after: ${data[position].value?.isCheck}")
                         }
-                    } // 跳转到HTML
+                    }
+                    // 跳转到HTML
                     R.id.tv_page_txt -> {
                         if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener // 跳转到HTML
                         val intent = Intent(context, WebActivity::class.java)
@@ -678,5 +714,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // packNo的id
         const val KEY_PACK_NO = "key_pack_no"
+
+        // 当富文本里包含input_box时，才需要传入这个值
+        const val KEY_INPUT_BOX = "key_input_box"
     }
 }

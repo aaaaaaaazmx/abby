@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.cl.modules_my.viewmodel.CalendarViewModel" />
@@ -50,11 +51,11 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
             android:id="@+id/ll_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:gravity="center"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -124,11 +125,11 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:id="@+id/rv_list"
             android:layout_width="match_parent"
             android:layout_height="245dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ll_title"
@@ -210,21 +211,21 @@
                         tools:text="Day 1" />
 
                     <com.cl.common_base.widget.SvTextView
-                        app:layout_constraintTop_toBottomOf="@+id/tv_today_date"
                         android:id="@+id/svt_day_bg"
-                        android:layout_alignParentRight="true"
-                        app:svSolidColor="#F8FAF9"
-                        app:svSolidType="solid"
-                        android:layout_marginTop="5dp"
                         android:layout_width="80dp"
-                        android:layout_height="15dp"/>
+                        android:layout_height="15dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="5dp"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_today_date"
+                        app:svSolidColor="#F8FAF9"
+                        app:svSolidType="solid" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="25dp">
+                    android:layout_marginTop="15dp">
 
                     <View
                         android:id="@+id/vv"
@@ -237,59 +238,73 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.joketng.timelinestepview.view.TimeLineStepView
-                        android:id="@+id/time_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="50dp"
-                        android:background="@color/white"
+                    <androidx.core.widget.NestedScrollView
+                        android:layout_marginTop="2dp"
                         android:paddingStart="24dp"
                         android:paddingEnd="24dp"
-                        app:layout_constraintTop_toBottomOf="@+id/vv"
-                        app:lineActiveColor="@color/mainGray"
-                        app:lineInActiveColor="@color/mainGray"
-                        app:lineWidth="80dp" />
+                        android:layout_marginBottom="50dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:layout_constraintTop_toBottomOf="@+id/vv">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="vertical">
+
+                            <com.joketng.timelinestepview.view.TimeLineStepView
+                                android:id="@+id/time_line"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/white"
+                                app:lineActiveColor="@color/mainGray"
+                                app:lineInActiveColor="@color/mainGray"
+                                app:lineWidth="80dp" />
+                        </LinearLayout>
+                    </androidx.core.widget.NestedScrollView>
+
 
                     <LinearLayout
-                        android:visibility="gone"
+                        android:id="@+id/rl_empty"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="35dp"
                         android:gravity="center_horizontal"
                         android:orientation="vertical"
-                        android:id="@+id/rl_empty"
-                        android:layout_marginTop="35dp"
                         android:paddingStart="24dp"
                         android:paddingEnd="24dp"
-                        app:layout_constraintTop_toBottomOf="@+id/vv"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@+id/vv">
+
                         <com.cl.common_base.widget.AbTextViewCalendar
-                            android:textStyle="bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:text="@string/my_no_task"
                             android:textColor="@color/black"
                             android:textSize="13sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:textStyle="bold" />
 
                         <com.cl.common_base.widget.AbTextViewCalendar
-                            android:layout_marginTop="10dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
+                            android:layout_marginTop="10dp"
                             android:text="@string/my_how_is"
                             android:textColor="@color/mainColor"
-                            android:textSize="13sp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"/>
+                            android:textSize="13sp" />
                     </LinearLayout>
 
                     <com.cl.common_base.widget.SvTextView
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        android:layout_marginTop="28dp"
-                        app:layout_constraintTop_toBottomOf="@+id/vv"
-                        android:layout_marginEnd="20dp"
-                        android:layout_marginStart="20dp"
                         android:id="@+id/svt_task_list_bg"
                         android:layout_width="0dp"
                         android:layout_height="185dp"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="28dp"
+                        android:layout_marginEnd="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/vv"
                         app:svSolidColor="#F8FAF9"
                         app:svSolidType="solid" />
                 </androidx.constraintlayout.widget.ConstraintLayout>

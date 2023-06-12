@@ -28,7 +28,6 @@
             url="@{data.picture}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             tools:background="@mipmap/ic_launcher" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -177,9 +176,6 @@
                 app:layout_constraintBottom_toTopOf="@+id/tv_desc"
                 android:id="@+id/tv_name"
                 android:shadowColor="@color/white"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
                 android:text="@{data.nickName}"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
@@ -187,9 +183,9 @@
 
 
             <TextView
+                android:paddingBottom="10dp"
                 android:gravity="start"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="27dp"
                 android:textColor="@color/white"
                 android:ellipsize="end"
                 android:maxLines="2"
@@ -198,9 +194,6 @@
                 app:layout_constraintStart_toStartOf="@id/tv_name"
                 android:id="@+id/tv_desc"
                 android:shadowColor="@color/white"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
                 android:text="@{data.description}"
                 android:textSize="15sp"
                 android:layout_width="0dp"

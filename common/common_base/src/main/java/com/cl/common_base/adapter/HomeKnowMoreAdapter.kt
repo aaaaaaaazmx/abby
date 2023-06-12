@@ -48,6 +48,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         addItemType(RichTextData.KEY_TYPE_DRYING_WEIGH, R.layout.home_item_curing_pop) // 干燥期、重量
         addItemType(RichTextData.KEY_TYPE_BUTTON_JUMP, R.layout.home_itme_button_jump) // 按钮跳转
         addItemType(RichTextData.KEY_TYPE_CHECK_BOX, R.layout.home_item_chexk_box)
+        addItemType(RichTextData.KEY_TYPE_INPUT_BOX, R.layout.home_item_input_box)
         /*addItemType(RichTextData.KEY_TYPE_PAGE_TXT, R.layout.home_itme_page_txt)*/
     }
 
@@ -157,6 +158,12 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
             RichTextData.KEY_TYPE_CHECK_BOX -> {
                 DataBindingUtil.bind<HomeItemChexkBoxBinding>(holder.itemView)?.let {
                     it.data = data[position]
+                    it.executePendingBindings()
+                }
+            }
+            RichTextData.KEY_TYPE_INPUT_BOX -> {
+                DataBindingUtil.bind<HomeItemInputBoxBinding>(holder.itemView)?.let {
+                    it.datas = data[position]
                     it.executePendingBindings()
                 }
             }

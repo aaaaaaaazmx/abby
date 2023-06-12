@@ -118,6 +118,14 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
      */
     private val packNo by lazy { intent.getStringExtra(BasePopActivity.KEY_PACK_NO) }
 
+    /**
+     * 传入过来的用于FinishTask的ViewDatas
+     */
+    private val viewDatas by lazy {
+        val inputData = intent.getSerializableExtra(BasePopActivity.KEY_INPUT_BOX) as? MutableList<FinishTaskReq.ViewData>
+        inputData ?: mutableListOf()
+    }
+
 
     /**
      * 排水界面视图适配器
@@ -284,7 +292,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 isOpenOrStop(true)
             } else { //  如果不是空的,判断是否是最后一个任务，
                 if (taskIdList.size == 1) { // 如果是最后一个任务，那么直接完成当前任务，并且返回
-                    mViewMode.finishTask(FinishTaskReq(taskId = fixedId.toString(), packetNo = packNo.toString()))
+                    mViewMode.finishTask(FinishTaskReq(taskId = fixedId.toString(), packetNo = packNo.toString(), viewDatas = if (viewDatas.isEmpty()) null else viewDatas))
                 } else { // 如果不是最后一个任务，那么需要先移除第1个，然后在进行第二个。
                     if (taskIdList.size > 0) {
                         taskIdList.removeAt(0)
@@ -301,6 +309,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, fixedId)
                         intent.putExtra(Constants.Global.KEY_TXT_ID, taskIdList[0].textId)
+                        intent.putExtra(BasePopActivity.KEY_INPUT_BOX, viewDatas as? Serializable)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
@@ -674,6 +683,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                         ToastUtil.shortShow(getString(R.string.draining_complete))
                         return@success
                     }
+                    // 不管是从富文本界面进来的，还是从任务列表进来的，都需要判断是否有任务需要执行setResult，然后会通过onActivityResult返回给出相对应的逻辑
                     setResult(Activity.RESULT_OK)
                     finish()
                 }

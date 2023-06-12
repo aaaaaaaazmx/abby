@@ -93,14 +93,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             .dismissOnTouchOutside(false)
     }
 
-    /**
-     * 右边布局Adapter
-     */
-    private val taskListAdapter by lazy {
-        TaskListAdapter(mutableListOf())
-    }
-
-
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -1089,14 +1081,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         layoutParams.width = dp2px(0f)
                         layoutParams.height = dp2px(0f)
                         holder.llLine.layoutParams.width = LinearLayout.LayoutParams.WRAP_CONTENT
-                        holder.imgLineEnd.layoutParams.width = dp2px(0.8f)
-                        holder.imgLineStart.layoutParams.width = dp2px(0.8f)
-                        if (position == 0) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
+                        holder.imgLineEnd.layoutParams.width = dp2px(0f)
+                        holder.imgLineStart.layoutParams.width = dp2px(0f)
+                        /*if (position == 0 || position == 1) holder.imgMark.setImageDrawable(null) else holder.imgMark.setImageDrawable(
                             ContextCompat.getDrawable(
                                 this@CalendarActivity,
                                 R.mipmap.my_iv_red_circle
                             )
-                        )
+                        )*/
                         return
                     }
                     val layoutParams = holder.imgMark.layoutParams as LinearLayout.LayoutParams
@@ -1226,10 +1218,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         holder.rightLayout.findViewById<SvTextView>(R.id.svt_unlock)
                     val svtGrayUnlock =
                         holder.rightLayout.findViewById<SvTextView>(R.id.svt_gray_unlock)
+
                     val rvTaskList = holder.rightLayout.findViewById<RecyclerView>(R.id.rv_task_list)
                     rvTaskList.layoutManager = LinearLayoutManager(this@CalendarActivity)
-                    rvTaskList.adapter = taskListAdapter
-                    taskListAdapter.setList(listContent[position].subTaskList)
+                    rvTaskList.adapter = TaskListAdapter(listContent[position].subTaskList)
 
                     when (listContent[position].taskStatus) {
                         // (1-已完成、0-未完成可操作、2-未完成不可操作)

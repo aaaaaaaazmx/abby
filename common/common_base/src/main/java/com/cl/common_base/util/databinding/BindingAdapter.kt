@@ -3,6 +3,8 @@ package com.cl.common_base.util.databinding
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.os.Build
+import android.text.InputType
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -229,6 +231,19 @@ fun setGravityText(view: TextView, gravity: String) {
 @BindingAdapter("colorText")
 fun setColorText(textView: TextView, color: String) {
     textView.setTextColor(Color.parseColor(color))
+}
+
+@BindingAdapter("typeInput")
+fun setTypeInput(editText: EditText, type: String) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+        when (type) {
+            "Number" ->
+                editText.inputType = InputType.TYPE_CLASS_NUMBER
+            "String" -> {
+                editText.inputType = InputType.TYPE_CLASS_TEXT
+            }
+        }
+    }
 }
 
 @BindingAdapter("sizeText")
