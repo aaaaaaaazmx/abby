@@ -274,12 +274,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
         binding.ivGoogle.setOnClickListener {
             // 谷歌登录
-            val privatePropertyAgree = Prefs.getBoolean(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE)
-            logI("$privatePropertyAgree")
-            if (!privatePropertyAgree) {
-                pop.asCustom(privacyPop).show()
-                return@setOnClickListener
-            }
             googleHelp.login()
         }
 
