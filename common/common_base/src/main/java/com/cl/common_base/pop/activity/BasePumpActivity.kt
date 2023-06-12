@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
@@ -28,6 +29,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.common_base.bean.RewardReq
 import com.cl.common_base.bean.UnreadMessageData
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.BasePopPumpActivityBinding
 import com.cl.common_base.ext.logI
@@ -250,7 +252,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
             }
 
             ivClose.setOnClickListener {
-                finish()
+                directShutdown()
             }
             btnSuccess.setOnClickListener {
                 isOpenOrStop(if (isFirst) isFirst else btnSuccess.isChecked)
@@ -837,6 +839,20 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        directShutdown()
+    }
+
+
+    // 直接关闭
+    private fun directShutdown() {
+        if (taskIdList.isNotEmpty()) {
+            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePumpActivity)
+            return
+        }
+        finish()
     }
 
     @RequiresApi(Build.VERSION_CODES.FROYO)

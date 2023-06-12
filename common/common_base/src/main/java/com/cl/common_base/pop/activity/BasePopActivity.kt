@@ -644,6 +644,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     // 直接关闭
     private fun directShutdown() {
+        if (isContinueUnlock) {
+            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+            return
+        }
         finish()
     }
 
