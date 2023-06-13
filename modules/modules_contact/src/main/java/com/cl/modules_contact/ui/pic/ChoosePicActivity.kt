@@ -72,7 +72,12 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
         binding.smart.open()
         binding.smart.setOnCloseListener(callback)
 
-        binding.ivClose.setOnClickListener { directShutdown() }
+        binding.ivClose.setOnClickListener { finish() }
+
+        binding.btnNext.setOnClickListener {
+            // 这个才点击返回图片
+            directShutdown()
+        }
 
 
         val adapter = MyPagerAdapter(supportFragmentManager)
@@ -143,11 +148,6 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
         } else {
             finish()
         }
-    }
-
-    // 系统返回键
-    override fun onBackPressed() {
-        directShutdown()
     }
 
 
@@ -245,7 +245,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             )
             val selectedImages = (activity as? ChoosePicActivity)?.selectedImages ?: mutableListOf()
             adapter = ImageAdapter(requireContext(), selectedImages) { image ->
-                if (selectedImages.size < 20 || selectedImages.contains(image)) {
+                if (selectedImages.size < 16 || selectedImages.contains(image)) {
                     if (selectedImages.contains(image)) {
                         selectedImages.remove(image)
                         (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
@@ -255,7 +255,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                     }
                     adapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(context, "选择的照片数量不能超过20张", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "The number of selected photos cannot exceed 16.", Toast.LENGTH_SHORT).show()
                 }
             }
             recyclerView.adapter = adapter
@@ -304,7 +304,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             )
             val selectedImages = (activity as? ChoosePicActivity)?.selectedImages ?: mutableListOf()
             adapter = ImageAdapter(requireContext(), selectedImages) { image ->
-                if (selectedImages.size < 20 || selectedImages.contains(image)) {
+                if (selectedImages.size < 16 || selectedImages.contains(image)) {
                     if (selectedImages.contains(image)) {
                         selectedImages.remove(image)
                         (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
@@ -314,7 +314,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                     }
                     adapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(context, "选择的照片数量不能超过20张", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "The number of selected photos cannot exceed 16.", Toast.LENGTH_SHORT).show()
                 }
             }
             recyclerView.adapter = adapter

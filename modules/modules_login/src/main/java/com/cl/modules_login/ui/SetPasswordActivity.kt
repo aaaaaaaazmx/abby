@@ -203,7 +203,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                                     it.source = "google"
                                     it.autoToken = thirdToken
                                     it.sourceUserId = AESCipher.aesEncryptString(
-                                        Firebase.auth.currentUser?.uid, AESCipher.KEY
+                                        Firebase.auth.currentUser?.email, AESCipher.KEY
                                     )
                                     mViewModel.login()
                                 }

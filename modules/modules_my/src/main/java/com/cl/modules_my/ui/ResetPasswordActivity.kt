@@ -62,7 +62,9 @@ class ResetPasswordActivity : BaseActivity<MyResetPasswordBinding>() {
         // 修改密码
         binding.btnSuccess.setOnClickListener {
             kotlin.runCatching {
-                mViewModel.resetPwd(ResetPwdReq(newPassword = binding.etPassword.text.toString()))
+                mViewModel.resetPwd(ResetPwdReq(newPassword = AESCipher.aesEncryptString(
+                    binding.etPassword.text.toString(), AESCipher.KEY
+                )))
             }.onFailure {
                 logE("btnSuccess.setOnClickListener < Build.VERSION_CODES.O Catch")
             }

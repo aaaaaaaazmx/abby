@@ -149,6 +149,8 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                             if (data.errorCode == 1005) {
                                 // 表示第三方登录没有注册、也就是没有绑定过邮箱
                                 _noBindEmail.value = true
+                            } else {
+                                _registerLoginLiveData.value = data
                             }
                         }
 

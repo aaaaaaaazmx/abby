@@ -363,7 +363,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                                         it.source = "google"
                                         it.autoToken = idToken
                                         it.sourceUserId = AESCipher.aesEncryptString(
-                                            user?.uid, AESCipher.KEY
+                                            user?.email, AESCipher.KEY
                                         )
                                         mViewModel.login()
                                     }
@@ -393,6 +393,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                         }
 
                         else -> {
+                            ToastUtil.shortShow(e.localizedMessage)
                             logI("Couldn't get credential from result. (${e.localizedMessage})")
                         }
                     }

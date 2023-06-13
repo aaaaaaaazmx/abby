@@ -32,8 +32,10 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.BasePopPumpActivityBinding
+import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.pop.BasePumpWaterFinishedPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.pop.RewardPop
 import com.cl.common_base.refresh.ClassicsHeader
@@ -239,7 +241,6 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
 
             // 点击排水跳过
             tvSkip.setOnClickListener {
-                isOpenOrStop(false)
                 XPopup.Builder(this@BasePumpActivity)
                     .asCustom(BaseThreeTextPop(this@BasePumpActivity, content = "If there is still water left over, click \"Continue Draining\" to proceed. Otherwise, click \"Next\"",
                         oneLineText = "Continue Draining", twoLineText = "Next",
@@ -291,7 +292,13 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         kotlin.runCatching { // 需要判断当前是否携带过来的任务是为空
             if (taskIdList.isEmpty()) { //  如果是空的，那么因该是没有这个选项的。
                 // 开启排水
-                isOpenOrStop(true)
+                isOpenOrStop(false)
+                // 弹出完成排水界面
+                XPopup.Builder(this@BasePumpActivity).isDestroyOnDismiss(false).enableDrag(false)
+                    .maxHeight(dp2px(600f)).dismissOnTouchOutside(false).asCustom(
+                        BasePumpWaterFinishedPop(this@BasePumpActivity)
+                    ).show()
+                return@runCatching
             } else { //  如果不是空的,判断是否是最后一个任务，
                 if (taskIdList.size == 1) { // 如果是最后一个任务，那么直接完成当前任务，并且返回
                     mViewMode.finishTask(FinishTaskReq(taskId = fixedId.toString(), packetNo = packNo.toString(), viewDatas = if (viewDatas.isEmpty()) null else viewDatas))
@@ -314,7 +321,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                         intent.putExtra(BasePopActivity.KEY_INPUT_BOX, viewDatas as? Serializable)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                         intent.putExtra(BasePopActivity.KEY_PACK_NO, packNo)
                         startActivity(intent)
                         return

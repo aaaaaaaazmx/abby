@@ -210,15 +210,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         if (isUnlockTask) {
             // 如果是连续解锁任务包的ID
             if (isContinueUnlock) { // 如果还存在连续多个任务，每次完成之后需要减去1
-
                 // 判断当前任务是否包含input_box类型
-                val dataArray = arrayListOf<String>()
-                adapter.data.filter { it.itemType == RichTextData.KEY_TYPE_INPUT_BOX }.forEachIndexed { index, page ->
-                    // 如果有需要输入的input_box类型，那么就需要判断是否输入了内容
-                    (adapter.getViewByPosition(index, R.id.input_weight) as? EditText)?.let {
-                        dataArray.add(it.text.toString())
-                    }
-                }
+                val dataArray = adapter.data
+                    .filter { it.itemType == RichTextData.KEY_TYPE_INPUT_BOX }
+                    .mapNotNull { adapter.getViewByPosition(adapter.data.indexOf(it), R.id.input_weight) as? EditText }
+                    .map { it.text.toString() }
+                    .toMutableList()
+
                 // 一个任务一个FinishTaskReq.ViewData， 多个任务多个FinishTaskReq.ViewData，但是都保存在viewDatas里面
                 if (dataArray.isNotEmpty()) {
                     viewDatas.add(FinishTaskReq.ViewData(textId = taskIdList[0].textId, dataArray = dataArray.toMutableList()))
@@ -242,7 +240,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
                     intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                     intent.putExtra(KEY_TASK_PACKAGE_ID, true)
-                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                     intent.putExtra(KEY_PACK_NO, packetNo)
                     startActivity(intent)
                 } else {

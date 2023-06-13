@@ -246,7 +246,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                 success {
                     // 不管有没有绑定过，都需要绑定，只是检查是否存在
                     bindSourceEmail(BindSourceEmailReq(emailName, thirdSource, sourceUserId = AESCipher.aesEncryptString(
-                        Firebase.auth.currentUser?.uid, AESCipher.KEY
+                        Firebase.auth.currentUser?.email, AESCipher.KEY
                     )))
                 }
             })
@@ -269,7 +269,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                                     it.source = "google"
                                     it.autoToken = thirdToken
                                     it.sourceUserId = AESCipher.aesEncryptString(
-                                        Firebase.auth.currentUser?.uid, AESCipher.KEY
+                                        Firebase.auth.currentUser?.email, AESCipher.KEY
                                     )
                                     mViewModel.login()
                                 }
