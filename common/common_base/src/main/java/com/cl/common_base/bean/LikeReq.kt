@@ -1,4 +1,4 @@
-package com.cl.modules_contact.request
+package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
 

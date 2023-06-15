@@ -225,6 +225,15 @@ object Constants {
 
         // 是否是手动模式
         const val KEY_MANUAL_MODE = "key_manual_mode"
+
+        // 注册或者是忘记密码  true 是注册 false忘记密码
+        const val KEY_REGISTER_OR_FORGET_PASSWORD = "key_register_or_forget_password"
+
+        // gif的宽度
+        const val KEY_GIF_WIDTH = 828f
+
+        // gif的高度
+        const val KEY_GIF_HEIGHT = 1124f
     }
 
     // Fixed Id

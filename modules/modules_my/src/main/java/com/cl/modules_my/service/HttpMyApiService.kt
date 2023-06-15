@@ -14,6 +14,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.modules_my.request.OxygenCoinListBean
+import com.cl.modules_my.request.ResetPwdReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -319,4 +320,12 @@ interface HttpMyApiService {
      */
     @POST("abby/account/getAccountFlowing")
     fun oxygenCoinBillList(@Body req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>>
+
+    /**
+     * 修改密码
+     */
+    @POST("abby/user/resetPwd")
+    fun resetPwd(
+       @Body req: ResetPwdReq
+    ): Flow<HttpResult<BaseBean>>
 }

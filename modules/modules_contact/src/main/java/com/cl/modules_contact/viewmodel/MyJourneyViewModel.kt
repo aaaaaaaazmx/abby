@@ -13,10 +13,10 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.repository.ContactRepository
 import com.cl.modules_contact.request.DeleteReq
-import com.cl.modules_contact.request.LikeReq
+import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
-import com.cl.modules_contact.request.RewardReq
+import com.cl.common_base.bean.RewardReq
 import com.cl.modules_contact.response.NewPageData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers

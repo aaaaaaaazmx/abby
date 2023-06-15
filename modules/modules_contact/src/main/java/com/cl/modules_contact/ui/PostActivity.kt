@@ -348,7 +348,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                     // 那么就不用管
                 } else {
                     // 找出他们之间不同的，并且在alreadyList中删除他
-                    findDifferentItems(alreadyList, userList).forEach {
+                    viewModel.findDifferentItems(alreadyList, userList).forEach {
                         viewModel.serSelectFriendsRemove(it)
                     }
                 }
@@ -378,13 +378,13 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                                 // 在勾选之后取消、需要删除相对应的人，那么userList.size > it.size
                                 if ((binding.etConnect.formatResult?.userList?.size ?: 0) > it.size) {
                                     // 删除当前的length
-                                    findDifferentItemForuserList(it, binding.etConnect.formatResult?.userList).forEach { userList ->
+                                    viewModel.findDifferentItemForuserList(it, binding.etConnect.formatResult?.userList).forEach { userList ->
                                         // 需要删除当前的userList
                                         binding.etConnect.remove(MentionUser(userList.id ?: "", userList.name ?: "", userList.abbyId ?: "", userList.name ?: "", userList.picture ?: ""))
                                     }
                                 } else {
                                     // 插入用户贵
-                                    findDifferentItems(it, binding.etConnect.formatResult?.userList).forEach { mentionData ->
+                                    viewModel.findDifferentItems(it, binding.etConnect.formatResult?.userList).forEach { mentionData ->
                                         val index: Int = binding.etConnect.selectionStart
                                         binding.etConnect.editableText.insert(index, "@")
                                         binding.etConnect.insert(MentionUser(mentionData.userId ?: "", mentionData.nickName ?: "", mentionData.abbyId ?: "", mentionData.nickName ?: "", mentionData.picture ?: ""))
@@ -399,50 +399,6 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
     }
 
-    fun findDifferentItems(list1: MutableList<MentionData>, list2: MutableList<FormatItemResult>? = mutableListOf()): MutableList<MentionData> {
-        val result = mutableListOf<MentionData>()
-        if (list2?.isEmpty() == true) return result
-
-        for (item1 in list1) {
-            var found = false
-            for (item2 in list2!!) {
-                if (item1.userId == item2.id) {
-                    found = true
-                    break
-                }
-            }
-            if (!found) {
-                result.add(item1)
-            }
-        }
-        logI("!2312312312: ${result.size}")
-        return result
-    }
-
-
-    fun findDifferentItemForuserList(list1: MutableList<MentionData>, list2: MutableList<FormatItemResult>? = mutableListOf()): MutableList<FormatItemResult> {
-        val result = mutableListOf<FormatItemResult>()
-        if (list2?.isEmpty() == true) return result
-
-        for (item1 in list2!!) {
-            var found = false
-            for (item2 in list1) {
-                if (item1.id == item2.userId) {
-                    found = true
-                    break
-                }
-            }
-            if (!found) {
-                result.add(item1)
-            }
-        }
-
-        result.forEach {
-            logI("12313123: ${it.name}, ${it.id}, ${it.fromIndex}, ${it.length}")
-        }
-
-        return result
-    }
 
     /**
      * 表单提交
@@ -603,7 +559,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
                 R.id.img_contact_pic_delete -> {
                     this@PostActivity.chooserAdapter.removeAt(position)
-                    viewModel.deletePicAddress(position)
+                    viewModel.clearPicAddress()
                     picList.removeAt(position)
                     // 在最后面添加到ADD
                     if (this@PostActivity.chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_ADD }.size == 1) {

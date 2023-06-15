@@ -108,6 +108,10 @@ dependencies {
     api(Deps.fcm)
     api(Deps.jpushGoogle)
     api(Deps.jPushCodeGoogle)
+    // Import the BoM for the Firebase platform
+    api(platform("com.google.firebase:firebase-bom:32.1.0"))
+    api("com.google.firebase:firebase-auth-ktx")
+    api("com.google.android.gms:play-services-auth:20.5.0")
     // 启动
     api("androidx.core:core-splashscreen:1.0.0-beta02")
     // bugly
@@ -143,6 +147,8 @@ dependencies {
     // 轮播图
     api("io.github.youth5201314:banner:2.2.2")
 
+    // ffmpeg
+    api(Deps.epMedia)
     // 图片压缩
     api(Deps.choosePhotoComproress)
 }

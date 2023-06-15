@@ -1,12 +1,12 @@
-package com.cl.modules_contact.pop
+package com.cl.common_base.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.GridLayoutManager
+import com.cl.common_base.R
 import com.cl.common_base.adapter.RewardAdapter
 import com.cl.common_base.bean.RewardBean
-import com.cl.modules_contact.R
-import com.cl.modules_contact.databinding.ContactPopRewardBinding
+import com.cl.common_base.databinding.ContactPopRewardBinding
 import com.lxj.xpopup.core.BottomPopupView
 
 /**

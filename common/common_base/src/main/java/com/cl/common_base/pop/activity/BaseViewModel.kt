@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.RichTextData
@@ -178,6 +179,40 @@ class BaseViewModel @Inject constructor(): ViewModel() {
             }.collectLatest {
                 _intoPlantBasket.value = it
             }
+        }
+    }
+
+
+    private val _advertising = MutableLiveData<Resource<MutableList<AdvertisingData>>>()
+    val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
+    fun advertising(type: String? = "0") {
+        viewModelScope.launch {
+            service.advertising(type ?: "0", current = 1, size = 10)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _advertising.value = it
+                }
         }
     }
 

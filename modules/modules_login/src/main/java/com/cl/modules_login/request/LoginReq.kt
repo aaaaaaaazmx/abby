@@ -20,4 +20,7 @@ data class LoginReq(
     var token: String? = null,
     var userName: String? = null,
     var version: String? = null,
+    var autoToken: String? = null,
+    var source: String? = null,
+    var sourceUserId: String? = null,
 ) : Serializable

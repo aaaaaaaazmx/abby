@@ -8,18 +8,34 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.UserinfoBean
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.Constants.Global.KEY_REGISTER_OR_FORGET_PASSWORD
+import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logE
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.init.InitSdk
+import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.salt.AESCipher
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivitySetPasswordBinding
+import com.cl.modules_login.repository.BindSourceEmailReq
 import com.cl.modules_login.request.UpdatePwdReq
 import com.cl.modules_login.request.UserRegisterReq
+import com.cl.modules_login.response.LoginData
 import com.cl.modules_login.viewmodel.SetPassWordViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -38,6 +54,20 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
         val bean =
             intent.getSerializableExtra(CreateAccountActivity.KEY_USER_REGISTER_BEAN) as? UserRegisterReq
         bean
+    }
+
+    /**
+     * 第三方登录来源
+     */
+    private val thirdSource by lazy {
+        intent.getStringExtra(LoginActivity.KEY_SOURCE)
+    }
+
+    /**
+     * 第三方token
+     */
+    private val thirdToken by lazy {
+        intent.getStringExtra(LoginActivity.KEY_THIRD_TOKEN)
     }
 
     /**
@@ -72,12 +102,135 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
         ViewUtils.setEditTextInputSpace(binding.etPassword)
     }
 
+    private lateinit var userInfoBean: LoginData
+
     override fun observe() {
         mViewModel.apply {
+            /**
+             * 检查是否种植过
+             */
+            checkPlant.observe(this@SetPasswordActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    errorMsg?.let { msg -> ToastUtil.shortShow(msg) }
+                }
+                success {
+                    hideProgressLoading()
+                    kotlin.runCatching { // 初始化SDK
+                        InitSdk.init() // 是否种植过
+                        // 保存账号
+                        userInfoBean.email?.let { Prefs.putString(Constants.USER_NAME, it) }
+                        data?.let { PlantCheckHelp().plantStatusCheck(this@SetPasswordActivity, it) }
+                    }
+                    finish()
+                }
+            })
+
+            registerLoginLiveData.observe(this@SetPasswordActivity) {
+                when (it) {
+                    is Resource.Loading -> {
+                        showProgressLoading()
+                    }
+
+                    is Resource.Success -> {
+                        userInfoBean = it.data!! // 保存当前的信息.
+                        GSON.toJson(it.data)?.let { data ->
+                            logI("LoginData: $data")
+                            Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, data)
+                        } // 保存Token
+                        it.data?.token?.let { it1 ->
+                            Prefs.putStringAsync(
+                                Constants.Login.KEY_LOGIN_DATA_TOKEN, it1
+                            )
+                        }
+
+                        // 保存账号密码
+                        it.data?.email?.let { it1 ->
+                            Prefs.putStringAsync(
+                                Constants.Login.KEY_LOGIN_ACCOUNT, it1
+                            )
+                        }
+
+                        /**
+                         * 登录涂鸦
+                         */
+                        val it = mViewModel.registerLoginLiveData.value
+                        mViewModel.tuYaLogin(
+                            map = mapOf(),
+                            interComeUserId = it?.data?.userId,
+                            userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
+                            deviceId = it?.data?.deviceId,
+                            code = it?.data?.tuyaCountryCode,
+                            email = it?.data?.email,
+                            password = AESCipher.aesDecryptString(it?.data?.tuyaPassword, AESCipher.KEY),
+                            onRegisterReceiver = { devId ->
+                                val intent = Intent(this@SetPasswordActivity, TuYaDeviceUpdateReceiver::class.java)
+                                startService(intent)
+                            },
+                            onError = { code, error ->
+                                hideProgressLoading()
+                                error?.let { ToastUtil.shortShow(it) }
+                            })
+                    }
+
+                    is Resource.DataError -> {
+                        hideProgressLoading() // 错误信息显示出来
+                        when (it.errorCode) {
+                            else -> {
+                                it.errorMsg?.let { msg -> ToastUtil.shortShow(msg) }
+                            }
+                        }
+                    }
+
+                    else -> {
+                    }
+                }
+            }
+
+            // 绑定第三方邮箱
+            bindEmail.observe(this@SetPasswordActivity, resourceObserver {
+                success {
+                    when(thirdSource) {
+                        "google" -> {
+                            // 如果是谷歌登录
+                            // 调用登录接口
+                            mViewModel.loginReq.value?.let {
+                                it.userName = emailName
+                                it.password = AESCipher.aesEncryptString(
+                                    binding.etPassword.text.toString(), AESCipher.KEY
+                                )
+                                it.source = "google"
+                                it.autoToken = thirdToken
+                                it.sourceUserId = AESCipher.aesEncryptString(
+                                    Firebase.auth.currentUser?.email, AESCipher.KEY
+                                )
+                                mViewModel.login()
+                            }
+                        }
+                    }
+                }
+            })
+
             // 注册用户
             isVerifySuccess.observe(this@SetPasswordActivity, resourceObserver {
                 success {
                     hideProgressLoading()
+                    if (!thirdSource.isNullOrEmpty()) {
+                        // 如果是第三方登录，注册成之后，直接去登录。
+                        when (thirdSource) {
+                            "google" -> {
+                                bindSourceEmail(
+                                    BindSourceEmailReq(
+                                        emailName, thirdSource, sourceUserId = AESCipher.aesEncryptString(
+                                            Firebase.auth.currentUser?.email, AESCipher.KEY
+                                        )
+                                    )
+                                )
+                            }
+                        }
+                        return@success
+                    }
                     startActivity(Intent(this@SetPasswordActivity, LoginActivity::class.java))
                     finish()
                 }
@@ -118,7 +271,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                     userRegisterBean?.password = AESCipher.aesEncryptString(
                         binding.etPassword.text.toString(),
                         AESCipher.KEY
-                     )
+                    )
                     userRegisterBean?.let { bean -> mViewModel.registerAccount(bean) }
                 } else {
                     // 修改密码
@@ -210,14 +363,14 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                         InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
 
                     binding.cbCheck.background =
-                        ContextCompat.getDrawable(this@SetPasswordActivity, R.mipmap.login_psd_open)
+                        ContextCompat.getDrawable(this@SetPasswordActivity, com.cl.common_base.R.mipmap.login_psd_open)
                 } else {
                     // 密码
                     binding.etPassword.inputType =
                         InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                     binding.cbCheck.background = ContextCompat.getDrawable(
                         this@SetPasswordActivity,
-                        R.mipmap.login_psd_close
+                        com.cl.common_base.R.mipmap.login_psd_close
                     )
                 }
                 binding.etPassword.setSelection(binding.etPassword.text.length)
@@ -228,8 +381,6 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
     }
 
     companion object {
-        // 注册或者是忘记密码  true 是注册 false忘记密码
-        const val KEY_REGISTER_OR_FORGET_PASSWORD = "key_register_or_forget_password"
         const val CONTAIN_DIGIT_REGEX = ".*[0-9].*"
         const val CONTAIN_LETTER_REGEX = ".*[a-zA-Z].*"
     }

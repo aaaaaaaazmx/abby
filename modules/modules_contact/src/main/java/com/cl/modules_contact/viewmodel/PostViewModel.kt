@@ -11,6 +11,7 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.edittext.bean.FormatItemResult
 import com.cl.modules_contact.repository.ContactRepository
 import com.cl.modules_contact.request.AddTrendData
 import com.cl.modules_contact.request.AddTrendReq
@@ -69,6 +70,24 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
     }
 
     /**
+     * 上传之后才发布的标记
+     */
+    private val _uploadImageFlag = MutableLiveData<Boolean>(false)
+    val uploadImageFlag: LiveData<Boolean> = _uploadImageFlag
+    fun setUploadImageFlag(req: Boolean) {
+        _uploadImageFlag.value = req
+    }
+
+    /**
+     * 选择gif的时长
+     */
+    private val _gifCheckBox = MutableLiveData<Boolean>(false)
+    val gifCheckBox: LiveData<Boolean> = _gifCheckBox
+    fun setGifDuration(req: Boolean) {
+        _gifCheckBox.value = req
+    }
+
+    /**
      * 上传多张图片
      */
     private val _uploadImg = MutableLiveData<Resource<MutableList<String>>>()
@@ -120,7 +139,13 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
         _picAddress.value?.add(0, url)
     }
     fun deletePicAddress(index: Int) {
-        _picAddress.value?.removeAt(index)
+        if ((_picAddress.value?.size ?: 0) > 0) {
+            _picAddress.value?.removeAt(index)
+        }
+    }
+
+    fun clearPicAddress() {
+        _picAddress.value?.clear()
     }
 
     /**
@@ -139,5 +164,50 @@ class PostViewModel @Inject constructor(private val repository: ContactRepositor
 
     fun serSelectFriendsRemove(bean: MentionData) {
         _selectFriends.value?.remove(bean)
+    }
+
+    fun findDifferentItems(list1: MutableList<MentionData>, list2: MutableList<FormatItemResult>? = mutableListOf()): MutableList<MentionData> {
+        val result = mutableListOf<MentionData>()
+        if (list2?.isEmpty() == true) return result
+
+        for (item1 in list1) {
+            var found = false
+            for (item2 in list2!!) {
+                if (item1.userId == item2.id) {
+                    found = true
+                    break
+                }
+            }
+            if (!found) {
+                result.add(item1)
+            }
+        }
+        logI("!2312312312: ${result.size}")
+        return result
+    }
+
+
+    fun findDifferentItemForuserList(list1: MutableList<MentionData>, list2: MutableList<FormatItemResult>? = mutableListOf()): MutableList<FormatItemResult> {
+        val result = mutableListOf<FormatItemResult>()
+        if (list2?.isEmpty() == true) return result
+
+        for (item1 in list2!!) {
+            var found = false
+            for (item2 in list1) {
+                if (item1.id == item2.userId) {
+                    found = true
+                    break
+                }
+            }
+            if (!found) {
+                result.add(item1)
+            }
+        }
+
+        result.forEach {
+            logI("12313123: ${it.name}, ${it.id}, ${it.fromIndex}, ${it.length}")
+        }
+
+        return result
     }
 }

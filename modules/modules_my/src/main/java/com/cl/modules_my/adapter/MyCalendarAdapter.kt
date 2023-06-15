@@ -94,23 +94,49 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                         ViewUtils.setGone(llPoint)
                         ViewUtils.setVisible(changWaterGray)
                     }
+
                     1 -> {
                         ViewUtils.setVisible(llPointGray)
                         ViewUtils.setGone(llPoint)
                         ViewUtils.setVisible(changUnlockGray)
                     }
+
                     2 -> {
                         ViewUtils.setVisible(llPointGray)
                         ViewUtils.setGone(llPoint)
                         ViewUtils.setVisible(changElseGray)
                     }
+
                     else -> {
 
                     }
                 }
             } else if (DateHelper.after(itemTime, currentTime) || item.ymd == CalendarUtil.getFormat("yyyy-MM-dd").format(Date())) {
+                // 根据数量展示小圆点
+                when (index) {
+                    0 -> {
+                        ViewUtils.setVisible(changeUnlock)
+                    }
+
+                    1 -> {
+                        ViewUtils.setVisible(changeUnlock)
+                        ViewUtils.setVisible(changElse)
+                    }
+                    2 -> {
+                        ViewUtils.setVisible(changeUnlock)
+                        ViewUtils.setVisible(changElse)
+                        ViewUtils.setVisible(changWater)
+                    }
+                    else -> {
+                        if (index > 2) {
+                            ViewUtils.setVisible(changeUnlock)
+                            ViewUtils.setVisible(changElse)
+                            ViewUtils.setVisible(changWater)
+                        }
+                    }
+                }
                 // 当前时间小于或者等于itemTime
-                if (null == data) return@forEachIndexed
+                /*if (null == data) return@forEachIndexed
                 if (data.taskType.isNullOrEmpty()) return@forEachIndexed
                 when (data.taskType) {
                     UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT,
@@ -134,7 +160,7 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                     else -> {
                         ViewUtils.setVisible(changElse)
                     }
-                }
+                }*/
             }
         }
         return false
@@ -160,6 +186,7 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                     )
                 }
             }
+
             Calendar.KEY_NORMAL -> {
                 if (CalendarUtil.isSaturday(item)) {
                     ContextCompat.getDrawable(
@@ -178,6 +205,7 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                     )
                 }
             }
+
             Calendar.KEY_END -> {
                 if (CalendarUtil.isSunday(item)) {
                     ContextCompat.getDrawable(
@@ -191,6 +219,7 @@ class MyCalendarAdapter(data: MutableList<Calendar>?) :
                     )
                 }
             }
+
             else -> {
                 null
             }

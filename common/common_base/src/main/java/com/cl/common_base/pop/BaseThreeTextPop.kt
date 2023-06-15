@@ -17,9 +17,11 @@ class BaseThreeTextPop(
     val oneLineText: String? = null,
     val twoLineText: String? = null,
     val threeLineText: String? = null,
+    val fourLineText: String? = null,
     private val oneLineCLickEventAction: (() -> Unit)? = null,
     private val twoLineCLickEventAction: (() -> Unit)? = null,
     private val threeLineCLickEventAction: (() -> Unit)? = null,
+    private val fourLineClickEventAction: (() -> Unit)? = null,
 ) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_three_pop
@@ -35,10 +37,12 @@ class BaseThreeTextPop(
             ViewUtils.setVisible(!oneLineText.isNullOrEmpty(), tvOne)
             ViewUtils.setVisible(!twoLineText.isNullOrEmpty(), tvTwo)
             ViewUtils.setVisible(!threeLineText.isNullOrEmpty(), tvThree, vvThree)
+            ViewUtils.setVisible(!fourLineText.isNullOrEmpty(), tvFour, vvFour)
 
             tvOne.text = oneLineText
             tvTwo.text = twoLineText
             tvThree.text = threeLineText
+            tvFour.text = fourLineText
 
             tvOne.setOnClickListener {
                 oneLineCLickEventAction?.invoke()
@@ -50,6 +54,10 @@ class BaseThreeTextPop(
             }
             tvThree.setOnClickListener {
                 threeLineCLickEventAction?.invoke()
+                dismiss()
+            }
+            tvFour.setOnClickListener {
+                fourLineClickEventAction?.invoke()
                 dismiss()
             }
         }

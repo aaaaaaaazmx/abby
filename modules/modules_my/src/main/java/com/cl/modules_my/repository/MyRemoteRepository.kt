@@ -9,6 +9,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.modules_my.request.OxygenCoinListBean
+import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -196,6 +197,9 @@ class MyRemoteRepository @Inject constructor() {
 
     fun oxygenCoinBillList(req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>> {
         return service.oxygenCoinBillList(req)
+    }
+    fun resetPwd(req: ResetPwdReq): Flow<HttpResult<BaseBean>> {
+        return service.resetPwd(req)
     }
 
 }

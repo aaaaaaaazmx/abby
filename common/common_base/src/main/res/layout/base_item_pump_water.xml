@@ -9,87 +9,279 @@
             name="data"
             type="com.cl.common_base.bean.AdvertisingData" />
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
+
+        <import type="com.cl.common_base.ext.DateHelper" />
+
+        <import type="android.text.TextUtils" />
+
 
     </data>
 
-    <com.lin.cardlib.SwipeTouchLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingConstraints">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/iv_img"
+            url="@{data.picture}"
             android:layout_width="match_parent"
-            android:layout_height="358dp"
-            android:background="@mipmap/base_pump_water_bg"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:layout_height="match_parent"
+            tools:background="@mipmap/ic_launcher" />
 
-            <RelativeLayout
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="27dp"
-                android:layout_marginEnd="17dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-                <ImageView
-                    android:id="@+id/iv_idea"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/base_pump_water_idea" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="21dp"
-                    android:layout_toRightOf="@+id/iv_idea"
-                    android:text="Tip"
-                    android:textColor="@color/mainColor"
-                    android:textSize="17sp" />
-            </RelativeLayout>
-
-            <ImageView
-                android:id="@+id/iv_pic"
-                url="@{data.picture}"
-                android:layout_width="match_parent"
-                android:layout_height="171dp"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="28dp"
-                android:layout_marginEnd="17dp"
-                android:visibility="@{null == data.picture ? View.GONE : View.VISIBLE}"
-                tools:background="@mipmap/ic_launcher" />
-
-            <com.cl.common_base.video.SampleCoverVideo
-                android:visibility="@{null == data.video ? View.GONE : View.VISIBLE}"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="28dp"
-                android:layout_marginEnd="17dp"
-                android:id="@+id/video_item_player"
-                android:layout_width="match_parent"
-                android:layout_height="171dp"
-                android:layout_below="@+id/cl_title"
-                app:layout_constraintEnd_toEndOf="parent"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_avatar"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_title"
-                tools:ignore="MissingConstraints" />
-
-            <TextView
-                android:maxLines="4"
-                android:ellipsize="end"
-                android:id="@+id/tv_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="27dp"
-                android:layout_marginEnd="17dp"
+                android:layout_marginEnd="11dp"
+                android:layout_marginStart="11dp"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/ivAvatar"
+                    circleUrl="@{data.avatarPicture}"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:visibility="@{TextUtils.isEmpty(data.avatarPicture) ? View.GONE : View.VISIBLE}"
+                    tools:src="@mipmap/ic_launcher" />
+
+                <TextView
+                    android:id="@+id/nohead_show"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/head_bg"
+                    android:gravity="center"
+                    android:text="@{data.nickName.substring(0,1)}"
+                    android:textColor="@color/mainColor"
+                    android:textColorHint="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:visibility="@{TextUtils.isEmpty(data.avatarPicture) ? View.VISIBLE : View.GONE}" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_marginTop="18dp"
+                app:layout_constraintTop_toBottomOf="@+id/cl_avatar"
+                android:id="@+id/ll_root"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="@+id/cl_avatar"
+                app:layout_constraintStart_toStartOf="@+id/cl_avatar"
+               >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_love"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <!-- android:background="@drawable/create_love_checkbox"-->
+                    <CheckBox
+                        android:id="@+id/curing_box_love"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/pump_love_checkbox"
+                        android:button="@null"
+                        android:checked="@{data.isPraise == 0 ? false : true}"
+                        android:clickable="false"
+                        android:enabled="false"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:shadowColor="#000000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text='@{data.praise == 0 ? "" : String.valueOf(data.praise)}'
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/curing_box_love"
+                        app:layout_constraintStart_toStartOf="@+id/curing_box_love"
+                        app:layout_constraintTop_toBottomOf="@+id/curing_box_love"
+                        tools:text="520" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_marginTop="18dp"
+                    android:id="@+id/cl_gift"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <CheckBox
+                        android:id="@+id/curing_box_gift"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:background="@drawable/pump_gift_checkbox"
+                        android:button="@null"
+                        android:checked="@{data.isReward == 0 ? false : true}"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:padding="5dp"
+                         />
+
+                    <TextView
+                        android:shadowColor="#000000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text='@{data.reward == 0 ? "" : String.valueOf(data.reward)}'
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/curing_box_gift"
+                        app:layout_constraintStart_toStartOf="@+id/curing_box_gift"
+                        app:layout_constraintTop_toBottomOf="@+id/curing_box_gift"
+                        tools:text="520" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@mipmap/contact_trans_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_goneMarginStart="16dp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/white"
+                android:layout_marginBottom="6dp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_desc"
+                android:id="@+id/tv_name"
+                android:shadowColor="@color/white"
+                android:text="@{data.nickName}"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+            <TextView
+                android:paddingBottom="10dp"
+                android:gravity="start"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/white"
+                android:ellipsize="end"
+                android:maxLines="3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="@id/tv_name"
+                android:id="@+id/tv_desc"
+                android:shadowColor="@color/white"
                 android:text="@{data.description}"
-                android:textColor="#161B19"
                 android:textSize="15sp"
-                android:textStyle="bold"
-                tools:ignore="MissingConstraints"
-                tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod endum laoreet. Proin gravida dolor sit amet lacus accumsan" />
-        </LinearLayout>
-    </com.lin.cardlib.SwipeTouchLayout>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- <com.lin.cardlib.SwipeTouchLayout
+         android:visibility="gone"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content">
+
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="358dp"
+             android:background="@mipmap/base_pump_water_bg"
+             android:orientation="vertical"
+             android:padding="24dp">
+
+             <RelativeLayout
+                 android:visibility="gone"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginStart="17dp"
+                 android:layout_marginTop="27dp"
+                 android:layout_marginEnd="17dp">
+
+                 <ImageView
+                     android:id="@+id/iv_idea"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@mipmap/base_pump_water_idea" />
+
+                 <TextView
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_centerVertical="true"
+                     android:layout_marginStart="21dp"
+                     android:layout_toRightOf="@+id/iv_idea"
+                     android:text="Tip"
+                     android:textColor="@color/mainColor"
+                     android:textSize="17sp" />
+             </RelativeLayout>
+
+             <ImageView
+                 android:id="@+id/iv_pic"
+                 url="@{data.picture}"
+                 android:layout_width="match_parent"
+                 android:layout_height="171dp"
+                 android:layout_marginStart="17dp"
+                 android:layout_marginTop="28dp"
+                 android:layout_marginEnd="17dp"
+                 android:visibility="@{null == data.picture ? View.GONE : View.VISIBLE}"
+                 tools:background="@mipmap/ic_launcher" />
+
+             <com.cl.common_base.video.SampleCoverVideo
+                 android:visibility="@{null == data.video ? View.GONE : View.VISIBLE}"
+                 android:layout_marginStart="17dp"
+                 android:layout_marginTop="28dp"
+                 android:layout_marginEnd="17dp"
+                 android:id="@+id/video_item_player"
+                 android:layout_width="match_parent"
+                 android:layout_height="171dp"
+                 android:layout_below="@+id/cl_title"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintTop_toBottomOf="@+id/cl_title"
+                 tools:ignore="MissingConstraints" />
+
+             <TextView
+                 android:maxLines="4"
+                 android:ellipsize="end"
+                 android:id="@+id/tv_text"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_marginStart="17dp"
+                 android:layout_marginTop="27dp"
+                 android:layout_marginEnd="17dp"
+                 android:text="@{data.description}"
+                 android:textColor="#FFFFFF"
+                 android:textSize="15sp"
+                 android:textStyle="bold"
+                 tools:ignore="MissingConstraints"
+                 tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod endum laoreet. Proin gravida dolor sit amet lacus accumsan" />
+         </LinearLayout>
+     </com.lin.cardlib.SwipeTouchLayout>-->
 
 </layout>

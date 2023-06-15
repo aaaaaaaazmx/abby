@@ -1,13 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
     </data>
 
-  <ImageView
+  <!--<ImageView
       android:id="@+id/iv_pic_add"
       android:src="@mipmap/contact_add_pic"
       android:layout_width="64dp"
-      android:layout_height="64dp"/>
+      android:layout_height="64dp"/>-->
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_pic_add"
+            android:layout_width="63dp"
+            android:layout_height="64dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:background="@mipmap/contact_add_pic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ProgressBar
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:progress="65"
+            android:id="@+id/game_pro"
+            android:layout_width="43dp"
+            android:layout_height="5dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:background="@null"
+            android:layout_centerHorizontal="true"
+            android:progressDrawable="@drawable/contact_progress_shape"/>
+
+
+        <ImageView
+            android:visibility="invisible"
+            android:layout_alignParentRight="true"
+            android:id="@+id/img_contact_pic_delete"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@mipmap/device_chooser_photo_bg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </RelativeLayout>
 </layout>

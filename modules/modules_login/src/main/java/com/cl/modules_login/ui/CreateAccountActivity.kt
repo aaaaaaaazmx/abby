@@ -17,6 +17,8 @@ import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_EMAIL_NAME
 import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_IS_REGISTER
 import com.cl.modules_login.viewmodel.CreateAccountViewModel
 import com.cl.modules_login.widget.PrivacyPop
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
 import com.tencent.bugly.proguard.ad
 import com.tuya.bouncycastle.asn1.x509.X509ObjectIdentifiers.countryName
@@ -34,6 +36,15 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
     @Inject
     lateinit var mViewModel: CreateAccountViewModel
 
+    // 第三方来源
+    private val thirdSource by lazy {
+        intent.getStringExtra(LoginActivity.KEY_SOURCE)
+    }
+    // 第三方登录的token
+    private val thirdToken by lazy {
+        intent.getStringExtra(LoginActivity.KEY_THIRD_TOKEN)
+    }
+
     private val privacyPop by lazy {
         PrivacyPop(
             context = this@CreateAccountActivity,
@@ -43,6 +54,11 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                 // 点击同意隐私协议
                 // 初始化SDK
                 InitSdk.init()
+                if (thirdSource?.isNotEmpty() == true) {
+                    // 发送验证码
+                    mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "5")
+                    return@PrivacyPop
+                }
                 // 发送验证码
                 mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "1")
             },
@@ -82,6 +98,10 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
         // 获取列表
         mViewModel.getCountList()
 
+        // 第三方登录，直接显示绑定邮箱
+        if (!thirdSource.isNullOrEmpty()) {
+            binding.tvCreateLog.text = "Bind Email"
+        }
 
     }
 
@@ -139,6 +159,8 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                         intent.putExtra(KEY_EMAIL_NAME, binding.etEmail.text.toString())
                         intent.putExtra(KEY_IS_REGISTER, true)
                         intent.putExtra(KEY_USER_REGISTER_BEAN, userRegisterBean)
+                        intent.putExtra(LoginActivity.KEY_SOURCE, thirdSource)
+                        intent.putExtra(LoginActivity.KEY_THIRD_TOKEN, thirdToken)
                         startActivity(intent)
                     }
                     is Resource.Loading -> {

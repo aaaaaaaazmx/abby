@@ -2,6 +2,7 @@ package com.cl.modules_login.viewmodel
 
 import androidx.lifecycle.*
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.UserinfoBean
@@ -56,6 +57,64 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
         Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
     }
 
+    // 第三方登录未绑定邮箱
+    private val _noBindEmail = MutableLiveData<Boolean>(false)
+    val noBindEmail: LiveData<Boolean> = _noBindEmail
+
+    /**
+     * 第三方来源
+     */
+    private val _thirdSource = MutableLiveData<String>()
+    val thirdSource: LiveData<String> = _thirdSource
+    fun setThirdSource(source: String) {
+        _thirdSource.value = source
+    }
+
+    /**
+     * 第三方登录的token
+     */
+    private val _thirdToken = MutableLiveData<String>()
+    val thirdToken: LiveData<String> = _thirdToken
+    fun setThirdToken(token: String) {
+        _thirdToken.value = token
+    }
+
+    /**
+     * 检查第三方登录邮箱是否已经绑定过
+     */
+    private val _checkThirdEmail = MutableLiveData<Resource<Boolean>>()
+    val checkThirdEmail: LiveData<Resource<Boolean>> = _checkThirdEmail
+    fun checkThirdEmail(email: String) = viewModelScope.launch {
+        repository.checkUserExists(email)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _checkThirdEmail.value = it
+            }
+    }
+
+
+
     /**
      * 登录
      */
@@ -84,8 +143,21 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                             "${it.message}"
                         )
                     )
-                }.collectLatest {
-                    _registerLoginLiveData.value = it
+                }.collectLatest { data ->
+                    when (data) {
+                        is Resource.DataError -> {
+                            if (data.errorCode == 1005) {
+                                // 表示第三方登录没有注册、也就是没有绑定过邮箱
+                                _noBindEmail.value = true
+                            } else {
+                                _registerLoginLiveData.value = data
+                            }
+                        }
+
+                        else -> {
+                            _registerLoginLiveData.value = data
+                        }
+                    }
                 }
         }
     }
@@ -396,6 +468,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                             }
                             logI("123123123:: ${Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)}")
                         }
+
                         else -> {}
                     }
                 }

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "995131742482-0fleq0tn0qv0qfcv3efb2vof4dvprtqb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cl.abby",
+            "certificate_hash": "70cc177bfd8ae1a5c645d87b86e869ffa42b7afc"
+          }
+        },
+        {
           "client_id": "995131742482-8oq163kb35oria5idl62eip4t1pc4cig.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -22,7 +30,15 @@
           }
         },
         {
-          "client_id": "995131742482-rcmv4nb2qq9cr5alfdqkpecdaeqkddbo.apps.googleusercontent.com",
+          "client_id": "995131742482-e12ggmd7acs7f56ds0l27dou5gguuai8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cl.abby",
+            "certificate_hash": "9bda40a23ca1e51c2edb5b4d6bfcaaece700dc12"
+          }
+        },
+        {
+          "client_id": "995131742482-i3vj9v7h9nh8hfbu36jtaju9ul4jgdoi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -35,8 +51,16 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "995131742482-rcmv4nb2qq9cr5alfdqkpecdaeqkddbo.apps.googleusercontent.com",
+              "client_id": "995131742482-i3vj9v7h9nh8hfbu36jtaju9ul4jgdoi.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "995131742482-c36vsjbsebjup6lve2jv89sub8j8k78k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cl.Abby",
+                "app_store_id": "1594778711"
+              }
             }
           ]
         }

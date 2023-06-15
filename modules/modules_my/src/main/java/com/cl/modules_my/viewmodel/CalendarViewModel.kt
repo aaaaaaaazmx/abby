@@ -563,4 +563,56 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     fun setGuideInfoTime(guideInfoTaskTime: String) {
         _guideInfoTaskTime.postValue(guideInfoTaskTime)
     }
+
+    // 记录packetNo
+    private val _packetNo = MutableLiveData<String?>()
+    val packetNo: LiveData<String?> = _packetNo
+    fun setPacketNo(packetNo: String?) {
+        _packetNo.value = packetNo
+    }
+
+    /**
+     * 保存解锁任务包
+     */
+    private val _saveUnlockTask = MutableLiveData<MutableList<CalendarData.TaskList.SubTaskList>>()
+    val saveUnlockTask: LiveData<MutableList<CalendarData.TaskList.SubTaskList>> = _saveUnlockTask
+    fun setSaveUnlockTask(list: MutableList<CalendarData.TaskList.SubTaskList>) {
+        _saveUnlockTask.value = list
+    }
+
+    /**
+     * 检查是否种植过植物
+     */
+    private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
+    val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
+    fun checkPlant(uuid: String? = tuYaUser?.uid) = viewModelScope.launch {
+        uuid?.let {
+            repository.checkPlant(it)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _checkPlant.value = it
+                }
+        }
+    }
+
 }

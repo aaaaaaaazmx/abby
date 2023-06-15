@@ -1726,12 +1726,61 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // InterCome信息
             getInterComeData.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
+                    // 更新InterCome用户信息
+                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
+                        map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
+                    )
+
+                    // 更新涂鸦Bean
+                    TuyaHomeSdk.newHomeInstance(mViewMode.homeId)
+                        .getHomeDetail(object : ITuyaHomeResultCallback {
+                            override fun onSuccess(bean: HomeBean?) {
+                                bean?.let { it ->
+                                    val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                    logI("123123123: ${arrayList.size}")
+                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
+                                        .apply {
+                                            logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
+                                            if (null == this) {
+                                                val aa = mViewMode.tuyaDeviceBean
+                                                aa()?.devId = mViewMode.deviceId.value
+                                                GSON.toJson(aa)?.let {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                                        it
+                                                    )
+                                                }
+                                                return@apply
+                                            }
+                                            GSON.toJson(this)?.let {
+                                                Prefs.putStringAsync(
+                                                    Constants.Tuya.KEY_DEVICE_DATA,
+                                                    it
+                                                )
+                                            }
+
+                                            // 重新注册服务
+                                            // 开启服务
+                                            val intent = Intent(
+                                                context,
+                                                TuYaDeviceUpdateReceiver::class.java
+                                            )
+                                            context?.startService(intent)
+                                            // 切换之后需要重新刷新所有的东西
+                                            mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                        }
+                                }
+                            }
+
+                            override fun onError(errorCode: String?, errorMsg: String?) {
+
+                            }
+                        })
                 }
                 success {
                     // 更新InterCome用户信息
-                    val map = this.data
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
-                        map = map, userDetail.value?.data, refreshToken.value?.data,
+                        map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
                     )
 
                     // 更新涂鸦Bean
@@ -3520,11 +3569,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 排水结束
                 TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
                     if (isManual != true) return
-                    binding.plantManual.ivDrainStatus.background =
+                    /*binding.plantManual.ivDrainStatus.background =
                         resources.getDrawable(
                             R.mipmap.home_drain_start,
                             context?.theme
-                        )
+                        )*/
                 }
                 // 排水暂停
                 TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
