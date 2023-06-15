@@ -244,10 +244,33 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
              */
             isBindEmail.observe(this@VerifyEmailActivity, resourceObserver {
                 success {
-                    // 不管有没有绑定过，都需要绑定，只是检查是否存在
-                    bindSourceEmail(BindSourceEmailReq(emailName, thirdSource, sourceUserId = AESCipher.aesEncryptString(
-                        Firebase.auth.currentUser?.email, AESCipher.KEY
-                    )))
+                    if (data == false) {
+                        // 跳转到修改密码界面, 需要区分是注册用户还是忘记密码用户,接口不一样
+                        val intent =
+                            Intent(this@VerifyEmailActivity, SetPasswordActivity::class.java)
+                        intent.putExtra(
+                            KEY_REGISTER_OR_FORGET_PASSWORD,
+                            true
+                        )
+                        // 用户注册的一些必要参数
+                        intent.putExtra(
+                            CreateAccountActivity.KEY_USER_REGISTER_BEAN,
+                            userRegisterBean
+                        )
+                        intent.putExtra(KEY_EMAIL_NAME, emailName)
+                        intent.putExtra(LoginActivity.KEY_SOURCE, thirdSource)
+                        intent.putExtra(LoginActivity.KEY_THIRD_TOKEN, thirdToken)
+                        startActivity(intent)
+                    } else {
+                        // 不管有没有绑定过，都需要绑定，只是检查是否存在
+                        bindSourceEmail(
+                            BindSourceEmailReq(
+                                emailName, thirdSource, sourceUserId = AESCipher.aesEncryptString(
+                                    Firebase.auth.currentUser?.email, AESCipher.KEY
+                                )
+                            )
+                        )
+                    }
                 }
             })
 
@@ -255,11 +278,13 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
              * 第三方绑定邮箱
              */
             bindEmail.observe(this@VerifyEmailActivity, resourceObserver {
-                success {
+                error { errorMsg, code ->
 
+                }
+                success {
                     if (isBindEmail.value?.data == true) {
                         //  如果已经绑定过，那么直接使用第三方登录
-                        when(thirdSource) {
+                        when (thirdSource) {
                             "google" -> {
                                 // 如果是谷歌登录
                                 // 调用登录接口
@@ -305,6 +330,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         hideProgressLoading()
                         it.errorMsg?.let { it1 -> ToastUtil.shortShow(it1) }
                     }
+
                     is Resource.Success -> {
                         hideProgressLoading()
                         logD("isVerifySuccess: ${it.data}")
@@ -333,6 +359,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         intent.putExtra(KEY_EMAIL_NAME, emailName)
                         startActivity(intent)
                     }
+
                     is Resource.Loading -> {
                         /*showProgressLoading()*/
                     }
@@ -364,7 +391,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
             }
             binding.btnSuccess.isEnabled = true
             // 验证码邮箱是否正确
-            emailName?.let { name -> mViewModel.verifyCode(it, name) }
+            // emailName?.let { name -> mViewModel.verifyCode(it, name) }
         }
     }
 

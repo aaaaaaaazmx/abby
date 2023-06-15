@@ -389,21 +389,6 @@
                     android:layout_marginEnd="20dp"
                     android:background="@color/lineBg" />
 
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@color/white"
-                    app:itemTitle="Reset Password" />
-
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height=".5dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@color/lineBg" />
-
                 <!--重量单位-->
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_weight"
@@ -422,6 +407,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     app:itemTitle="@string/my_cache" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    app:itemTitle="Change the password" />
+
 
                 <View
                     android:layout_width="match_parent"

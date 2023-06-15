@@ -14,6 +14,8 @@ import android.graphics.Paint;
 import android.text.TextUtils;
 import android.util.TypedValue;
 
+import com.cl.common_base.constants.Constants;
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -462,8 +464,15 @@ public class Gif {
             if (!TextUtils.isEmpty(nickName)) {
                 Paint p = new Paint();
                 p.setColor(Color.WHITE);
-                p.setTextSize(sp2px(7));
-                g.drawText("@" + nickName, width - 100, height - 100, p);
+                p.setTextSize(sp2px(10));
+                /*g.drawText("@" + nickName, width - 100, height - 100, p);*/
+
+                int x = (int) (((Constants.Global.KEY_GIF_WIDTH - image.getWidth()) / 2) + image.getWidth());
+                x =  x >= Constants.Global.KEY_GIF_WIDTH ? (int) (Constants.Global.KEY_GIF_WIDTH ) : x;
+                int y = (int) (((Constants.Global.KEY_GIF_HEIGHT - image.getHeight()) / 2) + image.getHeight());
+                y =  y >= Constants.Global.KEY_GIF_HEIGHT ? (int) (Constants.Global.KEY_GIF_HEIGHT) : y;
+                int textWidth = (int) p.measureText("@" + nickName) + 50;
+                g.drawText("@" + nickName, x >= Constants.Global.KEY_GIF_HEIGHT ? width - textWidth : x - textWidth, y >= Constants.Global.KEY_GIF_HEIGHT ? height - 50 : y - 50, p);
             }
 
             image = temp;

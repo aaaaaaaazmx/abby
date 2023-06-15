@@ -14,8 +14,6 @@ import android.os.Build
 import android.text.TextUtils
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.FileProvider
-import androidx.core.content.FileProvider.getUriForFile
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -52,7 +50,6 @@ import com.cl.modules_contact.util.DeviceConstants
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.utils.DensityUtil
 import com.lxj.xpopup.XPopup
-import com.lxj.xpopup.impl.LoadingPopupView
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,8 +61,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import top.zibin.luban.Luban
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.io.Serializable
 import java.lang.Float.min
 import java.security.MessageDigest
@@ -139,6 +134,8 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                             }
                             Collections.swap(picList, fromPosition, toPosition)
                             chooserAdapter.notifyItemMoved(fromPosition, toPosition)
+                            // 调换位置了也需要删除，
+                            viewModel.clearPicAddress()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -339,9 +336,14 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
 
             // 同时也需要判断，当前是否上传过gif,判断当前没有gif，但是选择的照片又不为空
             if ((viewModel.picAddress.value?.size ?: 0) <= 0 && !picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC }) {
+                showProgressLoading()
                 // 1、先生成gif、并且上传gif, 2、发布
                 viewModel.setUploadImageFlag(true)
-                generateGifAndUploadGif()
+                generateGifAndUploadGif {
+                    runOnUiThread {
+                        if (!it) hideProgressLoading()
+                   }
+                }
                 return@setOnClickListener
             }
             // 3、 其他情况直接发布
@@ -383,11 +385,11 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     binding.cbThree.setTextColor(Color.BLACK)
                 }
             }
-            // 如果有图
+           /* // 如果有图
             if (picList.size == 1) return@setOnCheckedChangeListener
             if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2 && viewModel.picAddress.value?.isEmpty() == true) {
                 generateGifAndUploadGif(delayCheck = true)
-            }
+            }*/
         }
         binding.cbTwo.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -405,11 +407,11 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     binding.cbThree.setTextColor(Color.BLACK)
                 }
             }
-            // 如果有图
+            /*// 如果有图
             if (picList.size == 1) return@setOnCheckedChangeListener
             if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2 && viewModel.picAddress.value?.isEmpty() == true) {
                 generateGifAndUploadGif(delayCheck = true)
-            }
+            }*/
         }
         binding.cbThree.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -427,11 +429,11 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     binding.cbOne.setTextColor(Color.BLACK)
                 }
             }
-            // 如果有图
+            /*// 如果有图
             if (picList.size == 1) return@setOnCheckedChangeListener
             if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2 && viewModel.picAddress.value?.isEmpty() == true) {
                 generateGifAndUploadGif(delayCheck = true)
-            }
+            }*/
         }
 
         binding.clType.setOnClickListener {
@@ -507,78 +509,82 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
      */
     @SuppressLint("CheckResult")
     private fun generateGifAndUploadGif(delayCheck: Boolean? = false, parm: ((status: Boolean) -> Unit)? = null) {
-       lifecycleScope.launch(Dispatchers.IO) {
-           FileUtil.deleteDirectory(DeviceConstants.getDialPhotoPath(this@ReelPostActivity))
-           val sources: MutableList<Bitmap> = ArrayList()
-           picList.forEachIndexed { index, choosePicBean ->
-               if (choosePicBean.type == ChoosePicBean.KEY_TYPE_PIC) {
-                   var imageBitmap: Bitmap? = null
-                   // 需要区分是否是网络图片
-                   if (choosePicBean.picAddress?.contains("https") == true || choosePicBean.picAddress?.contains("http") == true) {
-                       // 表示是网络图片，
-                       val cacheKey = ObjectKey(choosePicBean.picAddress)
-                       val cacheFile = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this@ReelPostActivity), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
-                           .get(cacheKey)
-                       // 通过缓存转换成bitmap
-                       if (cacheFile != null && cacheFile.exists()) {
-                           imageBitmap = BitmapFactory.decodeFile(cacheFile.absolutePath)
-                           imageBitmap = conversionBitmap(imageBitmap, cacheFile.absolutePath)
-                       } else {
-                           // todo 如果没找到缓存，那么就下载图片，并且需要压缩, 其实能看到网络图片那么就完全不需要下载了。
-                       }
-                   } else {
-                       // 表示是本地图片
-                       val uri = (choosePicBean.compressPicAddress ?: choosePicBean.picAddress)?.let { Uri.fromFile(File(it)) }
-                       imageBitmap = ImageUtil.rotationZoomingDecodeBitmap(this@ReelPostActivity, uri)
-                       //                    imageBitmap = BitmapFactory.decodeFile(choosePicBean.picAddress)
-                       //                    imageBitmap = conversionBitmap(imageBitmap, choosePicBean.picAddress)
-                   }
-                   // 转化你之后转换图片
-                   val imagePath = DeviceConstants.getDialPhotoPath(this@ReelPostActivity) + File.separator + "image" + index + ".png"
-                   ImageUtil.saveBitmap(imageBitmap, imagePath)
-                   imageBitmap?.let { it1 -> sources.add(it1) }
-               }
-           }
-           FileUtil.deleteDirectory(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
-           FileUtil.createDirIfNotExists(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
-           // 保存gif路径
-           val dialCustomGif = DeviceConstants.getDialCustomGif(this@ReelPostActivity) + System.currentTimeMillis() + ".gif"
+        lifecycleScope.launch(Dispatchers.IO) {
+            FileUtil.deleteDirectory(DeviceConstants.getDialPhotoPath(this@ReelPostActivity))
+            val sources: MutableList<Bitmap> = ArrayList()
+            picList.forEachIndexed { index, choosePicBean ->
+                if (choosePicBean.type == ChoosePicBean.KEY_TYPE_PIC) {
+                    var imageBitmap: Bitmap? = null
+                    // 需要区分是否是网络图片
+                    if (choosePicBean.picAddress?.contains("https") == true || choosePicBean.picAddress?.contains("http") == true) {
+                        // 表示是网络图片，
+                        val cacheKey = ObjectKey(choosePicBean.picAddress)
+                        val cacheFile = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this@ReelPostActivity), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
+                            .get(cacheKey)
+                        // 通过缓存转换成bitmap
+                        if (cacheFile != null && cacheFile.exists()) {
+                            imageBitmap = BitmapFactory.decodeFile(cacheFile.absolutePath)
+                            imageBitmap = conversionBitmap(imageBitmap, cacheFile.absolutePath)
+                        } else {
+                            // todo 如果没找到缓存，那么就下载图片，并且需要压缩, 其实能看到网络图片那么就完全不需要下载了。
+                        }
+                    } else {
+                        // 表示是本地图片
+                        val uri = (choosePicBean.compressPicAddress ?: choosePicBean.picAddress)?.let { Uri.fromFile(File(it)) }
+                        imageBitmap = ImageUtil.rotationZoomingDecodeBitmap(this@ReelPostActivity, uri)
+                        //                    imageBitmap = BitmapFactory.decodeFile(choosePicBean.picAddress)
+                        //                    imageBitmap = conversionBitmap(imageBitmap, choosePicBean.picAddress)
+                    }
+                    // 转化你之后转换图片
+                    val imagePath = DeviceConstants.getDialPhotoPath(this@ReelPostActivity) + File.separator + "image" + index + ".png"
+                    ImageUtil.saveBitmap(imageBitmap, imagePath)
+                    imageBitmap?.let { it1 -> sources.add(it1) }
+                }
+            }
+            FileUtil.deleteDirectory(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
+            FileUtil.createDirIfNotExists(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
+            // 保存gif路径
+            val dialCustomGif = DeviceConstants.getDialCustomGif(this@ReelPostActivity) + System.currentTimeMillis() + ".gif"
 
-           // 根据选择的时长
-           val delayTime = if (binding.cbOne.isChecked) {
-               300
-           } else if (binding.cbTwo.isChecked) {
-               500
-           } else if (binding.cbThree.isChecked) {
-               800
-           } else {
-               300 // Default delay time
-           }
-           // .setRepeat(1)
-           Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay(delayTime).start(object : Gif.ResultCallback {
-               override fun onSuccess(destPath: String?) {
-                   parm?.invoke(true)
-                   logI("pngToGif >> onSuccess")
-                   if (delayCheck == true || viewModel.uploadImageFlag.value == true) {
-                       // 上传gif
-                       viewModel.uploadImg(upLoadImage(dialCustomGif))
-                       return
-                   }
-                   viewModel.uploadImg(upLoadImage(dialCustomGif))
-                   // 并不是什么时候都展示展示Gif图
-                   XPopup.Builder(this@ReelPostActivity).asImageViewer(
-                       binding.ivPreview, destPath, SmartGlideImageLoader()
-                   ).show()
+            // 根据选择的时长
+            var delayTime = if (binding.cbOne.isChecked) {
+                300f / (sources.size * 100f)
+            } else if (binding.cbTwo.isChecked) {
+                500f / (sources.size * 100f)
+            } else if (binding.cbThree.isChecked) {
+                800f / (sources.size * 100f)
+            } else {
+                // Default delay time
+                300f / (sources.size * 100f)
+            }
+            logI("123123123: delayTime: $delayTime")
+            val num = delayTime
+            val formatted = String.format("%.2f", num) // 将浮点数格式化为字符串，保留两位小数
+            logI("123123123: delayTime: $formatted,,,, ${(formatted.toFloat() * 100).toInt()}")
+            Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay((formatted.toFloat() * 100).toInt()).start(object : Gif.ResultCallback {
+                override fun onSuccess(destPath: String?) {
+                    parm?.invoke(true)
+                    logI("pngToGif >> onSuccess")
+                    if (delayCheck == true || viewModel.uploadImageFlag.value == true) {
+                        // 上传gif
+                        viewModel.uploadImg(upLoadImage(dialCustomGif))
+                        return
+                    }
+                    viewModel.uploadImg(upLoadImage(dialCustomGif))
+                    // 并不是什么时候都展示展示Gif图
+                    XPopup.Builder(this@ReelPostActivity).asImageViewer(
+                        binding.ivPreview, destPath, SmartGlideImageLoader()
+                    ).show()
 
-               }
+                }
 
-               override fun onError(msg: String?) {
-                   parm?.invoke(false)
-                   logI("pngToGif >> onFailure")
-                   ToastUtil.shortShow("pngToGif >> onFailure")
-               }
-           })
-       }
+                override fun onError(msg: String?) {
+                    parm?.invoke(false)
+                    logI("pngToGif >> onFailure")
+                    ToastUtil.shortShow("pngToGif >> onFailure")
+                }
+            })
+        }
     }
 
     /**

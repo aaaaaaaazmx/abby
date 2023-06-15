@@ -2,6 +2,7 @@ package com.cl.modules_login.viewmodel
 
 import androidx.lifecycle.*
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
@@ -17,6 +18,7 @@ import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_login.repository.BindSourceEmailReq
 import com.cl.modules_login.repository.RegisterLoginRepository
 import com.cl.modules_login.request.LoginReq
 import com.cl.modules_login.request.UpdatePwdReq
@@ -161,6 +163,42 @@ class SetPassWordViewModel @Inject constructor(private val repository: RegisterL
                 }
         }
     }
+
+
+    /**
+     * 第三方登录，绑定邮箱
+     */
+    private val _bindEmail = MutableLiveData<Resource<BaseBean>>()
+    val bindEmail: LiveData<Resource<BaseBean>> = _bindEmail
+    fun bindSourceEmail(email: BindSourceEmailReq) =
+        viewModelScope.launch {
+            repository.bindSourceEmail(email)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("verifyEmail: catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _bindEmail.value = it
+                }
+        }
 
 
     /**

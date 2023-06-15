@@ -54,9 +54,9 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                 // 点击同意隐私协议
                 // 初始化SDK
                 InitSdk.init()
-                if (!thirdSource.isNullOrEmpty()) {
+                if (thirdSource?.isNotEmpty() == true) {
                     // 发送验证码
-                    Firebase.auth.currentUser?.email?.let { mViewModel.verifyEmail(email = it, "5") }
+                    mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "5")
                     return@PrivacyPop
                 }
                 // 发送验证码

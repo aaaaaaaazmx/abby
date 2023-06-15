@@ -580,4 +580,39 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         _saveUnlockTask.value = list
     }
 
+    /**
+     * 检查是否种植过植物
+     */
+    private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
+    val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
+    fun checkPlant(uuid: String? = tuYaUser?.uid) = viewModelScope.launch {
+        uuid?.let {
+            repository.checkPlant(it)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _checkPlant.value = it
+                }
+        }
+    }
+
 }

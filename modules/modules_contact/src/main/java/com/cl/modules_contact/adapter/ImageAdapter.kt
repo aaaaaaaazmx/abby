@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.cl.common_base.R
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
 import com.lxj.xpopup.util.SmartGlideImageLoader
@@ -27,8 +29,9 @@ class ImageAdapter(val imageUrls: List<String>, val context: Context) : BannerAd
 
     override fun onBindView(holder: ImageHolder, data: String, position: Int, size: Int) {
         Glide.with(holder.itemView)
-                .load(data)
-                .into(holder.imageView)
+            .load(data)
+            .apply(RequestOptions()).placeholder(R.mipmap.placeholder).error(R.mipmap.placeholder)
+            .into(holder.imageView)
 
         holder.itemView.setOnClickListener {
             // 图片浏览

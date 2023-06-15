@@ -29,6 +29,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivitySetPasswordBinding
+import com.cl.modules_login.repository.BindSourceEmailReq
 import com.cl.modules_login.request.UpdatePwdReq
 import com.cl.modules_login.request.UserRegisterReq
 import com.cl.modules_login.response.LoginData
@@ -187,26 +188,45 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                 }
             }
 
+            // 绑定第三方邮箱
+            bindEmail.observe(this@SetPasswordActivity, resourceObserver {
+                success {
+                    when(thirdSource) {
+                        "google" -> {
+                            // 如果是谷歌登录
+                            // 调用登录接口
+                            mViewModel.loginReq.value?.let {
+                                it.userName = emailName
+                                it.password = AESCipher.aesEncryptString(
+                                    binding.etPassword.text.toString(), AESCipher.KEY
+                                )
+                                it.source = "google"
+                                it.autoToken = thirdToken
+                                it.sourceUserId = AESCipher.aesEncryptString(
+                                    Firebase.auth.currentUser?.email, AESCipher.KEY
+                                )
+                                mViewModel.login()
+                            }
+                        }
+                    }
+                }
+            })
+
             // 注册用户
             isVerifySuccess.observe(this@SetPasswordActivity, resourceObserver {
                 success {
                     hideProgressLoading()
                     if (!thirdSource.isNullOrEmpty()) {
                         // 如果是第三方登录，注册成之后，直接去登录。
-                        when(thirdSource) {
+                        when (thirdSource) {
                             "google" -> {
-                                // 如果是谷歌登录
-                                // 调用登录接口
-                                mViewModel.loginReq.value?.let {
-                                    it.userName = null
-                                    it.password = null
-                                    it.source = "google"
-                                    it.autoToken = thirdToken
-                                    it.sourceUserId = AESCipher.aesEncryptString(
-                                        Firebase.auth.currentUser?.email, AESCipher.KEY
+                                bindSourceEmail(
+                                    BindSourceEmailReq(
+                                        emailName, thirdSource, sourceUserId = AESCipher.aesEncryptString(
+                                            Firebase.auth.currentUser?.email, AESCipher.KEY
+                                        )
                                     )
-                                    mViewModel.login()
-                                }
+                                )
                             }
                         }
                         return@success
@@ -251,7 +271,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                     userRegisterBean?.password = AESCipher.aesEncryptString(
                         binding.etPassword.text.toString(),
                         AESCipher.KEY
-                     )
+                    )
                     userRegisterBean?.let { bean -> mViewModel.registerAccount(bean) }
                 } else {
                     // 修改密码

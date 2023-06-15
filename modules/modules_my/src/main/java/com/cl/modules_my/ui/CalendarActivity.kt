@@ -58,6 +58,7 @@ import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.modules_my.adapter.TaskListAdapter
 import com.joketng.timelinestepview.LayoutType
@@ -98,6 +99,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         super.onNewIntent(intent)
         // 刷新任务
         mViewMode.refreshTask()
+        mViewMode.checkPlant()
     }
 
     override fun initView() {
@@ -171,6 +173,20 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 检查植物
+            checkPlant.observe(this@CalendarActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+
+                success {
+                    // 是否种植过
+                    data?.let { PlantCheckHelp().plantStatusCheck(this@CalendarActivity, it, true) }
+                }
+            })
+
+
             // 跳转到主页
             showCompletePage.observe(this@CalendarActivity) {
                 if (it) {
@@ -1893,6 +1909,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 KEY_REQUEST_KNOW_MORE -> {
                     // 刷新任务
                     mViewMode.refreshTask()
+                    mViewMode.checkPlant()
                 }
             }
         }
@@ -1907,6 +1924,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         if (activityResult.resultCode == Activity.RESULT_OK) {
             // 刷新任务
             mViewMode.refreshTask()
+            mViewMode.checkPlant()
         }
     }
 
