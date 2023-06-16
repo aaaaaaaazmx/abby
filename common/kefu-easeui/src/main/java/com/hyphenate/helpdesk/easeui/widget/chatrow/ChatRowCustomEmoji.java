@@ -114,4 +114,3 @@ public class ChatRowCustomEmoji extends ChatRow {
 
 }
 
-

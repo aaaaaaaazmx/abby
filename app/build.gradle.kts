@@ -11,6 +11,7 @@ plugins {
     //    id("kotlin-parcelize")
         id("center.uploadpgy.plugin")
 }
+apply("thingMapping.gradle")
 
 uploadPgyParams {
      apiKey = readProperties("PgyApiKey")

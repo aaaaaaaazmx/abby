@@ -16,8 +16,8 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import com.cl.common_base.ext.letMultiple
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -52,13 +52,13 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         GSON.parseObject(bean, User::class.java)
     }
 
-    val tuyaDeviceBean by lazy {
+    val thingDeviceBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
     private val getDeviceDps by lazy {
-        tuyaDeviceBean?.dps
+        thingDeviceBean?.dps
     }
 
     // 水的容积。=， 多少升

@@ -87,7 +87,7 @@ object Version {
 
     const val luban = "1.1.8"
 
-    const val tuya = "4.0.3"
+    const val tuya = "5.0.1"
 
     const val jcore = "3.3.0"
     const val push = "4.7.2"
@@ -226,7 +226,7 @@ object Deps {
     const val luban = "top.zibin:Luban:${Version.luban}"
 
     // 涂鸦
-    const val tuya = "com.tuya.smart:tuyasmart:${Version.tuya}"
+    const val tuya = "com.thingclips.smart:thingsmart:${Version.tuya}"
 
     // fastJson for tuya
     const val fastJson = "com.alibaba:fastjson:1.1.67.android"

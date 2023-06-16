@@ -30,8 +30,8 @@ import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.lxj.xpopup.XPopup
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IResultCallback
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.FileInputStream
 import java.io.Serializable
@@ -74,7 +74,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             return
         }
         list.firstOrNull { it.isChooser == true }?.apply {
-            if (deviceId != mViewModel.tuyaDeviceBean?.devId) {
+            if (deviceId != mViewModel.thingDeviceBean?.devId) {
                 // 删除原先的、或者切换了设备
                 // 跳转到主页、加载。
                 // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
@@ -143,7 +143,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             data?.get(this)?.isChooser = true
                             return@apply
                         }
-                        data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean?.devId }
+                        data?.indexOfFirst { it.deviceId == mViewModel.thingDeviceBean?.devId }
                             ?.apply {
                                 if (this == -1) {
                                     if (data.isNullOrEmpty()) return@apply
@@ -151,20 +151,20 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                     data?.get(0)?.isChooser = true
                                     return@apply
                                 }
-                                logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
+                                logI("thingDeviceBean ID: ${mViewModel.thingDeviceBean?.devId}")
                                 if (data.isNullOrEmpty()) return@apply
                                 data?.get(this)?.isChooser = true
                             }
                     }
                 } else {
-                    data?.indexOfFirst { it.deviceId == mViewModel.tuyaDeviceBean?.devId }?.apply {
+                    data?.indexOfFirst { it.deviceId == mViewModel.thingDeviceBean?.devId }?.apply {
                         if (this == -1) {
                             if (data.isNullOrEmpty()) return@apply
                             // 如果没有找到相对应的, 选中当前第一个。
                             data?.get(0)?.isChooser = true
                             return@apply
                         }
-                        logI("tuyaDeviceBean ID: ${mViewModel.tuyaDeviceBean?.devId}")
+                        logI("thingDeviceBean ID: ${mViewModel.thingDeviceBean?.devId}")
                         if (data.isNullOrEmpty()) return@apply
                         data?.get(this)?.isChooser = true
                     }
@@ -304,7 +304,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false)
                         .dismissOnTouchOutside(true)
                         .asCustom(MyDeleteDevicePop(this) {
-                            TuyaHomeSdk.newDeviceInstance(deviceBean?.deviceId)
+                            ThingHomeSdk.newDeviceInstance(deviceBean?.deviceId)
                                 .removeDevice(object : IResultCallback {
                                     override fun onError(code: String?, error: String?) {
                                         ToastUtil.shortShow(error)

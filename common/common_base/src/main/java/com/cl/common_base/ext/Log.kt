@@ -42,4 +42,3 @@ fun logE(tag: String) {
         Logger.e(tag)
     }
 }
-

@@ -19,7 +19,7 @@ import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.modules_pairing_connection.repository.PairRepository
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

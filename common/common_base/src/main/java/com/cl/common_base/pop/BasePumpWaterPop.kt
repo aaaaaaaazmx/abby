@@ -31,9 +31,9 @@ import com.lin.cardlib.OnSwipeCardListener
 import com.lin.cardlib.utils.ReItemTouchHelper
 import com.lxj.xpopup.core.BottomPopupView
 import com.shuyu.gsyvideoplayer.GSYVideoManager
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IResultCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -231,7 +231,7 @@ class BasePumpWaterPop(
         }
 
         // 蓝牙状态监听变化
-        LiveEventBus.get().with(Constants.Tuya.KEY_TUYA_DEVICE_TO_APP, String::class.java)
+        LiveEventBus.get().with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
             .observe(this) {
                 val map = GSON.parseObject(it, Map::class.java)
                 map?.forEach { (key, value) ->
@@ -295,7 +295,7 @@ class BasePumpWaterPop(
 
                             if ((value as? Boolean == false)) return@observe
                             // 查询是否排水结束
-                            TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+                            ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
                                 it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
                                     IResultCallback {
                                     override fun onError(code: String?, error: String?) {

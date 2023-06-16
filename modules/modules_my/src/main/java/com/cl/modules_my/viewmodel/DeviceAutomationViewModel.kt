@@ -20,11 +20,11 @@ import com.cl.modules_my.repository.AccessoryListBean
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
-import com.tuya.smart.android.device.bean.UpgradeInfoBean
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IGetOtaInfoCallback
-import com.tuya.smart.sdk.api.IResultCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.android.device.bean.UpgradeInfoBean
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -480,7 +480,7 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
         tuYaDeviceBean?.devId?.let {
-            TuyaHomeSdk.newOTAInstance(it).getOtaInfo(object : IGetOtaInfoCallback {
+            ThingHomeSdk.newOTAInstance(it).getOtaInfo(object : IGetOtaInfoCallback {
                 override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                     logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
                     // 如果可以升级
@@ -582,7 +582,7 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
 
     // 获取SN
     fun getSn() {
-        TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_REST_STATUS, object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logI(
@@ -605,7 +605,7 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
 
     // 获取激活状态
     fun getActivationStatus() {
-        TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logI(

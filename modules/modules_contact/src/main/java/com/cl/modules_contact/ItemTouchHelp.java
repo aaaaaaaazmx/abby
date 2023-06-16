@@ -182,4 +182,3 @@ public class ItemTouchHelp extends ItemTouchHelper.Callback {
         mListener = listener;
     }
 }
-

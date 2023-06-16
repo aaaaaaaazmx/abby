@@ -19,11 +19,11 @@ import com.cl.modules_home.repository.HomeRepository
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.widget.toast.ToastUtil
-import com.tuya.smart.android.device.bean.UpgradeInfoBean
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IGetOtaInfoCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.android.device.bean.UpgradeInfoBean
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -54,13 +54,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 设备信息
      */
-    val tuyaDeviceBean = {
+    val thingDeviceBean = {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
     private val _deviceId =
-        MutableLiveData(tuyaDeviceBean()?.devId.toString())
+        MutableLiveData(thingDeviceBean()?.devId.toString())
     val deviceId: LiveData<String> = _deviceId
     fun setDeviceId(deviceId: String) {
         // 暂时不做水箱的容积判断，手动赋值默认就是为0L
@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 童锁的开闭状态
     val _childLockStatus = MutableLiveData(
-        tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
+        thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK).toString()
     )
     val childLockStatus: LiveData<String> = _childLockStatus
@@ -79,7 +79,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 门的开闭状态
     private val _openDoorStatus = MutableLiveData(
-        tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
+        thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK).toString()
     )
     val openDoorStatus: LiveData<String> = _openDoorStatus
@@ -98,7 +98,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 不能直接用
      */
     private val getDeviceDps = {
-        tuyaDeviceBean()?.dps
+        thingDeviceBean()?.dps
     }
 
     // 水的容积。=， 多少升
@@ -113,7 +113,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 是否需要修复SN
     // 需要在设备在线的情况下才展示修复
-    private val _repairSN = MutableLiveData(if (tuyaDeviceBean()?.isOnline == true) {
+    private val _repairSN = MutableLiveData(if (thingDeviceBean()?.isOnline == true) {
         getDeviceDps()?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN).toString()
     } else {
@@ -1039,8 +1039,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuyaDeviceBean()?.devId?.let {
-            TuyaHomeSdk.newOTAInstance(it)?.getOtaInfo(object : IGetOtaInfoCallback {
+        thingDeviceBean()?.devId?.let {
+            ThingHomeSdk.newOTAInstance(it)?.getOtaInfo(object : IGetOtaInfoCallback {
                 override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                     logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
                     // 如果可以升级
@@ -1412,9 +1412,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 获取环境信息
      */
-    var tuYaDps = tuyaDeviceBean()?.dps
+    var tuYaDps = thingDeviceBean()?.dps
     fun getEnvData() {
-        tuyaDeviceBean()?.let {
+        thingDeviceBean()?.let {
             val envReq = EnvironmentInfoReq(deviceId = it.devId)
             tuYaDps?.forEach { (key, value) ->
                 when (key) {
@@ -1482,7 +1482,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getPlantHeight.value = String.format(
                 "%.1f",
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat()
                     .div(25.4))
         }
@@ -1499,7 +1499,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getWenDu() {
         kotlin.runCatching {
             _getWenDu.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().toInt()
         }
     }
@@ -1516,7 +1516,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getHumidity() {
         kotlin.runCatching {
             _getHumidity.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().toInt()
         }
     }
@@ -1532,7 +1532,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getWaterWenDu() {
         kotlin.runCatching {
             _getWaterWenDu.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().toInt()
         }
     }
@@ -1548,7 +1548,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getFanIntake() {
         kotlin.runCatching {
             _getFanIntake.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().toInt()
         }
     }
@@ -1563,7 +1563,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getFanExhaust() {
         kotlin.runCatching {
             _getFanExhaust.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().toInt()
         }
     }
@@ -1579,7 +1579,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getGrowLight() {
         kotlin.runCatching {
             _getGrowLight.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().toInt()
         }
     }
@@ -1594,7 +1594,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getAirPump() {
         kotlin.runCatching {
             _getAirPump.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP).toString().toBoolean()
         }
     }
@@ -1610,7 +1610,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getLightTime: LiveData<String> = _getLightTime
     fun getLightTime() {
         _getLightTime.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME }
+            thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME }
                 ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME).toString()
     }
 
@@ -1620,7 +1620,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getCloseLightTime() {
         kotlin.runCatching {
             _getCloseLightTime.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME).toString()
             getTimeText()
             logI("getLightTime:${_getLightTime.value} -- ${_getCloseLightTime.value} --- ${getTimeText.value}")

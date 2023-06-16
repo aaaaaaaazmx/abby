@@ -21,8 +21,8 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_pairing_connection.databinding.PairPlantHomeBinding
 import com.cl.modules_pairing_connection.widget.PairLoginOutPop
 import com.lxj.xpopup.XPopup
-import com.tuya.smart.android.user.api.ILogoutCallback
-import com.tuya.smart.home.sdk.TuyaHomeSdk
+import com.thingclips.smart.android.user.api.ILogoutCallback
+import com.thingclips.smart.home.sdk.ThingHomeSdk
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -39,7 +39,7 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
             .isDestroyOnDismiss(false)
             .dismissOnTouchOutside(false)
             .asCustom(PairLoginOutPop(this) {
-                TuyaHomeSdk.getUserInstance().logout(object : ILogoutCallback {
+                ThingHomeSdk.getUserInstance().logout(object : ILogoutCallback {
                     override fun onSuccess() {
                         // 清除缓存数据
                         Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)

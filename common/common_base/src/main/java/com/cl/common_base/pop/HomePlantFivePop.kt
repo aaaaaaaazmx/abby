@@ -13,7 +13,7 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.lxj.xpopup.core.BottomPopupView
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.DeviceBean
 
 /**
  * 开水下一步
@@ -33,13 +33,13 @@ class HomePlantFivePop(
     /**
      * 设备信息
      */
-    val tuyaDeviceBean by lazy {
+    val thingDeviceBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
     private val getDeviceDps by lazy {
-        tuyaDeviceBean?.dps
+        thingDeviceBean?.dps
     }
 
     // 水位
@@ -92,7 +92,7 @@ class HomePlantFivePop(
             }
         }
 
-        LiveEventBus.get().with(Constants.Tuya.KEY_TUYA_DEVICE_TO_APP, String::class.java)
+        LiveEventBus.get().with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
             .observe(this) {
                 val map = GSON.parseObject(it, Map::class.java)
                 map?.forEach { (key, value) ->

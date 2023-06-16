@@ -17,11 +17,11 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.common_base.intercome.InterComeHelp
-import com.tuya.smart.android.device.bean.UpgradeInfoBean
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IGetOtaInfoCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.android.device.bean.UpgradeInfoBean
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -48,7 +48,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 设备信息
      */
-    val tuyaDeviceBean by lazy {
+    val thingDeviceBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
@@ -59,7 +59,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
      * 不能直接用
      */
     private val getDeviceDps by lazy {
-        tuyaDeviceBean?.dps
+        thingDeviceBean?.dps
     }
 
     // 水的容积。=， 多少升
@@ -74,7 +74,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 是否需要修复SN
     // 需要在设备在线的情况下才展示修复
-    private val _repairSN = MutableLiveData(if (tuyaDeviceBean?.isOnline == true) {
+    private val _repairSN = MutableLiveData(if (thingDeviceBean?.isOnline == true) {
         getDeviceDps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN).toString()
     } else {
@@ -706,7 +706,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     private val tuYaHomeSdk by lazy {
-        TuyaHomeSdk.newOTAInstance(tuYaDeviceBean?.devId)
+        ThingHomeSdk.newOTAInstance(tuYaDeviceBean?.devId)
     }
 
     /**
@@ -951,7 +951,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
         // 获取环信消息数量
         getEaseUINumber()
         // 获取设备环境消息
-        environmentInfo(EnvironmentInfoReq(deviceId = tuyaDeviceBean?.devId))
+        environmentInfo(EnvironmentInfoReq(deviceId = thingDeviceBean?.devId))
         getHomePageNumber()
     }
 

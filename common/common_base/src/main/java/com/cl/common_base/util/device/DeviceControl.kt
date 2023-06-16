@@ -1,6 +1,6 @@
 package com.cl.common_base.util.device
 
-import com.tuya.smart.sdk.api.ITuyaDevice
+import com.thingclips.smart.sdk.api.IThingDevice
 
 /**
  * 设备接口
@@ -21,7 +21,7 @@ interface DeviceControl {
     /**
      * 获取当前设备
      */
-    fun getCurrentDevice(): ITuyaDevice?
+    fun getCurrentDevice(): IThingDevice?
 
     /**
      * 排水

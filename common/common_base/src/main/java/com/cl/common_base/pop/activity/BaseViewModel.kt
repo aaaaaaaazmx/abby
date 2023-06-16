@@ -17,7 +17,7 @@ import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
-import com.tuya.smart.android.user.bean.User
+import com.thingclips.smart.android.user.bean.User
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

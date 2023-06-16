@@ -56,10 +56,10 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.home.sdk.bean.HomeBean
-import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
@@ -1662,7 +1662,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             childLockStatus.observe(viewLifecycleOwner) {
-                logI("123123: $it,,,, ${mViewMode.tuyaDeviceBean()?.devId}")
+                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}")
                 ViewUtils.setVisible(
                     mViewMode.isShowDoorDrawable(),
                     binding.pplantNinth.ivDoorLockStatus
@@ -1748,17 +1748,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
 
                     // 更新涂鸦Bean
-                    TuyaHomeSdk.newHomeInstance(mViewMode.homeId)
-                        .getHomeDetail(object : ITuyaHomeResultCallback {
+                    ThingHomeSdk.newHomeInstance(mViewMode.homeId)
+                        .getHomeDetail(object : IThingHomeResultCallback {
                             override fun onSuccess(bean: HomeBean?) {
                                 bean?.let { it ->
                                     val arrayList = it.deviceList as ArrayList<DeviceBean>
                                     logI("123123123: ${arrayList.size}")
                                     arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
                                         .apply {
-                                            logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
                                             if (null == this) {
-                                                val aa = mViewMode.tuyaDeviceBean
+                                                val aa = mViewMode.thingDeviceBean
                                                 aa()?.devId = mViewMode.deviceId.value
                                                 GSON.toJson(aa)?.let {
                                                     Prefs.putStringAsync(
@@ -1800,17 +1800,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
 
                     // 更新涂鸦Bean
-                    TuyaHomeSdk.newHomeInstance(mViewMode.homeId)
-                        .getHomeDetail(object : ITuyaHomeResultCallback {
+                    ThingHomeSdk.newHomeInstance(mViewMode.homeId)
+                        .getHomeDetail(object : IThingHomeResultCallback {
                             override fun onSuccess(bean: HomeBean?) {
                                 bean?.let { it ->
                                     val arrayList = it.deviceList as ArrayList<DeviceBean>
                                     logI("123123123: ${arrayList.size}")
                                     arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
                                         .apply {
-                                            logI("tuyaDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
                                             if (null == this) {
-                                                val aa = mViewMode.tuyaDeviceBean
+                                                val aa = mViewMode.thingDeviceBean
                                                 aa()?.devId = mViewMode.deviceId.value
                                                 GSON.toJson(aa)?.let {
                                                     Prefs.putStringAsync(

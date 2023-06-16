@@ -32,15 +32,15 @@ import com.cl.modules_pairing_connection.databinding.PairConnectNetworkBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
 import com.lxj.xpopup.XPopup
-import com.tuya.smart.android.ble.api.ConfigErrorBean
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.home.sdk.bean.HomeBean
-import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
-import com.tuya.smart.sdk.api.IMultiModeActivatorListener
-import com.tuya.smart.sdk.api.ITuyaActivatorGetToken
-import com.tuya.smart.sdk.bean.DeviceBean
-import com.tuya.smart.sdk.bean.MultiModeActivatorBean
+import com.thingclips.smart.android.ble.api.ConfigErrorBean
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.api.IMultiModeActivatorListener
+import com.thingclips.smart.sdk.api.IThingActivatorGetToken
+import com.thingclips.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.MultiModeActivatorBean
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.concurrent.thread
@@ -327,8 +327,8 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
         // 首先获取配网token
         showProgressLoading(cancelable = false)
-        TuyaHomeSdk.getActivatorInstance().getActivatorToken(homeId,
-            object : ITuyaActivatorGetToken {
+        ThingHomeSdk.getActivatorInstance().getActivatorToken(homeId,
+            object : IThingActivatorGetToken {
                 override fun onSuccess(token: String) {
                     // Start configuration -- Dual Ble Device
                     logI("getActivatorToken: $token")
@@ -355,13 +355,13 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     netWorkBean.timeout = 120000
                     logI("MultiModeActivatorBean: $netWorkBean")
                     // 开始配网
-                    TuyaHomeSdk.getActivator().newMultiModeActivator()
+                    ThingHomeSdk.getActivator().newMultiModeActivator()
                         .startActivator(netWorkBean, object : IMultiModeActivatorListener {
                             override fun onSuccess(deviceBean: DeviceBean?) {
                                 logI("startActivator DeviceBean : ${deviceBean.toString()}")
                                 // 从涂鸦的设备列表里面拿第一个设备
-                                TuyaHomeSdk.newHomeInstance(homeId).getHomeDetail(object :
-                                    ITuyaHomeResultCallback {
+                                ThingHomeSdk.newHomeInstance(homeId).getHomeDetail(object :
+                                    IThingHomeResultCallback {
                                     override fun onSuccess(bean: HomeBean?) {
                                         // 取数据
                                         bean?.let { homeBean ->

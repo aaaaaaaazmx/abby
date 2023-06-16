@@ -641,4 +641,3 @@ public class RecorderVideoActivity extends BaseActivity implements
 	}
 
 }
-

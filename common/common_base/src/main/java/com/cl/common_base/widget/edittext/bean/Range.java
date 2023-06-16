@@ -73,4 +73,3 @@ public class Range implements Comparable<Range> {
         this.insertData = insertData;
     }
 }
-
