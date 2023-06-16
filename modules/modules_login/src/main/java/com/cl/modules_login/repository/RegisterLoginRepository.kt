@@ -1,6 +1,5 @@
 package com.cl.modules_login.repository
 
-import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
@@ -76,7 +75,7 @@ class RegisterLoginRepository @Inject constructor(private var remoteRepository: 
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
         return remoteRepository.intercomDataAttributeSync()
     }
-    fun bindSourceEmail(req: BindSourceEmailReq): Flow<HttpResult<BaseBean>> {
+    fun bindSourceEmail(req: BindSourceEmailReq): Flow<HttpResult<Boolean>> {
         return remoteRepository.bindSourceEmail(req)
     }
 

@@ -318,12 +318,16 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             return
         }
         letMultiple(account, password) { ac, ps ->
-            val value = mViewModel.loginReq.value
-            value?.password = AESCipher.aesEncryptString(
-                password, AESCipher.KEY
-            )
-            value?.userName = account
-            mViewModel.login()
+            mViewModel.loginReq.value?.let {
+                it.userName = account
+                it.password = AESCipher.aesEncryptString(
+                    password, AESCipher.KEY
+                )
+                it.source = null
+                it.autoToken = null
+                it.sourceUserId = null
+                mViewModel.login()
+            }
         }
     }
 
