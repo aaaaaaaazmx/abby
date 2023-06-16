@@ -1,6 +1,5 @@
 package com.cl.modules_login.ui
 
-import android.R.attr.editable
 import android.content.Intent
 import android.os.Build
 import android.text.InputType
@@ -8,13 +7,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
-import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.Constants.Global.KEY_REGISTER_OR_FORGET_PASSWORD
-import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
@@ -27,9 +24,8 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivitySetPasswordBinding
-import com.cl.modules_login.repository.BindSourceEmailReq
+import com.cl.modules_login.request.BindSourceEmailReq
 import com.cl.modules_login.request.UpdatePwdReq
 import com.cl.modules_login.request.UserRegisterReq
 import com.cl.modules_login.response.LoginData
@@ -37,7 +33,6 @@ import com.cl.modules_login.viewmodel.SetPassWordViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject
 

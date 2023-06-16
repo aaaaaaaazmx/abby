@@ -1,8 +1,7 @@
 package com.cl.modules_login.service
 
-import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
-import com.cl.modules_login.repository.BindSourceEmailReq
+import com.cl.modules_login.request.BindSourceEmailReq
 import com.cl.modules_login.request.*
 import com.cl.modules_login.response.CountData
 import com.cl.modules_login.response.LoginData
@@ -80,7 +79,7 @@ interface HttpLoginApiService {
      * 第三方登录绑定邮箱
      */
     @POST("abby/user/app/bindSourceEmail")
-    fun bindSourceEmail(@Body requestBody: BindSourceEmailReq): Flow<HttpResult<BaseBean>>
+    fun bindSourceEmail(@Body requestBody: BindSourceEmailReq): Flow<HttpResult<Boolean>>
 
     /**
      * 检查用户第三方登录邮箱是否绑定过

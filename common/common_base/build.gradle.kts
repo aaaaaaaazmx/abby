@@ -109,7 +109,7 @@ dependencies {
     api(Deps.jpushGoogle)
     api(Deps.jPushCodeGoogle)
     // Import the BoM for the Firebase platform
-    api(platform("com.google.firebase:firebase-bom:32.1.0"))
+    api(platform("com.google.firebase:firebase-bom:30.5.0"))
     api("com.google.firebase:firebase-auth-ktx")
     api("com.google.android.gms:play-services-auth:20.5.0")
     // 启动

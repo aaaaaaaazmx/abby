@@ -18,14 +18,11 @@ import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
-import com.cl.common_base.util.login.GoogleLoginHelper
 import com.cl.common_base.widget.code.VerificationCodeInputView
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivityVerifyEmailBinding
-import com.cl.modules_login.repository.BindSourceEmailReq
+import com.cl.modules_login.request.BindSourceEmailReq
 import com.cl.modules_login.request.UserRegisterReq
 import com.cl.modules_login.response.LoginData
 import com.cl.modules_login.viewmodel.VerifyEmailViewModel
