@@ -48,6 +48,7 @@ import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.activity.HomeNewPlantNameActivity
+import com.cl.modules_home.activity.MyActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
@@ -231,6 +232,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                 }
             }
+
             "1L" -> {
                 context?.let { cc ->
                     ContextCompat.getDrawable(
@@ -238,6 +240,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                 }
             }
+
             "2L" -> {
                 context?.let { cc ->
                     ContextCompat.getDrawable(
@@ -245,6 +248,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                 }
             }
+
             "3L" -> {
                 context?.let { cc ->
                     ContextCompat.getDrawable(
@@ -252,6 +256,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                 }
             }
+
             else -> {
                 context?.let { cc ->
                     ContextCompat.getDrawable(
@@ -318,17 +323,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 这是默认进入的，也就是Flag = null 的情况下
                         ViewUtils.setVisible(binding.plantFirst.root)
                     }
+
                     "1" -> {
                         ViewUtils.setVisible(binding.plantAddWater.root)
                     }
+
                     "2" -> {
                         ViewUtils.setVisible(binding.plantAddWater.root)
                         ViewUtils.setVisible(binding.plantAddWater.clContinue)
                         ViewUtils.setGone(binding.plantAddWater.ivAddWater)
                     }
+
                     "3" -> {
                         ViewUtils.setVisible(binding.plantClone.root)
                     }
+
                     "4" -> {
                         ViewUtils.setGone(
                             binding.plantFirst.root,
@@ -424,6 +433,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.pplantNinth.apply {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
+
+            // 跳转到摄像头界面
+            ivCamera.setOnClickListener {
+                startActivity(Intent(activity, MyActivity::class.java))
+            }
 
             // 选中门锁开关
             ivDoorLockStatus.setOnClickListener {
@@ -1420,11 +1434,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             mViewMode.setCurrentReqStatus(1)
                             mViewMode.saveOrUpdate("1")
                         }
+
                         "1" -> {
                             // 这是第9个弹窗，开始种植，需要传入步骤为 4
                             mViewMode.setCurrentReqStatus(4)
                             mViewMode.saveOrUpdate("4")
                         }
+
                         else -> {}
                     }
                     return@BasePlantUsuallyGuidePop
@@ -2089,6 +2105,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             UnReadConstants.Device.KEY_ADD_MANURE -> {
                                 plantFeed.show()
                             }
+
                             UnReadConstants.Device.KEY_CHANGE_CUP_WATER -> {
                                 // 种子发芽之后的换水
                                 // 跳转到富文本
@@ -2114,6 +2131,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                                 startActivityLauncherSeeding.launch(intent)
                             }
+
                             UnReadConstants.Device.KEY_CLOSE_DOOR -> {
                                 mViewMode.getRead(
                                     "${
@@ -2240,6 +2258,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     ViewUtils.setVisible(binding.plantOffLine.root)
                                     offLineTextSpan()
                                 }
+
                                 "1" -> {
                                     showView(plantFlag, plantGuideFlag)
                                     // 请求未读消息数据，只有在种植之后才会开始有数据返回
@@ -2249,6 +2268,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     // 检查固件
                                     checkOtaUpdateInfo()
                                 }
+
                                 else -> {}
                             }
                         }
@@ -2327,6 +2347,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ViewUtils.setGone(binding.plantFirst.root)
                             ViewUtils.setVisible(binding.plantAddWater.root)
                         }
+
                         2 -> {
                             // 同意plant5之后的弹窗
                             // plant5后记“2”
@@ -2334,11 +2355,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ViewUtils.setGone(binding.plantAddWater.ivAddWater)
                             plantSix().show()
                         }
+
                         3 -> {
                             // plant6后记“3”
                             ViewUtils.setGone(binding.plantAddWater.root)
                             ViewUtils.setVisible(binding.plantClone.root)
                         }
+
                         4 -> {
                             // plant9之后记4
                             ViewUtils.setGone(binding.plantClone.root)
@@ -2667,6 +2690,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     2 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2674,6 +2698,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     3 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2681,6 +2706,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     4, 5 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2688,6 +2714,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     6, 7 -> {
                                         if (data?.cupType == 1) {
                                             context?.let {
@@ -2705,6 +2732,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             }
                                         }
                                     }
+
                                     8, 9 -> {
                                         if (data?.cupType == 1) {
                                             context?.let {
@@ -2721,6 +2749,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             }
                                         }
                                     }
+
                                     10, 11 -> {
                                         if (data?.cupType == 1) {
                                             context?.let {
@@ -2738,6 +2767,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             }
                                         }
                                     }
+
                                     12 -> {
                                         if (data?.cupType == 1) {
                                             context?.let {
@@ -2755,6 +2785,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             }
                                         }
                                     }
+
                                     else -> {
                                         if (data?.cupType == 1) {
                                             context?.let {
@@ -2791,6 +2822,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             4
                                         }
                                     }
+
                                     UnReadConstants.PeriodStatus.KEY_FLOWERING -> {
                                         number = if ((info.totalDay ?: 0) in 1..7) {
                                             5
@@ -2810,6 +2842,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             12
                                         }
                                     }
+
                                     UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING -> {
                                         // Photo （seed & Clone） 没有这个周期
                                         // Auto才会有这个周期
@@ -2837,18 +2870,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             11
                                         }
                                     }
+
                                     UnReadConstants.PeriodStatus.KEY_FLUSHING -> {
                                         number = 12
                                     }
+
                                     UnReadConstants.PeriodStatus.KEY_HARVEST -> {
                                         number = 12
                                     }
+
                                     UnReadConstants.PeriodStatus.KEY_DRYING -> {
                                         number = 12
                                     }
+
                                     UnReadConstants.PeriodStatus.KEY_CURING -> {
                                         number = 12
                                     }
+
                                     else -> {
                                         number = 12
                                     }
@@ -2862,6 +2900,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     2 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2869,6 +2908,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     3 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2876,6 +2916,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     4 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2883,6 +2924,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     5 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2890,6 +2932,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     6 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2897,6 +2940,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     7 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2904,6 +2948,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     8 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2911,6 +2956,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     9 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2918,6 +2964,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     10 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2925,6 +2972,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     11 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2932,6 +2980,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     12 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -2939,6 +2988,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                         }
                                     }
+
                                     else -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
@@ -3218,6 +3268,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                             plantFour.show()
                         }
+
                         else -> {
                             mViewMode.getUnreadMessageList().firstOrNull()?.let {
                                 mViewMode.userMessageFlag(
@@ -3471,6 +3522,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 offLineTextSpan()
             }
+
             Constants.Device.KEY_DEVICE_ONLINE -> {
                 logI(
                     """
@@ -3499,6 +3551,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 刷新数据以及token
                 // 一并检查下当前的状态
             }
+
             Constants.Device.KEY_DEVICE_REMOVE -> {
                 logI(
                     """
@@ -3534,6 +3587,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 加水弹窗
                         plantFour.show()
                     }
+
                     else -> {
                         // 加肥的弹窗
                         plantSix().show()
@@ -3632,6 +3686,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                     mViewMode.setGrowLight(value.toString())
                 }
+
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
                     mViewMode.tuYaDps?.put(
                         TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT,
@@ -3639,6 +3694,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                     mViewMode.setHumidity(value.toString())
                 }
+
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_INPUT_AIR_FLOW_INSTRUCTION -> {
                     mViewMode.tuYaDps?.put(
                         TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW,
@@ -3646,6 +3702,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                     mViewMode.setFanIntake(value.toString())
                 }
+
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TEMP_CURRENT_INSTRUCTION -> {
                     mViewMode.tuYaDps?.put(
                         TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT,
@@ -3653,6 +3710,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                     mViewMode.setWenDu(value.toString())
                 }
+
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_VENTILATION_INSTRUCTION -> {
                     mViewMode.tuYaDps?.put(
                         TuYaDeviceConstants.KEY_DEVICE_VENTILATION,
@@ -3660,6 +3718,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                     mViewMode.setFanExhaust(value.toString())
                 }
+
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_TEMPERATURE_INSTRUCTION -> {
                     mViewMode.tuYaDps?.put(
                         TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE,
