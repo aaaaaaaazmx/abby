@@ -1,8 +1,8 @@
 package com.cl.modules_pairing_connection.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -10,10 +10,12 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.widget.doAfterTextChanged
 import cn.jpush.android.api.JPushInterface
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -31,14 +33,17 @@ import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairConnectNetworkBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
+import com.google.zxing.WriterException
 import com.lxj.xpopup.XPopup
 import com.thingclips.smart.android.ble.api.ConfigErrorBean
 import com.thingclips.smart.android.user.bean.User
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.builder.ThingCameraActivatorBuilder
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.api.IMultiModeActivatorListener
 import com.thingclips.smart.sdk.api.IThingActivatorGetToken
+import com.thingclips.smart.sdk.api.IThingSmartCameraActivatorListener
 import com.thingclips.smart.sdk.bean.DeviceBean
 import com.thingclips.smart.sdk.bean.MultiModeActivatorBean
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,6 +58,7 @@ import kotlin.random.Random
  * @author 李志军 2022-08-03 22:26
  */
 @AndroidEntryPoint
+@Route(path = RouterPath.PairConnect.PAGE_WIFI_CONNECT)
 class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
     // 传过来设备数据
@@ -62,6 +68,11 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
     private val homeId by lazy {
         Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
+    }
+
+    // 区分是链接camera还是链接abby的flag
+    private val isCameraConnect by lazy {
+        intent.getBooleanExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS, false)
     }
 
     @Inject
@@ -243,7 +254,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     override fun onResult(result: Boolean) {
                         if (!result) return
                         // 权限都同意之后，那么直接开始配网
-                        startNetWork()
+                        if (isCameraConnect) startNetWorkForCamera() else startNetWorkForAbby()
                     }
                 })
         }
@@ -317,11 +328,69 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
     }
 
     /**
+     * 开始配网，链接camera
+     */
+    private fun startNetWorkForCamera() {
+        val wifiName = binding.tvWifiName.text.toString()
+        val psd = binding.etWifiPwd.text.toString()
+        showProgressLoading()
+        // 首先获取配网token
+        ThingHomeSdk.getActivatorInstance().getActivatorToken(homeId, object : IThingActivatorGetToken{
+            override fun onSuccess(token: String?) {
+                val builder = ThingCameraActivatorBuilder()
+                    .setToken(token)
+                    .setPassword(psd)
+                    .setTimeOut(100)
+                    .setContext(this@PairDistributionWifiActivity)
+                    .setSsid(wifiName)
+                    .setListener(object : IThingSmartCameraActivatorListener {
+                        override fun onQRCodeSuccess(qrcodeUrl: String) {
+                            hideProgressLoading()
+                            try {
+                                // 需要返回这个url回去。
+                                this@PairDistributionWifiActivity.setResult(Activity.RESULT_OK, Intent().apply {
+                                    putExtra("qrcodeUrl", qrcodeUrl)
+                                    putExtra("wifiName", wifiName)
+                                    putExtra("wifiPsd", psd)
+                                    putExtra("token", token)
+                                })
+                                finish()
+                            } catch (e: WriterException) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onError(errorCode: String, errorMsg: String) {
+                            hideProgressLoading()
+                            ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
+                        }
+                        override fun onActiveSuccess(devResp: DeviceBean?) {
+                            // Toast.makeText(this@WifiToQrCodeActivity, "config success!", Toast.LENGTH_LONG).show()
+                            // todo 绑定成功、 跳转到视频界面
+                            hideProgressLoading()
+                        }
+                    })
+
+                // 开始配对
+                ThingHomeSdk.getActivatorInstance().newCameraDevActivator(builder)?.apply {
+                    createQRCode()
+                    start()
+                }
+            }
+
+            override fun onFailure(errorCode: String?, errorMsg: String?) {
+                hideProgressLoading()
+                ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
+            }
+        })
+    }
+
+    /**
      * 开始配网
      *
      * 这部分可以抽到ViewModel当中，但是我不想抽！
      */
-    private fun startNetWork() {
+    private fun startNetWorkForAbby() {
         val wifiName = binding.tvWifiName.text.toString()
         val psd = binding.etWifiPwd.text.toString()
 

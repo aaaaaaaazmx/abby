@@ -47,8 +47,8 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.activity.CameraActivity
 import com.cl.modules_home.activity.HomeNewPlantNameActivity
-import com.cl.modules_home.activity.MyActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
@@ -436,7 +436,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 跳转到摄像头界面
             ivCamera.setOnClickListener {
-                startActivity(Intent(activity, MyActivity::class.java))
+                startActivity(Intent(activity, CameraActivity::class.java))
             }
 
             // 选中门锁开关

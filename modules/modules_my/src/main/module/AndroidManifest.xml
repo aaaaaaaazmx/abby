@@ -138,6 +138,8 @@
         <activity android:name=".ui.WallActivity" />
         <activity android:name=".ui.OxygenListActivity" />
         <activity android:name=".ui.ResetPasswordActivity" />
+        <activity android:name=".ui.StoraceOptioneActivity" />
+        <activity android:name=".ui.PairTheCameraActivity" />
 
 
     </application>

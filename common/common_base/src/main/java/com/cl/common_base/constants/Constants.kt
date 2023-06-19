@@ -234,6 +234,15 @@ object Constants {
 
         // gif的高度
         const val KEY_GIF_HEIGHT = 1124f
+
+        // wifi配对链接界面的返回key
+        const val KEY_WIFI_PAIRING_BACK = 20
+
+        // wifi配对链接界面的携带参数key
+        const val KEY_WIFI_PAIRING_PARAMS = "key_wifi_pairing_params"
+
+        // cameraId
+        const val INTENT_DEV_ID = "intent_devId"
     }
 
     // Fixed Id

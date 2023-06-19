@@ -148,7 +148,11 @@ dependencies {
     api("io.github.youth5201314:banner:2.2.2")
 
     // ffmpeg
-    api(Deps.epMedia)
+    /*api(Deps.epMedia)*/
     // 图片压缩
     api(Deps.choosePhotoComproress)
+
+    // camera
+    api("com.thingclips.smart:thingsmart-ipcsdk:5.0.0")
+    api("com.google.zxing:core:3.2.1")
 }

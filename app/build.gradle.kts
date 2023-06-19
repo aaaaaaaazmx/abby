@@ -89,6 +89,15 @@ android {
         // jpush
         doNotStrip("*/mips/*.so")
         doNotStrip("*/mips64/*.so")
+
+        // IPC
+        pickFirst("lib/*/libc++_shared.so")
+        pickFirst("lib/*/libyuv.so")
+        pickFirst("lib/*/libopenh264.so")
+
+
+        // 报错的直接排除
+        exclude("lib/*/liblog.so")
     }
 
     applicationVariants.all {

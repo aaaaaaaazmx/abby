@@ -78,6 +78,6 @@
             android:screenOrientation="portrait"
             android:name="com.cl.modules_home.activity.HomePlantProfileActivity"
                 android:windowSoftInputMode="adjustPan" />
-        <activity android:name="com.cl.modules_home.activity.MyActivity" />
+        <activity android:name="com.cl.modules_home.activity.CameraActivity" />
     </application>
 </manifest>

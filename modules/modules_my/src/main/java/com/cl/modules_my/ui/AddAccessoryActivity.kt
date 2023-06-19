@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.telephony.SmsManager
 import android.view.View
+import android.widget.ResourceCursorAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.camera2.internal.ZslControlNoOpImpl
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.launcher.ARouter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
@@ -15,6 +17,7 @@ import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
@@ -83,6 +86,15 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
             val itemData = adapter.data[position] as? AccessoryListBean
             when (view.id) {
                 R.id.cl_root -> {
+                    // 判断当前是否是camera，并且是没有添加过的
+                    if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == true && itemData?.textId == "smart_camera") {
+                        // 跳转到摄像头配对页面
+                        ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                            .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
+                            .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
+                        return@setOnItemChildClickListener
+                    }
+
                     // 判断当前有几个智能设备
                     if (accessoryList?.size == 0) {
                         // 跳转到富文本界面
@@ -149,7 +161,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                         intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                         intent.putExtra(
                                             BasePopActivity.KEY_PART_ID,
-                                           "${itemData?.accessoryId}"
+                                            "${itemData?.accessoryId}"
                                         )
                                         startActivity(intent)
                                     }
@@ -157,6 +169,30 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                             ).show()
                         return@setOnItemChildClickListener
                     }
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                Constants.Global.KEY_WIFI_PAIRING_BACK -> {
+                    val url = data?.getStringExtra("qrcodeUrl")
+                    val wifiName = data?.getStringExtra("wifiName")
+                    val wifiPwd = data?.getStringExtra("wifiPsd")
+                    val token = data?.getStringExtra("token")
+
+
+                    // 说明绑定成功，跳转到二维码生成界面
+                    startActivity(Intent(this@AddAccessoryActivity, PairTheCameraActivity::class.java).apply {
+                        putExtra("qrcodeUrl", url)
+                        putExtra("deviceId", deviceId)
+                        putExtra("wifiName", wifiName)
+                        putExtra("wifiPsd", wifiPwd)
+                        putExtra("token", token)
+                    })
                 }
             }
         }

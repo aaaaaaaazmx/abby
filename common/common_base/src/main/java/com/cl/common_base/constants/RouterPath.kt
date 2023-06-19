@@ -41,6 +41,8 @@ class RouterPath {
         const val KEY_PAIR_RECONNECTING = "/pairReconnecting/$PAIR_CONNECT"
         // 扫码界面
         const val PAGE_SCAN_CODE = "/pairScanCode/$PAIR_CONNECT"
+        // wifi链接界面
+        const val PAGE_WIFI_CONNECT = "/pairWifiConnect/$PAIR_CONNECT"
     }
 
     /**
@@ -70,6 +72,8 @@ class RouterPath {
         const val PAGE_HOME = "/home/$HOME"
         const val PAGE_KNOW = "/knowMore/$HOME" // 学院
         const val PAGE_PLANT_NAME = "/plantName/$HOME"
+        // 摄像头显示界面
+        const val PAGE_CAMERA = "/camera/$HOME"
     }
 
     /**
