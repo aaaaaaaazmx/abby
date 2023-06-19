@@ -33,19 +33,10 @@
             android:textColor="@color/mainColor"
             android:textSize="26sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/iv_camera"
+            app:layout_constraintEnd_toStartOf="@id/iv_device_list"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_marginEnd="24dp"
-            app:layout_constraintEnd_toEndOf="@+id/iv_device_list"
-            app:layout_constraintEnd_toStartOf="@+id/iv_device_list"
-            app:layout_constraintTop_toTopOf="@+id/iv_device_list"
-            android:background="@mipmap/home_camera_bg"
-            android:id="@+id/iv_camera"
-            android:layout_width="30dp"
-            android:layout_height="30dp"/>
 
         <ImageView
             android:id="@+id/iv_device_list"
@@ -85,9 +76,9 @@
             android:layout_height="30dp"
             android:layout_marginEnd="26dp"
             android:background="@mipmap/home_calendar_bg"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/tv_title" />
+            app:layout_constraintEnd_toEndOf="@+id/iv_camera"
+            app:layout_constraintEnd_toStartOf="@+id/iv_camera"
+            app:layout_constraintTop_toTopOf="@+id/iv_camera"/>
 
 
         <TextView
@@ -118,6 +109,17 @@
             app:layout_constraintCircleAngle="50"
             app:layout_constraintCircleRadius="20dp" />
 
+
+
+        <ImageView
+            android:layout_marginEnd="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_title"
+            android:background="@mipmap/home_camera_bg"
+            android:id="@+id/iv_camera"
+            android:layout_width="30dp"
+            android:layout_height="30dp"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_plant_status"

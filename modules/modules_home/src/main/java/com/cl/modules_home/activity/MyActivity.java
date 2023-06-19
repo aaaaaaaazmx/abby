@@ -29,7 +29,7 @@ import com.bbgo.module_home.R;
  */
 public class MyActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
+    private CenterLayoutManager layoutManager;
     private MyAdapter adapter;
 
     interface OnScrollListener {
@@ -49,7 +49,7 @@ public class MyActivity extends AppCompatActivity {
         setContentView(R.layout.home_activity_my);
 
         recyclerView = findViewById(R.id.recycler_view);
-        layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        layoutManager = new CenterLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView.setLayoutManager(layoutManager);
 
         String[] letters = {"动图", "视频", "照片", "文字", "文字"};
@@ -60,7 +60,7 @@ public class MyActivity extends AppCompatActivity {
         }
 
         int targetPosition = 1;
-        adapter = new MyAdapter(letters, this, recyclerViewWidth);
+        adapter = new MyAdapter(letters, this, recyclerViewWidth, recyclerView);
         SnapHelper snapHelper = new LinearSnapHelper();
         recyclerView.setAdapter(adapter);
         adapter.setFocusedPosition(targetPosition);
@@ -86,6 +86,31 @@ public class MyActivity extends AppCompatActivity {
         });
     }
 }
+ class CenterLayoutManager extends LinearLayoutManager {
+    public CenterLayoutManager(Context context, int orientation, boolean reverseLayout) {
+        super(context, orientation, reverseLayout);
+    }
+
+    @Override
+    public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state, int position) {
+        RecyclerView.SmoothScroller smoothScroller = new CenterSmoothScroller(recyclerView.getContext());
+        smoothScroller.setTargetPosition(position);
+        startSmoothScroll(smoothScroller);
+    }
+
+    private static class CenterSmoothScroller extends LinearSmoothScroller {
+
+        CenterSmoothScroller(Context context) {
+            super(context);
+        }
+
+        @Override
+        public int calculateDtToFit(int viewStart, int viewEnd, int boxStart, int boxEnd, int snapPreference) {
+            return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2);
+        }
+    }
+}
+
 
 class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String[] letters;
@@ -94,11 +119,14 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int itemWidth;
 
     private int blankWidth;
+
+    private RecyclerView recyclerView;
     private int focusedPosition = -1;
 
-    public MyAdapter(String[] letters, final Context context, int recyclerViewWidth) {
+    public MyAdapter(String[] letters, final Context context, int recyclerViewWidth, RecyclerView recyclerView) {
         this.letters = letters;
         this.itemWidth = recyclerViewWidth / 2;
+        this.recyclerView = recyclerView;
     }
 
     public void setFocusedPosition(int focusedPosition) {
@@ -144,6 +172,13 @@ class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             } else {
                 letterView.setTextColor(Color.BLACK);  // Original color
             }
+
+            // Add click listener to smoothly scroll to clicked item
+            holder.itemView.setOnClickListener(v -> {
+                recyclerView.smoothScrollToPosition(position);
+                setFocusedPosition(position);
+            });
+
         }
     }
 
