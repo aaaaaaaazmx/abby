@@ -249,6 +249,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             logI("123131231: ${deviceBean?.deviceId},,,,${deviceBean?.nightTimer}")
             when (view.id) {
                 R.id.iv_luosi -> {
+                    // camera跳转到专属页面
+                    if (deviceBean?.accessoryList?.get(0)?.accessoryName == "Smart Camera") {
+                        startActivity(Intent(this@DeviceListActivity, StoraceOptioneActivity::class.java))
+                        return@setOnItemChildClickListener
+                    }
                     val intent =
                         Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
                     intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceBean?.deviceId)

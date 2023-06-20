@@ -7,6 +7,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
+import com.tuya.smart.android.demo.camera.CameraPanelActivity
 
 class CameraUtils {
     companion object {

@@ -1,6 +1,7 @@
 package com.cl.modules_pairing_connection.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.text.InputType
@@ -78,21 +79,36 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
     @Inject
     lateinit var mViewModel: PairDistributionWifiViewModel
 
+    @SuppressLint("SetTextI18n")
     override fun initView() {
         ARouter.getInstance().inject(this)
-        // 设置设备名字
-        binding.tvBleNane.text = "Device: ${bleData?.subName}"
+        /**
+         * 摄像头界面需要改变这些文案
+         */
+        if (isCameraConnect){
+            ViewUtils.setVisible(false, binding.tvBleNane)
+            binding.titleBar.setTitle("")
+            binding.tvDescThree.text = buildSpannedString {
+                append("1. abby only supports ")
+                bold { append("2.4GHz Wi-Fi networks.") }
+                appendLine("\n")
+                appendLine("2. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+            }
+        } else {
+            // 设置设备名字
+            binding.tvBleNane.text = "Device: ${bleData?.subName}"
 
-        // 设置富文本
-        // Hey abby only supports 2.4G Wi-Fi networks.
-        // Network names must be comprised of alpahnumeric characters only.
-        binding.tvDescThree.text = buildSpannedString {
-            append("1. Hey abby only supports ")
-            bold { append("2.4GHz Wi-Fi networks.") }
-            appendLine("\n")
-            appendLine("2. Network names must be comprised of alpahnumeric characters only")
-            appendLine("\n")
-            appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+            // 设置富文本
+            // Hey abby only supports 2.4G Wi-Fi networks.
+            // Network names must be comprised of alpahnumeric characters only.
+            binding.tvDescThree.text = buildSpannedString {
+                append("1. Hey abby only supports ")
+                bold { append("2.4GHz Wi-Fi networks.") }
+                appendLine("\n")
+                appendLine("2. Network names must be comprised of alpahnumeric characters only")
+                appendLine("\n")
+                appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+            }
         }
     }
 

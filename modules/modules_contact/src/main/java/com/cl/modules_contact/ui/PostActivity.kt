@@ -12,13 +12,16 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
+import android.util.Log
 import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
@@ -72,6 +75,10 @@ import okhttp3.RequestBody
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.Collections
 import javax.inject.Inject
 
@@ -79,6 +86,7 @@ import javax.inject.Inject
  * 发帖
  */
 @AndroidEntryPoint
+@Route(path = RouterPath.Contact.PAGE_TREND)
 class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
     @Inject
@@ -90,6 +98,17 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 mItemTouchHelper?.startDrag(holder)
             }
         })
+    }
+
+    // 分享的类型，主要是针对种植完成的分享
+    // 默认为空，表示是正常的分享，种植完成的分享就是"plant_complete"
+    private val shareType by lazy {
+        intent.getStringExtra(Constants.Global.KEY_SHARE_TYPE)
+    }
+
+    // 需要分享的图片
+    private val shareImg by lazy {
+        intent.getStringExtra(Constants.Global.KEY_SHARE_CONTENT)
     }
 
     // 图片列表
@@ -146,8 +165,22 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         if (!viewModel.shareToPublic) {
             ViewUtils.setVisible(false, binding.plantToVisible, binding.peopleAt)
         }
+
+        // 如果是种植完成跳转到这边来，需要直接添加一张图
+        shareTypeOperation()
     }
 
+    /**
+     * 种植成功分昂操作
+     */
+    private fun shareTypeOperation() {
+        shareType?.let {
+            // 本地添加一个，网络地址也添加一个,适配器上也添加一个
+            picList.add(0, ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = shareImg))
+            viewModel.setPicAddress(ImageUrl(imageUrl = shareImg))
+            chooserAdapter.addData(0, ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = shareImg, isUploading = true))
+        }
+    }
     override fun observe() {
         viewModel.apply {
             // 上传图片回调

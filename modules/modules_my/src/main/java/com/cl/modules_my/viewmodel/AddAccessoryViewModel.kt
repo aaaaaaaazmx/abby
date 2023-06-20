@@ -34,6 +34,10 @@ import javax.inject.Inject
 class AddAccessoryViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
 
+    val homeId by lazy {
+        Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
+    }
+
     /**
      * refreshToken 接口返回
      */
@@ -531,6 +535,15 @@ class AddAccessoryViewModel @Inject constructor(private val repository: MyReposi
     val isOffLine: LiveData<Boolean> = _isOffLine
     fun setOffLine(offline: Boolean) {
         _isOffLine.value = offline
+    }
+
+    /**
+     * 保存ID accessoryId
+     */
+    private val _accessoryId = MutableLiveData<String>()
+    val accessoryId: LiveData<String> = _accessoryId
+    fun setAccessoryId(accessoryId: String) {
+        _accessoryId.value = accessoryId
     }
 
 }

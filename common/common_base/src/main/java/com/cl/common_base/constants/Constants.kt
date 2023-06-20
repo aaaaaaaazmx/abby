@@ -243,6 +243,10 @@ object Constants {
 
         // cameraId
         const val INTENT_DEV_ID = "intent_devId"
+
+        // 分享Trend的类型
+        const val KEY_SHARE_TYPE = "key_share_type"
+        const val KEY_SHARE_CONTENT = "key_share_content"
     }
 
     // Fixed Id

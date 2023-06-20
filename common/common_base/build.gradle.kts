@@ -94,8 +94,7 @@ dependencies {
     kapt(Deps.glideKapt)
     // permisslion
     api(Deps.permission)
-    // t涂鸦
-    api(Deps.tuya)
+
     api(Deps.fastJson)
     api(Deps.okHttpUrl)
     // 探探卡片滑动布局
@@ -118,6 +117,7 @@ dependencies {
     api("com.tencent.bugly:crashreport:latest.release")
     api(project(mapOf("path" to ":common:BarcodeScanning")))
     /*api(project(mapOf("path" to ":common:kefu-easeui")))*/
+    api(project(mapOf("path" to ":common:ipc")))
     api(project(mapOf("path" to ":common:mylibrary")))
     // lottie
     api(Deps.lottie)
@@ -151,8 +151,4 @@ dependencies {
     /*api(Deps.epMedia)*/
     // 图片压缩
     api(Deps.choosePhotoComproress)
-
-    // camera
-    api("com.thingclips.smart:thingsmart-ipcsdk:5.0.0")
-    api("com.google.zxing:core:3.2.1")
 }

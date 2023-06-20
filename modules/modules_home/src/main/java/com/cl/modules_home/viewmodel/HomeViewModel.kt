@@ -19,9 +19,12 @@ import com.cl.modules_home.repository.HomeRepository
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.widget.toast.ToastUtil
+import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 import com.thingclips.smart.android.user.bean.User
 import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -1756,6 +1759,28 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getDrainageFlag: LiveData<Boolean> = _getDrainageFlag
     fun setDrainageFlag(flag: Boolean) {
         _getDrainageFlag.value = flag
+    }
+
+    /**
+     * 绑定的设备是否有摄像头
+     *  false 表示没有摄像头
+     */
+    private val _getCameraFlag = MutableLiveData<Boolean>(false)
+    val getCameraFlag: LiveData<Boolean> = _getCameraFlag
+    fun getCameraFlag() {
+        ThingHomeSdk.newHomeInstance(homeId)
+            .getHomeDetail(object : IThingHomeResultCallback {
+                override fun onSuccess(bean: HomeBean?) {
+                    val list = (bean?.deviceList as? ArrayList<DeviceBean>)
+                    list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
+                        _getCameraFlag.value = null != this
+                    }
+                }
+
+                override fun onError(errorCode: String?, errorMsg: String?) {
+                    _getCameraFlag.value = false
+                }
+            })
     }
 
 

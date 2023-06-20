@@ -29,6 +29,12 @@ import com.cl.modules_my.repository.AccessoryListBean
 import com.cl.modules_my.viewmodel.AddAccessoryViewModel
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.lxj.xpopup.XPopup
+import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -84,14 +90,36 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
         adapter.addChildClickViewIds(R.id.cl_root)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val itemData = adapter.data[position] as? AccessoryListBean
+            mViewModel.setAccessoryId("${itemData?.accessoryId}")
             when (view.id) {
                 R.id.cl_root -> {
                     // 判断当前是否是camera，并且是没有添加过的
-                    if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == true && itemData?.textId == "smart_camera") {
-                        // 跳转到摄像头配对页面
-                        ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
-                            .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
-                            .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
+                    if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == true && itemData?.accessoryName == "Smart Camera") {
+                        if ((accessoryList?.size ?: 0) > 0) {
+                            XPopup.Builder(this@AddAccessoryActivity)
+                                .isDestroyOnDismiss(false)
+                                .dismissOnTouchOutside(false)
+                                .asCustom(
+                                    BaseCenterPop(
+                                        this@AddAccessoryActivity,
+                                        content = "Hey abby only contains one USB port to support a single smart accessory. If you add a new accessory, the current one will be deleted. Are you sure you want to proceed?",
+                                        cancelText = "No",
+                                        confirmText = "Yes",
+                                        onConfirmAction = {
+                                            // 跳转到摄像头配对页面
+                                            ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                                                .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
+                                                .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
+                                        }
+                                    )
+                                ).show()
+                            return@setOnItemChildClickListener
+                        } else {
+                            // 跳转到摄像头配对页面
+                            ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                                .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
+                                .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
+                        }
                         return@setOnItemChildClickListener
                     }
 
@@ -136,34 +164,87 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                     cancelText = "No",
                                     confirmText = "Yes",
                                     onConfirmAction = {
-                                        // 跳转到富文本界面
                                         val intent = Intent(this, KnowMoreActivity::class.java)
-                                        intent.putExtra(
-                                            Constants.Global.KEY_TXT_ID,
-                                            itemData?.textId
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_FIXED_TASK_ID,
-                                            Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_INTENT_UNLOCK_TASK,
-                                            true
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
-                                            true
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                            "Slide to Unlock"
-                                        )
-                                        intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_PART_ID,
-                                            "${itemData?.accessoryId}"
-                                        )
-                                        startActivity(intent)
+
+                                        // 判断是否有摄像头，然后在解绑。
+                                        ThingHomeSdk.newHomeInstance(mViewModel.homeId)
+                                            .getHomeDetail(object : IThingHomeResultCallback {
+                                                override fun onSuccess(bean: HomeBean?) {
+                                                    // 跳转到富文本界面
+                                                    val list = (bean?.deviceList as? ArrayList<DeviceBean>)
+                                                    list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
+                                                        // 如果没有摄像头，就不需要解绑
+                                                        if (null == this) {
+                                                            intent.putExtra(
+                                                                Constants.Global.KEY_TXT_ID,
+                                                                itemData?.textId
+                                                            )
+                                                            intent.putExtra(
+                                                                BasePopActivity.KEY_FIXED_TASK_ID,
+                                                                Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
+                                                            )
+                                                            intent.putExtra(
+                                                                BasePopActivity.KEY_INTENT_UNLOCK_TASK,
+                                                                true
+                                                            )
+                                                            intent.putExtra(
+                                                                BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
+                                                                true
+                                                            )
+                                                            intent.putExtra(
+                                                                BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                                                                "Slide to Unlock"
+                                                            )
+                                                            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+                                                            intent.putExtra(
+                                                                BasePopActivity.KEY_PART_ID,
+                                                                "${itemData?.accessoryId}"
+                                                            )
+                                                            startActivity(intent)
+                                                        } else {
+                                                            // 需要解绑摄像头
+                                                            ThingHomeSdk.newDeviceInstance(devId).removeDevice(object : IResultCallback {
+                                                                override fun onError(s: String, s1: String) {
+                                                                    com.tuya.smart.android.demo.camera.utils.ToastUtil.shortToast(this@AddAccessoryActivity, s1)
+                                                                }
+
+                                                                override fun onSuccess() {
+                                                                    intent.putExtra(
+                                                                        Constants.Global.KEY_TXT_ID,
+                                                                        itemData?.textId
+                                                                    )
+                                                                    intent.putExtra(
+                                                                        BasePopActivity.KEY_FIXED_TASK_ID,
+                                                                        Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
+                                                                    )
+                                                                    intent.putExtra(
+                                                                        BasePopActivity.KEY_INTENT_UNLOCK_TASK,
+                                                                        true
+                                                                    )
+                                                                    intent.putExtra(
+                                                                        BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
+                                                                        true
+                                                                    )
+                                                                    intent.putExtra(
+                                                                        BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                                                                        "Slide to Unlock"
+                                                                    )
+                                                                    intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+                                                                    intent.putExtra(
+                                                                        BasePopActivity.KEY_PART_ID,
+                                                                        "${itemData?.accessoryId}"
+                                                                    )
+                                                                    startActivity(intent)
+                                                                }
+                                                            })
+                                                        }
+                                                    }
+                                                }
+
+                                                override fun onError(errorCode: String?, errorMsg: String?) {
+
+                                                }
+                                            })
                                     }
                                 )
                             ).show()
@@ -192,6 +273,8 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         putExtra("wifiName", wifiName)
                         putExtra("wifiPsd", wifiPwd)
                         putExtra("token", token)
+                        putExtra("accessoryId", mViewModel.accessoryId.value)
+                        putExtra("deviceId", deviceId)
                     })
                 }
             }

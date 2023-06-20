@@ -1,79 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:background="@color/black"
-        tools:ignore="MissingConstraints"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-
-        <ImageView
-            android:id="@+id/iv_back"
-            android:layout_marginTop="20dp"
-            android:layout_marginStart="20dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:background="@mipmap/home_left_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-
-
-        <ImageView
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/camera"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/black"
+            tools:ignore="MissingConstraints"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_back"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:background="@mipmap/home_left_arrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
 
-        <androidx.recyclerview.widget.RecyclerView
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginBottom="30dp"
-            app:layout_constraintBottom_toTopOf="@+id/iv_camera_button"
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:ignore="MissingConstraints" />
+                <RelativeLayout
+                    android:layout_marginTop="165dp"
+                    android:layout_below="@+id/iv_back"
+                    android:id="@+id/camera_video_view_Rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout_height="250dp">
+
+                    <com.thingclips.smart.camera.middleware.widget.ThingCameraView
+                        android:id="@+id/camera_video_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <ImageView
+                        android:id="@+id/camera_mute"
+                        android:layout_width="@dimen/wh_28"
+                        android:layout_height="@dimen/wh_28"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:gravity="center"
+                        android:src="@drawable/camera_mute_btn" />
+
+                    <TextView
+                        android:id="@+id/camera_quality"
+                        android:layout_width="@dimen/wh_60"
+                        android:layout_height="@dimen/wh_28"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center"
+                        android:layout_margin="10dp"
+                        android:layout_toRightOf="@+id/camera_mute"
+                        android:background="@drawable/camera_shape_wirlesswake"
+                        android:gravity="center"
+                        android:text="@string/hd"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/ts_12" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginBottom="30dp"
+                app:layout_constraintBottom_toTopOf="@+id/iv_camera_button"
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints" />
 
 
-        <ImageView
-            android:layout_marginStart="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_camera_button"
-            app:layout_constraintTop_toTopOf="@+id/iv_camera_button"
-            app:layout_constraintStart_toEndOf="@+id/iv_camera_button"
-            tools:background="@mipmap/ic_launcher"
-            android:layout_width="79dp"
-            android:layout_height="45dp"/>
+            <ImageView
+                android:layout_marginStart="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_camera_button"
+                app:layout_constraintTop_toTopOf="@+id/iv_camera_button"
+                app:layout_constraintStart_toEndOf="@+id/iv_camera_button"
+                android:layout_width="79dp"
+                android:layout_height="45dp" />
 
 
-        <ImageView
-            android:layout_marginBottom="69dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:id="@+id/iv_camera_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_width="62dp"
-            android:layout_height="62dp"/>
+            <ImageView
+                android:layout_marginBottom="69dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/iv_camera_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="62dp"
+                android:layout_height="62dp" />
 
-        <ImageView
-            android:layout_marginEnd="24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_camera_button"
-            app:layout_constraintTop_toTopOf="@+id/iv_camera_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="@mipmap/home_camera_button"
-            android:layout_width="75dp"
-            android:layout_height="30dp"/>
+            <ImageView
+                android:layout_marginEnd="24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_camera_button"
+                app:layout_constraintTop_toTopOf="@+id/iv_camera_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@mipmap/home_camera_button"
+                android:layout_width="75dp"
+                android:layout_height="30dp" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RelativeLayout>
 </layout>

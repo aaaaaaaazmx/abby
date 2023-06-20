@@ -56,10 +56,12 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
+import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
+import com.tuya.smart.android.demo.camera.CameraUtils
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
@@ -141,6 +143,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
         )*/
+        // 检查是否有摄像头
+        mViewMode.getCameraFlag()
+
         mViewMode.userDetail()
 
         // getAppVersion 检查版本更新
@@ -436,7 +441,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 跳转到摄像头界面
             ivCamera.setOnClickListener {
-                startActivity(Intent(activity, CameraActivity::class.java))
+                // 更新涂鸦Bean
+                ThingHomeSdk.newHomeInstance(mViewMode.homeId)
+                    .getHomeDetail(object : IThingHomeResultCallback {
+                        override fun onSuccess(bean: HomeBean?) {
+                            val list = (bean?.deviceList as? ArrayList<DeviceBean>)
+                            list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
+                                if (null == this) {
+                                } else {
+                                    // 跳转到IPC界面
+                                    com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, devId)
+                                }
+                            }
+                        }
+
+                        override fun onError(errorCode: String?, errorMsg: String?) {
+
+                        }
+                    })
             }
 
             // 选中门锁开关
@@ -895,7 +917,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             // 分享
             completeIvShare.setOnClickListener {
-                // todo
+                // 分享到朋友圈
+                ARouter.getInstance().build(RouterPath.Contact.PAGE_TREND)
+                    .withString(Constants.Global.KEY_SHARE_TYPE, "plant_complete")
+                    .withString(Constants.Global.KEY_SHARE_CONTENT, mViewMode.getFinishPage.value?.data?.imageUrl)
+                    .navigation()
             }
         }
 
@@ -1626,6 +1652,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
+            // 是否显示摄像头
+            getCameraFlag.observe(viewLifecycleOwner) {
+                ViewUtils.setVisible(it, binding.pplantNinth.ivCamera)
+            }
+
             getFanIntake.observe(viewLifecycleOwner) {
                 binding.plantManual.fanIntakeSeekbar.setProgress(it.toFloat())
             }
@@ -3559,6 +3590,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     device is removed
                 """.trimIndent()
                 )
+                // 在设备移除时，检查是否需要显示摄像头
+                mViewMode.getCameraFlag()
             }
         }
     }
