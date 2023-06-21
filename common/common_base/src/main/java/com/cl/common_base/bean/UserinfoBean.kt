@@ -51,6 +51,7 @@ data class UserinfoBean(
         val subscriptionTime: String? = null,
         val isVip: Int? = 0,
         val userId: String? = null,
+        val externalId: String? = null,
         val plantDays: String? = null,
         val growBoxCount: String? = null,
         val harvestCount: String? = null,
