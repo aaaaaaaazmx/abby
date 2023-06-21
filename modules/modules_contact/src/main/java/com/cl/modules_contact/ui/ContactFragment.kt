@@ -460,6 +460,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
             .isDestroyOnDismiss(false)
             .dismissOnTouchOutside(false)
             .moveUpToKeyboard(false)
+            .enableDrag(false)
             .maxHeight((XPopupUtils.getScreenHeight(context) * 0.9f).toInt())
             .asCustom(
                 context?.let {
