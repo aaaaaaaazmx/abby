@@ -143,8 +143,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
         )*/
-        // 检查是否有摄像头
-        mViewMode.getCameraFlag()
 
         mViewMode.userDetail()
 
@@ -441,6 +439,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 跳转到摄像头界面
             ivCamera.setOnClickListener {
+
+                 /*ARouter
+                    .getInstance()
+                    .build(RouterPath.Home.PAGE_CAMERA)
+                    .withString(Constants.Global.INTENT_DEV_ID, "123")
+                    .navigation(context)*/
+
                 // 更新涂鸦Bean
                 ThingHomeSdk.newHomeInstance(mViewMode.homeId)
                     .getHomeDetail(object : IThingHomeResultCallback {
@@ -1653,9 +1658,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun observe() {
         mViewMode.apply {
             // 是否显示摄像头
-            getCameraFlag.observe(viewLifecycleOwner) {
+            /*getCameraFlag.observe(viewLifecycleOwner) {
                 ViewUtils.setVisible(it, binding.pplantNinth.ivCamera)
-            }
+            }*/
 
             getFanIntake.observe(viewLifecycleOwner) {
                 binding.plantManual.fanIntakeSeekbar.setProgress(it.toFloat())
@@ -3386,6 +3391,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+        // 检查是否有摄像头
+        // mViewMode.getCameraFlag()
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
         // 刷新数据
@@ -3590,8 +3597,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     device is removed
                 """.trimIndent()
                 )
-                // 在设备移除时，检查是否需要显示摄像头
-                mViewMode.getCameraFlag()
             }
         }
     }

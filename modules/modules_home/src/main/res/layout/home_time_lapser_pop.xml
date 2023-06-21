@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_white_r6"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:layout_marginTop="25dp"
+            android:layout_marginStart="25dp"
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/iv_close"
+            android:scaleType="center" />
+
+
+        <TextView
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginStart="25dp"
+            android:text="You are about to start the time-lapse capture. Here's how it works: every time you open the Hey Abby app to check on your plant, the system will automatically capture one picture per day to keep track of its growth. To avoid interfering with the plant, the mechanism only works when the grow lights are on."
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <Button
+            android:layout_marginBottom="53dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="32dp"
+            android:id="@+id/btn_next"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/create_state_button"
+            android:enabled="true"
+            android:text="I Understood"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+          />
+
+
+    </LinearLayout>
+</layout>

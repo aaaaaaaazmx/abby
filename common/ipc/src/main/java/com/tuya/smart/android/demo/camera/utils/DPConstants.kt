@@ -23,6 +23,10 @@ class DPConstants {
         const val SD_FORMAT = "111"
         const val SD_FORMAT_STATUS = "117"
 
+
+        // 隐私模式
+        const val PRIVATE_MODE = "105"
+
         //DP Data type
         const val SCHEMA_TYPE_RAW = "raw"
         const val SCHEMA_TYPE_BOOL = "bool"

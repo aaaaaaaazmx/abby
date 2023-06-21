@@ -38,6 +38,7 @@
     <string name="update_wait">Please wait…</string>
     <string name="profile_request_camera">Authorize hey abby to access your camera</string>
     <string name="profile_request_photo">Authorize hey abby to access your camera</string>
+    <string name="profile_request_sd_card">Authorize hey Abby to access your memory card</string>
     <string name="private_policy">Your privacy is important to us. By continuing to use our product and services, you are confirming that you have read and accepted our</string>
     <string name="terms_us">Terms of Use</string>
     <string name="policy">Privacy Policy</string>

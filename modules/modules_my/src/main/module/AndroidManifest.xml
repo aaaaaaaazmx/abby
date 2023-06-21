@@ -140,6 +140,7 @@
         <activity android:name=".ui.ResetPasswordActivity" />
         <activity android:name=".ui.StoraceOptioneActivity" />
         <activity android:name=".ui.PairTheCameraActivity" />
+        <activity android:name=".ui.CameraSettingActivity" />
 
 
     </application>

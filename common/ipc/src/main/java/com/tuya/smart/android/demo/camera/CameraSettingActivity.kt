@@ -171,14 +171,14 @@ class CameraSettingActivity : AppCompatActivity() {
         }
     }
 
-    private fun queryValueByDPID(dpId: String): Any? {
+     fun queryValueByDPID(dpId: String): Any? {
         ThingHomeSdk.getDataInstance().getDeviceBean(devId)?.also {
             return it.getDps()?.get(dpId)
         }
         return null
     }
 
-    private fun publishDps(dpId: String, value: Any) {
+     fun publishDps(dpId: String, value: Any) {
         if (iTuyaDevice == null) {
             iTuyaDevice = ThingHomeSdk.newDeviceInstance(devId)
         }
@@ -196,7 +196,7 @@ class CameraSettingActivity : AppCompatActivity() {
         })
     }
 
-    private fun listenDPUpdate(dpId: String, callback: DPCallback?) {
+     fun listenDPUpdate(dpId: String, callback: DPCallback?) {
         ThingHomeSdk.newDeviceInstance(devId).registerDevListener(object : IDevListener {
             override fun onDpUpdate(devId: String, dpStr: String) {
                 callback?.let {
@@ -215,7 +215,7 @@ class CameraSettingActivity : AppCompatActivity() {
         })
     }
 
-    private interface DPCallback {
+    interface DPCallback {
         fun callback(obj: Any)
     }
 }

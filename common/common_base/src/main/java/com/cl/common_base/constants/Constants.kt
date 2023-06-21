@@ -86,6 +86,8 @@ object Constants {
     object Contact {
         const val KEY_SHARE_TO_PUBLIC = "key_share_to_public"
         const val KEY_PLANT_DATA_IS_VISIBLE = "key_plant_data_is_visible"
+        // timelapse提示是否只展示一次
+        const val KEY_TIMELAPSE_TIP_IS_SHOW = "key_timelapse_tip_is_show"
     }
 
     // 隐私合规相关
@@ -247,6 +249,9 @@ object Constants {
         // 分享Trend的类型
         const val KEY_SHARE_TYPE = "key_share_type"
         const val KEY_SHARE_CONTENT = "key_share_content"
+
+        // 是否开启了延时摄影模式
+        const val KEY_TIME_LAPSE = "key_time_lapse"
     }
 
     // Fixed Id

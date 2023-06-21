@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bbgo.module_home.R;
+import com.cl.common_base.widget.toast.ToastUtil;
 
 public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private String[] letters;
@@ -24,6 +25,16 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private RecyclerView recyclerView;
     private int focusedPosition = -1;
+
+    private boolean shouldDisableClick = true;
+
+    public boolean isShouldDisableClick() {
+        return shouldDisableClick;
+    }
+
+    public void setShouldDisableClick(boolean shouldDisableClick) {
+        this.shouldDisableClick = shouldDisableClick;
+    }
 
     public MyAdapter(String[] letters, final Context context, int recyclerViewWidth, RecyclerView recyclerView) {
         this.letters = letters;
@@ -49,12 +60,16 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    public int getFocusedPosition() {
+        return focusedPosition;
+    }
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-         if (viewType == VIEW_TYPE_BLANK) {
+        if (viewType == VIEW_TYPE_BLANK) {
             View view = new View(parent.getContext());
-            RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(itemWidth - dp2px(20), parent.getHeight());
+            RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(itemWidth - dp2px(35), parent.getHeight());
             view.setLayoutParams(params);
             return new RecyclerView.ViewHolder(view) {
             };
@@ -77,6 +92,10 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             // Add click listener to smoothly scroll to clicked item
             holder.itemView.setOnClickListener(v -> {
+                if (!shouldDisableClick) {
+                    ToastUtil.shortShow("Please stop the current mode first");
+                    return;
+                }
                 recyclerView.smoothScrollToPosition(position);
                 setFocusedPosition(position);
             });

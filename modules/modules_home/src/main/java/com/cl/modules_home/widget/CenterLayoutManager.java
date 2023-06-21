@@ -6,10 +6,30 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cl.common_base.widget.toast.ToastUtil;
+
 
 public class CenterLayoutManager extends LinearLayoutManager {
     public CenterLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
+    }
+
+   private boolean isScrollEnabled = true;
+
+    public boolean isScrollEnabled() {
+        return isScrollEnabled;
+    }
+
+    public void setScrollEnabled(boolean scrollEnabled) {
+        isScrollEnabled = scrollEnabled;
+    }
+
+    @Override
+    public boolean canScrollHorizontally() {
+        if (!isScrollEnabled) {
+            ToastUtil.shortShow("Please stop the current mode first");
+        }
+        return isScrollEnabled && super.canScrollHorizontally();
     }
 
     @Override
