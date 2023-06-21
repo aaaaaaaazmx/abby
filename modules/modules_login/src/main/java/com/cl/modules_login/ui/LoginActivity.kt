@@ -177,7 +177,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 val it = mViewModel.registerLoginLiveData.value
                 mViewModel.tuYaLogin(
                     map = mapOf(),
-                    interComeUserId = it?.data?.userId,
+                    interComeUserId = it?.data?.externalId,
                     userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
                     deviceId = it?.data?.deviceId,
                     code = it?.data?.tuyaCountryCode,
@@ -199,7 +199,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 val it = mViewModel.registerLoginLiveData.value
                 mViewModel.tuYaLogin(
                     map = mapOf(),
-                    interComeUserId = it?.data?.userId,
+                    interComeUserId = it?.data?.externalId,
                     userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
                     deviceId = it?.data?.deviceId,
                     code = it?.data?.tuyaCountryCode,
