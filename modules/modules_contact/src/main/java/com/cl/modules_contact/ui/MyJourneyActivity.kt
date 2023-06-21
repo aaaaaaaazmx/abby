@@ -392,6 +392,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
             .isDestroyOnDismiss(false)
             .dismissOnTouchOutside(false)
             .moveUpToKeyboard(false)
+            .enableDrag(false)
             .maxHeight((XPopupUtils.getScreenHeight(this@MyJourneyActivity) * 0.9f).toInt())
             .asCustom(
                     CommentPop(this@MyJourneyActivity, item?.id, onDismissAction = { commentListData ->
