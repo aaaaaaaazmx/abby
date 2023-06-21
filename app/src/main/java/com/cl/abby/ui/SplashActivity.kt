@@ -116,7 +116,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 val tuyaPassword = userinfoBean?.tuyaPassword
                 mViewModel.tuYaLogin(
                     map = mapOf(),
-                    mViewModel.userDetail.value?.data?.userId,
+                    mViewModel.userDetail.value?.data?.externalId,
                     mViewModel.userDetail.value?.data,
                     mViewModel.userDetail.value?.data?.deviceId,
                     tuyaCountryCode,
@@ -141,7 +141,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 val tuyaPassword = userinfoBean?.tuyaPassword
                 mViewModel.tuYaLogin(
                     map = mapOf(),
-                    mViewModel.userDetail.value?.data?.userId,
+                    mViewModel.userDetail.value?.data?.externalId,
                     mViewModel.userDetail.value?.data,
                     mViewModel.userDetail.value?.data?.deviceId,
                     tuyaCountryCode,

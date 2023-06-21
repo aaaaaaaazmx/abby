@@ -72,7 +72,7 @@ class InterComeHelp {
         // Intercom.client().loginUnidentifiedUser()
         /* For best results, use a unique user_id if you have one. */
         Intercom.client().logout()
-        interComeUserId?.let { Registration().withUserId(if (BuildConfig.DEBUG) "test_$it" else it) }
+        interComeUserId?.let { Registration().withUserId(it) }
             ?.apply {
                 Intercom.client().loginIdentifiedUser(
                     userRegistration = this,
