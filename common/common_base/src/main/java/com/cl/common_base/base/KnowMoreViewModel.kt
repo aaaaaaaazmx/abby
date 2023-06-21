@@ -25,6 +25,9 @@ import javax.inject.Inject
 class KnowMoreViewModel  @Inject constructor() : ViewModel() {
     private val service = ServiceCreators.create(BaseApiService::class.java)
 
+    val homeId by lazy {
+        Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
+    }
 
     /**
      * 涂鸦信息
@@ -124,9 +127,9 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
      */
     private val _addAccessory = MutableLiveData<Resource<BaseBean>>()
     val addAccessory: LiveData<Resource<BaseBean>> = _addAccessory
-    fun addAccessory(accessoryId: String, deviceId: String) {
+    fun addAccessory(accessoryId: String, deviceId: String, accessoryDeviceId: String? = null) {
         viewModelScope.launch {
-            service.accessoryAdd(accessoryId, deviceId)
+            service.accessoryAdd(accessoryId, deviceId, accessoryDeviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

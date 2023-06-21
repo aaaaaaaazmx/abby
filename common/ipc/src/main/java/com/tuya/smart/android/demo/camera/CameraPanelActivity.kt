@@ -283,7 +283,7 @@ class CameraPanelActivity : AppCompatActivity(), View.OnClickListener {
         devId?.let {
             cameraPTZHelper = CameraPTZHelper(it)
         }
-        cameraPTZHelper?.bindPtzBoard(findViewById(R.id.sv_ptz_board))
+        /*cameraPTZHelper?.bindPtzBoard(findViewById(R.id.sv_ptz_board))*/
     }
 
     private fun showNotSupportToast() {

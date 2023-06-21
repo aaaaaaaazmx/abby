@@ -202,4 +202,11 @@ class MyRemoteRepository @Inject constructor() {
         return service.resetPwd(req)
     }
 
+    fun updateInfo(body: UpdateInfoReq): Flow<HttpResult<BaseBean>> {
+        return service.updateInfo(body)
+    }
+
+    fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
+        return service.getAccessoryInfo(deviceId)
+    }
 }

@@ -909,10 +909,10 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     // true 开门、 fasle 关门
                     if (value.toString() == "true") {
                         // 开门，打开隐私模式
-                        publishDps(DPConstants.PRIVATE_MODE, "true")
+                        publishDps(DPConstants.PRIVATE_MODE, true)
                     } else {
                         // todo 关门，查看接口返回的是不是隐私模式，如果是，那么就不关闭，反之关闭
-                        publishDps(DPConstants.PRIVATE_MODE, "false")
+                        publishDps(DPConstants.PRIVATE_MODE, false)
                     }
                     listenDPUpdate(DPConstants.PRIVATE_MODE, object : CameraSettingActivity.DPCallback {
                         override fun callback(obj: Any) {

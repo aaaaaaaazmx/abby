@@ -246,4 +246,12 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun resetPwd(req: ResetPwdReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.resetPwd(req)
     }
+
+    fun updateInfo(body: UpdateInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateInfo(body)
+    }
+
+    fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
+        return remoteRepository.getAccessoryInfo(deviceId)
+    }
 }

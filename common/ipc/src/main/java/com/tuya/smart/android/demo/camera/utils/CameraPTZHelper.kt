@@ -38,7 +38,7 @@ class CameraPTZHelper(devId: String) : View.OnClickListener, OnLongClickListener
         this.ptzBoard = ptzBoard
         context = ptzBoard.context
         progressDialog = android.app.ProgressDialog(ptzBoard.context)
-        ptzBoard.findViewById<View>(R.id.tv_ptz_close).setOnClickListener(this)
+        /*ptzBoard.findViewById<View>(R.id.tv_ptz_close).setOnClickListener(this)*/
         //PTZ Control
         ptzBoard.findViewById<View>(R.id.tv_ptz_left)
             .setOnTouchListener(PTZControlTouchListener("6"))

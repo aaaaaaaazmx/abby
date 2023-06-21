@@ -251,7 +251,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 R.id.iv_luosi -> {
                     // camera跳转到专属页面
                     if (deviceBean?.accessoryList?.get(0)?.accessoryName == "Smart Camera") {
-                        startActivity(Intent(this@DeviceListActivity, CameraSettingActivity::class.java))
+                        val accessoryDeviceId = deviceBean.accessoryList?.get(0)?.accessoryDeviceId
+                        startActivityLauncher.launch(Intent(this@DeviceListActivity, CameraSettingActivity::class.java).apply {
+                            putExtra("accessoryDeviceId", accessoryDeviceId)
+                            putExtra("deviceId", deviceBean.deviceId)
+                        })
                         return@setOnItemChildClickListener
                     }
                     val intent =

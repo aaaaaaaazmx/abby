@@ -74,11 +74,11 @@
         android:visibility="invisible"
         android:background="@color/white">
 
-        <include
+      <!--  <include
             android:id="@+id/camera_ptz_board"
             layout="@layout/camera_ptz_control_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" />-->
 
     </ScrollView>
 

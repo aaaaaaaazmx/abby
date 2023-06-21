@@ -143,6 +143,14 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
                     // 如果点击的是当前已经添加过的。
                     accessoryList?.firstOrNull { it.accessoryId == itemData?.accessoryId }?.apply {
+                        // 跳转到摄像头界面
+                        if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == true && itemData?.accessoryName == "Smart Camera") {
+                            startActivity(Intent(this@AddAccessoryActivity, CameraSettingActivity::class.java).apply {
+                                putExtra("accessoryDeviceId", accessoryDeviceId)
+                                putExtra("deviceId", deviceId)
+                            })
+                            return@setOnItemChildClickListener
+                        }
                         // 跳转到智能设备信息界面
                         val intent = Intent(this@AddAccessoryActivity, DeviceAutomationActivity::class.java)
                         intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
@@ -165,86 +173,32 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                     confirmText = "Yes",
                                     onConfirmAction = {
                                         val intent = Intent(this, KnowMoreActivity::class.java)
-
-                                        // 判断是否有摄像头，然后在解绑。
-                                        ThingHomeSdk.newHomeInstance(mViewModel.homeId)
-                                            .getHomeDetail(object : IThingHomeResultCallback {
-                                                override fun onSuccess(bean: HomeBean?) {
-                                                    // 跳转到富文本界面
-                                                    val list = (bean?.deviceList as? ArrayList<DeviceBean>)
-                                                    list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
-                                                        // 如果没有摄像头，就不需要解绑
-                                                        if (null == this) {
-                                                            intent.putExtra(
-                                                                Constants.Global.KEY_TXT_ID,
-                                                                itemData?.textId
-                                                            )
-                                                            intent.putExtra(
-                                                                BasePopActivity.KEY_FIXED_TASK_ID,
-                                                                Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
-                                                            )
-                                                            intent.putExtra(
-                                                                BasePopActivity.KEY_INTENT_UNLOCK_TASK,
-                                                                true
-                                                            )
-                                                            intent.putExtra(
-                                                                BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
-                                                                true
-                                                            )
-                                                            intent.putExtra(
-                                                                BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                                                "Slide to Unlock"
-                                                            )
-                                                            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
-                                                            intent.putExtra(
-                                                                BasePopActivity.KEY_PART_ID,
-                                                                "${itemData?.accessoryId}"
-                                                            )
-                                                            startActivity(intent)
-                                                        } else {
-                                                            // 需要解绑摄像头
-                                                            ThingHomeSdk.newDeviceInstance(devId).removeDevice(object : IResultCallback {
-                                                                override fun onError(s: String, s1: String) {
-                                                                    com.tuya.smart.android.demo.camera.utils.ToastUtil.shortToast(this@AddAccessoryActivity, s1)
-                                                                }
-
-                                                                override fun onSuccess() {
-                                                                    intent.putExtra(
-                                                                        Constants.Global.KEY_TXT_ID,
-                                                                        itemData?.textId
-                                                                    )
-                                                                    intent.putExtra(
-                                                                        BasePopActivity.KEY_FIXED_TASK_ID,
-                                                                        Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
-                                                                    )
-                                                                    intent.putExtra(
-                                                                        BasePopActivity.KEY_INTENT_UNLOCK_TASK,
-                                                                        true
-                                                                    )
-                                                                    intent.putExtra(
-                                                                        BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
-                                                                        true
-                                                                    )
-                                                                    intent.putExtra(
-                                                                        BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                                                        "Slide to Unlock"
-                                                                    )
-                                                                    intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
-                                                                    intent.putExtra(
-                                                                        BasePopActivity.KEY_PART_ID,
-                                                                        "${itemData?.accessoryId}"
-                                                                    )
-                                                                    startActivity(intent)
-                                                                }
-                                                            })
-                                                        }
-                                                    }
-                                                }
-
-                                                override fun onError(errorCode: String?, errorMsg: String?) {
-
-                                                }
-                                            })
+                                        intent.putExtra(
+                                            Constants.Global.KEY_TXT_ID,
+                                            itemData?.textId
+                                        )
+                                        intent.putExtra(
+                                            BasePopActivity.KEY_FIXED_TASK_ID,
+                                            Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
+                                        )
+                                        intent.putExtra(
+                                            BasePopActivity.KEY_INTENT_UNLOCK_TASK,
+                                            true
+                                        )
+                                        intent.putExtra(
+                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
+                                            true
+                                        )
+                                        intent.putExtra(
+                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                                            "Slide to Unlock"
+                                        )
+                                        intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+                                        intent.putExtra(
+                                            BasePopActivity.KEY_PART_ID,
+                                            "${itemData?.accessoryId}"
+                                        )
+                                        startActivity(intent)
                                     }
                                 )
                             ).show()

@@ -5,6 +5,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreViewModel
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ipc.CameraUtils
@@ -74,7 +75,10 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
                     /*CameraUtils.ipcProcess(this@PairTheCameraActivity, cameraId)*/
-                    startActivity(Intent(this@PairTheCameraActivity, StoraceOptioneActivity::class.java))
+                    startActivity(Intent(this@PairTheCameraActivity, StoraceOptioneActivity::class.java).apply {
+                        putExtra("accessoryDeviceId", cameraId)
+                        putExtra("deviceId", deviceId)
+                    })
                 }
             })
         }
@@ -103,9 +107,10 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
                     // 绑定成功、 跳转到视频界面
                     hideProgressLoading()
                     cameraId = devResp?.devId ?: ""
+                    logI("123123: cameraId: $cameraId  deviceId: $deviceId")
                     letMultiple(accessoryId, deviceId) { a, b ->
                         // 新增配件接口
-                        mViewMode.addAccessory(a, b)
+                        mViewMode.addAccessory(a, b, cameraId)
                     }
                 }
             })

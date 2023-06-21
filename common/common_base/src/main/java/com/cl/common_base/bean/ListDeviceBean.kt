@@ -25,6 +25,7 @@ data class ListDeviceBean(
         val isAuto: Int? = null,
         val accessoryId: Int? = null,
         val accessoryName: String? = null,
+        val accessoryDeviceId: String? = null,
         val image: String? = null,
         val textId: String? = null,
         val status: Int? = null,
