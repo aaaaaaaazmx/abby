@@ -38,8 +38,8 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactReelPostActivityBinding
-import com.cl.modules_contact.decoraion.FullyGridLayoutManager
-import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
+import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
+import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.modules_contact.pop.ContactListPop
 import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.ImageUrl

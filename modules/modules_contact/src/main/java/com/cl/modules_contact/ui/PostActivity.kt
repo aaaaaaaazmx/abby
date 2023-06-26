@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.TextUtils
-import android.util.Log
 import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
@@ -33,7 +32,6 @@ import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
-import com.cl.common_base.widget.edittext.bean.FormatItemResult
 import com.cl.common_base.widget.edittext.bean.MentionUser
 import com.cl.common_base.widget.edittext.listener.EditDataListener
 import com.cl.common_base.widget.toast.ToastUtil
@@ -41,8 +39,8 @@ import com.cl.modules_contact.ItemTouchHelp
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactPostActivityBinding
-import com.cl.modules_contact.decoraion.FullyGridLayoutManager
-import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
+import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
+import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.modules_contact.pop.ContactLinkPop
 import com.cl.modules_contact.pop.ContactListPop
 import com.cl.modules_contact.pop.ContactPhPop
@@ -51,7 +49,6 @@ import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.ImageUrl
 import com.cl.modules_contact.request.Mention
 import com.cl.modules_contact.response.ChoosePicBean
-import com.cl.modules_contact.response.MentionData
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -75,10 +72,6 @@ import okhttp3.RequestBody
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import java.util.Collections
 import javax.inject.Inject
 

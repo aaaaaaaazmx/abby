@@ -32,7 +32,14 @@ class TuyaCameraUtils {
         })
     }
 
-    fun listenDPUpdate(devId: String, dpId: String, callback: DPCallback?) {
+    /**
+     * 监听dp指令
+     * @param devId 设备id
+     * @param dpId dp指令id
+     * @param callback dp指令回调
+     * @param onStatusChangedAction 设备在线状态回调
+     */
+    fun listenDPUpdate(devId: String, dpId: String, callback: DPCallback? = null, onStatusChangedAction: ((online: Boolean) -> Unit)? = null) {
         ThingHomeSdk.newDeviceInstance(devId).registerDevListener(object : IDevListener {
             override fun onDpUpdate(devId: String, dpStr: String) {
                 callback?.let {
@@ -45,7 +52,9 @@ class TuyaCameraUtils {
             }
 
             override fun onRemoved(devId: String) {}
-            override fun onStatusChanged(devId: String, online: Boolean) {}
+            override fun onStatusChanged(devId: String, online: Boolean) {
+                onStatusChangedAction?.invoke(online)
+            }
             override fun onNetworkStatusChanged(devId: String, status: Boolean) {}
             override fun onDevInfoUpdate(devId: String) {}
         })

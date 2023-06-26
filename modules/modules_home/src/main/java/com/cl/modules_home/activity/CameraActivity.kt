@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -23,7 +24,6 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.fastjson.JSONObject
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeCameraBinding
 import com.bumptech.glide.Glide
@@ -37,6 +37,7 @@ import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.TuYaDeviceConstants
+import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.json.GSON
@@ -55,9 +56,6 @@ import com.thingclips.smart.camera.ipccamerasdk.p2p.ICameraP2P
 import com.thingclips.smart.camera.middleware.p2p.IThingSmartCameraP2P
 import com.thingclips.smart.camera.middleware.widget.AbsVideoViewCallback
 import com.thingclips.smart.home.sdk.ThingHomeSdk
-import com.thingclips.smart.sdk.api.IDevListener
-import com.thingclips.smart.sdk.api.IResultCallback
-import com.tuya.smart.android.demo.camera.CameraSettingActivity
 import com.tuya.smart.android.demo.camera.databinding.ActivityCameraPanelBinding
 import com.tuya.smart.android.demo.camera.utils.CameraPTZHelper
 import com.tuya.smart.android.demo.camera.utils.DPConstants
@@ -235,6 +233,20 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     private var adapters: MyAdapter? = null
     override fun initView() {
+        // 注册监听
+        devId?.let {
+            tuYaUtils.listenDPUpdate(devId = it, dpId = DPConstants.PRIVATE_MODE, onStatusChangedAction = { online ->
+                if (!online) {
+                    binding.ivCameraButton.isClickable = false
+                    binding.ivCameraButton.isEnabled = false
+                    binding.ivCameraButton.isFocusable = false
+                } else {
+                    binding.ivCameraButton.isClickable = true
+                    binding.ivCameraButton.isEnabled = true
+                    binding.ivCameraButton.isFocusable = true
+                }
+            })
+        }
 
         // 获取配件信息
         mViewModel.tuYaDeviceBean?.devId?.let { mViewModel.getAccessoryInfo(it) }
@@ -398,6 +410,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             binding.cameraQuality.setOnClickListener(this)
             binding.ivThumbnail.setOnClickListener(this)
             binding.ivGetImage.setOnClickListener(this)
+            binding.ivBack.setOnClickListener(this)
         }
 
         binding.ivCameraButton.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -435,7 +448,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                         Prefs.putBoolean(Constants.Contact.KEY_TIMELAPSE_TIP_IS_SHOW, true)
                                         // Toggle the status and store it
                                         Prefs.putBooleanAsync(timeLapseKey, !currentStatus)
-                                        
+
                                         // 判断是否第一次开启，判断是否需要截图
                                         isScreenshots()
                                     },
@@ -549,9 +562,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             if (!it) return@applyForAuthority
             if (!isRecording) {
                 // 创建文件夹
-                FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value)
-                // 文件路径
-                val picPath = SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value
+                val picPath = createFileDir()
                 // 文件名字
                 val fileName = System.currentTimeMillis().toString() + ".mp4"
                 mCameraP2P?.startRecordLocalMp4(
@@ -616,9 +627,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         applyForAuthority {
             if (!it) return@applyForAuthority
             // 创建文件夹
-            FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value)
-            // 文件路径
-            val picPath = SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value
+            val picPath = createFileDir()
             // 文件名字
             val fileName = System.currentTimeMillis().toString() + ".jpg"
             mCameraP2P?.snapshot(
@@ -894,12 +903,26 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             R.id.iv_thumbnail -> {
                 applyForAuthority {
                     if (!it) return@applyForAuthority
-                    // todo 跳转到相册
+                    // 跳转到相册
+                    startActivity(Intent(this@CameraActivity, CameraChooserActivity::class.java).apply {
+                        // 传递设备id
+                        putExtra("devId", devId)
+                        // 传递sdCard相册路径
+                        putExtra("sdCardPath", createFileDir())
+                        // 是否是保存在相册还是保存在本地
+                        putExtra("isSaveAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == "0")
+                        // 设备的sn号
+                        putExtra("sn", mViewModel.sn.value)
+                    })
                 }
             }
 
             R.id.iv_get_image -> {
                 // todo 跳转到生成界面
+            }
+
+            R.id.iv_back -> {
+                isExit()
             }
         }
     }
@@ -987,20 +1010,22 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     // true 开门、 fasle 关门
                     if (value.toString() == "true") {
                         // 开门，打开隐私模式
-                        publishDps(DPConstants.PRIVATE_MODE, true)
+                        devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
                     } else {
                         // 关门，查看接口返回的是不是隐私模式，如果是，那么就不关闭，反之关闭
                         if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) {
-                            publishDps(DPConstants.PRIVATE_MODE, true)
+                            devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
                         } else {
-                            publishDps(DPConstants.PRIVATE_MODE, false)
+                            devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
                         }
                     }
-                    listenDPUpdate(DPConstants.PRIVATE_MODE, object : CameraSettingActivity.DPCallback {
-                        override fun callback(obj: Any) {
-                            ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
-                        }
-                    })
+                    devId?.let {
+                        tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, callback = object : TuyaCameraUtils.DPCallback {
+                            override fun callback(obj: Any) {
+                                ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
+                            }
+                        })
+                    }
                 }
             }
         }
@@ -1120,48 +1145,40 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         return files?.toList() ?: emptyList()
     }
 
-    private fun queryValueByDPID(dpId: String): Any? {
-        ThingHomeSdk.getDataInstance().getDeviceBean(devId)?.also {
-            return it.getDps()?.get(dpId)
-        }
-        return null
+    // 创建文件夹，并且返回文件夹路径
+    // 这是本地路径
+    private fun createFileDir(): String {
+        FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value)
+        // 文件路径
+        return SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value
+    }
+
+    override fun onBackPressed() {
+        isExit()
+    }
+
+    private fun isExit() {
+        adapters?.focusedPosition?.let { adapters?.getLetter(it) }?.apply {
+            if (binding.ivCameraButton.isChecked) {
+                if (this == "TIME-LAPSE") {
+                    this@CameraActivity.finish()
+                } else {
+                    com.cl.common_base.widget.toast.ToastUtil.shortShow("Please stop the current mode first")
+                }
+            } else {
+                this@CameraActivity.finish()
+            }
+        } ?: finish()
+    }
+
+    /**
+     * 涂鸦摄像头帮助类
+     */
+    private val tuYaUtils by lazy {
+        TuyaCameraUtils()
     }
 
     private val iTuyaDevice by lazy {
         ThingHomeSdk.newDeviceInstance(devId)
-    }
-
-    private fun publishDps(dpId: String, value: Any) {
-        val jsonObject = JSONObject()
-        jsonObject[dpId] = value
-        val dps = jsonObject.toString()
-        iTuyaDevice!!.publishDps(dps, object : IResultCallback {
-            override fun onError(code: String, error: String) {
-                Log.e(TAG, "publishDps err $dps")
-            }
-
-            override fun onSuccess() {
-                Log.i(TAG, "publishDps suc $dps")
-            }
-        })
-    }
-
-    private fun listenDPUpdate(dpId: String, callback: CameraSettingActivity.DPCallback?) {
-        ThingHomeSdk.newDeviceInstance(devId).registerDevListener(object : IDevListener {
-            override fun onDpUpdate(devId: String, dpStr: String) {
-                callback?.let {
-                    val dps: Map<String, Any> =
-                        JSONObject.parseObject<Map<String, Any>>(dpStr, MutableMap::class.java)
-                    if (dps.containsKey(dpId)) {
-                        dps[dpId]?.let { it1 -> callback.callback(it1) }
-                    }
-                }
-            }
-
-            override fun onRemoved(devId: String) {}
-            override fun onStatusChanged(devId: String, online: Boolean) {}
-            override fun onNetworkStatusChanged(devId: String, status: Boolean) {}
-            override fun onDevInfoUpdate(devId: String) {}
-        })
     }
 }

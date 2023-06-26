@@ -1,4 +1,4 @@
-package com.cl.modules_contact.decoraion;
+package com.cl.common_base.widget.decoraion;
 
 import android.content.Context;
 import android.view.View;

@@ -17,17 +17,22 @@
         <activity android:name="com.cl.common_base.web.BaseWebActivity" />
         <activity android:name="com.cl.common_base.web.WebActivity" />
         <activity
-            android:windowSoftInputMode="adjustPan"
             android:name=".pop.activity.BasePopActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
-            android:theme="@style/TranslucentTheme" />
+            android:theme="@style/TranslucentTheme"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".pop.activity.BasePumpActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
             android:theme="@style/TranslucentTheme" />
+
+        <activity
+            android:name=".video.GSYPlayVideoActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait" />
 
         <service android:name=".listener.TuYaDeviceUpdateReceiver" />
 
