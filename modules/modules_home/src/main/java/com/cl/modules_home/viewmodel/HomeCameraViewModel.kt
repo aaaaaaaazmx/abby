@@ -8,6 +8,7 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AcademyDetails
 import com.cl.common_base.bean.AcademyListData
 import com.cl.common_base.bean.RichTextData
+import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
@@ -31,7 +32,6 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class HomeCameraViewModel @Inject constructor(private val repository: HomeRepository) : ViewModel() {
 
-
     // 用户信息
     val userInfo by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
@@ -41,7 +41,7 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
 
 
     // 获取当前设备信息
-    private val tuYaDeviceBean by lazy {
+    val tuYaDeviceBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
@@ -75,6 +75,42 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
                     logI("sdasdas")
                 }
             })
+        }
+    }
+
+    /**
+     * 获取配件信息
+     */
+    private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
+    val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
+    fun getAccessoryInfo(deviceId: String) {
+        viewModelScope.launch {
+            repository.getAccessoryInfo(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _getAccessoryInfo.value = it
+                }
         }
     }
 
@@ -115,13 +151,49 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
     }
 
     /**
+     * 获取配件信息
+     */
+    private val _getPartsInfo = MutableLiveData<Resource<UpdateInfoReq>>()
+    val getPartsInfo: LiveData<Resource<UpdateInfoReq>> = _getPartsInfo
+    fun getPartsInfo(deviceId: String = tuYaDeviceBean?.devId ?: "") {
+        viewModelScope.launch {
+            repository.getAccessoryInfo(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _getPartsInfo.value = it
+                }
+        }
+    }
+
+    /**
      * 获取学院列表
      */
-    private val _getAcademyList = MutableLiveData<Resource<MutableList<AcademyListData>>>()
-    val getAcademyList: LiveData<Resource<MutableList<AcademyListData>>> = _getAcademyList
-    fun getAcademyList() {
+    private val _getAcademyList = MutableLiveData<Resource<UpdateInfoReq>>()
+    val getAcademyList: LiveData<Resource<UpdateInfoReq>> = _getAcademyList
+    fun getAcademyList(deviceId: String) {
         viewModelScope.launch {
-            repository.getAcademyList()
+            repository.getAccessoryInfo(deviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

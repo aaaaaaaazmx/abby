@@ -7,10 +7,12 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyCameraSettingBinding
 import com.cl.modules_my.viewmodel.CameraSettingViewModel
+import com.lxj.xpopup.XPopup
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IResultCallback
 import com.tuya.smart.android.demo.camera.utils.DPConstants
@@ -94,16 +96,42 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
         }
 
         binding.unbindCamera.setOnClickListener {
-            // 解绑相机
-            accessoryDeviceId?.let { it1 ->
-                tuyaUtils.unBindCamera(it1, onErrorAction = {
-                    ToastUtil.shortShow(it)
-                }) {
-                    // 绑定成功，结束当前页面，刷新配件列表
-                    setResult(Activity.RESULT_OK)
-                    finish()
-                }
-            }
+            XPopup.Builder(this@CameraSettingActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(BaseCenterPop(this@CameraSettingActivity,
+                    titleText = "Are you certain you wish to delete the BudCam?",
+                    content = "The photos you've taken will remain saved in the app, and any videos can be accessed through the micro SD card inside the budcam.",
+                    cancelText = "No",
+                    confirmText = "Yes",
+                    onCancelAction = {},
+                    onConfirmAction = { // 解绑相机
+                        accessoryDeviceId?.let { it1 ->
+                            tuyaUtils.unBindCamera(it1, onErrorAction = {
+                                ToastUtil.shortShow(it)
+                            }) { // 绑定成功，结束当前页面，刷新配件列表
+                                setResult(Activity.RESULT_OK)
+                                finish()
+                            }
+                        }
+                    })).show()
+            /* xpopup {
+                 title("解绑摄像头")
+                 content("确定要解绑摄像头吗？")
+                 positiveButton("确定") {
+                     unBindDevice()
+                     // 解绑相机
+                     accessoryDeviceId?.let { it1 ->
+                         tuyaUtils.unBindCamera(it1, onErrorAction = {
+                             ToastUtil.shortShow(it)
+                         }) {
+                             // 绑定成功，结束当前页面，刷新配件列表
+                             setResult(Activity.RESULT_OK)
+                             finish()
+                         }
+                     }
+                 }
+                 negativeButton("取消") {
+                     dismiss()
+                 }
+             }.show()*/
         }
 
         binding.ftPrivacyMode.setSwitchCheckedChangeListener { _, isChecked ->

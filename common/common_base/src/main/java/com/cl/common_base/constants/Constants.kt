@@ -103,13 +103,14 @@ object Constants {
 
     // 涂鸦相关
     object Tuya {
-        // 用户信息
+        // 用户信息 tuya用户信息类
         const val KEY_DEVICE_USER = "key_deviceUser"
 
         // 用户的家庭ID
         const val KEY_HOME_ID = "key_home_id"
 
         // 用户的第0个设备数据 HomeBean[0].getDeviceList() =  DeviceBean
+        // 这个才是真的tuya相关类
         const val KEY_DEVICE_DATA = "key_device_data"
 
         // 设备端给APP端下发的信息
@@ -252,6 +253,10 @@ object Constants {
 
         // 是否开启了延时摄影模式
         const val KEY_TIME_LAPSE = "key_time_lapse"
+
+        // 摄像头当天是否已经截图了
+        // lastOperationDate
+        const val KEY_IS_LAST_OPERATION_DATE = "key_is_take_photo_today"
     }
 
     // Fixed Id

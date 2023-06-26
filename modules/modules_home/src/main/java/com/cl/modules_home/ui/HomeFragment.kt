@@ -456,7 +456,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 } else {
                                     // 跳转到IPC界面
                                      com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, devId)
-                                    // CameraUtils.ipcProcess(it.context, devId)
+//                                     CameraUtils.ipcProcess(it.context, devId)
                                 }
                             }
                         }

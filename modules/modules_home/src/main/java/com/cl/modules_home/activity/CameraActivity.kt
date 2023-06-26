@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -32,8 +31,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -46,7 +45,6 @@ import com.cl.modules_home.viewmodel.HomeCameraViewModel
 import com.cl.modules_home.widget.CenterLayoutManager
 import com.cl.modules_home.widget.HomeTimeLapseDestroyPop
 import com.cl.modules_home.widget.HomeTimeLapsePop
-import com.luck.picture.lib.utils.MediaStoreUtils
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
@@ -69,8 +67,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
-import java.io.Serializable
 import java.nio.ByteBuffer
+import java.util.Calendar
 import java.util.Timer
 import java.util.TimerTask
 import javax.inject.Inject
@@ -237,6 +235,10 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     private var adapters: MyAdapter? = null
     override fun initView() {
+
+        // 获取配件信息
+        mViewModel.tuYaDeviceBean?.devId?.let { mViewModel.getAccessoryInfo(it) }
+
         // Check if the device version >= 23 because
         // from Android 6.0 (Marshmallow) you can set the status bar color.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -342,9 +344,34 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     // 上一个滚动的视图。
     var lastPosition = -1
     override fun observe() {
+        mViewModel.apply {
+            getPartsInfo.observe(this@CameraActivity, resourceObserver {
+                error { errorMsg, code ->
+                    com.cl.common_base.widget.toast.ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    if (null == data) return@success
+                }
+            })
+
+
+            // 配件信息
+            getAccessoryInfo.observe(this@CameraActivity, resourceObserver {
+                error { errorMsg, code ->
+                    com.cl.common_base.widget.toast.ToastUtil.shortShow(errorMsg)
+                }
+
+                success {
+
+                }
+            })
+        }
     }
 
     override fun initData() {
+        // 获取配件信息
+        mViewModel.getPartsInfo()
+
         ThingIPCSdk.getCameraInstance()?.let {
             mCameraP2P = it.createCameraP2P(devId)
         }
@@ -408,6 +435,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                         Prefs.putBoolean(Constants.Contact.KEY_TIMELAPSE_TIP_IS_SHOW, true)
                                         // Toggle the status and store it
                                         Prefs.putBooleanAsync(timeLapseKey, !currentStatus)
+                                        
+                                        // 判断是否第一次开启，判断是否需要截图
+                                        isScreenshots()
                                     },
                                     onCancelAction = {
                                         Prefs.putBooleanAsync(timeLapseKey, false)
@@ -417,6 +447,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         } else {
                             // Toggle the status and store it
                             Prefs.putBooleanAsync(timeLapseKey, !currentStatus)
+
+                            // 判断是否第一次开启，判断是否需要截图
+                            isScreenshots()
                         }
 
                     } else {
@@ -468,6 +501,29 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         }
     }
 
+    /**
+     * 是否需要截图
+     */
+    private fun isScreenshots() {
+        val time = System.currentTimeMillis()
+        val lastSnapshotTime = Prefs.getLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE)
+
+        // 初始化日历对象
+        val currentCalendar = Calendar.getInstance().apply {
+            timeInMillis = time
+        }
+        val lastSnapshotCalendar = Calendar.getInstance().apply {
+            timeInMillis = lastSnapshotTime
+        }
+
+        // 判断今天是否已经截图
+        if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
+            // 如果今天还没截图，就执行截图操作并更新截图时间
+            snapShotClick()
+            Prefs.putLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE, time)
+        }
+    }
+
     private fun showNotSupportToast() {
         com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.not_support_device))
     }
@@ -493,9 +549,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             if (!it) return@applyForAuthority
             if (!isRecording) {
                 // 创建文件夹
-                FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + "camera" + File.separator + mViewModel.sn.value)
+                FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value)
                 // 文件路径
-                val picPath = SDCard.getCacheDir(this@CameraActivity) + File.separator + "camera" + File.separator + mViewModel.sn.value
+                val picPath = SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value
                 // 文件名字
                 val fileName = System.currentTimeMillis().toString() + ".mp4"
                 mCameraP2P?.startRecordLocalMp4(
@@ -515,7 +571,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                         override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
                             ViewUtils.setGone(binding.timer)
-                            timer.cancel()
+                            timer?.cancel()
                             mHandler.sendEmptyMessage(com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_FAIL)
                         }
                     })
@@ -523,14 +579,13 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 mCameraP2P?.stopRecordLocalMp4(object : OperationDelegateCallBack {
                     override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
                         ViewUtils.setGone(binding.timer)
-                        timer.cancel()
+                        timer?.cancel()
                         mHandler.sendMessage(
                             MessageUtil.getMessage(
                                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_OVER,
                                 com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS
                             )
                         )
-                        logI("1231231@: $data")
                         Glide.with(this@CameraActivity)
                             .load(data)
                             .into(binding.ivThumbnail)
@@ -543,7 +598,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                     override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
                         ViewUtils.setGone(binding.timer)
-                        timer.cancel()
+                        timer?.cancel()
                         mHandler.sendMessage(
                             MessageUtil.getMessage(
                                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_OVER,
@@ -561,9 +616,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         applyForAuthority {
             if (!it) return@applyForAuthority
             // 创建文件夹
-            FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + "camera" + File.separator + mViewModel.sn.value)
+            FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value)
             // 文件路径
-            val picPath = SDCard.getCacheDir(this@CameraActivity) + File.separator + "camera" + File.separator + mViewModel.sn.value
+            val picPath = SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value
             // 文件名字
             val fileName = System.currentTimeMillis().toString() + ".jpg"
             mCameraP2P?.snapshot(
@@ -806,7 +861,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     override fun onPause() {
         super.onPause()
         binding.cameraVideoView.onPause()
-        timer.cancel()
+        timer?.cancel()
         mCameraP2P?.let {
             if (isSpeaking) it.stopAudioTalk(null)
             if (isPlay) {
@@ -828,7 +883,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         super.onDestroy()
         mHandler.removeCallbacksAndMessages(null)
         mCameraP2P?.destroyP2P()
-        timer.cancel()
+        timer?.cancel()
     }
 
     // 点击事件
@@ -849,12 +904,11 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         }
     }
 
-    private val timer by lazy {
-        Timer()
-    }
+    private var timer: Timer? = null
     private var seconds = 0
     private fun startTimer() {
-        timer.scheduleAtFixedRate(object : TimerTask() {
+        timer = Timer()
+        timer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 runOnUiThread {
                     val timeView = findViewById<TextView>(R.id.timer)
@@ -869,7 +923,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         }, 0, 1000)
     }
 
-    @SuppressLint("CheckResult")
+    @SuppressLint("CheckResult", "FileEndsWithExt")
     override fun onTuYaToAppDataChange(status: String) {
         super.onTuYaToAppDataChange(status)
         val map = GSON.parseObject(status, Map::class.java)
@@ -887,19 +941,43 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     // 截取, 并且需要置灰
                     kotlin.runCatching {
                         mViewModel.saveSn(value.toString().split("#")[1])
-
-                        // 查找当前sd卡路径，是否展示图片还是灰色的颜色，不管相册还是sdcard的，都是和当前的sn相关的，但是相册里面的可能被删除。
-                        // todo 需要从相册里面读取图片，如果没有图片，就展示灰色的图片
-                        FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + "camera" + File.separator + value.toString().split("#")[1])
-                        val picPath = findFirstImageInDir(SDCard.getCacheDir(this@CameraActivity) + File.separator + "camera" + File.separator + value.toString().split("#")[1])
                         val requestOptions = RequestOptions().apply {
                             error(R.drawable.home_gray_place_holder)
                             placeholder(R.drawable.home_gray_place_holder)
                         }
-                        Glide.with(this@CameraActivity)
-                            .load(picPath)
-                            .apply(requestOptions)
-                            .into(binding.ivThumbnail)
+                        // 查找当前sd卡路径，是否展示图片还是灰色的颜色，不管相册还是sdcard的，都是和当前的sn相关的，但是相册里面的可能被删除。
+                        //  需要从相册里面读取图片，如果没有图片，就展示灰色的图片
+                        applyForAuthority {
+                            if (!it) {
+                                Glide.with(this@CameraActivity)
+                                    .load("")
+                                    .apply(requestOptions)
+                                    .into(binding.ivThumbnail)
+                                return@applyForAuthority
+                            }
+                            if (mViewModel.getPartsInfo.value?.data?.storageModel == "0") {
+                                // 表示是从内存卡里面读取的
+                                FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + value.toString().split("#")[1])
+                                val picPath = findFirstImageInDir(SDCard.getCacheDir(this@CameraActivity) + File.separator + value.toString().split("#")[1])
+
+                                Glide.with(this@CameraActivity)
+                                    .load(picPath)
+                                    .apply(requestOptions)
+                                    .into(binding.ivThumbnail)
+                            } else {
+                                val list = fetchImagesAndVideosFromSpecificFolder(value.toString().split("#")[1])
+                                list.firstOrNull { path -> path.absolutePath.endsWith(".jpg") || path.absolutePath.endsWith(".jpeg") || path.absolutePath.endsWith(".png") }?.let { path ->
+                                    Glide.with(this@CameraActivity)
+                                        .load(path)
+                                        .apply(requestOptions)
+                                        .into(binding.ivThumbnail)
+                                } ?: Glide.with(this@CameraActivity)
+                                    .load("")
+                                    .apply(requestOptions)
+                                    .into(binding.ivThumbnail)
+                            }
+                        }
+
                     }
                 }
 
@@ -911,8 +989,12 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         // 开门，打开隐私模式
                         publishDps(DPConstants.PRIVATE_MODE, true)
                     } else {
-                        // todo 关门，查看接口返回的是不是隐私模式，如果是，那么就不关闭，反之关闭
-                        publishDps(DPConstants.PRIVATE_MODE, false)
+                        // 关门，查看接口返回的是不是隐私模式，如果是，那么就不关闭，反之关闭
+                        if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) {
+                            publishDps(DPConstants.PRIVATE_MODE, true)
+                        } else {
+                            publishDps(DPConstants.PRIVATE_MODE, false)
+                        }
                     }
                     listenDPUpdate(DPConstants.PRIVATE_MODE, object : CameraSettingActivity.DPCallback {
                         override fun callback(obj: Any) {
@@ -978,24 +1060,32 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
      * 根据后台返回的参数来判断，当前存储的路径是否在sd卡中或者相册中
      */
     private fun isExistInSdCard(): Boolean {
-        // todo 根据后台来返回的参数来判断是否保存在相册中还是sd卡中
-        return false
+        // 0 是手机， 1 是相册
+        // 根据后台来返回的参数来判断是否保存在相册中还是sd卡中
+        return mViewModel.getAccessoryInfo.value?.data?.storageModel == "0"
     }
 
-    fun saveFileToGallery(context: Context, filePath: String, title: String, mimeType: String, albumName: String): Uri? {
+    /**
+     * 存储到相册
+     */
+    private fun saveFileToGallery(context: Context, filePath: String, title: String, mimeType: String, albumName: String): Uri? {
         val file = File(filePath)
         if (!file.exists()) return null
+
+        val isVideo = mimeType.startsWith("video")
+        val contentUri = if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val directory = Environment.DIRECTORY_PICTURES
 
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, title)
             put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/$albumName")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "$directory/$albumName")
                 put(MediaStore.Images.Media.IS_PENDING, 1)
             }
         }
 
-        val uri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+        val uri = context.contentResolver.insert(contentUri, contentValues)
 
         var inputStream: InputStream? = null
         var outputStream: OutputStream? = null
@@ -1017,6 +1107,18 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         return uri
     }
 
+
+    /**
+     * 从相册中读取图片或者视频
+     */
+    private fun fetchImagesAndVideosFromSpecificFolder(folderName: String): List<File> {
+        val directory = Environment.getExternalStorageDirectory()
+        val file = File(directory, "/Pictures/$folderName")
+        val files = file.listFiles { dir, name ->
+            name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".mp4")
+        }
+        return files?.toList() ?: emptyList()
+    }
 
     private fun queryValueByDPID(dpId: String): Any? {
         ThingHomeSdk.getDataInstance().getDeviceBean(devId)?.also {
