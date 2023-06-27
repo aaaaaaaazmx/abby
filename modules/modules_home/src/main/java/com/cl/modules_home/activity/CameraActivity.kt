@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -24,6 +25,7 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeCameraBinding
 import com.bumptech.glide.Glide
@@ -40,12 +42,30 @@ import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
+import com.cl.common_base.util.glide.GlideEngine
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.modules_home.adapter.MyAdapter
 import com.cl.modules_home.viewmodel.HomeCameraViewModel
+import com.cl.modules_home.widget.CameraChooserGerPop
 import com.cl.modules_home.widget.CenterLayoutManager
 import com.cl.modules_home.widget.HomeTimeLapseDestroyPop
 import com.cl.modules_home.widget.HomeTimeLapsePop
+import com.luck.picture.lib.basic.IBridgeLoaderFactory
+import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.SelectMimeType
+import com.luck.picture.lib.config.SelectorConfig
+import com.luck.picture.lib.engine.CompressFileEngine
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.entity.LocalMediaFolder
+import com.luck.picture.lib.interfaces.OnQueryAlbumListener
+import com.luck.picture.lib.interfaces.OnQueryAllAlbumListener
+import com.luck.picture.lib.interfaces.OnQueryDataResultListener
+import com.luck.picture.lib.language.LanguageConfig
+import com.luck.picture.lib.loader.IBridgeMediaLoader
+import com.luck.picture.lib.style.BottomNavBarStyle
+import com.luck.picture.lib.style.PictureSelectorStyle
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
@@ -62,6 +82,8 @@ import com.tuya.smart.android.demo.camera.utils.DPConstants
 import com.tuya.smart.android.demo.camera.utils.MessageUtil
 import com.tuya.smart.android.demo.camera.utils.ToastUtil
 import dagger.hilt.android.AndroidEntryPoint
+import top.zibin.luban.Luban
+import top.zibin.luban.OnNewCompressListener
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -309,42 +331,33 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     if (newState == RecyclerView.SCROLL_STATE_IDLE && !recyclerView.isComputingLayout) {
                         val centerView = snapHelper.findSnapView(layoutManager)
                         val pos = layoutManager!!.getPosition(centerView!!)
-
                         if (pos == lastPosition) {  //如果位置没有发生改变，则返回
                             return
                         }
-
                         lastPosition = pos  //更新lastPosition
-
                         adapters?.let { scrollListener.onScrolled(pos, it) }
                         logI("onScrollStateChanged: pos = $pos")
                         logI("onScrollStateChanged: text = ${adapters?.getLetter(pos)}")
 
+
                         // 首先默认设置为false 重置他们的选中状态
-                        binding.ivCameraButton.isChecked = false
-                        when (adapters?.getLetter(pos)) {
-                            "TIME-LAPSE" -> {
-                                // 设置iv_camera_button的背景为time_lapse
-                                binding.ivCameraButton.setBackgroundResource(com.cl.common_base.R.drawable.create_camera_time_line)
-                                // 需要判断当前是否是开启了time_lapse模式， 目前就存在本地吧
-                                val isOpen = Prefs.getBoolean(Constants.Global.KEY_TIME_LAPSE, false)
+                        if (binding.ivCameraButton.isChecked) {
+                            mViewModel.selectCallBack(true)
+                            binding.ivCameraButton.isChecked = false
+                        }
+
+                        // 使用映射来查找对应的背景资源
+                        val background = backgrounds[adapters?.getLetter(pos)]
+
+                        // 如果找到了对应的背景资源，就更新按钮的背景和选中状态
+                        if (background != null) {
+                            binding.ivCameraButton.setBackgroundResource(background)
+
+                            // 需要判断当前是否是开启了time_lapse模式，目前就存在本地吧
+                            val isOpen = Prefs.getBoolean(Constants.Global.KEY_TIME_LAPSE, false)
+
+                            if (adapters?.getLetter(pos) == "TIME-LAPSE") {
                                 binding.ivCameraButton.isChecked = isOpen
-                            }
-
-                            "VIDEO" -> {
-                                binding.ivCameraButton.setBackgroundResource(com.cl.common_base.R.drawable.create_camera_video)
-                            }
-
-                            "PHOTO" -> {
-                                binding.ivCameraButton.setBackgroundResource(com.cl.common_base.R.drawable.create_camera_photo)
-                            }
-
-                            "MIC" -> {
-                                binding.ivCameraButton.setBackgroundResource(com.cl.common_base.R.drawable.create_camera_mic)
-                            }
-
-                            "PLAYBACK" -> {
-                                binding.ivCameraButton.setBackgroundResource(com.cl.common_base.R.drawable.create_camera_record)
                             }
                         }
                     }
@@ -417,6 +430,12 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             val currentLetter = adapters?.focusedPosition?.let { adapters?.getLetter(it) }
             val isTimeLapse = currentLetter == "TIME-LAPSE" || currentLetter == "PHOTO"
             val timeLapseShow = Prefs.getBoolean(Constants.Contact.KEY_TIMELAPSE_TIP_IS_SHOW, false)
+
+            // 主要用户在重置时产生的一系列问题
+            if (mViewModel.selectCallBack.value == true) {
+                mViewModel.selectCallBack(false)
+                return@setOnCheckedChangeListener
+            }
 
             when (adapters?.focusedPosition?.let { adapters?.getLetter(it) }) {
                 "TIME-LAPSE" -> {
@@ -918,7 +937,58 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             }
 
             R.id.iv_get_image -> {
-                // todo 跳转到生成界面
+                // 跳转到生成界面
+                XPopup.Builder(this@CameraActivity)
+                    .popupPosition(PopupPosition.Left)
+                    .dismissOnTouchOutside(true)
+                    .isClickThrough(false)  //点击透传
+                    .hasShadowBg(true) // 去掉半透明背景
+                    //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                    .atView(binding.ivGetImage)
+                    .isCenterHorizontal(false)
+                    .asCustom(
+                        CameraChooserGerPop(
+                            this@CameraActivity,
+                            gifAction = {
+                                // 跳转gif生成界面
+                                // 是否存在相册，
+                                // 相册地址，
+                                // 内存地址
+                                  ARouter.getInstance().build(RouterPath.Contact.PAGE_GIF)
+                                      .withBoolean("isAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == "0")
+                                      .withString("sdCardPath", createFileDir())
+                                      .withString("devId", devId)
+                                      .withString("albumPath", getAlbumDir())
+                                      .withBoolean("isVideo", false)
+                                      .withString("sn", mViewModel.sn.value)
+                                      .navigation()
+                            },
+                            videoAction = {
+                                ARouter.getInstance().build(RouterPath.Contact.PAGE_GIF)
+                                    .withBoolean("isAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == "0")
+                                    .withString("sdCardPath", createFileDir())
+                                    .withString("devId", devId)
+                                    .withString("albumPath", getAlbumDir())
+                                    .withBoolean("isVideo", true)
+                                    .withString("sn", mViewModel.sn.value)
+                                    .navigation()
+                            }
+                        ).setBubbleBgColor(Color.WHITE) //气泡背景
+                            .setArrowWidth(XPopupUtils.dp2px(this@CameraActivity, 3f))
+                            .setArrowHeight(
+                                XPopupUtils.dp2px(
+                                    this@CameraActivity,
+                                    3f
+                                )
+                            )
+                            //.setBubbleRadius(100)
+                            .setArrowRadius(
+                                XPopupUtils.dp2px(
+                                    this@CameraActivity,
+                                    3f
+                                )
+                            )
+                    ).show()
             }
 
             R.id.iv_back -> {
@@ -980,15 +1050,14 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                             }
                             if (mViewModel.getPartsInfo.value?.data?.storageModel == "0") {
                                 // 表示是从内存卡里面读取的
-                                FileUtil.createDirIfNotExists(SDCard.getCacheDir(this@CameraActivity) + File.separator + value.toString().split("#")[1])
-                                val picPath = findFirstImageInDir(SDCard.getCacheDir(this@CameraActivity) + File.separator + value.toString().split("#")[1])
+                                val picPath = findFirstImageInDir(createFileDir())
 
                                 Glide.with(this@CameraActivity)
                                     .load(picPath)
                                     .apply(requestOptions)
                                     .into(binding.ivThumbnail)
                             } else {
-                                val list = fetchImagesAndVideosFromSpecificFolder(value.toString().split("#")[1])
+                                val list = fetchImagesAndVideosFromSpecificFolder()
                                 list.firstOrNull { path -> path.absolutePath.endsWith(".jpg") || path.absolutePath.endsWith(".jpeg") || path.absolutePath.endsWith(".png") }?.let { path ->
                                     Glide.with(this@CameraActivity)
                                         .load(path)
@@ -1136,9 +1205,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     /**
      * 从相册中读取图片或者视频
      */
-    private fun fetchImagesAndVideosFromSpecificFolder(folderName: String): List<File> {
-        val directory = Environment.getExternalStorageDirectory()
-        val file = File(directory, "/Pictures/$folderName")
+    private fun fetchImagesAndVideosFromSpecificFolder(): List<File> {
+        val file = File(getAlbumDir())
         val files = file.listFiles { dir, name ->
             name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".mp4")
         }
@@ -1153,6 +1221,11 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         return SDCard.getCacheDir(this@CameraActivity) + File.separator + mViewModel.sn.value
     }
 
+    // 返回相册的文件夹路径
+    private fun getAlbumDir(): String {
+        return Environment.getExternalStorageDirectory().toString() + "/Pictures/" + mViewModel.sn.value
+    }
+
     override fun onBackPressed() {
         isExit()
     }
@@ -1160,7 +1233,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private fun isExit() {
         adapters?.focusedPosition?.let { adapters?.getLetter(it) }?.apply {
             if (binding.ivCameraButton.isChecked) {
-                if (this == "TIME-LAPSE") {
+                if (this == "TIME-LAPSE" || this == "PHOTO") {
                     this@CameraActivity.finish()
                 } else {
                     com.cl.common_base.widget.toast.ToastUtil.shortShow("Please stop the current mode first")
@@ -1181,4 +1254,13 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private val iTuyaDevice by lazy {
         ThingHomeSdk.newDeviceInstance(devId)
     }
+
+    // 创建一个映射，将每个标签映射到对应的背景资源
+   private val backgrounds = mapOf(
+        "TIME-LAPSE" to com.cl.common_base.R.drawable.create_camera_time_line,
+        "VIDEO" to com.cl.common_base.R.drawable.create_camera_video,
+        "PHOTO" to com.cl.common_base.R.drawable.create_camera_photo,
+        "MIC" to com.cl.common_base.R.drawable.create_camera_mic,
+        "PLAYBACK" to com.cl.common_base.R.drawable.create_camera_record
+    )
 }

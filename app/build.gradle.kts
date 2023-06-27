@@ -95,6 +95,15 @@ android {
         pickFirst("lib/*/libyuv.so")
         pickFirst("lib/*/libopenh264.so")
 
+        // ffmpeg
+        pickFirst("lib/*/libavcodec.so")
+        pickFirst("lib/*/libavfilter.so")
+        pickFirst("lib/*/libavformat.so")
+        pickFirst("lib/*/libavutil.so")
+        pickFirst("lib/*/libswresample.so")
+        pickFirst("lib/*/libswscale.so")
+        pickFirst("lib/*/libpostproc.so")
+
 
         // 报错的直接排除
         exclude("lib/*/liblog.so")

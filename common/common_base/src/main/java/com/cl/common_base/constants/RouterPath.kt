@@ -84,6 +84,8 @@ class RouterPath {
         const val PAGE_CONTACT = "/contact/$CONTACT"
         // 发Trend页面
         const val PAGE_TREND = "/trend/$CONTACT"
+        // 发布gif页面
+        const val PAGE_GIF = "/gif/$CONTACT"
     }
 
     /**

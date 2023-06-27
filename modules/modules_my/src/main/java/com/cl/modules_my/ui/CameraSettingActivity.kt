@@ -2,6 +2,7 @@ package com.cl.modules_my.ui
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpdateInfoReq
@@ -86,13 +87,13 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
             // 当前如果是选中的，那么另外一个就取消选中，如果当前不是选中，那么另外一个选中
             binding.curingBoxPhoto.isChecked = !isChecked
             showProgressLoading()
-            mViewModel.cameraSetting(UpdateInfoReq(deviceId = deviceId, storageModel = "0"))
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = "0"))
         }
         binding.curingBoxPhoto.setOnCheckedChangeListener { buttonView, isChecked ->
             // 当前如果是选中的，那么另外一个就取消选中，如果当前不是选中，那么另外一个选中
             binding.curingBox.isChecked = !isChecked
             showProgressLoading()
-            mViewModel.cameraSetting(UpdateInfoReq(deviceId = deviceId, storageModel = "1"))
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = "1"))
         }
 
         binding.unbindCamera.setOnClickListener {
@@ -103,6 +104,8 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
                     confirmText = "Yes",
                     onCancelAction = {},
                     onConfirmAction = { // 解绑相机
+                        // 上传解绑状态
+                        mViewModel.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId))
                         accessoryDeviceId?.let { it1 ->
                             tuyaUtils.unBindCamera(it1, onErrorAction = {
                                 ToastUtil.shortShow(it)
@@ -151,7 +154,7 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
                         // 隐私模式的开关
                         binding.ftPrivacyMode.isItemChecked = obj.toString() == "true"
                         // 上传到服务器
-                        mViewModel.cameraSetting(UpdateInfoReq(deviceId = deviceId, privateModel = obj.toString() == "true"))
+                        mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, privateModel = obj.toString() == "true"))
                     }
                 })
             }

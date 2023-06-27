@@ -300,8 +300,16 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
     }
 
     // 已读列表
-     val messageReadList = mutableListOf<String>()
+    val messageReadList = mutableListOf<String>()
     fun setReadList(id: String) {
         messageReadList?.add(id)
     }
+
+    // 记录选中回调
+    private val _selectCallBack = MutableLiveData<Boolean>()
+    val selectCallBack: LiveData<Boolean> = _selectCallBack
+    fun selectCallBack(flag: Boolean) {
+        _selectCallBack.value = flag
+    }
+
 }
