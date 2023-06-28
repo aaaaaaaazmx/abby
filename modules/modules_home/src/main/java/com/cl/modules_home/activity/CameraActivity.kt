@@ -562,11 +562,14 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         binding.ivCameraButton.isClickable = true
                         binding.ivCameraButton.isEnabled = true
                         binding.ivCameraButton.isFocusable = true
+                        // 主动设置为隐私模式
+                        devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
                     }
 
                     devId?.let {
                         tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
                             override fun callback(obj: Any) {
+                                logI("123123@: ${obj.toString()}")
                                 ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
                             }
                         })
@@ -1441,6 +1444,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     devId?.let {
                         tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, callback = object : TuyaCameraUtils.DPCallback {
                             override fun callback(obj: Any) {
+                                logI("123123@: ${obj.toString()}")
                                 ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
                             }
                         })

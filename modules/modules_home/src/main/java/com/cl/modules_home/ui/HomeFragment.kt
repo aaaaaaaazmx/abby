@@ -1659,9 +1659,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun observe() {
         mViewMode.apply {
             // 是否显示摄像头
-            /*getCameraFlag.observe(viewLifecycleOwner) {
+            getCameraFlag.observe(viewLifecycleOwner) {
                 ViewUtils.setVisible(it, binding.pplantNinth.ivCamera)
-            }*/
+            }
 
             getFanIntake.observe(viewLifecycleOwner) {
                 binding.plantManual.fanIntakeSeekbar.setProgress(it.toFloat())
@@ -3393,7 +3393,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun onResume() {
         super.onResume()
         // 检查是否有摄像头
-        // mViewMode.getCameraFlag()
+         mViewMode.getCameraFlag()
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
         // 刷新数据

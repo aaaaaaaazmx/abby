@@ -148,7 +148,7 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
         binding.ftPrivacyMode.setSwitchCheckedChangeListener { _, isChecked ->
             // showProgressLoading()
             // 隐私模式的开关
-            /*if (isChecked) {
+            if (isChecked) {
                 // 开启隐私模式
                 accessoryDeviceId?.let { tuyaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
             } else {
@@ -159,13 +159,13 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
             accessoryDeviceId?.let {
                 tuyaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
                     override fun callback(obj: Any) {
-                        // 隐私模式的开关
+                       /* // 隐私模式的开关
                         binding.ftPrivacyMode.isItemChecked = obj.toString() == "true"
                         // 上传到服务器
-                        mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, privateModel = obj.toString() == "true"))
+                        mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, privateModel = obj.toString() == "true"))*/
                     }
                 })
-            }*/
+            }
         }
     }
 
