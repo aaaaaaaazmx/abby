@@ -50,8 +50,8 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
                     if (this.data == null) return@success
-                    binding.curingBox.isChecked = data?.storageModel == "0"
-                    binding.curingBoxPhoto.isChecked = data?.storageModel == "1"
+                    binding.curingBox.isChecked = data?.storageModel == 0
+                    binding.curingBoxPhoto.isChecked = data?.storageModel == 1
                     binding.ftPrivacyMode.isItemChecked = data?.privateModel == true
                 }
             })
@@ -87,13 +87,13 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
             // 当前如果是选中的，那么另外一个就取消选中，如果当前不是选中，那么另外一个选中
             binding.curingBoxPhoto.isChecked = !isChecked
             showProgressLoading()
-            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = "0"))
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = 0))
         }
         binding.curingBoxPhoto.setOnCheckedChangeListener { buttonView, isChecked ->
             // 当前如果是选中的，那么另外一个就取消选中，如果当前不是选中，那么另外一个选中
             binding.curingBox.isChecked = !isChecked
             showProgressLoading()
-            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = "1"))
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = 1))
         }
 
         binding.unbindCamera.setOnClickListener {

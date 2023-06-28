@@ -253,6 +253,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     if (deviceBean?.accessoryList?.get(0)?.accessoryName == "Smart Camera") {
                         val accessoryDeviceId = deviceBean.accessoryList?.get(0)?.accessoryDeviceId
                         startActivityLauncher.launch(Intent(this@DeviceListActivity, CameraSettingActivity::class.java).apply {
+                            // 配件Id 就是cameraId
                             putExtra("accessoryDeviceId", accessoryDeviceId)
                             putExtra("deviceId", deviceBean.deviceId)
                         })

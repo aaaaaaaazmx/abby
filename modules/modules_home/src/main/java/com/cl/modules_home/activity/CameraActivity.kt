@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -26,6 +25,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.alibaba.fastjson.JSON
+import com.alibaba.fastjson.JSONObject
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeCameraBinding
 import com.bumptech.glide.Glide
@@ -33,11 +34,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.util.file.FileUtil
@@ -51,31 +54,25 @@ import com.cl.modules_home.widget.CameraChooserGerPop
 import com.cl.modules_home.widget.CenterLayoutManager
 import com.cl.modules_home.widget.HomeTimeLapseDestroyPop
 import com.cl.modules_home.widget.HomeTimeLapsePop
-import com.luck.picture.lib.basic.IBridgeLoaderFactory
-import com.luck.picture.lib.basic.PictureSelector
-import com.luck.picture.lib.config.PictureConfig
-import com.luck.picture.lib.config.SelectMimeType
-import com.luck.picture.lib.config.SelectorConfig
-import com.luck.picture.lib.engine.CompressFileEngine
-import com.luck.picture.lib.entity.LocalMedia
-import com.luck.picture.lib.entity.LocalMediaFolder
-import com.luck.picture.lib.interfaces.OnQueryAlbumListener
-import com.luck.picture.lib.interfaces.OnQueryAllAlbumListener
-import com.luck.picture.lib.interfaces.OnQueryDataResultListener
-import com.luck.picture.lib.language.LanguageConfig
-import com.luck.picture.lib.loader.IBridgeMediaLoader
-import com.luck.picture.lib.style.BottomNavBarStyle
-import com.luck.picture.lib.style.PictureSelectorStyle
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
+import com.thingclips.smart.android.camera.timeline.OnBarMoveListener
+import com.thingclips.smart.android.camera.timeline.TimeBean
+import com.thingclips.smart.android.common.utils.L
+import com.thingclips.smart.camera.base.log.ThingCameraModule.playback
+import com.thingclips.smart.camera.camerasdk.bean.ThingVideoFrameInfo
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.AbsP2pCameraListener
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.OperationDelegateCallBack
+import com.thingclips.smart.camera.ipccamerasdk.bean.MonthDays
 import com.thingclips.smart.camera.ipccamerasdk.p2p.ICameraP2P
 import com.thingclips.smart.camera.middleware.p2p.IThingSmartCameraP2P
 import com.thingclips.smart.camera.middleware.widget.AbsVideoViewCallback
 import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.tuya.smart.android.demo.camera.CameraPlaybackActivity
+import com.tuya.smart.android.demo.camera.bean.RecordInfoBean
+import com.tuya.smart.android.demo.camera.bean.TimePieceBean
 import com.tuya.smart.android.demo.camera.databinding.ActivityCameraPanelBinding
 import com.tuya.smart.android.demo.camera.utils.CameraPTZHelper
 import com.tuya.smart.android.demo.camera.utils.DPConstants
@@ -88,6 +85,7 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.nio.ByteBuffer
+import java.util.ArrayList
 import java.util.Calendar
 import java.util.Timer
 import java.util.TimerTask
@@ -140,11 +138,173 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_TALK_BACK_BEGIN -> handleStartTalk(msg)
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_TALK_BACK_OVER -> handleStopTalk(msg)
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_GET_VIDEO_CLARITY -> handleGetVideoClarity(msg)
+                com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE -> handleDataDate(msg)
+                com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE_BY_DAY_SUCC, com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE_BY_DAY_FAIL -> handleDataDay(
+                    msg
+                )
             }
             super.handleMessage(msg)
         }
     }
     var cameraPTZHelper: CameraPTZHelper? = null
+
+
+    // 回放功能
+    // 是否正在回放
+    private var isPlayback = false
+
+    // key 为查询的day
+    var mBackDataMonthCache: MutableMap<String, MutableList<String>>? = HashMap()
+
+    // 查询的日期的一级列表，需要根据这个查询当天的时间段列表 如2023/06/28/09 当前的9点开始
+    private var dateList: ArrayList<String>? = arrayListOf()
+
+    // 具体的时间节点列表 如 09:22:01,时分秒列表
+    private var queryDateList: MutableList<TimePieceBean>? = mutableListOf()
+
+    // 具体时间列表的缓存
+    var mBackDataDayCache: MutableMap<String, MutableList<TimePieceBean>>? = HashMap()
+
+    private fun showErrorToast() {
+        runOnUiThread {
+            com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.no_data))
+        }
+    }
+
+    /**
+     * 发送日期数据
+     */
+    private fun handleDataDate(msg: Message) {
+        if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
+            dateList?.clear()
+            queryDateList?.clear();
+            val days = mBackDataMonthCache?.get(mCameraP2P?.monthKey)
+            if (days.isNullOrEmpty()) {
+                showErrorToast()
+                return
+            }
+
+            // 保存的格式为 2023/06/28/09 2023/06/28/26
+            if (currentDate.isNotEmpty() && currentDate.contains("/")) {
+                for (s in days) {
+                    dateList?.add("$currentDate/$s")
+                }
+            }
+
+            // 根据上面的dateList来出查询具体的时间列表
+            showTimePieceAtDay(dateList?.get(0))
+        }
+    }
+
+    /**
+     * 根据日期，来查询具体的时间列表
+     */
+    private fun showTimePieceAtDay(inputStr: String?) {
+        if (!inputStr.isNullOrEmpty() && inputStr.contains("/")) {
+            val substring = inputStr.split("/".toRegex()).toTypedArray()
+            val year = substring[0].toInt()
+            val mouth = substring[1].toInt()
+            val day = substring[2].toInt()
+            mCameraP2P?.queryRecordTimeSliceByDay(
+                year,
+                mouth,
+                day,
+                object : OperationDelegateCallBack {
+                    override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
+                        logI("$inputStr --- $data")
+                        parsePlaybackData(data)
+                    }
+
+                    override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
+                        mHandler.sendEmptyMessage(com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE_BY_DAY_FAIL)
+                    }
+                })
+        }
+    }
+
+    /**
+     * 解析具体的时间列表 如 09:22:01,时分秒列表
+     */
+    private fun parsePlaybackData(obj: Any) {
+        val parseObject = JSON.parseObject(obj.toString(), RecordInfoBean::class.java)
+        if (parseObject.count != 0) {
+            if (parseObject.items.isNotEmpty()) {
+                mBackDataDayCache?.put(mCameraP2P?.dayKey.toString(), parseObject.items)
+            }
+            mHandler.sendMessage(
+                MessageUtil.getMessage(
+                    com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE_BY_DAY_SUCC,
+                    com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS
+                )
+            )
+        } else {
+            mHandler.sendMessage(
+                MessageUtil.getMessage(
+                    com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE_BY_DAY_FAIL,
+                    com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_FAIL
+                )
+            )
+        }
+    }
+
+    /**
+     * 查询某一天的时间列表
+     */
+    private fun handleDataDay(msg: Message) {
+        if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
+            queryDateList?.clear()
+            //Timepieces with data for the query day
+            val timePieceBeans = mBackDataDayCache!![mCameraP2P?.dayKey]
+            if (!timePieceBeans.isNullOrEmpty()) {
+                queryDateList?.addAll(timePieceBeans)
+                val timelineData: MutableList<TimeBean> = arrayListOf()
+                for ((startTime, endTime) in timePieceBeans) {
+                    val b = TimeBean()
+                    b.startTime = startTime
+                    b.endTime = endTime
+                    timelineData.add(b)
+                }
+                binding.timeline.setCurrentTimeConfig(timePieceBeans[0].endTime * 1000L)
+                binding.timeline.setRecordDataExistTimeClipsList(timelineData)
+            } else {
+                showErrorToast()
+            }
+
+            // 查询到了，直接播放，
+            if (!queryDateList.isNullOrEmpty()) {
+                kotlin.runCatching {
+                    val startTime = queryDateList?.get(0)
+                    val endTime = queryDateList?.get(queryDateList?.size?.minus(1) ?: 0)
+                    playback(startTime?.startTime!!, endTime?.endTime!!, startTime.startTime)
+                }
+            }
+        }
+    }
+
+
+    private fun playback(startTime: Int, endTime: Int, playTime: Int) {
+        mCameraP2P?.startPlayBack(startTime, endTime, playTime, object : OperationDelegateCallBack {
+            override fun onSuccess(sessionId: Int, requestId: Int, data: String?) {
+                logI("startPlayBack onSuccess")
+                isPlayback = true
+            }
+
+            override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
+                isPlayback = false
+                logI("startPlayBack onFailure")
+            }
+        }, object : OperationDelegateCallBack {
+            override fun onSuccess(sessionId: Int, requestId: Int, data: String?) {
+                isPlayback = false
+                logI("onReceiveFirstFrame onSuccess")
+            }
+
+            override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
+                isPlayback = false
+                logI("onReceiveFirstFrame onFailure")
+            }
+        })
+    }
 
     private fun handleStopTalk(msg: Message) {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
@@ -258,6 +418,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         // 注册监听
         devId?.let {
             tuYaUtils.listenDPUpdate(devId = it, dpId = DPConstants.PRIVATE_MODE, onStatusChangedAction = { online ->
+                // 监听设备是否在线
                 if (!online) {
                     binding.ivCameraButton.isClickable = false
                     binding.ivCameraButton.isEnabled = false
@@ -388,6 +549,28 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                 success {
 
+                    if (data == null) return@success
+                    // 隐私模式不能显示
+                    if (data?.privateModel == true) {
+                        binding.ivCameraButton.isClickable = false
+                        binding.ivCameraButton.isEnabled = false
+                        binding.ivCameraButton.isFocusable = false
+
+                        // 主动设置为隐私模式
+                        devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+                    } else {
+                        binding.ivCameraButton.isClickable = true
+                        binding.ivCameraButton.isEnabled = true
+                        binding.ivCameraButton.isFocusable = true
+                    }
+
+                    devId?.let {
+                        tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
+                            override fun callback(obj: Any) {
+                                ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
+                            }
+                        })
+                    }
                 }
             })
         }
@@ -406,7 +589,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 mCameraP2P?.generateCameraView(o)
             }
         })
-        //        binding.cameraVideoView.createVideoView(p2pType)
+        /*binding.cameraVideoView.createVideoView(p2pType)*/
         binding.cameraVideoView.createVideoView(devId)
         if (mCameraP2P == null) showNotSupportToast()
         devId?.let {
@@ -525,6 +708,74 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                 "PLAYBACK" -> {
                     // todo 回放
+                    ViewUtils.setVisible(isChecked, binding.timelineLayout)
+                    binding.timeline.setOnBarMoveListener(object : OnBarMoveListener {
+                        override fun onBarMove(l: Long, l1: Long, l2: Long) {}
+                        override fun onBarMoveFinish(startTime: Long, endTime: Long, currentTime: Long) {
+                            binding.timeline.setCanQueryData()
+                            binding.timeline.setQueryNewVideoData(false)
+                            if (startTime != -1L && endTime != -1L) {
+                                playback(startTime.toInt(), endTime.toInt(), currentTime.toInt())
+                            }
+                        }
+
+                        override fun onBarActionDown() {}
+                    })
+                    binding.timeline.setOnSelectedTimeListener { _, _ -> }
+                    if (isChecked) {
+                        // 开始播放
+                        queryDayByMonthClick()
+                    } else {
+                        // 暂停播放
+                        if (isPlayback) {
+                            isPlayback = false
+                            mCameraP2P?.stopPlayBack(null)
+                            /*pauseOnCamera()*/
+                            mCameraP2P?.let {
+                                binding.cameraVideoView.onPause()
+                                if (isSpeaking) it.stopAudioTalk(null)
+                                if (isPlay) {
+                                    it.stopPreview(object : OperationDelegateCallBack {
+                                        override fun onSuccess(sessionId: Int, requestId: Int, data: String) {}
+                                        override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {}
+                                    })
+                                    isPlay = false
+                                }
+                                it.removeOnP2PCameraListener()
+                                it.disconnect(object : OperationDelegateCallBack {
+                                    override fun onSuccess(i: Int, i1: Int, s: String) {
+                                        runOnUiThread {
+                                            binding.cameraVideoView.onResume()
+                                            //must register again,or can't callback
+                                            it.registerP2PCameraListener(p2pCameraListener)
+                                            it.generateCameraView(binding.cameraVideoView.createdView())
+                                            it.connect(devId, object : OperationDelegateCallBack {
+                                                override fun onSuccess(i: Int, i1: Int, s: String) {
+                                                    mHandler.sendMessage(
+                                                        MessageUtil.getMessage(
+                                                            com.tuya.smart.android.demo.camera.utils.Constants.MSG_CONNECT,
+                                                            com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS
+                                                        )
+                                                    )
+                                                }
+
+                                                override fun onFailure(i: Int, i1: Int, i2: Int) {
+                                                    mHandler.sendMessage(
+                                                        MessageUtil.getMessage(
+                                                            com.tuya.smart.android.demo.camera.utils.Constants.MSG_CONNECT,
+                                                            com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_FAIL
+                                                        )
+                                                    )
+                                                }
+                                            })
+                                        }
+
+                                    }
+                                    override fun onFailure(i: Int, i1: Int, i2: Int) {}
+                                })
+                            }
+                        }
+                    }
                 }
             }
 
@@ -537,6 +788,58 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 adapters?.isShouldDisableClick = true
             }
         }
+    }
+
+    /**
+     * 查询回放功能
+     * 日期格式为 2023/06
+     */
+    private val currentDate by lazy {
+        DateHelper.formatTime(System.currentTimeMillis(), "yyyy/MM/dd")
+    }
+
+    private fun queryDayByMonthClick() {
+        // 默认加载为今天的。
+        logI("queryDayByMonthClick currentDate = $currentDate")
+        if (mCameraP2P?.isConnecting == false) {
+            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.connect_first))
+            return
+        }
+        val substring = currentDate.split("/".toRegex()).toTypedArray()
+        if (substring.size >= 2) {
+            try {
+                val year = substring[0].toInt()
+                val mouth = substring[1].toInt()
+                mCameraP2P?.queryRecordDaysByMonth(
+                    year,
+                    mouth,
+                    object : OperationDelegateCallBack {
+                        override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
+                            val monthDays = JSONObject.parseObject(data, MonthDays::class.java)
+                            mBackDataMonthCache?.put(mCameraP2P?.monthKey.toString(), monthDays.dataDays)
+                            logI("MonthDays --- $data")
+                            mHandler.sendMessage(
+                                MessageUtil.getMessage(
+                                    com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE,
+                                    com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS
+                                )
+                            )
+                        }
+
+                        override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
+                            mHandler.sendMessage(
+                                MessageUtil.getMessage(
+                                    com.tuya.smart.android.demo.camera.utils.Constants.MSG_DATA_DATE,
+                                    com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_FAIL
+                                )
+                            )
+                        }
+                    })
+            } catch (e: Exception) {
+                com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.input_err))
+            }
+        }
+
     }
 
     /**
@@ -808,6 +1111,13 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         mViewModel.getSn()
         binding.cameraVideoView.onResume()
         //must register again,or can't callback
+        goOnCameraPlay()
+    }
+
+    /**
+     * 检查是否可以继续显示摄像数据
+     */
+    private fun goOnCameraPlay() {
         mCameraP2P?.let {
             it.registerP2PCameraListener(p2pCameraListener)
             it.generateCameraView(binding.cameraVideoView.createdView())
@@ -889,6 +1199,39 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 }
             }
         }
+
+        override fun onReceiveFrameYUVData(
+            i: Int,
+            byteBuffer: ByteBuffer,
+            byteBuffer1: ByteBuffer,
+            byteBuffer2: ByteBuffer,
+            i1: Int,
+            i2: Int,
+            i3: Int,
+            i4: Int,
+            l: Long,
+            l1: Long,
+            l2: Long,
+            o: Any,
+        ) {
+            super.onReceiveFrameYUVData(
+                i,
+                byteBuffer,
+                byteBuffer1,
+                byteBuffer2,
+                i1,
+                i2,
+                i3,
+                i4,
+                l,
+                l1,
+                l2,
+                o
+            )
+            if (adapters?.focusedPosition?.let { adapters?.getLetter(it) } == "PLAYBACK") {
+                binding.timeline.setCurrentTimeInMillisecond(l * 1000L)
+            }
+        }
     }
 
 
@@ -907,7 +1250,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             }
             it.removeOnP2PCameraListener()
             it.disconnect(object : OperationDelegateCallBack {
-                override fun onSuccess(i: Int, i1: Int, s: String) {}
+                override fun onSuccess(i: Int, i1: Int, s: String) {
+                }
                 override fun onFailure(i: Int, i1: Int, i2: Int) {}
             })
         }
@@ -935,7 +1279,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         // 传递sdCard相册路径
                         putExtra("sdCardPath", createFileDir())
                         // 是否是保存在相册还是保存在本地
-                        putExtra("isSaveAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == "0")
+                        putExtra("isSaveAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == 0)
                         // 设备的sn号
                         putExtra("sn", mViewModel.sn.value)
                     })
@@ -960,18 +1304,18 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                 // 是否存在相册，
                                 // 相册地址，
                                 // 内存地址
-                                  ARouter.getInstance().build(RouterPath.Contact.PAGE_GIF)
-                                      .withBoolean("isAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == "0")
-                                      .withString("sdCardPath", createFileDir())
-                                      .withString("devId", devId)
-                                      .withString("albumPath", getAlbumDir())
-                                      .withBoolean("isVideo", false)
-                                      .withString("sn", mViewModel.sn.value)
-                                      .navigation()
+                                ARouter.getInstance().build(RouterPath.Contact.PAGE_GIF)
+                                    .withBoolean("isAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == 0)
+                                    .withString("sdCardPath", createFileDir())
+                                    .withString("devId", devId)
+                                    .withString("albumPath", getAlbumDir())
+                                    .withBoolean("isVideo", false)
+                                    .withString("sn", mViewModel.sn.value)
+                                    .navigation()
                             },
                             videoAction = {
                                 ARouter.getInstance().build(RouterPath.Contact.PAGE_GIF)
-                                    .withBoolean("isAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == "0")
+                                    .withBoolean("isAlbum", mViewModel.getAccessoryInfo.value?.data?.storageModel == 0)
                                     .withString("sdCardPath", createFileDir())
                                     .withString("devId", devId)
                                     .withString("albumPath", getAlbumDir())
@@ -1054,7 +1398,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                     .into(binding.ivThumbnail)
                                 return@applyForAuthority
                             }
-                            if (mViewModel.getPartsInfo.value?.data?.storageModel == "0") {
+                            if (mViewModel.getPartsInfo.value?.data?.storageModel == 0) {
                                 // 表示是从内存卡里面读取的
                                 val picPath = findFirstImageInDir(createFileDir())
 
@@ -1162,7 +1506,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private fun isExistInSdCard(): Boolean {
         // 0 是手机， 1 是相册
         // 根据后台来返回的参数来判断是否保存在相册中还是sd卡中
-        return mViewModel.getAccessoryInfo.value?.data?.storageModel == "0"
+        return mViewModel.getAccessoryInfo.value?.data?.storageModel == 0
     }
 
     /**
@@ -1262,7 +1606,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     }
 
     // 创建一个映射，将每个标签映射到对应的背景资源
-   private val backgrounds = mapOf(
+    private val backgrounds = mapOf(
         "TIME-LAPSE" to com.cl.common_base.R.drawable.create_camera_time_line,
         "VIDEO" to com.cl.common_base.R.drawable.create_camera_video,
         "PHOTO" to com.cl.common_base.R.drawable.create_camera_photo,

@@ -53,7 +53,7 @@ dependencies {
     implementation 'com.thingclips.smart:thingsmart-ipc-camera-autotest:5.0.0'
     implementation 'com.thingclips.smart:thingsmart-ipc-camera-cloudtool:5.0.0'
     //timeline view
-    implementation 'com.thingclips.smart:thingsmart-ipc-camera-timeline:1.1.0'
+    api 'com.thingclips.smart:thingsmart-ipc-camera-timeline:1.1.0'
     api 'com.google.zxing:core:3.2.1'
     // t涂鸦
     api(Deps.tuya)

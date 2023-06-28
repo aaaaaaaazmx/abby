@@ -52,7 +52,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
-
                 <RelativeLayout
                     android:layout_marginTop="165dp"
                     android:layout_below="@+id/iv_back"
@@ -99,6 +98,28 @@
                         android:text="@string/hd"
                         android:textColor="@color/white"
                         android:textSize="@dimen/ts_12" />
+                </RelativeLayout>
+
+                <!--时间轴-->
+                <RelativeLayout
+                    android:visibility="gone"
+                    android:background="@color/white"
+                    android:id="@+id/timeline_layout"
+                    android:layout_below="@+id/camera_video_view_Rl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.thingclips.smart.android.camera.timeline.ThingTimelineView
+                        android:id="@+id/timeline"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        app:bottomTextMargin="5dp"
+                        app:bubbleColor="@color/gray"
+                        app:bubbleTextColor="@color/white"
+                        app:linesColor="@color/black"
+                        app:timeScaleColor="@color/black"
+                        app:topTextMargin="10dp" />
+
                 </RelativeLayout>
             </RelativeLayout>
 

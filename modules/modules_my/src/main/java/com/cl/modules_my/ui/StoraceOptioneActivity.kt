@@ -72,10 +72,10 @@ class StoraceOptioneActivity: BaseActivity<MyStoraceOptionBinding>() {
             // 判断当前哪一个选中了
             if (binding.curingBox.isChecked) {
                 //  选中了存储到本地， 然后返回，onBackPressed
-                mViewModel.cameraSetting(UpdateInfoReq(deviceId = deviceId, storageModel = "0"))
+                mViewModel.cameraSetting(UpdateInfoReq(deviceId = deviceId, storageModel = 0))
             } else {
                 //  选中了存储到云端 然后返回 onBackPressed
-                mViewModel.cameraSetting(UpdateInfoReq(deviceId = deviceId, storageModel = "1"))
+                mViewModel.cameraSetting(UpdateInfoReq(deviceId = deviceId, storageModel = 1))
             }
         }
     }
