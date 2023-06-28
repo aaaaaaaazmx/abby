@@ -58,63 +58,71 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
 
             saveCameraSetting.observe(this@CameraSettingActivity, resourceObserver {
                 error { errorMsg, code ->
-                    com.cl.common_base.widget.toast.ToastUtil.shortShow(errorMsg)
+                    ToastUtil.shortShow(errorMsg)
                     hideProgressLoading()
                 }
 
                 success {
-                    // 保存成功
                     hideProgressLoading()
+                    if (mViewModel.isUnbind.value == true) {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                    } else {
+                        // 保存成功
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                            .navigation()
+                        finish()
+                    }
                 }
             })
         }
     }
 
     override fun onBackPressed() {
-        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-            .navigation()
-        finish()
+        showProgressLoading()
+        mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = if (binding.curingBox.isChecked) 0 else 1, privateModel = binding.ftPrivacyMode.isItemChecked))
     }
 
     override fun initData() {
         binding.title.setLeftClickListener {
-            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                .navigation()
-            finish()
+            showProgressLoading()
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = if (binding.curingBox.isChecked) 0 else 1, privateModel = binding.ftPrivacyMode.isItemChecked))
         }
 
         binding.curingBox.setOnCheckedChangeListener { buttonView, isChecked ->
             // 当前如果是选中的，那么另外一个就取消选中，如果当前不是选中，那么另外一个选中
             binding.curingBoxPhoto.isChecked = !isChecked
-            showProgressLoading()
-            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = 0))
+            /*showProgressLoading()
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = 0))*/
         }
         binding.curingBoxPhoto.setOnCheckedChangeListener { buttonView, isChecked ->
             // 当前如果是选中的，那么另外一个就取消选中，如果当前不是选中，那么另外一个选中
             binding.curingBox.isChecked = !isChecked
-            showProgressLoading()
-            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = 1))
+            /*showProgressLoading()
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = 1))*/
         }
 
         binding.unbindCamera.setOnClickListener {
-            XPopup.Builder(this@CameraSettingActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(BaseCenterPop(this@CameraSettingActivity,
+            XPopup.Builder(this@CameraSettingActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(
+                BaseCenterPop(this@CameraSettingActivity,
                     titleText = "Are you certain you wish to delete the BudCam?",
                     content = "The photos you've taken will remain saved in the app, and any videos can be accessed through the micro SD card inside the budcam.",
                     cancelText = "No",
                     confirmText = "Yes",
                     onCancelAction = {},
                     onConfirmAction = { // 解绑相机
-                        // 上传解绑状态
-                        mViewModel.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId))
                         accessoryDeviceId?.let { it1 ->
                             tuyaUtils.unBindCamera(it1, onErrorAction = {
                                 ToastUtil.shortShow(it)
                             }) { // 绑定成功，结束当前页面，刷新配件列表
-                                setResult(Activity.RESULT_OK)
-                                finish()
+                                // 上传解绑状态
+                                showProgressLoading()
+                                mViewModel.setUnbind(true)
+                                mViewModel.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId))
                             }
                         }
-                    })).show()
+                    })
+            ).show()
             /* xpopup {
                  title("解绑摄像头")
                  content("确定要解绑摄像头吗？")
@@ -138,9 +146,9 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
         }
 
         binding.ftPrivacyMode.setSwitchCheckedChangeListener { _, isChecked ->
-            showProgressLoading()
+            // showProgressLoading()
             // 隐私模式的开关
-            if (isChecked) {
+            /*if (isChecked) {
                 // 开启隐私模式
                 accessoryDeviceId?.let { tuyaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
             } else {
@@ -157,7 +165,7 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
                         mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, privateModel = obj.toString() == "true"))
                     }
                 })
-            }
+            }*/
         }
     }
 
@@ -166,17 +174,5 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
      */
     private val tuyaUtils by lazy {
         TuyaCameraUtils()
-    }
-
-    // 移除设备
-    private fun unBindDevice() {
-        ThingHomeSdk.newDeviceInstance(accessoryDeviceId).removeDevice(object : IResultCallback {
-            override fun onError(s: String, s1: String) {
-            }
-
-            override fun onSuccess() {
-
-            }
-        })
     }
 }

@@ -620,4 +620,13 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
         _accessoryId.value = accessoryId
     }
 
+    /**
+     * 是否是解绑操作
+     */
+    private val _isUnbind = MutableLiveData<Boolean>(false)
+    val isUnbind: LiveData<Boolean> = _isUnbind
+    fun setUnbind(unbind: Boolean) {
+        _isUnbind.value = unbind
+    }
+
 }

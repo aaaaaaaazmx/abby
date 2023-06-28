@@ -110,6 +110,7 @@
                 android:layout_height="wrap_content"/>
 
             <com.cl.common_base.widget.FeatureItemSwitch
+                app:itemChecked="false"
                 android:background="@color/black"
                 app:itemTitle="Private Mode"
                 android:layout_marginTop="10dp"
