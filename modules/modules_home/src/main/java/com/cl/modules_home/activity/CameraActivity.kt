@@ -437,6 +437,12 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 return@setOnCheckedChangeListener
             }
 
+            // 隐私模式，不能做任何事情。
+            if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) {
+                com.cl.common_base.widget.toast.ToastUtil.shortShow("Currently in privacy mode")
+                return@setOnCheckedChangeListener
+            }
+
             when (adapters?.focusedPosition?.let { adapters?.getLetter(it) }) {
                 "TIME-LAPSE" -> {
                     val timeLapseKey = Constants.Global.KEY_TIME_LAPSE
