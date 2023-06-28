@@ -604,13 +604,11 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     }
 
     private fun initListener() {
-        mCameraP2P?.let {
-            binding.cameraMute.setOnClickListener(this)
-            binding.cameraQuality.setOnClickListener(this)
-            binding.ivThumbnail.setOnClickListener(this)
-            binding.ivGetImage.setOnClickListener(this)
-            binding.ivBack.setOnClickListener(this)
-        }
+        binding.cameraMute.setOnClickListener(this)
+        binding.cameraQuality.setOnClickListener(this)
+        binding.ivThumbnail.setOnClickListener(this)
+        binding.ivGetImage.setOnClickListener(this)
+        binding.ivBack.setOnClickListener(this)
 
         binding.ivCameraButton.setOnCheckedChangeListener { buttonView, isChecked ->
             val currentLetter = adapters?.focusedPosition?.let { adapters?.getLetter(it) }
@@ -774,6 +772,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                         }
 
                                     }
+
                                     override fun onFailure(i: Int, i1: Int, i2: Int) {}
                                 })
                             }
@@ -1255,6 +1254,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             it.disconnect(object : OperationDelegateCallBack {
                 override fun onSuccess(i: Int, i1: Int, s: String) {
                 }
+
                 override fun onFailure(i: Int, i1: Int, i2: Int) {}
             })
         }

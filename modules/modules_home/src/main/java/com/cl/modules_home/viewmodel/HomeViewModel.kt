@@ -1767,7 +1767,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _getCameraFlag = MutableLiveData<Boolean>(false)
     val getCameraFlag: LiveData<Boolean> = _getCameraFlag
-    fun getCameraFlag() {
+    /*fun getCameraFlag() {
         ThingHomeSdk.newHomeInstance(homeId)
             .getHomeDetail(object : IThingHomeResultCallback {
                 override fun onSuccess(bean: HomeBean?) {
@@ -1781,7 +1781,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     _getCameraFlag.value = false
                 }
             })
-    }
+    }*/
 
 
     companion object {
