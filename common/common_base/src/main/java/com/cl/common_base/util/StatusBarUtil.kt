@@ -4,7 +4,10 @@ import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Point
 import android.os.Build
+import android.util.DisplayMetrics
+import android.view.Display
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
@@ -18,6 +21,7 @@ import androidx.annotation.RequiresApi
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import com.cl.common_base.R
+import com.cl.common_base.ext.logI
 
 /**
  * Created by Jaeger on 16/2/14.
@@ -838,5 +842,52 @@ object StatusBarUtil {
         val option =
             View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         decorView.systemUiVisibility = vis or option
+    }
+
+    fun hasVirtualNavigation(context: Context): Boolean {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = windowManager.defaultDisplay
+        val metrics = DisplayMetrics()
+        display.getRealMetrics(metrics)
+
+        val appUsableSize = getAppUsableScreenSize(context)
+        val realScreenSize = getRealScreenSize(context)
+
+        // 计算导航栏的高度
+        val navigationBarHeight = realScreenSize.y - appUsableSize.y
+        logI("1231231: $navigationBarHeight")
+        // 导航栏高度大于0，则意味着启用了虚拟导航栏
+        return navigationBarHeight > 150
+    }
+
+    private fun getAppUsableScreenSize(context: Context): Point {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = windowManager.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        return size
+    }
+
+    private fun getRealScreenSize(context: Context): Point {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = windowManager.defaultDisplay
+        val size = Point()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            display.getRealSize(size)
+        } else {
+            try {
+                @Suppress("DEPRECATION")
+                val getRawWidth = Display::class.java.getMethod("getRawWidth")
+                @Suppress("DEPRECATION")
+                val getRawHeight = Display::class.java.getMethod("getRawHeight")
+                size.x = getRawWidth.invoke(display) as Int
+                size.y = getRawHeight.invoke(display) as Int
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+        return size
     }
 }
