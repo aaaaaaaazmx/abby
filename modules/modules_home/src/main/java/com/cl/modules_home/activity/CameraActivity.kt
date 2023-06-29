@@ -848,6 +848,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
      * 是否需要截图
      */
     private fun isScreenshots() {
+        // 隐私模式不截图，留着下一次截图
+        if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) return
         val time = System.currentTimeMillis()
         val lastSnapshotTime = Prefs.getLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE)
 

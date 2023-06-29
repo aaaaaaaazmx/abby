@@ -1902,10 +1902,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         // 表示有，并且已经在展示状态
         if (cameraAccessory != null && isShowCamera) {
             isHaveACamera.invoke(true, true, cameraAccessory.accessoryDeviceId ?: "",  listDevice.value?.data?.firstOrNull {it.currentDevice == 1}?.deviceId ?: "")
-            return
         }  else {
             isHaveACamera.invoke(false, false, "", "")
-            return
         }
     }
 

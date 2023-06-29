@@ -503,25 +503,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                    .withString(Constants.Global.INTENT_DEV_ID, "123")
                    .navigation(context)*/
 
-                // 更新涂鸦Bean
-                ThingHomeSdk.newHomeInstance(mViewMode.homeId)
-                    .getHomeDetail(object : IThingHomeResultCallback {
-                        override fun onSuccess(bean: HomeBean?) {
-                            val list = (bean?.deviceList as? ArrayList<DeviceBean>)
-                            list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
-                                if (null == this) {
-                                } else {
-                                    // 跳转到IPC界面
-                                                                        com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, devId)
-//                                    CameraUtils.ipcProcess(it.context, devId)
-                                }
-                            }
-                        }
-
-                        override fun onError(errorCode: String?, errorMsg: String?) {
-
-                        }
-                    })
+                val cameraAccessory = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+                    ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                // 跳转到IPC界面
+                // com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
             // 选中门锁开关
@@ -1803,6 +1789,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             binding.pplantNinth.imageRightSwip
                         )
                     }
+
+                    // 是否显示摄像头
+                    ViewUtils.setVisible(data?.firstOrNull { it.currentDevice == 1 }
+                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" } != null, binding.pplantNinth.ivCamera)
 
                     if ((data?.size ?: 0) >= 1) {
                         getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
@@ -4360,6 +4350,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 是否需要截图
      */
     private fun isScreenshots() {
+        // 隐私模式不截图，留着下一次截图
+        if (mViewMode.getAccessoryInfo.value?.data?.privateModel == true) return
         val time = System.currentTimeMillis()
         val lastSnapshotTime = Prefs.getLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE)
 
