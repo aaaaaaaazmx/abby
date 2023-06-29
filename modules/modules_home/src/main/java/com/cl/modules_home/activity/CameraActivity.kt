@@ -1391,7 +1391,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                             error(R.drawable.home_gray_place_holder)
                             placeholder(R.drawable.home_gray_place_holder)
                         }
-                        // 查找当前sd卡路径，是否展示图片还是灰色的颜色，不管相册还是sdcard的，都是和当前的sn相关的，但是相册里面的可能被删除。
+                        //  查找当前sd卡路径，是否展示图片还是灰色的颜色，不管相册还是sdcard的，都是和当前的sn相关的，但是相册里面的可能被删除。
                         //  需要从相册里面读取图片，如果没有图片，就展示灰色的图片
                         applyForAuthority {
                             if (!it) {

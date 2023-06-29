@@ -257,6 +257,9 @@ object Constants {
         // 摄像头当天是否已经截图了
         // lastOperationDate
         const val KEY_IS_LAST_OPERATION_DATE = "key_is_take_photo_today"
+
+        // 是否显示camera
+        const val KEY_IS_SHOW_CAMERA = "key_is_show_camera"
     }
 
     // Fixed Id

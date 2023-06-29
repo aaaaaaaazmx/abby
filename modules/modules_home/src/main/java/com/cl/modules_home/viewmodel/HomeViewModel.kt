@@ -18,6 +18,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
@@ -26,6 +27,7 @@ import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
+import com.thingclips.smart.sdk.api.IResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
@@ -52,6 +54,14 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     val homeId by lazy {
         Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
+    }
+
+
+    /**
+     * 涂鸦摄像头帮助类
+     */
+    val tuYaUtils by lazy {
+        TuyaCameraUtils()
     }
 
     /**
@@ -538,6 +548,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         originalData?.environments = envList
                         _environmentInfo.value = originalData?.let { it1 -> Resource.Success(it1) }
                     }
+
                     else -> _environmentInfo.value = it
                 }
             }
@@ -1185,6 +1196,39 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 保存SN
+     */
+    private val _sn = MutableLiveData<String>()
+    val sn: LiveData<String> = _sn
+    fun saveSn(sn: String) {
+        _sn.value = sn
+    }
+    /**
+     * 获取SN
+     */
+    fun getSn() {
+        ThingHomeSdk.newDeviceInstance(thingDeviceBean()?.devId)?.let {
+            it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_REST_STATUS, object : IResultCallback {
+                override fun onError(code: String?, error: String?) {
+                    logI(
+                        """
+                        KEY_DEVICE_REPAIR_REST_STATUS: error
+                        code: $code
+                        error: $error
+                    """.trimIndent()
+                    )
+                    ToastUtil.shortShow(error)
+                    Reporter.reportTuYaError("newDeviceInstance", error, code)
+                }
+
+                override fun onSuccess() {
+                    logI("sdasdas")
+                }
+            })
+        }
+    }
+
+    /**
      * 删除植物
      */
     private val _plantDelete = MutableLiveData<Resource<Boolean>>()
@@ -1328,6 +1372,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     // 回调出去。自行处理
                     _transplantPeriodicity.value = taskId
                 }
+
                 else -> {
                     // getGuideInfo(it)
                 }
@@ -1412,6 +1457,79 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             }
     }
 
+
+    /**
+     * 获取配件信息
+     */
+    private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
+    val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
+    fun getAccessoryInfo(deviceId: String) {
+        viewModelScope.launch {
+            repository.getAccessoryInfo(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _getAccessoryInfo.value = it
+                }
+        }
+    }
+
+    /**
+     * 保存camera设置信息
+     */
+    private val _saveCameraSetting = MutableLiveData<Resource<BaseBean>>()
+    val saveCameraSetting: LiveData<Resource<BaseBean>> = _saveCameraSetting
+    fun cameraSetting(body: UpdateInfoReq) {
+        viewModelScope.launch {
+            repository.updateInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _saveCameraSetting.value = it
+                }
+        }
+    }
+
     /**
      * 获取环境信息
      */
@@ -1424,21 +1542,27 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE -> {
                         envReq.waterTemperature = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_VENTILATION -> {
                         envReq.ventilation = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT -> {
                         envReq.tempCurrent = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW -> {
                         envReq.inputAirFlow = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT -> {
                         envReq.humidityCurrent = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE -> {
                         envReq.brightValue = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL -> {
                         envReq.waterLevel = value.toString()
                     }
@@ -1764,24 +1888,36 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     /**
      * 绑定的设备是否有摄像头
      *  false 表示没有摄像头
+     *
+     *  @param isHave 是否有摄像头
+     *  @param isLoadCamera 是否加载摄像头
+     *  @param cameraId 摄像头的ID
      */
-    private val _getCameraFlag = MutableLiveData<Boolean>(false)
-    val getCameraFlag: LiveData<Boolean> = _getCameraFlag
-    /*fun getCameraFlag() {
-        ThingHomeSdk.newHomeInstance(homeId)
-            .getHomeDetail(object : IThingHomeResultCallback {
-                override fun onSuccess(bean: HomeBean?) {
-                    val list = (bean?.deviceList as? ArrayList<DeviceBean>)
-                    list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
-                        _getCameraFlag.value = null != this
-                    }
-                }
+    fun getCameraFlag(isHaveACamera: (isHave: Boolean, isLoadCamera: Boolean, cameraId: String, devId: String) -> Unit) {
+        val isShowCamera = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
 
-                override fun onError(errorCode: String?, errorMsg: String?) {
-                    _getCameraFlag.value = false
-                }
-            })
-    }*/
+        val cameraAccessory = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+            ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+
+        // 表示有，并且已经在展示状态
+        if (cameraAccessory != null && isShowCamera) {
+            isHaveACamera.invoke(true, true, cameraAccessory.accessoryDeviceId ?: "",  listDevice.value?.data?.firstOrNull {it.currentDevice == 1}?.deviceId ?: "")
+            return
+        }  else {
+            isHaveACamera.invoke(false, false, "", "")
+            return
+        }
+    }
+
+
+    /**
+     * 保存摄像头Id
+     */
+    private val _cameraId = MutableLiveData<String>()
+    val cameraId: LiveData<String> = _cameraId
+    fun setCameraId(flag: String) {
+        _cameraId.value = flag
+    }
 
 
     companion object {

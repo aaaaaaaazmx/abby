@@ -82,6 +82,42 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
     }
 
     /**
+     * 保存camera设置信息
+     */
+    private val _saveCameraSetting = MutableLiveData<Resource<BaseBean>>()
+    val saveCameraSetting: LiveData<Resource<BaseBean>> = _saveCameraSetting
+    fun cameraSetting(body: UpdateInfoReq) {
+        viewModelScope.launch {
+            repository.updateInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _saveCameraSetting.value = it
+                }
+        }
+    }
+
+    /**
      * 获取配件信息
      */
     private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()

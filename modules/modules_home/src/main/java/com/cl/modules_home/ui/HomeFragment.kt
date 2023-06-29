@@ -1,20 +1,36 @@
 package com.cl.modules_home.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.method.LinkMovementMethod
+import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +39,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeBinding
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.base.KnowMoreActivity
@@ -43,6 +60,9 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
+import com.cl.common_base.util.device.TuyaCameraUtils
+import com.cl.common_base.util.file.FileUtil
+import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
@@ -57,17 +77,30 @@ import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
+import com.thingclips.smart.camera.camerasdk.thingplayer.callback.AbsP2pCameraListener
+import com.thingclips.smart.camera.camerasdk.thingplayer.callback.OperationDelegateCallBack
+import com.thingclips.smart.camera.ipccamerasdk.p2p.ICameraP2P
+import com.thingclips.smart.camera.middleware.p2p.IThingSmartCameraP2P
+import com.thingclips.smart.camera.middleware.widget.AbsVideoViewCallback
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
 import com.tuya.smart.android.demo.camera.CameraUtils
+import com.tuya.smart.android.demo.camera.utils.CameraPTZHelper
+import com.tuya.smart.android.demo.camera.utils.DPConstants
+import com.tuya.smart.android.demo.camera.utils.MessageUtil
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
+import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.io.Serializable
+import java.nio.ByteBuffer
+import java.util.Calendar
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -144,13 +177,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             )
         )*/
 
+        // 获取sn
+        mViewMode.getSn()
+
         mViewMode.userDetail()
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
-
-        // 刷新设备列表
-        mViewMode.listDevice()
 
         liveDataObser()
 
@@ -437,14 +470,38 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
 
+
+            // 切换摄像头
+            ivSwitchCamera.setOnClickListener {
+                // 获取, 并且取反
+                val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
+
+                // 显示隐藏的布局
+                binding.pplantNinth.ivOne.setBackgroundResource(if (isSHowCamera) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
+                ViewUtils.setVisible(isSHowCamera, binding.pplantNinth.rlBowl)
+                ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isSHowCamera)
+                ViewUtils.setVisible(!isSHowCamera, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+
+                // 如果是从false -> true
+                if (isSHowCamera) {
+                    // 加载并且展示视频
+                    mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+                        if (!isHave || !isLoadCamera) return@getCameraFlag
+                        initCamera(cameraId)
+                    }
+                }
+
+                // 放入
+                Prefs.putBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, isSHowCamera)
+            }
             // 跳转到摄像头界面
             ivCamera.setOnClickListener {
 
-                 /*ARouter
-                    .getInstance()
-                    .build(RouterPath.Home.PAGE_CAMERA)
-                    .withString(Constants.Global.INTENT_DEV_ID, "123")
-                    .navigation(context)*/
+                /*ARouter
+                   .getInstance()
+                   .build(RouterPath.Home.PAGE_CAMERA)
+                   .withString(Constants.Global.INTENT_DEV_ID, "123")
+                   .navigation(context)*/
 
                 // 更新涂鸦Bean
                 ThingHomeSdk.newHomeInstance(mViewMode.homeId)
@@ -455,8 +512,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 if (null == this) {
                                 } else {
                                     // 跳转到IPC界面
-                                     com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, devId)
-//                                     CameraUtils.ipcProcess(it.context, devId)
+                                                                        com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, devId)
+//                                    CameraUtils.ipcProcess(it.context, devId)
                                 }
                             }
                         }
@@ -541,6 +598,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 plantDrain.show()
             }
 
+            // 左滑动
             // 左滑动
             imageLeftSwip.setOnClickListener {
                 val listDeviceData = mViewMode.listDevice.value?.data
@@ -1723,6 +1781,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 设备列表
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 success {
+                    hideProgressLoading()
                     if (data.isNullOrEmpty()) {
                         ViewUtils.setGone(
                             binding.pplantNinth.imageLeftSwip,
@@ -1738,14 +1797,63 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             binding.pplantNinth.imageLeftSwip,
                             binding.pplantNinth.imageRightSwip
                         )
-                        return@success
                     } else {
                         ViewUtils.setGone(
                             binding.pplantNinth.imageLeftSwip,
                             binding.pplantNinth.imageRightSwip
                         )
-                        return@success
                     }
+
+                    if ((data?.size ?: 0) >= 1) {
+                        getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+                            binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
+                            ViewUtils.setVisible(isLoadCamera, binding.pplantNinth.rlBowl)
+                            ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isLoadCamera)
+                            ViewUtils.setVisible(!isLoadCamera, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+                            ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
+                            logI("123123: $isHave,,,, $isLoadCamera")
+                            if (!isHave || !isLoadCamera) return@getCameraFlag
+
+                            // 获取摄像头配件信息
+                            mViewMode.getAccessoryInfo(devId)
+                            // 保存摄像头Id
+                            setCameraId(cameraId)
+                            if (isPlay) {
+                                return@getCameraFlag
+                            }
+                            val marginTopPx = TypedValue.applyDimension(
+                                TypedValue.COMPLEX_UNIT_DIP,
+                                32f,
+                                resources.displayMetrics
+                            ).toInt()
+                            val windowManager = activity?.getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager
+                            val width = windowManager.defaultDisplay.width - marginTopPx
+                            val height = width * 9 / 16
+                            // 假设你已经有了一个 ConstraintLayout 和一个 RelativeLayout
+                            val constraintLayout = binding.pplantNinth.clPlantStatus
+                            val relativeLayout = binding.pplantNinth.rlBowl
+
+
+                            // 创建一个 RelativeLayout.LayoutParams
+                            val layoutParams = ConstraintLayout.LayoutParams(
+                                width, height
+                            )
+                            // 设置布局参数
+                            relativeLayout.layoutParams = layoutParams
+                            // 创建一个 ConstraintSet
+                            val constraintSet = ConstraintSet()
+                            constraintSet.clone(constraintLayout) // 克隆当前的约束
+                            // 设置新的约束
+                            constraintSet.connect(relativeLayout.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+                            constraintSet.connect(relativeLayout.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+                            constraintSet.connect(relativeLayout.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+                            // 应用新的约束
+                            constraintSet.applyTo(constraintLayout)
+                            // 初始化摄像头
+                            initCamera(cameraId)
+                        }
+                    }
+
                     /*data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
                         if (this == -1) {
                             ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
@@ -1758,6 +1866,46 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }*/
                 }
             })
+
+            // 获取配件信息
+            getAccessoryInfo.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    if (data == null) return@success
+                    ViewUtils.setVisible(data?.privateModel == true, binding.pplantNinth.tvPrivacyMode)
+                    val devId = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(0)?.accessoryDeviceId
+
+                    // 隐私模式不能显示
+                    if (data?.privateModel == true) {
+                        // 主动设置为隐私模式
+                        devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+                    } else {
+                        // 主动设置为隐私模式
+                        devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
+                    }
+
+                    /**
+                     * 监听隐私模式、或者是否在先
+                     */
+                    devId?.let {
+                        mViewMode.tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
+                            override fun callback(obj: Any) {
+                                logI("123123@: ${obj.toString()}")
+                                ViewUtils.setVisible(obj.toString() == "true", binding.pplantNinth.tvPrivacyMode)
+                            }
+                        }, onStatusChangedAction = { online ->
+                            if (online) {
+                                //  在线摄像头
+                                binding.pplantNinth.tvPrivacyMode.text = "Currently in privacy mode"
+                            } else {
+                                //  离线摄像头
+                                binding.pplantNinth.tvPrivacyMode.text = "The camera is offline"
+                            }
+                        })
+                    }
+
+                }
+            })
+
             // 切换设备列表
             switchDevice.observe(viewLifecycleOwner, resourceObserver {
                 loading { showProgressLoading() }
@@ -1879,17 +2027,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
-            // 刷新设备列表
-            listDevice.observe(viewLifecycleOwner, resourceObserver {
-                error { errorMsg, code ->
-                    ToastUtil.shortShow(errorMsg)
-                    hideProgressLoading()
-                }
-                success {
-                    hideProgressLoading()
-                    // 需要保存当前有多少个设备列表在线
-                }
-            })
             // 检查是否订阅补偿
             whetherSubCompensation.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
@@ -3337,6 +3474,163 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     /**
+     * 初始化摄像头
+     */
+    private var mCameraP2P: IThingSmartCameraP2P<Any>? = null
+    private var isPlay = false
+    private fun initCamera(cameraId: String) {
+        if (null == mCameraP2P) {
+            ThingIPCSdk.getCameraInstance()?.let {
+                mCameraP2P = it.createCameraP2P(cameraId)
+            }
+            binding.pplantNinth.cameraVideoView.setViewCallback(object : AbsVideoViewCallback() {
+                override fun onCreated(o: Any) {
+                    super.onCreated(o)
+                    mCameraP2P?.generateCameraView(o)
+                }
+            })
+            binding.pplantNinth.cameraVideoView.createVideoView(cameraId)
+            if (mCameraP2P == null) {
+                ToastUtil.shortShow("Camera initialization failed")
+            }
+        }
+
+        binding.pplantNinth.cameraVideoView.onResume()
+        //must register again,or can't callback
+        goOnCameraPlay()
+    }
+
+
+    /**
+     * 检查是否可以继续显示摄像数据
+     */
+    private fun goOnCameraPlay() {
+        mCameraP2P?.let {
+            it.registerP2PCameraListener(p2pCameraListener)
+            it.generateCameraView(binding.pplantNinth.cameraVideoView.createdView())
+            if (it.isConnecting) {
+                it.startPreview(object : OperationDelegateCallBack {
+                    override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
+                        isPlay = true
+                    }
+
+                    override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
+                        Log.d(TAG, "start preview onFailure, errCode: $errCode")
+                    }
+                })
+            } else {
+                /* if (ThingIPCSdk.getCameraInstance()?.isLowPowerDevice(mViewMode.cameraId.value) == true) {
+                     ThingIPCSdk.getDoorbell()?.wirelessWake(mViewMode.cameraId.value)
+                 }*/
+                //Establishing a p2p channel
+                it.connect(mViewMode.cameraId.value, object : OperationDelegateCallBack {
+                    override fun onSuccess(i: Int, i1: Int, s: String) {
+                        activity?.runOnUiThread {
+                            preview()
+                        }
+                    }
+
+                    override fun onFailure(i: Int, i1: Int, i2: Int) {
+                        activity?.runOnUiThread {
+                            ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+                        }
+                    }
+                })
+            }
+        }
+    }
+
+    var reConnect = false
+    private val p2pCameraListener: AbsP2pCameraListener = object : AbsP2pCameraListener() {
+        override fun onReceiveSpeakerEchoData(pcm: ByteBuffer, sampleRate: Int) {
+            mCameraP2P?.let {
+                val length = pcm.capacity()
+                Log.d(TAG, "receiveSpeakerEchoData pcmlength $length sampleRate $sampleRate")
+                val pcmData = ByteArray(length)
+                pcm[pcmData, 0, length]
+                it.sendAudioTalkData(pcmData, length)
+            }
+        }
+
+        override fun onSessionStatusChanged(camera: Any?, sessionId: Int, sessionStatus: Int) {
+            super.onSessionStatusChanged(camera, sessionId, sessionStatus)
+            if (sessionStatus == -3 || sessionStatus == -105) {
+                // 遇到超时/鉴权失败，建议重连一次，避免循环调用
+                if (!reConnect) {
+                    reConnect = true
+                    mCameraP2P?.connect(mViewMode.cameraId.value, object : OperationDelegateCallBack {
+                        override fun onSuccess(i: Int, i1: Int, s: String) {
+                            activity?.runOnUiThread {
+                                preview();
+                            }
+                        }
+
+                        override fun onFailure(i: Int, i1: Int, i2: Int) {
+                            activity?.runOnUiThread {
+                                ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+                            }
+                        }
+                    })
+                }
+            }
+        }
+
+        override fun onReceiveFrameYUVData(
+            i: Int,
+            byteBuffer: ByteBuffer,
+            byteBuffer1: ByteBuffer,
+            byteBuffer2: ByteBuffer,
+            i1: Int,
+            i2: Int,
+            i3: Int,
+            i4: Int,
+            l: Long,
+            l1: Long,
+            l2: Long,
+            o: Any,
+        ) {
+            super.onReceiveFrameYUVData(
+                i,
+                byteBuffer,
+                byteBuffer1,
+                byteBuffer2,
+                i1,
+                i2,
+                i3,
+                i4,
+                l,
+                l1,
+                l2,
+                o
+            )
+            /*if (adapters?.focusedPosition?.let { adapters?.getLetter(it) } == "PLAYBACK") {
+                binding.timeline.setCurrentTimeInMillisecond(l * 1000L)
+            }*/
+        }
+    }
+
+
+    /**
+     * 初始化摄像头画面
+     */
+    private fun preview() {
+        mCameraP2P?.startPreview(ICameraP2P.HD, object : OperationDelegateCallBack {
+            override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
+                // 查看是否每天需要拍一张照片，
+                isScreenshots()
+                Log.d(TAG, "start preview onSuccess")
+                isPlay = true
+            }
+
+            override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
+                Log.d(TAG, "start preview onFailure, errCode: $errCode")
+                isPlay = false
+            }
+        })
+    }
+
+
+    /**
      * 展示完成界面逻辑
      */
     private fun showCompletePage() {
@@ -3387,6 +3681,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+        // 刷新设备列表
+        mViewMode.listDevice()
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
         // 刷新数据
@@ -3404,7 +3700,56 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             return@setOnApplyWindowInsetsListener insets
         }
+
+        // 是否再次初始化摄像头
+        mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+            if (!isHave || !isLoadCamera) return@getCameraFlag
+
+            if (null == mCameraP2P) {
+                ThingIPCSdk.getCameraInstance()?.let {
+                    mCameraP2P = it.createCameraP2P(cameraId)
+                }
+                binding.pplantNinth.cameraVideoView.setViewCallback(object : AbsVideoViewCallback() {
+                    override fun onCreated(o: Any) {
+                        super.onCreated(o)
+                        mCameraP2P?.generateCameraView(o)
+                    }
+                })
+                binding.pplantNinth.cameraVideoView.createVideoView(cameraId)
+                if (mCameraP2P == null) {
+                    ToastUtil.shortShow("Camera initialization failed")
+                }
+            }
+
+            // 显示画面
+            binding.pplantNinth.cameraVideoView.onResume()
+            //must register again,or can't callback
+            goOnCameraPlay()
+        }
     }
+
+    override fun onPause() {
+        super.onPause()
+        mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+            if (!isHave || !isLoadCamera) return@getCameraFlag
+            binding.pplantNinth.cameraVideoView.onPause()
+            mCameraP2P?.let { p2p ->
+                if (isPlay) {
+                    p2p.stopPreview(object : OperationDelegateCallBack {
+                        override fun onSuccess(sessionId: Int, requestId: Int, data: String) {}
+                        override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {}
+                    })
+                    isPlay = false
+                }
+                p2p.removeOnP2PCameraListener()
+                p2p.disconnect(object : OperationDelegateCallBack {
+                    override fun onSuccess(i: Int, i1: Int, s: String) {}
+                    override fun onFailure(i: Int, i1: Int, i2: Int) {}
+                })
+            }
+        }
+    }
+
 
     /**
      * 种植引导
@@ -3637,6 +3982,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     /**
      * 设备指令监听
      */
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onTuYaToAppDataChange(status: String) {
         val map = GSON.parseObject(status, Map::class.java)
         map?.forEach { (key, value) ->
@@ -3683,6 +4029,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     logI("KEY_DEVICE_REPAIR_SN： $value")
                 }
 
+                // 获取SN的通知
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_REST_STATUS_INSTRUCTION -> {
+                    logI("KEY_DEVICE_REPAIR_REST_STATUS： $value")
+                    mViewMode.saveSn(value.toString().split("#")[1])
+                }
+
                 // 童锁开关
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_CHILD_LOCK_INSTRUCT -> {
                     mViewMode.setChildLockStatus(value.toString())
@@ -3695,6 +4047,28 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 // 是否关闭门
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
+                    // 摄像头相关
+                    // 主要用户删除当前的door的气泡消息
+                    // true 开门、 fasle 关门
+                    mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+                        // 判断是否正在显示摄像头, 如果正在显示才执行隐私模式相关的操作
+                        if (isHave && isLoadCamera) {
+                            if (value.toString() == "true") {
+                                // 开门，打开隐私模式
+                                devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+                            } else {
+                                // 关门，查看接口返回的是不是隐私模式，如果是，那么就不关闭，反之关闭
+                                if (mViewMode.getAccessoryInfo.value?.data?.privateModel == true) {
+                                    // 开门，打开隐私模式
+                                    devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+                                } else {
+                                    // 关门，
+                                    devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
+                                }
+                            }
+                        }
+                    }
+
                     // 主要用户删除当前的door的气泡消息
                     // true 开门、 fasle 关门
                     if (value.toString() == "true") return
@@ -3776,6 +4150,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onDestroy()
         // 销毁job倒计时任务
         job?.cancel()
+        mCameraP2P?.destroyP2P()
     }
 
     /**
@@ -3979,6 +4354,153 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.plantInfo()
             }
         }
+
+
+    /**
+     * 是否需要截图
+     */
+    private fun isScreenshots() {
+        val time = System.currentTimeMillis()
+        val lastSnapshotTime = Prefs.getLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE)
+
+        // 初始化日历对象
+        val currentCalendar = Calendar.getInstance().apply {
+            timeInMillis = time
+        }
+        val lastSnapshotCalendar = Calendar.getInstance().apply {
+            timeInMillis = lastSnapshotTime
+        }
+
+        // 判断今天是否已经截图
+        if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
+            // 如果今天还没截图，就执行截图操作并更新截图时间
+            snapShotClick()
+            Prefs.putLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE, time)
+        }
+    }
+
+    // 创建文件夹，并且返回文件夹路径
+    // 这是本地路径
+    private fun createFileDir(): String {
+        FileUtil.createDirIfNotExists(SDCard.getCacheDir(context) + File.separator + mViewMode.sn.value)
+        // 文件路径
+        return SDCard.getCacheDir(context) + File.separator + mViewMode.sn.value
+    }
+
+    /**
+     * 根据后台返回的参数来判断，当前存储的路径是否在sd卡中或者相册中
+     */
+    private fun isExistInSdCard(): Boolean {
+        // 0 是手机， 1 是相册
+        // 根据后台来返回的参数来判断是否保存在相册中还是sd卡中
+        return mViewMode.getAccessoryInfo.value?.data?.storageModel == 0
+    }
+
+    // 截屏
+    private fun snapShotClick() {
+        applyForAuthority {
+            if (!it) return@applyForAuthority
+            // 创建文件夹
+            val picPath = createFileDir()
+            // 文件名字
+            val fileName = System.currentTimeMillis().toString() + ".jpg"
+            mCameraP2P?.snapshot(
+                picPath,
+                fileName,
+                context,
+                object : OperationDelegateCallBack {
+                    override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
+                        if (!isExistInSdCard()) {
+                            // 保存到相册
+                            activity?.let { it1 -> saveFileToGallery(it1, filePath = data, title = System.currentTimeMillis().toString() + ".jpg", mimeType = "image/jpeg", albumName = mViewMode.sn.value.toString()) }
+                        }
+                        logI("snapShotClick : sucess")
+                    }
+
+                    override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
+                        logI("snapShotClick : $errCode")
+                    }
+                })
+        }
+    }
+
+    /**
+     * 存储到相册
+     */
+    private fun saveFileToGallery(context: Context, filePath: String, title: String, mimeType: String, albumName: String): Uri? {
+        val file = File(filePath)
+        if (!file.exists()) return null
+
+        val isVideo = mimeType.startsWith("video")
+        val contentUri = if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val directory = Environment.DIRECTORY_PICTURES
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, title)
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "$directory/$albumName")
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+            }
+        }
+
+        val uri = context.contentResolver.insert(contentUri, contentValues)
+
+        var inputStream: InputStream? = null
+        var outputStream: OutputStream? = null
+        try {
+            inputStream = file.inputStream()
+            outputStream = context.contentResolver.openOutputStream(uri!!)
+            outputStream?.let { inputStream.copyTo(it) }
+        } finally {
+            inputStream?.close()
+            outputStream?.close()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            context.contentResolver.update(uri!!, contentValues, null, null)
+        }
+
+        return uri
+    }
+
+    /**
+     *申请的权限不一致
+     */
+    private fun applyForAuthority(resultAction: (result: Boolean) -> Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            activity?.let {
+                PermissionHelp().applyPermissionHelp(
+                    it,
+                    getString(com.cl.common_base.R.string.profile_request_photo),
+                    object : PermissionHelp.OnCheckResultListener {
+                        override fun onResult(result: Boolean) {
+                            resultAction.invoke(result)
+                        }
+                    },
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                )
+            }
+        } else {
+            activity?.let {
+                PermissionHelp().applyPermissionHelp(
+                    it,
+                    getString(com.cl.common_base.R.string.profile_request_photo),
+                    object : PermissionHelp.OnCheckResultListener {
+                        override fun onResult(result: Boolean) {
+                            resultAction.invoke(result)
+                        }
+                    },
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                )
+            }
+        }
+    }
 
 
     companion object {
