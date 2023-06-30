@@ -1430,18 +1430,14 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                 // 是否关闭门
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
-                    // 主要用户删除当前的door的气泡消息
-                    // true 开门、 fasle 关门
-                    if (value.toString() == "true") {
+                    val isOpen = value.toString() == "true"
+                    val isPrivate = mViewModel.getAccessoryInfo.value?.data?.privateModel == true
+                    if (isOpen) {
                         // 开门，打开隐私模式
                         devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
-                    } else {
-                        // 关门，查看接口返回的是不是隐私模式，如果是，那么就不关闭，反之关闭
-                        if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) {
-                            devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
-                        } else {
-                            devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
-                        }
+                    } else if (!isPrivate) {
+                        // 关门，如果不是隐私模式就关闭
+                        devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
                     }
                     devId?.let {
                         tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, callback = object : TuyaCameraUtils.DPCallback {

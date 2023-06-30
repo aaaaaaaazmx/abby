@@ -486,7 +486,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 if (isSHowCamera) {
                     // 加载并且展示视频
                     mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-                        if (!isHave || !isLoadCamera) return@getCameraFlag
+                        if (!isHave) return@getCameraFlag
                         initCamera(cameraId)
                     }
                 }
@@ -506,8 +506,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 val cameraAccessory = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
                     ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
                 // 跳转到IPC界面
-                // com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
-                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+//                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
             // 选中门锁开关
@@ -1802,7 +1802,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ViewUtils.setVisible(!isLoadCamera, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
                             ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
                             logI("123123: $isHave,,,, $isLoadCamera")
-                            if (!isHave || !isLoadCamera) return@getCameraFlag
+                            if (!isHave) return@getCameraFlag
 
                             // 获取摄像头配件信息
                             mViewMode.getAccessoryInfo(devId)
@@ -3693,7 +3693,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 是否再次初始化摄像头
         mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-            if (!isHave || !isLoadCamera) return@getCameraFlag
+            if (!isHave) return@getCameraFlag
 
             if (null == mCameraP2P) {
                 ThingIPCSdk.getCameraInstance()?.let {
@@ -3721,7 +3721,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun onPause() {
         super.onPause()
         mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-            if (!isHave || !isLoadCamera) return@getCameraFlag
+            if (!isHave) return@getCameraFlag
             binding.pplantNinth.cameraVideoView.onPause()
             mCameraP2P?.let { p2p ->
                 if (isPlay) {
@@ -4041,20 +4041,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 主要用户删除当前的door的气泡消息
                     // true 开门、 fasle 关门
                     mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-                        // 判断是否正在显示摄像头, 如果正在显示才执行隐私模式相关的操作
                         if (isHave && isLoadCamera) {
-                            if (value.toString() == "true") {
+                            val isOpen = value.toString() == "true"
+                            val isPrivate = mViewMode.getAccessoryInfo.value?.data?.privateModel == true
+                            if (isOpen) {
                                 // 开门，打开隐私模式
                                 devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
-                            } else {
-                                // 关门，查看接口返回的是不是隐私模式，如果是，那么就不关闭，反之关闭
-                                if (mViewMode.getAccessoryInfo.value?.data?.privateModel == true) {
-                                    // 开门，打开隐私模式
-                                    devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
-                                } else {
-                                    // 关门，
-                                    devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
-                                }
+                            } else if (!isPrivate) {
+                                // 关门，如果不是隐私模式就关闭
+                                devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
                             }
                         }
                     }
