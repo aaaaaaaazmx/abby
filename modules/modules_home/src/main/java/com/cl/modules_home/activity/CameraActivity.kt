@@ -431,7 +431,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             })
 
             // 查询门是否开着的。
-            mViewModel.tuYaDeviceBean?.devId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
+            /*mViewModel.tuYaDeviceBean?.devId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }*/
         }
 
         // 获取配件信息

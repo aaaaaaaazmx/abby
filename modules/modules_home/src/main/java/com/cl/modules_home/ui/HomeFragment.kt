@@ -1802,13 +1802,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave)
                             ViewUtils.setVisible(!isHave, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
                             ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
-                            logI("123123: $isHave,,,, $isLoadCamera")
+                            logI("111: $isHave,,,, $isLoadCamera")
+                            logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
                             if (!isHave || cameraId.isBlank()) return@getCameraFlag
 
                             // 获取摄像头配件信息
                             mViewMode.getAccessoryInfo(devId)
-                            // 保存摄像头Id
-                            setCameraId(cameraId)
                             if (isPlay) {
                                 return@getCameraFlag
                             }
@@ -1855,6 +1854,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             // 初始化摄像头
                             initCamera(cameraId)
+                            // 保存摄像头Id
+                            setCameraId(cameraId)
                         }
                     }
 
@@ -3490,7 +3491,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private var mCameraP2P: IThingSmartCameraP2P<Any>? = null
     private var isPlay = false
     private fun initCamera(cameraId: String) {
-        if (null == mCameraP2P  || mViewMode.cameraId.value != cameraId) {
+        if (null == mCameraP2P || mViewMode.cameraId.value != cameraId) {
             ThingIPCSdk.getCameraInstance()?.let {
                 mCameraP2P = it.createCameraP2P(cameraId)
             }
@@ -3712,35 +3713,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 topMargin = insets.systemWindowInsetTop
             }
             return@setOnApplyWindowInsetsListener insets
-        }
-
-        // 是否再次初始化摄像头
-        mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-            if (!isHave || cameraId.isBlank()) return@getCameraFlag
-
-            // 门是否打开的。
-            devId.let { it1 -> mViewMode.tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
-
-            if (null == mCameraP2P || mViewMode.cameraId.value != cameraId) {
-                ThingIPCSdk.getCameraInstance()?.let {
-                    mCameraP2P = it.createCameraP2P(cameraId)
-                }
-                binding.pplantNinth.cameraVideoView.setViewCallback(object : AbsVideoViewCallback() {
-                    override fun onCreated(o: Any) {
-                        super.onCreated(o)
-                        mCameraP2P?.generateCameraView(o)
-                    }
-                })
-                binding.pplantNinth.cameraVideoView.createVideoView(cameraId)
-                if (mCameraP2P == null) {
-                    ToastUtil.shortShow("Camera initialization failed")
-                }
-            }
-
-            // 显示画面
-            binding.pplantNinth.cameraVideoView.onResume()
-            //must register again,or can't callback
-            goOnCameraPlay()
         }
     }
 

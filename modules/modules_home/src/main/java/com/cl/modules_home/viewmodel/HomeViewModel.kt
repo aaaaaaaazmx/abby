@@ -1203,6 +1203,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun saveSn(sn: String) {
         _sn.value = sn
     }
+
     /**
      * 获取SN
      */
@@ -1330,7 +1331,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         )
                     )
                 }.collectLatest {
-                    _listDevice.value = it
+                    when (it) {
+                        is Resource.Success -> {
+                            _listDevice.value = it
+                        }
+                        else -> {}
+                    }
                 }
         }
     }
@@ -1896,10 +1902,14 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getCameraFlag(isHaveACamera: (isHave: Boolean, isLoadCamera: Boolean, cameraId: String, devId: String) -> Unit) {
         val isShowCamera = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
 
-        val cameraAccessory = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-            ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
-
-        logI("getCameraFlag: $isShowCamera,,,, $cameraAccessory")
+        listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+            ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }.apply {
+                if (this == null) {
+                    isHaveACamera.invoke(false, isShowCamera, "", "")
+                } else {
+                    isHaveACamera.invoke(true, isShowCamera, accessoryDeviceId ?: "", listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.deviceId ?: "")
+                }
+            }
 
         // 如果是不显示摄像头
         /*if (!isShowCamera) {
@@ -1915,12 +1925,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 isHaveACamera.invoke(false, false, "", "")
             }
         }*/
-
-        if (cameraAccessory == null) {
-            isHaveACamera.invoke(false, isShowCamera, "", "")
-        } else {
-            isHaveACamera.invoke(true, isShowCamera, cameraAccessory.accessoryDeviceId ?: "",  listDevice.value?.data?.firstOrNull {it.currentDevice == 1}?.deviceId ?: "")
-        }
 
 
         // 表示有，并且已经在展示状态
