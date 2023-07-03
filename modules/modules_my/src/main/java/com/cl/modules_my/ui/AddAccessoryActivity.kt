@@ -144,7 +144,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                     // 如果点击的是当前已经添加过的。
                     accessoryList?.firstOrNull { it.accessoryId == itemData?.accessoryId }?.apply {
                         // 跳转到摄像头界面
-                        if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == true && itemData?.accessoryName == "Smart Camera") {
+                        if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == false && itemData?.accessoryName == "Smart Camera") {
                             startActivity(Intent(this@AddAccessoryActivity, CameraSettingActivity::class.java).apply {
                                 putExtra("accessoryDeviceId", accessoryDeviceId)
                                 putExtra("deviceId", deviceId)

@@ -429,6 +429,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     binding.ivCameraButton.isFocusable = true
                 }
             })
+
+            // 查询门是否开着的。
+            mViewModel.tuYaDeviceBean?.devId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
         }
 
         // 获取配件信息
@@ -460,14 +463,14 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         ).toInt()
 
         val layoutParams = RelativeLayout.LayoutParams(width, height).apply {
-            addRule(RelativeLayout.BELOW, R.id.iv_back)
+            addRule(RelativeLayout.BELOW, R.id.fl_back)
             topMargin = marginTopPx
         }
 
         binding.cameraVideoViewRl.layoutParams = layoutParams
 
 
-        binding.ivBack.setOnClickListener { finish() }
+        binding.flBack.setOnClickListener { finish() }
 
         binding.recyclerView.apply {
             layoutManager = layoutMangers
@@ -515,10 +518,13 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                             binding.ivCameraButton.setBackgroundResource(background)
 
                             // 需要判断当前是否是开启了time_lapse模式，目前就存在本地吧
-                            val isOpen = Prefs.getBoolean(Constants.Global.KEY_TIME_LAPSE, false)
+                            val isOpen = Prefs.getBoolean(mViewModel.sn.value.toString(), false)
 
                             if (adapters?.getLetter(pos) == "TIME-LAPSE") {
                                 binding.ivCameraButton.isChecked = isOpen
+                                ViewUtils.setVisible(binding.ivGetImage)
+                            } else {
+                                ViewUtils.setGone(binding.ivGetImage)
                             }
                         }
                     }
@@ -551,7 +557,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                     if (data == null) return@success
                     // 隐私模式不能显示
-                    if (data?.privateModel == true) {
+                    /*if (data?.privateModel == true) {
                         binding.ivCameraButton.isClickable = false
                         binding.ivCameraButton.isEnabled = false
                         binding.ivCameraButton.isFocusable = false
@@ -564,7 +570,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         binding.ivCameraButton.isFocusable = true
                         // 主动设置为隐私模式
                         devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
-                    }
+                    }*/
 
                     devId?.let {
                         tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
@@ -608,12 +614,11 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         binding.cameraQuality.setOnClickListener(this)
         binding.ivThumbnail.setOnClickListener(this)
         binding.ivGetImage.setOnClickListener(this)
-        binding.ivBack.setOnClickListener(this)
+        binding.flBack.setOnClickListener(this)
 
         binding.ivCameraButton.setOnCheckedChangeListener { buttonView, isChecked ->
             val currentLetter = adapters?.focusedPosition?.let { adapters?.getLetter(it) }
             val isTimeLapse = currentLetter == "TIME-LAPSE" || currentLetter == "PHOTO"
-            val timeLapseShow = Prefs.getBoolean(Constants.Contact.KEY_TIMELAPSE_TIP_IS_SHOW, false)
 
             // 主要用户在重置时产生的一系列问题
             if (mViewModel.selectCallBack.value == true) {
@@ -622,18 +627,19 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             }
 
             // 隐私模式，不能做任何事情。
-            if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) {
+            /*if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) {
                 com.cl.common_base.widget.toast.ToastUtil.shortShow("Currently in privacy mode")
                 return@setOnCheckedChangeListener
-            }
+            }*/
 
             when (adapters?.focusedPosition?.let { adapters?.getLetter(it) }) {
                 "TIME-LAPSE" -> {
-                    val timeLapseKey = Constants.Global.KEY_TIME_LAPSE
+                    val timeLapseKey = mViewModel.sn.value.toString()
                     val currentStatus = Prefs.getBoolean(timeLapseKey, false)
                     val isShowAlready = Prefs.getBoolean(Constants.Contact.KEY_TIMELAPSE_TIP_IS_SHOW, false)
 
-                    if (timeLapseShow || isChecked) {
+                    // 已经接受过了一次，然后也是选中
+                    if (isShowAlready || isChecked) {
                         if (currentStatus == isChecked) {
                             // If the status remains unchanged, no need to do anything
                             return@setOnCheckedChangeListener
@@ -848,24 +854,29 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
      * 是否需要截图
      */
     private fun isScreenshots() {
-        // 隐私模式不截图，留着下一次截图
-        if (mViewModel.getAccessoryInfo.value?.data?.privateModel == true) return
-        val time = System.currentTimeMillis()
-        val lastSnapshotTime = Prefs.getLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE)
+        // todo 其实这一块还是需要判断当前是否是开门的状态，开门的状态就不需要截图了
+        kotlin.runCatching {
+            runOnUiThread {
+                // 判断当前是否可以截图
+                val key = mViewModel.sn.value.toString() + "test"
+                val time = System.currentTimeMillis()
+                val lastSnapshotTime = Prefs.getLong(key)
 
-        // 初始化日历对象
-        val currentCalendar = Calendar.getInstance().apply {
-            timeInMillis = time
-        }
-        val lastSnapshotCalendar = Calendar.getInstance().apply {
-            timeInMillis = lastSnapshotTime
-        }
+                // 初始化日历对象
+                val currentCalendar = Calendar.getInstance().apply {
+                    timeInMillis = time
+                }
+                val lastSnapshotCalendar = Calendar.getInstance().apply {
+                    timeInMillis = lastSnapshotTime
+                }
 
-        // 判断今天是否已经截图
-        if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
-            // 如果今天还没截图，就执行截图操作并更新截图时间
-            snapShotClick()
-            Prefs.putLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE, time)
+                // 判断今天是否已经截图
+                if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
+                    // 如果今天还没截图，就执行截图操作并更新截图时间
+                    snapShotClick()
+                    Prefs.putLong(key, time)
+                }
+            }
         }
     }
 
@@ -915,6 +926,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
                             ViewUtils.setGone(binding.timer)
                             timer?.cancel()
+                            seconds = 0
                             mHandler.sendEmptyMessage(com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_FAIL)
                         }
                     })
@@ -923,6 +935,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
                         ViewUtils.setGone(binding.timer)
                         timer?.cancel()
+                        seconds = 0
                         mHandler.sendMessage(
                             MessageUtil.getMessage(
                                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_OVER,
@@ -942,6 +955,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     override fun onFailure(sessionId: Int, requestId: Int, errCode: Int) {
                         ViewUtils.setGone(binding.timer)
                         timer?.cancel()
+                        seconds = 0
                         mHandler.sendMessage(
                             MessageUtil.getMessage(
                                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_OVER,
@@ -1243,6 +1257,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         super.onPause()
         binding.cameraVideoView.onPause()
         timer?.cancel()
+        seconds = 0
         mCameraP2P?.let {
             if (isSpeaking) it.stopAudioTalk(null)
             if (isPlay) {
@@ -1267,6 +1282,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         mHandler.removeCallbacksAndMessages(null)
         mCameraP2P?.destroyP2P()
         timer?.cancel()
+        seconds = 0
     }
 
     // 点击事件
@@ -1346,7 +1362,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     ).show()
             }
 
-            R.id.iv_back -> {
+            R.id.fl_back -> {
                 isExit()
             }
         }
@@ -1393,6 +1409,16 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                             error(R.drawable.home_gray_place_holder)
                             placeholder(R.drawable.home_gray_place_holder)
                         }
+
+                        // 默认选中第一个,第一个就是time-lapse
+                        val isOpen = Prefs.getBoolean(mViewModel.sn.value.toString(), false)
+                        if (adapters?.focusedPosition?.let { adapters?.getLetter(it) } == "TIME-LAPSE") {
+                            binding.ivCameraButton.isChecked = isOpen
+                            ViewUtils.setVisible(binding.ivGetImage)
+                        } else {
+                            ViewUtils.setGone(binding.ivGetImage)
+                        }
+
                         //  查找当前sd卡路径，是否展示图片还是灰色的颜色，不管相册还是sdcard的，都是和当前的sn相关的，但是相册里面的可能被删除。
                         //  需要从相册里面读取图片，如果没有图片，就展示灰色的图片
                         applyForAuthority {
@@ -1430,25 +1456,29 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                 // 是否关闭门
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
-                    val isOpen = value.toString() == "true"
-                    val isPrivate = mViewModel.getAccessoryInfo.value?.data?.privateModel == true
-                    if (isOpen) {
-                        // 开门，打开隐私模式
-                        devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
-                    } else if (!isPrivate) {
-                        // 关门，如果不是隐私模式就关闭
-                        devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
-                    }
-                    devId?.let {
-                        tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, callback = object : TuyaCameraUtils.DPCallback {
-                            override fun callback(obj: Any) {
-                                logI("123123@: ${obj.toString()}")
-                                ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
-                            }
-                        })
-                    }
+                    isPrivateMode(value)
                 }
             }
+        }
+    }
+
+    private fun isPrivateMode(value: Any?) {
+        val isOpen = value.toString() == "true"
+        val isPrivate = mViewModel.getAccessoryInfo.value?.data?.privateModel == true
+        if (isOpen && isPrivate) {
+            // 开门，打开隐私模式
+            devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+        } else {
+            // 关门，如果不是隐私模式就关闭
+            devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
+        }
+        devId?.let {
+            tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, callback = object : TuyaCameraUtils.DPCallback {
+                override fun callback(obj: Any) {
+                    logI("123123@: ${obj.toString()}")
+                    ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
+                }
+            })
         }
     }
 

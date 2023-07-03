@@ -950,6 +950,8 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 override fun onFailure() {
                     runOnUiThread {
                         ToastUtil.shortShow("gifTMp4: onFailure")
+                        // 需要删除这个创建失败的文件夹
+                        FileUtil.deleteFile(sdCardPath + File.separator + name)
                     }
                     logI("gifTMp4: onFailure")
                 }

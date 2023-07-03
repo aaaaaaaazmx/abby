@@ -8,6 +8,7 @@ import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.util.ipc.CameraUtils
 import com.cl.common_base.util.ipc.QRCodeUtil
 import com.cl.common_base.widget.toast.ToastUtil
@@ -18,6 +19,7 @@ import com.thingclips.smart.home.sdk.builder.ThingCameraActivatorBuilder
 import com.thingclips.smart.sdk.api.IThingActivatorGetToken
 import com.thingclips.smart.sdk.api.IThingSmartCameraActivatorListener
 import com.thingclips.smart.sdk.bean.DeviceBean
+import com.tuya.smart.android.demo.camera.utils.DPConstants
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -101,6 +103,7 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
                 override fun onError(errorCode: String, errorMsg: String) {
                     hideProgressLoading()
                     ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
+                    logI("123123: errorCode: $errorCode errorMsg: $errorMsg")
                 }
 
                 override fun onActiveSuccess(devResp: DeviceBean?) {
@@ -108,6 +111,10 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
                     hideProgressLoading()
                     cameraId = devResp?.devId ?: ""
                     logI("123123: cameraId: $cameraId  deviceId: $deviceId")
+
+                    // 设置摄像头为连续摄像模式
+                    // 设备设置页面-存储卡设置 SD卡录像模式选择，1为事件录像（检测到移动再录像到SD卡），2为连续录像
+                    TuyaCameraUtils().publishDps(cameraId, DPConstants.PRIVATE_MODE, 2)
                     letMultiple(accessoryId, deviceId) { a, b ->
                         // 新增配件接口
                         mViewMode.addAccessory(a, b, cameraId)

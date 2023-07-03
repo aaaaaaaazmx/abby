@@ -7,6 +7,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.RoundRectShape
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -109,7 +111,6 @@ import kotlin.random.Random
  * 种植引导Fragment
  * 种植继承
  */
-@Suppress("LABEL_NAME_CLASH")
 @Route(path = RouterPath.Home.PAGE_HOME)
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<HomeBinding>() {
@@ -506,8 +507,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 val cameraAccessory = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
                     ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
                 // 跳转到IPC界面
-                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
-//                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                //                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
             // 选中门锁开关
@@ -1796,13 +1797,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     if ((data?.size ?: 0) >= 1) {
                         getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-                            binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
-                            ViewUtils.setVisible(isLoadCamera, binding.pplantNinth.rlBowl)
-                            ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isLoadCamera)
-                            ViewUtils.setVisible(!isLoadCamera, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+                            binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera && isHave) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
+                            ViewUtils.setVisible(isHave, binding.pplantNinth.rlBowl)
+                            ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave)
+                            ViewUtils.setVisible(!isHave, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
                             ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
                             logI("123123: $isHave,,,, $isLoadCamera")
-                            if (!isHave) return@getCameraFlag
+                            if (!isHave || cameraId.isBlank()) return@getCameraFlag
 
                             // 获取摄像头配件信息
                             mViewMode.getAccessoryInfo(devId)
@@ -1839,6 +1840,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             constraintSet.connect(relativeLayout.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
                             // 应用新的约束
                             constraintSet.applyTo(constraintLayout)
+
+                            // Assuming you are using Kotlin for Android
+
+                            // Set the corner radius for the bottom left and bottom right corners
+                            val cornerRadius = 30.0f
+                            // 角度为顺时针旋转绘制的，
+                            val radii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+
+                            // val radii = floatArrayOf(0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius, 0f, 0f)
+                            val shapeDrawable = ShapeDrawable(RoundRectShape(radii, null, null))
+                            binding.pplantNinth.cardView.clipToOutline = true
+                            binding.pplantNinth.cardView.background = shapeDrawable
+
                             // 初始化摄像头
                             initCamera(cameraId)
                         }
@@ -1861,17 +1875,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             getAccessoryInfo.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     if (data == null) return@success
-                    ViewUtils.setVisible(data?.privateModel == true, binding.pplantNinth.tvPrivacyMode)
                     val devId = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(0)?.accessoryDeviceId
 
                     // 隐私模式不能显示
-                    if (data?.privateModel == true) {
+                    /*if (data?.privateModel == true) {
                         // 主动设置为隐私模式
                         devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
                     } else {
                         // 主动设置为隐私模式
                         devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
-                    }
+                    }*/
 
                     /**
                      * 监听隐私模式、或者是否在先
@@ -1879,10 +1892,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     devId?.let {
                         mViewMode.tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
                             override fun callback(obj: Any) {
-                                logI("123123@: ${obj.toString()}")
+                                logI("123123@: $obj")
                                 ViewUtils.setVisible(obj.toString() == "true", binding.pplantNinth.tvPrivacyMode)
                             }
                         }, onStatusChangedAction = { online ->
+                            // 在线和不在线都需要提示
+                            ViewUtils.setVisible(online, binding.pplantNinth.tvPrivacyMode)
                             if (online) {
                                 //  在线摄像头
                                 binding.pplantNinth.tvPrivacyMode.text = "Currently in privacy mode"
@@ -2837,7 +2852,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 binding.pplantNinth.ivWaterStatus
                             )
                             // 显示碗or植物
-                            binding.pplantNinth.ivBowl.visibility = View.VISIBLE
+                            getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+                                if (isHave && isLoadCamera) {
+                                    binding.pplantNinth.ivBowl.visibility = View.INVISIBLE
+                                } else {
+                                    binding.pplantNinth.ivBowl.visibility = View.VISIBLE
+                                }
+                            }
                             if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) {
                                 // 显示种子背景图
                                 // 根据总天数判断
@@ -3469,7 +3490,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private var mCameraP2P: IThingSmartCameraP2P<Any>? = null
     private var isPlay = false
     private fun initCamera(cameraId: String) {
-        if (null == mCameraP2P) {
+        if (null == mCameraP2P  || mViewMode.cameraId.value != cameraId) {
             ThingIPCSdk.getCameraInstance()?.let {
                 mCameraP2P = it.createCameraP2P(cameraId)
             }
@@ -3607,7 +3628,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         mCameraP2P?.startPreview(ICameraP2P.HD, object : OperationDelegateCallBack {
             override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
                 // 查看是否每天需要拍一张照片，
-                isScreenshots()
+                activity?.runOnUiThread {
+                    isScreenshots()
+                }
                 Log.d(TAG, "start preview onSuccess")
                 isPlay = true
             }
@@ -3693,9 +3716,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 是否再次初始化摄像头
         mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-            if (!isHave) return@getCameraFlag
+            if (!isHave || cameraId.isBlank()) return@getCameraFlag
 
-            if (null == mCameraP2P) {
+            // 门是否打开的。
+            devId.let { it1 -> mViewMode.tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
+
+            if (null == mCameraP2P || mViewMode.cameraId.value != cameraId) {
                 ThingIPCSdk.getCameraInstance()?.let {
                     mCameraP2P = it.createCameraP2P(cameraId)
                 }
@@ -4037,22 +4063,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 // 是否关闭门
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
+                    logI("12312312312 KEY_DEVICE_DOOR: $value")
                     // 摄像头相关
                     // 主要用户删除当前的door的气泡消息
                     // true 开门、 fasle 关门
-                    mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-                        if (isHave && isLoadCamera) {
-                            val isOpen = value.toString() == "true"
-                            val isPrivate = mViewMode.getAccessoryInfo.value?.data?.privateModel == true
-                            if (isOpen) {
-                                // 开门，打开隐私模式
-                                devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
-                            } else if (!isPrivate) {
-                                // 关门，如果不是隐私模式就关闭
-                                devId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
-                            }
-                        }
-                    }
+                    isPrivateMode(value)
 
                     // 主要用户删除当前的door的气泡消息
                     // true 开门、 fasle 关门
@@ -4126,6 +4141,25 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 气泵
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_AIR_PUMP_INSTRUCTION -> {
                     mViewMode.setAirPump(value.toString())
+                }
+            }
+        }
+    }
+
+    /**
+     * 是否开启隐私模式
+     */
+    private fun isPrivateMode(value: Any?) {
+        mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+            if (isHave && isLoadCamera) {
+                val isOpen = value.toString() == "true"
+                val isPrivate = mViewMode.getAccessoryInfo.value?.data?.privateModel == true
+                if (isOpen && isPrivate) {
+                    // 打开隐私模式
+                    cameraId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+                } else {
+                    // 关闭隐私模式
+                    cameraId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
                 }
             }
         }
@@ -4345,24 +4379,33 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 是否需要截图
      */
     private fun isScreenshots() {
-        // 隐私模式不截图，留着下一次截图
-        if (mViewMode.getAccessoryInfo.value?.data?.privateModel == true) return
-        val time = System.currentTimeMillis()
-        val lastSnapshotTime = Prefs.getLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE)
+        kotlin.runCatching {
+            // todo 其实这一块还是需要判断当前是否是开门的状态，开门的状态就不需要截图了
 
-        // 初始化日历对象
-        val currentCalendar = Calendar.getInstance().apply {
-            timeInMillis = time
-        }
-        val lastSnapshotCalendar = Calendar.getInstance().apply {
-            timeInMillis = lastSnapshotTime
-        }
+            // 首先需要判断当前设备的截图是否开启
+            val isOpenTimeLapse = Prefs.getBoolean(mViewMode.sn.value.toString(), false)
+            if (!isOpenTimeLapse) return
 
-        // 判断今天是否已经截图
-        if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
-            // 如果今天还没截图，就执行截图操作并更新截图时间
-            snapShotClick()
-            Prefs.putLong(Constants.Global.KEY_IS_LAST_OPERATION_DATE, time)
+
+            // 判断当前是否可以截图
+            val key = mViewMode.sn.value.toString() + "test"
+            val time = System.currentTimeMillis()
+            val lastSnapshotTime = Prefs.getLong(key)
+
+            // 初始化日历对象
+            val currentCalendar = Calendar.getInstance().apply {
+                timeInMillis = time
+            }
+            val lastSnapshotCalendar = Calendar.getInstance().apply {
+                timeInMillis = lastSnapshotTime
+            }
+
+            // 判断今天是否已经截图
+            if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
+                // 如果今天还没截图，就执行截图操作并更新截图时间
+                snapShotClick()
+                Prefs.putLong(key, time)
+            }
         }
     }
 
@@ -4457,6 +4500,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      *申请的权限不一致
      */
     private fun applyForAuthority(resultAction: (result: Boolean) -> Unit) {
+        // 创建一个 ActivityResultLauncher 对象
+        /*val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // 如果权限已被授予，则执行相应的操作
+                // ...
+                resultAction.invoke(true)
+            } else {
+                // 如果权限未被授予，则提示用户
+                resultAction.invoke(false)
+                ToastUtil.shortShow("Permission denied")
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val permissions = arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.READ_MEDIA_AUDIO,
+            )
+            // 请求权限
+            requestPermissionLauncher.launch(permissions.toString())
+        } else {
+            val permissions = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            )
+            // 请求权限
+            requestPermissionLauncher.launch(permissions.toString())
+        }*/
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             activity?.let {
                 PermissionHelp().applyPermissionHelp(

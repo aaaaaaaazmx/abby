@@ -1899,7 +1899,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         val cameraAccessory = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
             ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
 
-        logI("123123: $isShowCamera,,,, $cameraAccessory")
+        logI("getCameraFlag: $isShowCamera,,,, $cameraAccessory")
 
         // 如果是不显示摄像头
         /*if (!isShowCamera) {
@@ -1917,7 +1917,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }*/
 
         if (cameraAccessory == null) {
-            isHaveACamera.invoke(cameraAccessory == null, isShowCamera, "", "")
+            isHaveACamera.invoke(false, isShowCamera, "", "")
         } else {
             isHaveACamera.invoke(true, isShowCamera, cameraAccessory.accessoryDeviceId ?: "",  listDevice.value?.data?.firstOrNull {it.currentDevice == 1}?.deviceId ?: "")
         }

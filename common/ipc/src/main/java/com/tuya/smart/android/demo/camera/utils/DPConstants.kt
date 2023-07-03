@@ -18,6 +18,9 @@ class DPConstants {
         //Data type: boolean
         const val SD_CARD_RECORD_SWITCH = "150"
 
+        // 连续录像 Data type: enum
+        const val SD_CARD_RECORD_MODE = "151"
+
         const val SD_STATUS = "110"
         const val SD_STORAGE = "109"
         const val SD_FORMAT = "111"
