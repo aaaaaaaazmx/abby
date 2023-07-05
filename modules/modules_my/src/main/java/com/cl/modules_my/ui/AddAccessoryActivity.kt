@@ -198,6 +198,14 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                             "Slide to Unlock"
                                         )
                                         intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+
+                                        accessoryList?.firstOrNull { it.accessoryId == itemData?.accessoryId }?.apply {
+                                            // 跳转到摄像头界面
+                                            if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == false && itemData?.accessoryName == "Smart Camera") {
+                                                intent.putExtra(BasePopActivity.KEY_CAMERA_ID, accessoryDeviceId)
+                                            }
+                                        }
+
                                         intent.putExtra(
                                             BasePopActivity.KEY_PART_ID,
                                             "${itemData?.accessoryId}"

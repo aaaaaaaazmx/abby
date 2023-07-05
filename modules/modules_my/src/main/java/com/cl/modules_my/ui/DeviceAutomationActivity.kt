@@ -152,7 +152,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     data?.status?.let {
                         binding.ftCheck.setItemChecked(it == 1)
                     }
-                    binding.tvAutoDesc.text = if (openSize == 0) "Auto\nOff" else "Auto\nOn"
+                    // 主开关需要开启，才显示
+                    binding.tvAutoDesc.text = if (data?.status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
 
                     adapter.setList(data?.list)
                 }

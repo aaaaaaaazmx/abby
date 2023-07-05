@@ -139,7 +139,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                             }
                         }
                         "Humidity" -> {
-                            data?.list?.firstOrNull { it.type == "Temperature" }.apply {
+                            data?.list?.firstOrNull { it.type == "Humidity" }.apply {
                                 mViewModel.setTemperature(if (this == null) "40" else value.toString())
                                 if (this == null) {
                                     binding.tvIfText.text = "≤ 40%"

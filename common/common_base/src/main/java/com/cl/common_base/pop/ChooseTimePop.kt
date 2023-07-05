@@ -186,6 +186,10 @@ class ChooseTimePop(
                  dismiss()*/
 
                 logI("turnOnHour: $turnOnHour,,,turnOffHour: $turnOffHour")
+                if (turnOnHour == turnOffHour) {
+                    ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
+                    return@setOnClickListener
+                }
                 if (isTheSpacingHours) {
                     if ((turnOffHour?.minus(turnOnHour ?: 0) ?: 0) <= 12) {
                         val timeOpenHour = turnOnHour?.let {

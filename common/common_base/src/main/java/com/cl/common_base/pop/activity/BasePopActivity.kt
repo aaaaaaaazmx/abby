@@ -702,6 +702,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         // 设备ID
         const val KEY_DEVICE_ID = "key_device_id"
 
+        // 摄像头id，用于解绑
+        const val KEY_CAMERA_ID = "key_camera_id"
+
         // 配件ID
         const val KEY_PART_ID = "key_part_id"
 

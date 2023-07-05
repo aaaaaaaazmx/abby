@@ -99,6 +99,11 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
         intent.getStringExtra(Constants.Global.KEY_SHARE_TYPE)
     }
 
+    // 带过来的文字
+    private val shareContent by lazy {
+        intent.getStringExtra(Constants.Global.KEY_SHARE_TEXT)
+    }
+
     // 需要分享的图片
     private val shareImg by lazy {
         intent.getStringExtra(Constants.Global.KEY_SHARE_CONTENT)
@@ -168,10 +173,13 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
      */
     private fun shareTypeOperation() {
         shareType?.let {
+            binding.etConnect.setText(shareContent ?: "")
             // 本地添加一个，网络地址也添加一个,适配器上也添加一个
-            picList.add(0, ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = shareImg))
-            viewModel.setPicAddress(ImageUrl(imageUrl = shareImg))
-            chooserAdapter.addData(0, ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = shareImg, isUploading = true))
+            val chooseBean = ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = shareImg, isUploading = true)
+            picList.add(0, chooseBean)
+            chooserAdapter.addData(0, chooseBean)
+            // 直接上传
+            picList[0].picAddress?.let { upLoadImage(it) }?.let { viewModel.uploadImg(it) }
         }
     }
     override fun observe() {
