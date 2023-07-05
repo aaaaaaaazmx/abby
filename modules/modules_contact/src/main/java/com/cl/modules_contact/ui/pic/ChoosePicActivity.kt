@@ -30,8 +30,8 @@ import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactChooserPicActivityBinding
-import com.cl.modules_contact.decoraion.FullyGridLayoutManager
-import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
+import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
+import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.modules_contact.request.TrendPictureReq
 import com.cl.modules_contact.response.ChoosePicBean
 import com.cl.modules_contact.ui.ReelPostActivity
@@ -245,7 +245,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             )
             val selectedImages = (activity as? ChoosePicActivity)?.selectedImages ?: mutableListOf()
             adapter = ImageAdapter(requireContext(), selectedImages) { image ->
-                if (selectedImages.size < 16 || selectedImages.contains(image)) {
+                if (selectedImages.size < MAX_IMAGE_COUNT || selectedImages.contains(image)) {
                     if (selectedImages.contains(image)) {
                         selectedImages.remove(image)
                         (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
@@ -255,7 +255,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                     }
                     adapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(context, "The number of selected photos cannot exceed 16.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "The number of selected photos cannot exceed $MAX_IMAGE_COUNT.", Toast.LENGTH_SHORT).show()
                 }
             }
             recyclerView.adapter = adapter
@@ -304,7 +304,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
             )
             val selectedImages = (activity as? ChoosePicActivity)?.selectedImages ?: mutableListOf()
             adapter = ImageAdapter(requireContext(), selectedImages) { image ->
-                if (selectedImages.size < 16 || selectedImages.contains(image)) {
+                if (selectedImages.size < MAX_IMAGE_COUNT || selectedImages.contains(image)) {
                     if (selectedImages.contains(image)) {
                         selectedImages.remove(image)
                         (activity as? ChoosePicActivity)?.updateSelectedIndexes(adapter)
@@ -314,7 +314,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                     }
                     adapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(context, "The number of selected photos cannot exceed 16.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "The number of selected photos cannot exceed $MAX_IMAGE_COUNT.", Toast.LENGTH_SHORT).show()
                 }
             }
             recyclerView.adapter = adapter
@@ -431,5 +431,10 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
         selectedImages.forEachIndexed { index, position ->
             adapter.notifyItemChanged(index)
         }
+    }
+
+    companion object {
+        // 相片最大选中数量
+        const val MAX_IMAGE_COUNT = 16
     }
 }

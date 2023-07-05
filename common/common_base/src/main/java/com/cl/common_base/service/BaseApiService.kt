@@ -70,7 +70,8 @@ interface BaseApiService {
     @POST("abby/accessory/add")
     fun accessoryAdd(
         @Field("accessoryId") accessoryId: String,
-        @Field("deviceId") deviceId: String
+        @Field("deviceId") deviceId: String,
+        @Field("accessoryDeviceId")accessoryDeviceId: String? = null,
     ): Flow<HttpResult<BaseBean>>
 
     /**

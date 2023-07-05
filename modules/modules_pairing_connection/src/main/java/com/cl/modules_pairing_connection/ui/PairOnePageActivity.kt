@@ -26,11 +26,11 @@ import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
 import com.cl.common_base.report.Reporter
 import com.lxj.xpopup.XPopup
-import com.tuya.smart.android.ble.api.BleConfigType
-import com.tuya.smart.android.ble.api.ScanType
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.home.sdk.bean.ConfigProductInfoBean
-import com.tuya.smart.sdk.api.ITuyaDataCallback
+import com.thingclips.smart.android.ble.api.BleConfigType
+import com.thingclips.smart.android.ble.api.ScanType
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.ConfigProductInfoBean
+import com.thingclips.smart.sdk.api.IThingDataCallback
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -181,7 +181,7 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
         logI("one Page：startScaning")
         // 开启涂鸦扫描共呢个
         // Scan Single Ble Device
-        TuyaHomeSdk.getBleOperator().startLeScan(60 * 1000, ScanType.SINGLE) { bean ->
+        ThingHomeSdk.getBleOperator().startLeScan(60 * 1000, ScanType.SINGLE) { bean ->
             logI("startScan $bean")
             val bleDats = PairBleData()
             val myBleData = PairBleData.MyScanDeviceBean()
@@ -218,11 +218,11 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
             // 单点蓝牙
             if (bean?.configType == BleConfigType.CONFIG_TYPE_WIFI.type) {
                 // 查询设备名称
-                TuyaHomeSdk.getActivatorInstance().getActivatorDeviceInfo(
+                ThingHomeSdk.getActivatorInstance().getActivatorDeviceInfo(
                     bean.productId,
                     bean.uuid,
                     bean.mac,
-                    object : ITuyaDataCallback<ConfigProductInfoBean?> {
+                    object : IThingDataCallback<ConfigProductInfoBean?> {
                         override fun onSuccess(result: ConfigProductInfoBean?) {
                             // 设置适配器 , 添加新数据
                             bleDats.name = result?.name
@@ -240,8 +240,8 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
                             Reporter.reportTuYaError("getActivatorInstance", errorMessage, errorCode)
                         }
                     })
-//                TuyaHomeSdk.getBleManager().startBleConfig(tuYaHomeId.toLong(), bean.uuid, null,
-//                    object : ITuyaBleConfigListener {
+//                ThingHomeSdk.getBleManager().startBleConfig(tuYaHomeId.toLong(), bean.uuid, null,
+//                    object : IThingBleConfigListener {
 //                        override fun onSuccess(bean: DeviceBean?) {
 //                            setPbViewVisible(false)
 //                            Toast.makeText(

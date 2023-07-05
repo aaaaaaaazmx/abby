@@ -10,7 +10,7 @@ import com.cl.common_base.util.ViewUtils
 import com.google.firebase.messaging.CommonNotificationBuilder
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.CenterPopupView
-import com.tuya.smart.android.device.bean.UpgradeInfoBean
+import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 
 /**
  * 固件升级弹窗

@@ -36,12 +36,18 @@ import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.shuyu.gsyvideoplayer.GSYVideoManager
+import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -289,6 +295,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         )
                         startActivity(intent)
                     }
+
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_2 -> {
                         val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
                         intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
@@ -310,6 +317,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         )
                         startActivity(intent)
                     }
+
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
                         val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
                         intent.putExtra(BasePopActivity.KEY_UNLOCK_TASK_ID, unLockId)
@@ -396,8 +404,34 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                        .navigation()
+
+                    // 判断需不需要解绑摄像头，在添加其他设备的时候
+                    ThingHomeSdk.newHomeInstance(mViewMode.homeId)
+                        .getHomeDetail(object : IThingHomeResultCallback {
+                            override fun onSuccess(bean: HomeBean?) {
+                                // 跳转到富文本界面
+                                val list = (bean?.deviceList as? ArrayList<DeviceBean>)
+                                list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
+                                    // 如果没有摄像头，就不需要解绑
+                                    if (null == this) {
+                                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                            .navigation()
+                                    } else {
+                                        TuyaCameraUtils().unBindCamera(devId, onErrorAction = {
+                                            ToastUtil.shortShow(it)
+                                        }, onSuccessAction = {
+                                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                                .navigation()
+                                        })
+                                    }
+                                }
+                            }
+
+                            override fun onError(errorCode: String?, errorMsg: String?) {
+
+                            }
+                        })
+
                 }
             })
 
@@ -504,6 +538,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                             )
                                             startActivity(intent)
                                         }
+
                                         "finishTask" -> {
                                             if (!isHaveCheckBoxViewType()) return@setOnClickListener
 
@@ -646,6 +681,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         context.startActivity(intent)
                     }
+
                     R.id.tv_txt -> {
                         if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
                         // 跳转到HTML

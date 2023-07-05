@@ -1,15 +1,14 @@
 package com.cl.common_base.util.device
 
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IResultCallback
-import com.tuya.smart.sdk.api.ITuyaDevice
-import com.tuya.smart.sdk.bean.DeviceBean
-import com.tuya.smart.sdk.enums.TYDevicePublishModeEnum
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.api.IThingDevice
+import com.thingclips.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.enums.ThingDevicePublishModeEnum
 import kotlin.math.log
 
 /**
@@ -45,8 +44,8 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     /**
      * 获取当前设备
      */
-    override fun getCurrentDevice(): ITuyaDevice? {
-        return TuyaHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
+    override fun getCurrentDevice(): IThingDevice? {
+        return ThingHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
     }
 
     /**
@@ -56,7 +55,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KAY_PUMP_WATER] = startOrStop
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }
@@ -65,7 +64,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP] = startOrStop
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }
@@ -74,7 +73,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KEY_DEVICE_INTAKE] = gear
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }
@@ -83,7 +82,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KEY_DEVICE_EXHAUST] = gear
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }
@@ -92,7 +91,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT] = gear
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }
@@ -104,7 +103,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK] = openOrClose
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }
@@ -112,15 +111,15 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     override fun childLock(startOrStop: Boolean, devId: String?) {
         map[TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK] = startOrStop
         if (!devId.isNullOrEmpty()) {
-            TuyaHomeSdk.newDeviceInstance(devId)?.publishDps(
+            ThingHomeSdk.newDeviceInstance(devId)?.publishDps(
                 GSON.toJson(map),
-                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
                 this
             )
         }else {
             getCurrentDevice()?.publishDps(
                 GSON.toJson(map),
-                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
                 this
             )
         }
@@ -132,15 +131,15 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     override fun nightMode(startOrStop: String, devId: String?) {
         map[TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE] = startOrStop
         if (!devId.isNullOrEmpty()) {
-            TuyaHomeSdk.newDeviceInstance(devId)?.publishDps(
+            ThingHomeSdk.newDeviceInstance(devId)?.publishDps(
                 GSON.toJson(map),
-                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
                 this
             )
         } else {
             getCurrentDevice()?.publishDps(
                 GSON.toJson(map),
-                TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
                 this
             )
         }
@@ -151,7 +150,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME] = time
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }
@@ -160,7 +159,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME] = time
         getCurrentDevice()?.publishDps(
             GSON.toJson(map),
-            TYDevicePublishModeEnum.TYDevicePublishModeAuto,
+            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
             this
         )
     }

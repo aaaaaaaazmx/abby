@@ -328,4 +328,18 @@ interface HttpMyApiService {
     fun resetPwd(
        @Body req: ResetPwdReq
     ): Flow<HttpResult<BaseBean>>
+
+
+    /**
+     * 保存camera的信息
+     */
+    @POST("abby/accessory/updateInfo")
+    fun updateInfo(@Body body: UpdateInfoReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取配件信息
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/getAccessoryInfo")
+    fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
 }

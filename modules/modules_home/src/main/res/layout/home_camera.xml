@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/black"
+            tools:ignore="MissingConstraints"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:id="@+id/fl_back"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="20dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:padding="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/iv_back"
+                        android:background="@mipmap/home_left_arrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </FrameLayout>
+
+
+                <TextView
+                    android:visibility="gone"
+                    android:paddingEnd="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingBottom="2dp"
+                    android:paddingTop="2dp"
+                    android:background="@drawable/background_blue_r6"
+                    android:id="@+id/timer"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="78dp"
+                    android:layout_below="@+id/iv_back"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <RelativeLayout
+                    android:layout_marginTop="165dp"
+                    android:layout_below="@+id/iv_back"
+                    android:id="@+id/camera_video_view_Rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:layout_height="250dp">
+
+                    <com.thingclips.smart.camera.middleware.widget.ThingCameraView
+                        android:id="@+id/camera_video_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                    <TextView
+                        android:visibility="gone"
+                        android:id="@+id/tv_privacy_mode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Currently in privacy mode"
+                        android:textColor="@color/white"
+                        android:textSize="13sp" />
+
+                    <ImageView
+                        android:id="@+id/camera_mute"
+                        android:layout_width="@dimen/wh_28"
+                        android:layout_height="@dimen/wh_28"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:gravity="center"
+                        android:src="@drawable/camera_mute_btn" />
+
+                    <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                        android:id="@+id/camera_quality"
+                        android:layout_width="@dimen/wh_60"
+                        android:layout_height="@dimen/wh_28"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:layout_toRightOf="@+id/camera_mute"
+                        android:background="@drawable/camera_shape_wirlesswake"
+                        android:gravity="center"
+                        android:text="@string/hd"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/ts_12" />
+                </RelativeLayout>
+
+                <!--时间轴-->
+                <RelativeLayout
+                    android:visibility="gone"
+                    android:background="@color/white"
+                    android:id="@+id/timeline_layout"
+                    android:layout_below="@+id/camera_video_view_Rl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.thingclips.smart.android.camera.timeline.ThingTimelineView
+                        android:id="@+id/timeline"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        app:bottomTextMargin="5dp"
+                        app:bubbleColor="@color/gray"
+                        app:bubbleTextColor="@color/white"
+                        app:linesColor="@color/black"
+                        app:timeScaleColor="@color/black"
+                        app:topTextMargin="10dp" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="28dp"
+                app:layout_constraintBottom_toTopOf="@+id/iv_camera_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/iv_thumbnail"
+                android:layout_marginStart="24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_camera_button"
+                app:layout_constraintTop_toTopOf="@+id/iv_camera_button"
+                app:layout_constraintStart_toEndOf="@+id/iv_camera_button"
+                android:layout_width="79dp"
+                android:layout_height="45dp" />
+
+
+            <CheckBox
+                android:checked="false"
+                android:background="@drawable/create_camera_time_line"
+                android:button="@null"
+                android:layout_marginBottom="69dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/iv_camera_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="62dp"
+                android:layout_height="62dp" />
+
+            <ImageView
+                android:id="@+id/iv_get_image"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_camera_button"
+                app:layout_constraintTop_toTopOf="@+id/iv_camera_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@mipmap/home_camera_button"
+                android:layout_width="75dp"
+                android:layout_height="30dp" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </RelativeLayout>
+</layout>

@@ -53,4 +53,3 @@ class ImageAdapter(val imageUrls: List<String>, val context: Context) : BannerAd
     }
 
 }
-

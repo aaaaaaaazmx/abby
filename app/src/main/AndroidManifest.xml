@@ -34,6 +34,7 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
+        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true"
         android:name="com.cl.abby.EntranceApplication"
         android:allowBackup="true"

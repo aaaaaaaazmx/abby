@@ -1,8 +1,13 @@
 package com.cl.modules_contact.ui
 
+import VideoHandle.CmdList
+import VideoHandle.EpEditor
+import VideoHandle.OnEditorListener
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,6 +16,8 @@ import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.widget.ImageView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +26,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.cache.DiskCache
 import com.bumptech.glide.load.engine.cache.DiskLruCacheWrapper
@@ -27,19 +35,24 @@ import com.bumptech.glide.signature.EmptySignature
 import com.bumptech.glide.signature.ObjectKey
 import com.bumptech.glide.util.Util
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Gif
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.ImageUtil
+import com.cl.common_base.util.glide.GlideEngine
+import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
+import com.cl.common_base.video.GSYPlayVideoActivity
+import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
+import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.edittext.bean.MentionUser
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactReelPostActivityBinding
-import com.cl.modules_contact.decoraion.FullyGridLayoutManager
-import com.cl.modules_contact.decoraion.GridSpaceItemDecoration
 import com.cl.modules_contact.pop.ContactListPop
 import com.cl.modules_contact.request.AddTrendReq
 import com.cl.modules_contact.request.ImageUrl
@@ -47,7 +60,17 @@ import com.cl.modules_contact.request.Mention
 import com.cl.modules_contact.response.ChoosePicBean
 import com.cl.modules_contact.ui.pic.ChoosePicActivity
 import com.cl.modules_contact.util.DeviceConstants
+import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.viewmodel.PostViewModel
+import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.config.PictureMimeType
+import com.luck.picture.lib.config.SelectMimeType
+import com.luck.picture.lib.engine.CompressFileEngine
+import com.luck.picture.lib.entity.LocalMedia
+import com.luck.picture.lib.interfaces.OnResultCallbackListener
+import com.luck.picture.lib.language.LanguageConfig
+import com.luck.picture.lib.style.BottomNavBarStyle
+import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.utils.DensityUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
@@ -60,22 +83,58 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import top.zibin.luban.Luban
+import top.zibin.luban.OnNewCompressListener
 import java.io.File
+import java.io.InputStream
+import java.io.OutputStream
 import java.io.Serializable
 import java.lang.Float.min
 import java.security.MessageDigest
 import java.util.Collections
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 
 /**
  * 生成Gif发布界面
  */
 @AndroidEntryPoint
+@Route(path = RouterPath.Contact.PAGE_GIF)
 class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
 
     @Inject
     lateinit var viewModel: PostViewModel
+
+    // 获取是否存在本地
+    private val isExistLocal by lazy {
+        intent.getBooleanExtra("isAlbum", true)
+    }
+
+    // 获取相册地址
+    private val albumPath by lazy {
+        intent.getStringExtra("albumPath")
+    }
+
+    // 获取摄像头ID
+    private val cameraId by lazy {
+        intent.getStringExtra("devId")
+    }
+
+    // 获取本地图片地址
+    private val sdCardPath by lazy {
+        intent.getStringExtra("sdCardPath")
+    }
+
+    // 获取相册名字
+    private val albumName by lazy {
+        intent.getStringExtra("sn")
+    }
+
+    // 是否是合成video
+    private val isVideo by lazy {
+        val isVideo = intent.getBooleanExtra("isVideo", false)
+        isVideo
+    }
 
     // 图片列表
     private val picList by lazy {
@@ -91,6 +150,11 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
     }
 
     override fun initView() {
+        // 生成video的界面和gif不一致。
+        if (isVideo) {
+            binding.btnPost.text = "Save"
+            ViewUtils.setGone(binding.peopleAt, binding.vvOne, binding.tvEms, binding.etConnect, binding.vvThree)
+        }
         binding.rvPic.apply {
             layoutManager = FullyGridLayoutManager(
                 this@ReelPostActivity,
@@ -231,9 +295,8 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                             object : PermissionHelp.OnCheckResultListener {
                                 override fun onResult(result: Boolean) {
                                     if (!result) return
-                                    val intent = Intent(this@ReelPostActivity, ChoosePicActivity::class.java)
-                                    intent.putExtra(KEY_PIC_LIST_RESULT, picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC } as? Serializable)
-                                    startActivityLauncher.launch(intent)
+                                    // 判断是否是从camera界面跳转过来的
+                                    goToActivity()
                                 }
                             },
                             Manifest.permission.READ_MEDIA_IMAGES,
@@ -247,9 +310,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                             object : PermissionHelp.OnCheckResultListener {
                                 override fun onResult(result: Boolean) {
                                     if (!result) return
-                                    val intent = Intent(this@ReelPostActivity, ChoosePicActivity::class.java)
-                                    intent.putExtra(KEY_PIC_LIST_RESULT, picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC } as? Serializable)
-                                    startActivityLauncher.launch(intent)
+                                    goToActivity()
                                 }
                             },
                             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -288,6 +349,86 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 }
             }
         }
+    }
+
+    /**
+     * 跳转相对应的界面
+     */
+    private fun goToActivity() {
+        if (cameraId.isNullOrEmpty()) {
+            val intent = Intent(this@ReelPostActivity, ChoosePicActivity::class.java)
+            intent.putExtra(KEY_PIC_LIST_RESULT, picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC } as? Serializable)
+            startActivityLauncher.launch(intent)
+            return
+        }
+
+        // 转换数据
+        val localMedia = picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.map {
+            it.localMedia
+        }.toMutableList()
+
+        logI("131231: localMedia: ${localMedia.size}")
+
+        // 从camera界面跳转过来的
+        val style = PictureSelectorStyle()
+        val ss = BottomNavBarStyle()
+        ss.isCompleteCountTips = false
+        style.bottomBarStyle = ss
+        PictureSelector.create(this@ReelPostActivity)
+            .openGallery(SelectMimeType.ofImage())
+            .setImageEngine(GlideEngine.createGlideEngine())
+
+            .isOnlyObtainSandboxDir(true)
+            .setQuerySandboxDir(if (isExistLocal) sdCardPath else albumPath)
+            .setCompressEngine(CompressFileEngine { context, source, call ->
+                Luban.with(context).load(source).ignoreBy(100)
+                    .setCompressListener(object : OnNewCompressListener {
+                        override fun onSuccess(source: String?, compressFile: File?) {
+                            call?.onCallback(source, compressFile?.absolutePath)
+                        }
+
+                        override fun onError(source: String?, e: Throwable?) {
+                            call?.onCallback(source, null)
+                        }
+
+                        override fun onStart() {
+
+                        }
+                    }).launch();
+            })
+            .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
+            .isOriginalControl(false) // 原图功能
+            .isDisplayTimeAxis(true) // 资源轴
+            .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
+            .isMaxSelectEnabledMask(true) // 是否显示蒙层
+            .isDisplayCamera(false) //是否显示摄像
+            .setLanguage(LanguageConfig.ENGLISH) //显示英语
+            .setMaxSelectNum(MAX_SELECT_COUNT) // 最大选择数量
+            .setSelectorUIStyle(style)
+            .setSelectedData(localMedia)
+            .forResult(object : OnResultCallbackListener<LocalMedia> {
+                override fun onResult(result: java.util.ArrayList<LocalMedia>?) {
+                    // Map the result into ChoosePicBean and add them into picList
+                    lifecycleScope.launch {
+                        picList.clear()
+                        val listPic = withContext(Dispatchers.IO) {
+                            result?.map { listData ->
+                                ChoosePicBean(
+                                    type = ChoosePicBean.KEY_TYPE_PIC,
+                                    picAddress = listData.availablePath?.toString(),
+                                    compressPicAddress = listData.compressPath ?: listData.availablePath,
+                                    localMedia = listData
+                                )
+                            }?.plus(ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD)) ?: mutableListOf()
+                        }.take(MAX_SELECT_COUNT)
+                        picList.addAll(listPic)
+                        chooserAdapter.setList(picList)
+                    }
+                }
+
+                override fun onCancel() {
+                }
+            })
     }
 
     /**
@@ -334,6 +475,18 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 }
             }
 
+            if (isVideo) {
+                showProgressLoading()
+                // 1、先生成gif、并且上传gif, 2、发布
+                viewModel.setUploadImageFlag(true)
+                generateGifAndUploadGif {
+                    runOnUiThread {
+                        if (!it) hideProgressLoading()
+                    }
+                }
+                return@setOnClickListener
+            }
+
             // 同时也需要判断，当前是否上传过gif,判断当前没有gif，但是选择的照片又不为空
             if ((viewModel.picAddress.value?.size ?: 0) <= 0 && !picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC }) {
                 showProgressLoading()
@@ -342,7 +495,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 generateGifAndUploadGif {
                     runOnUiThread {
                         if (!it) hideProgressLoading()
-                   }
+                    }
                 }
                 return@setOnClickListener
             }
@@ -357,7 +510,6 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 ToastUtil.shortShow("You need at least two pictures.")
                 return@setOnClickListener
             }
-
             showProgressLoading()
             // 有改动，就需要删除上传的gif
             viewModel.clearPicAddress()
@@ -385,11 +537,11 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     binding.cbThree.setTextColor(Color.BLACK)
                 }
             }
-           /* // 如果有图
-            if (picList.size == 1) return@setOnCheckedChangeListener
-            if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2 && viewModel.picAddress.value?.isEmpty() == true) {
-                generateGifAndUploadGif(delayCheck = true)
-            }*/
+            /* // 如果有图
+             if (picList.size == 1) return@setOnCheckedChangeListener
+             if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC } && picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size >= 2 && viewModel.picAddress.value?.isEmpty() == true) {
+                 generateGifAndUploadGif(delayCheck = true)
+             }*/
         }
         binding.cbTwo.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
@@ -541,6 +693,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     imageBitmap?.let { it1 -> sources.add(it1) }
                 }
             }
+
             FileUtil.deleteDirectory(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
             FileUtil.createDirIfNotExists(DeviceConstants.getDialCustomGif(this@ReelPostActivity))
             // 保存gif路径
@@ -561,9 +714,15 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
             val num = delayTime
             val formatted = String.format("%.2f", num) // 将浮点数格式化为字符串，保留两位小数
             logI("123123123: delayTime: $formatted,,,, ${(formatted.toFloat() * 100).toInt()}")
-            Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay((formatted.toFloat() * 100).toInt()).start(object : Gif.ResultCallback {
+            Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay((formatted.toFloat() * 100).toInt()).setIsVideo(isVideo).start(object : Gif.ResultCallback {
                 override fun onSuccess(destPath: String?) {
                     parm?.invoke(true)
+                    if (isVideo) {
+                        if (destPath != null) {
+                            gifToMp4(destPath, parm, delayCheck)
+                        }
+                        return
+                    }
                     logI("pngToGif >> onSuccess")
                     if (delayCheck == true || viewModel.uploadImageFlag.value == true) {
                         // 上传gif
@@ -575,7 +734,6 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     XPopup.Builder(this@ReelPostActivity).asImageViewer(
                         binding.ivPreview, destPath, SmartGlideImageLoader()
                     ).show()
-
                 }
 
                 override fun onError(msg: String?) {
@@ -698,7 +856,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                                 compressPicAddress = compressData?.get(0).toString()
                             )
                         } + ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD)
-                    }.take(16)
+                    }.take(MAX_SELECT_COUNT)
                     picList.addAll(listPic)
                     chooserAdapter.setList(picList)
                     // [/storage/emulated/0/Android/data/com.cl.abby/cache/luban_disk_cache/1686532998062109.jpeg]
@@ -738,6 +896,115 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
 
         // 传递过去的照片数组
         const val KEY_PIC_LIST_RESULT = "key_pic_list_result"
+
+        // 相册最大选中数量
+        const val MAX_SELECT_COUNT = 16
+    }
+
+
+    /**
+     * 选择Gif之后转Mp4
+     */
+    private fun gifToMp4(url: String, parm: ((status: Boolean) -> Unit)?, delayCheck: Boolean? = false) {
+        thread {
+            // ffmpeg -i input.gif -vf "crop=trunc(iw/2)*2:trunc(ih/2)*2" output.mp4
+            // ffmpeg -i input.gif -vf scale=420:-2,format=yuv420p out.mp4
+            // ffmpeg -f gif -i  -y -pix_fmt yuv420p -vf "crop=in_w:in_h"
+            // ffmpeg -y -i /storage/emulated/0/1/input.gif -pix_fmt yuv420p -preset superfast /storage/emulated/0/1/result.mp4
+            // ffmpeg -y -loop 1 -r 25 -i /storage/emulated/0/1/input.png -vf zoompan=z=1.1:x='if(eq(x,0),100,x-1)':s='960*540' -t 10 -pix_fmt yuv420p /storage/emulated/0/1/result.mp4
+            val name = "${System.currentTimeMillis()}.mp4"
+            val cmdList = CmdList()
+            val path = if (viewModel.uploadImageFlag.value == true) sdCardPath + File.separator + name  else sdCardPath + File.separator + "preview" + File.separator + name
+            cmdList.append("-y")
+                .append("-i")
+                .append(url)
+                .append("-pix_fmt")
+                .append("yuv420p")
+                .append("-preset")
+                .append("superfast")
+                .append(path)
+            FileUtil.createFileIfNotExists(path)
+            val cmds = cmdList.toTypedArray()
+            val stringBuffer = StringBuffer()
+            for (ss in cmds) {
+                stringBuffer.append(ss).append(" ")
+            }
+            logI("gifTMp4 stringBuffer :  $stringBuffer")
+            EpEditor.execCmd(stringBuffer.toString(), 0, object : OnEditorListener {
+                override fun onSuccess() {
+                    logI("gifTMp4: onSuccess")
+                    runOnUiThread {
+                        // 展示
+                        if (viewModel.uploadImageFlag.value == false) {
+                            startActivity(Intent(this@ReelPostActivity, GSYPlayVideoActivity::class.java).apply {
+                                putExtra("url", path)
+                            })
+                        }
+                        if (viewModel.uploadImageFlag.value == true) {
+                            // 保存时，才保存到相册
+                            // 保存到相册。
+                            val uri = saveFileToGallery(this@ReelPostActivity, path, name, "video/mp4", albumName ?: "")
+                            if (null != uri) {
+                                ToastUtil.shortShow("Saved successfully")
+                                finish()
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure() {
+                    runOnUiThread {
+                        ToastUtil.shortShow("gifTMp4: onFailure")
+                        // 需要删除这个创建失败的文件夹
+                        FileUtil.deleteFile(path)
+                    }
+                    logI("gifTMp4: onFailure")
+                }
+
+                override fun onProgress(progress: Float) {
+                    logI("gifTMp4: $progress")
+                }
+            })
+        }
+    }
+
+    private fun saveFileToGallery(context: Context, filePath: String, title: String, mimeType: String, albumName: String): Uri? {
+        val file = File(filePath)
+        if (!file.exists()) return null
+
+        val isVideo = mimeType.startsWith("video")
+        val contentUri = if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val directory = Environment.DIRECTORY_PICTURES
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, title)
+            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "$directory/$albumName")
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+            }
+        }
+
+        val uri = context.contentResolver.insert(contentUri, contentValues)
+
+        var inputStream: InputStream? = null
+        var outputStream: OutputStream? = null
+        try {
+            inputStream = file.inputStream()
+            outputStream = context.contentResolver.openOutputStream(uri!!)
+            outputStream?.let { inputStream.copyTo(it) }
+        } finally {
+            inputStream?.close()
+            outputStream?.close()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            context.contentResolver.update(uri!!, contentValues, null, null)
+        }
+
+        return uri
     }
 
 }

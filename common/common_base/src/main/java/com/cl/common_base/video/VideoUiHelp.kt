@@ -142,4 +142,3 @@ private fun initOrientationUtils(standardGSYVideoPlayer: StandardGSYVideoPlayer,
     orientationUtils?.isLand = if (full) 1 else 0
 }
 
-

@@ -239,8 +239,8 @@
 -dontwarn com.alibaba.fastjson.**
 
 #mqtt
--keep class com.tuya.smart.mqttclient.mqttv3.** { *; }
--dontwarn com.tuya.smart.mqttclient.mqttv3.**
+-keep class com.thingclips.smart.mqttclient.mqttv3.** { *; }
+-dontwarn com.thingclips.smart.mqttclient.mqttv3.**
 
 #OkHttp3
 -keep class okhttp3.** { *; }
@@ -250,8 +250,12 @@
 -keep class okio.** { *; }
 -dontwarn okio.**
 
--keep class com.tuya.**{*;}
--dontwarn com.tuya.**
+-keep class com.thingclips.**{*;}
+-dontwarn com.thingclips.**
+
+# Matter SDK
+-keep class chip.** { *; }
+-dontwarn chip.**
 
 #pictureselector
 -keep class com.luck.picture.lib.** { *; }

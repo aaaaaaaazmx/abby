@@ -1,8 +1,9 @@
 package com.cl.modules_pairing_connection.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -10,10 +11,12 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.widget.doAfterTextChanged
 import cn.jpush.android.api.JPushInterface
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -31,16 +34,19 @@ import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairConnectNetworkBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
+import com.google.zxing.WriterException
 import com.lxj.xpopup.XPopup
-import com.tuya.smart.android.ble.api.ConfigErrorBean
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.home.sdk.bean.HomeBean
-import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
-import com.tuya.smart.sdk.api.IMultiModeActivatorListener
-import com.tuya.smart.sdk.api.ITuyaActivatorGetToken
-import com.tuya.smart.sdk.bean.DeviceBean
-import com.tuya.smart.sdk.bean.MultiModeActivatorBean
+import com.thingclips.smart.android.ble.api.ConfigErrorBean
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.builder.ThingCameraActivatorBuilder
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.api.IMultiModeActivatorListener
+import com.thingclips.smart.sdk.api.IThingActivatorGetToken
+import com.thingclips.smart.sdk.api.IThingSmartCameraActivatorListener
+import com.thingclips.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.MultiModeActivatorBean
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlin.concurrent.thread
@@ -53,6 +59,7 @@ import kotlin.random.Random
  * @author 李志军 2022-08-03 22:26
  */
 @AndroidEntryPoint
+@Route(path = RouterPath.PairConnect.PAGE_WIFI_CONNECT)
 class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
     // 传过来设备数据
@@ -64,24 +71,50 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
     }
 
+    // 区分是链接camera还是链接abby的flag
+    private val isCameraConnect by lazy {
+        intent.getBooleanExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS, false)
+    }
+
     @Inject
     lateinit var mViewModel: PairDistributionWifiViewModel
 
+    @SuppressLint("SetTextI18n")
     override fun initView() {
         ARouter.getInstance().inject(this)
-        // 设置设备名字
-        binding.tvBleNane.text = "Device: ${bleData?.subName}"
+        /**
+         * 摄像头界面需要改变这些文案
+         */
+        if (isCameraConnect){
+            //1.abby only supports 2.4GHz Wi-Fi.
+            //Wi-Fi only supports alphanumeric character
+            //
+            //2.Your phone must be connected to the same 2.4G wifi as abby
+            ViewUtils.setVisible(false, binding.tvBleNane)
+            binding.titleBar.setTitle("")
+            binding.btnSuccess.text = "Next"
+            binding.tvDescThree.text = buildSpannedString {
+                append("1. smart camera only supports ")
+                bold { append("2.4GHz Wi-Fi.") }
+                appendLine("\nWi-Fi only supports alphanumeric character")
+                appendLine("\n")
+                appendLine("2. Your phone must be connected to the same 2.4G wifi as smart camera")
+            }
+        } else {
+            // 设置设备名字
+            binding.tvBleNane.text = "Device: ${bleData?.subName}"
 
-        // 设置富文本
-        // Hey abby only supports 2.4G Wi-Fi networks.
-        // Network names must be comprised of alpahnumeric characters only.
-        binding.tvDescThree.text = buildSpannedString {
-            append("1. Hey abby only supports ")
-            bold { append("2.4GHz Wi-Fi networks.") }
-            appendLine("\n")
-            appendLine("2. Network names must be comprised of alpahnumeric characters only")
-            appendLine("\n")
-            appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+            // 设置富文本
+            // Hey abby only supports 2.4G Wi-Fi networks.
+            // Network names must be comprised of alpahnumeric characters only.
+            binding.tvDescThree.text = buildSpannedString {
+                append("1. Hey abby only supports ")
+                bold { append("2.4GHz Wi-Fi networks.") }
+                appendLine("\n")
+                appendLine("2. Network names must be comprised of alpahnumeric characters only")
+                appendLine("\n")
+                appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+            }
         }
     }
 
@@ -243,7 +276,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     override fun onResult(result: Boolean) {
                         if (!result) return
                         // 权限都同意之后，那么直接开始配网
-                        startNetWork()
+                        if (isCameraConnect) startNetWorkForCamera() else startNetWorkForAbby()
                     }
                 })
         }
@@ -317,18 +350,86 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
     }
 
     /**
+     * 开始配网，链接camera
+     */
+    private fun startNetWorkForCamera() {
+        val wifiName = binding.tvWifiName.text.toString()
+        val psd = binding.etWifiPwd.text.toString()
+        showProgressLoading()
+        // 首先获取配网token
+        ThingHomeSdk.getActivatorInstance().getActivatorToken(homeId, object : IThingActivatorGetToken{
+            override fun onSuccess(token: String?) {
+                val builder = ThingCameraActivatorBuilder()
+                    .setToken(token)
+                    .setPassword(psd)
+                    .setTimeOut(100)
+                    .setContext(this@PairDistributionWifiActivity)
+                    .setSsid(wifiName)
+                    .setListener(object : IThingSmartCameraActivatorListener {
+                        override fun onQRCodeSuccess(qrcodeUrl: String) {
+                            hideProgressLoading()
+                            try {
+                                // 需要返回这个url回去。
+                                /*this@PairDistributionWifiActivity.setResult(Activity.RESULT_OK, Intent().apply {
+                                    putExtra("qrcodeUrl", qrcodeUrl)
+                                    putExtra("wifiName", wifiName)
+                                    putExtra("wifiPsd", psd)
+                                    putExtra("token", token)
+                                })
+                                finish()*/
+
+                                // 说明绑定成功，跳转到二维码生成界面
+                                ARouter.getInstance().build(RouterPath.My.PAGE_CAMERA_QR_CODE)
+                                    .withString("qrcodeUrl", qrcodeUrl)
+                                    .withString("wifiName", wifiName)
+                                    .withString("wifiPsd", psd)
+                                    .withString("token", token)
+                                    .withString("accessoryId", intent.getStringExtra("accessoryId"))
+                                    .withString("deviceId", intent.getStringExtra("deviceId"))
+                                    .navigation(this@PairDistributionWifiActivity)
+                            } catch (e: WriterException) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onError(errorCode: String, errorMsg: String) {
+                            hideProgressLoading()
+                            ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
+                        }
+                        override fun onActiveSuccess(devResp: DeviceBean?) {
+                            // Toast.makeText(this@WifiToQrCodeActivity, "config success!", Toast.LENGTH_LONG).show()
+                            // todo 绑定成功、 跳转到视频界面
+                            hideProgressLoading()
+                        }
+                    })
+
+                // 开始配对
+                ThingHomeSdk.getActivatorInstance().newCameraDevActivator(builder)?.apply {
+                    createQRCode()
+                    start()
+                }
+            }
+
+            override fun onFailure(errorCode: String?, errorMsg: String?) {
+                hideProgressLoading()
+                ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
+            }
+        })
+    }
+
+    /**
      * 开始配网
      *
      * 这部分可以抽到ViewModel当中，但是我不想抽！
      */
-    private fun startNetWork() {
+    private fun startNetWorkForAbby() {
         val wifiName = binding.tvWifiName.text.toString()
         val psd = binding.etWifiPwd.text.toString()
 
         // 首先获取配网token
         showProgressLoading(cancelable = false)
-        TuyaHomeSdk.getActivatorInstance().getActivatorToken(homeId,
-            object : ITuyaActivatorGetToken {
+        ThingHomeSdk.getActivatorInstance().getActivatorToken(homeId,
+            object : IThingActivatorGetToken {
                 override fun onSuccess(token: String) {
                     // Start configuration -- Dual Ble Device
                     logI("getActivatorToken: $token")
@@ -355,13 +456,13 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     netWorkBean.timeout = 120000
                     logI("MultiModeActivatorBean: $netWorkBean")
                     // 开始配网
-                    TuyaHomeSdk.getActivator().newMultiModeActivator()
+                    ThingHomeSdk.getActivator().newMultiModeActivator()
                         .startActivator(netWorkBean, object : IMultiModeActivatorListener {
                             override fun onSuccess(deviceBean: DeviceBean?) {
                                 logI("startActivator DeviceBean : ${deviceBean.toString()}")
                                 // 从涂鸦的设备列表里面拿第一个设备
-                                TuyaHomeSdk.newHomeInstance(homeId).getHomeDetail(object :
-                                    ITuyaHomeResultCallback {
+                                ThingHomeSdk.newHomeInstance(homeId).getHomeDetail(object :
+                                    IThingHomeResultCallback {
                                     override fun onSuccess(bean: HomeBean?) {
                                         // 取数据
                                         bean?.let { homeBean ->

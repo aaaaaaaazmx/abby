@@ -6,6 +6,7 @@ import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
+import com.cl.common_base.bean.UpdateInfoReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -253,5 +254,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
 
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
         return remoteRepository.intercomDataAttributeSync()
+    }
+
+    fun updateInfo(body: UpdateInfoReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateInfo(body)
+    }
+
+    fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
+        return remoteRepository.getAccessoryInfo(deviceId)
     }
 }

@@ -70,13 +70,18 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait" />
         <activity
+            android:name="com.cl.modules_home.activity.HomeNewPlantNameActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:screenOrientation="portrait"
-            android:name="com.cl.modules_home.activity.HomeNewPlantNameActivity" />
+            android:screenOrientation="portrait" />
         <activity
+            android:name="com.cl.modules_home.activity.HomePlantProfileActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait"
-            android:name="com.cl.modules_home.activity.HomePlantProfileActivity"
-                android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name="com.cl.modules_home.activity.CameraActivity" />
+        <activity
+            android:name="com.cl.modules_home.activity.CameraChooserActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>

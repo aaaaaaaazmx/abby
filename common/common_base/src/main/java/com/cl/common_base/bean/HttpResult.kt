@@ -7,4 +7,3 @@ import androidx.annotation.Keep
  */
 @Keep
 class HttpResult<T>(val data: T) : BaseBean()
-

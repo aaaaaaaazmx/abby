@@ -6,6 +6,7 @@ import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
+import com.cl.common_base.bean.UpdateInfoReq
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*
 
@@ -269,4 +270,17 @@ interface HttpHomeApiService {
     @POST("abby/user/intercomDataAttributeSync")
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>>
 
+    /**
+     * 保存camera的信息
+     */
+    @POST("abby/accessory/updateInfo")
+    fun updateInfo(@Body body: UpdateInfoReq): Flow<HttpResult<BaseBean>>
+
+
+    /**
+     * 获取配件信息
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/getAccessoryInfo")
+    fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
 }

@@ -13,7 +13,7 @@ import com.orhanobut.logger.PrettyFormatStrategy
 import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.bugly.crashreport.CrashReport.UserStrategy
 import com.tencent.mmkv.MMKV
-import com.tuya.smart.home.sdk.TuyaHomeSdk
+import com.thingclips.smart.home.sdk.ThingHomeSdk
 
 
 /**
@@ -30,12 +30,12 @@ class AppInitializer : Initializer<Unit> {
         initLogConfig()
 
         // 涂鸦，需要同意隐私协议
-        TuyaHomeSdk.init(
+        ThingHomeSdk.init(
             context.applicationContext as? Application,
-            "awps95tphthfa4rs7drt",
-            "tf5vqymy8d337hv97du4crerx5m73qac"
+            "wxwdkkqchswudekgsrqv",
+            "t77armdv4h7ncx97akumfkht7jtpm4xh"
         )
-        TuyaHomeSdk.setDebugMode(true)
+        ThingHomeSdk.setDebugMode(true)
 
         // bugly 初始化符合合规要求
         val strategy = UserStrategy(context.applicationContext as? Application)

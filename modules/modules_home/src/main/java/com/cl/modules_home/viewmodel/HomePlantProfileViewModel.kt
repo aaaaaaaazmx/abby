@@ -13,7 +13,7 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -26,7 +26,7 @@ class HomePlantProfileViewModel  @Inject constructor(private val repository: Hom
     /**
      * 设备信息
      */
-    val tuyaDeviceBean by lazy  {
+    val thingDeviceBean by lazy  {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }

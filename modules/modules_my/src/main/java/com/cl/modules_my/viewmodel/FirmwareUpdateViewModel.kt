@@ -16,14 +16,14 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
-import com.tuya.smart.android.device.bean.UpgradeInfoBean
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IGetOtaInfoCallback
-import com.tuya.smart.sdk.api.IOtaListener
-import com.tuya.smart.sdk.api.IResultCallback
-import com.tuya.smart.sdk.bean.DeviceBean
-import com.tuya.smart.sdk.bean.OTAErrorMessageBean
+import com.thingclips.smart.android.device.bean.UpgradeInfoBean
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
+import com.thingclips.smart.sdk.api.IOtaListener
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.OTAErrorMessageBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -46,7 +46,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
     }
 
     private val tuYaHomeSdk by lazy {
-        TuyaHomeSdk.newOTAInstance(tuYaDeviceBean?.devId)
+        ThingHomeSdk.newOTAInstance(tuYaDeviceBean?.devId)
     }
 
     private val _upgradeInfoBeans = MutableLiveData<MutableList<UpgradeInfoBean>>()
@@ -196,7 +196,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
 
     // 删除设备
     fun delete() {
-        TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)
+        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)
             .removeDevice(object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logE(

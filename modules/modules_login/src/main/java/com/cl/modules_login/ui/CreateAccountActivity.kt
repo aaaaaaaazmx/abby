@@ -17,11 +17,7 @@ import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_EMAIL_NAME
 import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_IS_REGISTER
 import com.cl.modules_login.viewmodel.CreateAccountViewModel
 import com.cl.modules_login.widget.PrivacyPop
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
-import com.tencent.bugly.proguard.ad
-import com.tuya.bouncycastle.asn1.x509.X509ObjectIdentifiers.countryName
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import javax.inject.Inject

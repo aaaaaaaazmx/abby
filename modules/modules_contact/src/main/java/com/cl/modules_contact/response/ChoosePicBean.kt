@@ -2,12 +2,14 @@ package com.cl.modules_contact.response
 
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.cl.common_base.BaseBean
+import com.luck.picture.lib.entity.LocalMedia
 
 data class ChoosePicBean(
     val type: Int? = KEY_TYPE_ADD,
     val picAddress: String? = null,
     var isUploading: Boolean? = false,
     var compressPicAddress: String? = null,
+    var localMedia: LocalMedia? = null,
 ) : BaseBean(), MultiItemEntity {
     override val itemType: Int
         get() = when(type) {

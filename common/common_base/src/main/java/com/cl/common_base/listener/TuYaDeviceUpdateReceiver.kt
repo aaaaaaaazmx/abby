@@ -10,9 +10,9 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IDeviceListener
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IDeviceListener
+import com.thingclips.smart.sdk.bean.DeviceBean
 
 /**
  * 涂鸦设备给APP发的信息监听器
@@ -32,7 +32,7 @@ class TuYaDeviceUpdateReceiver : Service() {
         )
         val devId = tuyaHomeBean?.devId
         logI("TuYaDeviceUpdateReceiver devId : $devId")
-        TuyaHomeSdk.newDeviceInstance(devId).registerDeviceListener(object : IDeviceListener {
+        ThingHomeSdk.newDeviceInstance(devId).registerDeviceListener(object : IDeviceListener {
             /**
              * DP 数据更新
              *
@@ -51,7 +51,7 @@ class TuYaDeviceUpdateReceiver : Service() {
                 )
                 // 直接下发状态
                 LiveEventBus.get()
-                    .with(Constants.Tuya.KEY_TUYA_DEVICE_TO_APP, String::class.java)
+                    .with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
                     .postEvent(json)
             }
 

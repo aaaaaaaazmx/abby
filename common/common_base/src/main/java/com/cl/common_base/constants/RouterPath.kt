@@ -41,6 +41,8 @@ class RouterPath {
         const val KEY_PAIR_RECONNECTING = "/pairReconnecting/$PAIR_CONNECT"
         // 扫码界面
         const val PAGE_SCAN_CODE = "/pairScanCode/$PAIR_CONNECT"
+        // wifi链接界面
+        const val PAGE_WIFI_CONNECT = "/pairWifiConnect/$PAIR_CONNECT"
     }
 
     /**
@@ -70,6 +72,8 @@ class RouterPath {
         const val PAGE_HOME = "/home/$HOME"
         const val PAGE_KNOW = "/knowMore/$HOME" // 学院
         const val PAGE_PLANT_NAME = "/plantName/$HOME"
+        // 摄像头显示界面
+        const val PAGE_CAMERA = "/camera/$HOME"
     }
 
     /**
@@ -78,6 +82,10 @@ class RouterPath {
     object Contact {
         private const val CONTACT = "modules_contact"
         const val PAGE_CONTACT = "/contact/$CONTACT"
+        // 发Trend页面
+        const val PAGE_TREND = "/trend/$CONTACT"
+        // 发布gif页面
+        const val PAGE_GIF = "/gif/$CONTACT"
     }
 
     /**
@@ -92,6 +100,8 @@ class RouterPath {
         const val PAGE_MY_GUIDE_SEED = "/guideSeed/$MY"
         const val PAGE_MY_DEVICE_LIST = "/deviceList/$MY"
         const val PAGE_MY_DEVICE_AUTOMATION = "/deviceAutomation/$MY"
+        // 摄像头二维码配对界面
+        const val PAGE_CAMERA_QR_CODE = "/cameraQrCode/$MY"
     }
 
     /**

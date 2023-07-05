@@ -16,8 +16,9 @@ pluginManagement {
         }
 
         maven { setUrl("https://maven-other.tuya.com/repository/maven-commercial-releases/") }
-        // maven { setUrl("https://central.maven.org/maven2/")}
+        /*maven { setUrl("https://central.maven.org/maven2/") }*/
         maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
+        /*maven { setUrl("https://developer.huawei.com/repo/") }*/
     }
 }
 dependencyResolutionManagement {
@@ -34,8 +35,9 @@ dependencyResolutionManagement {
             setUrl("https://maven-other.tuya.com/repository/maven-releases/")
         }
         maven { setUrl("https://maven-other.tuya.com/repository/maven-commercial-releases/") }
-        // maven { setUrl("https://central.maven.org/maven2/")}
+        /*maven { setUrl("https://central.maven.org/maven2/") }*/
         maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
+        /*maven { setUrl("https://developer.huawei.com/repo/") }*/
     }
 }
 rootProject.name = "abby"
@@ -48,5 +50,6 @@ include(":common:common_service")
 include(":common:common_base")
 include(":common:BarcodeScanning")
 /*include(":common:kefu-easeui")*/
+include(":common:ipc")
 include(":modules:modules_pairing_connection")
 include(":common:mylibrary")

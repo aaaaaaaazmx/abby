@@ -29,6 +29,8 @@ public class Gif {
         private String destPath;
 
         private String nickName;
+
+        private boolean isVideo;
         private int delay = 300;
         private int repeat = 0;
         private List<Bitmap> sources;
@@ -58,6 +60,11 @@ public class Gif {
             return this;
         }
 
+        public Builder setIsVideo(boolean isVideo) {
+            this.isVideo = isVideo;
+            return this;
+        }
+
         public void start(ResultCallback callback) {
             if (TextUtils.isEmpty(destPath)) {
                 if (callback != null) {
@@ -80,7 +87,7 @@ public class Gif {
                 os = new FileOutputStream(destPath);
                 gifEncoder.start(os);
                 for (Bitmap bitmap : sources) {
-                    gifEncoder.addFrame(bitmap, nickName, delay);
+                    gifEncoder.addFrame(bitmap, nickName, delay, isVideo);
                 }
                 gifEncoder.setDelay(delay);
                 gifEncoder.setRepeat(repeat);
@@ -239,7 +246,7 @@ public class Gif {
      * @param im BufferedImage containing frame to write.
      * @return true if successful.
      */
-    public boolean addFrame(Bitmap im, String nickName, int delay) {
+    public boolean addFrame(Bitmap im, String nickName, int delay, boolean isVideo) {
         if ((im == null) || !started) {
             return false;
         }
@@ -252,7 +259,7 @@ public class Gif {
 
             image = im;
             getImagePixels(nickName); // convert to correct format if necessary
-            analyzePixels(); // build color table & map pixels
+            analyzePixels(isVideo); // build color table & map pixels
             if (firstFrame) {
                 writeLSD(); // logical screen descriptior
                 writePalette(); // global color table
@@ -391,7 +398,7 @@ public class Gif {
     /**
      * Analyzes image colors and creates color map.
      */
-    protected void analyzePixels() {
+    protected void analyzePixels(boolean isVideo) {
         int len = pixels.length;
         int nPix = len / 3;
         indexedPixels = new byte[nPix];
@@ -417,7 +424,15 @@ public class Gif {
         palSize = 7;
         // get closest match to transparent color if specified
         if (transparent != -1) {
-            transIndex = findClosest(transparent);
+            if (isVideo) {
+                // 转视频需要
+                // 强制为0
+                transIndex = 0;
+            } else {
+                transIndex = findClosest(transparent);
+            }
+            // transIndex = 0;
+            logI("123123123L : " + transIndex);
         }
     }
 

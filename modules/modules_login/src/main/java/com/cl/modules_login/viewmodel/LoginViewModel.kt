@@ -18,12 +18,12 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.repository.RegisterLoginRepository
 import com.cl.modules_login.request.LoginReq
 import com.cl.modules_login.response.LoginData
-import com.tuya.smart.android.user.api.ILoginCallback
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.home.sdk.bean.HomeBean
-import com.tuya.smart.home.sdk.callback.ITuyaGetHomeListCallback
-import com.tuya.smart.home.sdk.callback.ITuyaHomeResultCallback
+import com.thingclips.smart.android.user.api.ILoginCallback
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingGetHomeListCallback
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -255,7 +255,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
             interComeUserId = interComeUserId,
             userInfo = userInfo
         )
-        TuyaHomeSdk.getUserInstance()
+        ThingHomeSdk.getUserInstance()
             .loginWithEmail(
                 code,
                 email,
@@ -269,8 +269,8 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
 
 
                         // 加入当前家庭
-                        TuyaHomeSdk.getHomeManagerInstance().queryHomeList(object :
-                            ITuyaGetHomeListCallback {
+                        ThingHomeSdk.getHomeManagerInstance().queryHomeList(object :
+                            IThingGetHomeListCallback {
                             override fun onSuccess(homeBeans: MutableList<HomeBean>?) {
                                 logI("homeBeansList: ${homeBeans?.size}")
 
@@ -281,8 +281,8 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                 if ((homeBeans?.size ?: 0) > 0) {
                                     homeBeans?.get(0)?.homeId?.let { homeId ->
                                         Prefs.putLongAsync(Constants.Tuya.KEY_HOME_ID, homeId)
-                                        TuyaHomeSdk.newHomeInstance(homeId)
-                                            .getHomeDetail(object : ITuyaHomeResultCallback {
+                                        ThingHomeSdk.newHomeInstance(homeId)
+                                            .getHomeDetail(object : IThingHomeResultCallback {
                                                 override fun onSuccess(bean: HomeBean?) {
                                                     logI("DeviceListSize: ${bean?.deviceList?.size}")
                                                     // 取数据

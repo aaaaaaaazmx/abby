@@ -14,9 +14,9 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_pairing_connection.repository.PairRepository
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IResultCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -77,7 +77,7 @@ class PairFrontScanCodeViewModel @Inject constructor(private val repository: Pai
     }
 
     fun getActivationStatus() {
-        TuyaHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
                 override fun onError(code: String, error: String?) {
                     logI(

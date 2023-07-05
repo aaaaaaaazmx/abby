@@ -16,7 +16,7 @@ import com.orhanobut.logger.PrettyFormatStrategy
 import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.bugly.crashreport.CrashReport.UserStrategy
 import com.tencent.mmkv.MMKV
-import com.tuya.smart.home.sdk.TuyaHomeSdk
+import com.thingclips.smart.home.sdk.ThingHomeSdk
 import io.intercom.android.sdk.Intercom
 
 

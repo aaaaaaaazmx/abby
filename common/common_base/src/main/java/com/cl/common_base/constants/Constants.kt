@@ -86,6 +86,8 @@ object Constants {
     object Contact {
         const val KEY_SHARE_TO_PUBLIC = "key_share_to_public"
         const val KEY_PLANT_DATA_IS_VISIBLE = "key_plant_data_is_visible"
+        // timelapse提示是否只展示一次
+        const val KEY_TIMELAPSE_TIP_IS_SHOW = "key_timelapse_tip_is_show"
     }
 
     // 隐私合规相关
@@ -101,17 +103,18 @@ object Constants {
 
     // 涂鸦相关
     object Tuya {
-        // 用户信息
+        // 用户信息 tuya用户信息类
         const val KEY_DEVICE_USER = "key_deviceUser"
 
         // 用户的家庭ID
         const val KEY_HOME_ID = "key_home_id"
 
         // 用户的第0个设备数据 HomeBean[0].getDeviceList() =  DeviceBean
+        // 这个才是真的tuya相关类
         const val KEY_DEVICE_DATA = "key_device_data"
 
         // 设备端给APP端下发的信息
-        const val KEY_TUYA_DEVICE_TO_APP = "key_tuya_device_to_app"
+        const val KEY_THING_DEVICE_TO_APP = "key_tuya_device_to_app"
     }
 
     /**
@@ -234,6 +237,29 @@ object Constants {
 
         // gif的高度
         const val KEY_GIF_HEIGHT = 1124f
+
+        // wifi配对链接界面的返回key
+        const val KEY_WIFI_PAIRING_BACK = 20
+
+        // wifi配对链接界面的携带参数key
+        const val KEY_WIFI_PAIRING_PARAMS = "key_wifi_pairing_params"
+
+        // cameraId
+        const val INTENT_DEV_ID = "intent_devId"
+
+        // 分享Trend的类型
+        const val KEY_SHARE_TYPE = "key_share_type"
+        const val KEY_SHARE_CONTENT = "key_share_content"
+
+        // 是否开启了延时摄影模式
+        /*const val KEY_TIME_LAPSE = "key_time_lapse"*/
+
+        // 摄像头当天是否已经截图了
+        // lastOperationDate
+        /*const val KEY_IS_LAST_OPERATION_DATE = "key_is_take_photo_today"*/
+
+        // 是否显示camera
+        const val KEY_IS_SHOW_CAMERA = "key_is_show_camera"
     }
 
     // Fixed Id

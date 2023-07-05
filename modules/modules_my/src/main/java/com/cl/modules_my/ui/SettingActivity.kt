@@ -45,11 +45,11 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
 import com.shuyu.gsyvideoplayer.GSYVideoManager
-import com.tuya.smart.android.user.api.ILogoutCallback
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IResultCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.android.user.api.ILogoutCallback
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import java.util.regex.Matcher
@@ -485,7 +485,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             .dismissOnTouchOutside(false)
             .asCustom(LoginOutPop(this) {
                 InterComeHelp.INSTANCE.logout()
-                TuyaHomeSdk.getUserInstance().logout(object : ILogoutCallback {
+                ThingHomeSdk.onDestroy()
+                ThingHomeSdk.getUserInstance().logout(object : ILogoutCallback {
                     override fun onSuccess() {
                         // 清除缓存数据
                         Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
@@ -697,7 +698,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
                 .asCustom(MyDeleteDevicePop(this) {
-                    TuyaHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
+                    ThingHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
                         .removeDevice(object : IResultCallback {
                             override fun onError(code: String?, error: String?) {
                                 logE(
@@ -1047,4 +1048,3 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
 
 }
-

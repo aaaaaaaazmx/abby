@@ -13,7 +13,7 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -28,7 +28,7 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
     /**
      * 设备信息
      */
-    val tuyaDeviceBean by lazy  {
+    val thingDeviceBean by lazy  {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }

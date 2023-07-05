@@ -32,6 +32,7 @@ import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.shuyu.gsyvideoplayer.cache.CacheFactory
 import com.shuyu.gsyvideoplayer.player.PlayerFactory
+import com.thingclips.smart.home.sdk.ThingHomeSdk
 import dagger.hilt.android.AndroidEntryPoint
 import tv.danmaku.ijk.media.exo2.Exo2PlayerManager
 import tv.danmaku.ijk.media.exo2.ExoPlayerCacheManager
@@ -503,7 +504,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         // 注销InterCome
-        // InterComeHelp.INSTANCE.logout()
+         InterComeHelp.INSTANCE.logout()
     }
 
     override fun inAppInfoChange(status: String) {

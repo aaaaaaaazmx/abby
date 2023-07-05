@@ -25,7 +25,7 @@ import com.cl.modules_my.databinding.MyEditProfilePopBinding
 import com.cl.modules_my.service.HttpMyApiService
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

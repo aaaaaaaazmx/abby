@@ -11,7 +11,6 @@ import com.cl.common_base.R
 import com.cl.common_base.databinding.BaseCenterBinding
 import com.cl.common_base.util.ViewUtils
 import com.lxj.xpopup.core.CenterPopupView
-import com.tuya.sdk.device.cache.SmartCacheEntityManager
 
 /**
  * 可以显示2个按钮、也可以显示1个按钮的弹窗

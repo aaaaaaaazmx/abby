@@ -18,12 +18,17 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.widget.toast.ToastUtil
-import com.tuya.smart.android.device.bean.UpgradeInfoBean
-import com.tuya.smart.android.user.bean.User
-import com.tuya.smart.home.sdk.TuyaHomeSdk
-import com.tuya.smart.sdk.api.IGetOtaInfoCallback
-import com.tuya.smart.sdk.bean.DeviceBean
+import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
+import com.thingclips.smart.android.device.bean.UpgradeInfoBean
+import com.thingclips.smart.android.user.bean.User
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
+import com.thingclips.smart.sdk.api.IResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -51,16 +56,24 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
     }
 
+
+    /**
+     * 涂鸦摄像头帮助类
+     */
+    val tuYaUtils by lazy {
+        TuyaCameraUtils()
+    }
+
     /**
      * 设备信息
      */
-    val tuyaDeviceBean = {
+    val thingDeviceBean = {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
     private val _deviceId =
-        MutableLiveData(tuyaDeviceBean()?.devId.toString())
+        MutableLiveData(thingDeviceBean()?.devId.toString())
     val deviceId: LiveData<String> = _deviceId
     fun setDeviceId(deviceId: String) {
         // 暂时不做水箱的容积判断，手动赋值默认就是为0L
@@ -69,7 +82,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 童锁的开闭状态
     val _childLockStatus = MutableLiveData(
-        tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
+        thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK).toString()
     )
     val childLockStatus: LiveData<String> = _childLockStatus
@@ -79,7 +92,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 门的开闭状态
     private val _openDoorStatus = MutableLiveData(
-        tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
+        thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK).toString()
     )
     val openDoorStatus: LiveData<String> = _openDoorStatus
@@ -98,7 +111,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      * 不能直接用
      */
     private val getDeviceDps = {
-        tuyaDeviceBean()?.dps
+        thingDeviceBean()?.dps
     }
 
     // 水的容积。=， 多少升
@@ -113,7 +126,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     // 是否需要修复SN
     // 需要在设备在线的情况下才展示修复
-    private val _repairSN = MutableLiveData(if (tuyaDeviceBean()?.isOnline == true) {
+    private val _repairSN = MutableLiveData(if (thingDeviceBean()?.isOnline == true) {
         getDeviceDps()?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN }
             ?.get(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN).toString()
     } else {
@@ -535,6 +548,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         originalData?.environments = envList
                         _environmentInfo.value = originalData?.let { it1 -> Resource.Success(it1) }
                     }
+
                     else -> _environmentInfo.value = it
                 }
             }
@@ -1039,8 +1053,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuyaDeviceBean()?.devId?.let {
-            TuyaHomeSdk.newOTAInstance(it)?.getOtaInfo(object : IGetOtaInfoCallback {
+        thingDeviceBean()?.devId?.let {
+            ThingHomeSdk.newOTAInstance(it)?.getOtaInfo(object : IGetOtaInfoCallback {
                 override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                     logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
                     // 如果可以升级
@@ -1182,6 +1196,40 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 保存SN
+     */
+    private val _sn = MutableLiveData<String>()
+    val sn: LiveData<String> = _sn
+    fun saveSn(sn: String) {
+        _sn.value = sn
+    }
+
+    /**
+     * 获取SN
+     */
+    fun getSn() {
+        ThingHomeSdk.newDeviceInstance(thingDeviceBean()?.devId)?.let {
+            it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_REST_STATUS, object : IResultCallback {
+                override fun onError(code: String?, error: String?) {
+                    logI(
+                        """
+                        KEY_DEVICE_REPAIR_REST_STATUS: error
+                        code: $code
+                        error: $error
+                    """.trimIndent()
+                    )
+                    ToastUtil.shortShow(error)
+                    Reporter.reportTuYaError("newDeviceInstance", error, code)
+                }
+
+                override fun onSuccess() {
+                    logI("sdasdas")
+                }
+            })
+        }
+    }
+
+    /**
      * 删除植物
      */
     private val _plantDelete = MutableLiveData<Resource<Boolean>>()
@@ -1283,7 +1331,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         )
                     )
                 }.collectLatest {
-                    _listDevice.value = it
+                    when (it) {
+                        is Resource.Success -> {
+                            _listDevice.value = it
+                        }
+                        else -> {}
+                    }
                 }
         }
     }
@@ -1325,6 +1378,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     // 回调出去。自行处理
                     _transplantPeriodicity.value = taskId
                 }
+
                 else -> {
                     // getGuideInfo(it)
                 }
@@ -1409,33 +1463,112 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             }
     }
 
+
+    /**
+     * 获取配件信息
+     */
+    private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
+    val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
+    fun getAccessoryInfo(deviceId: String) {
+        viewModelScope.launch {
+            repository.getAccessoryInfo(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _getAccessoryInfo.value = it
+                }
+        }
+    }
+
+    /**
+     * 保存camera设置信息
+     */
+    private val _saveCameraSetting = MutableLiveData<Resource<BaseBean>>()
+    val saveCameraSetting: LiveData<Resource<BaseBean>> = _saveCameraSetting
+    fun cameraSetting(body: UpdateInfoReq) {
+        viewModelScope.launch {
+            repository.updateInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _saveCameraSetting.value = it
+                }
+        }
+    }
+
     /**
      * 获取环境信息
      */
-    var tuYaDps = tuyaDeviceBean()?.dps
+    var tuYaDps = thingDeviceBean()?.dps
     fun getEnvData() {
-        tuyaDeviceBean()?.let {
+        thingDeviceBean()?.let {
             val envReq = EnvironmentInfoReq(deviceId = it.devId)
             tuYaDps?.forEach { (key, value) ->
                 when (key) {
                     TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE -> {
                         envReq.waterTemperature = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_VENTILATION -> {
                         envReq.ventilation = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT -> {
                         envReq.tempCurrent = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW -> {
                         envReq.inputAirFlow = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT -> {
                         envReq.humidityCurrent = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE -> {
                         envReq.brightValue = value.safeToInt()
                     }
+
                     TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL -> {
                         envReq.waterLevel = value.toString()
                     }
@@ -1482,7 +1615,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getPlantHeight.value = String.format(
                 "%.1f",
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat()
                     .div(25.4))
         }
@@ -1499,7 +1632,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getWenDu() {
         kotlin.runCatching {
             _getWenDu.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().toInt()
         }
     }
@@ -1516,7 +1649,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getHumidity() {
         kotlin.runCatching {
             _getHumidity.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().toInt()
         }
     }
@@ -1532,7 +1665,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getWaterWenDu() {
         kotlin.runCatching {
             _getWaterWenDu.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().toInt()
         }
     }
@@ -1548,7 +1681,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getFanIntake() {
         kotlin.runCatching {
             _getFanIntake.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().toInt()
         }
     }
@@ -1563,7 +1696,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getFanExhaust() {
         kotlin.runCatching {
             _getFanExhaust.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().toInt()
         }
     }
@@ -1579,7 +1712,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getGrowLight() {
         kotlin.runCatching {
             _getGrowLight.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().toInt()
         }
     }
@@ -1594,7 +1727,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getAirPump() {
         kotlin.runCatching {
             _getAirPump.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP).toString().toBoolean()
         }
     }
@@ -1610,7 +1743,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getLightTime: LiveData<String> = _getLightTime
     fun getLightTime() {
         _getLightTime.value =
-            tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME }
+            thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME }
                 ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME).toString()
     }
 
@@ -1620,7 +1753,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun getCloseLightTime() {
         kotlin.runCatching {
             _getCloseLightTime.value =
-                tuyaDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME).toString()
             getTimeText()
             logI("getLightTime:${_getLightTime.value} -- ${_getCloseLightTime.value} --- ${getTimeText.value}")
@@ -1756,6 +1889,60 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getDrainageFlag: LiveData<Boolean> = _getDrainageFlag
     fun setDrainageFlag(flag: Boolean) {
         _getDrainageFlag.value = flag
+    }
+
+    /**
+     * 绑定的设备是否有摄像头
+     *  false 表示没有摄像头
+     *
+     *  @param isHave 是否有摄像头
+     *  @param isLoadCamera 是否加载摄像头
+     *  @param cameraId 摄像头的ID
+     */
+    fun getCameraFlag(isHaveACamera: (isHave: Boolean, isLoadCamera: Boolean, cameraId: String, devId: String) -> Unit) {
+        val isShowCamera = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
+
+        listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+            ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }.apply {
+                if (this == null) {
+                    isHaveACamera.invoke(false, isShowCamera, "", "")
+                } else {
+                    isHaveACamera.invoke(true, isShowCamera, accessoryDeviceId ?: "", listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.deviceId ?: "")
+                }
+            }
+
+        // 如果是不显示摄像头
+        /*if (!isShowCamera) {
+            if (cameraAccessory != null) {
+                isHaveACamera.invoke(true, false, cameraAccessory.accessoryDeviceId ?: "",  listDevice.value?.data?.firstOrNull {it.currentDevice == 1}?.deviceId ?: "")
+            } else {
+                isHaveACamera.invoke(false, false, "", "")
+            }
+        } else {
+            if (cameraAccessory != null) {
+                isHaveACamera.invoke(true, true, cameraAccessory.accessoryDeviceId ?: "",  listDevice.value?.data?.firstOrNull {it.currentDevice == 1}?.deviceId ?: "")
+            } else {
+                isHaveACamera.invoke(false, false, "", "")
+            }
+        }*/
+
+
+        // 表示有，并且已经在展示状态
+        /*if (cameraAccessory != null && isShowCamera) {
+            isHaveACamera.invoke(true, true, cameraAccessory.accessoryDeviceId ?: "",  listDevice.value?.data?.firstOrNull {it.currentDevice == 1}?.deviceId ?: "")
+        }  else {
+            isHaveACamera.invoke(false, false, "", "")
+        }*/
+    }
+
+
+    /**
+     * 保存摄像头Id
+     */
+    private val _cameraId = MutableLiveData<String>()
+    val cameraId: LiveData<String> = _cameraId
+    fun setCameraId(flag: String) {
+        _cameraId.value = flag
     }
 
 

@@ -54,47 +54,55 @@
             android:background="#F7F7F7"
             app:layout_constraintTop_toBottomOf="@+id/btn_post" />
 
-        <com.cl.common_base.widget.edittext.MentionEditText
-            android:id="@+id/et_connect"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@null"
-            android:gravity="start"
-            android:hint="For the best results, please arrange the images of plant growth in chronological order."
-            android:maxEms="140"
-            android:maxLength="140"
-            android:padding="10dp"
-            android:textSize="15sp"
-            android:lineSpacingExtra="4dp"
-            android:scrollbars="vertical"
-            android:includeFontPadding="false"
-            app:layout_constraintEnd_toEndOf="@id/btn_post"
-            app:layout_constraintStart_toStartOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/vv" />
+     <androidx.constraintlayout.widget.ConstraintLayout
+         android:layout_marginStart="10dp"
+         android:layout_marginEnd="10dp"
+         android:layout_marginTop="10dp"
+         android:id="@+id/rl_co"
+         app:layout_constraintEnd_toEndOf="@id/btn_post"
+         app:layout_constraintStart_toStartOf="@+id/textView"
+         app:layout_constraintTop_toBottomOf="@+id/vv"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content">
+         <com.cl.common_base.widget.edittext.MentionEditText
+             android:id="@+id/et_connect"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:background="@null"
+             android:gravity="start"
+             android:hint="For the best results, please arrange the images of plant growth in chronological order."
+             android:maxEms="140"
+             android:maxLength="140"
+             android:padding="10dp"
+             android:textSize="15sp"
+             android:lineSpacingExtra="4dp"
+             android:scrollbars="vertical"
+             android:includeFontPadding="false"
+              />
 
-        <TextView
-            android:gravity="end"
-            android:id="@+id/tv_ems"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="26dp"
-            android:paddingTop="3dp"
-            android:text="0/140"
-            android:textColor="#C4C4C4"
-            android:textSize="15sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/et_connect"
-            tools:text="0/140" />
+         <TextView
+             android:gravity="end"
+             android:id="@+id/tv_ems"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_marginEnd="26dp"
+             android:paddingTop="3dp"
+             android:text="0/140"
+             android:textColor="#C4C4C4"
+             android:textSize="15sp"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintTop_toBottomOf="@+id/et_connect"
+             tools:text="0/140" />
+     </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_pic"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:layout_constraintEnd_toEndOf="@+id/et_connect"
-            app:layout_constraintStart_toStartOf="@+id/et_connect"
-            app:layout_constraintTop_toBottomOf="@+id/tv_ems" />
+            app:layout_constraintEnd_toEndOf="@+id/rl_co"
+            app:layout_constraintStart_toStartOf="@+id/rl_co"
+            app:layout_constraintTop_toBottomOf="@+id/rl_co" />
 
         <LinearLayout
             android:gravity="center_horizontal"
@@ -236,6 +244,7 @@
             app:itemTitle="Mention someone" />
 
         <View
+            android:id="@+id/vv_three"
             android:layout_marginBottom="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/people_at"

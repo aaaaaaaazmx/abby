@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:fillViewport="true"
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="MissingConstraints">
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="Storage Options" />
+
+
+            <TextView
+                android:textStyle="bold"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="26dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title"
+                android:id="@+id/tv_store_in_app"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/curing_box"
+                android:text="Store in the app (Recommended)"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                android:checked="true"
+                app:layout_constraintStart_toEndOf="@+id/tv_store_in_app"
+                android:id="@+id/curing_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/create_state_checkbox"
+                android:button="@null"
+                app:layout_constraintBottom_toBottomOf="@id/tv_store_in_app"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_store_in_app" />
+
+            <TextView
+                android:id="@+id/tv_store_desc"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_store_in_app"
+                app:layout_constraintTop_toBottomOf="@+id/curing_box"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="The pictures you take with the budcam are stored locally to protect your privacy. You won't see these pictures in your photo album. Nothing is uploaded to the cloud. However, if you delete the app, the pictures will be deleted as well."
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+
+
+
+
+            <TextView
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/tv_store_desc"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="62dp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/tv_store_in_photo"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toStartOf="@+id/curing_box_photo"
+                android:text="Store in photo album"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <CheckBox
+                app:layout_constraintStart_toEndOf="@+id/tv_store_in_photo"
+                android:id="@+id/curing_box_photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/create_state_checkbox"
+                android:button="@null"
+                app:layout_constraintBottom_toBottomOf="@id/tv_store_in_photo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_store_in_photo" />
+
+            <TextView
+                android:id="@+id/tv_photo_desc"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/tv_store_in_photo"
+                app:layout_constraintTop_toBottomOf="@+id/curing_box_photo"
+                android:textColor="@color/black"
+                android:textSize="16sp"
+                android:text="Your other pictures will be stored in the photo album and may be uploaded to the cloud depending on your photo backup strategy."
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <com.cl.common_base.widget.FeatureItemSwitch
+                app:itemTitleBold="true"
+                app:itemChecked="false"
+                android:background="@color/black"
+                app:itemTitle="Private Mode"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_photo_desc"
+                android:id="@+id/ft_privacy_mode"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"/>
+
+            <TextView
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ft_privacy_mode"
+                android:id="@+id/tv_mode_desc"
+                android:textColor="@color/black"
+                android:text="When Private Mode is activated, the camera function will be disabled when you open the door. The camera will not take pictures or videos of people, safeguarding your personal privacy."
+                android:textSize="16sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/unbind_camera"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                app:layout_constraintTop_toBottomOf="@+id/tv_mode_desc"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_create"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="50dp"
+                    android:gravity="center"
+                    android:text="Delete Budcam"
+                    android:textColor="#F72E47"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="1dp"
+                    android:background="#F72E47"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_create"
+                    app:layout_constraintStart_toStartOf="@+id/tv_create"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_create" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

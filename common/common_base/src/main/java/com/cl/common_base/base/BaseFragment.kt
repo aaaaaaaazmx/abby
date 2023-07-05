@@ -74,7 +74,7 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment(), BaseBinding<VB> 
                 onDeviceChange(it)
             }
         // 涂鸦发送给app数据监听
-        LiveEventBus.get().with(Constants.Tuya.KEY_TUYA_DEVICE_TO_APP, String::class.java)
+        LiveEventBus.get().with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
             .observe(this) {
                 onTuYaToAppDataChange(it)
             }
