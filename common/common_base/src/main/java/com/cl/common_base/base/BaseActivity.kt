@@ -163,9 +163,9 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
 
         StatusBarUtil.setColor(this, Color.TRANSPARENT, 0)
         StatusBarUtil.setLightMode(this)
-        if (!StatusBarUtil.hasVirtualNavigation(this)) {
+       /* if (!StatusBarUtil.hasVirtualNavigation(this)) {
             StatusBarUtil.transparentNavBar(this)
-        }
+        }*/
     }
 
     open fun isLightStatusBar(): Boolean = true

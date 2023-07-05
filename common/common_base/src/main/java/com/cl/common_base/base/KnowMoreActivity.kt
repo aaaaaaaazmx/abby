@@ -107,6 +107,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private val accessoryId by lazy { intent.getStringExtra(BasePopActivity.KEY_PART_ID) }
 
+    /**
+     * 摄像头Id
+     */
+    private val cameraId by lazy { intent.getStringExtra(BasePopActivity.KEY_CAMERA_ID) }
+
     @Inject
     lateinit var mViewMode: KnowMoreViewModel
 
@@ -404,34 +409,15 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 }
                 success {
                     hideProgressLoading()
-
-                    // 判断需不需要解绑摄像头，在添加其他设备的时候
-                    ThingHomeSdk.newHomeInstance(mViewMode.homeId)
-                        .getHomeDetail(object : IThingHomeResultCallback {
-                            override fun onSuccess(bean: HomeBean?) {
-                                // 跳转到富文本界面
-                                val list = (bean?.deviceList as? ArrayList<DeviceBean>)
-                                list?.firstOrNull { ThingIPCSdk.getCameraInstance().isIPCDevice(it.devId) }.apply {
-                                    // 如果没有摄像头，就不需要解绑
-                                    if (null == this) {
-                                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                                            .navigation()
-                                    } else {
-                                        TuyaCameraUtils().unBindCamera(devId, onErrorAction = {
-                                            ToastUtil.shortShow(it)
-                                        }, onSuccessAction = {
-                                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                                                .navigation()
-                                        })
-                                    }
-                                }
-                            }
-
-                            override fun onError(errorCode: String?, errorMsg: String?) {
-
-                            }
+                    cameraId?.let {
+                        TuyaCameraUtils().unBindCamera(it, onErrorAction = { msg ->
+                            ToastUtil.shortShow(msg)
+                        }, onSuccessAction = {
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                .navigation()
                         })
-
+                    } ?: ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                        .navigation()
                 }
             })
 

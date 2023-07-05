@@ -77,20 +77,19 @@
 
 
         <ProgressBar
-            android:visibility="@{data.isUploading ? View.VISIBLE: View.GONE}"
+            android:id="@+id/game_pro"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="43dp"
+            android:layout_height="5dp"
             android:layout_centerInParent="true"
+            android:background="@null"
+            android:progress="65"
+            android:progressDrawable="@drawable/contact_progress_shape"
+            android:visibility="@{data.isUploading ? View.VISIBLE: View.GONE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:progress="65"
-            android:id="@+id/game_pro"
-            android:layout_width="43dp"
-            android:layout_height="5dp"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:background="@null"
-            android:layout_centerHorizontal="true"
-            android:progressDrawable="@drawable/contact_progress_shape"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <ImageView

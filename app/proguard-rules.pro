@@ -220,14 +220,14 @@
 -dontwarn com.bumptech.glide.load.model.stream.**
 
 # EventBus
--keepclassmembers class * {
-    @org.greenrobot.eventbus.Subscribe <methods>;
-}
--keep enum org.greenrobot.eventbus.ThreadMode { *; }
-# Only required if you use AsyncExecutor
--keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
-    <init>(java.lang.Throwable);
-}
+#-keepclassmembers class * {
+#    @org.greenrobot.eventbus.Subscribe <methods>;
+#}
+#-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+## Only required if you use AsyncExecutor
+#-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+#    <init>(java.lang.Throwable);
+#}
 
 # Arouter
 -keep public class com.alibaba.android.arouter.routes.**{*;}
@@ -274,7 +274,7 @@
 
 -dontwarn cn.jpush.**
 -keep class cn.jpush.** { *; }
--keep class * extends cn.jpush.android.helpers.JPushMessageReceiver { *; }
+-keep class * extends cn.jpush.android.service.JPushMessageReceiver { *; }
 
 -dontwarn cn.jiguang.**
 -keep class cn.jiguang.** { *; }

@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.RoundRectShape
@@ -19,7 +20,6 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -31,8 +31,6 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
-import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,7 +39,6 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeBinding
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.base.KnowMoreActivity
@@ -62,14 +59,12 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
-import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_home.activity.CameraActivity
 import com.cl.modules_home.activity.HomeNewPlantNameActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
@@ -88,10 +83,7 @@ import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
-import com.tuya.smart.android.demo.camera.CameraUtils
-import com.tuya.smart.android.demo.camera.utils.CameraPTZHelper
 import com.tuya.smart.android.demo.camera.utils.DPConstants
-import com.tuya.smart.android.demo.camera.utils.MessageUtil
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
@@ -971,11 +963,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             // 分享
             completeIvShare.setOnClickListener {
-                // 分享到朋友圈
-                ARouter.getInstance().build(RouterPath.Contact.PAGE_TREND)
-                    .withString(Constants.Global.KEY_SHARE_TYPE, "plant_complete")
-                    .withString(Constants.Global.KEY_SHARE_CONTENT, mViewMode.getFinishPage.value?.data?.imageUrl)
-                    .navigation()
+
+                // 隐藏
+                // 截图
+                val layout = binding.plantComplete.rlComplete // replace with your actual RelativeLayout id
+                layout.isDrawingCacheEnabled = true
+                layout.buildDrawingCache()
+                val bitmap = Bitmap.createBitmap(layout.drawingCache)
+                layout.isDrawingCacheEnabled = false
+                val filePath = FileUtil.saveBitmap(bitmap, context)
+                logI("123123123: filepa: $filePath")
+                if (filePath.isNotBlank()) {
+                    // 分享到朋友圈
+                    ARouter.getInstance().build(RouterPath.Contact.PAGE_TREND)
+                        .withString(Constants.Global.KEY_SHARE_TYPE, "plant_complete")
+                        .withString(Constants.Global.KEY_SHARE_TEXT, "I’m #${mViewMode.getFinishPage.value?.data?.harvestComplete} Complete grower")
+                        .withString(Constants.Global.KEY_SHARE_CONTENT, filePath)
+                        .navigation()
+                }
             }
         }
 

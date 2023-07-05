@@ -250,6 +250,7 @@ object Constants {
         // 分享Trend的类型
         const val KEY_SHARE_TYPE = "key_share_type"
         const val KEY_SHARE_CONTENT = "key_share_content"
+        const val KEY_SHARE_TEXT  = "key_share_text"
 
         // 是否开启了延时摄影模式
         /*const val KEY_TIME_LAPSE = "key_time_lapse"*/

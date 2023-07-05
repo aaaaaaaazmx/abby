@@ -1,8 +1,3 @@
-// import java.nio.charset.Charset
-
-// private const val verName = "2.0.0"
-// private val verCode: Int by lazy { "git rev-list --count HEAD".exec().toInt() }
-
 object Version {
     object ClassPathVersion {
         const val kotlinVersion = "1.7.0"
@@ -252,8 +247,3 @@ object Deps {
     // interCome
     const val interCome = "io.intercom.android:intercom-sdk:${Version.interCome}"
 }
-
-/*
-fun String.exec(): String =
-    Runtime.getRuntime().exec(this).inputStream.readBytes().toString(Charset.defaultCharset())
-        .trim()*/

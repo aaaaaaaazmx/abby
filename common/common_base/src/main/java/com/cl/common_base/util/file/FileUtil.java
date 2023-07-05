@@ -5,6 +5,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -56,6 +57,39 @@ public class FileUtil {
         }
         return content;
     }
+
+
+    public static String saveBitmap(Bitmap bitmap, Context context) {
+        // 确保外部存储是可用的
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            return "";
+        }
+
+        File dir = new File(SDCard.getCacheDir(context), "abby");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        File file = new File(dir, "screenshot.png");
+        FileOutputStream out = null;
+
+        try {
+            out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return file.getAbsolutePath();
+    }
+
 
     public static byte[] readFile(String filePath) {
         byte[] buffer = null;

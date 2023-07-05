@@ -857,7 +857,7 @@ object StatusBarUtil {
         val navigationBarHeight = realScreenSize.y - appUsableSize.y
         logI("1231231: $navigationBarHeight")
         // 导航栏高度大于0，则意味着启用了虚拟导航栏
-        return navigationBarHeight > 150
+        return navigationBarHeight > 200
     }
 
     private fun getAppUsableScreenSize(context: Context): Point {
