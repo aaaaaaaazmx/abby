@@ -1,6 +1,8 @@
 package com.cl.modules_home.activity
 
 import android.Manifest
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
@@ -17,8 +19,10 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -79,6 +83,18 @@ import com.tuya.smart.android.demo.camera.utils.DPConstants
 import com.tuya.smart.android.demo.camera.utils.MessageUtil
 import com.tuya.smart.android.demo.camera.utils.ToastUtil
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
@@ -124,14 +140,14 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_SET_CLARITY -> handleClarity(msg)
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_MUTE -> handleMute(msg)
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_SCREENSHOT -> handlesnapshot(msg)
-                com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_BEGIN -> ToastUtil.shortToast(
+                com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_BEGIN -> {}/*ToastUtil.shortToast(
                     this@CameraActivity,
-                    getString(com.tuya.smart.android.demo.camera.R.string.operation_suc)
-                )
+                    "Pairing Successful"
+                )*/
 
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_FAIL -> ToastUtil.shortToast(
                     this@CameraActivity,
-                    getString(com.tuya.smart.android.demo.camera.R.string.operation_failed)
+                    "Pairing Failed"
                 )
 
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_OVER -> handleVideoRecordOver(msg)
@@ -308,45 +324,45 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     private fun handleStopTalk(msg: Message) {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
-            ToastUtil.shortToast(
+            /*ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + getString(com.tuya.smart.android.demo.camera.R.string.operation_suc)
-            )
+                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + "Pairing Successful"
+            )*/
         } else {
             ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + getString(com.tuya.smart.android.demo.camera.R.string.operation_failed)
+                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + "Pairing Failed"
             )
         }
     }
 
     private fun handleStartTalk(msg: Message) {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
-            ToastUtil.shortToast(
+            /*ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + getString(com.tuya.smart.android.demo.camera.R.string.operation_suc)
-            )
+                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + "Pairing Successful"
+            )*/
         } else {
             ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + getString(com.tuya.smart.android.demo.camera.R.string.operation_failed)
+                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + "Pairing Failed"
             )
         }
     }
 
     private fun handleVideoRecordOver(msg: Message) {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.operation_suc))
+            /*ToastUtil.shortToast(this@CameraActivity, "Pairing Successful")*/
         } else {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.operation_failed))
+            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
         }
     }
 
     private fun handlesnapshot(msg: Message) {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.operation_suc))
+            /*ToastUtil.shortToast(this@CameraActivity, "Pairing Successful")*/
         } else {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.operation_failed))
+            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
         }
     }
 
@@ -354,7 +370,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             binding.cameraMute.isSelected = (previewMute == ICameraP2P.MUTE)
         } else {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.operation_failed))
+            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
         }
     }
 
@@ -363,7 +379,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             binding.cameraQuality.text =
                 if (videoClarity == ICameraP2P.HD) getString(com.tuya.smart.android.demo.camera.R.string.hd) else getString(com.tuya.smart.android.demo.camera.R.string.sd)
         } else {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.operation_failed))
+            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
         }
     }
 
@@ -383,12 +399,12 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             } else if (currVideoClarity == ICameraP2P.STANDEND.toString()) {
                 info = getString(com.tuya.smart.android.demo.camera.R.string.sd)
             }
-            ToastUtil.shortToast(
+            /*ToastUtil.shortToast(
                 this@CameraActivity,
                 getString(com.tuya.smart.android.demo.camera.R.string.get_current_clarity) + info
-            )
+            )*/
         } else {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.operation_failed))
+            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
         }
     }
 
@@ -417,7 +433,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     override fun initView() {
         // 注册监听
         devId?.let {
-            tuYaUtils.listenDPUpdate(devId = it, dpId = DPConstants.PRIVATE_MODE, onStatusChangedAction = { online ->
+            tuYaUtils.listenDPUpdate(devId = it, dpId = DPConstants.SD_CARD_RECORD_MODE, onStatusChangedAction = { online ->
                 // 监听设备是否在线
                 if (!online) {
                     binding.ivCameraButton.isClickable = false
@@ -431,7 +447,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             })
 
             // 查询门是否开着的。
-            /*mViewModel.tuYaDeviceBean?.devId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }*/
+            mViewModel.tuYaDeviceBean?.devId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
         }
 
         // 获取配件信息
@@ -571,15 +587,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         // 主动设置为隐私模式
                         devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
                     }*/
-
-                    devId?.let {
-                        tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
-                            override fun callback(obj: Any) {
-                                logI("123123@: ${obj.toString()}")
-                                ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
-                            }
-                        })
-                    }
+                    // 默认为静音
+                    binding.cameraMute.isSelected = true
                 }
             })
         }
@@ -716,18 +725,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 "PLAYBACK" -> {
                     // todo 回放
                     ViewUtils.setVisible(isChecked, binding.timelineLayout)
-                    binding.timeline.setOnBarMoveListener(object : OnBarMoveListener {
-                        override fun onBarMove(l: Long, l1: Long, l2: Long) {}
-                        override fun onBarMoveFinish(startTime: Long, endTime: Long, currentTime: Long) {
-                            binding.timeline.setCanQueryData()
-                            binding.timeline.setQueryNewVideoData(false)
-                            if (startTime != -1L && endTime != -1L) {
-                                playback(startTime.toInt(), endTime.toInt(), currentTime.toInt())
-                            }
-                        }
-
-                        override fun onBarActionDown() {}
-                    })
+                    // flow 监听
+                    subscribeOnBarMoveFinishFlow()
                     binding.timeline.setOnSelectedTimeListener { _, _ -> }
                     if (isChecked) {
                         // 开始播放
@@ -982,6 +981,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 this@CameraActivity,
                 object : OperationDelegateCallBack {
                     override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
+                        // 拍照动画
+                        startCaptureAnimation()
                         mHandler.sendMessage(
                             MessageUtil.getMessage(
                                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_SCREENSHOT,
@@ -1439,7 +1440,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                     .into(binding.ivThumbnail)
                             } else {
                                 val list = fetchImagesAndVideosFromSpecificFolder()
-                                list.firstOrNull { path -> path.absolutePath.endsWith(".jpg") || path.absolutePath.endsWith(".jpeg") || path.absolutePath.endsWith(".png") }?.let { path ->
+                                list.lastOrNull { path -> path.absolutePath.endsWith(".jpg") || path.absolutePath.endsWith(".jpeg") || path.absolutePath.endsWith(".png") }?.let { path ->
                                     Glide.with(this@CameraActivity)
                                         .load(path)
                                         .apply(requestOptions)
@@ -1465,6 +1466,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private fun isPrivateMode(value: Any?) {
         val isOpen = value.toString() == "true"
         val isPrivate = mViewModel.getAccessoryInfo.value?.data?.privateModel == true
+        logI("isPrivateMode isOpen: $isOpen, isPrivate: $isPrivate")
+        ViewUtils.setVisible(isOpen && isPrivate, binding.tvPrivacyMode)
         if (isOpen && isPrivate) {
             // 开门，打开隐私模式
             devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
@@ -1472,18 +1475,10 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             // 关门，如果不是隐私模式就关闭
             devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
         }
-        devId?.let {
-            tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, callback = object : TuyaCameraUtils.DPCallback {
-                override fun callback(obj: Any) {
-                    logI("123123@: ${obj.toString()}")
-                    ViewUtils.setVisible(obj.toString() == "true", binding.tvPrivacyMode)
-                }
-            })
-        }
     }
 
     /**
-     * 遍历图片文件夹，找到第一张图片
+     * 遍历图片文件夹，找到最后一张图片，因为list没倒序
      */
     private fun findFirstImageInDir(directory: String): String? {
         val dir = File(directory)
@@ -1494,7 +1489,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         || name.endsWith(".gif", ignoreCase = true)
             }
             if (!files.isNullOrEmpty()) {
-                return files[0].absolutePath
+                return files[files.size -1].absolutePath
             }
         }
         return null
@@ -1610,6 +1605,58 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     override fun onBackPressed() {
         isExit()
+    }
+
+    private fun createOnBarMoveFinishFlow(): Flow<Triple<Long, Long, Long>> = callbackFlow {
+        val listener = object : OnBarMoveListener {
+            override fun onBarMove(l: Long, l1: Long, l2: Long) {
+                // 不需要处理，可以留空
+            }
+
+            override fun onBarMoveFinish(startTime: Long, endTime: Long, currentTime: Long) {
+                // 发送 onBarMoveFinish 事件到 Flow
+                trySend(Triple(startTime, endTime, currentTime))
+            }
+
+            override fun onBarActionDown() {
+                // 不需要处理，可以留空
+            }
+        }
+
+        // 在 Flow 订阅时注册监听器
+        binding.timeline.setOnBarMoveListener(listener)
+
+        // 当 Flow 被取消订阅时，移除监听器
+        awaitClose {
+            binding.timeline.setOnBarMoveListener(null)
+        }
+    }
+
+    // 在合适的地方订阅 Flow
+    private fun subscribeOnBarMoveFinishFlow() {
+        lifecycleScope.launch {
+            createOnBarMoveFinishFlow()
+                .debounce(300) // 设置时间窗口为30秒
+                .collectLatest { (startTime, endTime, currentTime) ->
+                    binding.timeline.setCanQueryData()
+                    binding.timeline.setQueryNewVideoData(false)
+                    if (startTime != -1L && endTime != -1L && binding.ivCameraButton.isChecked) {
+                        playback(startTime.toInt(), endTime.toInt(), currentTime.toInt())
+                    }
+                }
+        }
+    }
+
+    private fun startCaptureAnimation() {
+        val scaleXAnimator = ObjectAnimator.ofFloat(binding.ivCameraButton, View.SCALE_X, 1f, 0.8f, 1f)
+        val scaleYAnimator = ObjectAnimator.ofFloat(binding.ivCameraButton, View.SCALE_Y, 1f, 0.8f, 1f)
+        val alphaAnimator = ObjectAnimator.ofFloat(binding.ivCameraButton, View.ALPHA, 1f, 0.5f, 1f)
+
+        val animatorSet = AnimatorSet()
+        animatorSet.playTogether(scaleXAnimator, scaleYAnimator, alphaAnimator)
+        animatorSet.duration = 300
+        animatorSet.interpolator = AccelerateDecelerateInterpolator()
+        animatorSet.start()
     }
 
     private fun isExit() {

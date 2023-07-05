@@ -1,9 +1,11 @@
 package com.cl.modules_home.adapter;
 
+import static android.graphics.Paint.FAKE_BOLD_TEXT_FLAG;
 import static com.cl.common_base.ext.DensityKt.dp2px;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +87,11 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             TextView letterView = ((LetterViewHolder) holder).letterView;
             letterView.setText(letters[position - 1]);
             if (position == focusedPosition) {
-                letterView.setTextColor(Color.parseColor("#006241"));  // Change color to red
+                letterView.setTextColor(Color.parseColor("#4CD964"));  // Change color to red
+                // Set the font to the TextView
+
+                // Set the text to bold
+                letterView.setPaintFlags(letterView.getPaintFlags() | Paint.FAKE_BOLD_TEXT_FLAG);
             } else {
                 letterView.setTextColor(Color.WHITE);  // Original color
             }

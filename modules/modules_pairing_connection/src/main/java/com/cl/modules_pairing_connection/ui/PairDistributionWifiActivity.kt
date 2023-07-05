@@ -86,13 +86,19 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
          * 摄像头界面需要改变这些文案
          */
         if (isCameraConnect){
+            //1.abby only supports 2.4GHz Wi-Fi.
+            //Wi-Fi only supports alphanumeric character
+            //
+            //2.Your phone must be connected to the same 2.4G wifi as abby
             ViewUtils.setVisible(false, binding.tvBleNane)
             binding.titleBar.setTitle("")
+            binding.btnSuccess.text = "Next"
             binding.tvDescThree.text = buildSpannedString {
-                append("1. abby only supports ")
-                bold { append("2.4GHz Wi-Fi networks.") }
+                append("1. smart camera only supports ")
+                bold { append("2.4GHz Wi-Fi.") }
+                appendLine("\nWi-Fi only supports alphanumeric character")
                 appendLine("\n")
-                appendLine("2. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+                appendLine("2. Your phone must be connected to the same 2.4G wifi as smart camera")
             }
         } else {
             // 设置设备名字
@@ -364,13 +370,23 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                             hideProgressLoading()
                             try {
                                 // 需要返回这个url回去。
-                                this@PairDistributionWifiActivity.setResult(Activity.RESULT_OK, Intent().apply {
+                                /*this@PairDistributionWifiActivity.setResult(Activity.RESULT_OK, Intent().apply {
                                     putExtra("qrcodeUrl", qrcodeUrl)
                                     putExtra("wifiName", wifiName)
                                     putExtra("wifiPsd", psd)
                                     putExtra("token", token)
                                 })
-                                finish()
+                                finish()*/
+
+                                // 说明绑定成功，跳转到二维码生成界面
+                                ARouter.getInstance().build(RouterPath.My.PAGE_CAMERA_QR_CODE)
+                                    .withString("qrcodeUrl", qrcodeUrl)
+                                    .withString("wifiName", wifiName)
+                                    .withString("wifiPsd", psd)
+                                    .withString("token", token)
+                                    .withString("accessoryId", intent.getStringExtra("accessoryId"))
+                                    .withString("deviceId", intent.getStringExtra("deviceId"))
+                                    .navigation(this@PairDistributionWifiActivity)
                             } catch (e: WriterException) {
                                 e.printStackTrace()
                             }

@@ -100,6 +100,8 @@ class RouterPath {
         const val PAGE_MY_GUIDE_SEED = "/guideSeed/$MY"
         const val PAGE_MY_DEVICE_LIST = "/deviceList/$MY"
         const val PAGE_MY_DEVICE_AUTOMATION = "/deviceAutomation/$MY"
+        // 摄像头二维码配对界面
+        const val PAGE_CAMERA_QR_CODE = "/cameraQrCode/$MY"
     }
 
     /**

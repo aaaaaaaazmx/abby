@@ -190,7 +190,8 @@ class ImageAdapter(directoryPath: String) : RecyclerView.Adapter<ImageAdapter.Im
                 }
             }
         }
-
+        // 倒序
+        imagePaths.reverse()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
@@ -270,6 +271,7 @@ class VideoAdapter(directoryPath: String, val context: Context?) : RecyclerView.
                 }
             }
         }
+        videoPaths.reverse()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {

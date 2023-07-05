@@ -1,12 +1,15 @@
 package com.cl.modules_my.ui
 
 import android.content.Intent
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreViewModel
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.util.ipc.CameraUtils
@@ -27,6 +30,7 @@ import javax.inject.Inject
  * 配对摄像头界面、生成二维码
  */
 @AndroidEntryPoint
+@Route(path = RouterPath.My.PAGE_CAMERA_QR_CODE)
 class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
 
     @Inject
@@ -68,6 +72,11 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
             })
         } catch (e: WriterException) {
             e.printStackTrace()
+        }
+
+
+        binding.unbindCamera.setOnClickListener {
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, "8074254")
         }
     }
 
@@ -114,7 +123,7 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
 
                     // 设置摄像头为连续摄像模式
                     // 设备设置页面-存储卡设置 SD卡录像模式选择，1为事件录像（检测到移动再录像到SD卡），2为连续录像
-                    TuyaCameraUtils().publishDps(cameraId, DPConstants.PRIVATE_MODE, 2)
+                    TuyaCameraUtils().publishDps(cameraId, DPConstants.SD_CARD_RECORD_MODE, "2")
                     letMultiple(accessoryId, deviceId) { a, b ->
                         // 新增配件接口
                         mViewMode.addAccessory(a, b, cameraId)

@@ -61,6 +61,12 @@ class CameraSettingActivity : AppCompatActivity() {
             })
         }
 
+
+        viewBinding.btnContinuousRecording.setOnClickListener {
+            publishDps("151", "2")
+            sdCardSaveModel()
+        }
+
     }
 
     private fun sdCardSave() {

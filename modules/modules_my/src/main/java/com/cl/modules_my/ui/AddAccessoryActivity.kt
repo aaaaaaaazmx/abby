@@ -109,6 +109,8 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                             // 跳转到摄像头配对页面
                                             ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
                                                 .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
+                                                .withString("deviceId", deviceId)
+                                                .withString("accessoryId", "${itemData.accessoryId}")
                                                 .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
                                         }
                                     )
@@ -118,6 +120,8 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                             // 跳转到摄像头配对页面
                             ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
                                 .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
+                                .withString("deviceId", deviceId)
+                                .withString("accessoryId", "${itemData.accessoryId}")
                                 .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
                         }
                         return@setOnItemChildClickListener
@@ -228,7 +232,6 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         putExtra("wifiPsd", wifiPwd)
                         putExtra("token", token)
                         putExtra("accessoryId", mViewModel.accessoryId.value)
-                        putExtra("deviceId", deviceId)
                     })
                 }
             }

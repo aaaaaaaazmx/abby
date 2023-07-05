@@ -94,13 +94,16 @@
                         android:gravity="center"
                         android:src="@drawable/camera_mute_btn" />
 
-                    <TextView
+                    <com.cl.common_base.widget.AbTextViewSimpleCalendar
                         android:id="@+id/camera_quality"
                         android:layout_width="@dimen/wh_60"
                         android:layout_height="@dimen/wh_28"
                         android:layout_alignParentBottom="true"
                         android:layout_gravity="center"
-                        android:layout_margin="10dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
                         android:layout_toRightOf="@+id/camera_mute"
                         android:background="@drawable/camera_shape_wirlesswake"
                         android:gravity="center"
@@ -132,16 +135,17 @@
                 </RelativeLayout>
             </RelativeLayout>
 
+
             <androidx.recyclerview.widget.RecyclerView
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginBottom="30dp"
-                app:layout_constraintBottom_toTopOf="@+id/iv_camera_button"
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="28dp"
+                app:layout_constraintBottom_toTopOf="@+id/iv_camera_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="MissingConstraints" />
-
 
             <ImageView
                 android:id="@+id/iv_thumbnail"

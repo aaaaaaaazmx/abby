@@ -180,11 +180,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 获取sn
         mViewMode.getSn()
-
+        // 获取用户信息
         mViewMode.userDetail()
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
+
+        // 初始化摄像头尺寸
+        initCameraSize()
 
         liveDataObser()
 
@@ -508,7 +511,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
                 // 跳转到IPC界面
                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
-                //                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+//                                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
             // 选中门锁开关
@@ -1798,59 +1801,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     if ((data?.size ?: 0) >= 1) {
                         getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
                             binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera && isHave) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
-                            ViewUtils.setVisible(isHave, binding.pplantNinth.rlBowl)
-                            ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave)
+                            ViewUtils.setVisible(isHave && isLoadCamera, binding.pplantNinth.rlBowl)
+                            ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave && isLoadCamera)
                             ViewUtils.setVisible(!isHave, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
                             ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
                             logI("111: $isHave,,,, $isLoadCamera")
                             logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
-                            if (!isHave || cameraId.isBlank()) return@getCameraFlag
-
                             // 获取摄像头配件信息
                             mViewMode.getAccessoryInfo(devId)
-                            if (isPlay) {
-                                return@getCameraFlag
-                            }
-                            val marginTopPx = TypedValue.applyDimension(
-                                TypedValue.COMPLEX_UNIT_DIP,
-                                32f,
-                                resources.displayMetrics
-                            ).toInt()
-                            val windowManager = activity?.getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager
-                            val width = windowManager.defaultDisplay.width - marginTopPx
-                            val height = width * 9 / 16
-                            // 假设你已经有了一个 ConstraintLayout 和一个 RelativeLayout
-                            val constraintLayout = binding.pplantNinth.clPlantStatus
-                            val relativeLayout = binding.pplantNinth.rlBowl
 
-
-                            // 创建一个 RelativeLayout.LayoutParams
-                            val layoutParams = ConstraintLayout.LayoutParams(
-                                width, height
-                            )
-                            // 设置布局参数
-                            relativeLayout.layoutParams = layoutParams
-                            // 创建一个 ConstraintSet
-                            val constraintSet = ConstraintSet()
-                            constraintSet.clone(constraintLayout) // 克隆当前的约束
-                            // 设置新的约束
-                            constraintSet.connect(relativeLayout.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-                            constraintSet.connect(relativeLayout.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-                            constraintSet.connect(relativeLayout.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
-                            // 应用新的约束
-                            constraintSet.applyTo(constraintLayout)
-
-                            // Assuming you are using Kotlin for Android
-
-                            // Set the corner radius for the bottom left and bottom right corners
-                            val cornerRadius = 30.0f
-                            // 角度为顺时针旋转绘制的，
-                            val radii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
-
-                            // val radii = floatArrayOf(0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius, 0f, 0f)
-                            val shapeDrawable = ShapeDrawable(RoundRectShape(radii, null, null))
-                            binding.pplantNinth.cardView.clipToOutline = true
-                            binding.pplantNinth.cardView.background = shapeDrawable
+                            // 不加载摄像头
+                            if (!isHave || cameraId.isBlank() || !isLoadCamera || isPlay) return@getCameraFlag
 
                             // 初始化摄像头
                             initCamera(cameraId)
@@ -1891,14 +1852,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                      * 监听隐私模式、或者是否在先
                      */
                     devId?.let {
-                        mViewMode.tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, object : TuyaCameraUtils.DPCallback {
-                            override fun callback(obj: Any) {
-                                logI("123123@: $obj")
-                                ViewUtils.setVisible(obj.toString() == "true", binding.pplantNinth.tvPrivacyMode)
-                            }
-                        }, onStatusChangedAction = { online ->
+                        // 查询开关们的状态
+                        mViewMode.deviceId.value?.let { it1 -> mViewMode.tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
+                        mViewMode.tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, onStatusChangedAction = { online ->
+                            logI("隐私模式：$online")
                             // 在线和不在线都需要提示
-                            ViewUtils.setVisible(online, binding.pplantNinth.tvPrivacyMode)
                             if (online) {
                                 //  在线摄像头
                                 binding.pplantNinth.tvPrivacyMode.text = "Currently in privacy mode"
@@ -1906,6 +1864,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 //  离线摄像头
                                 binding.pplantNinth.tvPrivacyMode.text = "The camera is offline"
                             }
+                            /*ViewUtils.setVisible(!online, binding.pplantNinth.tvPrivacyMode)*/
                         })
                     }
 
@@ -3486,6 +3445,52 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     /**
+     * 初始化摄像头的尺寸大小
+     */
+    private fun initCameraSize() {
+        val marginTopPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            32f,
+            resources.displayMetrics
+        ).toInt()
+        val windowManager = activity?.getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager
+        val width = windowManager.defaultDisplay.width - marginTopPx
+        val height = width * 9 / 16
+        // 假设你已经有了一个 ConstraintLayout 和一个 RelativeLayout
+        val constraintLayout = binding.pplantNinth.clPlantStatus
+        val relativeLayout = binding.pplantNinth.rlBowl
+
+
+        // 创建一个 RelativeLayout.LayoutParams
+        val layoutParams = ConstraintLayout.LayoutParams(
+            width, height
+        )
+        // 设置布局参数
+        relativeLayout.layoutParams = layoutParams
+        // 创建一个 ConstraintSet
+        val constraintSet = ConstraintSet()
+        constraintSet.clone(constraintLayout) // 克隆当前的约束
+        // 设置新的约束
+        constraintSet.connect(relativeLayout.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+        constraintSet.connect(relativeLayout.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
+        constraintSet.connect(relativeLayout.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+        // 应用新的约束
+        constraintSet.applyTo(constraintLayout)
+
+        // Assuming you are using Kotlin for Android
+
+        // Set the corner radius for the bottom left and bottom right corners
+        val cornerRadius = 30.0f
+        // 角度为顺时针旋转绘制的，
+        val radii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+
+        // val radii = floatArrayOf(0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius, 0f, 0f)
+        val shapeDrawable = ShapeDrawable(RoundRectShape(radii, null, null))
+        binding.pplantNinth.cardView.clipToOutline = true
+        binding.pplantNinth.cardView.background = shapeDrawable
+    }
+
+    /**
      * 初始化摄像头
      */
     private var mCameraP2P: IThingSmartCameraP2P<Any>? = null
@@ -3545,6 +3550,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     override fun onFailure(i: Int, i1: Int, i2: Int) {
                         activity?.runOnUiThread {
                             ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+                            mViewMode.tuYaUtils.queryValueByDPID("",DPConstants.PRIVATE_MODE)
                         }
                     }
                 })
@@ -4126,6 +4132,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             if (isHave && isLoadCamera) {
                 val isOpen = value.toString() == "true"
                 val isPrivate = mViewMode.getAccessoryInfo.value?.data?.privateModel == true
+                logI("isPrivateMode isOpen: $isOpen, isPrivate: $isPrivate")
+                ViewUtils.setVisible(isOpen && isPrivate, binding.pplantNinth.tvPrivacyMode)
                 if (isOpen && isPrivate) {
                     // 打开隐私模式
                     cameraId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }

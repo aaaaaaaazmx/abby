@@ -60,6 +60,7 @@ import com.cl.modules_contact.request.Mention
 import com.cl.modules_contact.response.ChoosePicBean
 import com.cl.modules_contact.ui.pic.ChoosePicActivity
 import com.cl.modules_contact.util.DeviceConstants
+import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureMimeType
@@ -913,6 +914,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
             // ffmpeg -y -loop 1 -r 25 -i /storage/emulated/0/1/input.png -vf zoompan=z=1.1:x='if(eq(x,0),100,x-1)':s='960*540' -t 10 -pix_fmt yuv420p /storage/emulated/0/1/result.mp4
             val name = "${System.currentTimeMillis()}.mp4"
             val cmdList = CmdList()
+            val path = if (viewModel.uploadImageFlag.value == true) sdCardPath + File.separator + name  else sdCardPath + File.separator + "preview" + File.separator + name
             cmdList.append("-y")
                 .append("-i")
                 .append(url)
@@ -920,8 +922,8 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                 .append("yuv420p")
                 .append("-preset")
                 .append("superfast")
-                .append(sdCardPath + File.separator + name)
-            FileUtil.createFileIfNotExists(sdCardPath + File.separator + name)
+                .append(path)
+            FileUtil.createFileIfNotExists(path)
             val cmds = cmdList.toTypedArray()
             val stringBuffer = StringBuffer()
             for (ss in cmds) {
@@ -935,14 +937,17 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                         // 展示
                         if (viewModel.uploadImageFlag.value == false) {
                             startActivity(Intent(this@ReelPostActivity, GSYPlayVideoActivity::class.java).apply {
-                                putExtra("url", "$sdCardPath/$name")
+                                putExtra("url", path)
                             })
                         }
                         if (viewModel.uploadImageFlag.value == true) {
                             // 保存时，才保存到相册
                             // 保存到相册。
-                            saveFileToGallery(this@ReelPostActivity, "$sdCardPath/$name", name, "video/mp4", albumName ?: "")
-                            ToastUtil.shortShow("Saved successfully")
+                            val uri = saveFileToGallery(this@ReelPostActivity, path, name, "video/mp4", albumName ?: "")
+                            if (null != uri) {
+                                ToastUtil.shortShow("Saved successfully")
+                                finish()
+                            }
                         }
                     }
                 }
@@ -951,7 +956,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     runOnUiThread {
                         ToastUtil.shortShow("gifTMp4: onFailure")
                         // 需要删除这个创建失败的文件夹
-                        FileUtil.deleteFile(sdCardPath + File.separator + name)
+                        FileUtil.deleteFile(path)
                     }
                     logI("gifTMp4: onFailure")
                 }
