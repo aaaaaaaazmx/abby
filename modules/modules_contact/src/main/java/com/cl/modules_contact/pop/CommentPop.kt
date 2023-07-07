@@ -2,15 +2,19 @@ package com.cl.modules_contact.pop
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.text.SpannedString
 import android.text.TextUtils
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.cl.common_base.bean.UserinfoBean
@@ -143,9 +147,58 @@ class CommentPop(
                             )
                         })
                     ).show()
+            },
+            onDeleteAction = {
+                // todo 删除评论
+                it.replyId?.let { it1 -> deleteReply(it1) }
+            },
+            onCopyAction = {
+                // todo 复制评论
+                // 复制内容
+                val cm: ClipboardManager? = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                // 创建普通字符型ClipData
+                val mClipData = ClipData.newPlainText("Connect", it.comment)
+                // 将ClipData内容放到系统剪贴板里。
+                cm?.setPrimaryClip(mClipData)
             }
         )
     }
+
+    /**
+     * 删除回复
+     */
+    private val _deleteReplyData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val deleteReplyData: LiveData<Resource<com.cl.common_base.BaseBean>> = _deleteReplyData
+    fun deleteReply(replyId: String) = lifecycleScope.launch {
+        service.deleteReply(replyId).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            _deleteReplyData.value = Resource.Loading()
+        }.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _deleteReplyData.value = it
+            when(it) {
+                is Resource.Success -> {
+                    // 点赞成功
+                    commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
+                }
+                else -> {}
+            }
+        }
+    }
+
 
     private val _commentListData = MutableLiveData<Resource<MutableList<CommentByMomentData>>>()
     private val commentListData: LiveData<Resource<MutableList<CommentByMomentData>>> = _commentListData

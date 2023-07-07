@@ -26,6 +26,8 @@ object Constants {
         private const val WEB_URL_MAIN = HttpUrl.WEB_PRODUCTION_URL
         const val PRIVACY_POLICY_URL = "${WEB_URL_MAIN}/protocol/privacyPolicy.html"
         const val PERSONAL_URL = "${WEB_URL_MAIN}/protocol/licenseAgreement.html"
+        // 氧气币html
+        const val OXYGEN_COIN_URL = "${WEB_URL_MAIN}/Explantion.html"
 
         // APP官网
         const val ABBY_OFFICIAL_WEBSITE = "https://heyabby.com/"

@@ -47,7 +47,7 @@ class ContactNotificationActivity : BaseActivity<ContactNotificationBinding>() {
             layoutManager = LinearLayoutManager(this@ContactNotificationActivity)
             //添加自定义分割线
             val divider = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-            divider.setDrawable(ContextCompat.getDrawable(context, R.drawable.custom_divider)!!)
+            divider.setDrawable(ContextCompat.getDrawable(context, com.cl.common_base.R.drawable.custom_divider)!!)
             addItemDecoration(divider)
             adapter = notificationAdapter
         }

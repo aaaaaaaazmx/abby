@@ -24,6 +24,9 @@
 #保持bean类不被混淆
 -keep public class cn.mtjsoft.barcodescanning.**{*;}
 
+# 涂鸦下面的ipc的所有类
+-keep public class com.tuya.smart.android.demo.camera.**{*;}
+
 -keep public class com.cl.common_base.bean.**{*;}
 
 -keep public class com.cl.modules_contact.request.**{*;}

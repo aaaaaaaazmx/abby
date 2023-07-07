@@ -169,7 +169,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
         binding.rvJourney.apply { // 添加分割线
             //添加自定义分割线
             val divider = DividerItemDecoration(this@OtherJourneyActivity, DividerItemDecoration.VERTICAL)
-            divider.setDrawable(ContextCompat.getDrawable(context, R.drawable.custom_divider)!!)
+            divider.setDrawable(ContextCompat.getDrawable(context, com.cl.common_base.R.drawable.custom_divider)!!)
             addItemDecoration(divider)
             layoutManager = LinearLayoutManager(this@OtherJourneyActivity)
             adapter = this@OtherJourneyActivity.adapter

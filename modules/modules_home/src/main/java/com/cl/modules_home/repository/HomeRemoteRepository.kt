@@ -186,4 +186,12 @@ class HomeRemoteRepository @Inject constructor() {
     fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
         return service.getAccessoryInfo(deviceId)
     }
+
+    fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>> {
+        return service.oxygenCoinList()
+    }
+
+    fun getGrantOxygen(orderNo: String): Flow<HttpResult<BaseBean>> {
+        return service.getGrantOxygen(orderNo)
+    }
 }

@@ -2,12 +2,12 @@ package com.cl.modules_my.repository
 
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
-import com.cl.modules_my.request.AccountFlowingReq
+import com.cl.common_base.bean.AccountFlowingReq
 import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
-import com.cl.modules_my.request.OxygenCoinListBean
+import com.cl.common_base.bean.OxygenCoinListBean
 import com.cl.modules_my.request.ResetPwdReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*

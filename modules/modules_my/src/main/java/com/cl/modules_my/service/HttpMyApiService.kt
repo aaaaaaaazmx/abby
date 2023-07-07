@@ -7,13 +7,13 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.modules_my.repository.AccessoryListBean
 import com.cl.modules_my.repository.GetAutomationRuleBean
 import com.cl.modules_my.repository.MyTroubleData
-import com.cl.modules_my.repository.OxygenCoinBillList
-import com.cl.modules_my.request.AccountFlowingReq
+import com.cl.common_base.bean.OxygenCoinBillList
+import com.cl.common_base.bean.AccountFlowingReq
 import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
-import com.cl.modules_my.request.OxygenCoinListBean
+import com.cl.common_base.bean.OxygenCoinListBean
 import com.cl.modules_my.request.ResetPwdReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody

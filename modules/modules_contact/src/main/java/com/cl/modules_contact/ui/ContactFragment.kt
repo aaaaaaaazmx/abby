@@ -114,7 +114,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
             // 添加分割线
             //添加自定义分割线
             val divider = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-            divider.setDrawable(ContextCompat.getDrawable(context, R.drawable.custom_divider)!!)
+            divider.setDrawable(ContextCompat.getDrawable(context, com.cl.common_base.R.drawable.custom_divider)!!)
             addItemDecoration(divider)
             /*this@ContactFragment.adapter.setHasStableIds(true)*/
             this@ContactFragment.adapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.AlphaIn)

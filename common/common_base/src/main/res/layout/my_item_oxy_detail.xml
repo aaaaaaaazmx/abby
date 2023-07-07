@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.common_base.bean.RunnerWater" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        tools:ignore="MissingConstraints"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="15sp"
+            android:text="@{data.tips}"
+            android:id="@+id/tv_reward"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            app:layout_marginBaseline="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@{data.time}"
+            android:id="@+id/tv_date"
+            android:layout_marginBottom="18dp"
+            android:layout_marginTop="5dp"
+            tools:text="16:58 · 2021/11/18"
+            app:layout_constraintTop_toBottomOf="@+id/tv_reward"
+            android:textColor="#C9C9C9"
+            android:textSize="13sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            colorText='@{data.oxygen.startsWith("+") ? "#F72E47" : "#008961"}'
+            android:id="@+id/tv_value"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_date"
+            app:layout_constraintTop_toTopOf="@id/tv_reward"
+            android:text="@{data.oxygen}"
+            tools:text="+15"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

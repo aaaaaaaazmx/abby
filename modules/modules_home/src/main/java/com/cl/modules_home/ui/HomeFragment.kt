@@ -20,7 +20,6 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.RelativeLayout
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -65,6 +64,8 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.common_base.widget.waterview.bean.Water
+import com.cl.common_base.widget.waterview.widget.WaterView
 import com.cl.modules_home.activity.HomeNewPlantNameActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
@@ -503,7 +504,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
                 // 跳转到IPC界面
                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
-//                                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                //                                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
             // 选中门锁开关
@@ -617,6 +618,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 mViewMode.plantInfo()
                 mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
                 periodPopDelegate.show()
+            }
+
+            // 点击弹出个氧气币窗口
+            clOxy.setOnClickListener {
+               xpopup {
+                   isDestroyOnDismiss(false)
+                   enableDrag(true)
+                   dismissOnTouchOutside(true)
+                   maxHeight(dp2px(600f))
+                   asCustom(context?.let { it1 -> HomeOxyPop(it1) }).show()
+               }
             }
 
             // 点击环境弹窗
@@ -2357,6 +2369,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     hideProgressLoading()
 
+                    // 登录InterCome
+                    InterComeHelp.INSTANCE.successfulLogin(
+                        map = mapOf(),
+                        interComeUserId = data?.externalId,
+                        refreshUserInfo = data
+                    )
+
+                    // 获取氧气币列表
+                    mViewMode.getOxygenCoinList()
+
                     // 环信消息
                     getEaseUINumber()
 
@@ -2432,6 +2454,61 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 loading {
                     showProgressLoading()
+                }
+            })
+
+            // 获取氧气币列表
+            getOxygenCoinList.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    if (data == null) return@success
+
+                    // 判断什么时候才显示氧气币，应该是没气泡的时候
+                    if (unreadMessageList.value?.size == 0) {
+                        // 显示氧气币
+                        /*data?.map {
+                            Water(it.oxygen.toString(), it.tips).apply {
+                                this.loseEfficacy = it.loseEfficacy.toString()
+                                this.orderNo = it.orderNo
+                                this.oxygen = it.oxygen.toString()
+                                this.tips = it.tips
+                            }
+                        }.let {
+                            // 加载水珠
+                            binding.pplantNinth.waterView.apply {
+                                setDestroyPoint(WaterView.VIEW_SELF)
+                                setViewAnimation(WaterView.TRANSLATE)
+                                setTextSize(12)
+                                setTextColor(Color.parseColor("#008961"))
+                                setImageRes(R.drawable.group4)
+                                setLayoutStyle(WaterView.FAN_RANDOM)
+                                setWaters(it)
+                            }
+                        }*/
+
+                        data?.take(7)?.map { Water("${it.oxygen}g", it.tips, it.loseEfficacy.toString(), it.orderNo, it.oxygen.toString(), it.tips) }?.toMutableList()?.let {
+                            binding.pplantNinth.waterView.apply {
+                                setDestroyPoint(WaterView.VIEW_SELF)
+                                setDrawablePosition(WaterView.DRAWABLE_TOP)
+                                setViewAnimation(WaterView.TRANSLATE)
+                                setTextColor(Color.parseColor("#008961"))
+                                setImageRes(R.drawable.group4)
+                                setLayoutStyle(WaterView.FAN_RANDOM)
+                                setWaters(it)
+                            }
+                        }
+                    }
+
+                    // 点击事件
+                    binding.pplantNinth.waterView.apply {
+                        setClickListener { view, _, water ->
+                            setViewInterpolator(null)
+                            animRemoveView(view)
+                            if (water.loseEfficacy != "1") {
+                                getOxygenCoin(water.orderNo)
+                            }
+                        }
+                    }
                 }
             })
 
@@ -3555,7 +3632,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     override fun onFailure(i: Int, i1: Int, i2: Int) {
                         activity?.runOnUiThread {
                             ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
-                            mViewMode.tuYaUtils.queryValueByDPID("",DPConstants.PRIVATE_MODE)
+                            mViewMode.tuYaUtils.queryValueByDPID("", DPConstants.PRIVATE_MODE)
                         }
                     }
                 })
@@ -4547,6 +4624,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
     }
 
+    fun xpopup(block: XPopup.Builder.() -> Unit) {
+        XPopup.Builder(context).block()
+    }
 
     companion object {
         const val KEY_NEW_PLANT = "0"

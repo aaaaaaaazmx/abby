@@ -283,4 +283,23 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/accessory/getAccessoryInfo")
     fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
+
+    /**
+     * 获取氧气币列表
+     */
+    @POST("abby/oxygenGrant/getGrantOxygenList")
+    fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>>
+
+    /**
+     * 领取氧气币
+     */
+    @FormUrlEncoded
+    @POST("abby/oxygenGrant/getGrantOxygen")
+    fun getGrantOxygen(@Field("orderNo") orderNo: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取氧气币账单流水
+     */
+    @POST("abby/account/getAccountFlowing")
+    fun oxygenCoinBillList(@Body req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>>
 }
