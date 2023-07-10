@@ -270,10 +270,11 @@ public class WaterView extends FrameLayout {
                 setChildViewCircleLocation(mViews);
                 break;
             case FAN_RANDOM:
+                double angle = 180 / mViews.size();
                 Rect rect = new Rect(-(left * 3), 0, getWidth(), getHeight());
-                double startAngle = Math.asin((double) getHeight() / (2 * (getWidth() / 2) + getHeight())) * 180 / Math.PI;
-                double sweepAngle = 180 - 2 * startAngle;
-                generateClockwiseArcPoints(rect, startAngle, sweepAngle, mViews.size());
+                double startAngle = Math.asin((double) getHeight() / (2 * (getWidth() / 2) + getHeight())) * (180 + angle) / Math.PI;
+                double sweepAngle = 180.0 - angle / 2 - 2 * startAngle;
+                generateClockwiseArcPoints(rect, startAngle, sweepAngle, mViews.size(), angle);
                 setChildViewCircleLocation(mViews);
                 break;
         }
@@ -575,7 +576,7 @@ public class WaterView extends FrameLayout {
         return points;
     }
 
-    public List<Point> generateClockwiseArcPoints(Rect rect, double startAngle, double sweepAngle, int numPoints) {
+    public List<Point> generateClockwiseArcPoints(Rect rect, double startAngle, double sweepAngle, int numPoints, double angle) {
         points.clear();
         int centerX = rect.left + rect.width() / 2;
         int centerY = rect.top + rect.height() / 2;
@@ -584,7 +585,7 @@ public class WaterView extends FrameLayout {
         float angleInterval = (float) (sweepAngle / (numPoints - 1));
 
         for (int i = 0; i < numPoints; i++) {
-            double radians = Math.toRadians(180 + startAngle + angleInterval * i);
+            double radians = Math.toRadians((180 + angle / 3) + startAngle + angleInterval * i);
             int x = (int) (centerX + radius * Math.cos(radians));
             int y = (int) (centerY + radius * Math.sin(radians));
             Point point = new Point(x, y);
