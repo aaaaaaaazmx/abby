@@ -27,7 +27,9 @@
 # 涂鸦下面的ipc的所有类
 -keep public class com.tuya.smart.android.demo.camera.**{*;}
 
--keep public class com.cl.common_base.bean.**{*;}
+#保留这个modules下面所有的类
+-keep public class com.cl.modules_my.**{*;}
+-keep public class com.cl.common_base.**{*;}
 
 -keep public class com.cl.modules_contact.request.**{*;}
 -keep public class com.cl.modules_contact.response.**{*;}
@@ -37,9 +39,6 @@
 
 -keep public class com.cl.modules_login.request.**{*;}
 -keep public class com.cl.modules_login.response.**{*;}
-
-#保留这个modules下面素有的类
--keep public class com.cl.modules_my.**{*;}
 
 -keep public class com.cl.modules_pairing_connection.request.**{*;}
 -keep public class com.cl.modules_pairing_connection.response.**{*;}

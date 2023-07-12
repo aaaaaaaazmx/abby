@@ -530,6 +530,7 @@
 
             <!--氧气币-->
             <com.cl.common_base.widget.waterview.widget.WaterView
+                android:visibility="gone"
                 android:id="@+id/water_view"
                 android:layout_width="300dp"
                 android:layout_height="300dp"

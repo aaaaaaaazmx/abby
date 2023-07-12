@@ -477,7 +477,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 binding.pplantNinth.ivOne.setBackgroundResource(if (isSHowCamera) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
                 ViewUtils.setVisible(isSHowCamera, binding.pplantNinth.rlBowl)
                 ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isSHowCamera)
-                ViewUtils.setVisible(!isSHowCamera, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+                ViewUtils.setVisible(!isSHowCamera && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
 
                 // 如果是从false -> true
                 if (isSHowCamera) {
@@ -622,13 +622,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 点击弹出个氧气币窗口
             clOxy.setOnClickListener {
-               xpopup {
-                   isDestroyOnDismiss(false)
-                   enableDrag(true)
-                   dismissOnTouchOutside(true)
-                   maxHeight(dp2px(600f))
-                   asCustom(context?.let { it1 -> HomeOxyPop(it1) }).show()
-               }
+                xpopup {
+                    isDestroyOnDismiss(false)
+                    enableDrag(true)
+                    dismissOnTouchOutside(true)
+                    maxHeight(dp2px(600f))
+                    asCustom(context?.let { it1 -> HomeOxyPop(it1) }).show()
+                }
             }
 
             // 点击环境弹窗
@@ -1820,7 +1820,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera && isHave) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
                             ViewUtils.setVisible(isHave && isLoadCamera, binding.pplantNinth.rlBowl)
                             ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave && isLoadCamera)
-                            ViewUtils.setVisible(!isHave, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+                            ViewUtils.setVisible(!isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
                             ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
                             logI("111: $isHave,,,, $isLoadCamera")
                             logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
@@ -2461,6 +2461,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             getOxygenCoinList.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
+                    ViewUtils.setVisible(data?.size != 0, binding.pplantNinth.waterView)
                     if (data == null) return@success
 
                     // 判断什么时候才显示氧气币，应该是没气泡的时候
@@ -2486,6 +2487,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                         }*/
 
+                        if (data?.size == 0) return@success
                         data?.take(7)?.map { Water("${it.oxygen}g", it.tips, it.loseEfficacy.toString(), it.orderNo, it.oxygen.toString(), it.tips) }?.toMutableList()?.let {
                             binding.pplantNinth.waterView.apply {
                                 setDestroyPoint(WaterView.VIEW_SELF)

@@ -20,6 +20,7 @@ data class CalendarData(
     var taskList: MutableList<TaskList>? = null
 ) : BaseBean() {
     data class TaskList(
+        val taskIdL: Int? = null,
         var createTime: String? = null,
         var finishTime: String? = null,
         var isDeleted: String? = null,

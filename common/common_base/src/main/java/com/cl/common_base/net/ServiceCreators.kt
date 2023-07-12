@@ -24,11 +24,12 @@ import javax.net.ssl.HttpsURLConnection
 object ServiceCreators {
 
     // 服务器地址
-//        private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.OUTER_ANG_URL else HttpsUrl.PRODUCTION_URL
-     val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
-//        private val BASE_URL =  HttpsUrl.PRODUCTION_URL
-    //    private val BASE_URL =  HttpsUrl.BD_URL
-//        private val BASE_URL =  HttpsUrl.OUTER_ANG_URL
+//    private val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.OUTER_ANG_URL else HttpsUrl.PRODUCTION_URL
+    val BASE_URL = if (BuildConfig.DEBUG) HttpsUrl.TEST_URL else HttpsUrl.PRODUCTION_URL
+//    val BASE_URL = HttpsUrl.TEST_URL
+//    private val BASE_URL = HttpsUrl.PRODUCTION_URL
+//    private val BASE_URL = HttpsUrl.BD_URL
+//    private val BASE_URL = HttpsUrl.OUTER_ANG_URL
 
     private const val MAX_CACHE_SIZE: Long = 1024 * 1024 * 50 // 50M 的缓存大小
 

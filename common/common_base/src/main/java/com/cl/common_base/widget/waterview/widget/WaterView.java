@@ -270,6 +270,7 @@ public class WaterView extends FrameLayout {
                 setChildViewCircleLocation(mViews);
                 break;
             case FAN_RANDOM:
+                if (mViews.size() == 0) return;
                 double angle = 180 / mViews.size();
                 Rect rect = new Rect(-(left * 3), 0, getWidth(), getHeight());
                 double startAngle = Math.asin((double) getHeight() / (2 * (getWidth() / 2) + getHeight())) * (180 + angle) / Math.PI;

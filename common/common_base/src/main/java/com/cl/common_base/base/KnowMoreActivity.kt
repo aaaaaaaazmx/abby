@@ -474,19 +474,19 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     if (null == data) return@success
 
                     // 初始化头部Video
-                    data?.topPage?.firstOrNull { it.type == "video" }?.apply {
+                    data.topPage?.firstOrNull { it.type == "video" }?.apply {
                         // 显示头部视频
                         binding.videoItemPlayer.visibility = View.VISIBLE
-                        value?.url?.let { initVideo(it, value?.autoplay == true) }
+                        value?.url?.let { initVideo(it, value.autoplay == true) }
                     }
-                    data?.bar?.let {
+                    data.bar?.let {
                         // todo 设置标题
                         binding.tvTitle.text = it
                     }
 
                     // 动态添加按钮
                     // 不是video的都需要添加
-                    val list = data?.topPage?.filter { it.type != "video" }
+                    val list = data.topPage?.filter { it.type != "video" }
                     list?.forEachIndexed { index, topPage ->
                         val tv = TextView(this@KnowMoreActivity)
                         tv.setBackgroundResource(R.drawable.create_state_button)

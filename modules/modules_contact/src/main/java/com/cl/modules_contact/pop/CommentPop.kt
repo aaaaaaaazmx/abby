@@ -148,19 +148,19 @@ class CommentPop(
                         })
                     ).show()
             },
-            onDeleteAction = {
-                // todo 删除评论
+           /* onDeleteAction = {
+                // todo 删除评论, 需要是自己发的帖子
                 it.replyId?.let { it1 -> deleteReply(it1) }
             },
             onCopyAction = {
-                // todo 复制评论
+                // todo 复制评论，需要是自己发的帖子
                 // 复制内容
                 val cm: ClipboardManager? = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                 // 创建普通字符型ClipData
                 val mClipData = ClipData.newPlainText("Connect", it.comment)
                 // 将ClipData内容放到系统剪贴板里。
                 cm?.setPrimaryClip(mClipData)
-            }
+            }*/
         )
     }
 
