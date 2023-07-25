@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.Calendar
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -48,6 +49,9 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
     }
+
+    // 这个变量用于存储选择的日期
+    var selectedDate: Calendar = Calendar.getInstance()
 
     /**
      * 保存SN
@@ -153,41 +157,6 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
         }
     }
 
-    /**
-     * 富文本图文图文接口、所用东西都是从接口拉取
-     */
-    private val _richText = MutableLiveData<Resource<RichTextData>>()
-    val richText: LiveData<Resource<RichTextData>> = _richText
-    fun getRichText(txtId: String? = null, type: String? = null) {
-        viewModelScope.launch {
-            repository.getRichText(txtId, type)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _richText.value = it
-                }
-        }
-    }
 
     /**
      * 获取配件信息

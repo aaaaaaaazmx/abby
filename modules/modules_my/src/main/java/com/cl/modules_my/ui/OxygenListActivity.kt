@@ -125,7 +125,7 @@ class OxygenListActivity : BaseActivity<MyOxyGenActivityBinding>() {
                                 buildSpannedString {
                                     bold {
                                         color(Color.parseColor("#B22234")) {
-                                            append("$it g")
+                                            append("$it ")
                                         }
                                     }
                                 }

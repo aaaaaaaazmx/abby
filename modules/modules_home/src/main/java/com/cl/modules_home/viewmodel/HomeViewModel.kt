@@ -32,6 +32,8 @@ import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.util.LinkedList
+import java.util.Queue
 import javax.inject.Inject
 
 
@@ -173,6 +175,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+
+    // 当前view的数量
+    private val _viewCount = MutableLiveData(0)
+    val viewCount: LiveData<Int> = _viewCount
+    fun setViewCount(count: Int) {
+        _viewCount.value = count
+    }
 
     /**
      * 领取氧气币

@@ -9,6 +9,7 @@ import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.RichTextData
+import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
@@ -44,13 +45,22 @@ class BaseViewModel @Inject constructor(): ViewModel() {
     }
 
     /**
+     * 滑块的具体文案
+     */
+    private val _sliderText = MutableLiveData<String?>()
+    val sliderText: LiveData<String?> = _sliderText
+    fun getSliderText(txt: String?) {
+        _sliderText.value = txt
+    }
+
+    /**
      * 富文本图文图文接口、所用东西都是从接口拉取
      */
     private val _richText = MutableLiveData<Resource<RichTextData>>()
     val richText: LiveData<Resource<RichTextData>> = _richText
-    fun getRichText(txtId: String? = null, type: String? = null) {
+    fun getRichText(taskId: String? = null, txtId: String? = null, type: String? = null) {
         viewModelScope.launch {
-            service.getRichText(txtId, type)
+            service.getRichText(taskId, txtId, type)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -242,6 +252,34 @@ class BaseViewModel @Inject constructor(): ViewModel() {
             )
         }.collectLatest {
             _checkPlant.value = it
+        }
+    }
+
+    /**
+     * 延迟任务
+     */
+    private val _delayTask = MutableLiveData<Resource<BaseBean>>()
+    val delayTask: LiveData<Resource<BaseBean>> = _delayTask
+    fun delayTask(req: SnoozeReq) = viewModelScope.launch {
+        service.snooze(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            _delayTask.value = it
         }
     }
 

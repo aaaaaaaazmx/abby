@@ -94,9 +94,13 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.Serializable
+import java.lang.Thread.sleep
 import java.nio.ByteBuffer
 import java.util.Calendar
+import java.util.LinkedList
+import java.util.Queue
 import javax.inject.Inject
+import kotlin.concurrent.thread
 import kotlin.random.Random
 
 
@@ -656,6 +660,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             ivDeviceList.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                     .navigation(activity)
+            }
+
+            // 跳转到摄像头界面
+            ivCamera.setOnClickListener {
+
+                /*ARouter
+                   .getInstance()
+                   .build(RouterPath.Home.PAGE_CAMERA)
+                   .withString(Constants.Global.INTENT_DEV_ID, "123")
+                   .navigation(context)*/
+
+                val cameraAccessory = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+                    ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                // 跳转到IPC界面
+                com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                //                                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
             tvAirPumpDesc.setOnClickListener {
@@ -1789,53 +1809,49 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             listDevice.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     hideProgressLoading()
-                    if (data.isNullOrEmpty()) {
-                        ViewUtils.setGone(
-                            binding.pplantNinth.imageLeftSwip,
-                            binding.pplantNinth.imageRightSwip
-                        )
-                        return@success
-                    }
+                    data?.let { dataList ->
+                        // 判断设备数量，设定左右滑动图片的显示
+                        val isVisible = dataList.filter { it.isSwitch == 1 }.size > 1
+                        ViewUtils.setVisible(isVisible, binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
 
-                    // 表示有多个设备
-                    val size = data?.filter { it.isSwitch == 1 }?.size ?: 0
-                    if (size > 1) {
-                        ViewUtils.setVisible(
-                            binding.pplantNinth.imageLeftSwip,
-                            binding.pplantNinth.imageRightSwip
-                        )
-                    } else {
-                        ViewUtils.setGone(
-                            binding.pplantNinth.imageLeftSwip,
-                            binding.pplantNinth.imageRightSwip
-                        )
-                    }
+                        // 寻找当前设备
+                        dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
+                            // 是否显示摄像头
+                            val isCameraVisible = device.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" } != null
+                            ViewUtils.setVisible(isCameraVisible, binding.pplantNinth.ivCamera)
+                            ViewUtils.setVisible(isCameraVisible, binding.plantManual.ivCamera)
 
-                    // 是否显示摄像头
-                    ViewUtils.setVisible(data?.firstOrNull { it.currentDevice == 1 }
-                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" } != null, binding.pplantNinth.ivCamera)
-
-                    if ((data?.size ?: 0) >= 1) {
-                        getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-                            binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera && isHave) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
-                            ViewUtils.setVisible(isHave && isLoadCamera, binding.pplantNinth.rlBowl)
-                            ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave && isLoadCamera)
-                            ViewUtils.setVisible(!isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
-                            ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
-                            logI("111: $isHave,,,, $isLoadCamera")
-                            logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
-                            // 获取摄像头配件信息
-                            mViewMode.getAccessoryInfo(devId)
-
-                            // 不加载摄像头
-                            if (!isHave || cameraId.isBlank() || !isLoadCamera || isPlay) return@getCameraFlag
-
-                            // 初始化摄像头
-                            initCamera(cameraId)
-                            // 保存摄像头Id
-                            setCameraId(cameraId)
+                            // 是否显示rlInch
+                            ViewUtils.setVisible(device.deviceType == "OG", binding.plantManual.rlInch)
                         }
+
+                        if (dataList.isNotEmpty()) {
+                            getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+                                binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera && isHave) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
+                                ViewUtils.setVisible(isHave && isLoadCamera, binding.pplantNinth.rlBowl)
+                                ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave && isLoadCamera)
+                                ViewUtils.setVisible(!isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+                                ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
+
+                                logI("111: $isHave,,,, $isLoadCamera")
+                                logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
+
+                                // 获取摄像头配件信息
+                                mViewMode.getAccessoryInfo(devId)
+
+                                // 不加载摄像头
+                                if (!isHave || cameraId.isBlank() || !isLoadCamera || isPlay) return@getCameraFlag
+
+                                // 初始化摄像头
+                                initCamera(cameraId)
+                                // 保存摄像头Id
+                                setCameraId(cameraId)
+                            }
+                        }
+                    } ?: run { // 数据为空时设为不可见
+                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
                     }
+
 
                     /*data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
                         if (this == -1) {
@@ -2173,19 +2189,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             val data = adapter.data[position] as? FinishPageData.ListBean
                             when (view.id) {
                                 R.id.ll_title -> {
-                                    data?.learnMoreId?.let { it1 ->
+                                    /*data?.learnMoreId?.let { it1 ->
                                         mViewMode.getDetailByLearnMoreId(
                                             it1
                                         )
-                                    }
+                                    }*/
+
+                                    // 跳转到interCome
+                                    InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, data?.articleId)
                                 }
                             }
                         }
                     }
                 }
             })
-            // 气泡点击事件
-            // 气泡按钮点击事件
+            // 未读消息气泡点击事件
+            // 未读消息气泡按钮点击事件
             bubbleOnClickEvent.observe(viewLifecycleOwner) { clickEvent ->
                 if (clickEvent == false) return@observe
                 // 自定义开始种植弹窗
@@ -2255,6 +2274,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 加肥
                             UnReadConstants.Device.KEY_ADD_MANURE -> {
                                 plantFeed.show()
+                            }
+
+                            // 防烧模式
+                            UnReadConstants.Device.KEY_BURN_OUT_PROOF -> {
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
+                                // 直接跳转到日历
+                                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_SETTING)
+                                    .withBoolean("isScrollToBurn", true)
+                                    .navigation(activity)
                             }
 
                             UnReadConstants.Device.KEY_CHANGE_CUP_WATER -> {
@@ -2490,7 +2522,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         if (data?.size == 0) return@success
                         data?.take(7)?.map { Water("${it.oxygen}g", it.tips, it.loseEfficacy.toString(), it.orderNo, it.oxygen.toString(), it.tips) }?.toMutableList()?.let {
                             binding.pplantNinth.waterView.apply {
-                                setDestroyPoint(WaterView.VIEW_SELF)
+                                setDestroyPoint(WaterView.VIEW_CENTER)
                                 setDrawablePosition(WaterView.DRAWABLE_TOP)
                                 setViewAnimation(WaterView.TRANSLATE)
                                 setTextColor(Color.parseColor("#008961"))
@@ -2503,15 +2535,33 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 点击事件
                     binding.pplantNinth.waterView.apply {
-                        setClickListener { view, _, water ->
-                            setViewInterpolator(null)
-                            animRemoveView(view)
-                            if (water.loseEfficacy != "1") {
-                                getOxygenCoin(water.orderNo)
+                        setClickListener { view, position, water, mViews ->
+                            synchronized(context) {
+                                setViewInterpolator(null)
+                                mViews.remove(view)
+                                animRemoveView(view, position)
+                                binding.pplantNinth.tvOxy.text = "${water.oxygen.toInt() + binding.pplantNinth.tvOxy.text.toString().toInt()}"
+                                // 直接在次加载氧气币
+                                setViewCount(mViews.size)
+                                logI("mmview: ${mViews.size}")
+
+                                if (water.loseEfficacy != "1") {
+                                    getOxygenCoin(water.orderNo)
+                                }
                             }
                         }
                     }
                 }
+            })
+
+            getOxygenCoin.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    // 刷新氧气币
+                    if (viewCount.value == 0) {
+                        getOxygenCoinList()
+                    }
+                }
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
             })
 
             // 获取图文引导
@@ -3350,6 +3400,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
+                    ViewUtils.setVisible((data?.size ?: 0) == 0, binding.pplantNinth.waterView)
                     // 气泡会消失掉，需要防止当前点了之后，这是状态之后，气泡消失掉了，但是数据还保存着, 查找当前任务不在了，那么直接消失掉
                     if (data?.firstOrNull {
                             it.taskId == mViewMode.popPeriodStatus.value?.get(
@@ -3886,7 +3937,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 按钮
         binding.pplantNinth.tvBtnDesc.text =
-            if (UnReadConstants.Device.KEY_CHANGE_CUP_WATER == unRead?.type) {
+            if (UnReadConstants.Device.KEY_CHANGE_CUP_WATER == unRead?.type || UnReadConstants.Device.KEY_BURN_OUT_PROOF == unRead?.type) {
                 "Go"
             } else if (UnReadConstants.plantStatus.contains(unRead?.type)) {
                 "Unlock"

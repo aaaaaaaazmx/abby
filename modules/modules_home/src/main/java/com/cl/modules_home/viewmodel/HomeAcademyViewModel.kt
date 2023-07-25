@@ -33,42 +33,6 @@ class HomeAcademyViewModel @Inject constructor(private val repository: HomeRepos
     }
 
     /**
-     * 富文本图文图文接口、所用东西都是从接口拉取
-     */
-    private val _richText = MutableLiveData<Resource<RichTextData>>()
-    val richText: LiveData<Resource<RichTextData>> = _richText
-    fun getRichText(txtId: String? = null, type: String? = null) {
-        viewModelScope.launch {
-            repository.getRichText(txtId, type)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _richText.value = it
-                }
-        }
-    }
-
-    /**
      * 获取学院列表
      */
     private val _getAcademyList = MutableLiveData<Resource<MutableList<AcademyListData>>>()

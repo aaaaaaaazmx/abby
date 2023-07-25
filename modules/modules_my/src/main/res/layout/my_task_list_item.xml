@@ -35,7 +35,6 @@
             android:textStyle="bold"
             android:textColor="@color/mainColor"
             android:textSize="10sp"
-            android:text="@{String.valueOf(data.description)}"
             android:id="@+id/tv_task_name"
             android:ellipsize="end"
             android:maxLines="2"

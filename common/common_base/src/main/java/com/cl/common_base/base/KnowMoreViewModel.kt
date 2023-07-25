@@ -30,6 +30,15 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
     }
 
     /**
+     * 滑块的具体文案
+     */
+    private val _sliderText = MutableLiveData<String?>()
+    val sliderText: LiveData<String?> = _sliderText
+    fun getSliderText(txt: String?) {
+        _sliderText.value = txt
+    }
+
+    /**
      * 涂鸦信息
      */
     val tuYaUser by lazy {
@@ -54,9 +63,9 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
      */
     private val _richText = MutableLiveData<Resource<RichTextData>>()
     val richText: LiveData<Resource<RichTextData>> = _richText
-    fun getRichText(txtId: String? = null, type: String? = null) {
+    fun getRichText(txtId: String? = null, type: String? = null, taskId: String? = null) {
         viewModelScope.launch {
-            service.getRichText(txtId, type)
+            service.getRichText(taskId, txtId, type)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -278,6 +287,34 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
             )
         }.collectLatest {
             _updateDeviceInfo.value = it
+        }
+    }
+
+    /**
+     * 延迟任务
+     */
+    private val _delayTask = MutableLiveData<Resource<BaseBean>>()
+    val delayTask: LiveData<Resource<BaseBean>> = _delayTask
+    fun delayTask(req: SnoozeReq) = viewModelScope.launch {
+        service.snooze(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            _delayTask.value = it
         }
     }
 

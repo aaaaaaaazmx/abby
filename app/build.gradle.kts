@@ -126,7 +126,7 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro"
             )
-            isDebuggable = true
+            /*isDebuggable = true*/
             // 签名
             signingConfig = signingConfigs.getByName("abby")
         }

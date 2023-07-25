@@ -246,7 +246,15 @@ public class WaterView extends FrameLayout {
                     llTop.setVisibility(VISIBLE);
                     tvNumber.setBackgroundResource(mImageRes);
                     tvNumber.setText(water.getNumber());
-                    tvTip.setText(water.getName());
+                    String name = water.getName();
+                    if (name.contains(" ")) {
+                        String[] s = name.split(" ");
+                        String ss;
+                        for (String s1 : s) {
+                            ss = s1 + "\n";
+                            tvTip.append(ss);
+                        }
+                    }
                     break;
             }
             int finalI = i;
@@ -254,7 +262,7 @@ public class WaterView extends FrameLayout {
             waterView.setOnClickListener(view -> {
                 if (mClickListener != null) {
                     view.setClickable(false);
-                    mClickListener.clickListener(view, finalI, water);
+                    mClickListener.clickListener(view, finalI, water, mViews);
                 }
             });
             mViews.add(waterView);
@@ -448,7 +456,7 @@ public class WaterView extends FrameLayout {
      * @param view 需要移除的view
      */
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
-    public void animRemoveView(View view) {
+    public void animRemoveView(View view, int position) {
         float x = view.getX();
         float y = view.getY();
         Point point = new Point((int) x, (int) y);
@@ -551,7 +559,7 @@ public class WaterView extends FrameLayout {
     }
 
     public interface ClickListener {
-        void clickListener(View view, int finalI, Water water);
+        void clickListener(View view, int finalI, Water water, List<View> mViews);
     }
 
     public ClickListener mClickListener;

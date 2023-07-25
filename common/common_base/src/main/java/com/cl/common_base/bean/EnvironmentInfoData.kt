@@ -16,6 +16,7 @@ class EnvironmentInfoData(
     var environments: MutableList<Environment>? = null,
 ) : BaseBean() {
     data class Environment(
+        val isBurnProof: Int? = null, // 是否开启防烧模式
         var fanIntake: Int? = null,
         var fanExhaust: Int? = null,
         val detectionValue: String? = null,

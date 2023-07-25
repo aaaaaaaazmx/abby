@@ -11,6 +11,7 @@ data class FinishPageData(
 ) : BaseBean() {
     data class ListBean(
         val learnMoreId: String?,
-        val title: String?
+        val title: String?,
+        val articleId: String? = null,
     )
 }

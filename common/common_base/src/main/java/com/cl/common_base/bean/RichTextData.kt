@@ -20,6 +20,7 @@ data class RichTextData(
         val value: Value? = null,
         var videoTag: Boolean = false,
         var videoPosition: Long? = null,
+        var isPreview: Boolean? = false, // 手动添加字段，在预览期间不要显示延迟item （not ready, remind me later）
     ) : BaseBean(), MultiItemEntity {
         override val itemType: Int
             get() = when (type) {
@@ -40,6 +41,7 @@ data class RichTextData(
                 "buttonJump" -> KEY_TYPE_BUTTON_JUMP
                 "option" -> KEY_TYPE_CHECK_BOX
                 "inputBox" -> KEY_TYPE_INPUT_BOX
+                "snooze" -> KEY_TYPE_DELAY_TASK
                 else -> KEY_TYPE_BAR
             }
     }
@@ -130,6 +132,9 @@ data class RichTextData(
 
         // 这是个不知名的类型，ui展示为一个输入框
         const val KEY_TYPE_INPUT_BOX = 18
+
+        // 推迟延迟任务类型文案
+        const val KEY_TYPE_DELAY_TASK = 19
 
         // 自己创建的类型
         // 与商民的无关

@@ -100,6 +100,7 @@ object UnReadConstants {
     object Device {
         const val KEY_CHANGING_WATER = "change_water"
         const val KEY_CHANGE_CUP_WATER = "change_cup_water"
+        const val KEY_BURN_OUT_PROOF = "burn_out_proof"
         const val KEY_ADD_WATER = "add_water"
         const val KEY_ADD_MANURE = "add_manure"
 

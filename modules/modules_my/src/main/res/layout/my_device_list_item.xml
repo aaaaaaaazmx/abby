@@ -152,9 +152,9 @@
 
             <ImageView
                 android:id="@+id/iv_jiqi"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/my_jiqi"
+                android:layout_width="116dp"
+                android:layout_height="127dp"
+                android:background='@{data.deviceType.equals("OG") ? @drawable/my_jiqi_oi : @drawable/my_jiqi}'
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title" />
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,9 +10,15 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.ext.logI
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -177,6 +183,7 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
                 }
         }
     }
+
 
 
     // 是否移除了自己
