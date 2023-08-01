@@ -90,9 +90,9 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         }
         binding.ftOxy.setOnClickListener {
             // 跳转到氧气币种
-           /* context?.let {
+            context?.let {
                 startActivity(Intent(it, OxygenListActivity::class.java))
-            }*/
+            }
         }
     }
 

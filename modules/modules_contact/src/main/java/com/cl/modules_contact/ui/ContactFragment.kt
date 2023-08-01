@@ -114,7 +114,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
             // 添加分割线
             //添加自定义分割线
             val divider = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-            divider.setDrawable(ContextCompat.getDrawable(context, R.drawable.custom_divider)!!)
+            divider.setDrawable(ContextCompat.getDrawable(context, com.cl.common_base.R.drawable.custom_divider)!!)
             addItemDecoration(divider)
             /*this@ContactFragment.adapter.setHasStableIds(true)*/
             this@ContactFragment.adapter.setAnimationWithDefault(BaseQuickAdapter.AnimationType.AlphaIn)
@@ -280,13 +280,13 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.cl_avatar -> {
                     // todo 点击头像、跳转到自己的空间， 用userID来区别是跳转到自己的，还是别人的
-                    /* if (item?.userId == mViewMode.userinfoBean?.userId) {
+                     if (item?.userId == mViewMode.userinfoBean?.userId) {
                          context?.startActivity(Intent(context, MyJourneyActivity::class.java))
                      } else {
                          val intent = Intent(context, OtherJourneyActivity::class.java)
                          intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
                          context?.startActivity(intent)
-                     }*/
+                     }
                 }
 
                 R.id.cl_env -> {
@@ -464,7 +464,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
             .maxHeight((XPopupUtils.getScreenHeight(context) * 0.9f).toInt())
             .asCustom(
                 context?.let {
-                    CommentPop(it, item?.id, onDismissAction = { commentListData ->
+                    CommentPop(it, item?.userId == mViewMode.userinfoBean?.userId, item?.id, onDismissAction = { commentListData ->
                         // 更新当前position
                         val commentsList = this@ContactFragment.adapter.data[position].comments
                         if (commentListData?.size == 0) return@CommentPop

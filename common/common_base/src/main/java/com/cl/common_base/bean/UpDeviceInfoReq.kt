@@ -25,6 +25,7 @@ data class UpDeviceInfoReq(
     var plantId: Int? = null, // 植物ID， 主要用于在设备列表里面修改植物名称
     var proMode: String? = null, // 专业模式
     var fanAuto: Int? = null, // 风扇是否自动
+    var burnOutProof: Int? = null, // 防烧模式是否开启
 ) : BaseBean() {
 
     data class InfoList(

@@ -128,7 +128,7 @@
             android:layout_height="250dp">
         <com.youth.banner.Banner
             app:banner_indicator_height="6dp"
-            app:banner_indicator_normal_color="#E6EFEC"
+            app:banner_indicator_normal_color="#99006241"
             app:banner_indicator_selected_color="@color/mainColor"
             android:id="@+id/banner"
             android:layout_width="match_parent"

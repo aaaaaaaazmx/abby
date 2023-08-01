@@ -3,7 +3,6 @@ package com.cl.common_base.base
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -11,9 +10,12 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.ViewDataBinding
 import com.alibaba.android.arouter.launcher.ARouter
@@ -27,6 +29,7 @@ import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.orhanobut.logger.Logger
 import java.lang.ref.WeakReference
 import java.lang.reflect.ParameterizedType
+
 
 abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBinding<VB> {
 
@@ -163,6 +166,13 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
 
         StatusBarUtil.setColor(this, Color.TRANSPARENT, 0)
         StatusBarUtil.setLightMode(this)
+        /*底部导航栏为白色*/
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val window: Window = this.window
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            window.navigationBarColor = ContextCompat.getColor(this, R.color.white)
+        }
        /* if (!StatusBarUtil.hasVirtualNavigation(this)) {
             StatusBarUtil.transparentNavBar(this)
         }*/

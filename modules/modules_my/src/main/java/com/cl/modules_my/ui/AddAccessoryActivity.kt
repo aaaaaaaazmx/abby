@@ -199,11 +199,9 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                         )
                                         intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
 
-                                        accessoryList?.firstOrNull { it.accessoryId == itemData?.accessoryId }?.apply {
-                                            // 跳转到摄像头界面
-                                            if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == false && itemData?.accessoryName == "Smart Camera") {
-                                                intent.putExtra(BasePopActivity.KEY_CAMERA_ID, accessoryDeviceId)
-                                            }
+                                        // 解绑的是传递过来的cameraId
+                                        accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }?.apply {
+                                            intent.putExtra(BasePopActivity.KEY_CAMERA_ID, accessoryDeviceId)
                                         }
 
                                         intent.putExtra(

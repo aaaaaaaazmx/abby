@@ -24,6 +24,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.RichTextData
+import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.databinding.BasePopActivityBinding
@@ -77,6 +78,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private val packetNo by lazy { intent.getStringExtra(KEY_PACK_NO) }
 
     /**
+     * 用于推迟任务包的编号
+     */
+    private val snoozeNo by lazy { intent.getStringExtra(KEY_TASK_NO) }
+
+    /**
      * 连续解锁任务包Id
      */
     private val isContinueUnlock by lazy { intent.getBooleanExtra(KEY_TASK_PACKAGE_ID, false) }
@@ -100,6 +106,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
      * 一系列的TaskId数组
      */
     private val taskIdList by lazy { (intent.getSerializableExtra(KEY_TASK_ID_LIST) as? MutableList<CalendarData.TaskList.SubTaskList>) ?: mutableListOf() }
+
+    /**
+     * 是否是预览
+     */
+    private val isPreview by lazy { intent.getBooleanExtra(KEY_PREVIEW, false) }
 
 
     /**
@@ -126,13 +137,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         binding.ivClose.setOnClickListener { directShutdown() }
 
         // 是否展示固定按钮、是否展示滑动解锁
-        ViewUtils.setVisible(isShowButton, binding.btnNext)
-        ViewUtils.setVisible(isShowUnlockButton, binding.slideToConfirm)
+        ViewUtils.setVisible(isShowButton && !isPreview, binding.btnNext)
+        ViewUtils.setVisible(isShowUnlockButton && !isPreview, binding.slideToConfirm)
         binding.btnNext.text = showButtonText ?: "Next"
         binding.btnNext.setOnClickListener {
             fixedProcessingLogic()
         }
-        binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")
+        /*binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")*/
         binding.slideToConfirm.slideListener = object : ISlideListener {
             override fun onSlideStart() {
             }
@@ -233,6 +244,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 继续是富文本任务
                     val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                    intent.putExtra(KEY_TASK_ID, taskId)
+                    intent.putExtra(KEY_TASK_NO, taskIdList[0].taskNo)
                     intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
                     intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                     intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
@@ -351,6 +364,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 success { // 跳转到换水页面
                     android.os.Handler().postDelayed({ // 传递的数据为空
                         val intent = Intent(this@BasePopActivity, BasePumpActivity::class.java)
+                        intent.putExtra(KEY_TASK_ID, taskId)
                         intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
                         intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
                         intent.putExtra(KEY_PACK_NO, packetNo)
@@ -358,6 +372,18 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
                         refreshActivityLauncher.launch(intent)
                     }, 50)
+                }
+            })
+
+            // 延迟任务
+            delayTask.observe(this@BasePopActivity, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    if (isContinueUnlock) {
+                        // 跳转到日历界面
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+                        return@success
+                    }
                 }
             })
 
@@ -388,6 +414,12 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         value?.url?.let { initVideo(it, value.autoplay == true) }
                     }
 
+                    // 滑动结果按钮文案
+                    mViewModel.getSliderText(data.topPage?.firstOrNull { it.type == "finishTask" }?.let {
+                        binding.slideToConfirm.setEngageText(it.value?.txt ?: "Slide to Unlock")
+                        it.value?.txt
+                    })
+
                     // 标题
                     data.bar?.let {
                         binding.tvTitle.text = it
@@ -398,17 +430,20 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     // 不是video的都需要添加
                     val list = data.topPage?.filter { it.type != "video" }
                     list?.forEachIndexed { _, topPage ->
-                        val tv = TextView(this@BasePopActivity)
-                        tv.setBackgroundResource(R.drawable.create_state_button)
-                        tv.isEnabled = true
-                        tv.text = topPage.value?.txt
-                        val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(60))
-                        lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
-                        tv.layoutParams = lp
-                        tv.gravity = Gravity.CENTER
-                        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
-                        tv.setTextColor(Color.WHITE)
-                        binding.flRoot.addView(tv)
+                        if (!isPreview) {
+                            // 参考KnowMoreActivity
+                          /*  val tv = TextView(this@BasePopActivity)
+                            tv.setBackgroundResource(R.drawable.create_state_button)
+                            tv.isEnabled = true
+                            tv.text = topPage.value?.txt
+                            val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(60))
+                            lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
+                            tv.layoutParams = lp
+                            tv.gravity = Gravity.CENTER
+                            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
+                            tv.setTextColor(Color.WHITE)
+                            binding.flRoot.addView(tv)*/
+                        }
                     }
                     binding.flRoot.children.forEach {
                         val tv = (it as? TextView)
@@ -438,7 +473,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
 
                     // 适配器设置数据
-                    adapter.setList(data.page)
+                   data.page?.map { it.copy(isPreview = isPreview) }?.let { adapter.setList(it) }
                 }
             })
 
@@ -481,7 +516,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     }
 
     override fun initData() {
-        mViewModel.getRichText(txtId = txtId, type = txtType)
+        mViewModel.getRichText(taskId = taskId, txtId = txtId, type = txtType)
 
         binding.rvList.layoutManager = linearLayoutManager
         binding.rvList.adapter = adapter
@@ -516,7 +551,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt, R.id.input_delete)
+            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt, R.id.input_delete, R.id.tv_delay_task)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
@@ -589,6 +624,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         context.startActivity(intent)
                     }
+
+                    R.id.tv_delay_task -> {
+                        // 延迟任务
+                        mViewModel.delayTask(SnoozeReq(taskId = taskId, taskNo = snoozeNo))
+                    }
                 }
             }
         }
@@ -644,6 +684,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private fun directShutdown() {
         if (isContinueUnlock) {
             ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+            finish()
             return
         }
         finish()
@@ -714,13 +755,22 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         // 传递一个数组，这个数组里面有一系列的taskId
         const val KEY_TASK_ID_LIST = "key_task_id_list"
 
+        // 所有任务类型获取富文本展示接口的时候，都需要taskId
+        const val KEY_TASK_ID = "key_task_id"
+
         // 连续解锁任务包ID
         const val KEY_TASK_PACKAGE_ID = "key_task_package_id"
 
         // packNo的id
         const val KEY_PACK_NO = "key_pack_no"
 
+        // taskNo 子任务编号，用于推迟任务
+        const val KEY_TASK_NO = "key_task_no"
+
         // 当富文本里包含input_box时，才需要传入这个值
         const val KEY_INPUT_BOX = "key_input_box"
+
+        // 只是起到预览, 不限时not ready 也不显示按钮
+        const val KEY_PREVIEW = "key_preview"
     }
 }

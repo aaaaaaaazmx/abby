@@ -25,6 +25,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
@@ -32,6 +34,7 @@ import com.cl.common_base.bean.UpdateReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.databinding.BasePopPumpActivityBinding
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
@@ -231,6 +234,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     /*mViewMode.getGuideInfo(it)*/
                                     val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                                     intent.putExtra(Constants.Global.KEY_TXT_TYPE, it)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_ID, mViewMode.taskId.value)
                                     startActivity(intent)
                                 }
                             }
@@ -250,10 +254,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     android.os.Handler().postDelayed({
                         // 传递的数据为空
                         val intent = Intent(this@CalendarActivity, BasePumpActivity::class.java)
+                        intent.putExtra(BasePopActivity.KEY_TASK_ID, mViewMode.taskId.value)
                         intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, mViewMode.saveUnlockTask.value as? Serializable)
                         intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, mViewMode.taskId.value)
                         intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
                         intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
+                        intent.putExtra(BasePopActivity.KEY_TASK_NO, mViewMode.taskNo.value)
                         refreshActivityLauncher.launch(intent)
                     }, 50)
                     /*pop
@@ -568,6 +574,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 this@CalendarActivity,
                                                 BasePopActivity::class.java
                                             )
+                                            intent.putExtra(BasePopActivity.KEY_TASK_ID, mViewMode.taskId.value)
                                             intent.putExtra(
                                                 Constants.Global.KEY_TXT_ID,
                                                 Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK
@@ -694,8 +701,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                         }
 
-                        // todo 解锁周期后弹出图文广告
-                        val status = mViewMode.guideInfoStatus.value
+                        // todo 解锁周期后弹出图文广告, 现在这个预告直接是做成了任务
+                        /*val status = mViewMode.guideInfoStatus.value
                         if (status.isNullOrEmpty()) return@launch
                         val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                         when (status) {
@@ -718,7 +725,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                             CalendarData.TASK_TYPE_CHECK_CHECK_CURING -> {
                             }
-                        }
+                        }*/
                     }
                 }
             })
@@ -1237,7 +1244,27 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                     val rvTaskList = holder.rightLayout.findViewById<RecyclerView>(R.id.rv_task_list)
                     rvTaskList.layoutManager = LinearLayoutManager(this@CalendarActivity)
-                    rvTaskList.adapter = TaskListAdapter(listContent[position].subTaskList)
+                    val taskListAdapter = TaskListAdapter(listContent[position].subTaskList)
+                    rvTaskList.adapter = taskListAdapter
+
+                    taskListAdapter.addChildClickViewIds(R.id.tv_task_name)
+                    taskListAdapter.setOnItemChildClickListener { adapter, view, position ->
+                        // taskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER
+                        val taskData = (adapter.data as? MutableList<CalendarData.TaskList.SubTaskList>)
+                        when (view.id) {
+                            R.id.tv_task_name -> {
+                                if (taskData?.get(position)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
+                                    // 请求接口
+                                    mViewMode.advertising()
+                                } else {
+                                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, taskData?.get(position)?.textId)
+                                    intent.putExtra(BasePopActivity.KEY_PREVIEW, true)
+                                    startActivity(intent)
+                                }
+                            }
+                        }
+                    }
 
                     when (listContent[position].taskStatus) {
                         // (1-已完成、0-未完成可操作、2-未完成不可操作)
@@ -1305,6 +1332,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 taskData.packetCondition?.taskPackes?.get(0)?.apply {
                                                     val taskList = packetNo?.subTaskList
                                                     mViewMode.setPacketNo(packetNo?.packetNo)
+                                                    mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
                                                     if (taskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
                                                         mViewMode.setSaveUnlockTask(taskList)
                                                         changWaterAddWaterAddpump()
@@ -1316,6 +1344,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                                                     val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                                                     intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
+                                                    intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
                                                     intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
                                                     intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
                                                     intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
@@ -1323,6 +1352,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                                    intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
                                                     refreshActivityLauncher.launch(intent)
                                                 }
                                             },
@@ -1330,6 +1360,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 taskData.packetCondition?.taskPackes?.get(1)?.apply {
                                                     val taskList = packetNo?.subTaskList
                                                     mViewMode.setPacketNo(packetNo?.packetNo)
+                                                    mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
                                                     if (taskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
                                                         mViewMode.setSaveUnlockTask(taskList)
                                                         changWaterAddWaterAddpump()
@@ -1339,6 +1370,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     }
 
                                                     val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                                    intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
                                                     intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
                                                     intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
@@ -1347,6 +1379,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
                                                     intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
                                                     intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
+                                                    intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
                                                     refreshActivityLauncher.launch(intent)
                                                 }
                                             },
@@ -1359,6 +1392,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     ).show()
                             } else {
                                 val taskList = taskData.subTaskList
+                                mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
 
                                 XPopup.Builder(this@CalendarActivity)
                                     .asCustom(
@@ -1383,12 +1417,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 }
                                                 val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                                                 intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
+                                                intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
                                                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
                                                 intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
                                                 intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
                                                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                                intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
                                                 refreshActivityLauncher.launch(intent)
                                             },
                                             twoLineCLickEventAction = {

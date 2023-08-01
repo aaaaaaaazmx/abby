@@ -32,10 +32,6 @@ class HomeRemoteRepository @Inject constructor() {
         return service.updateDeviceInfo(body)
     }
 
-    fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
-        return service.getRichText(txtId, type)
-    }
-
     fun saveOrUpdate(body: String): Flow<HttpResult<BaseBean>> {
         return service.saveOrUpdate(body)
     }
@@ -185,5 +181,13 @@ class HomeRemoteRepository @Inject constructor() {
 
     fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
         return service.getAccessoryInfo(deviceId)
+    }
+
+    fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>> {
+        return service.oxygenCoinList()
+    }
+
+    fun getGrantOxygen(orderNo: String): Flow<HttpResult<BaseBean>> {
+        return service.getGrantOxygen(orderNo)
     }
 }

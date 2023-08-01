@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.bean.WallpaperListBean
 import com.cl.common_base.constants.Constants
@@ -13,8 +12,8 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
-import com.cl.modules_my.repository.OxygenCoinBillList
-import com.cl.modules_my.request.AccountFlowingReq
+import com.cl.common_base.bean.OxygenCoinBillList
+import com.cl.common_base.bean.AccountFlowingReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -140,4 +139,14 @@ class OxyGenListViewModel@Inject constructor(private val repository: MyRepositor
                 _oxygenCoinBillList.value = it
             }
     }
+
+
+
+    // 更改Current页码
+    private val _updateCurrent = MutableLiveData<Int>(1)
+    val updateCurrent: LiveData<Int> = _updateCurrent
+    fun updateCurrent(current: Int) {
+        _updateCurrent.value = current
+    }
+
 }

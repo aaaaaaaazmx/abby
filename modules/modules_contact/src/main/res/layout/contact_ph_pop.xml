@@ -66,7 +66,7 @@
             app:isb_thumb_drawable="@mipmap/bbbbb"
             app:isb_thumb_size="27dp"
             app:isb_thumb_text_color="@color/black"
-            app:isb_track_background_color="#E6EFEC"
+            app:isb_track_background_color="#99006241"
             app:isb_track_background_size="5dp"
             app:isb_track_progress_color="#008961"
             app:isb_track_progress_size="5dp"

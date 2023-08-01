@@ -49,6 +49,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         addItemType(RichTextData.KEY_TYPE_BUTTON_JUMP, R.layout.home_itme_button_jump) // 按钮跳转
         addItemType(RichTextData.KEY_TYPE_CHECK_BOX, R.layout.home_item_chexk_box)
         addItemType(RichTextData.KEY_TYPE_INPUT_BOX, R.layout.home_item_input_box)
+        addItemType(RichTextData.KEY_TYPE_DELAY_TASK, R.layout.home_item_delay_task)
         /*addItemType(RichTextData.KEY_TYPE_PAGE_TXT, R.layout.home_itme_page_txt)*/
     }
 
@@ -63,6 +64,15 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                     binding.executePendingBindings()
                 }
             }
+            RichTextData.KEY_TYPE_DELAY_TASK -> {
+                val binding = DataBindingUtil.bind<HomeItemDelayTaskBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
             RichTextData.KEY_TYPE_TITLE -> {
                 val binding = DataBindingUtil.bind<HomeTitleItemBinding>(holder.itemView)
                 if (binding != null) {

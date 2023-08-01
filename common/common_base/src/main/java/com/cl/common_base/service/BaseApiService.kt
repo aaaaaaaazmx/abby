@@ -27,6 +27,7 @@ interface BaseApiService {
      */
     @GET("abby/richText/getRichText")
     fun getRichText(
+        @Query("taskId") taskId: String? = null,
         @Query("txtId") txtId: String? = null,
         @Query("txtType") txtType: String? = null
     ): Flow<HttpResult<RichTextData>>
@@ -104,4 +105,11 @@ interface BaseApiService {
      */
     @POST("abby/moments/reward")
     fun reward(@Body requestBody: RewardReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 延迟任务
+     */
+    @POST("abby/calendar/snooze")
+    fun snooze(@Body requestBody: SnoozeReq): Flow<HttpResult<BaseBean>>
+
 }

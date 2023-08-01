@@ -1,4 +1,4 @@
-package com.cl.modules_my.repository
+package com.cl.common_base.bean
 
 data class RunnerWater(
     val oxygen: String,

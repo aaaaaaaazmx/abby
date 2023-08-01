@@ -38,13 +38,6 @@ interface HttpHomeApiService {
     @POST("abby/guide/getGuideInfo")
     fun getGuideInfo(@Field("type") type: String): Flow<HttpResult<GuideInfoData>>
 
-
-    /**
-     * 富文本图文接口 统一
-     */
-    @GET("abby/richText/getRichText")
-    fun getRichText(@Query("txtId")txtId: String? = null, @Query("txtType") txtType: String? = null): Flow<HttpResult<RichTextData>>
-
     /**
      * 上报引导标记
      */
@@ -283,4 +276,23 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/accessory/getAccessoryInfo")
     fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
+
+    /**
+     * 获取氧气币列表
+     */
+    @POST("abby/oxygenGrant/getGrantOxygenList")
+    fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>>
+
+    /**
+     * 领取氧气币
+     */
+    @FormUrlEncoded
+    @POST("abby/oxygenGrant/getGrantOxygen")
+    fun getGrantOxygen(@Field("orderNo") orderNo: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取氧气币账单流水
+     */
+    @POST("abby/account/getAccountFlowing")
+    fun oxygenCoinBillList(@Body req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>>
 }

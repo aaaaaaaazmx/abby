@@ -37,13 +37,24 @@
                 android:textColor="@color/mainColor"
                 android:textSize="26sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@id/iv_device_list"
+                app:layout_constraintEnd_toStartOf="@id/iv_camera"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                android:layout_marginEnd="24dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_title"
                 app:layout_constraintTop_toTopOf="@+id/tv_title"
+                app:layout_constraintEnd_toEndOf="@+id/iv_device_list"
+                app:layout_constraintEnd_toStartOf="@+id/iv_device_list"
+                android:background="@mipmap/home_camera_bg"
+                android:id="@+id/iv_camera"
+                android:layout_width="28dp"
+                android:layout_height="28dp"/>
+
+            <ImageView
+                app:layout_constraintBottom_toBottomOf="@+id/iv_camera"
+                app:layout_constraintTop_toTopOf="@+id/iv_camera"
                 android:id="@+id/iv_device_list"
                 android:layout_width="28dp"
                 android:layout_height="28dp"
@@ -56,10 +67,13 @@
             <RelativeLayout
                 app:layout_constraintRight_toLeftOf="@+id/rl_period"
                 android:id="@+id/rl_inch"
-                android:layout_width="144dp"
+                android:minWidth="144dp"
+                android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_marginTop="18dp"
+                android:layout_marginEnd="40dp"
                 android:background="@drawable/background_white_r6"
+                app:layout_constraintEnd_toStartOf="@+id/rl_period"
                 app:layout_constraintStart_toStartOf="@+id/tv_title"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title">
 
@@ -98,15 +112,17 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:layout_marginTop="18dp"
+                app:layout_constraintStart_toEndOf="@+id/rl_inch"
                 android:id="@+id/rl_period"
+                android:minWidth="144dp"
                 app:layout_constraintLeft_toRightOf="@+id/rl_inch"
-                android:layout_marginStart="10dp"
-                android:layout_width="144dp"
+                android:layout_width="0dp"
                 android:layout_height="64dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/background_white_r6"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/rl_inch">
+                app:layout_constraintTop_toBottomOf="@+id/tv_title">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -138,7 +154,7 @@
                 android:layout_marginTop="22dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/background_white_r6"
-                app:layout_constraintTop_toBottomOf="@+id/rl_inch">
+                app:layout_constraintTop_toBottomOf="@+id/rl_period">
 
                 <TextView
                     android:id="@+id/tv_grow"
@@ -352,7 +368,7 @@
                     app:isb_thumb_size="27dp"
                     app:isb_ticks_count="10"
                     app:isb_max="10"
-                    app:isb_track_background_color="#E6EFEC"
+                    app:isb_track_background_color="#99006241"
                     app:isb_track_background_size="5dp"
                     app:isb_track_progress_color="#008961"
                     app:isb_track_progress_size="5dp"
@@ -429,7 +445,7 @@
                     app:isb_thumb_drawable="@mipmap/bbbbb"
                     app:isb_thumb_size="27dp"
                     app:isb_ticks_count="10"
-                    app:isb_track_background_color="#E6EFEC"
+                    app:isb_track_background_color="#99006241"
                     app:isb_track_background_size="5dp"
                     app:isb_track_progress_color="#008961"
                     app:isb_track_progress_size="5dp"
@@ -547,7 +563,7 @@
                     app:isb_thumb_drawable="@mipmap/bbbbb"
                     app:isb_thumb_size="27dp"
                     app:isb_ticks_count="10"
-                    app:isb_track_background_color="#E6EFEC"
+                    app:isb_track_background_color="#99006241"
                     app:isb_track_background_size="5dp"
                     app:isb_track_progress_color="#008961"
                     app:isb_track_progress_size="5dp"

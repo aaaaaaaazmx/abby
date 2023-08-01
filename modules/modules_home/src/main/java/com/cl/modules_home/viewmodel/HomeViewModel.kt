@@ -32,6 +32,8 @@ import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.util.LinkedList
+import java.util.Queue
 import javax.inject.Inject
 
 
@@ -137,6 +139,85 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _repairSN.value = sn
     }
 
+    /**
+     * 获取氧气币列表
+     */
+    private val _getOxygenCoinList = MutableLiveData<Resource<MutableList<OxygenCoinListBean>>>()
+    val getOxygenCoinList: LiveData<Resource<MutableList<OxygenCoinListBean>>> = _getOxygenCoinList
+    fun getOxygenCoinList() {
+        viewModelScope.launch {
+            repository.oxygenCoinList()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _getOxygenCoinList.value = it
+                }
+        }
+    }
+
+
+    // 当前view的数量
+    private val _viewCount = MutableLiveData(0)
+    val viewCount: LiveData<Int> = _viewCount
+    fun setViewCount(count: Int) {
+        _viewCount.value = count
+    }
+
+    /**
+     * 领取氧气币
+     */
+    private val _getOxygenCoin = MutableLiveData<Resource<BaseBean>>()
+    val getOxygenCoin: LiveData<Resource<BaseBean>> = _getOxygenCoin
+    fun getOxygenCoin(body: String) {
+        viewModelScope.launch {
+            repository.getGrantOxygen(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _getOxygenCoin.value = it
+                }
+        }
+    }
 
     /**
      * 修改植物信息

@@ -138,7 +138,7 @@
                     android:layout_margin="20dp"
                     app:border_radius="100dp"
                     app:border_width="0dp"
-                    app:slider_background_color="#E6EFEC"
+                    app:slider_background_color="#99006241"
                     app:slider_color="@color/translucency_mainColor"
                     app:slider_lottie="lottie_x.json"
                     app:slider_image="@mipmap/home_unlock"

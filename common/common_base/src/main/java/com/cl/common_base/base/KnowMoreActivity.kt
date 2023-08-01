@@ -23,6 +23,7 @@ import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
+import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -112,6 +113,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private val cameraId by lazy { intent.getStringExtra(BasePopActivity.KEY_CAMERA_ID) }
 
+    /**
+     * 是否是预览
+     */
+    private val isPreview by lazy { intent.getBooleanExtra(BasePopActivity.KEY_PREVIEW, false) }
+
     @Inject
     lateinit var mViewMode: KnowMoreViewModel
 
@@ -135,6 +141,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         intent.getStringExtra(Constants.Global.KEY_TASK_ID)
     }
 
+    // taksNo
+    private val taskNo by lazy {
+        intent.getStringExtra(BasePopActivity.KEY_TASK_NO)
+    }
+
     override fun initView() {
         binding.ivBack.setOnClickListener {
             finish()
@@ -143,7 +154,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
         logI("txtId = $txtId, type = $txtType")
-        mViewMode.getRichText(txtId = txtId, type = txtType)
+        mViewMode.getRichText(txtId = txtId, type = txtType, taskId = null)
         // 学院任务一进来就已读。
         when (txtType) {
             CalendarData.TASK_TYPE_TEST -> {
@@ -152,13 +163,15 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         }
 
         // 是否展示固定按钮、是否展示滑动解锁
-        ViewUtils.setVisible(isShowButton, binding.btnNext)
-        ViewUtils.setVisible(isShowUnlockButton, binding.slideToConfirm)
+        ViewUtils.setVisible(isShowButton && !isPreview, binding.btnNext)
+        ViewUtils.setVisible(isShowUnlockButton && !isPreview, binding.slideToConfirm)
         binding.btnNext.text = showButtonText ?: "Next"
         binding.btnNext.setOnClickListener {
             fixedProcessingLogic()
         }
-        binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")
+        /*binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")*/
+        // 滑动解锁按钮的文案由后台下发
+        binding.slideToConfirm.setEngageText(mViewMode.sliderText.value ?: "Slide to Next")
         binding.slideToConfirm.slideListener = object : ISlideListener {
             override fun onSlideStart() {
             }
@@ -352,7 +365,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                 deviceId = mViewMode.tuyaHomeBean?.devId
                             )
                         )
-                        mViewMode.startRunning(botanyId = "", goon = false)
+                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                        /*mViewMode.startRunning(botanyId = "", goon = false)*/
                     }
                     // 新增配件
                     Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES -> {
@@ -400,6 +414,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            startRunning.observe(this@KnowMoreActivity, resourceObserver {
+                error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
+            })
+
             // 新增配件
             addAccessory.observe(this@KnowMoreActivity, resourceObserver {
                 loading { showProgressLoading() }
@@ -474,35 +492,45 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     if (null == data) return@success
 
                     // 初始化头部Video
-                    data?.topPage?.firstOrNull { it.type == "video" }?.apply {
+                    data.topPage?.firstOrNull { it.type == "video" }?.apply {
                         // 显示头部视频
                         binding.videoItemPlayer.visibility = View.VISIBLE
-                        value?.url?.let { initVideo(it, value?.autoplay == true) }
+                        value?.url?.let { initVideo(it, value.autoplay == true) }
                     }
-                    data?.bar?.let {
+                    data.bar?.let {
                         // todo 设置标题
                         binding.tvTitle.text = it
                     }
 
                     // 动态添加按钮
                     // 不是video的都需要添加
-                    val list = data?.topPage?.filter { it.type != "video" }
+                    val list = data.topPage?.filter { it.type != "video" }
                     list?.forEachIndexed { index, topPage ->
-                        val tv = TextView(this@KnowMoreActivity)
-                        tv.setBackgroundResource(R.drawable.create_state_button)
-                        tv.isEnabled = true
-                        tv.text = topPage.value?.txt
-                        val lp = LinearLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            dp2px(60)
-                        )
-                        lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
-                        tv.layoutParams = lp
-                        tv.gravity = Gravity.CENTER
-                        tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
-                        tv.setTextColor(Color.WHITE)
-                        binding.flRoot.addView(tv)
+                        if (!isPreview) {
+                            // 乱七八糟的，不管啥都返回这个这个
+                            /*val tv = TextView(this@KnowMoreActivity)
+                            tv.setBackgroundResource(R.drawable.create_state_button)
+                            tv.isEnabled = true
+                            tv.text = topPage.value?.txt
+                            val lp = LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                dp2px(60)
+                            )
+                            lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
+                            tv.layoutParams = lp
+                            tv.gravity = Gravity.CENTER
+                            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
+                            tv.setTextColor(Color.WHITE)
+                            binding.flRoot.addView(tv)*/
+                        }
                     }
+
+                    // 滑动结果按钮文案
+                    mViewMode.getSliderText(data.topPage?.firstOrNull { it.type == "finishTask" }?.let {
+                        binding.slideToConfirm.setEngageText(it.value?.txt ?: "Slide to Unlock")
+                        it.value?.txt
+                    })
+
                     binding.flRoot.children.forEach {
                         val tv = (it as? TextView)
                         tv?.setOnClickListener {
@@ -538,7 +566,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     }
 
                     // 适配器设置数据
-                    adapter.setList(data?.page)
+                    data.page?.map { it.copy(isPreview = isPreview) }?.let { adapter.setList(it) }
                 }
             })
         }
@@ -594,7 +622,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 R.id.cl_learn,
                 R.id.cl_check,
                 R.id.tv_page_txt,
-                R.id.tv_txt
+                R.id.tv_txt,
+                R.id.tv_delay_task
             )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
@@ -674,6 +703,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         context.startActivity(intent)
+                    }
+                    // 延迟任务
+                    R.id.tv_delay_task -> {
+                        // 应该是传过来的taskId
+                        mViewMode.delayTask(SnoozeReq(taskId = taskId, taskNo = taskNo))
                     }
                 }
             }

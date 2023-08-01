@@ -36,13 +36,6 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     }
 
     /**
-     * 获取富文本、统一图文接口
-     */
-    fun getRichText(txtId: String?, type: String?): Flow<HttpResult<RichTextData>> {
-        return remoteRepository.getRichText(txtId, type)
-    }
-
-    /**
      * 上报引导标记
      */
     fun saveOrUpdate(body: String): Flow<HttpResult<BaseBean>> {
@@ -262,5 +255,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
 
     fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
         return remoteRepository.getAccessoryInfo(deviceId)
+    }
+
+    fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>> {
+        return remoteRepository.oxygenCoinList()
+    }
+
+    fun getGrantOxygen(orderNo: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.getGrantOxygen(orderNo)
     }
 }

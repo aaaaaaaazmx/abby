@@ -1,11 +1,16 @@
 package com.cl.modules_my.ui
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.*
 import android.content.Intent.*
 import android.net.Uri
 import android.os.Handler
+import android.view.animation.LinearInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
@@ -63,6 +68,7 @@ import javax.inject.Inject
  * @author 李志军 2022-08-06 11:33
  */
 @AndroidEntryPoint
+@Route(path = RouterPath.My.PAGE_MY_DEVICE_SETTING)
 class SettingActivity : BaseActivity<MySettingBinding>() {
     @Inject
     lateinit var mViewModel: SettingViewModel
@@ -82,6 +88,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         GSON.parseObject(bean, AutomaticLoginData::class.java)
     }
 
+    /**
+     * 是否滚动到burner
+     */
+    private val isScrollToBurner by lazy {
+        intent.getBooleanExtra("isScrollToBurn", false)
+    }
 
     /**
      *  replant 弹窗
@@ -183,34 +195,48 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 当前版本号
         binding.ftVision.itemValue = AppUtil.appVersionName
         binding.ftSub.setPointClickListener {
-            pop.asCustom(
+            /*pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
                     isShowCancelButton = false,
                     confirmText = "OK",
                     content = "Digital service includes 1 on 1 expert support, oxygen coins, and exclusive digital assets and deals",
                 )
-            ).show()
+            ).show()*/
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_SERVICE)
         }
         binding.ftChildLock.setPointClickListener {
-            pop.asCustom(
+            /*pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
                     isShowCancelButton = false,
                     confirmText = "OK",
                     content = "When child lock is on, the door will  lock automatically when closed. The door can then only be opened via the app",
                 )
-            ).show()
+            ).show()*/
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_CHILD_LOCK)
         }
         binding.ftNight.setPointClickListener {
-            pop.asCustom(
+           /* pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
                     isShowCancelButton = false,
                     confirmText = "OK",
                     content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
                 )
-            ).show()
+            ).show()*/
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_NIGHT_MODE)
+        }
+        binding.ftBurner.setPointClickListener {
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_BURN_PROOF)
+            /*pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity,
+                    isShowCancelButton = false,
+                    confirmText = "OK",
+                    content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
+                )
+            ).show()*/
         }
 
         // 是否可以操作设备相关的功能
@@ -219,6 +245,25 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         mViewModel.setOffLine(isBind && isOnline)
 
         mViewModel.listDevice()
+
+
+        // 是否滚动到防烧模式
+        if (isScrollToBurner) {
+            binding.nes.post {
+                binding.nes.scrollTo(0, binding.llBurner.top)
+                ObjectAnimator.ofPropertyValuesHolder(
+                    binding.llBurner,
+                    PropertyValuesHolder.ofFloat("scaleX", 1f, 1.2f, 1f),
+                    PropertyValuesHolder.ofFloat("scaleY", 1f, 1.2f, 1f)
+                ).apply {
+                    duration = 100
+                    repeatCount = 2
+                    interpolator = LinearInterpolator()
+                    repeatMode = ValueAnimator.RESTART
+                }.start()
+            }
+        }
+
     }
 
     override fun observe() {
@@ -227,6 +272,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 success {
                     data?.firstOrNull { it.deviceId == tuyaHomeBean?.devId }?.let { deviceInfo ->
                         mViewModel.updateDevicesInfo(deviceInfo)
+
+                        // 是否显示防烧模式
+                        ViewUtils.setVisible(deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode != "On", binding.ftBurner)
+                        ViewUtils.setVisible(deviceInfo.burnOutProof == 1 && deviceInfo.proMode != "On", binding.tvBurnerDesc)
+
+                        // 防烧模式是否开启
+                        binding.ftBurner.isItemChecked = deviceInfo.burnOutProof == 1
+
                         // 显示当前的是否是手动模式
                         binding.itemTitle.text = if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
                         binding.ftName.itemValue = deviceInfo.plantName
@@ -403,7 +456,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             } else {
                                 if (isClickUpdate.value == true) {
                                     ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_appversion))
-                                } else {}
+                                } else {
+                                }
                             }
                         }
                     }
@@ -538,6 +592,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 )
             ).show()
         }
+
+        // 防烧模式
+        binding.ftBurner.setSwitchCheckedChangeListener { _, isChecked ->
+            ViewUtils.setVisible(isChecked, binding.tvBurnerDesc)
+            // 开启防烧模式
+            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = tuyaHomeBean?.devId, burnOutProof = if (isChecked) 1 else 0))
+        }
+
         // 童锁
         binding.ftChildLock.setSwitchCheckedChangeListener { _, isChecked ->
             // 是否打开童锁

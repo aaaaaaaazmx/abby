@@ -571,6 +571,13 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         _packetNo.value = packetNo
     }
 
+    // 记录taskNo
+    private val _taskNo = MutableLiveData<String?>()
+    val taskNo: LiveData<String?> = _taskNo
+    fun setTaskNo(taskNo: String?) {
+        _taskNo.value = taskNo
+    }
+
     /**
      * 保存解锁任务包
      */

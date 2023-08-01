@@ -1,6 +1,8 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.bean.UserinfoBean
@@ -13,6 +15,10 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 
 /**
@@ -44,6 +50,7 @@ class ChooseTimePop(
     //    private var turnHour = turnOffHour
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<MyChooseTimePopBinding>(popupImplView)?.apply {
@@ -184,12 +191,35 @@ class ChooseTimePop(
                  }
                  onConfirmAction?.invoke(ftTurnOn.itemValue, ftTurnOff.itemValue)
                  dismiss()*/
-
                 logI("turnOnHour: $turnOnHour,,,turnOffHour: $turnOffHour")
+
                 if (turnOnHour == turnOffHour) {
                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                     return@setOnClickListener
                 }
+
+                // 计算时间是否大于12个小时
+                val now = LocalDateTime.now()
+                val turn = if (turnOnHour == 24) 0 else turnOnHour
+                val turnOff = if (turnOffHour == 24) 0 else turnOffHour
+                val start = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turn ?: 0, 0) // 开始时间
+                var end = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turnOff ?: 0, 0) // 结束时间
+
+                if (start > end) {
+                    end = end.plusDays(1) // 如果结束时间小于开始时间，加一天
+                }
+
+                val duration = Duration.between(start, end) // 计算两个时间的差异
+                val hours = duration.toHours() // 转换为小时
+
+                logI("The difference is $hours hours.")
+
+                if (hours > 12) {
+                    // 差距超过12小时
+                    ToastUtil.shortShow("The time interval cannot be greater than 12 hours.")
+                    return@setOnClickListener
+                }
+
                 if (isTheSpacingHours) {
                     if ((turnOffHour?.minus(turnOnHour ?: 0) ?: 0) <= 12) {
                         val timeOpenHour = turnOnHour?.let {

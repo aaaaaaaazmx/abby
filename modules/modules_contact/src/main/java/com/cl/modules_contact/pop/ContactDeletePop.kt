@@ -5,6 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.hardware.camera2.params.DeviceStateSensorOrientationMap
 import androidx.databinding.DataBindingUtil
+import com.cl.common_base.util.ViewUtils
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactDeletePopBinding
 import com.lxj.xpopup.core.BubbleAttachPopupView
@@ -16,6 +17,7 @@ import com.lxj.xpopup.core.CenterPopupView
  */
 class ContactDeletePop(
     context: Context,
+    private val isShowDelete: Boolean? = true,
     private val onCopyAction: (() -> Unit)? = null,
     private val onDeleteAction: (() -> Unit)? = null,
 ) : BubbleAttachPopupView(context) {
@@ -27,6 +29,7 @@ class ContactDeletePop(
         super.onCreate()
 
         DataBindingUtil.bind<ContactDeletePopBinding>(popupImplView)?.apply {
+            ViewUtils.setVisible(isShowDelete == true, tvDelete, vv)
 
             tvDelete.setOnClickListener {
                 onDeleteAction?.invoke()

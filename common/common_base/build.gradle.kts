@@ -115,6 +115,7 @@ dependencies {
     api("androidx.core:core-splashscreen:1.0.0-beta02")
     // bugly
     api("com.tencent.bugly:crashreport:latest.release")
+    // todo 添加第三方依赖的时候，一定要注意不混淆下面依赖的类！！！！！！！ 不然正式环境会找不到混淆的类！
     api(project(mapOf("path" to ":common:BarcodeScanning")))
     /*api(project(mapOf("path" to ":common:kefu-easeui")))*/
     api(project(mapOf("path" to ":common:ipc")))

@@ -238,7 +238,7 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                         .isClickThrough(false)  //点击透传
                         .hasShadowBg(false) // 去掉半透明背景
                         .offsetY(0)
-                        .offsetX(- (view.measuredWidth / 2.2).toInt())
+                        .offsetX(-(view.measuredWidth / 2.2).toInt())
                         .atView(view)
                         .asCustom(
                             ContactDeletePop(this@ContactCommentActivity, onDeleteAction = {
@@ -687,22 +687,26 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
      * 获取内容
      */
     private fun getContents(content: String?, mentions: MutableList<com.cl.modules_contact.response.Mention>?): SpannableString {
-        content?.let {
-            val spannableString = SpannableString(content)
-            mentions?.forEach {
-                it.nickName?.let { nickName ->
-                    val colorSpan = ForegroundColorSpan(Color.parseColor("#006241"))
-                    val startIndex = spannableString.indexOf(nickName)
-                    var endIndex = spannableString.indexOf(" ", startIndex)
-                    if (endIndex == -1) {
-                        endIndex = spannableString.length
+        kotlin.runCatching {
+            content?.let {
+                val spannableString = SpannableString(content)
+                mentions?.forEach {
+                    it.nickName.let { nickName ->
+                        val colorSpan = ForegroundColorSpan(Color.parseColor("#006241"))
+                        val startIndex = spannableString.indexOf(nickName)
+                        var endIndex = spannableString.indexOf(" ", startIndex)
+                        if (endIndex == -1) {
+                            endIndex = spannableString.length
+                        }
+                        spannableString.setSpan(colorSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                     }
-                    spannableString.setSpan(colorSpan, startIndex, endIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 }
-            }
-            return spannableString
-        } ?: return SpannableString("")
-
+                return spannableString
+            } ?: return SpannableString("")
+        }.onFailure {
+            return SpannableString(content)
+        }
+        return SpannableString(content)
     }
 
 

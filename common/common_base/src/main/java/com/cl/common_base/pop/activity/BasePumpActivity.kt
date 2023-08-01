@@ -123,12 +123,22 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
     private val packNo by lazy { intent.getStringExtra(BasePopActivity.KEY_PACK_NO) }
 
     /**
+     * 用于推迟任务包的taskNo
+     */
+    private val taskNo by lazy { intent.getStringExtra(BasePopActivity.KEY_TASK_NO) }
+
+    /**
      * 传入过来的用于FinishTask的ViewDatas
      */
     private val viewDatas by lazy {
         val inputData = intent.getSerializableExtra(BasePopActivity.KEY_INPUT_BOX) as? MutableList<FinishTaskReq.ViewData>
         inputData ?: mutableListOf()
     }
+
+    /**
+     * 传递过来的taskId
+     */
+    private val taskId by lazy { intent.getStringExtra(BasePopActivity.KEY_TASK_ID) }
 
 
     /**
@@ -314,6 +324,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
 
                         // 跳转到富文本
                         val intent = Intent(this@BasePumpActivity, BasePopActivity::class.java)
+                        intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
                         intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskIdList as? Serializable)
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, fixedId)
@@ -323,6 +334,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                         intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                         intent.putExtra(BasePopActivity.KEY_PACK_NO, packNo)
+                        intent.putExtra(BasePopActivity.KEY_TASK_NO, taskIdList[0].taskNo)
                         startActivity(intent)
                         return
                     }
