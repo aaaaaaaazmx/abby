@@ -76,7 +76,7 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
 
 
         binding.unbindCamera.setOnClickListener {
-            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, "8074254")
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_BIND_CAMERA)
         }
     }
 

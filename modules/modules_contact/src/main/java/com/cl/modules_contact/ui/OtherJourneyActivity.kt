@@ -232,7 +232,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
                         // 没有加载了、或者加载完毕
                         if ((data?.records?.size ?: 0) <= 0) {
-                            binding.refreshLayout.finishLoadMoreWithNoMoreData()
+                            binding.refreshLayout.finishLoadMore()
                         } else {
                             binding.refreshLayout.finishLoadMore()
                         }
@@ -451,7 +451,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
     private fun toCommentPop(item: NewPageData.Records?, position: Int, adapter: BaseQuickAdapter<*, *>) {
         XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).moveUpToKeyboard(false).maxHeight((XPopupUtils.getScreenHeight(this@OtherJourneyActivity) * 0.9f).toInt()).asCustom(
-            CommentPop(this@OtherJourneyActivity, item?.id, onDismissAction = { commentListData -> // 更新当前position
+            CommentPop(this@OtherJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData -> // 更新当前position
                 val commentsList = this@OtherJourneyActivity.adapter.data[position].comments
                 if (commentListData?.size == 0) return@CommentPop
                 if (commentListData?.size == commentsList?.size) return@CommentPop // 实行替换操作

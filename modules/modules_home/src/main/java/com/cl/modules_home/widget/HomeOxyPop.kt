@@ -14,6 +14,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.web.WebActivity
@@ -47,10 +48,8 @@ class HomeOxyPop(context: Context) : BottomPopupView(context) {
         super.onCreate()
         DataBindingUtil.bind<HomeOxyPopBinding>(popupImplView)?.apply {
             flImg.setOnClickListener {  // 添加
-                val intent = Intent(context, WebActivity::class.java)
-                intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.OXYGEN_COIN_URL)
-                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
-                context.startActivity(intent) }
+                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_OXYGEN_COIN)
+            }
 
 
             rvWxCircle.apply {

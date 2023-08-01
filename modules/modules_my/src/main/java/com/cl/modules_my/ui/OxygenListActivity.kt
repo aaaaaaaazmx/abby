@@ -17,6 +17,7 @@ import com.cl.modules_my.R
 import com.cl.common_base.adapter.OxygenCoinBillAdapter
 import com.cl.modules_my.databinding.MyOxyGenActivityBinding
 import com.cl.common_base.bean.AccountFlowingReq
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.modules_my.viewmodel.OxyGenListViewModel
 import com.lxj.xpopup.XPopup
 import com.scwang.smart.refresh.footer.ClassicsFooter
@@ -39,11 +40,8 @@ class OxygenListActivity : BaseActivity<MyOxyGenActivityBinding>() {
     override fun initView() {
         binding.title.setRightButtonImg(com.cl.common_base.R.mipmap.mt_gth)
             .setRightClickListener {
-                // 添加
-                val intent = Intent(this@OxygenListActivity, WebActivity::class.java)
-                intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.OXYGEN_COIN_URL)
-                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
-                startActivity(intent)
+                // 跳转氧气币
+                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_OXYGEN_COIN)
             }
 
         // refresh

@@ -7,6 +7,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.text.SpannedString
 import android.text.TextUtils
+import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
 import androidx.core.content.ContextCompat.getSystemService
@@ -17,6 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildLongClickListener
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
@@ -44,6 +47,8 @@ import com.cl.modules_contact.service.HttpContactApiService
 import com.cl.modules_contact.ui.ContactCommentActivity
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
+import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.util.XPopupUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -54,9 +59,14 @@ import kotlinx.coroutines.launch
 
 /**
  * 动态首页聊天弹窗
+ *
+ * @param isSelfTrend 是否是自己发布的帖子
+ * @param momentId 动态ID
+ * @param onDismissAction 弹窗消失监听
  */
 class CommentPop(
     context: Context,
+    private val isSelfTrend: Boolean? = false,
     private val momentId: Int? = null,
     private val onDismissAction: ((data: MutableList<CommentByMomentData>?) -> Unit)? = null
 ) : BottomPopupView(context) {
@@ -95,7 +105,7 @@ class CommentPop(
 
     private val commentAdapter by lazy {
         // 包括内部的评论回复点击
-        ContactCommentAdapter(mutableListOf(),
+        ContactCommentAdapter(mutableListOf(), isSelfTrend,
             replyAction = { replyData ->
                 // 点击回复
                 XPopup.Builder(context)
@@ -148,19 +158,19 @@ class CommentPop(
                         })
                     ).show()
             },
-           /* onDeleteAction = {
-                // todo 删除评论, 需要是自己发的帖子
+            onDeleteAction = {
+                //  删除评论, 需要是自己发的帖子
                 it.replyId?.let { it1 -> deleteReply(it1) }
             },
             onCopyAction = {
-                // todo 复制评论，需要是自己发的帖子
+                // 复制评论，需要是自己发的帖子
                 // 复制内容
                 val cm: ClipboardManager? = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
                 // 创建普通字符型ClipData
                 val mClipData = ClipData.newPlainText("Connect", it.comment)
                 // 将ClipData内容放到系统剪贴板里。
                 cm?.setPrimaryClip(mClipData)
-            }*/
+            }
         )
     }
 
@@ -189,11 +199,49 @@ class CommentPop(
             )
         }.collectLatest {
             _deleteReplyData.value = it
-            when(it) {
+            when (it) {
                 is Resource.Success -> {
                     // 点赞成功
                     commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
                 }
+
+                else -> {}
+            }
+        }
+    }
+
+
+    /**
+     * 删除评论
+     */
+    private val _deleteCommentData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val deleteCommentData: LiveData<Resource<com.cl.common_base.BaseBean>> = _deleteCommentData
+    fun deleteComment(commentId: String) = lifecycleScope.launch {
+        service.deleteComment(commentId).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            _deleteCommentData.value = Resource.Loading()
+        }.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _deleteCommentData.value = it
+            when (it) {
+                is Resource.Success -> {
+                    // 点赞成功
+                    commentList(CommentByMomentReq(momentId = momentId, learnMoreId = null, size = 50, current = 1))
+                }
+
                 else -> {}
             }
         }
@@ -463,7 +511,7 @@ class CommentPop(
     /**
      * 弹出软键盘、评论
      */
-   private fun ContactPopCommentBinding.showSoft() {
+    private fun ContactPopCommentBinding.showSoft() {
         XPopup.Builder(context)
             .isDestroyOnDismiss(false)
             .dismissOnTouchOutside(true)
@@ -599,6 +647,62 @@ class CommentPop(
                 }
             }
         }
+
+        // 长按删除和回复的适配器
+        commentAdapter.addChildLongClickViewIds(R.id.tvDesc)
+        commentAdapter.setOnItemChildLongClickListener(OnItemChildLongClickListener { adapter, view, position ->
+            // 判断当前
+            val item = adapter.getItem(position) as? CommentByMomentData
+            when (view.id) {
+                R.id.tvDesc -> {
+                   /* if (item?.userId != userinfoBean?.userId && isSelfTrend == false) {
+                        return@OnItemChildLongClickListener false
+                    }*/
+                    // 长按弹窗
+                    XPopup.Builder(context)
+                        .popupPosition(PopupPosition.Top)
+                        .isDestroyOnDismiss(false)
+                        .dismissOnTouchOutside(true)
+                        .isCenterHorizontal(true)
+                        .isClickThrough(false)  //点击透传
+                        .hasShadowBg(false) // 去掉半透明背景
+                        .offsetY(0)
+                        .offsetX(-(view.measuredWidth / 2.2).toInt())
+                        .atView(view)
+                        .asCustom(
+                            ContactDeletePop(context,
+                                isShowDelete = !(item?.userId != userinfoBean?.userId && isSelfTrend == false),
+                                onDeleteAction = {
+                                //  删除评论
+                                item?.commentId?.let { deleteComment(it) }
+                            }, onCopyAction = {
+                                //  复制评论
+                                // 复制内容
+                                val cm: ClipboardManager? = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                // 创建普通字符型ClipData
+                                val mClipData = ClipData.newPlainText("Connect", item?.comment)
+                                // 将ClipData内容放到系统剪贴板里。
+                                cm?.setPrimaryClip(mClipData)
+                            }).setBubbleBgColor(context.getColor(com.cl.common_base.R.color.mainColor)) //气泡背景
+                                .setArrowWidth(XPopupUtils.dp2px(context, 3f))
+                                .setArrowHeight(
+                                    XPopupUtils.dp2px(
+                                        context,
+                                        3f
+                                    )
+                                )
+                                //.setBubbleRadius(100)
+                                .setArrowRadius(
+                                    XPopupUtils.dp2px(
+                                        context,
+                                        2f
+                                    )
+                                )
+                        ).show()
+                }
+            }
+            return@OnItemChildLongClickListener true
+        })
     }
 
 

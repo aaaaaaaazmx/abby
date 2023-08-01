@@ -195,37 +195,40 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 当前版本号
         binding.ftVision.itemValue = AppUtil.appVersionName
         binding.ftSub.setPointClickListener {
-            pop.asCustom(
+            /*pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
                     isShowCancelButton = false,
                     confirmText = "OK",
                     content = "Digital service includes 1 on 1 expert support, oxygen coins, and exclusive digital assets and deals",
                 )
-            ).show()
+            ).show()*/
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_SERVICE)
         }
         binding.ftChildLock.setPointClickListener {
-            pop.asCustom(
+            /*pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
                     isShowCancelButton = false,
                     confirmText = "OK",
                     content = "When child lock is on, the door will  lock automatically when closed. The door can then only be opened via the app",
                 )
-            ).show()
+            ).show()*/
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_CHILD_LOCK)
         }
         binding.ftNight.setPointClickListener {
-            pop.asCustom(
+           /* pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
                     isShowCancelButton = false,
                     confirmText = "OK",
                     content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
                 )
-            ).show()
+            ).show()*/
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_NIGHT_MODE)
         }
         binding.ftBurner.setPointClickListener {
-            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, "8153317")
+            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_BURN_PROOF)
             /*pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
@@ -272,7 +275,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                         // 是否显示防烧模式
                         ViewUtils.setVisible(deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode != "On", binding.ftBurner)
-                        ViewUtils.setVisible(deviceInfo.burnOutProof == 1, binding.tvBurnerDesc)
+                        ViewUtils.setVisible(deviceInfo.burnOutProof == 1 && deviceInfo.proMode != "On", binding.tvBurnerDesc)
 
                         // 防烧模式是否开启
                         binding.ftBurner.isItemChecked = deviceInfo.burnOutProof == 1

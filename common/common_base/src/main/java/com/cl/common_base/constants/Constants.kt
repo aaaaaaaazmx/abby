@@ -26,8 +26,6 @@ object Constants {
         private const val WEB_URL_MAIN = HttpUrl.WEB_PRODUCTION_URL
         const val PRIVACY_POLICY_URL = "${WEB_URL_MAIN}/protocol/privacyPolicy.html"
         const val PERSONAL_URL = "${WEB_URL_MAIN}/protocol/licenseAgreement.html"
-        // 氧气币html
-        const val OXYGEN_COIN_URL = "${WEB_URL_MAIN}/Explantion.html"
 
         // APP官网
         const val ABBY_OFFICIAL_WEBSITE = "https://heyabby.com/"
@@ -125,6 +123,30 @@ object Constants {
     object InterCome {
         // 未读消息监听
         const val KEY_INTER_COME_UNREAD_MESSAGE = "key_inter_come_unread_message"
+
+        // 氧气币文章
+        const val KEY_INTER_COME_OXYGEN_COIN = "8192180"
+
+        // 服务说明
+        const val KEY_INTER_COME_SERVICE = "8192210"
+
+        // 夜间模式说明
+        const val KEY_INTER_COME_NIGHT_MODE = "8099171"
+
+        // 童锁说明
+        const val KEY_INTER_COME_CHILD_LOCK = "8192703"
+
+        // 植物高度说明
+        const val KEY_INTER_COME_PLANT_HEIGHT = "8192750"
+
+        // 气泵说明
+        const val KEY_INTER_COME_AIR_PUMP = "8193071"
+
+        // 防烧模式说明
+        const val KEY_INTER_COME_BURN_PROOF = "8153317"
+
+        // 绑定摄像头相关问题说明
+        const val KEY_INTER_COME_BIND_CAMERA = "8074254"
     }
 
     // APP应用内消息

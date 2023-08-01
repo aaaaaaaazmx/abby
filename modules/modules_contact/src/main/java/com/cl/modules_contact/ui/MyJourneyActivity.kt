@@ -395,7 +395,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
             .enableDrag(false)
             .maxHeight((XPopupUtils.getScreenHeight(this@MyJourneyActivity) * 0.9f).toInt())
             .asCustom(
-                    CommentPop(this@MyJourneyActivity, item?.id, onDismissAction = { commentListData ->
+                    CommentPop(this@MyJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData ->
                         // 更新当前position
                         val commentsList = this@MyJourneyActivity.adapter.data[position].comments
                         if (commentListData?.size == 0) return@CommentPop

@@ -43,7 +43,7 @@
                 android:textSize="16sp" />
 
             <FrameLayout
-                android:layout_marginStart="5dp"
+                android:padding="5dp"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/fiv_item_title"
                 android:id="@+id/ff_end_drawable"

@@ -679,7 +679,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             tvAirPumpDesc.setOnClickListener {
-                pop.isDestroyOnDismiss(false)
+               /* pop.isDestroyOnDismiss(false)
                     .dismissOnTouchOutside(false)
                     .asCustom(
                         context?.let { it1 ->
@@ -692,11 +692,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 confirmText = "OK"
                             )
                         }
-                    ).show()
+                    ).show()*/
+
+                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_AIR_PUMP)
             }
 
             ivExclamationMark.setOnClickListener {
-                pop.isDestroyOnDismiss(false)
+               /* pop.isDestroyOnDismiss(false)
                     .dismissOnTouchOutside(false)
                     .asCustom(
                         context?.let { it1 ->
@@ -710,8 +712,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 confirmText = "OK"
                             )
                         }
-                    ).show()
+                    ).show()*/
 
+                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_PLANT_HEIGHT)
             }
 
             // 时间模式

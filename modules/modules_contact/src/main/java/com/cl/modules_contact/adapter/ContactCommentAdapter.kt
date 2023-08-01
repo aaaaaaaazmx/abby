@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.provider.ContactsContract.CommonDataKinds.Nickname
 import android.text.SpannedString
 import android.widget.CheckBox
+import androidx.camera.core.impl.utils.CameraOrientationUtil
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -14,6 +15,7 @@ import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
+import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.R
@@ -33,12 +35,18 @@ import com.lxj.xpopup.util.XPopupUtils
  */
 class ContactCommentAdapter(
     data: MutableList<CommentByMomentData>?,
+    private val isSelfTrend: Boolean? = false,
     private val replyAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
     private val likeAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
     private val giftAction: ((replyData: CommentByMomentData.Replys, view: CheckBox) -> Unit)? = null,
     private val onDeleteAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
     private val onCopyAction: ((replyData: CommentByMomentData.Replys) -> Unit)? = null,
 ) : BaseQuickAdapter<CommentByMomentData, BaseDataBindingHolder<ContactItemCommentBinding>>(R.layout.contact_item_comment, data) {
+
+    val userinfoBean by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        GSON.parseObject(bean, UserinfoBean::class.java)
+    }
 
     override fun convert(holder: BaseDataBindingHolder<ContactItemCommentBinding>, item: CommentByMomentData) {
         holder.dataBinding?.apply {
@@ -52,7 +60,6 @@ class ContactCommentAdapter(
         // 设置富文本
         holder.setText(R.id.tvDesc, getContents(item.commentName, item.parentComentId, item.comment, holder.layoutPosition))
         holder.setText(R.id.tv_create_time, convertTime(item.createTime))
-
 
         // 设置回复的适配器
         holder.getView<RecyclerView>(R.id.rv_reply).apply {
@@ -82,6 +89,9 @@ class ContactCommentAdapter(
                 val reply = adapter.data[position] as CommentByMomentData.Replys
                 when (view.id) {
                     R.id.tvDesc -> { // 长按弹窗啥的。
+                       /* if (reply.userId != userinfoBean?.userId && isSelfTrend == false) {
+                            return@setOnItemChildLongClickListener false
+                        }*/
                         // 长按弹窗
                         XPopup.Builder(context)
                             .popupPosition(PopupPosition.Top)
@@ -94,7 +104,9 @@ class ContactCommentAdapter(
                             .offsetX(- (view.measuredWidth / 2.2).toInt())
                             .atView(view)
                             .asCustom(
-                                ContactDeletePop(context, onDeleteAction = {
+                                ContactDeletePop(context,
+                                    isShowDelete = !(reply.userId != userinfoBean?.userId && isSelfTrend == false),
+                                    onDeleteAction = {
                                     onDeleteAction?.invoke(reply)
                                 }, onCopyAction = {
                                     onCopyAction?.invoke(reply)
