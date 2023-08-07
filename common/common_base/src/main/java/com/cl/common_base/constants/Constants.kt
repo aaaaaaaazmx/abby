@@ -343,8 +343,9 @@ object Constants {
 
     object FragmentIndex {
         const val HOME_INDEX = 0
-        const val CONTACT_INDEX = 1
-        const val MY_INDEX = 2
+        const val PLANT_LOG = 1
+        const val CONTACT_INDEX = 2
+        const val MY_INDEX = 3
     }
 
     // 视频后缀

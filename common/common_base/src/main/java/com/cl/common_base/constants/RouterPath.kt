@@ -106,6 +106,15 @@ class RouterPath {
     }
 
     /**
+     * 种植日志 组件
+     */
+    object Plant {
+        private const val PLANT = "modules_plant"
+        const val PAGE_PLANT = "/planting/$PLANT"
+    }
+
+
+    /**
      * 体系 组件
      */
     object Square {
