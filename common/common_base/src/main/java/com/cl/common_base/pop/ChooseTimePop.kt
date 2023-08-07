@@ -181,47 +181,59 @@ class ChooseTimePop(
                     .show()
             }
             btnSuccess.setOnClickListener {
-                // 需要判断2个时间间隔为12小时
-                /* val turnOn = format24Hour(ftTurnOn.itemValue.toInt(), 0).toInt()
-                 val turnOff = format24Hour(ftTurnOff.itemValue.toInt(), 0).toInt()
-                 val is12Exceed = (turnOff - turnOn) < 12
-                 if (!is12Exceed) {
-                     ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
-                     return@setOnClickListener
-                 }
-                 onConfirmAction?.invoke(ftTurnOn.itemValue, ftTurnOff.itemValue)
-                 dismiss()*/
-                logI("turnOnHour: $turnOnHour,,,turnOffHour: $turnOffHour")
+                kotlin.runCatching {
+                    logI("turnOnHour: $turnOnHour,,,turnOffHour: $turnOffHour")
 
-                if (turnOnHour == turnOffHour) {
-                    ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
-                    return@setOnClickListener
-                }
+                    if (turnOnHour == turnOffHour) {
+                        ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
+                        return@setOnClickListener
+                    }
 
-                // 计算时间是否大于12个小时
-                val now = LocalDateTime.now()
-                val turn = if (turnOnHour == 24) 0 else turnOnHour
-                val turnOff = if (turnOffHour == 24) 0 else turnOffHour
-                val start = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turn ?: 0, 0) // 开始时间
-                var end = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turnOff ?: 0, 0) // 结束时间
+                    // 计算时间是否大于12个小时
+                    val now = LocalDateTime.now()
+                    val turn = if (turnOnHour == 24) 0 else turnOnHour
+                    val turnOff = if (turnOffHour == 24) 0 else turnOffHour
+                    val start = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turn ?: 0, 0) // 开始时间
+                    var end = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turnOff ?: 0, 0) // 结束时间
 
-                if (start > end) {
-                    end = end.plusDays(1) // 如果结束时间小于开始时间，加一天
-                }
+                    if (start > end) {
+                        end = end.plusDays(1) // 如果结束时间小于开始时间，加一天
+                    }
 
-                val duration = Duration.between(start, end) // 计算两个时间的差异
-                val hours = duration.toHours() // 转换为小时
+                    val duration = Duration.between(start, end) // 计算两个时间的差异
+                    val hours = duration.toHours() // 转换为小时
 
-                logI("The difference is $hours hours.")
+                    logI("The difference is $hours hours.")
 
-                if (hours > 12) {
-                    // 差距超过12小时
-                    ToastUtil.shortShow("The time interval cannot be greater than 12 hours.")
-                    return@setOnClickListener
-                }
+                    if (hours > 12) {
+                        // 差距超过12小时
+                        ToastUtil.shortShow("The time interval cannot be greater than 12 hours.")
+                        return@setOnClickListener
+                    }
 
-                if (isTheSpacingHours) {
-                    if ((turnOffHour?.minus(turnOnHour ?: 0) ?: 0) <= 12) {
+                    if (isTheSpacingHours) {
+                        if ((turnOffHour?.minus(turnOnHour ?: 0) ?: 0) <= 12) {
+                            val timeOpenHour = turnOnHour?.let {
+                                if (it > 12) {
+                                    "$it:00 PM"
+                                } else {
+                                    "$it:00 AM"
+                                }
+                            }
+
+                            val timeCloseHour = turnOffHour?.let {
+                                if (it > 12) {
+                                    "$it:00 PM"
+                                } else {
+                                    "$it:00 AM"
+                                }
+                            }
+                            onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
+                            dismiss()
+                        } else {
+                            ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
+                        }
+                    } else {
                         val timeOpenHour = turnOnHour?.let {
                             if (it > 12) {
                                 "$it:00 PM"
@@ -239,27 +251,7 @@ class ChooseTimePop(
                         }
                         onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
                         dismiss()
-                    } else {
-                        ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
                     }
-                } else {
-                    val timeOpenHour = turnOnHour?.let {
-                        if (it > 12) {
-                            "$it:00 PM"
-                        } else {
-                            "$it:00 AM"
-                        }
-                    }
-
-                    val timeCloseHour = turnOffHour?.let {
-                        if (it > 12) {
-                            "$it:00 PM"
-                        } else {
-                            "$it:00 AM"
-                        }
-                    }
-                    onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
-                    dismiss()
                 }
             }
         }
