@@ -110,6 +110,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         logI(plantGuideFlag)
         // 查看是否需要显示红点
         mViewModel.setIsPlants(plantFlag != "0")
+
+        // 是否显示和隐藏种植Menu
+        val menu = binding.bottomNavigation.menu
+        menu.findItem(R.id.action_plant).isVisible = !firstLoginAndNoDevice
     }
 
     private val bubblePopHor by lazy {

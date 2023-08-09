@@ -1,21 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.cl.modules_planting_log.viewmodel.PlantingLogViewModel" />
+
+
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:ignore="MissingConstraints">
 
-        <TextView
-            android:layout_width="wrap_content"
+
+        <RelativeLayout
+            android:id="@+id/rl_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_bg"
+                android:layout_width="match_parent"
+                android:layout_height="109dp"
+                android:background="@mipmap/plant_bg">
+
+                <ImageView
+                    android:id="@+id/iv_get_plant_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:background="@mipmap/plant_list_bg"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_log"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_add_log" />
+
+                <ImageView
+                    android:id="@+id/iv_add_log"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:background="@mipmap/plant_add"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginStart="19dp"
+                android:layout_marginTop="84dp"
+                android:layout_marginEnd="19dp"
+                android:background="@drawable/background_white_r10">
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:visibility="@{viewModel.getPlantInfoByPlantId.data == null ? View.VISIBLE : View.GONE}"
+                    android:text="no Plant"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:textColor="#006241"
+                    android:textSize="26sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="gone"
+                    tools:text="Mary" />
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:visibility="@{viewModel.getPlantInfoByPlantId.data == null ? View.GONE : View.VISIBLE}"
+                    android:text='@{String.valueOf(viewModel.getPlantInfoByPlantId.data.plantName)}'
+                    android:id="@+id/tv_nick_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:textColor="#006241"
+                    android:textSize="26sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/vv_line"
+                    app:layout_constraintEnd_toStartOf="@+id/vv_line"
+                    app:layout_constraintTop_toTopOf="@+id/vv_line"
+                    tools:text="Mary" />
+
+
+                <View
+                    android:visibility="@{viewModel.getPlantInfoByPlantId.data == null ? View.GONE : View.VISIBLE}"
+                    android:id="@+id/vv_line"
+                    android:layout_width="3dp"
+                    android:layout_height="29dp"
+                    android:background="#008961"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_nick_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:visibility="@{viewModel.getPlantInfoByPlantId.data == null ? View.GONE : View.VISIBLE}"
+                    android:text="@{String.valueOf(viewModel.getPlantInfoByPlantId.data.strainName)}"
+                    android:id="@+id/tv_plant_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:textColor="@color/mainColor"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/vv_line"
+                    app:layout_constraintTop_toTopOf="@+id/vv_line"
+                    tools:text="OG Kush" />
+
+                <TextView
+                    android:visibility="@{viewModel.getPlantInfoByPlantId.data == null ? View.GONE : View.VISIBLE}"
+                    android:layout_marginEnd="15dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="@{String.valueOf(viewModel.getPlantInfoByPlantId.data.periodInfo)}"
+                    android:id="@+id/tv_plant_period"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:textColor="@color/mainColor"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/vv_line"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_plant_name"
+                    tools:text="Flowering" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="32dp"
+            android:id="@+id/rv_period"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Plant Log"
-            android:textSize="20sp" />
+            app:layout_constraintTop_toBottomOf="@+id/rl_root" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="43dp"
+            android:id="@+id/rv_log"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_period" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

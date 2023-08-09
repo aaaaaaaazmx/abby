@@ -19,6 +19,7 @@ data class PlantInfoData(
     var name: String? = null,
     var heigh: Int? = null,
     var id: Int? = null,
+    var plantId: Int? = null,
     var oxygen: Int? = null,
     var plantStatus: Int? = null,
     var week: Int? = null,

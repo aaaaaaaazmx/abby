@@ -49,5 +49,6 @@
 
     <application>
         <activity android:name=".ui.PlantingMainActivity" />
+        <activity android:name=".ui.PlantingLogActivity" />
     </application>
 </manifest>

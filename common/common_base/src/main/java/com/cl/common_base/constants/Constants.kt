@@ -76,6 +76,11 @@ object Constants {
         const val KEY_USER_INFO = "key_user_info"
     }
 
+    object Plant {
+        // plantId
+        const val KEY_PLANT_ID = "key_plant_id"
+    }
+
     // 我的界面相关
     object My {
         // 公英制
