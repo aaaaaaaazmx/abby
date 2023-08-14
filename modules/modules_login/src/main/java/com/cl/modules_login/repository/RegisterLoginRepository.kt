@@ -6,6 +6,7 @@ import com.cl.modules_login.response.CountData
 import com.cl.modules_login.response.LoginData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @ActivityRetainedScoped

@@ -1,4 +1,4 @@
-package com.cl.modules_contact.response
+package com.cl.common_base.bean
 
 import com.chad.library.adapter.base.entity.MultiItemEntity
 import com.cl.common_base.BaseBean

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.ImageUrl
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
@@ -27,17 +28,98 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 import javax.inject.Inject
 
 @ActivityRetainedScoped
 class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRepository) : ViewModel() {
 
+    // 是否是公制
+    val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+
+
     /**
-     * 设备信息\用于获取设备Id
+     * 图片上传船地址结合
      */
-    val thingDeviceBean = {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+    private val _picAddress = MutableLiveData<MutableList<ImageUrl>>(mutableListOf())
+    val picAddress: LiveData<MutableList<ImageUrl>> = _picAddress
+    fun setPicAddress(url: ImageUrl) {
+        _picAddress.value?.add(0, url)
+    }
+    fun deletePicAddress(index: Int) {
+        if ((_picAddress.value?.size ?: 0) > 0) {
+            _picAddress.value?.removeAt(index)
+        }
+    }
+
+    fun clearPicAddress() {
+        _picAddress.value?.clear()
+    }
+
+    /**
+     * 表单提交
+     * 需要循环上传
+     */
+    fun submitTheForm(path: String): List<MultipartBody.Part> {
+        //1.创建MultipartBody.Builder对象
+        val builder = MultipartBody.Builder()
+            //表单类型
+            .setType(MultipartBody.FORM)
+
+        //2.获取图片，创建请求体
+        val file = File(path)
+        //表单类x型
+        //表单类型
+        val body: RequestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+
+        //3.调用MultipartBody.Builder的addFormDataPart()方法添加表单数据
+        /**
+         * ps:builder.addFormDataPart("code","123456");
+         * ps:builder.addFormDataPart("file",file.getName(),body);
+         */
+        builder.addFormDataPart("imgType", "trend") //传入服务器需要的key，和相应value值
+        builder.addFormDataPart("files", file.name, body) //添加图片数据，body创建的请求体
+        //4.创建List<MultipartBody.Part> 集合，
+        //  调用MultipartBody.Builder的build()方法会返回一个新创建的MultipartBody
+        //  再调用MultipartBody的parts()方法返回MultipartBody.Part集合
+        return builder.build().parts
+    }
+
+    /**
+     * 上传多张图片
+     */
+    private val _uploadImg = MutableLiveData<Resource<MutableList<String>>>()
+    val uploadImg: LiveData<Resource<MutableList<String>>> = _uploadImg
+    fun uploadImg(body: List<MultipartBody.Part>) = viewModelScope.launch {
+        repository.uploadImages(body)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _uploadImg.value = it
+            }
     }
 
     /**
@@ -72,8 +154,8 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     /**
      * 获取日志详情
      */
-    private val _getLogById = MutableLiveData<Resource<LogByIdData>>()
-    val getLogById: LiveData<Resource<LogByIdData>> = _getLogById
+    private val _getLogById = MutableLiveData<Resource<LogSaveOrUpdateReq>>()
+    val getLogById: LiveData<Resource<LogSaveOrUpdateReq>> = _getLogById
     fun getLogById(logId: Int) {
         viewModelScope.launch {
             repository.getLogById(logId).map {

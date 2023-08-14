@@ -53,6 +53,15 @@ class PlantingLogViewModel @Inject constructor(private val repository: PlantRepo
         _plantId.value = plantId
     }
 
+    /**
+     * 存储选的period
+     */
+    private val _period = MutableLiveData<String>()
+    val period: LiveData<String> = _period
+    fun setPeriod(period: String) {
+        _period.value = period
+    }
+
 
     /**
      * 获取植物基本信息
@@ -161,5 +170,30 @@ class PlantingLogViewModel @Inject constructor(private val repository: PlantRepo
     }
 
 
+    /**
+     * 关闭tips卡片，interCome卡片
+     */
+    private val _closeTips = MutableLiveData<Resource<Boolean>>()
+    val closeTips: LiveData<Resource<Boolean>> = _closeTips
+    fun closeTips(period: String, plantId: String) = viewModelScope.launch {
+        repository.closeTips(period, plantId).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _closeTips.value = it
+        }
+    }
 
 }

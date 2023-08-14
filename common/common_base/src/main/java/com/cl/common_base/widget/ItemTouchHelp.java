@@ -1,24 +1,23 @@
-package com.cl.modules_contact;
+package com.cl.common_base.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.graphics.Canvas;
-import android.view.View;
+import android.os.Build;
 import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cl.modules_contact.adapter.ChooserAdapter;
-import com.cl.modules_contact.response.ChoosePicBean;
-import com.cl.modules_contact.ui.PostActivity;
+import com.cl.common_base.adapter.ChooserAdapter;
+import com.cl.common_base.bean.ChoosePicBean;
 
 import java.util.Collections;
-import java.util.List;
 
 public class ItemTouchHelp extends ItemTouchHelper.Callback {
 
@@ -40,6 +39,7 @@ public class ItemTouchHelp extends ItemTouchHelper.Callback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         int itemViewType = viewHolder.getItemViewType();
@@ -79,6 +79,7 @@ public class ItemTouchHelp extends ItemTouchHelper.Callback {
         return true;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
                             @NonNull RecyclerView.ViewHolder viewHolder, float dx, float dy, int actionState, boolean isCurrentlyActive) {
@@ -140,6 +141,7 @@ public class ItemTouchHelp extends ItemTouchHelper.Callback {
         return super.getAnimationDuration(recyclerView, animationType, animateDx, animateDy);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
         int itemViewType = viewHolder.getItemViewType();

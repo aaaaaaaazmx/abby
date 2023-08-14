@@ -1,5 +1,8 @@
 package com.cl.common_base.widget;
 
+import static com.cl.common_base.widget.slidetoconfirmlib.Util.dp2px;
+import static com.cl.common_base.widget.slidetoconfirmlib.Util.sp2px;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,17 +10,21 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.cl.common_base.R;
+import com.cl.common_base.ext.DensityKt;
 import com.cl.common_base.util.ViewUtils;
 
 
@@ -115,13 +122,12 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
     public static boolean isFastClick() {
         boolean flag = true;
         long currentClickTime = System.currentTimeMillis();
-        if ((currentClickTime - lastClickTime) <= FAST_CLICK_DELAY_TIME ) {
+        if ((currentClickTime - lastClickTime) <= FAST_CLICK_DELAY_TIME) {
             flag = false;
         }
         lastClickTime = currentClickTime;
         return flag;
     }
-
 
 
     /**
@@ -266,6 +272,29 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
         ivRight.setVisibility(GONE);
         tvRight.setText(text);
         tvRight.setVisibility(VISIBLE);
+        return this;
+    }
+
+    public FeatureTitleBar setRightButtonTextSize(float size) {
+        tvRight.setTextSize(TypedValue.COMPLEX_UNIT_SP, size);
+        return this;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public FeatureTitleBar setRightButtonTextBack(int res) {
+        ivRight.setVisibility(GONE);
+        tvRight.setBackground(getResources().getDrawable(res));
+        tvRight.setVisibility(VISIBLE);
+        ConstraintLayout.MarginLayoutParams params = (ConstraintLayout.MarginLayoutParams) tvRight.getLayoutParams();
+        params.setMargins(0, 0, DensityKt.dp2px(10), 0); // 你可以按需替换这些值
+        tvRight.setLayoutParams(params);
+        return this;
+    }
+
+    public FeatureTitleBar setRightButtonTextHeight(float height) {
+        ConstraintLayout.MarginLayoutParams params = (ConstraintLayout.MarginLayoutParams) tvRight.getLayoutParams();
+        params.height = DensityKt.dp2px(height);
+        tvRight.setLayoutParams(params);
         return this;
     }
 

@@ -35,9 +35,8 @@ import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.common_base.widget.edittext.bean.MentionUser
 import com.cl.common_base.widget.edittext.listener.EditDataListener
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_contact.ItemTouchHelp
-import com.cl.modules_contact.R
-import com.cl.modules_contact.adapter.ChooserAdapter
+import com.cl.common_base.widget.ItemTouchHelp
+import com.cl.common_base.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactPostActivityBinding
 import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
@@ -46,9 +45,9 @@ import com.cl.modules_contact.pop.ContactListPop
 import com.cl.modules_contact.pop.ContactPhPop
 import com.cl.modules_contact.pop.TdsPop
 import com.cl.modules_contact.request.AddTrendReq
-import com.cl.modules_contact.request.ImageUrl
+import com.cl.common_base.bean.ImageUrl
 import com.cl.modules_contact.request.Mention
-import com.cl.modules_contact.response.ChoosePicBean
+import com.cl.common_base.bean.ChoosePicBean
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -465,11 +464,11 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
 
     private fun initAdapter() {
-        chooserAdapter.addChildClickViewIds(R.id.iv_pic_add, R.id.img_contact_pic_delete, R.id.iv_chooser_select)
+        chooserAdapter.addChildClickViewIds(com.cl.common_base.R.id.iv_pic_add, com.cl.common_base.R.id.img_contact_pic_delete, com.cl.common_base.R.id.iv_chooser_select)
         chooserAdapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? ChoosePicBean
             when (view.id) {
-                R.id.iv_pic_add -> {
+                com.cl.common_base.R.id.iv_pic_add -> {
                     // 添加图片
                     XPopup.Builder(this@PostActivity)
                         .hasStatusBar(true)
@@ -591,7 +590,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                         ).show()
                 }
 
-                R.id.img_contact_pic_delete -> {
+                com.cl.common_base.R.id.img_contact_pic_delete -> {
                     this@PostActivity.chooserAdapter.removeAt(position)
                     viewModel.clearPicAddress()
                     picList.removeAt(position)
@@ -604,7 +603,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                     }
                 }
 
-                R.id.iv_chooser_select -> {
+                com.cl.common_base.R.id.iv_chooser_select -> {
                     val picList = mutableListOf<String?>()
                     chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.forEach {
                         picList.add(it.picAddress)

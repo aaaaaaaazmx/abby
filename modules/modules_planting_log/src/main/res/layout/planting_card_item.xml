@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_planting_log.adapter.PlantLogCardAdapter" />
+
+        <variable
+            name="bean"
+            type="com.cl.modules_planting_log.request.CardInfo" />
+
+        <import type="android.view.View"/>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_card_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:id="@+id/cl_peroid"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/background_white_r16"
+            app:l_radius="16dp"
+            app:l_shadowAlpha="1"
+            app:l_shadowElevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+                android:id="@+id/iv_shadow"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:background="@drawable/background_white_r16"
+                app:l_radius="16dp"
+                app:l_shadowAlpha="1"
+                app:l_shadowElevation="10dp">
+
+                <ImageView
+                    url="@{bean.icon}"
+                    android:layout_width="90dp"
+                    android:layout_height="90dp"
+                    tools:background="@mipmap/ic_launcher"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
+
+
+            <TextView
+                android:text="@{bean.content}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="26dp"
+                android:layout_marginEnd="5dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ll_img"
+                app:layout_constraintStart_toEndOf="@+id/iv_shadow"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="ST 83 WT 74 RH49
+PH 6 EC 400
+HT 6.5 in’" />
+
+            <LinearLayout
+                android:id="@+id/ll_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <RelativeLayout
+                    android:visibility="@{bean.isEdit ? View.VISIBLE : View.GONE}"
+                    android:padding="8dp"
+                    android:id="@+id/iv_edit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="4dp"
+                        android:background="@mipmap/plant_point"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:visibility="@{bean.isEdit ? View.GONE : View.VISIBLE}"
+                    android:padding="5dp"
+                    android:id="@+id/iv_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@mipmap/plant_close"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </LinearLayout>
+
+
+        </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

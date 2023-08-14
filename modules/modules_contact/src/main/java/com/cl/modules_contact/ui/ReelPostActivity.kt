@@ -50,20 +50,17 @@ import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.edittext.bean.MentionUser
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_contact.R
-import com.cl.modules_contact.adapter.ChooserAdapter
+import com.cl.common_base.adapter.ChooserAdapter
 import com.cl.modules_contact.databinding.ContactReelPostActivityBinding
 import com.cl.modules_contact.pop.ContactListPop
 import com.cl.modules_contact.request.AddTrendReq
-import com.cl.modules_contact.request.ImageUrl
+import com.cl.common_base.bean.ImageUrl
 import com.cl.modules_contact.request.Mention
-import com.cl.modules_contact.response.ChoosePicBean
+import com.cl.common_base.bean.ChoosePicBean
 import com.cl.modules_contact.ui.pic.ChoosePicActivity
 import com.cl.modules_contact.util.DeviceConstants
-import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.basic.PictureSelector
-import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.config.SelectMimeType
 import com.luck.picture.lib.engine.CompressFileEngine
 import com.luck.picture.lib.entity.LocalMedia
@@ -281,11 +278,11 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
     }
 
     private fun initAdapter() {
-        chooserAdapter.addChildClickViewIds(R.id.iv_pic_add, R.id.img_contact_pic_delete, R.id.iv_chooser_select)
+        chooserAdapter.addChildClickViewIds(com.cl.common_base.R.id.iv_pic_add, com.cl.common_base.R.id.img_contact_pic_delete, com.cl.common_base.R.id.iv_chooser_select)
         chooserAdapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? ChoosePicBean
             when (view.id) {
-                R.id.iv_pic_add -> {
+                com.cl.common_base.R.id.iv_pic_add -> {
                     // 添加图片
                     //  跳转到选中图片界面
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -318,7 +315,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     }
                 }
 
-                R.id.img_contact_pic_delete -> {
+                com.cl.common_base.R.id.img_contact_pic_delete -> {
                     // 有改动，就需要删除上传的gif
                     viewModel.clearPicAddress()
                     picList.find { it.picAddress == chooserAdapter.getItem(position).picAddress }?.let {
@@ -331,7 +328,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     }
                 }
 
-                R.id.iv_chooser_select -> {
+                com.cl.common_base.R.id.iv_chooser_select -> {
                     val picList = mutableListOf<String?>()
                     chooserAdapter.data.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.forEach {
                         picList.add(it.picAddress)
@@ -670,7 +667,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     // 需要区分是否是网络图片
                     if (choosePicBean.picAddress?.contains("https") == true || choosePicBean.picAddress?.contains("http") == true) {
                         // 表示是网络图片，
-                        val cacheKey = ObjectKey(choosePicBean.picAddress)
+                        val cacheKey = ObjectKey(choosePicBean.picAddress!!)
                         val cacheFile = DiskLruCacheWrapper.get(Glide.getPhotoCacheDir(this@ReelPostActivity), DiskCache.Factory.DEFAULT_DISK_CACHE_SIZE.toLong())
                             .get(cacheKey)
                         // 通过缓存转换成bitmap

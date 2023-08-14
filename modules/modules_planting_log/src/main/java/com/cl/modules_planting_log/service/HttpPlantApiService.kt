@@ -14,6 +14,7 @@ import com.cl.modules_planting_log.request.LogTypeListDataItem
 import com.cl.modules_planting_log.request.PlantIdByDeviceIdData
 import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 /**
@@ -66,7 +67,7 @@ interface HttpPlantApiService {
      */
     @FormUrlEncoded
     @POST("abby/log/getLogById")
-    fun getLogById(@Field("logId") logId: Int): Flow<HttpResult<LogByIdData>>
+    fun getLogById(@Field("logId") logId: Int): Flow<HttpResult<LogSaveOrUpdateReq>>
 
     /**
      * 获取日志类型列表
@@ -101,5 +102,20 @@ interface HttpPlantApiService {
 
     @POST("abby/log/logSaveOrUpdate")
     fun logSaveOrUpdate(@Body body: LogSaveOrUpdateReq): Flow<HttpResult<Boolean>>
+
+    /**
+     * 上传图片多张
+     */
+    @Multipart
+    @POST("abby/base/uploadImgs")
+    fun uploadImages(@Part partLis: List<MultipartBody.Part>): Flow<HttpResult<MutableList<String>>>
+
+
+    /**
+     * 删除tips卡片，一天只显示一次
+     */
+    @FormUrlEncoded
+    @POST("abby/log/closeTips")
+    fun closeTips(@Field("period") period: String, @Field("plantId") plantId: String): Flow<HttpResult<Boolean>>
 
 }

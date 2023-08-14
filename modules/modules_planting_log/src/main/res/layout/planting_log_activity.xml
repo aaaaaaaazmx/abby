@@ -19,6 +19,8 @@
             android:orientation="vertical">
 
             <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/title"
+                app:title="Log"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -85,7 +87,39 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:id="@id/rv_log"
                 android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:text="Notes"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <FrameLayout
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="58dp">
+
+                <EditText
+                    android:id="@+id/et_note"
+                    android:padding="5dp"
+                    android:gravity="start"
+                    android:hint="手动填写"
+                    android:textColorHint="#979797"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:background="@null"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </FrameLayout>
 
           <!--  <com.cl.modules_planting_log.widget.CustomViewGroup
                 app:textView1Text="Date*"

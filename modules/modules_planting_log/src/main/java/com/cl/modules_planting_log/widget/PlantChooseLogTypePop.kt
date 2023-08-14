@@ -9,8 +9,9 @@ import com.cl.modules_planting_log.databinding.PlantingChooserLogTypeBinding
 import com.cl.modules_planting_log.request.PlantLogTypeBean
 import com.lxj.xpopup.core.BubbleAttachPopupView
 
-class PlantChooseLogTypePop (
+class PlantChooseLogTypePop(
     context: Context,
+    private val list: MutableList<PlantLogTypeBean>? = null,
     private val onConfirmAction: ((txt: String) -> Unit)? = null,
 ) : BubbleAttachPopupView(context) {
     override fun getImplLayoutId(): Int {
@@ -19,15 +20,6 @@ class PlantChooseLogTypePop (
 
     private val adapter by lazy {
         PlantChooserLogAdapter(mutableListOf())
-    }
-
-    private val list by lazy {
-        val list = mutableListOf<PlantLogTypeBean>()
-        list.add(PlantLogTypeBean("Log", false))
-        list.add(PlantLogTypeBean("Actions", false))
-        list.add(PlantLogTypeBean("Training", false))
-        // list.add(ContactPeriodBean("Auto", false))
-        list
     }
 
     override fun onCreate() {

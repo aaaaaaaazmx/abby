@@ -15,10 +15,8 @@ import com.cl.common_base.widget.edittext.bean.FormatItemResult
 import com.cl.modules_contact.repository.ContactRepository
 import com.cl.modules_contact.request.AddTrendData
 import com.cl.modules_contact.request.AddTrendReq
-import com.cl.modules_contact.request.ImageUrl
-import com.cl.modules_contact.request.NewPageReq
+import com.cl.common_base.bean.ImageUrl
 import com.cl.modules_contact.response.MentionData
-import com.cl.modules_contact.response.MessageListData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest

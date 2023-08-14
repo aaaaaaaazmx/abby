@@ -17,6 +17,7 @@ import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import com.cl.modules_planting_log.service.HttpPlantApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 /**
@@ -46,7 +47,7 @@ class PlantRemoteRepository @Inject constructor() {
         return service.syncDeviceInfo(syncDeviceInfo)
     }
 
-    fun getLogById(id: Int): Flow<HttpResult<LogByIdData>> {
+    fun getLogById(id: Int): Flow<HttpResult<LogSaveOrUpdateReq>> {
         return service.getLogById(id)
     }
 
@@ -73,6 +74,14 @@ class PlantRemoteRepository @Inject constructor() {
 
     fun plantInfo(): Flow<HttpResult<PlantInfoData>> {
         return service.plantInfo()
+    }
+
+    fun uploadImages(body: List<MultipartBody.Part>): Flow<HttpResult<MutableList<String>>> {
+        return service.uploadImages(body)
+    }
+
+    fun closeTips(period: String, plantId: String): Flow<HttpResult<Boolean>> {
+        return service.closeTips(period, plantId)
     }
 
 }

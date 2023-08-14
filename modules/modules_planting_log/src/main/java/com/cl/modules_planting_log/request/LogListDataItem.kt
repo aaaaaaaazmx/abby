@@ -4,7 +4,7 @@ import com.cl.common_base.BaseBean
 
 data class LogListDataItem(
     val dateFormat: String,
-    val list: List<CardInfo>,
+    val list: MutableList<CardInfo>,
     val period: String,
-    val periodInfo: String
+    val periodInfo: String,
 ): BaseBean()

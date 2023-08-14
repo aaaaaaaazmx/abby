@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.core.view.size
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -14,13 +15,17 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.R
 import com.cl.modules_planting_log.adapter.PlantChooserPeriodAdapter
 import com.cl.modules_planting_log.adapter.PlantLogAdapter
+import com.cl.modules_planting_log.adapter.PlantLogListAdapter
 import com.cl.modules_planting_log.databinding.PlantingMainFragmentBinding
+import com.cl.modules_planting_log.request.CardInfo
 import com.cl.modules_planting_log.request.LogListReq
 import com.cl.modules_planting_log.request.PeriodVo
+import com.cl.modules_planting_log.request.PlantLogTypeBean
 import com.cl.modules_planting_log.ui.PlantingLogActivity
 import com.cl.modules_planting_log.viewmodel.PlantingLogViewModel
 import com.cl.modules_planting_log.widget.PlantChooseLogTypePop
@@ -28,6 +33,7 @@ import com.cl.modules_planting_log.widget.PlantIdListPop
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
+import com.scwang.smart.refresh.footer.ClassicsFooter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -50,8 +56,41 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
     }
 
     override fun initView(view: View) {
+        initRefresh()
         initNetData()
         clickView()
+    }
+
+    private fun initRefresh() {
+        binding.refreshLayout.apply {
+            ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
+            ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
+            ClassicsFooter.REFRESH_FOOTER_NOTHING = "No more data"
+            ClassicsFooter.REFRESH_FOOTER_FINISH = "Loading completed"
+            ClassicsFooter.REFRESH_FOOTER_FAILED = "Loading failed"
+
+            // 刷新监听
+            setOnRefreshListener {
+                // 重新加载数据
+                logI("setOnRefreshListener: refresh")
+                viewModel.updateCurrent(1)
+                viewModel.getLogList(LogListReq(current = viewModel.updateCurrent.value, size = PAGE_SIZE, period = viewModel.period.value, plantId = viewModel.plantId.value?.toIntOrNull()))
+            }
+            // 加载更多监听
+            setOnLoadMoreListener {
+                val current = (viewModel.updateCurrent.value ?: 1) + 1
+                logI("setOnLoadMoreListener: loadMore Current : $current")
+                viewModel.updateCurrent(current)
+                viewModel.getLogList(LogListReq(current = current, size = PAGE_SIZE, period = viewModel.period.value, plantId = viewModel.plantId.value?.toIntOrNull()))
+            }
+            // 刷新头部局
+            setRefreshHeader(ClassicsHeader(context))
+            setRefreshFooter(ClassicsFooter(context).setFinishDuration(0))
+            // 刷新高度
+            setHeaderHeight(60f)
+            // 自动刷新
+            // autoRefresh()
+        }
     }
 
     private fun initNetData() {
@@ -86,25 +125,31 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                 .hasShadowBg(true) // 去掉半透明背景
                 //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
                 .atView(binding.ivAddLog).isCenterHorizontal(false).asCustom(context?.let {
-                    PlantChooseLogTypePop(it, onConfirmAction = { txt ->
-                        // todo 跳转到相对应的界面
-                        when (txt) {
-                            "Log" -> {
-                                logI("click Log")
-                                startActivity(Intent(context, PlantingLogActivity::class.java).apply {
-                                    putExtra("plantId", viewModel.plantId.value)
-                                })
-                            }
+                    PlantChooseLogTypePop(it,
+                        list = mutableListOf(
+                            PlantLogTypeBean("Log", false),
+                            PlantLogTypeBean("Actions", false),
+                            PlantLogTypeBean("Training", false)
+                        ), onConfirmAction = { txt ->
+                            // todo 跳转到相对应的界面
+                            when (txt) {
+                                "Log" -> {
+                                    logI("click Log")
+                                    context?.startActivity(Intent(context, PlantingLogActivity::class.java).apply {
+                                        putExtra("plantId", viewModel.plantId.value)
+                                        putExtra("period", viewModel.period.value)
+                                    })
+                                }
 
-                            "Actions" -> {
-                                logI("click Actions")
-                            }
+                                "Actions" -> {
+                                    logI("click Actions")
+                                }
 
-                            "Training" -> {
-                                logI("click Training")
+                                "Training" -> {
+                                    logI("click Training")
+                                }
                             }
-                        }
-                    }).setBubbleBgColor(Color.WHITE) //气泡背景
+                        }).setBubbleBgColor(Color.WHITE) //气泡背景
                         .setArrowWidth(XPopupUtils.dp2px(context, 6f)).setArrowHeight(
                             XPopupUtils.dp2px(
                                 context, 6f
@@ -128,6 +173,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                     if (data?.optional == true) {
                         // 选择周期之后，就需要刷新日志列表
                         val chooserPeriod = data.period
+                        viewModel.setPeriod(chooserPeriod)
 
                         // 1、更新isSelect周期选择
                         // Update the first selected item to unselected
@@ -152,9 +198,35 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
         PlantChooserPeriodAdapter(mutableListOf())
     }
 
-    private val logAdapter by lazy {
-        PlantLogAdapter(mutableListOf())
+    private val logListAdapter by lazy {
+        PlantLogListAdapter(mutableListOf(),
+            onDeleteInterComeCard = {
+                // 删除interCome卡片
+                viewModel.plantId.value?.let { it1 -> viewModel.closeTips(period = it, plantId = it1) }
+            },
+            onEditCard = { period, logId, showType ->
+                // 通过日志Id获取日志详情
+                context?.apply {
+                    when(showType) {
+                        CardInfo.TYPE_LOG_CARD -> {
+                            // 跳转到日志详情界面
+                            startActivity(Intent(this, PlantingLogActivity::class.java).apply {
+                                putExtra("period", period)
+                                putExtra("plantId", viewModel.plantId.value)
+                                putExtra("logId", logId)
+                            })
+                        }
+                        CardInfo.TYPE_ACTION_CARD -> {}
+                        CardInfo.TYPE_TRAINING_CARD -> {}
+                    }
+                }
+            }
+        )
     }
+
+    /*private val logAdapter by lazy {
+        PlantLogAdapter(mutableListOf())
+    }*/
 
     private fun initializeRv() {
         // 横向周期选择
@@ -162,11 +234,16 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
         binding.rvPeriod.adapter = chooserPeriodAdapter
         // 竖排log日志展示
         binding.rvLog.layoutManager = LinearLayoutManager(context)
-        binding.rvLog.adapter = logAdapter
+        binding.rvLog.adapter = logListAdapter
     }
 
     override fun observe() {
         viewModel.apply {
+            closeTips.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {}
+            })
+
             plantInfo.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
@@ -183,6 +260,8 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                 success {
                     if (null == data) return@success
                     setPlantIds(data?.plantId.toString())
+                    // 设置周期
+                    setPeriod(data?.period.toString())
 
                     // 1、设置周期的Rv适配器数据
                     val periodVoList = data?.periodVoList
@@ -198,10 +277,41 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
 
             getLogList.observe(viewLifecycleOwner, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    if (binding.refreshLayout.isRefreshing) {
+                        binding.refreshLayout.finishRefresh()
+                    }
+                    if (binding.refreshLayout.isLoading) {
+                        binding.refreshLayout.finishLoadMore()
+                    }
+                }
                 success {
+                    // 刷新相关
+                    if (binding.refreshLayout.isRefreshing) {
+                        binding.refreshLayout.finishRefresh()
+                    }
+                    if (binding.refreshLayout.isLoading) {
+
+                        // 没有加载了、或者加载完毕
+                        if ((data?.size ?: 0) <= 0) {
+                            binding.refreshLayout.finishLoadMoreWithNoMoreData()
+                        } else {
+                            binding.refreshLayout.finishLoadMore()
+                        }
+                    }
                     if (data.isNullOrEmpty()) return@success
-                    // todo 获取日志列表\添加加载更多
+                    // 数据相关
+                    data?.let {
+                        val current = viewModel.updateCurrent.value
+                        if (current == 1) {
+                            // 刷新数据
+                            logListAdapter.setList(it)
+                        } else {
+                            // 追加数据
+                            it.let { it1 -> logListAdapter.addData(logListAdapter.data.size, it1) }
+                        }
+                    }
                 }
             })
 
@@ -255,6 +365,10 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
             }
             return@setOnApplyWindowInsetsListener insets
         }
+
+        // 刷新当前卡片列表
+        viewModel.updateCurrent(1)
+        viewModel.getLogList(LogListReq(1, period = viewModel.period.value.toString(), plantId = viewModel.plantId.value?.toIntOrNull() ?: 0, PAGE_SIZE))
     }
 
     companion object {

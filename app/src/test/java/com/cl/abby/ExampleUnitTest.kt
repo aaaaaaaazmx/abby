@@ -1,9 +1,5 @@
 package com.cl.abby
 
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
 import com.cl.common_base.ext.DateHelper
 import org.junit.Test
 
@@ -23,6 +19,20 @@ class ExampleUnitTest {
                 println("1231232: ${DateHelper.formatTime(this, "ddMMM", Locale.US)}")
             }
         }*/
+
+        val url =
+            "https://heyabbytest.s3.us-west-1.amazonaws.com/user/trend/a94e2d2227de4189b760a6f8ecbbee84.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20230814T082719Z&X-Amz-SignedHeaders=host&X-Amz-Expires=518400&X-Amz-Credential=AKIA5UEWHT7XNCDKTYWY%2F20230814%2Fus-west-1%2Fs3%2Faws4_request&X-Amz-Signature=257f3d9ebb3911fa0f925b3fc1998285095b92f9f97650689f23e693cd4a7b6c"
+        val searchString = "user/trend/"
+        val startIndex = url.indexOf(searchString)
+
+        if (startIndex != -1) {
+            val endIndex = url.indexOf(".jpeg", startIndex) + 5 // 5 is the length of ".jpeg"
+            val result = url.substring(startIndex, endIndex)
+            println("123123123123: $result") // Output: user/trend/a94e2d2227de4189b760a6f8ecbbee84.jpeg
+        } else {
+            println("1231231231: Search string not found in URL.")
+        }
+
     }
 
     private fun convertTime(createTime: String? = null): String {

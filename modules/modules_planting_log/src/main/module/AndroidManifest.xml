@@ -49,6 +49,9 @@
 
     <application>
         <activity android:name=".ui.PlantingMainActivity" />
-        <activity android:name=".ui.PlantingLogActivity" />
+        <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="adjustPan"
+            android:name=".ui.PlantingLogActivity" />
     </application>
 </manifest>
