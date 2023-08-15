@@ -37,8 +37,10 @@ import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.adapter.CustomViewGroupAdapter
 import com.cl.modules_planting_log.databinding.PlantingLogActivityBinding
+import com.cl.modules_planting_log.request.FieldAttributes
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
 import com.cl.modules_planting_log.viewmodel.PlantingLogAcViewModel
+import com.cl.modules_planting_log.widget.CustomViewGroup
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
@@ -76,6 +78,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
      */
     private val logAdapter by lazy {
         CustomViewGroupAdapter(
+            this@PlantingLogActivity,
             listOf(
                 "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc",
                 "plantHeight", "vpd", "driedWeight", "wetWeight", "lightingSchedule", "co2Concentration"
@@ -83,7 +86,20 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             listOf(
                 "logTime"
             ),
-            this@PlantingLogActivity
+            mapOf(
+                "logTime" to FieldAttributes("Date*", "自动填写（可更改，下拉日历弹框）", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "spaceTemp" to FieldAttributes("Space Temp(ST)", "自动填写（可更改)", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "waterTemp" to FieldAttributes("Water Temp (WT)", "自动填写（可更改)", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "humidity" to FieldAttributes("Humidity (RH)", "自动填写（可更改)", "%", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "ph" to FieldAttributes("PH", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "tdsEc" to FieldAttributes("TDS/EC", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "plantHeight" to FieldAttributes("Height (HT)", "自动填写（可更改)", if (viewModel.isMetric) "cm" else "In", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "vpd" to FieldAttributes("VPD", "自动填写（可更改)", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "driedWeight" to FieldAttributes("Yield (Dried weight)", "手动填写", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "wetWeight" to FieldAttributes("Yield (Wet weight)", "手动填写", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "lightingSchedule" to FieldAttributes("Lighting Schedule", "自动填写（可更改)", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "co2Concentration" to FieldAttributes("CO2 Concentration", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+            )
         )
     }
 
@@ -227,7 +243,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
         }
 
         // 获取日志详情
-        logId?.toIntOrNull()?.let {
+        logId?.let {
             viewModel.getLogById(it)
         }
     }

@@ -32,5 +32,6 @@ data class LogSaveOrUpdateReq(
         const val KEY_PLANT_HEIGHT  = "plantHeight"
         const val KEY_DRIED_WEIGHT  = "driedWeight"
         const val KEY_WET_WEIGHT  = "wetWeight"
+        const val KEY_LOG_TYPE = "logType"
     }
 }

@@ -26,6 +26,7 @@ import com.cl.modules_planting_log.request.CardInfo
 import com.cl.modules_planting_log.request.LogListReq
 import com.cl.modules_planting_log.request.PeriodVo
 import com.cl.modules_planting_log.request.PlantLogTypeBean
+import com.cl.modules_planting_log.ui.PlantActionActivity
 import com.cl.modules_planting_log.ui.PlantingLogActivity
 import com.cl.modules_planting_log.viewmodel.PlantingLogViewModel
 import com.cl.modules_planting_log.widget.PlantChooseLogTypePop
@@ -143,6 +144,10 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
                                 "Actions" -> {
                                     logI("click Actions")
+                                    context?.startActivity(Intent(context, PlantActionActivity::class.java).apply {
+                                        putExtra("plantId", viewModel.plantId.value)
+                                        putExtra("period", viewModel.period.value)
+                                    })
                                 }
 
                                 "Training" -> {
@@ -216,7 +221,14 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("logId", logId)
                             })
                         }
-                        CardInfo.TYPE_ACTION_CARD -> {}
+                        CardInfo.TYPE_ACTION_CARD -> {
+                            startActivity(Intent(this, PlantActionActivity::class.java).apply {
+                                putExtra("period", period)
+                                putExtra("plantId", viewModel.plantId.value)
+                                putExtra("logId", logId)
+                                putExtra("showType", showType)
+                            })
+                        }
                         CardInfo.TYPE_TRAINING_CARD -> {}
                     }
                 }

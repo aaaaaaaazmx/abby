@@ -53,11 +53,11 @@ class PlantRepository @Inject constructor(private var remoteRepository: PlantRem
         return remoteRepository.syncDeviceInfo(syncDeviceInfo)
     }
 
-    fun getLogById(id: Int): Flow<HttpResult<LogSaveOrUpdateReq>> {
+    fun getLogById(id: String): Flow<HttpResult<LogSaveOrUpdateReq>> {
         return remoteRepository.getLogById(id)
     }
 
-    fun getLogTypeList(showType: String, logId: Int): Flow<HttpResult<List<LogTypeListDataItem>>> {
+    fun getLogTypeList(showType: String, logId: String?): Flow<HttpResult<List<LogTypeListDataItem>>> {
         return remoteRepository.getLogTypeList(showType, logId)
     }
 

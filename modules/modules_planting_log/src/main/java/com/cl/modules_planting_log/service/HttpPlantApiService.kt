@@ -67,14 +67,14 @@ interface HttpPlantApiService {
      */
     @FormUrlEncoded
     @POST("abby/log/getLogById")
-    fun getLogById(@Field("logId") logId: Int): Flow<HttpResult<LogSaveOrUpdateReq>>
+    fun getLogById(@Field("logId") logId: String): Flow<HttpResult<LogSaveOrUpdateReq>>
 
     /**
      * 获取日志类型列表
      */
     @FormUrlEncoded
     @POST("abby/log/getLogTypeList")
-    fun getLogTypeList(@Field("showType") showType: String, @Field("logId") logId: Int): Flow<HttpResult<List<LogTypeListDataItem>>>
+    fun getLogTypeList(@Field("showType") showType: String, @Field("logId") logId: String?): Flow<HttpResult<List<LogTypeListDataItem>>>
 
 
     /**

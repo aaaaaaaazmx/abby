@@ -17,6 +17,7 @@ import com.cl.modules_planting_log.request.LogByIdData
 import com.cl.modules_planting_log.request.LogListDataItem
 import com.cl.modules_planting_log.request.LogListReq
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
+import com.cl.modules_planting_log.request.LogTypeListDataItem
 import com.cl.modules_planting_log.request.PlantIdByDeviceIdData
 import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import com.thingclips.smart.sdk.bean.DeviceBean
@@ -150,13 +151,41 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
         }
     }
 
+    /**
+     * 获取日志类型列表
+     */
+    private val _getLogTypeList = MutableLiveData<Resource<List<LogTypeListDataItem>>>()
+    val getLogTypeList: LiveData<Resource<List<LogTypeListDataItem>>> = _getLogTypeList
+    fun getLogTypeList(showType: String, logId: String?) {
+        viewModelScope.launch {
+            repository.getLogTypeList(showType, logId).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getLogTypeList.value = it
+            }
+        }
+    }
+
 
     /**
      * 获取日志详情
      */
     private val _getLogById = MutableLiveData<Resource<LogSaveOrUpdateReq>>()
     val getLogById: LiveData<Resource<LogSaveOrUpdateReq>> = _getLogById
-    fun getLogById(logId: Int) {
+    fun getLogById(logId: String) {
         viewModelScope.launch {
             repository.getLogById(logId).map {
                 if (it.code != Constants.APP_SUCCESS) {

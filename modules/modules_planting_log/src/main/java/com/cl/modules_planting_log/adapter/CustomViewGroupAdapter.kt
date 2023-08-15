@@ -15,6 +15,7 @@ import com.cl.common_base.ext.unitsConversion
 import com.cl.common_base.ext.weightConversion
 import com.cl.common_base.util.Prefs
 import com.cl.modules_planting_log.databinding.PlantingCustomViewGroupItemBinding
+import com.cl.modules_planting_log.request.CardInfo
 import com.cl.modules_planting_log.request.FieldAttributes
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
 import com.cl.modules_planting_log.widget.CustomViewGroup
@@ -27,29 +28,20 @@ import java.util.Calendar
  *
  * @param   fields 想要展示的元素个数以及名称  ,, 由于要和后台返回的Bean类映射，所有传递的都是字段名
  * @param   noKeyboardFields EditText不可点击的元素名称
+ * @param   fieldsAttributes 主要用于显示单位、别名、hint描述等
+ * @param   interFaceEditTextValueChangeListener 暴露给外部的处理事件
  */
-class CustomViewGroupAdapter(private val fields: List<String>, private val noKeyboardFields: List<String>, private val context: Context) : RecyclerView.Adapter<CustomViewGroupAdapter.ViewHolder>(),
+class CustomViewGroupAdapter(private val context: Context, private val fields: List<String>,
+                             private val noKeyboardFields: List<String>,
+                             private val fieldsAttributes: Map<String, FieldAttributes>,
+                             private val interFaceEditTextValueChangeListener: EditTextValueChangeListener? = null,
+) : RecyclerView.Adapter<CustomViewGroupAdapter.ViewHolder>(),
     EditTextValueChangeListener {
     // 可以用map来接收，防止排列顺序不对，数据错乱的问题
     private val data: MutableList<String> = MutableList(fields.size) { "" }
 
     // 这个需要根据当前是国际单位来更改
     private val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-    private val fieldsAttributes = mapOf(
-        "logTime" to FieldAttributes("Date*", "自动填写（可更改，下拉日历弹框）", "", CustomViewGroup.TYPE_CLASS_TEXT),
-        "spaceTemp" to FieldAttributes("Space Temp(ST)", "自动填写（可更改)", if (isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "waterTemp" to FieldAttributes("Water Temp (WT)", "自动填写（可更改)", if (isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "humidity" to FieldAttributes("Humidity (RH)", "自动填写（可更改)", "%", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "ph" to FieldAttributes("PH", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "tdsEc" to FieldAttributes("TDS/EC", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "plantHeight" to FieldAttributes("Height (HT)", "自动填写（可更改)", if (isMetric) "cm" else "In", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "vpd" to FieldAttributes("VPD", "自动填写（可更改)", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "driedWeight" to FieldAttributes("Yield (Dried weight)", "手动填写", if (isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "wetWeight" to FieldAttributes("Yield (Wet weight)", "手动填写", if (isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
-        "lightingSchedule" to FieldAttributes("Lighting Schedule", "自动填写（可更改)", "", CustomViewGroup.TYPE_CLASS_TEXT),
-        "co2Concentration" to FieldAttributes("CO2 Concentration", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-    )
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = PlantingCustomViewGroupItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -90,21 +82,44 @@ class CustomViewGroupAdapter(private val fields: List<String>, private val noKey
      */
     @SuppressLint("SetTextI18n")
     override fun onEditTextClick(position: Int, editText: EditText) {
-        val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-            logI("选择的日期是：$year-${monthOfYear + 1}-$dayOfMonth")
-            // 保存选择的日期
-            // 转成毫秒
-            editText.setText("$year-${monthOfYear + 1}-$dayOfMonth")
-            data[position] = DateHelper.formatToLong("$year-${monthOfYear + 1}-$dayOfMonth", KEY_FORMAT_TIME).toString()
+        when (fields[position]) {
+            LogSaveOrUpdateReq.KEY_LOG_TIME -> {
+                val dateSetListener = DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                    logI("选择的日期是：$year-${monthOfYear + 1}-$dayOfMonth")
+                    // 保存选择的日期
+                    // 转成毫秒
+                    editText.setText("$year-${monthOfYear + 1}-$dayOfMonth")
+                    data[position] = DateHelper.formatToLong("$year-${monthOfYear + 1}-$dayOfMonth", KEY_FORMAT_TIME).toString()
+                }
+
+                // 在用户打开日期选择器时，设置初始选中的日期为上次选择的日期
+                Calendar.getInstance().apply {
+                    val timeMill = data[position].toLongOrNull() ?: DateHelper.formatToLong(data[position], KEY_FORMAT_TIME)
+                    timeInMillis = (timeMill)
+                    // 月份从0开始，所以需要加1
+                    DatePickerDialog(context, dateSetListener, get(Calendar.YEAR), get(Calendar.MONTH), get(Calendar.DAY_OF_MONTH)).show()
+                }
+            }
+
+            LogSaveOrUpdateReq.KEY_LOG_TYPE -> {
+                // 弹出日志类型选择列表
+                //  由外部调用，
+                interFaceEditTextValueChangeListener?.onEditTextClick(position, editText)
+            }
+        }
+    }
+
+    /**
+     * 外部处理interFaceEditTextValueChangeListener回调时调用的设置单个数据的方法
+     */
+    fun setData(position: Int, editText: EditText, inputData: String) {
+        when(fields[position]) {
+            LogSaveOrUpdateReq.KEY_LOG_TYPE -> {
+                editText.setText(inputData)
+                data[position] = inputData
+            }
         }
 
-        // 在用户打开日期选择器时，设置初始选中的日期为上次选择的日期
-        Calendar.getInstance().apply {
-            val timeMill = data[position].toLongOrNull() ?: DateHelper.formatToLong(data[position], KEY_FORMAT_TIME)
-            timeInMillis = (timeMill)
-            // 月份从0开始，所以需要加1
-            DatePickerDialog(context, dateSetListener, get(Calendar.YEAR), get(Calendar.MONTH), get(Calendar.DAY_OF_MONTH)).show()
-        }
     }
 
     fun setData(logData: LogSaveOrUpdateReq) {

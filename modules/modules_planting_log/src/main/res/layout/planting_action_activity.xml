@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="MissingConstraints">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -20,9 +19,9 @@
 
             <com.cl.common_base.widget.FeatureTitleBar
                 android:id="@+id/title"
-                app:title="Log"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:title="Action" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -67,85 +66,43 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_marginStart="10dp"
-                android:id="@+id/rv_pic"
+                android:id="@+id/rv_action"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
-
-            <TextView
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:text="add Max 3 Photos"
-                android:textColor="@color/black"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <androidx.recyclerview.widget.RecyclerView
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:id="@+id/rv_log"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
             <TextView
-                android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="10dp"
-                android:text="Notes"
-                android:textSize="14sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:text="Notes"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <FrameLayout
-                android:layout_marginBottom="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/white"
-                android:layout_width="match_parent"
-                android:layout_height="58dp">
+                android:layout_marginBottom="10dp"
+                android:background="@color/white">
 
                 <EditText
                     android:id="@+id/et_note"
-                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
                     android:gravity="start"
                     android:hint="手动填写"
-                    android:textColorHint="#979797"
+                    android:padding="5dp"
                     android:textColor="@color/black"
-                    android:textSize="12sp"
-                    android:background="@null"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:textColorHint="#979797"
+                    android:textSize="12sp" />
             </FrameLayout>
-
-          <!--  <com.cl.modules_planting_log.widget.CustomViewGroup
-                app:textView1Text="Date*"
-                app:editText1Text=""
-                app:editText1HintText="自动填写（可更改，下拉日历弹框）"
-                app:textView2Visibility="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <com.cl.modules_planting_log.widget.CustomViewGroup
-                app:textView1Text="Space Temp(ST)"
-                app:editText1Text=""
-                app:editText1HintText="自动填写（可更改)"
-                app:textView2Visibility="true"
-                app:textView2Text="F"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <com.cl.modules_planting_log.widget.CustomViewGroup
-                app:textView1Text="Water Temp (WT)"
-                app:editText1Text=""
-                app:editText1HintText="自动填写（可更改)"
-                app:textView2Visibility="true"
-                app:textView2Text="F"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>-->
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
