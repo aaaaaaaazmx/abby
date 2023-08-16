@@ -6,6 +6,10 @@
 
     <data>
 
+        <variable
+            name="plantInfoData"
+            type="com.cl.modules_planting_log.request.PlantInfoByPlantIdData" />
+
     </data>
 
 
@@ -30,6 +34,7 @@
                 android:background="@mipmap/plant_bg">
 
                 <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.plantName)}"
                     android:id="@+id/tv_plant_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -42,6 +47,7 @@
                     tools:text="Mary" />
 
                 <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.strainName)}"
                     android:id="@+id/tv_nick_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -53,6 +59,7 @@
                     tools:text="OG Kush" />
 
                 <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.periodInfo)}"
                     android:id="@+id/tv_plant_period"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

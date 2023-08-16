@@ -74,7 +74,12 @@ class CustomViewGroupAdapter(private val context: Context, private val fields: L
      * EditText的监听事件
      */
     override fun onValueChanged(position: Int, newValue: String) {
-        data[position] = newValue
+        when(fields[position]) {
+            LogSaveOrUpdateReq.KEY_LOG_TIME -> {
+                data[position] = DateHelper.formatToLong(newValue, KEY_FORMAT_TIME).toString()
+            }
+            else -> data[position] = newValue
+        }
     }
 
     /**

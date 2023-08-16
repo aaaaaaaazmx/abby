@@ -60,6 +60,34 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
         _picAddress.value?.clear()
     }
 
+    // 上传Train的时候的两张照片
+    private val _beforePicAddress = MutableLiveData<String?>()
+    val beforePicAddress: LiveData<String?> = _beforePicAddress
+    fun setBeforeAddress(address: String) {
+        _beforePicAddress.value = address
+    }
+    fun setClearBeforeAddress() {
+        _beforePicAddress.value = null
+    }
+
+    private val _afterPicAddress = MutableLiveData<String?>()
+    val afterPicAddress: LiveData<String?> = _afterPicAddress
+    fun setAfterAddress(address: String) {
+        _afterPicAddress.value = address
+    }
+    fun setClearAfterAddress() {
+        _afterPicAddress.value = null
+    }
+
+    private val _chooserTips = MutableLiveData<Boolean>()
+    val chooserTips: LiveData<Boolean> = _chooserTips
+    fun setChooserTips(address: Boolean) {
+        _chooserTips.value = address
+    }
+
+
+
+
     /**
      * 表单提交
      * 需要循环上传

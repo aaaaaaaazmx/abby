@@ -28,6 +28,7 @@ import com.cl.modules_planting_log.request.PeriodVo
 import com.cl.modules_planting_log.request.PlantLogTypeBean
 import com.cl.modules_planting_log.ui.PlantActionActivity
 import com.cl.modules_planting_log.ui.PlantingLogActivity
+import com.cl.modules_planting_log.ui.PlantingTrainActivity
 import com.cl.modules_planting_log.viewmodel.PlantingLogViewModel
 import com.cl.modules_planting_log.widget.PlantChooseLogTypePop
 import com.cl.modules_planting_log.widget.PlantIdListPop
@@ -36,6 +37,7 @@ import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.Serializable
 import javax.inject.Inject
 
 /**
@@ -87,6 +89,8 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
             // 刷新头部局
             setRefreshHeader(ClassicsHeader(context))
             setRefreshFooter(ClassicsFooter(context).setFinishDuration(0))
+            // 禁止下拉刷新
+            setEnableRefresh(false)
             // 刷新高度
             setHeaderHeight(60f)
             // 自动刷新
@@ -139,6 +143,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                     context?.startActivity(Intent(context, PlantingLogActivity::class.java).apply {
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
+                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
                                     })
                                 }
 
@@ -147,11 +152,17 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                     context?.startActivity(Intent(context, PlantActionActivity::class.java).apply {
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
+                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
                                     })
                                 }
 
                                 "Training" -> {
                                     logI("click Training")
+                                    context?.startActivity(Intent(context, PlantingTrainActivity::class.java).apply {
+                                        putExtra("plantId", viewModel.plantId.value)
+                                        putExtra("period", viewModel.period.value)
+                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                                    })
                                 }
                             }
                         }).setBubbleBgColor(Color.WHITE) //气泡背景
@@ -219,6 +230,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("period", period)
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)
+                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
                             })
                         }
                         CardInfo.TYPE_ACTION_CARD -> {
@@ -227,9 +239,18 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)
                                 putExtra("showType", showType)
+                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
                             })
                         }
-                        CardInfo.TYPE_TRAINING_CARD -> {}
+                        CardInfo.TYPE_TRAINING_CARD -> {
+                            startActivity(Intent(this, PlantingTrainActivity::class.java).apply {
+                                putExtra("period", period)
+                                putExtra("plantId", viewModel.plantId.value)
+                                putExtra("logId", logId)
+                                putExtra("showType", showType)
+                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                            })
+                        }
                     }
                 }
             }

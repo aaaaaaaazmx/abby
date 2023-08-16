@@ -36,9 +36,11 @@ import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.adapter.CustomViewGroupAdapter
+import com.cl.modules_planting_log.databinding.PlantingActionActivityBinding
 import com.cl.modules_planting_log.databinding.PlantingLogActivityBinding
 import com.cl.modules_planting_log.request.FieldAttributes
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
+import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import com.cl.modules_planting_log.viewmodel.PlantingLogAcViewModel
 import com.cl.modules_planting_log.widget.CustomViewGroup
 import com.luck.picture.lib.basic.PictureSelector
@@ -101,6 +103,10 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                 "co2Concentration" to FieldAttributes("CO2 Concentration", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
             )
         )
+    }
+
+    private val plantInfoData by lazy {
+        intent.getSerializableExtra("plantInfoData") as? PlantInfoByPlantIdData
     }
 
     // 植物ID， 用于新增日志
@@ -195,6 +201,14 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
         // Insert code for modifying an existing log entry
         viewModel.saveOrUpdateLog(logSaveOrUpdateReq)
         logI("Log Details: $logSaveOrUpdateReq")
+    }
+
+    override fun PlantingLogActivityBinding.initBinding() {
+        binding.apply {
+            lifecycleOwner = this@PlantingLogActivity
+            plantInfoData = this@PlantingLogActivity.plantInfoData
+            executePendingBindings()
+        }
     }
 
     override fun initView() {

@@ -14,6 +14,7 @@ import com.cl.modules_planting_log.databinding.PlantingActionActivityBinding
 import com.cl.modules_planting_log.request.CardInfo
 import com.cl.modules_planting_log.request.FieldAttributes
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
+import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import com.cl.modules_planting_log.request.PlantLogTypeBean
 import com.cl.modules_planting_log.viewmodel.PlantingLogAcViewModel
 import com.cl.modules_planting_log.widget.CustomViewGroup
@@ -34,6 +35,9 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
     @Inject
     lateinit var viewModel: PlantingLogAcViewModel
 
+    private val plantInfoData by lazy {
+        intent.getSerializableExtra("plantInfoData") as? PlantInfoByPlantIdData
+    }
 
     // 植物ID， 用于新增日志
     private val plantId by lazy {
@@ -50,9 +54,17 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         intent.getStringExtra("period")
     }
 
-    // showType,用于请求日志类型列表
+    // showType,用于请求日志类型列表w
     private val showType by lazy {
         intent.getStringExtra("showType") ?: CardInfo.TYPE_ACTION_CARD
+    }
+
+    override fun PlantingActionActivityBinding.initBinding() {
+        binding.apply {
+            lifecycleOwner = this@PlantActionActivity
+            plantInfoData = this@PlantActionActivity.plantInfoData
+            executePendingBindings()
+        }
     }
 
     /**

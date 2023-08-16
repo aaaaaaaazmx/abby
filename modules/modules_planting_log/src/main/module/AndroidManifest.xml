@@ -57,5 +57,9 @@
             android:name=".ui.PlantActionActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="adjustPan"
+            android:name=".ui.PlantingTrainActivity" />
     </application>
 </manifest>
