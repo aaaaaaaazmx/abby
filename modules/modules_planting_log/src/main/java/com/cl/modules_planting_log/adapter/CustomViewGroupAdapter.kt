@@ -31,10 +31,11 @@ import java.util.Calendar
  * @param   fieldsAttributes 主要用于显示单位、别名、hint描述等
  * @param   interFaceEditTextValueChangeListener 暴露给外部的处理事件
  */
-class CustomViewGroupAdapter(private val context: Context, private val fields: List<String>,
-                             private val noKeyboardFields: List<String>,
-                             private val fieldsAttributes: Map<String, FieldAttributes>,
-                             private val interFaceEditTextValueChangeListener: EditTextValueChangeListener? = null,
+class CustomViewGroupAdapter(
+    private val context: Context, private val fields: List<String>,
+    private val noKeyboardFields: List<String>,
+    private val fieldsAttributes: Map<String, FieldAttributes>,
+    private val interFaceEditTextValueChangeListener: EditTextValueChangeListener? = null,
 ) : RecyclerView.Adapter<CustomViewGroupAdapter.ViewHolder>(),
     EditTextValueChangeListener {
     // 可以用map来接收，防止排列顺序不对，数据错乱的问题
@@ -74,12 +75,7 @@ class CustomViewGroupAdapter(private val context: Context, private val fields: L
      * EditText的监听事件
      */
     override fun onValueChanged(position: Int, newValue: String) {
-        when(fields[position]) {
-            LogSaveOrUpdateReq.KEY_LOG_TIME -> {
-                data[position] = DateHelper.formatToLong(newValue, KEY_FORMAT_TIME).toString()
-            }
-            else -> data[position] = newValue
-        }
+        data[position] = newValue
     }
 
     /**
@@ -94,12 +90,11 @@ class CustomViewGroupAdapter(private val context: Context, private val fields: L
                     // 保存选择的日期
                     // 转成毫秒
                     editText.setText("$year-${monthOfYear + 1}-$dayOfMonth")
-                    data[position] = DateHelper.formatToLong("$year-${monthOfYear + 1}-$dayOfMonth", KEY_FORMAT_TIME).toString()
                 }
 
                 // 在用户打开日期选择器时，设置初始选中的日期为上次选择的日期
                 Calendar.getInstance().apply {
-                    val timeMill = data[position].toLongOrNull() ?: DateHelper.formatToLong(data[position], KEY_FORMAT_TIME)
+                    val timeMill = DateHelper.formatToLong(editText.text.toString(), KEY_FORMAT_TIME)
                     timeInMillis = (timeMill)
                     // 月份从0开始，所以需要加1
                     DatePickerDialog(context, dateSetListener, get(Calendar.YEAR), get(Calendar.MONTH), get(Calendar.DAY_OF_MONTH)).show()
@@ -118,7 +113,7 @@ class CustomViewGroupAdapter(private val context: Context, private val fields: L
      * 外部处理interFaceEditTextValueChangeListener回调时调用的设置单个数据的方法
      */
     fun setData(position: Int, editText: EditText, inputData: String) {
-        when(fields[position]) {
+        when (fields[position]) {
             LogSaveOrUpdateReq.KEY_LOG_TYPE -> {
                 editText.setText(inputData)
                 data[position] = inputData
@@ -133,30 +128,25 @@ class CustomViewGroupAdapter(private val context: Context, private val fields: L
             val declaredFiled = logData::class.java.getDeclaredField(field)
             declaredFiled.isAccessible = true
             val value = declaredFiled.get(logData)?.toString()
-            // 公英制转换,
-            // 需要根据特定的配型，来转换温度、长度、单位
-            kotlin.runCatching {
-                when (field) {
-                    LogSaveOrUpdateReq.KEY_LOG_TIME -> data[index] = DateHelper.formatTime(value?.toLongOrNull() ?: 0L, KEY_FORMAT_TIME)
-                    LogSaveOrUpdateReq.KEY_SPACE_TEMP -> data[index] = temperatureConversion(value?.toFloatOrNull() ?: 0f, isMetric, false)
-                    LogSaveOrUpdateReq.KEY_WATER_TEMP -> data[index] = temperatureConversion(value?.toFloatOrNull() ?: 0f, isMetric, false)
-                    LogSaveOrUpdateReq.KEY_PLANT_HEIGHT -> data[index] = unitsConversion(value?.toFloatOrNull() ?: 0f, isMetric, false)
-                    LogSaveOrUpdateReq.KEY_DRIED_WEIGHT -> data[index] = weightConversion(value?.toFloatOrNull() ?: 0f, isMetric, false)
-                    LogSaveOrUpdateReq.KEY_WET_WEIGHT -> data[index] = weightConversion(value?.toFloatOrNull() ?: 0f, isMetric, false)
-                    else -> data[index] = value ?: ""
-                }
-            }
+            data[index] = value ?: ""
         }
         notifyDataSetChanged()
     }
 
+    // 提供方法获取数据并填充到LogData对象
     // 提供方法获取数据并填充到LogData对象
     fun getLogData(): LogSaveOrUpdateReq {
         val logData = LogSaveOrUpdateReq()
         fields.forEachIndexed { index, field ->
             val declaredFiled = logData::class.java.getDeclaredField(field)
             declaredFiled.isAccessible = true
-            declaredFiled.set(logData, data[index])
+            when (field) {
+                // 用户选择了时间，可能会返回字符串
+                LogSaveOrUpdateReq.KEY_LOG_TIME -> {
+                    declaredFiled.set(logData, DateHelper.formatToLong(data[index], KEY_FORMAT_TIME).toString())
+                }
+                else -> declaredFiled.set(logData, data[index])
+            }
         }
         return logData
     }

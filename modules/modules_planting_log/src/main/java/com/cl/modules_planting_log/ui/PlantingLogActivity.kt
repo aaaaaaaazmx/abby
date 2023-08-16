@@ -20,6 +20,7 @@ import com.cl.common_base.adapter.ChooserAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.ChoosePicBean
 import com.cl.common_base.bean.ImageUrl
+import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.temperatureConversion
@@ -180,6 +181,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     }
 
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
+        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: 0L, CustomViewGroupAdapter.KEY_FORMAT_TIME)
         logSaveOrUpdateReq.spaceTemp = temperatureConversion(logSaveOrUpdateReq.spaceTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.waterTemp = temperatureConversion(logSaveOrUpdateReq.waterTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.plantHeight = unitsConversion(logSaveOrUpdateReq.plantHeight?.toFloatOrNull() ?: 0f, isMetric, isUpload)
