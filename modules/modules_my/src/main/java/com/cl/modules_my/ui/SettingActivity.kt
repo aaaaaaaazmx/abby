@@ -217,14 +217,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_CHILD_LOCK)
         }
         binding.ftNight.setPointClickListener {
-           /* pop.asCustom(
-                BaseCenterPop(
-                    this@SettingActivity,
-                    isShowCancelButton = false,
-                    confirmText = "OK",
-                    content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
-                )
-            ).show()*/
+            /* pop.asCustom(
+                 BaseCenterPop(
+                     this@SettingActivity,
+                     isShowCancelButton = false,
+                     confirmText = "OK",
+                     content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
+                 )
+             ).show()*/
             InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_NIGHT_MODE)
         }
         binding.ftBurner.setPointClickListener {
@@ -716,9 +716,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     turnOffHour = muteOff?.toInt(),
                     onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
                         binding.ftTimer.itemValue = "$onTime-$offMinute"
-                        muteOn = "$timeOn"
-                        muteOff = "$timeOff"
-                        // todo 这个时间和上面解析时间有问题，需要传递24小时制度
+                        muteOn = timeOn.toString().padStart(2, '0')
+                        muteOff = timeOff.toString().padStart(2, '0')
+                        // 这个时间和上面解析时间有问题，需要传递24小时制度
                         mViewModel.updateDeviceInfo(
                             UpDeviceInfoReq(
                                 nightTimer = binding.ftTimer.itemValue.toString(),
@@ -729,7 +729,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         DeviceControl.get()
                             .success {
                                 // "141":"muteOn:10,muteOff:22"
-                                logI("123312313: muteOn:$timeOn,muteOff:$timeOff")
+                                logI("123312313: muteOn:${timeOn.toString().padStart(2, '0')},muteOff:${timeOff.toString().padStart(2, '0')}")
                             }
                             .error { code, error ->
                                 ToastUtil.shortShow(
@@ -740,7 +740,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                                 )
                             }
-                            .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn},muteOff:${if (timeOff == 24) 12 else timeOff}")
+                            .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn.toString().padStart(2, '0')},muteOff:${if (timeOff == 24) 12 else timeOff.toString().padStart(2, '0')}")
                     })
             ).show()
         }

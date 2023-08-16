@@ -31,7 +31,7 @@ class ChooseTimePop(
     var isShowNightMode: Boolean = true,
     var turnOnHour: Int? = null,
     var turnOffHour: Int? = null,
-    var isTheSpacingHours: Boolean = true, // 是否是间隔小时
+    var isTheSpacingHours: Boolean = true, // 是否需要间隔12小时
     private val onConfirmAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?) -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
@@ -184,34 +184,34 @@ class ChooseTimePop(
                 kotlin.runCatching {
                     logI("turnOnHour: $turnOnHour,,,turnOffHour: $turnOffHour")
 
-                    if (turnOnHour == turnOffHour) {
-                        ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
-                        return@setOnClickListener
-                    }
-
-                    // 计算时间是否大于12个小时
-                    val now = LocalDateTime.now()
-                    val turn = if (turnOnHour == 24) 0 else turnOnHour
-                    val turnOff = if (turnOffHour == 24) 0 else turnOffHour
-                    val start = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turn ?: 0, 0) // 开始时间
-                    var end = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turnOff ?: 0, 0) // 结束时间
-
-                    if (start > end) {
-                        end = end.plusDays(1) // 如果结束时间小于开始时间，加一天
-                    }
-
-                    val duration = Duration.between(start, end) // 计算两个时间的差异
-                    val hours = duration.toHours() // 转换为小时
-
-                    logI("The difference is $hours hours.")
-
-                    if (hours > 12) {
-                        // 差距超过12小时
-                        ToastUtil.shortShow("The time interval cannot be greater than 12 hours.")
-                        return@setOnClickListener
+                    if (isTheSpacingHours) {
+                        if (turnOnHour == turnOffHour) {
+                            ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
+                            return@setOnClickListener
+                        }
                     }
 
                     if (isTheSpacingHours) {
+                        // 计算时间是否大于12个小时
+                        val now = LocalDateTime.now()
+                        val turn = if (turnOnHour == 24) 0 else turnOnHour
+                        val turnOff = if (turnOffHour == 24) 0 else turnOffHour
+                        val start = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turn ?: 0, 0) // 开始时间
+                        var end = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turnOff ?: 0, 0) // 结束时间
+
+                        if (start > end) {
+                            end = end.plusDays(1) // 如果结束时间小于开始时间，加一天
+                        }
+
+                        val duration = Duration.between(start, end) // 计算两个时间的差异
+                        val hours = duration.toHours() // 转换为小时
+
+                        logI("The difference is $hours hours.")
+                        if (hours > 12) {
+                            // 差距超过12小时
+                            ToastUtil.shortShow("The time interval cannot be greater than 12 hours.")
+                            return@setOnClickListener
+                        }
                         if ((turnOffHour?.minus(turnOnHour ?: 0) ?: 0) <= 12) {
                             val timeOpenHour = turnOnHour?.let {
                                 if (it > 12) {
