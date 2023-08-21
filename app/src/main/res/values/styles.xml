@@ -8,4 +8,9 @@
         <item name="android:windowBackground">@drawable/layout_start_background</item>
     </style>
 
+    <style name="BottomNavigationView" parent="Widget.Design.BottomNavigationView">
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemHorizontalTranslationEnabled">false</item>
+    </style>
+
 </resources>

@@ -8,17 +8,18 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginStart="5dp"
-        android:layout_width="100dp"
+        android:minWidth="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints">
 
         <CheckBox
             android:ellipsize="end"
             android:maxLines="1"
-            tools:text="12312132312313123"
+            tools:text="1"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:checked="true"
@@ -31,7 +32,7 @@
             android:textSize="16sp"
             android:gravity="center"
             android:id="@+id/check_period"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="25dp"
             android:button="@null" />
 

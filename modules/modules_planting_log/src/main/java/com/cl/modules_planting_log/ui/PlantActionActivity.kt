@@ -4,9 +4,13 @@ import android.graphics.Color
 import android.widget.EditText
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.temperatureConversion
+import com.cl.common_base.ext.unitsConversion
+import com.cl.common_base.ext.weightConversion
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.adapter.CustomViewGroupAdapter
 import com.cl.modules_planting_log.adapter.EditTextValueChangeListener
@@ -80,8 +84,8 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
                 "logTime", "logType"
             ),
             mapOf(
-                "logTime" to FieldAttributes("Date*", "自动填写（可更改，下拉日历弹框）", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "logType" to FieldAttributes("Action Type", "自动填写（可下拉更改)", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "logType" to FieldAttributes("Action Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             ),
             this@PlantActionActivity
         )
@@ -102,9 +106,8 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         viewModel.getLogTypeList(showType, logId)
 
         // 请求日志详情
-        logId?.let {
-            viewModel.getLogById(it)
-        }
+        viewModel.getLogById(logId)
+
         binding.rvAction.adapter = logAdapter
     }
 
@@ -138,6 +141,9 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         logI("Log Details: $logSaveOrUpdateReq")
     }
 
+    private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
+        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+    }
 
     override fun observe() {
         viewModel.apply {
@@ -155,6 +161,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
                     // 获取日志详情信息
                     if (null == data) return@success
                     data?.let {
+                        updateUnit(it, viewModel.isMetric, false)
                         logAdapter.setData(it)
                         // 添加备注
                         binding.etNote.setText(it.notes)

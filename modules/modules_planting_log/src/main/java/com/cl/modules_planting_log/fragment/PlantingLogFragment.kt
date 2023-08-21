@@ -101,6 +101,15 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
     private fun initNetData() {
         // 加载plantID
         val plantId = viewModel.plantId.value
+        val period = viewModel.period.value
+        if (!plantId.isNullOrEmpty() && !period.isNullOrEmpty()) {
+            // onResume 刷新当前卡片列表
+            viewModel.updateCurrent(1)
+            viewModel.getLogList(LogListReq(1, period = period.toString(), plantId = plantId.toIntOrNull() ?: 0, PAGE_SIZE))
+            return
+        }
+
+        // 第一次进来加载的
         if (plantId.isNullOrEmpty()) {
             // 如果plantId为空，则直接请求plant信息
             viewModel.plantInfo()
@@ -120,7 +129,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
 
     private fun clickView() {
-        binding.ivGetPlantList.setOnClickListener {
+        binding.flGetPlantList.setOnClickListener {
             // 获取到所有的植物ID
             viewModel.getPlantIdByDeviceId(viewModel.thingDeviceBean()?.devId ?: "")
         }
@@ -223,7 +232,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
             onEditCard = { period, logId, showType ->
                 // 通过日志Id获取日志详情
                 context?.apply {
-                    when(showType) {
+                    when (showType) {
                         CardInfo.TYPE_LOG_CARD -> {
                             // 跳转到日志详情界面
                             startActivity(Intent(this, PlantingLogActivity::class.java).apply {
@@ -233,6 +242,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
                             })
                         }
+
                         CardInfo.TYPE_ACTION_CARD -> {
                             startActivity(Intent(this, PlantActionActivity::class.java).apply {
                                 putExtra("period", period)
@@ -242,6 +252,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
                             })
                         }
+
                         CardInfo.TYPE_TRAINING_CARD -> {
                             startActivity(Intent(this, PlantingTrainActivity::class.java).apply {
                                 putExtra("period", period)
@@ -356,8 +367,9 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
                     XPopup.Builder(context).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
                         .hasShadowBg(true) // 去掉半透明背景
-                        /*.offsetX(XPopupUtils.dp2px(context, 5f))*/
-                        .atView(binding.ivGetPlantList).isCenterHorizontal(false).asCustom(context?.let {
+                        .offsetX(XPopupUtils.dp2px(context, -5f))
+                        .offsetY(XPopupUtils.dp2px(context, 10f))
+                        .atView(binding.ivGetPlantList).asCustom(context?.let {
                             PlantIdListPop(it, plantId.value?.toInt(), data, onConfirmAction = { plantId ->
                                 // 根据plantId获取植物信息
                                 getPlantInfoByPlantId(plantId = plantId.toIntOrNull() ?: 0)
@@ -369,7 +381,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 ) //.setBubbleRadius(100)
                                 .setArrowRadius(
                                     XPopupUtils.dp2px(
-                                        context, 3f
+                                        context, 0f
                                     )
                                 )
                         }).show()
@@ -399,10 +411,16 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
             return@setOnApplyWindowInsetsListener insets
         }
 
-        // 刷新当前卡片列表
-        viewModel.updateCurrent(1)
-        viewModel.getLogList(LogListReq(1, period = viewModel.period.value.toString(), plantId = viewModel.plantId.value?.toIntOrNull() ?: 0, PAGE_SIZE))
+        initNetData()
     }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) {
+            initNetData()
+        }
+    }
+
+
 
     companion object {
         const val PAGE_SIZE = 20

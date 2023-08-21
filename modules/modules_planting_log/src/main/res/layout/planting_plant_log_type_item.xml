@@ -32,7 +32,7 @@
             android:textSize="16sp"
             android:gravity="center"
             android:id="@+id/check_period"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="25dp"
             android:button="@null" />
 

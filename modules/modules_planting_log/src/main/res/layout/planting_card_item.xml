@@ -52,7 +52,7 @@
                 app:l_shadowElevation="10dp">
 
                 <ImageView
-                    url="@{bean.icon}"
+                    logUrl="@{bean.icon}"
                     android:layout_width="90dp"
                     android:layout_height="90dp"
                     tools:background="@mipmap/ic_launcher"
@@ -91,8 +91,9 @@ HT 6.5 in’" />
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <!--三个点。里面包含了编辑、分享功能-->
                 <RelativeLayout
-                    android:visibility="@{bean.isEdit ? View.VISIBLE : View.GONE}"
+                    android:visibility="gone"
                     android:padding="8dp"
                     android:id="@+id/iv_edit"
                     android:layout_width="wrap_content"
@@ -102,6 +103,22 @@ HT 6.5 in’" />
                         android:layout_width="16dp"
                         android:layout_height="4dp"
                         android:background="@mipmap/plant_point"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:visibility="@{bean.isEdit ? View.VISIBLE : View.GONE}"
+                    android:padding="8dp"
+                    android:id="@+id/iv_notes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="13dp"
+                        android:layout_height="15dp"
+                        android:background="@mipmap/log_edit"
                         android:textColor="@color/mainColor"
                         android:textSize="15sp"
                         android:textStyle="bold" />

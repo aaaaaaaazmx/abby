@@ -110,6 +110,20 @@ fun setImageUrl(imageView: ImageView, url: String?) {
     }
 }
 
+@SuppressLint("CheckResult")
+@BindingAdapter(value = ["logUrl"], requireAll = false)
+fun setLogUrl(imageView: ImageView, url: String?) {
+    url?.let {
+        val requestOptions = RequestOptions()
+        requestOptions.placeholder(R.mipmap.placeholder)
+        requestOptions.error(R.mipmap.errorholder)
+        Glide.with(imageView.context).load(url)
+            .apply(requestOptions)
+            .centerCrop()
+            .into(imageView)
+    }
+}
+
 @BindingAdapter(value = ["plantPhotoUrl"], requireAll = false)
 fun setPlantPhotoUrl(imageView: ImageView, url: String?) {
     val requestOptions = RequestOptions()

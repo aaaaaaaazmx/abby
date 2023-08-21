@@ -84,24 +84,24 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             this@PlantingLogActivity,
             listOf(
                 "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc",
-                "plantHeight", "vpd", "driedWeight", "wetWeight", "lightingSchedule", "co2Concentration"
+                "plantHeight", "vpd", "lightingSchedule", "co2Concentration"
             ),
             listOf(
                 "logTime"
             ),
             mapOf(
-                "logTime" to FieldAttributes("Date*", "自动填写（可更改，下拉日历弹框）", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "spaceTemp" to FieldAttributes("Space Temp(ST)", "自动填写（可更改)", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "waterTemp" to FieldAttributes("Water Temp (WT)", "自动填写（可更改)", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "humidity" to FieldAttributes("Humidity (RH)", "自动填写（可更改)", "%", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "ph" to FieldAttributes("PH", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "tdsEc" to FieldAttributes("TDS/EC", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "plantHeight" to FieldAttributes("Height (HT)", "自动填写（可更改)", if (viewModel.isMetric) "cm" else "In", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "vpd" to FieldAttributes("VPD", "自动填写（可更改)", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "driedWeight" to FieldAttributes("Yield (Dried weight)", "手动填写", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "wetWeight" to FieldAttributes("Yield (Wet weight)", "手动填写", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "lightingSchedule" to FieldAttributes("Lighting Schedule", "自动填写（可更改)", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "co2Concentration" to FieldAttributes("CO2 Concentration", "手动填写", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "spaceTemp" to FieldAttributes("Space Temp(ST)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "waterTemp" to FieldAttributes("Water Temp (WT)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "tdsEc" to FieldAttributes("TDS/EC", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "plantHeight" to FieldAttributes("Height (HT)", "", if (viewModel.isMetric) "cm" else "In", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+               /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),*/
+                "lightingSchedule" to FieldAttributes("Lighting Schedule", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "co2Concentration" to FieldAttributes("CO2 Concentration", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
             )
         )
     }
@@ -181,7 +181,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     }
 
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
-        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: 0L, CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
         logSaveOrUpdateReq.spaceTemp = temperatureConversion(logSaveOrUpdateReq.spaceTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.waterTemp = temperatureConversion(logSaveOrUpdateReq.waterTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.plantHeight = unitsConversion(logSaveOrUpdateReq.plantHeight?.toFloatOrNull() ?: 0f, isMetric, isUpload)
@@ -259,9 +259,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
         }
 
         // 获取日志详情
-        logId?.let {
-            viewModel.getLogById(it)
-        }
+        viewModel.getLogById(logId)
     }
 
     override fun observe() {

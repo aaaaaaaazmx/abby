@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.ImageUrl
+import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
@@ -103,8 +104,8 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                 "logTime", "logType"
             ),
             mapOf(
-                "logTime" to FieldAttributes("Date*", "自动填写（可更改，下拉日历弹框）", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "logType" to FieldAttributes("Training Type", "自动填写（可下拉更改)", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "logType" to FieldAttributes("Training Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             ),
             this@PlantingTrainActivity
         )
@@ -124,9 +125,8 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         viewModel.getLogTypeList(showType, logId)
 
         // 请求日志详情
-        logId?.let {
-            viewModel.getLogById(it)
-        }
+        viewModel.getLogById(logId)
+
         binding.rvLog.adapter = logAdapter
     }
 
@@ -186,6 +186,10 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         logI("Log Details: $logSaveOrUpdateReq")
     }
 
+    private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
+        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+    }
+
     override fun observe() {
         viewModel.apply {
             // 上传图片回调
@@ -228,6 +232,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                     // 获取日志详情信息
                     if (null == data) return@success
                     data?.let {
+                        updateUnit(it, viewModel.isMetric, false)
                         logAdapter.setData(it)
                         // 添加备注
                         binding.etNote.setText(it.notes)
@@ -586,7 +591,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
             }
         }
 
-        binding.afterImage.setOnClickListener {view ->
+        binding.afterImage.setOnClickListener { view ->
             viewModel.setChooserTips(false)
             val afterAddress = viewModel.afterPicAddress.value
             if (afterAddress.isNullOrEmpty()) {

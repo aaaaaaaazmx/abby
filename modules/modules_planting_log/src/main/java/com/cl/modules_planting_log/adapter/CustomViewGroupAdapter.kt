@@ -156,7 +156,7 @@ class CustomViewGroupAdapter(
     }
 
     companion object {
-        const val KEY_FORMAT_TIME = "yyyy-MM-dd"
+        const val KEY_FORMAT_TIME = "MM/dd/yyyy"
     }
 }
 

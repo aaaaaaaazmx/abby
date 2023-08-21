@@ -73,10 +73,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     @Inject
     lateinit var mViewModel: SettingViewModel
 
-    private val tuyaHomeBean by lazy {
+    /*private val tuyaHomeBean by lazy {
         val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
         GSON.parseObject(homeData, DeviceBean::class.java)
-    }
+    }*/
 
     private val tuYaUser by lazy {
         val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
@@ -270,7 +270,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         mViewModel.apply {
             listDevice.observe(this@SettingActivity, resourceObserver {
                 success {
-                    data?.firstOrNull { it.deviceId == tuyaHomeBean?.devId }?.let { deviceInfo ->
+                    data?.firstOrNull { it.currentDevice == 1 }?.let { deviceInfo ->
+                        // 保存DeviceId,涂鸦的和后台的返回不一致
+                        saveDeviceId(deviceInfo.deviceId)
                         mViewModel.updateDevicesInfo(deviceInfo)
 
                         // 是否显示防烧模式
@@ -597,7 +599,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftBurner.setSwitchCheckedChangeListener { _, isChecked ->
             ViewUtils.setVisible(isChecked, binding.tvBurnerDesc)
             // 开启防烧模式
-            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = tuyaHomeBean?.devId, burnOutProof = if (isChecked) 1 else 0))
+            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = mViewModel.saveDeviceId.value, burnOutProof = if (isChecked) 1 else 0))
         }
 
         // 童锁
@@ -608,7 +610,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     mViewModel.updateDeviceInfo(
                         UpDeviceInfoReq(
                             childLock = if (isChecked) 1 else 0,
-                            deviceId = tuyaHomeBean?.devId
+                            deviceId = mViewModel.saveDeviceId.value
                         )
                     )
                     binding.ftChildLock.isItemChecked = isChecked
@@ -655,7 +657,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             context = this,
                             contentText = "Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
                         ) {
-                            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = tuyaHomeBean?.devId, proMode = "Off"))
+                            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = mViewModel.saveDeviceId.value, proMode = "Off"))
                             tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
                         }).show()
             }
@@ -702,7 +704,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             mViewModel.updateDeviceInfo(
                 UpDeviceInfoReq(
                     nightMode = if (isChecked) 1 else 0,
-                    deviceId = tuyaHomeBean?.devId
+                    deviceId = mViewModel.saveDeviceId.value
                 )
             )
             ViewUtils.setVisible(isChecked, binding.ftTimer)
@@ -722,7 +724,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         mViewModel.updateDeviceInfo(
                             UpDeviceInfoReq(
                                 nightTimer = binding.ftTimer.itemValue.toString(),
-                                deviceId = tuyaHomeBean?.devId
+                                deviceId = mViewModel.saveDeviceId.value
                             )
                         )
                         // 发送dp点
@@ -760,7 +762,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
                 .asCustom(MyDeleteDevicePop(this) {
-                    ThingHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
+                    ThingHomeSdk.newDeviceInstance(mViewModel.saveDeviceId.value)
                         .removeDevice(object : IResultCallback {
                             override fun onError(code: String?, error: String?) {
                                 logE(
@@ -773,12 +775,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 ToastUtil.shortShow(error)
                                 Reporter.reportTuYaError("newDeviceInstance", error, code)
                                 //  调用接口请求删除设备
-                                mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
+                                mViewModel.deleteDevice(mViewModel.saveDeviceId.value.toString())
                             }
 
                             override fun onSuccess() {
                                 //  调用接口请求删除设备
-                                mViewModel.deleteDevice(tuyaHomeBean?.devId.toString())
+                                mViewModel.deleteDevice(mViewModel.saveDeviceId.value.toString())
                             }
                         })
                 }).show()

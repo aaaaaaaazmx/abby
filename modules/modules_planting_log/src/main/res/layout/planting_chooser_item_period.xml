@@ -48,7 +48,7 @@
 
         <TextView
             colorText='@{bean.optional ? "#006241" : "#979797"}'
-            android:text='@{DateHelper.formatTime((bean.startTime * 1000), "dd/MM/yy")}'
+            android:text='@{DateHelper.formatTime((bean.startTime * 1000), "MM/dd/yy")}'
             android:layout_marginTop="7dp"
             app:layout_constraintEnd_toEndOf="@+id/tV_period_name"
             app:layout_constraintStart_toStartOf="@id/tV_period_name"

@@ -38,7 +38,7 @@ class PlantLogListAdapter(data: MutableList<LogListDataItem>?, private val onDel
         holder.getView<RecyclerView>(R.id.rv_log_card).apply {
             layoutManager = LinearLayoutManager(context)
             adapter = PlantLogCardAdapter(item.list).apply {
-                addChildClickViewIds(R.id.cl_card_root, R.id.iv_edit, R.id.iv_close)
+                addChildClickViewIds(R.id.cl_card_root, R.id.iv_edit, R.id.iv_close, R.id.iv_notes)
                 setOnItemChildClickListener { adapter, view, position ->
                     val cardInfoData = item.list[position]
                     when (view.id) {
@@ -46,6 +46,11 @@ class PlantLogListAdapter(data: MutableList<LogListDataItem>?, private val onDel
                             // 跳转interCome
                             if (cardInfoData.showType == CardInfo.TYPE_TIPS) {
                                 cardInfoData.intercomId?.let { InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = cardInfoData.intercomId) }
+                            } else {
+                                // 跳转编辑界面
+                                logI("click Edit")
+                                // 获取日志详情，然后跳转到日志界面
+                                onEditCard?.invoke(item.period, cardInfoData.logId.toString(), cardInfoData.showType)
                             }
                         }
 
@@ -85,6 +90,10 @@ class PlantLogListAdapter(data: MutableList<LogListDataItem>?, private val onDel
                                             )
                                         )
                                 }).show()
+                        }
+
+                        R.id.iv_notes -> {
+                            // todo 编辑备注弹窗
                         }
 
                         R.id.iv_close -> {

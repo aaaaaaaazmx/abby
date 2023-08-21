@@ -213,7 +213,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
      */
     private val _getLogById = MutableLiveData<Resource<LogSaveOrUpdateReq>>()
     val getLogById: LiveData<Resource<LogSaveOrUpdateReq>> = _getLogById
-    fun getLogById(logId: String) {
+    fun getLogById(logId: String?) {
         viewModelScope.launch {
             repository.getLogById(logId).map {
                 if (it.code != Constants.APP_SUCCESS) {
