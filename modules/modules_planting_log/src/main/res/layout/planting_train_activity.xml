@@ -200,7 +200,7 @@
                     android:layout_height="match_parent"
                     android:background="@null"
                     android:gravity="start"
-                    android:hint="手动填写"
+                    android:hint=""
                     android:padding="5dp"
                     android:textColor="@color/black"
                     android:textColorHint="#979797"

@@ -119,7 +119,7 @@
                     android:id="@+id/et_note"
                     android:padding="5dp"
                     android:gravity="start"
-                    android:hint="手动填写"
+                    android:hint=""
                     android:textColorHint="#979797"
                     android:textColor="@color/black"
                     android:textSize="12sp"

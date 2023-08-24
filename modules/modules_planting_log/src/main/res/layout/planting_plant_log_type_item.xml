@@ -11,7 +11,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
         android:layout_marginStart="5dp"
-        android:minWidth="100dp"
+        android:minWidth="150dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints">
@@ -21,7 +21,6 @@
             android:maxLines="1"
             tools:text="123123"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:checked="true"
             android:paddingEnd="5dp"
             android:paddingStart="5dp"

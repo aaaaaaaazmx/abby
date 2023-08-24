@@ -152,7 +152,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                     context?.startActivity(Intent(context, PlantingLogActivity::class.java).apply {
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
-                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
                                     })
                                 }
 
@@ -161,7 +161,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                     context?.startActivity(Intent(context, PlantActionActivity::class.java).apply {
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
-                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
                                     })
                                 }
 
@@ -170,7 +170,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                     context?.startActivity(Intent(context, PlantingTrainActivity::class.java).apply {
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
-                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                                        putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
                                     })
                                 }
                             }
@@ -239,7 +239,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("period", period)
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)
-                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
                             })
                         }
 
@@ -249,7 +249,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)
                                 putExtra("showType", showType)
-                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
                             })
                         }
 
@@ -259,7 +259,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)
                                 putExtra("showType", showType)
-                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as Serializable))
+                                putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
                             })
                         }
                     }
@@ -371,6 +371,8 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                         .offsetY(XPopupUtils.dp2px(context, 10f))
                         .atView(binding.ivGetPlantList).asCustom(context?.let {
                             PlantIdListPop(it, plantId.value?.toInt(), data, onConfirmAction = { plantId ->
+                                // 设置植物ID
+                                setPlantIds(plantId)
                                 // 根据plantId获取植物信息
                                 getPlantInfoByPlantId(plantId = plantId.toIntOrNull() ?: 0)
                             }).setBubbleBgColor(Color.WHITE) //气泡背景
@@ -381,7 +383,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 ) //.setBubbleRadius(100)
                                 .setArrowRadius(
                                     XPopupUtils.dp2px(
-                                        context, 0f
+                                        context, 1f
                                     )
                                 )
                         }).show()

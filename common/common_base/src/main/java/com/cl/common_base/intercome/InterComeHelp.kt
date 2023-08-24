@@ -12,6 +12,7 @@ import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.px2dp
 import com.cl.common_base.ext.screenHeight
+import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
@@ -79,15 +80,24 @@ class InterComeHelp {
                     intercomStatusCallback = object : IntercomStatusCallback {
                         override fun onSuccess() {
                             // Handle successl
-                            logI("InterCome: Login success")
-                            // todo 登录成功之后更新用户信息。
-                            updateInterComeUserInfo(
+                            // 上报给自定义收集器InterCome登录成功
+                            /*Reporter.reportError(
+                                Reporter.ErrorType.ApiError, "InterCome: Login success interComeUserId: $interComeUserId",
+                                "userId" to userInfo?.userId.toString(),
+                                "interComeUserId" to interComeUserId,
+                                "userExternalId" to userInfo?.externalId.toString(),
+                                "deviceId" to userInfo?.deviceId.toString(),
+                                "isVip" to userInfo?.isVip.toString(),
+                            )*/
+                            logI("InterCome: Login success interComeUserId: $interComeUserId")
+                            //  登录成功之后更新用户信息。
+                           /* updateInterComeUserInfo(
                                 map = map,
                                 userInfo = userInfo,
                                 refreshUserInfo = refreshUserInfo,
                                 updateSuccess = updateSuccess,
                                 updateFail = updateFail
-                            )
+                            )*/
                         }
 
                         override fun onFailure(intercomError: IntercomError) {
@@ -117,7 +127,7 @@ class InterComeHelp {
                 .withCustomAttributes(map ?: mapOf<String, Any>())
                 .withName(refreshUserInfo?.nickName)
                 .withEmail(refreshUserInfo?.email)
-                .withUserId(if (BuildConfig.DEBUG) "test_${refreshUserInfo?.userId}" else refreshUserInfo?.userId.toString())
+                .withUserId(refreshUserInfo?.userId.toString())
                 // .withUserId(refreshUserInfo?.userId.toString())
                 .build()
         } else if (null == refreshUserInfo) {
@@ -125,7 +135,7 @@ class InterComeHelp {
                 .withCustomAttributes(map ?: mapOf<String, String>())
                 .withName(userInfo.nickName)
                 .withEmail(userInfo.email)
-                .withUserId(if (BuildConfig.DEBUG) "test_${userInfo.userId}" else userInfo.userId.toString())
+                .withUserId(userInfo.userId.toString())
                 .build()
         } else {
             UserAttributes.Builder()
@@ -166,6 +176,7 @@ class InterComeHelp {
                     Intercom.client().presentContent(content = IntercomContent.Article(id = it))
                 }
             }
+
             is InterComeSpace.Carousel -> {
                 id?.let {
                     Intercom.client().presentContent(content = IntercomContent.Carousel(id = it))
@@ -192,6 +203,7 @@ class InterComeHelp {
             is InterComeSpace.Home -> {
                 Intercom.client().present(space = IntercomSpace.Home)
             }
+
             else -> {
                 id?.let {
                     Intercom.client().presentContent(content = IntercomContent.Article(id = it))

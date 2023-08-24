@@ -152,18 +152,16 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         logSaveOrUpdateReq.trainingAfterPhoto = extractPhotoPath(viewModel.afterPicAddress.value)
     }
 
+    // todo 截取有问题
     private fun extractPhotoPath(inputUrl: String?): String? {
         inputUrl?.let { url ->
             val urlArray = url.split("--------")
             val targetUrl = if (urlArray.size > 1) urlArray[1] else urlArray[0]
-
             if (targetUrl.startsWith("http")) {
-                val searchString = "user/trend/"
-                val startIndex = targetUrl.indexOf(searchString)
-                if (startIndex != -1) {
-                    val endIndex = targetUrl.indexOf(".jpeg", startIndex).plus(".jpeg".length)
-                    return targetUrl.substring(startIndex, endIndex)
-                }
+                val prefix = "https://heyabbytest.s3.us-west-1.amazonaws.com/"
+                val startIndex = prefix.length
+                val endIndex = targetUrl.indexOf('?', startIndex) // 找到问号的位置，如果没有问号可以使用url.length
+                return targetUrl.substring(startIndex, if (endIndex == -1) url.length else endIndex)
             }
             return targetUrl
         }
@@ -610,7 +608,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         }
 
         binding.afterClose.setOnClickListener {
-            val afterAddress = viewModel.beforePicAddress.value
+            val afterAddress = viewModel.afterPicAddress.value
             afterAddress?.let {
                 // 移除照片
                 viewModel.setClearAfterAddress()
@@ -636,7 +634,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
 
     override fun onEditTextClick(position: Int, editText: EditText) {
         // 转换成日志
-        val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.logType, false) }?.toMutableList()
+        val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.showUiText, false) }?.toMutableList()
         // 弹出相对应的日志列表弹窗
         XPopup.Builder(this@PlantingTrainActivity).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
             .hasShadowBg(true) // 去掉半透明背景

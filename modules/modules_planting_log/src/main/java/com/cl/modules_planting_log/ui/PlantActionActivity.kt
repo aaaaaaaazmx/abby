@@ -185,7 +185,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
 
     override fun onEditTextClick(position: Int, editText: EditText) {
         // 转换成日志
-        val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.logType, false) }?.toMutableList()
+        val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.showUiText, false) }?.toMutableList()
         // 弹出相对应的日志列表弹窗
         XPopup.Builder(this@PlantActionActivity).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
             .hasShadowBg(true) // 去掉半透明背景

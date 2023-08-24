@@ -73,11 +73,11 @@ class CustomViewGroup : LinearLayout {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if (s.isEmpty()) {
+                /*if (s.isEmpty()) {
                     editText1?.gravity = (Gravity.LEFT or Gravity.CENTER_VERTICAL)
                 } else {
                     editText1?.gravity = (Gravity.RIGHT or Gravity.CENTER_VERTICAL)
-                }
+                }*/
             }
 
             override fun afterTextChanged(s: Editable?) {

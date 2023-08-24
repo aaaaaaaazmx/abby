@@ -89,7 +89,7 @@ class CustomViewGroupAdapter(
                     logI("选择的日期是：$year-${monthOfYear + 1}-$dayOfMonth")
                     // 保存选择的日期
                     // 转成毫秒
-                    editText.setText("$year-${monthOfYear + 1}-$dayOfMonth")
+                    editText.setText("${monthOfYear + 1}/$dayOfMonth/$year")
                 }
 
                 // 在用户打开日期选择器时，设置初始选中的日期为上次选择的日期
