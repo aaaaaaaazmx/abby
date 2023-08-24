@@ -32,7 +32,8 @@ import java.util.Calendar
  * @param   interFaceEditTextValueChangeListener 暴露给外部的处理事件
  */
 class CustomViewGroupAdapter(
-    private val context: Context, private val fields: List<String>,
+    private val context: Context,
+    private val fields: List<String>,
     private val noKeyboardFields: List<String>,
     private val fieldsAttributes: Map<String, FieldAttributes>,
     private val interFaceEditTextValueChangeListener: EditTextValueChangeListener? = null,
@@ -55,6 +56,8 @@ class CustomViewGroupAdapter(
         holder.customViewGroup.tag = position
         // 设置隐藏和显示以及设置文案
         val attributes = fieldsAttributes[fields[position]]
+        // 设置输入类型
+        holder.customViewGroup.setInputType(attributes?.inputType ?: CustomViewGroup.TYPE_CLASS_TEXT)
         holder.customViewGroup.setTextView1Text(attributes?.description)
         holder.customViewGroup.setEditText1HintText(attributes?.hintDescription)
         holder.customViewGroup.setTextView2Text(attributes?.unit)
@@ -65,8 +68,7 @@ class CustomViewGroupAdapter(
         val field = fields[position]
         val noKeyboard = noKeyboardFields.contains(field)
         holder.customViewGroup.setNoKeyboard(noKeyboard)
-        // 设置输入类型
-        holder.customViewGroup.setInputType(attributes?.inputType ?: CustomViewGroup.TYPE_CLASS_TEXT)
+
     }
 
     override fun getItemCount() = data.size

@@ -24,6 +24,13 @@ data class LogSaveOrUpdateReq(
     var vpd: String? = null,
     var waterTemp: String? = null,
     var wetWeight: String? = null,
+    val lightingOff: String? = null,
+    val lightingOn: String? = null,
+    val waterType: String? = null,
+    val volume: String? = null,
+    val feedingType: String? = null,
+    val repellentType: String? = null,
+    val declareDeathType: String? = null,
 ): BaseBean() {
     companion object {
         const val KEY_LOG_TIME = "logTime"

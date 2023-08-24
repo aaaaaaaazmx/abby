@@ -84,24 +84,26 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             this@PlantingLogActivity,
             listOf(
                 "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc",
-                "plantHeight", "vpd", "lightingSchedule", "co2Concentration"
+                "plantHeight", "lightingOn", "lightingOff", "co2Concentration"
             ),
             listOf(
                 "logTime"
             ),
             mapOf(
                 "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "spaceTemp" to FieldAttributes("Space Temp(ST)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "waterTemp" to FieldAttributes("Water Temp (WT)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "tdsEc" to FieldAttributes("TDS/EC", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "plantHeight" to FieldAttributes("Height (HT)", "", if (viewModel.isMetric) "cm" else "In", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
-               /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),
-                "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_CLASS_NUMBER),*/
-                "lightingSchedule" to FieldAttributes("Lighting Schedule", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "co2Concentration" to FieldAttributes("CO2 Concentration", "", "", CustomViewGroup.TYPE_CLASS_NUMBER),
+                "spaceTemp" to FieldAttributes("Space Temp(ST)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                "waterTemp" to FieldAttributes("Water Temp (WT)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                "plantHeight" to FieldAttributes("Height (HT)", "", if (viewModel.isMetric) "cm" else "In", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                /*"vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
+               /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
+                /*"lightingSchedule" to FieldAttributes("Lighting Schedule", "", "", CustomViewGroup.TYPE_CLASS_TEXT),*/
+                "lightingOn" to FieldAttributes("Lighting On", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "lightingOff" to FieldAttributes("Lighting Off", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+                "co2Concentration" to FieldAttributes("CO2 Concentration", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             )
         )
     }
