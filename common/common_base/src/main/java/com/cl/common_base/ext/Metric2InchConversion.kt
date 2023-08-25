@@ -56,3 +56,21 @@ fun weightConversion(value: Float, isMetric: Boolean, isUpload: Boolean): String
         }
     }
 }
+
+fun gallonConversion(value: Float, isMetric: Boolean, isUpload: Boolean) : String {
+    return if (isUpload) {
+        if (isMetric) {
+            val liters = value.times(3.78541f)
+            String.format("%.1f", liters) // 公制上传时转换为升
+        } else {
+            String.format("%.1f", value) // 英制上传不转换
+        }
+    } else {
+        if (isMetric) {
+            val gallons = value.div(3.78541f)
+            String.format("%.1f", gallons) // 公制获取后台数据时从升转换为加仑
+        } else {
+            String.format("%.1f", value) // 英制获取不转换
+        }
+    }
+}

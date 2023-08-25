@@ -231,7 +231,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     InitSdk.init() // 是否种植过
                     // 保存账号
                     Prefs.putString(Constants.USER_NAME, binding.accountEditText.text.toString())
-                    data?.let { PlantCheckHelp().plantStatusCheck(this@LoginActivity, it) } //                    when (userInfoBean.deviceStatus) {
+                    data?.let { PlantCheckHelp().plantStatusCheck(this@LoginActivity, it) }
+                    //                    when (userInfoBean.deviceStatus) {
                     //                        // 1-> 绑定设备、 2-> 未绑定设备
                     //                        "1" -> {
                     //

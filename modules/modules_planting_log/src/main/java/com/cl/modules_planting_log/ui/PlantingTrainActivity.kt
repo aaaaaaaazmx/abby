@@ -632,7 +632,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
 
     }
 
-    override fun onEditTextClick(position: Int, editText: EditText) {
+    override fun onEditTextClick(position: Int, editText: EditText, customViewGroup: CustomViewGroup) {
         // 转换成日志
         val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.showUiText, false) }?.toMutableList()
         // 弹出相对应的日志列表弹窗

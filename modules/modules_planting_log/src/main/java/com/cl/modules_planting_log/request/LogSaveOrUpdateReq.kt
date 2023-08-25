@@ -24,13 +24,13 @@ data class LogSaveOrUpdateReq(
     var vpd: String? = null,
     var waterTemp: String? = null,
     var wetWeight: String? = null,
-    val lightingOff: String? = null,
-    val lightingOn: String? = null,
-    val waterType: String? = null,
-    val volume: String? = null,
-    val feedingType: String? = null,
-    val repellentType: String? = null,
-    val declareDeathType: String? = null,
+    var lightingOff: String? = null,
+    var lightingOn: String? = null,
+    var waterType: String? = null,
+    var volume: String? = null,
+    var feedingType: String? = null,
+    var repellentType: String? = null,
+    var declareDeathType: String? = null,
 ): BaseBean() {
     companion object {
         const val KEY_LOG_TIME = "logTime"
@@ -40,5 +40,9 @@ data class LogSaveOrUpdateReq(
         const val KEY_DRIED_WEIGHT  = "driedWeight"
         const val KEY_WET_WEIGHT  = "wetWeight"
         const val KEY_LOG_TYPE = "logType"
+        const val KEY_LOG_TYPE_WATER_TYPE = "waterType"
+        const val KEY_LOG_TYPE_FEEDING = "feedingType"
+        const val KEY_LOG_TYPE_REPELLENT = "repellentType"
+        const val KEY_LOG_TYPE_DECLARE_DEATH = "declareDeathType"
     }
 }
