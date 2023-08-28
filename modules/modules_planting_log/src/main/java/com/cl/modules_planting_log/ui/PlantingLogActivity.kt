@@ -96,7 +96,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                 "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
                 "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
                 "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                "plantHeight" to FieldAttributes("Height (HT)", "", if (viewModel.isMetric) "cm" else "In", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+                "plantHeight" to FieldAttributes("Height (HT)", "", if (viewModel.isMetric) "mm" else "In", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
                 /*"vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
                /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
                 "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
@@ -125,6 +125,11 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     // period 用户新增时传递的周期参数
     private val period by lazy {
         intent.getStringExtra("period")
+    }
+
+    // 是否是新增的
+    private val isAdd by lazy {
+        intent.getBooleanExtra("isAdd", true)
     }
 
     /**

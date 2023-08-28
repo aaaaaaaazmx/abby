@@ -150,6 +150,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 "Log" -> {
                                     logI("click Log")
                                     context?.startActivity(Intent(context, PlantingLogActivity::class.java).apply {
+                                        putExtra("isAdd", true)
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
                                         putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
@@ -159,6 +160,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 "Actions" -> {
                                     logI("click Actions")
                                     context?.startActivity(Intent(context, PlantActionActivity::class.java).apply {
+                                        putExtra("isAdd", true)
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
                                         putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
@@ -168,6 +170,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                 "Training" -> {
                                     logI("click Training")
                                     context?.startActivity(Intent(context, PlantingTrainActivity::class.java).apply {
+                                        putExtra("isAdd", true)
                                         putExtra("plantId", viewModel.plantId.value)
                                         putExtra("period", viewModel.period.value)
                                         putExtra("plantInfoData", (viewModel.getPlantInfoByPlantId.value?.data as? Serializable))
@@ -236,6 +239,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                         CardInfo.TYPE_LOG_CARD -> {
                             // 跳转到日志详情界面
                             startActivity(Intent(this, PlantingLogActivity::class.java).apply {
+                                putExtra("isAdd", false)
                                 putExtra("period", period)
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)
@@ -245,6 +249,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
                         CardInfo.TYPE_ACTION_CARD -> {
                             startActivity(Intent(this, PlantActionActivity::class.java).apply {
+                                putExtra("isAdd", false)
                                 putExtra("period", period)
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)
@@ -255,6 +260,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
                         CardInfo.TYPE_TRAINING_CARD -> {
                             startActivity(Intent(this, PlantingTrainActivity::class.java).apply {
+                                putExtra("isAdd", false)
                                 putExtra("period", period)
                                 putExtra("plantId", viewModel.plantId.value)
                                 putExtra("logId", logId)

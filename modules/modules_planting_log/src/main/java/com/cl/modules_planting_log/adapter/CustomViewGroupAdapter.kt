@@ -48,7 +48,7 @@ class CustomViewGroupAdapter(
 
     // 这个是固定的选择logType之后，需要显示的映射相对应的显示和隐藏的条目
     // 这个目前也是固定的，主要是选择logType之后，显示listOf里面的条目，或者是选择其他的隐藏里面的条目
-    private val logTypeMap = mapOf(
+    val logTypeMap = mapOf(
         /*LogSaveOrUpdateReq.KEY_LOG_TYPE_WATER_TYPE to mutableListOf("waterType", "volume"),
         LogSaveOrUpdateReq.KEY_LOG_TYPE_FEEDING to mutableListOf("feedingType"),
         LogSaveOrUpdateReq.KEY_LOG_TYPE_REPELLENT to mutableListOf("repellentType"),
@@ -69,7 +69,7 @@ class CustomViewGroupAdapter(
 
     // 这个是根据选择的logType来对应的下面的可选列表，目前写死。
     // key 是对应 后台返回LogTypeListDataItem类里面的showUiText字段
-    private val chooseTypedData = mapOf(
+    val chooseTypedData = mapOf(
         LogSaveOrUpdateReq.KEY_LOG_TYPE_WATER_TYPE to mutableListOf(
             LogTypeListDataItem("Purified", "Purified", false),
             LogTypeListDataItem("Distilled", "Distilled", false),
@@ -126,7 +126,13 @@ class CustomViewGroupAdapter(
             holder.customViewGroup.setEditText1HintText(attributes?.hintDescription)
             holder.customViewGroup.setTextView2Text(attributes?.unit)
             holder.customViewGroup.setTextView2Visibility(!attributes?.unit.isNullOrBlank())
-            chooseTypedData[fields[position]]?.toMutableList()?.let { holder.customViewGroup.setRvListData(it, false) } // 设置rv数据
+            chooseTypedData[fields[position]]?.let { list ->
+                val updatedList = list.map { item ->
+                    item.copy(isSelected = item.showUiText == data[position])
+                }.toMutableList() as MutableList<LogTypeListDataItem>
+                holder.customViewGroup.setRvListData(updatedList, false)
+            }
+            // 设置rv数据
             holder.customViewGroup.setEditText1Text(position, data[position])
             holder.customViewGroup.setRootVisible(attributes?.isVisible == true) // 是否是显示和隐藏的logType字段
 
@@ -136,6 +142,8 @@ class CustomViewGroupAdapter(
             val noKeyboard = noKeyboardFields.contains(field)
             holder.customViewGroup.setNoKeyboard(noKeyboard)
         } else {
+            // 这一款主要是针对editText显示不正确的问题
+            // 外加隐藏和显示条目、隐藏和显示都默认位空
             holder.customViewGroup.setEditText1Text(position, "")
             data[position] = ""
             holder.customViewGroup.setRootVisible(attributes?.isVisible == true) // 是否是显示和隐藏的logType字段
@@ -189,7 +197,8 @@ class CustomViewGroupAdapter(
             LogSaveOrUpdateReq.KEY_LOG_TYPE_DECLARE_DEATH,
             LogSaveOrUpdateReq.KEY_LOG_TYPE_FEEDING,
             LogSaveOrUpdateReq.KEY_LOG_TYPE_REPELLENT -> {
-                customViewGroup.getRvListData()
+                if (customViewGroup.getRvListData()) customViewGroup.getRvListData() else interFaceEditTextValueChangeListener?.onEditTextClick(position, editText, customViewGroup)
+
             }
         }
     }

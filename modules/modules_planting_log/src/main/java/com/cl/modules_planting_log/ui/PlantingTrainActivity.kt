@@ -91,6 +91,11 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         intent.getStringExtra("showType") ?: CardInfo.TYPE_TRAINING_CARD
     }
 
+    // 是否是新增的
+    private val isAdd by lazy {
+        intent.getBooleanExtra("isAdd", true)
+    }
+
     /**
      * 日志适配器
      */

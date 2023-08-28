@@ -1,5 +1,7 @@
 package com.cl.modules_planting_log.widget
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.content.res.TypedArray
 import android.text.Editable
@@ -13,10 +15,10 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cl.common_base.util.SoftInputUtils
-import com.cl.common_base.util.ViewUtils
 import com.cl.modules_planting_log.R
 import com.cl.modules_planting_log.adapter.EditTextValueChangeListener
 import com.cl.modules_planting_log.adapter.LogTypeChooseAdapter
@@ -58,7 +60,8 @@ class CustomViewGroup : LinearLayout {
             val editText1Text = a.getString(R.styleable.CustomViewGroup_editText1Text)
             val textView2Text = a.getString(R.styleable.CustomViewGroup_textView2Text)
             val editText1HintText = a.getString(R.styleable.CustomViewGroup_editText1HintText)
-            val textView2Visibility = a.getBoolean(R.styleable.CustomViewGroup_textView2Visibility, true)
+            val textView2Visibility =
+                a.getBoolean(R.styleable.CustomViewGroup_textView2Visibility, true)
             a.recycle()
             initRv()
             setEditeTextViewListener()
@@ -86,7 +89,8 @@ class CustomViewGroup : LinearLayout {
             chooserAdapter.setOnItemChildClickListener { adapter, view, position ->
                 if (view.id != R.id.check_period_chooser) return@setOnItemChildClickListener
 
-                val data = adapter.data as? MutableList<LogTypeListDataItem> ?: return@setOnItemChildClickListener
+                val data = adapter.data as? MutableList<LogTypeListDataItem>
+                    ?: return@setOnItemChildClickListener
                 val previousSelectedIndex = data.indexOfFirst { it.isSelected }
                 var beforeShowUiText: String? = null
 
@@ -105,24 +109,32 @@ class CustomViewGroup : LinearLayout {
                 editText1?.setText(data[position].showUiText)
 
                 // 选中后隐藏
-                visibility = View.GONE
+                rvChoose?.let {
+                    fadeAnimation(it, false)
+                }
 
                 // 提供出接口，暴露相对应的visible的布局
                 // 爆出showUiText
                 // 选择相对应的logType之后，需要显示相对应的type，同时也需要隐藏相对应的type
-                showOrHideListener?.showOrHide(previousSelectedIndex, position, beforeShowUiText, data[position].showUiText, this@CustomViewGroup)
+                showOrHideListener?.showOrHide(
+                    previousSelectedIndex,
+                    position,
+                    beforeShowUiText,
+                    data[position].showUiText,
+                    this@CustomViewGroup
+                )
             }
 
         }
     }
 
     fun setRvListData(logTypeList: MutableList<LogTypeListDataItem>, isShow: Boolean = false) {
-        ViewUtils.setVisible(isShow, rvChoose)
+        rvChoose?.let { fadeAnimation(it, isShow) }
         chooserAdapter.setList(logTypeList)
     }
 
     fun getRvListData(): Boolean {
-        ViewUtils.setVisible(chooserAdapter.data.isNotEmpty(), rvChoose)
+        rvChoose?.let { fadeAnimation(it, chooserAdapter.data.isNotEmpty()) }
         return chooserAdapter.data.isNotEmpty()
     }
 
@@ -148,29 +160,30 @@ class CustomViewGroup : LinearLayout {
     private fun setEditeTextViewListener() {
         editText1?.gravity = (Gravity.RIGHT or Gravity.CENTER_VERTICAL)
         rlRoot?.setOnClickListener {
+            // 区分是可点击的，还是不可点击的。
+            if (isNotClickable()) return@setOnClickListener
+
             // 将光标设置到文本的末尾
             editText1?.setSelection(editText1?.text.toString().length)
 
             // 使EditText获取焦点
             editText1?.requestFocus()
 
-            // 区分是可点击的，还是不可点击的。
-            if (noKeyboard) {
-                listener?.onEditTextClick(tag as Int, editText1!!, this)
-                return@setOnClickListener
-            }
-
             // 显示软键盘
             SoftInputUtils.showSoftInput(context, editText1)
         }
+
         editText1?.setOnClickListener {
-            if (noKeyboard) {
-                listener?.onEditTextClick(tag as Int, editText1!!, this)
-                return@setOnClickListener
-            }
+            if (isNotClickable()) return@setOnClickListener
         }
+
         editText1?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { // 检查是否已经有一位小数点，如果没有则添加
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) { // 检查是否已经有一位小数点，如果没有则添加
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
@@ -187,7 +200,9 @@ class CustomViewGroup : LinearLayout {
                     val value = editText1?.text.toString()
                     val floatValue = value.toDoubleOrNull()
                     // 检查是否整数，如果是，则添加".0"
-                    if (floatValue != null && !value.contains(".") && floatValue == floatValue.toInt().toDouble()) {
+                    if (floatValue != null && !value.contains(".") && floatValue == floatValue.toInt()
+                            .toDouble()
+                    ) {
                         val formattedValue = "$value.0"
                         editText1?.setText(formattedValue)
                     }
@@ -209,17 +224,29 @@ class CustomViewGroup : LinearLayout {
         }
     }
 
+    private fun isNotClickable(): Boolean {
+        if (noKeyboard) {
+            rvChoose?.let { fadeAnimation(it, it.isVisible) }
+            if (rvChoose?.isVisible == true) {
+                return true
+            }
+            listener?.onEditTextClick(tag as Int, editText1!!, this)
+            return true
+        }
+        return false
+    }
+
     fun setTextView1Text(text: String?) {
         textView1!!.text = text
     }
 
     fun setEditText1Text(tags: Any, text: String?) {
         if (tags == tag) {
-                if (editText1?.inputType == InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL) {
-                    editText1?.setText(text?.toDoubleOrNull()?.toString() ?: "")
-                } else {
-                    editText1?.setText(text)
-                }
+            if (editText1?.inputType == InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL) {
+                editText1?.setText(text?.toDoubleOrNull()?.toString() ?: "")
+            } else {
+                editText1?.setText(text)
+            }
         }
 
     }
@@ -233,38 +260,63 @@ class CustomViewGroup : LinearLayout {
     }
 
     fun setTextView2Visibility(isVisible: Boolean) {
-        textView2!!.visibility = if (isVisible) VISIBLE else GONE
+        textView2?.let { fadeAnimation(it, isVisible) }
     }
 
     fun setRootVisible(isVisible: Boolean) {
-        llRoot!!.visibility = if (isVisible) View.VISIBLE else View.GONE
+        llRoot?.let { fadeAnimation(it, isVisible) }
     }
+
+    private fun fadeAnimation(view: View, isVisible: Boolean) {
+        if (isVisible) {
+            view.visibility = View.VISIBLE
+            view.alpha = 0f
+            view.animate()
+                .alpha(1f)
+                .setDuration(300) // 300毫秒的持续时间
+                .setListener(null)
+        } else {
+            view.animate()
+                .alpha(0f)
+                .setDuration(300) // 300毫秒的持续时间
+                .setListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        view.visibility = View.GONE
+                    }
+                })
+        }
+    }
+
 
     fun setInputType(type: String) {
         when (type) {
             TYPE_CLASS_TEXT -> editText1?.inputType = InputType.TYPE_CLASS_TEXT
 
             TYPE_NUMBER_FLAG_DECIMAL -> {
-                editText1?.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+                editText1?.inputType =
+                    InputType.TYPE_CLASS_NUMBER or InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 // editText1?.filters = arrayOf<InputFilter>(DecimalDigitsInputFilter(1))
-                editText1?.filters = arrayOf<InputFilter>(InputFilter { source, start, end, dest, dstart, dend ->
-                    if (source.isNotEmpty() && ".".contentEquals(source) && dest.toString().contains(".")) {
-                        // 不允许输入多个小数点
-                        return@InputFilter ""
-                    }
-                    if (source == "." && dstart == 0) {
-                        // 不允许以小数点开头
-                        return@InputFilter "0."
-                    }
-                    if (dest.toString().contains(".")) {
-                        val dotIndex = dest.indexOf(".")
-                        if (dend > dotIndex && dest.substring(dotIndex + 1).isNotEmpty()) {
-                            // 不允许输入超过一位小数
+                editText1?.filters =
+                    arrayOf<InputFilter>(InputFilter { source, start, end, dest, dstart, dend ->
+                        if (source.isNotEmpty() && ".".contentEquals(source) && dest.toString()
+                                .contains(".")
+                        ) {
+                            // 不允许输入多个小数点
                             return@InputFilter ""
                         }
-                    }
-                    null
-                })
+                        if (source == "." && dstart == 0) {
+                            // 不允许以小数点开头
+                            return@InputFilter "0."
+                        }
+                        if (dest.toString().contains(".")) {
+                            val dotIndex = dest.indexOf(".")
+                            if (dend > dotIndex && dest.substring(dotIndex + 1).isNotEmpty()) {
+                                // 不允许输入超过一位小数
+                                return@InputFilter ""
+                            }
+                        }
+                        null
+                    })
             }
         }
     }

@@ -60,6 +60,11 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         intent.getStringExtra("showType") ?: CardInfo.TYPE_ACTION_CARD
     }
 
+    // 是否是新增的
+    private val isAdd by lazy {
+        intent.getBooleanExtra("isAdd", true)
+    }
+
     override fun PlantingActionActivityBinding.initBinding() {
         binding.apply {
             lifecycleOwner = this@PlantActionActivity
@@ -175,13 +180,20 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
                     data?.let {
                         updateUnit(it, viewModel.isMetric, false)
                         // 展示和隐藏条目
+                        // 进来的时候有可能是编辑状态，所以需要展示已经选好的条目，并不能以空作为判断依据
                         maps.forEach { (field, value) ->
                             // 只针对默认显示为False的条目进行判断，为true的都是必须显示的。
                             if (!value.isVisible) {
                                 val declaredFiled = it::class.java.getDeclaredField(field)
                                 declaredFiled.isAccessible = true
                                 val values = declaredFiled.get(it)?.toString()
-                                logAdapter.fieldsAttributes[field]?.isVisible = (!values.isNullOrEmpty() && values.toString() != "0.0")
+                                val mapValue = logAdapter.logTypeMap[it.logType]
+                                if (mapValue.isNullOrEmpty()) {
+                                    logAdapter.fieldsAttributes[field]?.isVisible = !values.isNullOrEmpty()
+                                } else {
+                                    // 找到相对应的mapValue，判断是否相等
+                                    logAdapter.fieldsAttributes[field]?.isVisible = mapValue.contains(field)
+                                }
                             }
                         }
                         logAdapter.setData(it)
@@ -209,29 +221,14 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
     }
 
     override fun onEditTextClick(position: Int, editText: EditText, customViewGroup: CustomViewGroup) {
-        // 转换成日志
-        val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.showUiText, false) }?.toMutableList()
-        // 弹出相对应的日志列表弹窗
-        /*XPopup.Builder(this@PlantActionActivity).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
-            .hasShadowBg(true) // 去掉半透明背景
-            //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
-            .atView(editText).isCenterHorizontal(false).asCustom(this@PlantActionActivity.let {
-                PlantChooseLogTypePop(it,
-                    list = typeList,
-                    onConfirmAction = { txt ->
-                        logAdapter.setData(position, editText, txt)
-                    }).setBubbleBgColor(Color.WHITE) //气泡背景
-                    .setArrowWidth(XPopupUtils.dp2px(this@PlantActionActivity, 6f)).setArrowHeight(
-                        XPopupUtils.dp2px(
-                            this@PlantActionActivity, 6f
-                        )
-                    ) //.setBubbleRadius(100)
-                    .setArrowRadius(
-                        XPopupUtils.dp2px(
-                            this@PlantActionActivity, 3f
-                        )
-                    )
-            }).show()*/
-        customViewGroup.setRvListData(viewModel.getLogTypeList.value?.data?.toMutableList() ?: mutableListOf(), true)
+        val selectedLogType = editText.text.toString()
+        val logTypeListDataItems = viewModel.getLogTypeList.value?.data?.map { item ->
+            item.copy(isSelected = item.showUiText == selectedLogType)
+        } ?: mutableListOf()
+
+        (logTypeListDataItems as? MutableList<LogTypeListDataItem>)?.let {
+            customViewGroup.setRvListData(
+                it, true)
+        }
     }
 }
