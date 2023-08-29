@@ -22,6 +22,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.showToast
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.CustomBubbleAttachPopup
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
@@ -185,6 +186,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             userDetail.observe(this@MainActivity, resourceObserver {
                 success {
                     if (null == data) return@success
+                    // 获取存储的单位值，默认为 false
+                    val storedUnit = saveUnit.value ?: false
+
+                    // 计算新的单位值，如果 data?.inchMetricMode 为 "inch" 则为 false，否则为 true
+                    val newUnit = data?.inchMetricMode != "inch"
+
+                    // 只有在新旧单位不相等的情况下才进行赋值和保存
+                    if (newUnit != storedUnit) {
+                        setSaveUnit(newUnit)
+                        // 异步保存新的单位值
+                        Prefs.putBooleanAsync(Constants.My.KEY_MY_WEIGHT_UNIT, newUnit)
+                    }
+
+
                     if (data?.isVip != 1 || mViewModel.isPlant.value == false) {
                         val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
                         //获取第1个itemView

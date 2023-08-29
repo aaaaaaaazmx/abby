@@ -99,30 +99,33 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
     }
 
     private fun initNetData() {
-        // 加载plantID
-        val plantId = viewModel.plantId.value
-        val period = viewModel.period.value
-        if (!plantId.isNullOrEmpty() && !period.isNullOrEmpty()) {
-            // onResume 刷新当前卡片列表
-            viewModel.updateCurrent(1)
-            viewModel.getLogList(LogListReq(1, period = period.toString(), plantId = plantId.toIntOrNull() ?: 0, PAGE_SIZE))
-            return
-        }
+        kotlin.runCatching {
+            // 加载plantID
+            val plantId = viewModel.plantId.value
+            val period = viewModel.period.value
+            if (!plantId.isNullOrEmpty() && !period.isNullOrEmpty()) {
+                // onResume 刷新当前卡片列表
+                viewModel.getPlantInfoByPlantId(plantId = plantId.toIntOrNull() ?: 0)
+                viewModel.updateCurrent(1)
+                viewModel.getLogList(LogListReq(1, period = period.toString(), plantId = plantId.toIntOrNull() ?: 0, PAGE_SIZE))
+                return
+            }
 
-        // 第一次进来加载的
-        if (plantId.isNullOrEmpty()) {
-            // 如果plantId为空，则直接请求plant信息
-            viewModel.plantInfo()
-        } else {
-            // 尝试将plantId转换为整数，并根据结果进行处理
-            val plantIdInt = plantId.toIntOrNull()
-            if (plantIdInt != null) {
-                viewModel.getPlantInfoByPlantId(plantId = plantIdInt)
-            } else {
-                // 如果plantId不是有效的整数，则可以记录错误并采取其他措施
-                logE("Invalid plantId: $plantId")
-                // 可选的错误处理，例如默认操作或者用户通知
+            // 第一次进来加载的
+            if (plantId.isNullOrEmpty()) {
+                // 如果plantId为空，则直接请求plant信息
                 viewModel.plantInfo()
+            } else {
+                // 尝试将plantId转换为整数，并根据结果进行处理
+                val plantIdInt = plantId.toIntOrNull()
+                if (plantIdInt != null) {
+                    viewModel.getPlantInfoByPlantId(plantId = plantIdInt)
+                } else {
+                    // 如果plantId不是有效的整数，则可以记录错误并采取其他措施
+                    logE("Invalid plantId: $plantId")
+                    // 可选的错误处理，例如默认操作或者用户通知
+                    viewModel.plantInfo()
+                }
             }
         }
     }
@@ -135,6 +138,10 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
         }
 
         binding.ivAddLog.setOnClickListener {
+            if (null == viewModel.getPlantInfoByPlantId.value?.data) {
+                ToastUtil.shortShow("no plants")
+                return@setOnClickListener
+            }
             XPopup.Builder(context).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
                 .hasShadowBg(true) // 去掉半透明背景
                 //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
@@ -427,7 +434,6 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
             initNetData()
         }
     }
-
 
 
     companion object {

@@ -128,6 +128,10 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
      */
     private fun handleSaveOrUpdateLog() {
         val logSaveOrUpdateReq = logAdapter.getLogData()
+        if (logSaveOrUpdateReq.logType.isNullOrEmpty()) {
+            ToastUtil.shortShow("Please select the Action type")
+            return
+        }
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
@@ -155,10 +159,10 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
     }
 
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
-        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
-        logSaveOrUpdateReq.driedWeight = weightConversion((logSaveOrUpdateReq.driedWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)
+        logSaveOrUpdateReq.logTime = if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        /*logSaveOrUpdateReq.driedWeight = weightConversion((logSaveOrUpdateReq.driedWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)
         logSaveOrUpdateReq.wetWeight = weightConversion((logSaveOrUpdateReq.wetWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)
-        logSaveOrUpdateReq.volume = gallonConversion((logSaveOrUpdateReq.volume?.toFloatOrNull() ?: 0f), isMetric, isUpload)
+        logSaveOrUpdateReq.volume = gallonConversion((logSaveOrUpdateReq.volume?.toFloatOrNull() ?: 0f), isMetric, isUpload)*/
         logSaveOrUpdateReq.logType = if (isUpload) viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType ?: "" else viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
     }
 

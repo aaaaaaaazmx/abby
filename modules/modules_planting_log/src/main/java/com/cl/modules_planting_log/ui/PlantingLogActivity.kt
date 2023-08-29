@@ -127,7 +127,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
         intent.getStringExtra("period")
     }
 
-    // 是否是新增的
+    // 是否是新增的or编辑的。
     private val isAdd by lazy {
         intent.getBooleanExtra("isAdd", true)
     }
@@ -154,6 +154,11 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     }
 
     private fun handleSaveOrUpdateLog() {
+        if (chooserAdapter.data.any { it.isUploading == true }) {
+            ToastUtil.shortShow("Please wait for the picture to finish uploading")
+            return
+        }
+
         val logSaveOrUpdateReq = logAdapter.getLogData()
         logSaveOrUpdateReq.period = period
         updateNotes(logSaveOrUpdateReq)
@@ -188,12 +193,12 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     }
 
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
-        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
-        logSaveOrUpdateReq.spaceTemp = temperatureConversion(logSaveOrUpdateReq.spaceTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
+        logSaveOrUpdateReq.logTime = if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        /*logSaveOrUpdateReq.spaceTemp = temperatureConversion(logSaveOrUpdateReq.spaceTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.waterTemp = temperatureConversion(logSaveOrUpdateReq.waterTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.plantHeight = unitsConversion(logSaveOrUpdateReq.plantHeight?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.driedWeight = weightConversion((logSaveOrUpdateReq.driedWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)
-        logSaveOrUpdateReq.wetWeight = weightConversion((logSaveOrUpdateReq.wetWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)
+        logSaveOrUpdateReq.wetWeight = weightConversion((logSaveOrUpdateReq.wetWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)*/
     }
 
     private fun createNewLog(logSaveOrUpdateReq: LogSaveOrUpdateReq) {

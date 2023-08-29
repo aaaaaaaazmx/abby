@@ -21,4 +21,5 @@ data class AutomaticLoginReq(
     var token: String? = null,
     var userName: String? = null,
     var version: String? = AppUtil.appVersionName,
+    var inchMetricMode: String? = null,
 ) : BaseBean()

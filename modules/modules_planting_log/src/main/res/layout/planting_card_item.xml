@@ -109,7 +109,7 @@ HT 6.5 in’" />
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:visibility="@{bean.isEdit ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{bean.isNode ? View.VISIBLE : View.GONE}"
                     android:padding="8dp"
                     android:id="@+id/iv_notes"
                     android:layout_width="wrap_content"

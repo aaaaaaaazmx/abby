@@ -226,10 +226,11 @@ class CustomViewGroup : LinearLayout {
 
     private fun isNotClickable(): Boolean {
         if (noKeyboard) {
-            rvChoose?.let { fadeAnimation(it, it.isVisible) }
             if (rvChoose?.isVisible == true) {
+                rvChoose?.let { fadeAnimation(it, false) }
                 return true
             }
+            rvChoose?.let { fadeAnimation(it, true) }
             listener?.onEditTextClick(tag as Int, editText1!!, this)
             return true
         }
@@ -273,12 +274,12 @@ class CustomViewGroup : LinearLayout {
             view.alpha = 0f
             view.animate()
                 .alpha(1f)
-                .setDuration(300) // 300毫秒的持续时间
+                .setDuration(250) // 250毫秒的持续时间
                 .setListener(null)
         } else {
             view.animate()
                 .alpha(0f)
-                .setDuration(300) // 300毫秒的持续时间
+                .setDuration(250) // 250毫秒的持续时间
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
                         view.visibility = View.GONE

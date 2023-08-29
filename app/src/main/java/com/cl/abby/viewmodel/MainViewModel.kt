@@ -72,6 +72,13 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
         _getWaterVolume.value = "0"
     }
 
+    // 保存公英制信息
+    private val _saveUnit = MutableLiveData<Boolean>()
+    val saveUnit: LiveData<Boolean> = _saveUnit
+    fun setSaveUnit(boolean: Boolean) {
+        _saveUnit.value = boolean
+    }
+
     // 是否需要修复SN
     // 需要在设备在线的情况下才展示修复
     private val _repairSN = MutableLiveData(if (thingDeviceBean?.isOnline == true) {

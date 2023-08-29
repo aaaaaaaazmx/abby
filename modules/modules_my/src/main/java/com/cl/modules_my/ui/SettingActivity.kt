@@ -978,8 +978,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         // 重量单位
         val weightUnit = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-        binding.ftWeight.itemValue =
-            if (weightUnit) getString(com.cl.common_base.R.string.my_metric) else getString(com.cl.common_base.R.string.my_us)
+        mViewModel.modifyUserDetail(ModifyUserDetailReq(inchMetricMode = if (!weightUnit) "inch" else "mefric"))
+        binding.ftWeight.itemValue = if (weightUnit) getString(com.cl.common_base.R.string.my_metric) else getString(com.cl.common_base.R.string.my_us)
     }
 
 

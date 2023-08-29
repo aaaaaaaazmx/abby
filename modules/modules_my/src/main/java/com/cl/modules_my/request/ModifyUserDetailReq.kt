@@ -19,4 +19,5 @@ data class ModifyUserDetailReq(
     var userName: String? = null,
     var wallAddress: String? = null,
     var wallId: String? = null,
+    var inchMetricMode: String? = null,
 ): BaseBean()

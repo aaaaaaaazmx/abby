@@ -55,5 +55,6 @@ data class UserinfoBean(
         val plantDays: String? = null,
         val growBoxCount: String? = null,
         val harvestCount: String? = null,
+        val inchMetricMode: String? = null,
     ) : BaseBean()
 }

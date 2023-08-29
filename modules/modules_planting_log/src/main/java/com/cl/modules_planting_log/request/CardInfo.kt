@@ -8,6 +8,7 @@ data class CardInfo(
     val content: String,
     val icon: String,
     val isEdit: Boolean,
+    val isNode: Boolean,
     val logId: Int
 ):BaseBean() {
     companion object {

@@ -34,6 +34,7 @@ import com.cl.modules_planting_log.databinding.PlantingTrainActivityBinding
 import com.cl.modules_planting_log.request.CardInfo
 import com.cl.modules_planting_log.request.FieldAttributes
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
+import com.cl.modules_planting_log.request.LogTypeListDataItem
 import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import com.cl.modules_planting_log.request.PlantLogTypeBean
 import com.cl.modules_planting_log.viewmodel.PlantingLogAcViewModel
@@ -96,6 +97,21 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         intent.getBooleanExtra("isAdd", true)
     }
 
+    // 属性数组
+    private val maps by lazy {
+        mapOf(
+            "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "logType" to FieldAttributes("Training Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "waterType" to FieldAttributes("Water Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "volume" to FieldAttributes("Volume", "", if (viewModel.isMetric) "L" else "Gal", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
+            "feedingType" to FieldAttributes("Feeding Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "repellentType" to FieldAttributes("Repellent Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "declareDeathType" to FieldAttributes("DeclareDeath Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
+            "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
+        )
+    }
+
     /**
      * 日志适配器
      */
@@ -103,15 +119,12 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         CustomViewGroupAdapter(
             this@PlantingTrainActivity,
             listOf(
-                "logTime", "logType"
+                "logTime", "logType", "waterType", "volume", "feedingType", "repellentType", "declareDeathType", "driedWeight", "wetWeight"
             ),
             listOf(
-                "logTime", "logType"
+                "logTime", "logType", "waterType", "feedingType", "repellentType", "declareDeathType"
             ),
-            mapOf(
-                "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "logType" to FieldAttributes("Training Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            ),
+            maps,
             this@PlantingTrainActivity
         )
     }
@@ -129,9 +142,6 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         // 请求日志类型列表
         viewModel.getLogTypeList(showType, logId)
 
-        // 请求日志详情
-        viewModel.getLogById(logId)
-
         binding.rvLog.adapter = logAdapter
     }
 
@@ -140,11 +150,16 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
      */
     private fun handleSaveOrUpdateLog() {
         val logSaveOrUpdateReq = logAdapter.getLogData()
+        if (logSaveOrUpdateReq.logType.isNullOrEmpty()) {
+            ToastUtil.shortShow("Please select the Training type")
+            return
+        }
         logSaveOrUpdateReq.plantId = plantId
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.logId = logId
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
         updatePhotos(logSaveOrUpdateReq)
+        updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
         if (logId.isNullOrEmpty()) {
             createNewLog(logSaveOrUpdateReq)
         } else {
@@ -190,7 +205,8 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
     }
 
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
-        logSaveOrUpdateReq.logTime = if (isUpload) DateHelper.formatToLong(logSaveOrUpdateReq.logTime ?: "", CustomViewGroupAdapter.KEY_FORMAT_TIME).toString() else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        logSaveOrUpdateReq.logTime = if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        logSaveOrUpdateReq.logType = if (isUpload) viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType ?: "" else viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
     }
 
     override fun observe() {
@@ -236,6 +252,22 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                     if (null == data) return@success
                     data?.let {
                         updateUnit(it, viewModel.isMetric, false)
+                        // 展示和隐藏条目
+                        maps.forEach { (field, value) ->
+                            // 只针对默认显示为False的条目进行判断，为true的都是必须显示的。
+                            if (!value.isVisible) {
+                                val declaredFiled = it::class.java.getDeclaredField(field)
+                                declaredFiled.isAccessible = true
+                                val values = declaredFiled.get(it)?.toString()
+                                val mapValue = logAdapter.logTypeMap[it.logType]
+                                if (mapValue.isNullOrEmpty()) {
+                                    logAdapter.fieldsAttributes[field]?.isVisible = !values.isNullOrEmpty()
+                                } else {
+                                    // 找到相对应的mapValue，判断是否相等
+                                    logAdapter.fieldsAttributes[field]?.isVisible = mapValue.contains(field)
+                                }
+                            }
+                        }
                         logAdapter.setData(it)
                         // 添加备注
                         binding.etNote.setText(it.notes)
@@ -248,7 +280,10 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
 
             getLogTypeList.observe(this@PlantingTrainActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
-                success {}
+                success {
+                    // 请求日志详情
+                    viewModel.getLogById(logId)
+                }
             })
         }
     }
@@ -607,7 +642,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                 kotlin.runCatching {
                     extracted(view, listOf(urlArray?.get(0)))
                 }.onFailure {
-                    extracted(view, listOf(viewModel.beforePicAddress.value))
+                    extracted(view, listOf(viewModel.afterPicAddress.value))
                 }
             }
         }
@@ -641,7 +676,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         // 转换成日志
         val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.showUiText, false) }?.toMutableList()
         // 弹出相对应的日志列表弹窗
-        XPopup.Builder(this@PlantingTrainActivity).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
+        /*XPopup.Builder(this@PlantingTrainActivity).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
             .hasShadowBg(true) // 去掉半透明背景
             //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
             .atView(editText).isCenterHorizontal(false).asCustom(this@PlantingTrainActivity.let {
@@ -660,8 +695,16 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                             this@PlantingTrainActivity, 3f
                         )
                     )
-            }).show()
-    }
+            }).show()*/
+        val selectedLogType = editText.text.toString()
+        val logTypeListDataItems = viewModel.getLogTypeList.value?.data?.map { item ->
+            item.copy(isSelected = item.showUiText == selectedLogType)
+        } ?: mutableListOf()
+
+        (logTypeListDataItems as? MutableList<LogTypeListDataItem>)?.let {
+            customViewGroup.setRvListData(
+                it, true)
+        }    }
 
     companion object {
         // 请求相机

@@ -94,6 +94,8 @@ class PlantLogListAdapter(data: MutableList<LogListDataItem>?, private val onDel
 
                         R.id.iv_notes -> {
                             // todo 编辑备注弹窗
+                            // 获取日志详情，然后跳转到日志界面
+                            onEditCard?.invoke(item.period, cardInfoData.logId.toString(), cardInfoData.showType)
                         }
 
                         R.id.iv_close -> {
