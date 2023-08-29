@@ -23,4 +23,5 @@ data class LoginReq(
     var autoToken: String? = null,
     var source: String? = null,
     var sourceUserId: String? = null,
+    var inchMetricMode: String? = null,
 ) : Serializable

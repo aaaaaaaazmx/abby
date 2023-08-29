@@ -42,6 +42,15 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     }
 
     /**
+     * 保存当前设备ID
+     */
+    private val _saveDeviceId = MutableLiveData<String?>()
+    val saveDeviceId: LiveData<String?> = _saveDeviceId
+    fun saveDeviceId(id: String?) {
+        _saveDeviceId.value = id
+    }
+
+    /**
      * 删除用户设备
      */
     private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()

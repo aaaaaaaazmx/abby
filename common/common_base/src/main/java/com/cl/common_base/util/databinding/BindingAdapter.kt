@@ -1,5 +1,6 @@
 package com.cl.common_base.util.databinding
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -13,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.PagerAdapter
@@ -40,7 +42,9 @@ fun setAdapter(viewPager: ViewPager, adapter: PagerAdapter?) {
 @BindingAdapter("backgroundDrawableId")
 fun setBackgroundDrawableId(view: View, drawableId: Int?) {
     if (null != drawableId) {
-        view.background = view.context.getDrawable(drawableId)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            view.background = ContextCompat.getDrawable(view.context, drawableId)
+        }
     }
 }
 
@@ -106,6 +110,44 @@ fun setImageUrl(imageView: ImageView, url: String?) {
     }
 }
 
+@SuppressLint("CheckResult")
+@BindingAdapter(value = ["logUrl"], requireAll = false)
+fun setLogUrl(imageView: ImageView, url: String?) {
+    url?.let {
+        val requestOptions = RequestOptions()
+        requestOptions.placeholder(R.mipmap.placeholder)
+        requestOptions.error(R.mipmap.errorholder)
+        Glide.with(imageView.context).load(url)
+            .apply(requestOptions)
+            .centerCrop()
+            .into(imageView)
+    }
+}
+
+@BindingAdapter(value = ["plantPhotoUrl"], requireAll = false)
+fun setPlantPhotoUrl(imageView: ImageView, url: String?) {
+    val requestOptions = RequestOptions()
+    requestOptions.placeholder(R.mipmap.placeholder)
+    requestOptions.error(R.mipmap.errorholder)
+    if (url.isNullOrEmpty()) {
+        Glide.with(imageView.context).load(
+            ContextCompat.getDrawable(
+                imageView.context, R.mipmap.contact_add_pic
+            )
+        ).apply(requestOptions).centerCrop().into(imageView)
+    } else {
+        runCatching {
+            val urlArray = url.split("--------")
+            if (urlArray.isNotEmpty() && urlArray.size == 1) {
+                Glide.with(imageView.context).load(urlArray[0]).apply(requestOptions).centerCrop().into(imageView)
+            } else {
+                Glide.with(imageView.context).load(urlArray[0]).apply(requestOptions).centerCrop().into(imageView)
+            }
+        }.onFailure {
+            Glide.with(imageView.context).load(url).apply(requestOptions).centerCrop().into(imageView)
+        }
+    }
+}
 
 /**
  * 设置图片
@@ -239,6 +281,7 @@ fun setTypeInput(editText: EditText, type: String) {
         when (type) {
             "Number" ->
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
+
             "String" -> {
                 editText.inputType = InputType.TYPE_CLASS_TEXT
             }

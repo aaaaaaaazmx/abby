@@ -1,9 +1,5 @@
 package com.cl.abby
 
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
 import com.cl.common_base.ext.DateHelper
 import org.junit.Test
 
@@ -23,6 +19,13 @@ class ExampleUnitTest {
                 println("1231232: ${DateHelper.formatTime(this, "ddMMM", Locale.US)}")
             }
         }*/
+
+        val url = "https://heyabbytest.s3.us-west-1.amazonaws.com/user/trend/1f705984a8f64.jpg?X-Amz-Algorit"
+        val prefix = "https://heyabbytest.s3.us-west-1.amazonaws.com/"
+        val startIndex = prefix.length
+        val endIndex = url.indexOf('?', startIndex) // 找到问号的位置，如果没有问号可以使用url.length
+        val result = url.substring(startIndex, if (endIndex == -1) url.length else endIndex)
+        println("12312312312: $result")
     }
 
     private fun convertTime(createTime: String? = null): String {

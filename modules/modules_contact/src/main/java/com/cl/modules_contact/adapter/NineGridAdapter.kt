@@ -58,7 +58,7 @@ class NineGridAdapter(
                     .load(urlList[position])
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.sp_loading)
+                    .placeholder(com.cl.common_base.R.drawable.sp_loading)
                     .into(imageView)
                 itemView.setOnClickListener {
                     // 图片浏览
@@ -124,7 +124,7 @@ class NineGridAdapter(
                     .load(urlList[position])
                     .centerCrop()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.sp_loading)
+                    .placeholder(com.cl.common_base.R.drawable.sp_loading)
                     .into(imageView)
                 singleView.setOnClickListener {
                     // 图片浏览

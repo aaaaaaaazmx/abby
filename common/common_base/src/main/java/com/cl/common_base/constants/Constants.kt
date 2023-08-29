@@ -76,6 +76,11 @@ object Constants {
         const val KEY_USER_INFO = "key_user_info"
     }
 
+    object Plant {
+        // plantId
+        const val KEY_PLANT_ID = "key_plant_id"
+    }
+
     // 我的界面相关
     object My {
         // 公英制
@@ -343,8 +348,9 @@ object Constants {
 
     object FragmentIndex {
         const val HOME_INDEX = 0
-        const val CONTACT_INDEX = 1
-        const val MY_INDEX = 2
+        const val PLANT_LOG = 1
+        const val CONTACT_INDEX = 2
+        const val MY_INDEX = 3
     }
 
     // 视频后缀

@@ -174,6 +174,7 @@ dependencies {
     implementation(project(mapOf("path" to ":modules:modules_contact")))
     implementation(project(mapOf("path" to ":modules:modules_my")))
     implementation(project(mapOf("path" to ":modules:modules_pairing_connection")))
+    implementation(project(mapOf("path" to ":modules:modules_planting_log")))
 
 
     // 路由

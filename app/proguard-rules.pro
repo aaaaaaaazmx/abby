@@ -43,6 +43,9 @@
 -keep public class com.cl.modules_pairing_connection.request.**{*;}
 -keep public class com.cl.modules_pairing_connection.response.**{*;}
 
+-keep public class com.cl.modules_planting_log.request.**{*;}
+-keep public class com.cl.modules_planting_log.response.**{*;}
+
 
 #1.基本指令区
 # 代码混淆压缩比，在0~7之间，默认为5，一般不做修改

@@ -8,4 +8,15 @@
         <item name="android:windowBackground">@drawable/layout_start_background</item>
     </style>
 
+    <style name="BottomNavigationView" parent="Widget.Design.BottomNavigationView">
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemHorizontalTranslationEnabled">false</item>
+    </style>
+
+    <style name="navigation_tab_inactive">
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="navigation_tab_active">
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

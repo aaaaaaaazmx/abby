@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="CustomViewGroup" tools:ignore="ResourceName">
+        <attr name="textView1Text" format="string" />
+        <attr name="editText1Text" format="string" />
+        <attr name="editText1HintText" format="string" />
+        <attr name="textView2Text" format="string" />
+        <attr name="textView2Visibility" format="boolean" />
+    </declare-styleable>
+</resources>

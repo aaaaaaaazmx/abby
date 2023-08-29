@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="bean"
+            type="com.cl.modules_planting_log.request.PeriodVo" />
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_planting_log.adapter.PlantChooserPeriodAdapter" />
+
+        <import type="android.view.View"/>
+        <import type="com.cl.common_base.ext.DateHelper"/>
+        <import type="android.text.TextUtils"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:id="@+id/cl_root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            colorText='@{bean.optional ? "#006241" : "#979797"}'
+            android:text="@{String.valueOf(bean.period)}"
+            android:id="@+id/tV_period_name"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            tools:text="Germination" />
+
+        <View
+            android:visibility="@{bean.isSelect ? View.VISIBLE : View.INVISIBLE}"
+            android:id="@+id/vv_line"
+            android:layout_marginTop="9dp"
+            app:layout_constraintEnd_toEndOf="@+id/tV_period_name"
+            app:layout_constraintStart_toStartOf="@id/tV_period_name"
+            app:layout_constraintTop_toBottomOf="@+id/tV_period_name"
+            android:background="@color/mainColor"
+            android:layout_width="0dp"
+            android:layout_height="3dp"/>
+
+        <TextView
+            android:visibility="@{TextUtils.isEmpty(String.valueOf(bean.startTime)) ? View.INVISIBLE : View.VISIBLE}"
+            colorText='@{bean.optional ? "#006241" : "#979797"}'
+            android:text='@{adapter.formatTime(String.valueOf(bean.startTime))}'
+            android:layout_marginTop="7dp"
+            app:layout_constraintEnd_toEndOf="@+id/tV_period_name"
+            app:layout_constraintStart_toStartOf="@id/tV_period_name"
+            app:layout_constraintTop_toBottomOf="@+id/vv_line"
+            tools:text="01/02/23"
+            android:textSize="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

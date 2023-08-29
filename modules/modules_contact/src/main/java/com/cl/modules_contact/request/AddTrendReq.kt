@@ -1,5 +1,7 @@
 package com.cl.modules_contact.request
 
+import com.cl.common_base.bean.ImageUrl
+
 data class AddTrendReq(
     val content: String? = null,
     val imageUrls: List<ImageUrl>? = null,

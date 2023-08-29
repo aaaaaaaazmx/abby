@@ -1,7 +1,10 @@
 package com.cl.modules_home.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.view.LayoutInflater
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -44,6 +47,7 @@ class HomeOxyPop(context: Context) : BottomPopupView(context) {
     }
 
 
+    @SuppressLint("InflateParams")
     override fun onCreate() {
         super.onCreate()
         DataBindingUtil.bind<HomeOxyPopBinding>(popupImplView)?.apply {
@@ -55,6 +59,11 @@ class HomeOxyPop(context: Context) : BottomPopupView(context) {
             rvWxCircle.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = adapters
+                val view = LayoutInflater.from(context).inflate(com.cl.common_base.R.layout.base_empty_view, null, false)
+                view.findViewById<ImageView>(com.cl.common_base.R.id.iv_empty).apply {
+                    setBackgroundResource(com.cl.common_base.R.mipmap.base_no_oxygen)
+                }
+                adapters.setEmptyView(view)
             }
 
             lifecycleScope.launch {

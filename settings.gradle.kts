@@ -52,4 +52,6 @@ include(":common:BarcodeScanning")
 /*include(":common:kefu-easeui")*/
 include(":common:ipc")
 include(":modules:modules_pairing_connection")
+include(":modules:modules_planting_log")
 include(":common:mylibrary")
+include(":modules:modules_planting_log")

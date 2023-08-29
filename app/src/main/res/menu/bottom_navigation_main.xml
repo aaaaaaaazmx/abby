@@ -8,6 +8,12 @@
         android:title=""
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_plant"
+        android:enabled="true"
+        android:icon="@mipmap/main_plant"
+        android:title=""
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_contact"
         android:enabled="true"
         android:icon="@mipmap/conasdads"

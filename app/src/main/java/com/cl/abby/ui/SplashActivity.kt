@@ -103,7 +103,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 }
             }
             success {
-
                 // 获取InterCome信息
                 mViewModel.getInterComeData()
             }

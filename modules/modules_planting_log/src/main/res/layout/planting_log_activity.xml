@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+        <variable
+            name="plantInfoData"
+            type="com.cl.modules_planting_log.request.PlantInfoByPlantIdData" />
+
+    </data>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/title"
+                app:title="Log"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:background="@mipmap/plant_bg">
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.plantName)}"
+                    android:id="@+id/tv_plant_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Mary" />
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.strainName)}"
+                    android:id="@+id/tv_nick_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_plant_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_plant_name"
+                    tools:text="OG Kush" />
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.periodInfo)}"
+                    android:id="@+id/tv_plant_period"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_nick_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_nick_name"
+                    tools:text="Flowering Week 2 Day 2" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginStart="10dp"
+                android:id="@+id/rv_pic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:text="add Max 3 Photos"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:id="@+id/rv_log"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginStart="19dp"
+                android:background="@drawable/background_white_r6"
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
+                <TextView
+                    android:layout_marginTop="9dp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"
+                    android:text="Notes"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <EditText
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/et_note"
+                    android:gravity="start"
+                    android:padding="5dp"
+                    android:hint="input your notes here"
+                    android:textColorHint="#979797"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:background="@null"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+
+          <!--  <com.cl.modules_planting_log.widget.CustomViewGroup
+                app:textView1Text="Date*"
+                app:editText1Text=""
+                app:editText1HintText="自动填写（可更改，下拉日历弹框）"
+                app:textView2Visibility="false"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.cl.modules_planting_log.widget.CustomViewGroup
+                app:textView1Text="Space Temp(ST)"
+                app:editText1Text=""
+                app:editText1HintText="自动填写（可更改)"
+                app:textView2Visibility="true"
+                app:textView2Text="F"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <com.cl.modules_planting_log.widget.CustomViewGroup
+                app:textView1Text="Water Temp (WT)"
+                app:editText1Text=""
+                app:editText1HintText="自动填写（可更改)"
+                app:textView2Visibility="true"
+                app:textView2Text="F"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>-->
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

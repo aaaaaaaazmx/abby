@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.cl.modules_planting_log.viewmodel.PlantingLogAcViewModel" />
+
+        <variable
+            name="plantInfoData"
+            type="com.cl.modules_planting_log.request.PlantInfoByPlantIdData" />
+
+        <import type="android.view.View"/>
+        <import type="android.text.TextUtils"/>
+
+    </data>
+
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="Training" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:background="@mipmap/plant_bg">
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.plantName)}"
+                    android:id="@+id/tv_plant_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/white"
+                    android:textSize="26sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Mary" />
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.strainName)}"
+                    android:id="@+id/tv_nick_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_plant_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_plant_name"
+                    tools:text="OG Kush" />
+
+                <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:text="@{String.valueOf(plantInfoData.periodInfo)}"
+                    android:id="@+id/tv_plant_period"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_nick_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_nick_name"
+                    tools:text="Flowering Week 2 Day 2" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                tools:ignore="MissingConstraints">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/imageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <!-- Before Image -->
+                    <ImageView
+                        tools:background="@mipmap/iv_close"
+                        plantPhotoUrl='@{!TextUtils.isEmpty(viewModel.beforePicAddress) ? viewModel.beforePicAddress : ""}'
+                        android:id="@+id/beforeImage"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:visibility="@{TextUtils.isEmpty(viewModel.beforePicAddress) ? View.GONE : View.VISIBLE}"
+                        android:id="@+id/beforeClose"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginEnd="0dp"
+                        android:src="@mipmap/device_chooser_photo_bg"
+                        app:layout_constraintEnd_toEndOf="@+id/beforeImage"
+                        app:layout_constraintTop_toTopOf="@+id/beforeImage" />
+
+                    <!-- After Image -->
+                    <ImageView
+                        tools:background="@mipmap/contact_add_pic"
+                        plantPhotoUrl='@{!TextUtils.isEmpty(viewModel.afterPicAddress) ? viewModel.afterPicAddress : ""}'
+                        android:id="@+id/afterImage"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginStart="10dp"
+                        app:layout_constraintStart_toEndOf="@+id/beforeImage" />
+
+                    <ImageView
+                        android:visibility="@{TextUtils.isEmpty(viewModel.afterPicAddress) ? View.GONE : View.VISIBLE}"
+                        android:id="@+id/afterClose"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_marginEnd="0dp"
+                        android:src="@mipmap/device_chooser_photo_bg"
+                        app:layout_constraintEnd_toEndOf="@+id/afterImage"
+                        app:layout_constraintTop_toTopOf="@+id/afterImage" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:layout_marginTop="5dp"
+                        android:text="Before"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/beforeImage"
+                        app:layout_constraintStart_toStartOf="@+id/beforeImage"
+                        app:layout_constraintTop_toBottomOf="@+id/beforeImage" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="After"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/afterImage"
+                        app:layout_constraintStart_toStartOf="@+id/afterImage"
+                        app:layout_constraintTop_toBottomOf="@+id/afterImage" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="19dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginTop="5dp"
+                android:text="The before and after pictures are great to reference of plant training and one of community’s fav content."
+                android:textColor="#C4C4C4"
+                android:textSize="12sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_log"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginStart="19dp"
+                android:background="@drawable/background_white_r6"
+                android:layout_width="match_parent"
+                android:layout_height="100dp">
+                <TextView
+                    android:layout_marginTop="9dp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"
+                    android:text="Notes"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <EditText
+                    android:textStyle="bold"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/et_note"
+                    android:gravity="start"
+                    android:padding="5dp"
+                    android:hint="input your notes here"
+                    android:textColorHint="#979797"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:background="@null"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

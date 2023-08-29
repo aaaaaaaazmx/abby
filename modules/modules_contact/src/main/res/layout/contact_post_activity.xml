@@ -186,7 +186,7 @@
                     app:itemChecked="true"
                     app:itemIconHeight="21dp"
                     app:itemIconWidth="19dp"
-                    app:itemIcon="@mipmap/contact_share_to_public"
+                    app:itemIcon="@mipmap/contact_plant_visibile"
                     android:id="@+id/plant_to_visible"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

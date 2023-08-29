@@ -33,7 +33,7 @@ import com.cl.modules_contact.databinding.ContactChooserPicActivityBinding
 import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.modules_contact.request.TrendPictureReq
-import com.cl.modules_contact.response.ChoosePicBean
+import com.cl.common_base.bean.ChoosePicBean
 import com.cl.modules_contact.ui.ReelPostActivity
 import com.cl.modules_contact.viewmodel.ChoosePicViewModel
 import com.luck.picture.lib.utils.DensityUtil

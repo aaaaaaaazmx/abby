@@ -1,15 +1,14 @@
-package com.cl.modules_contact.adapter
+package com.cl.common_base.adapter
 
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.cl.modules_contact.R
-import com.cl.modules_contact.databinding.ContactItemChooserAddBinding
-import com.cl.modules_contact.databinding.ContactItemChooserPicBinding
-import com.cl.modules_contact.response.ChoosePicBean
+import com.cl.common_base.R
+import com.cl.common_base.bean.ChoosePicBean
+import com.cl.common_base.databinding.ContactItemChooserAddBinding
+import com.cl.common_base.databinding.ContactItemChooserPicBinding
 
 class ChooserAdapter(
     data: MutableList<ChoosePicBean>?,

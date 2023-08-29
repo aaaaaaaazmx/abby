@@ -1,7 +1,12 @@
 package com.cl.modules_my.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.view.LayoutInflater
+import android.widget.FrameLayout
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -37,6 +42,7 @@ class OxygenListActivity : BaseActivity<MyOxyGenActivityBinding>() {
         OxygenCoinBillAdapter(mutableListOf())
     }
 
+    @SuppressLint("InflateParams")
     override fun initView() {
         binding.title.setRightButtonImg(com.cl.common_base.R.mipmap.mt_gth)
             .setRightClickListener {
@@ -79,6 +85,11 @@ class OxygenListActivity : BaseActivity<MyOxyGenActivityBinding>() {
         binding.rvWxCircle.apply {
             layoutManager = LinearLayoutManager(this@OxygenListActivity)
             adapter = this@OxygenListActivity.adapter
+            val view = LayoutInflater.from(this@OxygenListActivity).inflate(com.cl.common_base.R.layout.base_empty_view, null, false)
+            view.findViewById<ImageView>(com.cl.common_base.R.id.iv_empty).apply {
+                setBackgroundResource(com.cl.common_base.R.mipmap.base_no_oxygen)
+            }
+            this@OxygenListActivity.adapter.setEmptyView(view)
         }
     }
 
