@@ -14,9 +14,9 @@ fun temperatureConversion(value: Float, isMetric: Boolean, isUpload: Boolean): S
 
 fun unitsConversion(value: Float, isMetric: Boolean, isUpload: Boolean): String {
     val result = if (isUpload) {
-        if (isMetric) value.div(25.4f) else value
+        if (isMetric) value.div(2.54f) else value
     } else {
-        if (isMetric) value.times(25.4f) else value
+        if (isMetric) value.times(2.54f) else value
     }
     return if (result == 0f) "" else String.format("%.1f", result)
 }

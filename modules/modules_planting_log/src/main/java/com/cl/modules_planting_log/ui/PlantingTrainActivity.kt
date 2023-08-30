@@ -103,12 +103,12 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
             "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             "logType" to FieldAttributes("Training Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             "waterType" to FieldAttributes("Water Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "volume" to FieldAttributes("Volume", "", if (viewModel.isMetric) "L" else "Gal", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
+            "volume" to FieldAttributes("Volume", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, metricUnits = "L", imperialUnits = "Gal"),
             "feedingType" to FieldAttributes("Feeding Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
             "repellentType" to FieldAttributes("Repellent Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
             "declareDeathType" to FieldAttributes("DeclareDeath Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
-            "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
+            "driedWeight" to FieldAttributes("Yield (Dried weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, metricUnits = "g", imperialUnits = "Oz"),
+            "wetWeight" to FieldAttributes("Yield (Wet weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, metricUnits = "g", imperialUnits = "Oz"),
         )
     }
 
@@ -206,7 +206,8 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
 
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
         logSaveOrUpdateReq.logTime = if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
-        logSaveOrUpdateReq.logType = if (isUpload) viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType ?: "" else viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
+        logSaveOrUpdateReq.logType =
+            if (isUpload) viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType ?: "" else viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
     }
 
     override fun observe() {
@@ -255,16 +256,22 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                         // 展示和隐藏条目
                         maps.forEach { (field, value) ->
                             // 只针对默认显示为False的条目进行判断，为true的都是必须显示的。
+                            val declaredFiled = it::class.java.getDeclaredField(field)
+                            declaredFiled.isAccessible = true
+                            val values = declaredFiled.get(it)?.toString()
                             if (!value.isVisible) {
-                                val declaredFiled = it::class.java.getDeclaredField(field)
-                                declaredFiled.isAccessible = true
-                                val values = declaredFiled.get(it)?.toString()
                                 val mapValue = logAdapter.logTypeMap[it.logType]
                                 if (mapValue.isNullOrEmpty()) {
                                     logAdapter.fieldsAttributes[field]?.isVisible = !values.isNullOrEmpty()
                                 } else {
                                     // 找到相对应的mapValue，判断是否相等
                                     logAdapter.fieldsAttributes[field]?.isVisible = mapValue.contains(field)
+                                }
+                            }
+                            if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
+                                // 转换公英制
+                                if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
+                                    logAdapter.fieldsAttributes[field]?.unit = if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
                                 }
                             }
                         }
@@ -703,8 +710,10 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
 
         (logTypeListDataItems as? MutableList<LogTypeListDataItem>)?.let {
             customViewGroup.setRvListData(
-                it, true)
-        }    }
+                it, true
+            )
+        }
+    }
 
     companion object {
         // 请求相机

@@ -80,12 +80,12 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
             "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             "logType" to FieldAttributes("Action Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             "waterType" to FieldAttributes("Water Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "volume" to FieldAttributes("Volume", "", if (viewModel.isMetric) "L" else "Gal", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
+            "volume" to FieldAttributes("Volume", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "L", "Gal"),
             "feedingType" to FieldAttributes("Feeding Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
             "repellentType" to FieldAttributes("Repellent Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
             "declareDeathType" to FieldAttributes("DeclareDeath Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
-            "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false),
+            "driedWeight" to FieldAttributes("Yield (Dried weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "g", "Oz"),
+            "wetWeight" to FieldAttributes("Yield (Wet weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "g", "Oz"),
         )
     }
 
@@ -163,7 +163,8 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         /*logSaveOrUpdateReq.driedWeight = weightConversion((logSaveOrUpdateReq.driedWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)
         logSaveOrUpdateReq.wetWeight = weightConversion((logSaveOrUpdateReq.wetWeight?.toFloatOrNull() ?: 0f), isMetric, isUpload)
         logSaveOrUpdateReq.volume = gallonConversion((logSaveOrUpdateReq.volume?.toFloatOrNull() ?: 0f), isMetric, isUpload)*/
-        logSaveOrUpdateReq.logType = if (isUpload) viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType ?: "" else viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
+        logSaveOrUpdateReq.logType =
+            if (isUpload) viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType ?: "" else viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
     }
 
     override fun observe() {
@@ -187,17 +188,22 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
                         // 进来的时候有可能是编辑状态，所以需要展示已经选好的条目，并不能以空作为判断依据
                         maps.forEach { (field, value) ->
                             // 只针对默认显示为False的条目进行判断，为true的都是必须显示的。
+                            val declaredFiled = it::class.java.getDeclaredField(field)
+                            declaredFiled.isAccessible = true
+                            val values = declaredFiled.get(it)?.toString()
                             if (!value.isVisible) {
-                                val declaredFiled = it::class.java.getDeclaredField(field)
-                                declaredFiled.isAccessible = true
-                                val values = declaredFiled.get(it)?.toString()
                                 val mapValue = logAdapter.logTypeMap[it.logType]
+                                // 条目是否可见
                                 if (mapValue.isNullOrEmpty()) {
                                     logAdapter.fieldsAttributes[field]?.isVisible = !values.isNullOrEmpty()
                                 } else {
                                     // 找到相对应的mapValue，判断是否相等
                                     logAdapter.fieldsAttributes[field]?.isVisible = mapValue.contains(field)
                                 }
+                            }
+                            // 转换公英制
+                            if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
+                                logAdapter.fieldsAttributes[field]?.unit = if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
                             }
                         }
                         logAdapter.setData(it)
@@ -232,7 +238,8 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
 
         (logTypeListDataItems as? MutableList<LogTypeListDataItem>)?.let {
             customViewGroup.setRvListData(
-                it, true)
+                it, true
+            )
         }
     }
 }
