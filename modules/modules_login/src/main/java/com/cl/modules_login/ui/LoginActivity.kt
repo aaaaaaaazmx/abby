@@ -114,6 +114,10 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     intent.putExtra(KEY_THIRD_TOKEN, mViewModel.thirdToken.value)
                     startActivity(intent)
                 }
+                else -> {
+                    hideProgressLoading()
+                    ToastUtil.shortShow("not exist user")
+                }
             }
         }
 

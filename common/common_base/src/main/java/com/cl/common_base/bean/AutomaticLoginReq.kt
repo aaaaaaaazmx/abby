@@ -2,8 +2,10 @@ package com.cl.common_base.bean
 
 import androidx.annotation.Keep
 import com.cl.common_base.BaseBean
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.util.AppUtil
+import com.cl.common_base.util.Prefs
 
 @Keep
 data class AutomaticLoginReq(
@@ -21,5 +23,5 @@ data class AutomaticLoginReq(
     var token: String? = null,
     var userName: String? = null,
     var version: String? = AppUtil.appVersionName,
-    var inchMetricMode: String? = null,
+    var inchMefricMode: String? = if (!Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)) "inch" else "mefric",
 ) : BaseBean()

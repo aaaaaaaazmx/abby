@@ -31,6 +31,7 @@ data class LogSaveOrUpdateReq(
     var feedingType: String? = null,
     var repellentType: String? = null,
     var declareDeathType: String? = null,
+    var inchMetricMode: String? = null,
 ): BaseBean() {
     companion object {
         const val KEY_LOG_TIME = "logTime"

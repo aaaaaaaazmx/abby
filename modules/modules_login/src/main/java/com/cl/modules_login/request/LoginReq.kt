@@ -1,7 +1,9 @@
 package com.cl.modules_login.request
 
 import androidx.annotation.Keep
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
+import com.cl.common_base.util.Prefs
 import java.io.Serializable
 
 @Keep
@@ -23,5 +25,5 @@ data class LoginReq(
     var autoToken: String? = null,
     var source: String? = null,
     var sourceUserId: String? = null,
-    var inchMetricMode: String? = null,
+    var inchMefricMode: String? = if (!Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)) "inch" else "mefric",
 ) : Serializable

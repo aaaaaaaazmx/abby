@@ -76,6 +76,25 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     @Inject
     lateinit var viewModel: PlantingLogAcViewModel
 
+    private val maps by lazy {
+        mapOf(
+            "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "spaceTemp" to FieldAttributes("Space Temp(ST)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
+            "waterTemp" to FieldAttributes("Water Temp (WT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
+            "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "plantHeight" to FieldAttributes("Height (HT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "cm", imperialUnits = "In"),
+            /*"vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
+            /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+             "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
+            /*"lightingSchedule" to FieldAttributes("Lighting Schedule", "", "", CustomViewGroup.TYPE_CLASS_TEXT),*/
+            "lightingOn" to FieldAttributes("Lighting On", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "lightingOff" to FieldAttributes("Lighting Off", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "co2Concentration" to FieldAttributes("CO2 Concentration", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+        )
+    }
+
     /**
      * 日志适配器
      */
@@ -89,22 +108,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             listOf(
                 "logTime"
             ),
-            mapOf(
-                "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "spaceTemp" to FieldAttributes("Space Temp(ST)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                "waterTemp" to FieldAttributes("Water Temp (WT)", "", if (viewModel.isMetric) "C" else "F", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                "plantHeight" to FieldAttributes("Height (HT)", "", if (viewModel.isMetric) "mm" else "In", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                /*"vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
-               /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-                "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
-                /*"lightingSchedule" to FieldAttributes("Lighting Schedule", "", "", CustomViewGroup.TYPE_CLASS_TEXT),*/
-                "lightingOn" to FieldAttributes("Lighting On", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "lightingOff" to FieldAttributes("Lighting Off", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-                "co2Concentration" to FieldAttributes("CO2 Concentration", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-            )
+            maps,
         )
     }
 
@@ -161,6 +165,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
 
         val logSaveOrUpdateReq = logAdapter.getLogData()
         logSaveOrUpdateReq.period = period
+        logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         updateNotes(logSaveOrUpdateReq)
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
@@ -284,6 +289,16 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                     data?.let {
                         // 后台返回的都是英制，那么转换就需要根据用户选中的来判断了。
                         updateUnit(it, viewModel.isMetric, false)
+                        maps.forEach { (field, value) ->
+                            // 只针对默认显示为False的条目进行判断，为true的都是必须显示的。
+                            val declaredFiled = it::class.java.getDeclaredField(field)
+                            declaredFiled.isAccessible = true
+                            val values = declaredFiled.get(it)?.toString()
+                            // 转换公英制,有些是默认填的，那么就不需要转换
+                            if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
+                                logAdapter.fieldsAttributes[field]?.unit = if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
+                            }
+                        }
                         logAdapter.setData(it)
                         // 添加备注、添加照片、
                         binding.etNote.setText(it.notes)
