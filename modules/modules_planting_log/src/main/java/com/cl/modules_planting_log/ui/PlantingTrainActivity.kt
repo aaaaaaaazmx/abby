@@ -154,6 +154,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
             ToastUtil.shortShow("Please select the Training type")
             return
         }
+        logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         logSaveOrUpdateReq.plantId = plantId
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.logId = logId

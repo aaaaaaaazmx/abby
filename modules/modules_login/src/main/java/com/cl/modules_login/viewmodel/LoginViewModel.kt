@@ -48,7 +48,6 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
             version = if (privacyPolicy) AppUtil.appVersionName else null,
             osType = "1",
             timeZone = DateHelper.getTimeZOneNumber().toString(),
-            inchMetricMode = if (!Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)) "inch" else "mefric"
         )
     )
     val loginReq: LiveData<LoginReq> = _loginReq

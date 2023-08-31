@@ -261,7 +261,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _refreshToken = MutableLiveData<Resource<AutomaticLoginData>>()
     val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
     fun refreshToken(req: AutomaticLoginReq) {
-        req.inchMetricMode = if (!Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)) "inch" else "mefric"
         viewModelScope.launch {
             repository.automaticLogin(req).map {
                 if (it.code != Constants.APP_SUCCESS) {

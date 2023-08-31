@@ -23,5 +23,5 @@ data class AutomaticLoginReq(
     var token: String? = null,
     var userName: String? = null,
     var version: String? = AppUtil.appVersionName,
-    var inchMetricMode: String? = "mefric",
+    var inchMefricMode: String? = if (!Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)) "inch" else "mefric",
 ) : BaseBean()

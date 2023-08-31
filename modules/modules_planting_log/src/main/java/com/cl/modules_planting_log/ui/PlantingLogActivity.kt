@@ -165,6 +165,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
 
         val logSaveOrUpdateReq = logAdapter.getLogData()
         logSaveOrUpdateReq.period = period
+        logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         updateNotes(logSaveOrUpdateReq)
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)

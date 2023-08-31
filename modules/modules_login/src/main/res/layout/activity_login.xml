@@ -50,7 +50,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="15dp"
                 android:layout_marginEnd="24dp"
-                android:hint="Username"
+                android:hint="Email Address"
                 android:orientation="vertical"
                 android:textColorHint="#C9C9C9"
                 android:textSize="15sp"
@@ -63,7 +63,7 @@
 
                 <EditText
                     android:importantForAutofill="yes"
-                    android:autofillHints="username"
+                    android:autofillHints="Email Address"
                     android:id="@+id/account_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"

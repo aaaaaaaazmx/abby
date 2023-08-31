@@ -132,6 +132,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
             ToastUtil.shortShow("Please select the Action type")
             return
         }
+        logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)

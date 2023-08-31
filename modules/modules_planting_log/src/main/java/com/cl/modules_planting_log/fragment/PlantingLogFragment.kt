@@ -357,7 +357,13 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                             binding.refreshLayout.finishLoadMore()
                         }
                     }
-                    if (data.isNullOrEmpty()) return@success
+                    if (data.isNullOrEmpty()) {
+                        if (viewModel.updateCurrent.value == 1) {
+                            // 设置空数据
+                            logListAdapter.setList(mutableListOf())
+                            return@success
+                        }
+                    }
                     // 数据相关
                     data?.let {
                         val current = viewModel.updateCurrent.value
