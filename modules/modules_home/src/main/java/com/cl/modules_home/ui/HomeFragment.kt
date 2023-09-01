@@ -89,7 +89,9 @@ import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -190,13 +192,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 开启定时器，每次20秒刷新未读气泡消息
         job = mViewMode.countDownCoroutines(10 * 6 * 500000, lifecycleScope, onTick = {
-            if (it % 30 == 0) {
-                // 表示过了30秒
-                mViewMode.getUnread()
-                // 查询植物信息Look
-                mViewMode.plantInfoLoop()
-                // 刷新设备列表
-                mViewMode.listDevice()
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    if (it % 30 == 0) {
+                        // 表示过了30秒
+                        mViewMode.getUnread()
+                        // 查询植物信息Look
+                        mViewMode.plantInfoLoop()
+                        // 刷新设备列表
+                        mViewMode.listDevice()
+                    }
+                } catch (e: Exception) {
+                    // 在这里处理任何可能出现的异常
+                    job?.cancel()
+                }
             }
             if (it == 0) {
                 job?.cancel()
@@ -679,40 +688,40 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             tvAirPumpDesc.setOnClickListener {
-               /* pop.isDestroyOnDismiss(false)
-                    .dismissOnTouchOutside(false)
-                    .asCustom(
-                        context?.let { it1 ->
-                            BaseCenterPop(
-                                it1,
-                                content = "The air pump will be turned off in the following conditions:\n" +
-                                        "1.When draining is on\n" +
-                                        "2.When the tank has no water.",
-                                isShowCancelButton = false,
-                                confirmText = "OK"
-                            )
-                        }
-                    ).show()*/
+                /* pop.isDestroyOnDismiss(false)
+                     .dismissOnTouchOutside(false)
+                     .asCustom(
+                         context?.let { it1 ->
+                             BaseCenterPop(
+                                 it1,
+                                 content = "The air pump will be turned off in the following conditions:\n" +
+                                         "1.When draining is on\n" +
+                                         "2.When the tank has no water.",
+                                 isShowCancelButton = false,
+                                 confirmText = "OK"
+                             )
+                         }
+                     ).show()*/
 
                 InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_AIR_PUMP)
             }
 
             ivExclamationMark.setOnClickListener {
-               /* pop.isDestroyOnDismiss(false)
-                    .dismissOnTouchOutside(false)
-                    .asCustom(
-                        context?.let { it1 ->
-                            BaseCenterPop(
-                                it1, content =
-                                "The minimum height that can be measured starts from 8 inches (20cm)." +
-                                        "\n" +
-                                        "\n" +
-                                        "To ensure accurate measurement of plant height, please remove all objects above the plant (e.g., the fan, towels, etc.).",
-                                isShowCancelButton = false,
-                                confirmText = "OK"
-                            )
-                        }
-                    ).show()*/
+                /* pop.isDestroyOnDismiss(false)
+                     .dismissOnTouchOutside(false)
+                     .asCustom(
+                         context?.let { it1 ->
+                             BaseCenterPop(
+                                 it1, content =
+                                 "The minimum height that can be measured starts from 8 inches (20cm)." +
+                                         "\n" +
+                                         "\n" +
+                                         "To ensure accurate measurement of plant height, please remove all objects above the plant (e.g., the fan, towels, etc.).",
+                                 isShowCancelButton = false,
+                                 confirmText = "OK"
+                             )
+                         }
+                     ).show()*/
 
                 InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_PLANT_HEIGHT)
             }
