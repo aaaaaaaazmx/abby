@@ -65,13 +65,15 @@ class TokenInterceptor : Interceptor {
                 }
             }
         }.onSuccess {
-            if (it?.code == 401) {
-                InterComeHelp.INSTANCE.logout()
-                //token过期 发通知
-                Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-                ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
-                    .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    .navigation()
+            kotlin.runCatching {
+                if (it?.code == 401) {
+                    InterComeHelp.INSTANCE.logout()
+                    //token过期 发通知
+                    Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
+                        .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .navigation()
+                }
             }
         }
         return response

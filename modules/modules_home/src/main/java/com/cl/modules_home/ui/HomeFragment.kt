@@ -2524,6 +2524,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         if (data?.size == 0) return@success
                         data?.take(7)?.map { Water("${it.oxygen}g", it.tips, it.loseEfficacy.toString(), it.orderNo, it.oxygen.toString(), it.tips) }?.toMutableList()?.let {
+                            if (it.size == 0) return@success
                             binding.pplantNinth.waterView.apply {
                                 setDestroyPoint(WaterView.VIEW_CENTER)
                                 setDrawablePosition(WaterView.DRAWABLE_TOP)
