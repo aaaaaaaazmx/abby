@@ -16,6 +16,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.databinding.ActivitySplashBinding
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.TuYaInfo
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -41,6 +42,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     private val userinfoBean by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         GSON.parseObject(bean, UserinfoBean::class.java)
+    }
+
+    private val tuYaInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_TU_YA_INFO)
+        GSON.parseObject(bean, TuYaInfo::class.java)
     }
 
     private val borad by lazy {
@@ -84,7 +90,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private fun redirectTo() {
         val data = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-        if (data.isNullOrEmpty()) {
+        if (data.isEmpty()) {
             // 直接跳转登录界面
             ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
             finish()
@@ -111,8 +117,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
             error { errorMsg, code ->
                 val email = userinfoBean?.email
-                val tuyaCountryCode = userinfoBean?.tuyaCountryCode
-                val tuyaPassword = userinfoBean?.tuyaPassword
+                val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
+                val tuyaPassword = tuYaInfo?.tuyaPassword
                 mViewModel.tuYaLogin(
                     map = mapOf(),
                     mViewModel.userDetail.value?.data?.externalId,
@@ -136,8 +142,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             }
             success {
                 val email = userinfoBean?.email
-                val tuyaCountryCode = userinfoBean?.tuyaCountryCode
-                val tuyaPassword = userinfoBean?.tuyaPassword
+                val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
+                val tuyaPassword = tuYaInfo?.tuyaPassword
                 mViewModel.tuYaLogin(
                     map = mapOf(),
                     mViewModel.userDetail.value?.data?.externalId,

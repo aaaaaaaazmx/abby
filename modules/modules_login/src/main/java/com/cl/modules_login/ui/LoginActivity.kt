@@ -9,6 +9,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.TuYaInfo
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -38,6 +39,7 @@ import com.google.android.gms.common.api.CommonStatusCodes
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import com.luck.picture.lib.utils.ToastUtils
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
@@ -129,6 +131,16 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
                 is Resource.Success -> {
                     userInfoBean = it.data!! // 保存当前的信息.
+                    val tuYaInfo = TuYaInfo(
+                        tuyaCountryCode = userInfoBean.tuyaCountryCode,
+                        tuyaPassword = userInfoBean.tuyaPassword,
+                        tuyaUserId = userInfoBean.tuyaUserId,
+                        tuyaUserType = userInfoBean.tuyaUserType
+                    )
+                    GSON.toJson(tuYaInfo)?.let { tuyainfos ->
+                        logI("tuYaInfoL: $tuyainfos")
+                        Prefs.putStringAsync(Constants.Login.KEY_TU_YA_INFO, tuyainfos)
+                    }
                     GSON.toJson(it.data)?.let { data ->
                         logI("LoginData: $data")
                         Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, data)

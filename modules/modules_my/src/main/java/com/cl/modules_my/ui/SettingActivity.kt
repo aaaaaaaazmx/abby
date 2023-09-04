@@ -83,10 +83,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         GSON.parseObject(bean, User::class.java)
     }
 
-    private val refreshTokenData by lazy {
+   /* private val refreshTokenData by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_REFRESH_LOGIN_DATA)
         GSON.parseObject(bean, AutomaticLoginData::class.java)
-    }
+    }*/
 
     /**
      * 是否滚动到burner
@@ -950,8 +950,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
          * 1- 绑定状态
          * 2- 解绑状态
          */
-        if (refreshTokenData?.deviceStatus == "1") {
-            refreshTokenData?.deviceOnlineStatus?.let {
+        if (mViewModel.deviceInfo?.deviceStatus == "1") {
+            mViewModel.deviceInfo?.deviceOnlineStatus?.let {
                 when (it) {
                     // 	设备在线状态(0-不在线，1-在线)
                     "0" -> {

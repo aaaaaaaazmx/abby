@@ -2161,11 +2161,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 环信消息
                     getEaseUINumber()
 
-                    // 保存刷新token信息
-                    GSON.toJson(data)?.let { data ->
-                        Prefs.putStringAsync(Constants.Login.KEY_REFRESH_LOGIN_DATA, data)
-                    }
-
                     // 设置TuYaDeviceId
                     data?.deviceId?.let { mViewMode.setDeviceId(it) }
 
@@ -2174,12 +2169,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         logI("refreshToken: $it")
                         Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
                     }
-                    // 保存Token
-                    data?.token?.let { it ->
-                        Prefs.putStringAsync(
-                            Constants.Login.KEY_LOGIN_DATA_TOKEN, it
-                        )
-                    }
+
                     // JPush,添加别名
                     data?.abbyId?.let {
                         JPushInterface.setAlias(context, Random.nextInt(100), it)
@@ -2542,97 +2532,37 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
             // 更新信息,刷新token
-            /*refreshToken.observe(viewLifecycleOwner, resourceObserver {
+            refreshToken.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     hideProgressLoading()
 
-                    // 登录InterCome
-                    InterComeHelp.INSTANCE.successfulLogin(
-                        map = mapOf(),
-                        interComeUserId = data?.externalId,
-                        refreshUserInfo = data
-                    )
-
-                    // 获取氧气币列表
-                    mViewMode.getOxygenCoinList()
-
-                    // 环信消息
-                    getEaseUINumber()
-
-                    // 保存刷新token信息
-                    GSON.toJson(data)?.let { data ->
-                        Prefs.putStringAsync(Constants.Login.KEY_REFRESH_LOGIN_DATA, data)
-                    }
-
-                    // 设置TuYaDeviceId
-                    data?.deviceId?.let { mViewMode.setDeviceId(it) }
-
-                    // 保存当前的信息.
-                    GSON.toJson(data)?.let {
-                        logI("refreshToken: $it")
-                        Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
-                    }
                     // 保存Token
                     data?.token?.let { it ->
                         Prefs.putStringAsync(
                             Constants.Login.KEY_LOGIN_DATA_TOKEN, it
                         )
                     }
-                    // JPush,添加别名
-                    data?.abbyId?.let {
-                        JPushInterface.setAlias(context, Random.nextInt(100), it)
-                    }
-                    *//**
-                     * 当有设备的时候，判断当前设备是否在线
-                     *
-                     * 1- 绑定状态
-                     * 2- 解绑状态
-                     *//*
-                    if (data?.deviceStatus == "1") {
-                        data?.deviceOnlineStatus?.let {
-                            when (it) {
-                                // 	设备在线状态(0-不在线，1-在线)
-                                "0" -> {
-                                    ViewUtils.setVisible(binding.plantOffLine.root)
-                                    offLineTextSpan()
-                                }
 
-                                "1" -> {
-                                    showView(plantFlag, plantGuideFlag)
-                                    // 请求未读消息数据，只有在种植之后才会开始有数据返回
-                                    mViewMode.getUnread()
-                                    // 请求环境信息
-                                    mViewMode.getEnvData()
-                                    // 检查固件
-                                    checkOtaUpdateInfo()
-                                }
-
-                                else -> {}
-                            }
-                        }
-                    } else {
-                        // 没绑定的状态下，显示这玩意
-                        firstLoginViewVisibile()
-                        // 跳转到绑定设备界面，
-                        // 跳转绑定界面
-                        //                        ARouter.getInstance()
-                        //                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-                        //                            .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        //                            .navigation()
+                    // 保存涂鸦信息
+                    val tuYaInfo = TuYaInfo(
+                        tuyaCountryCode = data?.tuyaCountryCode,
+                        tuyaPassword = data?.tuyaPassword,
+                        tuyaUserId = data?.tuyaUserId,
+                        tuyaUserType = data?.tuyaUserType
+                    )
+                    GSON.toJson(tuYaInfo)?.let { tuyainfos ->
+                        logI("tuYaInfoL: $tuyainfos")
+                        Prefs.putStringAsync(Constants.Login.KEY_TU_YA_INFO, tuyainfos)
                     }
                 }
                 error { msg, code ->
                     hideProgressLoading()
                     msg?.let { it1 -> ToastUtil.shortShow(it1) }
-                    // 容错处理、不管接口报错都显示
-                    showView(plantFlag, plantGuideFlag)
-                    // 请求未读消息数据，只有在种植之后才会开始有数据返回
-                    mViewMode.getUnread()
                 }
                 loading {
                     showProgressLoading()
                 }
-            })*/
+            })
 
             // 获取氧气币列表
             getOxygenCoinList.observe(viewLifecycleOwner, resourceObserver {
