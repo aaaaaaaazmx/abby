@@ -505,7 +505,25 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     override fun observe() {
         mViewMode.apply {
-            refreshToken.observe(viewLifecycleOwner, resourceObserver {
+            userDetail.observe(viewLifecycleOwner, resourceObserver {
+                success {
+
+                    data?.let {
+                        // 数量的显示
+                        ViewUtils.setVisible(it.eventCount != 0, binding.vvMsgNumber)
+                        ViewUtils.setVisible(TextUtils.isEmpty(it.avatarPicture), binding.noheadShow)
+                        ViewUtils.setVisible(!TextUtils.isEmpty(it.avatarPicture), binding.ivAvatar)
+                        context?.let { context ->
+                            Glide.with(context).load(it.avatarPicture)
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(binding.ivAvatar)
+                        }
+                        binding.vvMsgNumber.text = (it.eventCount ?: 0).toString()
+                        binding.noheadShow.text = it.nickName?.substring(0, 1)
+                    }
+                }
+            })
+            /*refreshToken.observe(viewLifecycleOwner, resourceObserver {
                 success {
 
                     data?.let {
@@ -523,7 +541,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     }
                 }
 
-            })
+            })*/
 
             // 获取标签列表
             tagListData.observe(viewLifecycleOwner, resourceObserver {
@@ -681,13 +699,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (!hidden) {
-            mViewMode.refreshToken(
-                AutomaticLoginReq(
-                    userName = mViewMode.account,
-                    password = mViewMode.psd,
-                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-                )
-            )
+            mViewMode.userDetail()
         }
     }
 
@@ -705,13 +717,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
     private val startActivityForNotificationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == AppCompatActivity.RESULT_OK) {
             // 重新请求数据
-            mViewMode.refreshToken(
-                AutomaticLoginReq(
-                    userName = mViewMode.account,
-                    password = mViewMode.psd,
-                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-                )
-            )
+            mViewMode.userDetail()
         }
     }
 

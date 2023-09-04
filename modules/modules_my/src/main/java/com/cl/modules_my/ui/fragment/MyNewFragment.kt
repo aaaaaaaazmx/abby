@@ -121,7 +121,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                 success {
                     data?.let {
                         // 缓存信息
-                        GSON.toJson(it)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
+                        GSON.toJson(it)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
 
                         // 壁纸
                         when (data?.wallAddress) {

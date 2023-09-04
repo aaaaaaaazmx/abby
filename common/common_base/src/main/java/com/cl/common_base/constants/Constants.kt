@@ -70,10 +70,6 @@ object Constants {
 
         // 密码 加密后的
         const val KEY_LOGIN_PSD = "key_login_psd"
-
-        // 用户信息
-        // 用户接口返回的用户信息
-        const val KEY_USER_INFO = "key_user_info"
     }
 
     object Plant {

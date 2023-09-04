@@ -128,34 +128,6 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     }
 
     /**
-     * refreshToken
-     */
-    private val _refreshToken = MutableLiveData<Resource<AutomaticLoginData>>()
-    val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
-    fun refreshToken(req: AutomaticLoginReq) {
-        viewModelScope.launch {
-            repository.automaticLogin(req).map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code, it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }.flowOn(Dispatchers.IO).onStart {}.catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1, "${it.message}"
-                    )
-                )
-            }.collectLatest {
-                _refreshToken.value = it
-            }
-        }
-    }
-
-    /**
      * 取消点赞
      */
     private val _unlikeData = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()

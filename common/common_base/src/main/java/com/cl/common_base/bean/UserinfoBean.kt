@@ -33,6 +33,7 @@ data class UserinfoBean(
     // 用户基本信息Bean
     // 从用户详情接口返回
     data class BasicUserBean(
+        val deviceStatus: String? = null, // 1 绑定状态、其他是设备未绑定
         val deviceId: String? = null,
         val abbyId: String? = null,
         val avatarPicture: String? = null,
@@ -56,5 +57,15 @@ data class UserinfoBean(
         val growBoxCount: String? = null,
         val harvestCount: String? = null,
         val inchMetricMode: String? = null,
+        val deviceOnlineStatus: String? = null,
+        val easemobId: String? = null,
+        // val easemobPassword: String? = null,
+        // val easemobUserName: String? = null,
+        val token: String? = null,
+        val tuyaCountryCode: String? = null,
+        val tuyaPassword: String? = null,
+        val tuyaUserId: String? = null,
+        val tuyaUserType: String? = null,
+        val notBound: Int? = null,
     ) : BaseBean()
 }
