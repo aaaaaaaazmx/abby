@@ -25,6 +25,7 @@
             app:svSolidType="solid" />
 
         <com.cl.common_base.widget.SvTextView
+            android:visibility="gone"
             android:id="@+id/tv_development"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -49,6 +50,7 @@
             app:svSolidType="solid" />
 
         <com.cl.common_base.widget.SvTextView
+            android:visibility="gone"
             android:id="@+id/tv_bd"
             android:layout_width="match_parent"
             android:layout_height="60dp"

@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.databinding.DataBindingUtil
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BuildConfig
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.util.Prefs
@@ -30,6 +31,7 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                     ServiceCreators.newBuilder(ServiceCreators.HttpsUrl.PRODUCTION_URL)
                     Prefs.clear()
                     dismiss()
+                    Prefs.putStringAsync(Constants.DebugTest.KEY_TEST_URL, ServiceCreators.HttpsUrl.PRODUCTION_URL)
                     ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()
@@ -38,6 +40,7 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                     ServiceCreators.newBuilder(ServiceCreators.HttpsUrl.OUTER_ANG_URL)
                     Prefs.clear()
                     dismiss()
+                    Prefs.putStringAsync(Constants.DebugTest.KEY_TEST_URL, ServiceCreators.HttpsUrl.OUTER_ANG_URL)
                     ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()
@@ -46,6 +49,7 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                     ServiceCreators.newBuilder(ServiceCreators.HttpsUrl.TEST_URL)
                     Prefs.clear()
                     dismiss()
+                    Prefs.putStringAsync(Constants.DebugTest.KEY_TEST_URL, ServiceCreators.HttpsUrl.TEST_URL)
                     ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()
@@ -54,6 +58,7 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                     ServiceCreators.newBuilder(ServiceCreators.HttpsUrl.BD_URL)
                     Prefs.clear()
                     dismiss()
+                    Prefs.putStringAsync(Constants.DebugTest.KEY_TEST_URL, ServiceCreators.HttpsUrl.BD_URL)
                     ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()

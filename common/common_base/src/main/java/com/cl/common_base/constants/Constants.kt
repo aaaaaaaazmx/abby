@@ -192,6 +192,10 @@ object Constants {
         const val KEY_DEVICE_TO_APP = "key_device_to_app"
     }
 
+    object DebugTest {
+        const val KEY_TEST_URL = "key_test_url"
+    }
+
 
     /**
      * 全局相关

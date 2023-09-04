@@ -25,10 +25,12 @@ import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.BluetoothMonitorReceiver
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
+import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_login.BuildConfig
 import com.cl.modules_login.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -62,6 +64,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     override fun initView() {
+        // 加载为当初选择的url
+        if (BuildConfig.DEBUG) {
+            val url = Prefs.getString(Constants.DebugTest.KEY_TEST_URL)
+            if (url.isNotEmpty()) {
+                ServiceCreators.newBuilder(url)
+            }
+        }
         // 初始化SDK、需要同意隐私协议
         InitSdk.init()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
