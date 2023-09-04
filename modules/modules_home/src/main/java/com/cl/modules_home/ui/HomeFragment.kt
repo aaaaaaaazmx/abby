@@ -167,20 +167,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun initView(view: View) {
         ARouter.getInstance().inject(this)
         binding.plantOffLine.title.setLeftVisible(false)
-        /*// 刷新数据以及token
-        // 一并检查下当前的状态
+
+        // 获取sn
+        mViewMode.getSn()
+        // 刷新token
         mViewMode.refreshToken(
             AutomaticLoginReq(
                 userName = mViewMode.account,
                 password = mViewMode.psd,
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
-        )*/
-
-        // 获取sn
-        mViewMode.getSn()
-        // 获取用户信息
-        mViewMode.userDetail()
+        )
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -490,7 +487,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 binding.pplantNinth.ivOne.setBackgroundResource(if (isSHowCamera) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
                 ViewUtils.setVisible(isSHowCamera, binding.pplantNinth.rlBowl)
                 ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isSHowCamera)
-                ViewUtils.setVisible(!isSHowCamera && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+                ViewUtils.setVisible(
+                    !isSHowCamera && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0,
+                    binding.pplantNinth.ivThree,
+                    binding.pplantNinth.ivTwo
+                )
 
                 // 如果是从false -> true
                 if (isSHowCamera) {
@@ -513,10 +514,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                    .withString(Constants.Global.INTENT_DEV_ID, "123")
                    .navigation(context)*/
 
-                val cameraAccessory = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                    ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                val cameraAccessory =
+                    mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
                 // 跳转到IPC界面
-                com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                com.cl.common_base.util.ipc.CameraUtils.ipcProcess(
+                    it.context,
+                    cameraAccessory?.accessoryDeviceId
+                )
                 //                                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
@@ -680,10 +685,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                    .withString(Constants.Global.INTENT_DEV_ID, "123")
                    .navigation(context)*/
 
-                val cameraAccessory = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                    ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                val cameraAccessory =
+                    mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
                 // 跳转到IPC界面
-                com.cl.common_base.util.ipc.CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
+                com.cl.common_base.util.ipc.CameraUtils.ipcProcess(
+                    it.context,
+                    cameraAccessory?.accessoryDeviceId
+                )
                 //                                CameraUtils.ipcProcess(it.context, cameraAccessory?.accessoryDeviceId)
             }
 
@@ -703,7 +712,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                          }
                      ).show()*/
 
-                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_AIR_PUMP)
+                InterComeHelp.INSTANCE.openInterComeSpace(
+                    InterComeHelp.InterComeSpace.Article,
+                    Constants.InterCome.KEY_INTER_COME_AIR_PUMP
+                )
             }
 
             ivExclamationMark.setOnClickListener {
@@ -723,7 +735,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                          }
                      ).show()*/
 
-                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_PLANT_HEIGHT)
+                InterComeHelp.INSTANCE.openInterComeSpace(
+                    InterComeHelp.InterComeSpace.Article,
+                    Constants.InterCome.KEY_INTER_COME_PLANT_HEIGHT
+                )
             }
 
             // 时间模式
@@ -1010,7 +1025,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 // 隐藏
                 // 截图
-                val layout = binding.plantComplete.rlComplete // replace with your actual RelativeLayout id
+                val layout =
+                    binding.plantComplete.rlComplete // replace with your actual RelativeLayout id
                 layout.isDrawingCacheEnabled = true
                 layout.buildDrawingCache()
                 val bitmap = Bitmap.createBitmap(layout.drawingCache)
@@ -1021,7 +1037,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 分享到朋友圈
                     ARouter.getInstance().build(RouterPath.Contact.PAGE_TREND)
                         .withString(Constants.Global.KEY_SHARE_TYPE, "plant_complete")
-                        .withString(Constants.Global.KEY_SHARE_TEXT, "I’m #${mViewMode.getFinishPage.value?.data?.harvestComplete} Complete grower")
+                        .withString(
+                            Constants.Global.KEY_SHARE_TEXT,
+                            "I’m #${mViewMode.getFinishPage.value?.data?.harvestComplete} Complete grower"
+                        )
                         .withString(Constants.Global.KEY_SHARE_CONTENT, filePath)
                         .navigation()
                 }
@@ -1824,25 +1843,43 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.let { dataList ->
                         // 判断设备数量，设定左右滑动图片的显示
                         val isVisible = dataList.filter { it.isSwitch == 1 }.size > 1
-                        ViewUtils.setVisible(isVisible, binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        ViewUtils.setVisible(
+                            isVisible,
+                            binding.pplantNinth.imageLeftSwip,
+                            binding.pplantNinth.imageRightSwip
+                        )
 
                         // 寻找当前设备
                         dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
                             // 是否显示摄像头
-                            val isCameraVisible = device.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" } != null
+                            val isCameraVisible =
+                                device.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" } != null
                             ViewUtils.setVisible(isCameraVisible, binding.pplantNinth.ivCamera)
                             ViewUtils.setVisible(isCameraVisible, binding.plantManual.ivCamera)
 
                             // 是否显示rlInch
-                            ViewUtils.setVisible(device.deviceType == "OG", binding.plantManual.rlInch)
+                            ViewUtils.setVisible(
+                                device.deviceType == "OG",
+                                binding.plantManual.rlInch
+                            )
                         }
 
                         if (dataList.isNotEmpty()) {
                             getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
                                 binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera && isHave) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
-                                ViewUtils.setVisible(isHave && isLoadCamera, binding.pplantNinth.rlBowl)
-                                ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isHave && isLoadCamera)
-                                ViewUtils.setVisible(!isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0, binding.pplantNinth.ivThree, binding.pplantNinth.ivTwo)
+                                ViewUtils.setVisible(
+                                    isHave && isLoadCamera,
+                                    binding.pplantNinth.rlBowl
+                                )
+                                ViewUtils.setInvisible(
+                                    binding.pplantNinth.ivBowl,
+                                    isHave && isLoadCamera
+                                )
+                                ViewUtils.setVisible(
+                                    !isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0,
+                                    binding.pplantNinth.ivThree,
+                                    binding.pplantNinth.ivTwo
+                                )
                                 ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
 
                                 logI("111: $isHave,,,, $isLoadCamera")
@@ -1861,7 +1898,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                         }
                     } ?: run { // 数据为空时设为不可见
-                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
+                        ViewUtils.setGone(
+                            binding.pplantNinth.imageLeftSwip,
+                            binding.pplantNinth.imageRightSwip
+                        )
                     }
 
 
@@ -1882,7 +1922,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             getAccessoryInfo.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     if (data == null) return@success
-                    val devId = mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(0)?.accessoryDeviceId
+                    val devId =
+                        mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(
+                            0
+                        )?.accessoryDeviceId
 
                     // 隐私模式不能显示
                     /*if (data?.privateModel == true) {
@@ -1898,19 +1941,28 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                      */
                     devId?.let {
                         // 查询开关们的状态
-                        mViewMode.deviceId.value?.let { it1 -> mViewMode.tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
-                        mViewMode.tuYaUtils.listenDPUpdate(it, DPConstants.PRIVATE_MODE, onStatusChangedAction = { online ->
-                            logI("隐私模式：$online")
-                            // 在线和不在线都需要提示
-                            if (online) {
-                                //  在线摄像头
-                                binding.pplantNinth.tvPrivacyMode.text = "Currently in privacy mode"
-                            } else {
-                                //  离线摄像头
-                                binding.pplantNinth.tvPrivacyMode.text = "The camera is offline"
-                            }
-                            /*ViewUtils.setVisible(!online, binding.pplantNinth.tvPrivacyMode)*/
-                        })
+                        mViewMode.deviceId.value?.let { it1 ->
+                            mViewMode.tuYaUtils.queryAbbyValueByDPID(
+                                it1,
+                                TuYaDeviceConstants.KEY_DEVICE_DOOR
+                            )
+                        }
+                        mViewMode.tuYaUtils.listenDPUpdate(
+                            it,
+                            DPConstants.PRIVATE_MODE,
+                            onStatusChangedAction = { online ->
+                                logI("隐私模式：$online")
+                                // 在线和不在线都需要提示
+                                if (online) {
+                                    //  在线摄像头
+                                    binding.pplantNinth.tvPrivacyMode.text =
+                                        "Currently in privacy mode"
+                                } else {
+                                    //  离线摄像头
+                                    binding.pplantNinth.tvPrivacyMode.text = "The camera is offline"
+                                }
+                                /*ViewUtils.setVisible(!online, binding.pplantNinth.tvPrivacyMode)*/
+                            })
                     }
 
                 }
@@ -2084,16 +2136,94 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
             // 首页循环刷新消息
-            /*userDetail.observe(viewLifecycleOwner, resourceObserver {
-                success {
-                    if (null == data) return@success
-                    // "pump_water_finished":false
-                    LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
-                        .postEvent(
-                            GSON.toJson(hashMapOf(Constants.APP.KEY_IN_APP_VIP to "${data?.isVip}"))
-                        )
+            userDetail.observe(viewLifecycleOwner, resourceObserver {
+                error { msg, code ->
+                    hideProgressLoading()
+                    msg?.let { it1 -> ToastUtil.shortShow(it1) }
+                    // 容错处理、不管接口报错都显示
+                    showView(plantFlag, plantGuideFlag)
+                    // 请求未读消息数据，只有在种植之后才会开始有数据返回
+                    mViewMode.getUnread()
                 }
-            })*/
+                success {
+                    hideProgressLoading()
+
+                    // 登录InterCome
+                    InterComeHelp.INSTANCE.successfulLogin(
+                        map = mapOf(),
+                        interComeUserId = data?.externalId,
+                        userInfo = data
+                    )
+
+                    // 获取氧气币列表
+                    mViewMode.getOxygenCoinList()
+
+                    // 环信消息
+                    getEaseUINumber()
+
+                    // 保存刷新token信息
+                    GSON.toJson(data)?.let { data ->
+                        Prefs.putStringAsync(Constants.Login.KEY_REFRESH_LOGIN_DATA, data)
+                    }
+
+                    // 设置TuYaDeviceId
+                    data?.deviceId?.let { mViewMode.setDeviceId(it) }
+
+                    // 保存当前的信息.
+                    GSON.toJson(data)?.let {
+                        logI("refreshToken: $it")
+                        Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
+                    }
+                    // 保存Token
+                    data?.token?.let { it ->
+                        Prefs.putStringAsync(
+                            Constants.Login.KEY_LOGIN_DATA_TOKEN, it
+                        )
+                    }
+                    // JPush,添加别名
+                    data?.abbyId?.let {
+                        JPushInterface.setAlias(context, Random.nextInt(100), it)
+                    }
+                    /**
+                     * 当有设备的时候，判断当前设备是否在线
+                     *
+                     * 1- 绑定状态
+                     * 2- 解绑状态
+                     */
+                    if (data?.deviceStatus == "1") {
+                        data?.deviceOnlineStatus?.let {
+                            when (it) {
+                                // 	设备在线状态(0-不在线，1-在线)
+                                "0" -> {
+                                    ViewUtils.setVisible(binding.plantOffLine.root)
+                                    offLineTextSpan()
+                                }
+
+                                "1" -> {
+                                    showView(plantFlag, plantGuideFlag)
+                                    // 请求未读消息数据，只有在种植之后才会开始有数据返回
+                                    mViewMode.getUnread()
+                                    // 请求环境信息
+                                    mViewMode.getEnvData()
+                                    // 检查固件
+                                    checkOtaUpdateInfo()
+                                }
+
+                                else -> {}
+                            }
+                        }
+                    } else {
+                        // 没绑定的状态下，显示这玩意
+                        firstLoginViewVisibile()
+                        // 跳转到绑定设备界面，
+                        // 跳转绑定界面
+                        //                        ARouter.getInstance()
+                        //                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
+                        //                            .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        //                            .navigation()
+                    }
+                }
+            })
             // 消息统计
             getHomePageNumber.observe(viewLifecycleOwner, resourceObserver {
                 loading { }
@@ -2208,7 +2338,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     }*/
 
                                     // 跳转到interCome
-                                    InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, data?.articleId)
+                                    InterComeHelp.INSTANCE.openInterComeSpace(
+                                        InterComeHelp.InterComeSpace.Article,
+                                        data?.articleId
+                                    )
                                 }
                             }
                         }
@@ -2409,7 +2542,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
             // 更新信息,刷新token
-            refreshToken.observe(viewLifecycleOwner, resourceObserver {
+            /*refreshToken.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     hideProgressLoading()
 
@@ -2449,12 +2582,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.abbyId?.let {
                         JPushInterface.setAlias(context, Random.nextInt(100), it)
                     }
-                    /**
+                    *//**
                      * 当有设备的时候，判断当前设备是否在线
                      *
                      * 1- 绑定状态
                      * 2- 解绑状态
-                     */
+                     *//*
                     if (data?.deviceStatus == "1") {
                         data?.deviceOnlineStatus?.let {
                             when (it) {
@@ -2499,7 +2632,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading {
                     showProgressLoading()
                 }
-            })
+            })*/
 
             // 获取氧气币列表
             getOxygenCoinList.observe(viewLifecycleOwner, resourceObserver {
@@ -2532,7 +2665,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         }*/
 
                         if (data?.size == 0) return@success
-                        data?.take(7)?.map { Water("${it.oxygen}g", it.tips, it.loseEfficacy.toString(), it.orderNo, it.oxygen.toString(), it.tips) }?.toMutableList()?.let {
+                        data?.take(7)?.map {
+                            Water(
+                                "${it.oxygen}g",
+                                it.tips,
+                                it.loseEfficacy.toString(),
+                                it.orderNo,
+                                it.oxygen.toString(),
+                                it.tips
+                            )
+                        }?.toMutableList()?.let {
                             if (it.size == 0) return@success
                             binding.pplantNinth.waterView.apply {
                                 setDestroyPoint(WaterView.VIEW_CENTER)
@@ -2553,7 +2695,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 setViewInterpolator(null)
                                 mViews.remove(view)
                                 animRemoveView(view, position)
-                                binding.pplantNinth.tvOxy.text = "${water.oxygen.toInt() + binding.pplantNinth.tvOxy.text.toString().toInt()}"
+                                binding.pplantNinth.tvOxy.text = "${
+                                    water.oxygen.toInt() + binding.pplantNinth.tvOxy.text.toString()
+                                        .toInt()
+                                }"
                                 // 直接在次加载氧气币
                                 setViewCount(mViews.size)
                                 logI("mmview: ${mViews.size}")
@@ -3601,7 +3746,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             32f,
             resources.displayMetrics
         ).toInt()
-        val windowManager = activity?.getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager
+        val windowManager =
+            activity?.getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager
         val width = windowManager.defaultDisplay.width - marginTopPx
         val height = width * 9 / 16
         // 假设你已经有了一个 ConstraintLayout 和一个 RelativeLayout
@@ -3619,9 +3765,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         val constraintSet = ConstraintSet()
         constraintSet.clone(constraintLayout) // 克隆当前的约束
         // 设置新的约束
-        constraintSet.connect(relativeLayout.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
-        constraintSet.connect(relativeLayout.id, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START)
-        constraintSet.connect(relativeLayout.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END)
+        constraintSet.connect(
+            relativeLayout.id,
+            ConstraintSet.BOTTOM,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.BOTTOM
+        )
+        constraintSet.connect(
+            relativeLayout.id,
+            ConstraintSet.START,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.START
+        )
+        constraintSet.connect(
+            relativeLayout.id,
+            ConstraintSet.END,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.END
+        )
         // 应用新的约束
         constraintSet.applyTo(constraintLayout)
 
@@ -3630,7 +3791,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // Set the corner radius for the bottom left and bottom right corners
         val cornerRadius = 30.0f
         // 角度为顺时针旋转绘制的，
-        val radii = floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
+        val radii =
+            floatArrayOf(0f, 0f, 0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius)
 
         // val radii = floatArrayOf(0f, 0f, cornerRadius, cornerRadius, cornerRadius, cornerRadius, 0f, 0f)
         val shapeDrawable = ShapeDrawable(RoundRectShape(radii, null, null))
@@ -3724,19 +3886,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 遇到超时/鉴权失败，建议重连一次，避免循环调用
                 if (!reConnect) {
                     reConnect = true
-                    mCameraP2P?.connect(mViewMode.cameraId.value, object : OperationDelegateCallBack {
-                        override fun onSuccess(i: Int, i1: Int, s: String) {
-                            activity?.runOnUiThread {
-                                preview();
+                    mCameraP2P?.connect(
+                        mViewMode.cameraId.value,
+                        object : OperationDelegateCallBack {
+                            override fun onSuccess(i: Int, i1: Int, s: String) {
+                                activity?.runOnUiThread {
+                                    preview();
+                                }
                             }
-                        }
 
-                        override fun onFailure(i: Int, i1: Int, i2: Int) {
-                            activity?.runOnUiThread {
-                                ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+                            override fun onFailure(i: Int, i1: Int, i2: Int) {
+                                activity?.runOnUiThread {
+                                    ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+                                }
                             }
-                        }
-                    })
+                        })
                 }
             }
         }
@@ -3854,13 +4018,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 从聊天退出来之后需要刷新消息环信数量
         mViewMode.getHomePageNumber()
         // 刷新数据
-        mViewMode.refreshToken(
-            AutomaticLoginReq(
-                userName = mViewMode.account,
-                password = mViewMode.psd,
-                token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-            )
-        )
+        mViewMode.userDetail()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -4050,18 +4208,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 )
                 ViewUtils.setGone(binding.plantOffLine.root)
                 // 刷新数据
-                mViewMode.refreshToken.value?.data?.let { data ->
+                mViewMode.userDetail.value?.data?.let { data ->
                     // 如果时绑定状态，并且是离线，表示是第一次进来，设备就是离线的。
                     // 当他在线时，就需要刷新状态
                     if (data.deviceStatus == "1") {
                         if (data.deviceOnlineStatus == "0") {
-                            mViewMode.refreshToken(
-                                AutomaticLoginReq(
-                                    userName = mViewMode.account,
-                                    password = mViewMode.psd,
-                                    token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-                                )
-                            )
+                            mViewMode.userDetail()
                         }
                     }
                 }
@@ -4284,10 +4436,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 ViewUtils.setVisible(isOpen && isPrivate, binding.pplantNinth.tvPrivacyMode)
                 if (isOpen && isPrivate) {
                     // 打开隐私模式
-                    cameraId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+                    cameraId.let {
+                        mViewMode.tuYaUtils.publishDps(
+                            it,
+                            DPConstants.PRIVATE_MODE,
+                            true
+                        )
+                    }
                 } else {
                     // 关闭隐私模式
-                    cameraId.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
+                    cameraId.let {
+                        mViewMode.tuYaUtils.publishDps(
+                            it,
+                            DPConstants.PRIVATE_MODE,
+                            false
+                        )
+                    }
                 }
             }
         }
@@ -4339,7 +4503,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
             // 在线、并且绑定了设备
-            if (mViewMode.refreshToken.value?.data?.deviceStatus == "1" && mViewMode.refreshToken.value?.data?.deviceOnlineStatus == "1") {
+            if (mViewMode.userDetail.value?.data?.deviceStatus == "1" && mViewMode.userDetail.value?.data?.deviceOnlineStatus == "1") {
                 // 如果没有绑定过设备
                 // 种植过的才可以请求
                 mViewMode.plantInfo()
@@ -4529,7 +4693,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             // 判断今天是否已经截图
-            if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
+            if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(
+                    Calendar.YEAR
+                ) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)
+            ) {
                 // 如果今天还没截图，就执行截图操作并更新截图时间
                 snapShotClick()
                 Prefs.putLong(key, time)
@@ -4570,7 +4737,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     override fun onSuccess(sessionId: Int, requestId: Int, data: String) {
                         if (!isExistInSdCard()) {
                             // 保存到相册
-                            activity?.let { it1 -> saveFileToGallery(it1, filePath = data, title = System.currentTimeMillis().toString() + ".jpg", mimeType = "image/jpeg", albumName = mViewMode.sn.value.toString()) }
+                            activity?.let { it1 ->
+                                saveFileToGallery(
+                                    it1,
+                                    filePath = data,
+                                    title = System.currentTimeMillis().toString() + ".jpg",
+                                    mimeType = "image/jpeg",
+                                    albumName = mViewMode.sn.value.toString()
+                                )
+                            }
                         }
                         logI("snapShotClick : sucess")
                     }
@@ -4585,12 +4760,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     /**
      * 存储到相册
      */
-    private fun saveFileToGallery(context: Context, filePath: String, title: String, mimeType: String, albumName: String): Uri? {
+    private fun saveFileToGallery(
+        context: Context,
+        filePath: String,
+        title: String,
+        mimeType: String,
+        albumName: String
+    ): Uri? {
         val file = File(filePath)
         if (!file.exists()) return null
 
         val isVideo = mimeType.startsWith("video")
-        val contentUri = if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val contentUri =
+            if (isVideo) MediaStore.Video.Media.EXTERNAL_CONTENT_URI else MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val directory = Environment.DIRECTORY_PICTURES
 
         val contentValues = ContentValues().apply {

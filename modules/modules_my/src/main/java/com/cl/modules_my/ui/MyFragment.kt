@@ -77,7 +77,7 @@ class MyFragment : BaseFragment<FragmentMyBinding>() {
                 success {
                     data?.let {
                         // 缓存信息
-                        GSON.toJson(it)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
+                        GSON.toJson(it)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
 
                         // 头像链接
                         val headUrl = it.avatarPicture

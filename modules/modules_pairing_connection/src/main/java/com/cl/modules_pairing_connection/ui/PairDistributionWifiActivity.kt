@@ -161,7 +161,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                 success {
                     hideProgressLoading()
                     // 缓存信息
-                    GSON.toJson(this)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_USER_INFO, it1) }
+                    GSON.toJson(this)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 绑定设备JPUSH的别名
                     thread {
                         logI(
