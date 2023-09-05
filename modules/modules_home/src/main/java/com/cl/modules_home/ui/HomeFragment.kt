@@ -1884,7 +1884,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                                 logI("111: $isHave,,,, $isLoadCamera")
                                 logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
-
+                                logI("123123123123123123: ${dataList.size},,, ${dataList.firstOrNull { it.currentDevice == 1 }}")
                                 // 获取摄像头配件信息
                                 mViewMode.getAccessoryInfo(devId)
 
@@ -1922,49 +1922,51 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             getAccessoryInfo.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     if (data == null) return@success
-                    val devId =
-                        mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(
-                            0
-                        )?.accessoryDeviceId
+                    runCatching {
+                        logI("123123123: ${mViewMode.listDevice.value?.data?.size},,, ${mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }}")
+                        val devId =
+                            mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(
+                                0
+                            )?.accessoryDeviceId
 
-                    // 隐私模式不能显示
-                    /*if (data?.privateModel == true) {
-                        // 主动设置为隐私模式
-                        devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
-                    } else {
-                        // 主动设置为隐私模式
-                        devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
-                    }*/
+                        // 隐私模式不能显示
+                        /*if (data?.privateModel == true) {
+                            // 主动设置为隐私模式
+                            devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
+                        } else {
+                            // 主动设置为隐私模式
+                            devId?.let { mViewMode.tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, false) }
+                        }*/
 
-                    /**
-                     * 监听隐私模式、或者是否在先
-                     */
-                    devId?.let {
-                        // 查询开关们的状态
-                        mViewMode.deviceId.value?.let { it1 ->
-                            mViewMode.tuYaUtils.queryAbbyValueByDPID(
-                                it1,
-                                TuYaDeviceConstants.KEY_DEVICE_DOOR
-                            )
+                        /**
+                         * 监听隐私模式、或者是否在先
+                         */
+                        devId?.let {
+                            // 查询开关们的状态
+                            mViewMode.deviceId.value?.let { it1 ->
+                                mViewMode.tuYaUtils.queryAbbyValueByDPID(
+                                    it1,
+                                    TuYaDeviceConstants.KEY_DEVICE_DOOR
+                                )
+                            }
+                            mViewMode.tuYaUtils.listenDPUpdate(
+                                it,
+                                DPConstants.PRIVATE_MODE,
+                                onStatusChangedAction = { online ->
+                                    logI("隐私模式：$online")
+                                    // 在线和不在线都需要提示
+                                    if (online) {
+                                        //  在线摄像头
+                                        binding.pplantNinth.tvPrivacyMode.text =
+                                            "Currently in privacy mode"
+                                    } else {
+                                        //  离线摄像头
+                                        binding.pplantNinth.tvPrivacyMode.text = "The camera is offline"
+                                    }
+                                    /*ViewUtils.setVisible(!online, binding.pplantNinth.tvPrivacyMode)*/
+                                })
                         }
-                        mViewMode.tuYaUtils.listenDPUpdate(
-                            it,
-                            DPConstants.PRIVATE_MODE,
-                            onStatusChangedAction = { online ->
-                                logI("隐私模式：$online")
-                                // 在线和不在线都需要提示
-                                if (online) {
-                                    //  在线摄像头
-                                    binding.pplantNinth.tvPrivacyMode.text =
-                                        "Currently in privacy mode"
-                                } else {
-                                    //  离线摄像头
-                                    binding.pplantNinth.tvPrivacyMode.text = "The camera is offline"
-                                }
-                                /*ViewUtils.setVisible(!online, binding.pplantNinth.tvPrivacyMode)*/
-                            })
                     }
-
                 }
             })
 
@@ -3258,7 +3260,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     1 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_one
+                                                it, com.cl.common_base.R.mipmap.home_week_one
                                             )
                                         }
                                     }
@@ -3266,7 +3268,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     2 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_two
+                                                it, com.cl.common_base.R.mipmap.home_week_two
                                             )
                                         }
                                     }
@@ -3274,7 +3276,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     3 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_three
+                                                it, com.cl.common_base.R.mipmap.home_week_three
                                             )
                                         }
                                     }
@@ -3282,7 +3284,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     4 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_four
+                                                it, com.cl.common_base.R.mipmap.home_week_four
                                             )
                                         }
                                     }
@@ -3290,7 +3292,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     5 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_five
+                                                it, com.cl.common_base.R.mipmap.home_week_five
                                             )
                                         }
                                     }
@@ -3298,7 +3300,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     6 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_six
+                                                it, com.cl.common_base.R.mipmap.home_week_six
                                             )
                                         }
                                     }
@@ -3306,7 +3308,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     7 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_seven
+                                                it, com.cl.common_base.R.mipmap.home_week_seven
                                             )
                                         }
                                     }
@@ -3314,7 +3316,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     8 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_eight
+                                                it, com.cl.common_base.R.mipmap.home_week_eight
                                             )
                                         }
                                     }
@@ -3322,7 +3324,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     9 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_nine
+                                                it, com.cl.common_base.R.mipmap.home_week_nine
                                             )
                                         }
                                     }
@@ -3330,7 +3332,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     10 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_ten
+                                                it, com.cl.common_base.R.mipmap.home_week_ten
                                             )
                                         }
                                     }
@@ -3338,7 +3340,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     11 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_eleven
+                                                it, com.cl.common_base.R.mipmap.home_week_eleven
                                             )
                                         }
                                     }
@@ -3346,7 +3348,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     12 -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_twelve
+                                                it, com.cl.common_base.R.mipmap.home_week_twelve
                                             )
                                         }
                                     }
@@ -3354,7 +3356,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     else -> {
                                         context?.let {
                                             ContextCompat.getDrawable(
-                                                it, R.mipmap.home_week_one
+                                                it, com.cl.common_base.R.mipmap.home_week_one
                                             )
                                         }
                                     }
