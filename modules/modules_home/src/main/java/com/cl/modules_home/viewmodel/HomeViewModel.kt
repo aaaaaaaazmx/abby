@@ -1504,7 +1504,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
     fun getEaseUINumber() {
         // 只有当设备绑定且在线的时候、才去添加
-        if (refreshToken.value?.data?.deviceStatus == "1" && refreshToken.value?.data?.deviceOnlineStatus == "1") {
+        if (userDetail.value?.data?.deviceStatus == "1" && userDetail.value?.data?.deviceOnlineStatus == "1") {
             _unReadMessageNumber.postValue(InterComeHelp.INSTANCE.getUnreadConversationCount())
         }
     }

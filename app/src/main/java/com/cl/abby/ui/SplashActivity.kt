@@ -16,6 +16,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.databinding.ActivitySplashBinding
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.TuYaInfo
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -24,10 +25,12 @@ import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.BluetoothMonitorReceiver
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
+import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_login.BuildConfig
 import com.cl.modules_login.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -43,6 +46,11 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         GSON.parseObject(bean, UserinfoBean::class.java)
     }
 
+    private val tuYaInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_TU_YA_INFO)
+        GSON.parseObject(bean, TuYaInfo::class.java)
+    }
+
     private val borad by lazy {
         BluetoothMonitorReceiver()
     }
@@ -56,6 +64,13 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
     }
 
     override fun initView() {
+        // 加载为当初选择的url
+        if (BuildConfig.DEBUG) {
+            val url = Prefs.getString(Constants.DebugTest.KEY_TEST_URL)
+            if (url.isNotEmpty()) {
+                ServiceCreators.newBuilder(url)
+            }
+        }
         // 初始化SDK、需要同意隐私协议
         InitSdk.init()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -84,13 +99,22 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
     private fun redirectTo() {
         val data = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-        if (data.isNullOrEmpty()) {
+        if (data.isEmpty()) {
             // 直接跳转登录界面
             ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
             finish()
         } else {
-            // 从设备列表当中获取当前选中设备
-            mViewModel.userDetail()
+            // 主要是针对老用户，因为新增了一个key用于保存涂鸦的信息，老用户是没有的，所以会一直登录不上，如果是老用户，那么就直接跳转到登录页面，让其登录一遍。
+            val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
+            val tuyaPassword = tuYaInfo?.tuyaPassword
+            if (null == tuYaInfo || (tuyaCountryCode?.isEmpty() == true && tuyaPassword?.isEmpty() == true)) {
+                // 直接跳转登录界面
+                ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
+                finish()
+            } else {
+                // 从设备列表当中获取当前选中设备
+                mViewModel.userDetail()
+            }
         }
     }
 
@@ -111,8 +135,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
             error { errorMsg, code ->
                 val email = userinfoBean?.email
-                val tuyaCountryCode = userinfoBean?.tuyaCountryCode
-                val tuyaPassword = userinfoBean?.tuyaPassword
+                val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
+                val tuyaPassword = tuYaInfo?.tuyaPassword
                 mViewModel.tuYaLogin(
                     map = mapOf(),
                     mViewModel.userDetail.value?.data?.externalId,
@@ -136,8 +160,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             }
             success {
                 val email = userinfoBean?.email
-                val tuyaCountryCode = userinfoBean?.tuyaCountryCode
-                val tuyaPassword = userinfoBean?.tuyaPassword
+                val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
+                val tuyaPassword = tuYaInfo?.tuyaPassword
                 mViewModel.tuYaLogin(
                     map = mapOf(),
                     mViewModel.userDetail.value?.data?.externalId,

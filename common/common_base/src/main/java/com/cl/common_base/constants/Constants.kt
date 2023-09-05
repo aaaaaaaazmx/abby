@@ -56,11 +56,8 @@ object Constants {
     // Login信息相关
     object Login {
         // UserinfoBean
-        // 登录信息
+        // 登录信息\用户信息
         const val KEY_LOGIN_DATA = "key_login_data"
-
-        // 刷新信息接口
-        const val KEY_REFRESH_LOGIN_DATA = "key_refresh_login_data+login_data"
 
         // Token
         const val KEY_LOGIN_DATA_TOKEN = "key_login_data_token"
@@ -70,6 +67,9 @@ object Constants {
 
         // 密码 加密后的
         const val KEY_LOGIN_PSD = "key_login_psd"
+
+        // 涂鸦相关信息
+        const val KEY_TU_YA_INFO = "key_tuya_info"
     }
 
     object Plant {
@@ -190,6 +190,10 @@ object Constants {
 
         // 设备端给APP端下发的信息
         const val KEY_DEVICE_TO_APP = "key_device_to_app"
+    }
+
+    object DebugTest {
+        const val KEY_TEST_URL = "key_test_url"
     }
 
 
