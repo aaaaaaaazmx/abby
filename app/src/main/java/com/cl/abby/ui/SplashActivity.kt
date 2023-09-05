@@ -107,7 +107,7 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
             // 主要是针对老用户，因为新增了一个key用于保存涂鸦的信息，老用户是没有的，所以会一直登录不上，如果是老用户，那么就直接跳转到登录页面，让其登录一遍。
             val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
             val tuyaPassword = tuYaInfo?.tuyaPassword
-            if (tuyaCountryCode?.isEmpty() == true && tuyaPassword?.isEmpty() == true) {
+            if (null == tuYaInfo || (tuyaCountryCode?.isEmpty() == true && tuyaPassword?.isEmpty() == true)) {
                 // 直接跳转登录界面
                 ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
                 finish()
