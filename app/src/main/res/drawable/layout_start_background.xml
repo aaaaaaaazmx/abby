@@ -10,9 +10,14 @@
     </item>
 
     <!--启动页面logo-->
-    <item>
+   <!-- <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/bg_logo" />
-    </item>
+            android:src="@drawable/bg_logo_min" />
+    </item>-->
+    <item
+        android:gravity="center"
+        android:width="100dp"
+        android:height="100dp"
+        android:drawable="@mipmap/bg_logo"/>
 </layer-list>
