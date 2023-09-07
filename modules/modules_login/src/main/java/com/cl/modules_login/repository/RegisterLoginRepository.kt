@@ -20,6 +20,11 @@ class RegisterLoginRepository @Inject constructor(private var remoteRepository: 
     }
 
 
+
+    fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
+        return remoteRepository.automaticLogin(body)
+    }
+
     /**
      * 设备列表
      */

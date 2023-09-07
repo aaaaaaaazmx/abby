@@ -26,6 +26,7 @@ data class UpDeviceInfoReq(
     var proMode: String? = null, // 专业模式
     var fanAuto: Int? = null, // 风扇是否自动
     var burnOutProof: Int? = null, // 防烧模式是否开启
+    var smartUsbPowder: Int? = null, // USB开关：1-开启、0-关闭
 ) : BaseBean() {
 
     data class InfoList(

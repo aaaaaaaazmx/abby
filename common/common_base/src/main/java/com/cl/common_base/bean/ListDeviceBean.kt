@@ -22,6 +22,7 @@ data class ListDeviceBean(
     val burnOutProof: Int? = null, // 是否开启防烧模式
     val isBurnOutProof: Int? = null, // 是否显示防烧模式
     var deviceType: String? = null, // 判断设备是OG还是O1
+    var smartUsbPowder: Int? = null, // USB开关：1-开启、0-关闭
     var accessoryList: MutableList<AccessoryList>? = null,
 ) : BaseBean() {
     data class AccessoryList(

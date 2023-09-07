@@ -295,7 +295,7 @@ public class WaterView extends FrameLayout {
       } catch (Exception e) {
           Pair<String, String> pair1 = new Pair<>("addWaterView", e.toString());
           Pair[] options = new Pair[] { pair1 };
-          Reporter.reportError(  Reporter.ErrorType.ApiError, e.toString(),  options);
+          Reporter.reportError(Reporter.ErrorType.ApiError, e.toString(),  options);
       }
     }
 

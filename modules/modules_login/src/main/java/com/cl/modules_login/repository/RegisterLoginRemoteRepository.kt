@@ -18,6 +18,10 @@ import javax.inject.Inject
 class RegisterLoginRemoteRepository @Inject constructor() {
     private val service = ServiceCreators.create(HttpLoginApiService::class.java)
 
+    fun automaticLogin(body: AutomaticLoginReq): Flow<HttpResult<AutomaticLoginData>> {
+        return service.automaticLogin(body)
+    }
+
     fun loginAbby(body: LoginReq): Flow<HttpResult<LoginData>> {
         return service.loginAbby(body)
     }

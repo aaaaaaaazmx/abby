@@ -170,14 +170,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 获取sn
         mViewMode.getSn()
-        // 刷新token
-        mViewMode.refreshToken(
+        // 刷新token、放在customSplashActivity页面了。
+       /* mViewMode.refreshToken(
             AutomaticLoginReq(
                 userName = mViewMode.account,
                 password = mViewMode.psd,
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
-        )
+        )*/
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -1923,7 +1923,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     if (data == null) return@success
                     runCatching {
-                        logI("123123123: ${mViewMode.listDevice.value?.data?.size},,, ${mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }}")
                         val devId =
                             mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(
                                 0
@@ -2534,13 +2533,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
             // 更新信息,刷新token
-            refreshToken.observe(viewLifecycleOwner, resourceObserver {
+            /*refreshToken.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     hideProgressLoading()
 
                     // 保存Token
                     data?.token?.let { it ->
-                        Prefs.putStringAsync(
+                        Prefs.putString(
                             Constants.Login.KEY_LOGIN_DATA_TOKEN, it
                         )
                     }
@@ -2564,7 +2563,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading {
                     showProgressLoading()
                 }
-            })
+            })*/
 
             // 获取氧气币列表
             getOxygenCoinList.observe(viewLifecycleOwner, resourceObserver {

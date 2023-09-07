@@ -49,6 +49,7 @@ import com.cl.modules_my.widget.SubPop
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.util.XPopupUtils
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.thingclips.smart.android.user.api.ILogoutCallback
 import com.thingclips.smart.android.user.bean.User
@@ -83,10 +84,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         GSON.parseObject(bean, User::class.java)
     }
 
-   /* private val refreshTokenData by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_REFRESH_LOGIN_DATA)
-        GSON.parseObject(bean, AutomaticLoginData::class.java)
-    }*/
+    /* private val refreshTokenData by lazy {
+         val bean = Prefs.getString(Constants.Login.KEY_REFRESH_LOGIN_DATA)
+         GSON.parseObject(bean, AutomaticLoginData::class.java)
+     }*/
 
     /**
      * 是否滚动到burner
@@ -203,7 +204,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     content = "Digital service includes 1 on 1 expert support, oxygen coins, and exclusive digital assets and deals",
                 )
             ).show()*/
-            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_SERVICE)
+            InterComeHelp.INSTANCE.openInterComeSpace(
+                InterComeHelp.InterComeSpace.Article,
+                Constants.InterCome.KEY_INTER_COME_SERVICE
+            )
         }
         binding.ftChildLock.setPointClickListener {
             /*pop.asCustom(
@@ -214,7 +218,10 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     content = "When child lock is on, the door will  lock automatically when closed. The door can then only be opened via the app",
                 )
             ).show()*/
-            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_CHILD_LOCK)
+            InterComeHelp.INSTANCE.openInterComeSpace(
+                InterComeHelp.InterComeSpace.Article,
+                Constants.InterCome.KEY_INTER_COME_CHILD_LOCK
+            )
         }
         binding.ftNight.setPointClickListener {
             /* pop.asCustom(
@@ -225,10 +232,16 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                      content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
                  )
              ).show()*/
-            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_NIGHT_MODE)
+            InterComeHelp.INSTANCE.openInterComeSpace(
+                InterComeHelp.InterComeSpace.Article,
+                Constants.InterCome.KEY_INTER_COME_NIGHT_MODE
+            )
         }
         binding.ftBurner.setPointClickListener {
-            InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_BURN_PROOF)
+            InterComeHelp.INSTANCE.openInterComeSpace(
+                InterComeHelp.InterComeSpace.Article,
+                Constants.InterCome.KEY_INTER_COME_BURN_PROOF
+            )
             /*pop.asCustom(
                 BaseCenterPop(
                     this@SettingActivity,
@@ -237,6 +250,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     content = "While in night mode, notifications will be muted. Both the screen and light strip will be turned off during the specified time",
                 )
             ).show()*/
+        }
+
+        binding.ftUsb.setPointClickListener {
+            // 展示一下弹窗
+            pop.asCustom(BaseCenterPop(this@SettingActivity, content = """
+                This option is designed to control the power of 3rd party accessories.\n\n
+                You are currently connect to a hey abby smart accessory, please remove it first from device manager.
+            """.trimIndent(), confirmText = "OK")).show()
         }
 
         // 是否可以操作设备相关的功能
@@ -268,6 +289,16 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            updateDeviceInfo.observe(this@SettingActivity, resourceObserver {
+                success {
+
+                }
+
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+            })
+
             listDevice.observe(this@SettingActivity, resourceObserver {
                 success {
                     data?.firstOrNull { it.currentDevice == 1 }?.let { deviceInfo ->
@@ -276,14 +307,23 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         mViewModel.updateDevicesInfo(deviceInfo)
 
                         // 是否显示防烧模式
-                        ViewUtils.setVisible(deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode != "On", binding.ftBurner)
-                        ViewUtils.setVisible(deviceInfo.burnOutProof == 1 && deviceInfo.proMode != "On", binding.tvBurnerDesc)
+                        ViewUtils.setVisible(
+                            deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode != "On",
+                            binding.ftBurner
+                        )
+                        ViewUtils.setVisible(
+                            deviceInfo.burnOutProof == 1 && deviceInfo.proMode != "On",
+                            binding.tvBurnerDesc
+                        )
 
+                        // 是否开启usb电源模式
+                        binding.ftUsb.isItemChecked = deviceInfo.smartUsbPowder == 1
                         // 防烧模式是否开启
                         binding.ftBurner.isItemChecked = deviceInfo.burnOutProof == 1
 
                         // 显示当前的是否是手动模式
-                        binding.itemTitle.text = if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
+                        binding.itemTitle.text =
+                            if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
                         binding.ftName.itemValue = deviceInfo.plantName
 
                         binding.ftChildLock.isItemChecked = deviceInfo.childLock == 1
@@ -599,7 +639,23 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftBurner.setSwitchCheckedChangeListener { _, isChecked ->
             ViewUtils.setVisible(isChecked, binding.tvBurnerDesc)
             // 开启防烧模式
-            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = mViewModel.saveDeviceId.value, burnOutProof = if (isChecked) 1 else 0))
+            mViewModel.updateDeviceInfo(
+                UpDeviceInfoReq(
+                    deviceId = mViewModel.saveDeviceId.value,
+                    burnOutProof = if (isChecked) 1 else 0
+                )
+            )
+        }
+
+        // usb模式
+        binding.ftUsb.setSwitchCheckedChangeListener { _, isChecked ->
+            // usb模式
+            mViewModel.updateDeviceInfo(
+                UpDeviceInfoReq(
+                    deviceId = mViewModel.saveDeviceId.value,
+                    smartUsbPowder = if (isChecked) 1 else 0
+                )
+            )
         }
 
         // 童锁
@@ -657,7 +713,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             context = this,
                             contentText = "Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
                         ) {
-                            mViewModel.updateDeviceInfo(UpDeviceInfoReq(deviceId = mViewModel.saveDeviceId.value, proMode = "Off"))
+                            mViewModel.updateDeviceInfo(
+                                UpDeviceInfoReq(
+                                    deviceId = mViewModel.saveDeviceId.value,
+                                    proMode = "Off"
+                                )
+                            )
                             tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
                         }).show()
             }
@@ -731,7 +792,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         DeviceControl.get()
                             .success {
                                 // "141":"muteOn:10,muteOff:22"
-                                logI("123312313: muteOn:${timeOn.toString().padStart(2, '0')},muteOff:${timeOff.toString().padStart(2, '0')}")
+                                logI(
+                                    "123312313: muteOn:${
+                                        timeOn.toString().padStart(2, '0')
+                                    },muteOff:${timeOff.toString().padStart(2, '0')}"
+                                )
                             }
                             .error { code, error ->
                                 ToastUtil.shortShow(
@@ -742,7 +807,13 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                                 )
                             }
-                            .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn.toString().padStart(2, '0')},muteOff:${if (timeOff == 24) 12 else timeOff.toString().padStart(2, '0')}")
+                            .nightMode(
+                                "muteOn:${
+                                    if (timeOn == 12) 24 else timeOn.toString().padStart(2, '0')
+                                },muteOff:${
+                                    if (timeOff == 24) 12 else timeOff.toString().padStart(2, '0')
+                                }"
+                            )
                     })
             ).show()
         }
@@ -942,7 +1013,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 CacheUtil.getVideoCache(this@SettingActivity)
         }
         mViewModel.userDetail()
-        mViewModel.getAppVersion()
+        /*mViewModel.getAppVersion()*/
 
         /**
          * 当有设备的时候，判断当前设备是否在线
@@ -978,7 +1049,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         // 重量单位
         val weightUnit = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-        binding.ftWeight.itemValue = if (weightUnit) getString(com.cl.common_base.R.string.my_metric) else getString(com.cl.common_base.R.string.my_us)
+        binding.ftWeight.itemValue =
+            if (weightUnit) getString(com.cl.common_base.R.string.my_metric) else getString(com.cl.common_base.R.string.my_us)
     }
 
     override fun onPause() {

@@ -11,10 +11,12 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.R
 import com.cl.abby.databinding.CustomSplashActivityBinding
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.TuYaInfo
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.init.InitSdk
@@ -30,11 +32,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
-    private val userinfoBean by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        GSON.parseObject(bean, UserinfoBean::class.java)
-    }
-
     private val tuYaInfo by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_TU_YA_INFO)
         GSON.parseObject(bean, TuYaInfo::class.java)
@@ -42,6 +39,16 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
 
     private val borad by lazy {
         BluetoothMonitorReceiver()
+    }
+
+    // 账号
+    val account by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
+    }
+
+    // 密码
+    val psd by lazy {
+        Prefs.getString(Constants.Login.KEY_LOGIN_PSD)
     }
 
 
@@ -95,13 +102,39 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                 ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
                 finish()
             } else {
-                // 从设备列表当中获取当前选中设备
-                mViewModel.userDetail()
+                mViewModel.refreshToken(
+                    AutomaticLoginReq(
+                        userName = account,
+                        password = psd,
+                        token = data
+                    )
+                )
             }
         }
     }
 
     override fun observe() {
+        mViewModel.refreshToken.observe(this@CustomSplashActivity, resourceObserver {
+            error { errorMsg, code ->
+                // 从设备列表当中获取当前选中设备
+                mViewModel.userDetail()
+            }
+            success {
+                // 保存涂鸦信息
+                val tuYaInfo = TuYaInfo(
+                    tuyaCountryCode = data?.tuyaCountryCode,
+                    tuyaPassword = data?.tuyaPassword,
+                    tuyaUserId = data?.tuyaUserId,
+                    tuyaUserType = data?.tuyaUserType
+                )
+                GSON.toJson(tuYaInfo)?.let { tuyainfos ->
+                    logI("tuYaInfoL: $tuyainfos")
+                    Prefs.putStringAsync(Constants.Login.KEY_TU_YA_INFO, tuyainfos)
+                }
+                // 从设备列表当中获取当前选中设备
+                mViewModel.userDetail()
+            }
+        })
 
         mViewModel.userDetail.observe(this@CustomSplashActivity, resourceObserver {
             error { errorMsg, code ->
@@ -118,7 +151,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
 
         mViewModel.getInterComeData.observe(this@CustomSplashActivity, resourceObserver {
             error { errorMsg, code ->
-                val email = userinfoBean?.email
+                val email = mViewModel.userDetail.value?.data?.email
                 val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
                 val tuyaPassword = tuYaInfo?.tuyaPassword
                 mViewModel.tuYaLogin(
@@ -143,7 +176,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                 )
             }
             success {
-                val email = userinfoBean?.email
+                val email = mViewModel.userDetail.value?.data?.email
                 val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
                 val tuyaPassword = tuYaInfo?.tuyaPassword
                 mViewModel.tuYaLogin(
