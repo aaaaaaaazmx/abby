@@ -150,6 +150,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                         Prefs.putStringAsync(
                             Constants.Login.KEY_LOGIN_DATA_TOKEN, it1
                         )
+                        ServiceCreators.TokenCache.token = it1
                     }
 
                     // 保存账号密码

@@ -3,6 +3,7 @@ package com.cl.common_base.net.interceptor
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.util.Prefs
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -13,7 +14,7 @@ class AddHeadInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val original: Request = chain.request()
         val request: Request = original.newBuilder()
-            .header("token", Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
+            .header("token", ServiceCreators.TokenCache.token ?: Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
             .addHeader("Connection","close")
 
             .build()

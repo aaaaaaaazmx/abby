@@ -103,7 +103,7 @@ fun setImageUrl(imageView: ImageView, url: String?) {
         var requestOptions = RequestOptions()
         requestOptions.placeholder(R.mipmap.placeholder)
         requestOptions.error(R.mipmap.errorholder)
-        requestOptions.override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, SIZE_ORIGINAL)
+        // requestOptions.override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, SIZE_ORIGINAL)
         Glide.with(imageView.context).load(url)
             .apply(requestOptions)
             .into(imageView)

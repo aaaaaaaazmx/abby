@@ -16,6 +16,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
+import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -190,6 +191,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                             Prefs.putStringAsync(
                                 Constants.Login.KEY_LOGIN_DATA_TOKEN, it1
                             )
+                            ServiceCreators.TokenCache.token = it1
                         }
 
                         // 保存账号密码

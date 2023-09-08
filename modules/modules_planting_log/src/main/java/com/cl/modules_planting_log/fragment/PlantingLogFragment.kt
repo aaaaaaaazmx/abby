@@ -152,7 +152,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                             PlantLogTypeBean("Actions", false),
                             PlantLogTypeBean("Training", false)
                         ), onConfirmAction = { txt ->
-                            // todo 跳转到相对应的界面
+                            // 跳转到相对应的界面
                             when (txt) {
                                 "Log" -> {
                                     logI("click Log")

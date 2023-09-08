@@ -23,6 +23,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.ChooserOptionPop
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.glide.GlideEngine
@@ -64,7 +65,8 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), EditTextValueChangeListener {
+class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
+    EditTextValueChangeListener {
     @Inject
     lateinit var viewModel: PlantingLogAcViewModel
 
@@ -102,13 +104,61 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         mapOf(
             "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             "logType" to FieldAttributes("Training Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            "waterType" to FieldAttributes("Water Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "volume" to FieldAttributes("Volume", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, metricUnits = "L", imperialUnits = "Gal"),
-            "feedingType" to FieldAttributes("Feeding Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "repellentType" to FieldAttributes("Repellent Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "declareDeathType" to FieldAttributes("DeclareDeath Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "driedWeight" to FieldAttributes("Yield (Dried weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, metricUnits = "g", imperialUnits = "Oz"),
-            "wetWeight" to FieldAttributes("Yield (Wet weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, metricUnits = "g", imperialUnits = "Oz"),
+            "waterType" to FieldAttributes(
+                "Water Type",
+                "",
+                "",
+                CustomViewGroup.TYPE_CLASS_TEXT,
+                false
+            ),
+            "volume" to FieldAttributes(
+                "Volume",
+                "",
+                "",
+                CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL,
+                false,
+                metricUnits = "L",
+                imperialUnits = "Gal"
+            ),
+            "feedingType" to FieldAttributes(
+                "Feeding Type",
+                "",
+                "",
+                CustomViewGroup.TYPE_CLASS_TEXT,
+                false
+            ),
+            "repellentType" to FieldAttributes(
+                "Repellent Type",
+                "",
+                "",
+                CustomViewGroup.TYPE_CLASS_TEXT,
+                false
+            ),
+            "declareDeathType" to FieldAttributes(
+                "DeclareDeath Type",
+                "",
+                "",
+                CustomViewGroup.TYPE_CLASS_TEXT,
+                false
+            ),
+            "driedWeight" to FieldAttributes(
+                "Yield (Dried weight)",
+                "",
+                "",
+                CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL,
+                false,
+                metricUnits = "g",
+                imperialUnits = "Oz"
+            ),
+            "wetWeight" to FieldAttributes(
+                "Yield (Wet weight)",
+                "",
+                "",
+                CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL,
+                false,
+                metricUnits = "g",
+                imperialUnits = "Oz"
+            ),
         )
     }
 
@@ -119,10 +169,23 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         CustomViewGroupAdapter(
             this@PlantingTrainActivity,
             listOf(
-                "logTime", "logType", "waterType", "volume", "feedingType", "repellentType", "declareDeathType", "driedWeight", "wetWeight"
+                "logTime",
+                "logType",
+                "waterType",
+                "volume",
+                "feedingType",
+                "repellentType",
+                "declareDeathType",
+                "driedWeight",
+                "wetWeight"
             ),
             listOf(
-                "logTime", "logType", "waterType", "feedingType", "repellentType", "declareDeathType"
+                "logTime",
+                "logType",
+                "waterType",
+                "feedingType",
+                "repellentType",
+                "declareDeathType"
             ),
             maps,
             this@PlantingTrainActivity
@@ -143,6 +206,8 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         viewModel.getLogTypeList(showType, logId)
 
         binding.rvLog.adapter = logAdapter
+
+        ViewUtils.setVisible(isAdd, binding.ftTrend)
     }
 
     /**
@@ -155,6 +220,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
             return
         }
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
+        logSaveOrUpdateReq.syncPost = binding.ftTrend.isItemChecked
         logSaveOrUpdateReq.plantId = plantId
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.logId = logId
@@ -205,10 +271,21 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         logI("Log Details: $logSaveOrUpdateReq")
     }
 
-    private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
-        logSaveOrUpdateReq.logTime = if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+    private fun updateUnit(
+        logSaveOrUpdateReq: LogSaveOrUpdateReq,
+        isMetric: Boolean,
+        isUpload: Boolean
+    ) {
+        logSaveOrUpdateReq.logTime =
+            if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(
+                logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(),
+                CustomViewGroupAdapter.KEY_FORMAT_TIME
+            )
         logSaveOrUpdateReq.logType =
-            if (isUpload) viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType ?: "" else viewModel.getLogTypeList.value?.data?.toList()?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
+            if (isUpload) viewModel.getLogTypeList.value?.data?.toList()
+                ?.firstOrNull { it.showUiText == logSaveOrUpdateReq.logType }?.logType
+                ?: "" else viewModel.getLogTypeList.value?.data?.toList()
+                ?.firstOrNull { it.logType == logSaveOrUpdateReq.logType }?.showUiText ?: ""
     }
 
     override fun observe() {
@@ -231,7 +308,13 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                                     // 更新用户信息
                                     // 更新集合
                                     // setPicAddress(ImageUrl(imageUrl = result[0]))
-                                    if (chooserTips.value == true) setBeforeAddress((viewModel.beforePicAddress.value ?: "").plus("--------${result[0]}")) else setAfterAddress((viewModel.afterPicAddress.value ?: "").plus("--------${result[0]}"))
+                                    if (chooserTips.value == true) setBeforeAddress(
+                                        (viewModel.beforePicAddress.value
+                                            ?: "").plus("--------${result[0]}")
+                                    ) else setAfterAddress(
+                                        (viewModel.afterPicAddress.value
+                                            ?: "").plus("--------${result[0]}")
+                                    )
                                 }
                             }
                         }
@@ -263,22 +346,26 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                             if (!value.isVisible) {
                                 val mapValue = logAdapter.logTypeMap[it.logType]
                                 if (mapValue.isNullOrEmpty()) {
-                                    logAdapter.fieldsAttributes[field]?.isVisible = !values.isNullOrEmpty()
+                                    logAdapter.fieldsAttributes[field]?.isVisible =
+                                        !values.isNullOrEmpty()
                                 } else {
                                     // 找到相对应的mapValue，判断是否相等
-                                    logAdapter.fieldsAttributes[field]?.isVisible = mapValue.contains(field)
+                                    logAdapter.fieldsAttributes[field]?.isVisible =
+                                        mapValue.contains(field)
                                 }
                             }
                             if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
                                 // 转换公英制
                                 if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
-                                    logAdapter.fieldsAttributes[field]?.unit = if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
+                                    logAdapter.fieldsAttributes[field]?.unit =
+                                        if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
                                 }
                             }
                         }
                         logAdapter.setData(it)
                         // 添加备注
                         binding.etNote.setText(it.notes)
+                        binding.ftTrend.isItemChecked = it.syncPost == true
                         // 添加两张图片、
                         it.trainingBeforePhoto?.let { setBeforeAddress(it) }
                         it.trainingAfterPhoto?.let { setAfterAddress(it) }
@@ -350,12 +437,22 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                                             .setImageEngine(GlideEngine.createGlideEngine())
                                             .setCompressEngine(CompressFileEngine { context, source, call ->
                                                 Luban.with(context).load(source).ignoreBy(100)
-                                                    .setCompressListener(object : OnNewCompressListener {
-                                                        override fun onSuccess(source: String?, compressFile: File?) {
-                                                            call?.onCallback(source, compressFile?.absolutePath)
+                                                    .setCompressListener(object :
+                                                        OnNewCompressListener {
+                                                        override fun onSuccess(
+                                                            source: String?,
+                                                            compressFile: File?
+                                                        ) {
+                                                            call?.onCallback(
+                                                                source,
+                                                                compressFile?.absolutePath
+                                                            )
                                                         }
 
-                                                        override fun onError(source: String?, e: Throwable?) {
+                                                        override fun onError(
+                                                            source: String?,
+                                                            e: Throwable?
+                                                        ) {
                                                             call?.onCallback(source, null)
                                                         }
 
@@ -398,12 +495,22 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                                             .setImageEngine(GlideEngine.createGlideEngine())
                                             .setCompressEngine(CompressFileEngine { context, source, call ->
                                                 Luban.with(context).load(source).ignoreBy(100)
-                                                    .setCompressListener(object : OnNewCompressListener {
-                                                        override fun onSuccess(source: String?, compressFile: File?) {
-                                                            call?.onCallback(source, compressFile?.absolutePath)
+                                                    .setCompressListener(object :
+                                                        OnNewCompressListener {
+                                                        override fun onSuccess(
+                                                            source: String?,
+                                                            compressFile: File?
+                                                        ) {
+                                                            call?.onCallback(
+                                                                source,
+                                                                compressFile?.absolutePath
+                                                            )
                                                         }
 
-                                                        override fun onError(source: String?, e: Throwable?) {
+                                                        override fun onError(
+                                                            source: String?,
+                                                            e: Throwable?
+                                                        ) {
                                                             call?.onCallback(source, null)
                                                         }
 
@@ -592,7 +699,8 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                             viewModel.setAfterAddress(it)
                         }
                         // 直接上传
-                        it.let { viewModel.submitTheForm(it) }.let { url -> viewModel.uploadImg(url) }
+                        it.let { viewModel.submitTheForm(it) }
+                            .let { url -> viewModel.uploadImg(url) }
                     }
                 }
             }
@@ -610,6 +718,19 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
      * 点击方法
      */
     private fun clickViewAction() {
+        binding.ftTrend.setSwitchCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                val beforeUrl = viewModel.beforePicAddress.value
+                val afterUrl = viewModel.afterPicAddress.value
+                val notes = binding.etNote.text.toString()
+
+                if (beforeUrl?.isEmpty() == true || afterUrl?.isEmpty() == true || notes.isEmpty()) {
+                    ToastUtil.show("Please refine the pictures and notes.")
+                    binding.ftTrend.isItemChecked = false
+                }
+            }
+        }
+
         binding.beforeImage.setOnClickListener { view ->
             viewModel.setChooserTips(true)
             val beforeAddress = viewModel.beforePicAddress.value
@@ -680,9 +801,15 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
 
     }
 
-    override fun onEditTextClick(position: Int, editText: EditText, customViewGroup: CustomViewGroup) {
+    override fun onEditTextClick(
+        position: Int,
+        editText: EditText,
+        customViewGroup: CustomViewGroup
+    ) {
         // 转换成日志
-        val typeList = viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.showUiText, false) }?.toMutableList()
+        val typeList =
+            viewModel.getLogTypeList.value?.data?.map { PlantLogTypeBean(it.showUiText, false) }
+                ?.toMutableList()
         // 弹出相对应的日志列表弹窗
         /*XPopup.Builder(this@PlantingTrainActivity).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
             .hasShadowBg(true) // 去掉半透明背景
