@@ -321,11 +321,15 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
 
             // 修改日志、以及上传日志
             logSaveOrUpdate.observe(this@PlantingLogActivity, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg) }
                 success {
+                    hideProgressLoading()
                     // 提交成功 or 修改成功
                     finish()
                 }
+                loading { showProgressLoading() }
             })
 
             // 上传图片回调
