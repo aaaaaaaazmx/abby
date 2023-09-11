@@ -10,8 +10,17 @@ plugins {
     id("com.google.gms.google-services")
     //    id("kotlin-parcelize")
         id("center.uploadpgy.plugin")
+    id("io.github.leavesczy.trace")
 }
 apply("thingMapping.gradle")
+
+viewClickTrace {
+    onClickClass = "com.cl.abby.click.ViewClickMonitor"
+    onClickMethodName = "onClick"
+    uncheckViewOnClickAnnotation = "com.cl.common_base.click.UncheckViewOnClick"
+    include = setOf()
+    exclude = setOf()
+}
 
 uploadPgyParams {
      apiKey = readProperties("PgyApiKey")

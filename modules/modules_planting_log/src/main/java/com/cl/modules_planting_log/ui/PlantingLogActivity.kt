@@ -163,6 +163,16 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             ToastUtil.shortShow("Please wait for the picture to finish uploading")
             return
         }
+        if (binding.ftTrend.isItemChecked) {
+            val notes = binding.etNote.text.toString()
+            val picListUrl = viewModel.picAddress.value
+
+            if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
+                ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                binding.ftTrend.isItemChecked = false
+                return
+            }
+        }
 
         val logSaveOrUpdateReq = logAdapter.getLogData()
         logSaveOrUpdateReq.period = period
@@ -731,7 +741,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                 val picListUrl = viewModel.picAddress.value
 
                 if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
-                    ToastUtil.show("Please refine the pictures and notes.")
+                    ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
                     binding.ftTrend.isItemChecked = false
                 }
             }

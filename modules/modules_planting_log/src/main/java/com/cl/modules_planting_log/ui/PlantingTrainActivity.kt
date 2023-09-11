@@ -219,6 +219,16 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
             ToastUtil.shortShow("Please select the Training type")
             return
         }
+        if (binding.ftTrend.isItemChecked) {
+            val notes = binding.etNote.text.toString()
+            val picListUrl = viewModel.picAddress.value
+
+            if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
+                ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                binding.ftTrend.isItemChecked = false
+            }
+            return
+        }
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         logSaveOrUpdateReq.syncPost = binding.ftTrend.isItemChecked
         logSaveOrUpdateReq.plantId = plantId
@@ -730,7 +740,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                 val notes = binding.etNote.text.toString()
 
                 if (beforeUrl?.isEmpty() == true || afterUrl?.isEmpty() == true || notes.isEmpty()) {
-                    ToastUtil.show("Please refine the pictures and notes.")
+                    ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
                     binding.ftTrend.isItemChecked = false
                 }
             }

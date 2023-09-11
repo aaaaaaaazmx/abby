@@ -20,6 +20,7 @@ import androidx.databinding.BindingAdapter;
 
 import com.bumptech.glide.load.model.ResourceLoader;
 import com.cl.common_base.R;
+import com.cl.common_base.click.UncheckViewOnClick;
 import com.cl.common_base.ext.DensityKt;
 import com.cl.common_base.util.ViewUtils;
 import com.bumptech.glide.Glide;
@@ -376,6 +377,7 @@ public class FeatureItemView extends FrameLayout implements View.OnClickListener
         return this;
     }
 
+    @UncheckViewOnClick
     @Override
     public void onClick(View view) {
        if (view.getId() == R.id.ff_end_drawable) {

@@ -24,8 +24,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.cl.common_base.R;
+import com.cl.common_base.click.UncheckViewOnClick;
 import com.cl.common_base.ext.DensityKt;
 import com.cl.common_base.util.ViewUtils;
+import com.cl.common_base.widget.toast.ToastUtil;
 
 
 /**
@@ -90,8 +92,10 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
     }
 
 
+    @UncheckViewOnClick
     @Override
     public void onClick(View v) {
+        isFastClick();
         if (v.getId() == R.id.iv_back || v.getId() == R.id.tv_left_name) {
             if (leftClickListener != null) {
                 leftClickListener.onClick(v);

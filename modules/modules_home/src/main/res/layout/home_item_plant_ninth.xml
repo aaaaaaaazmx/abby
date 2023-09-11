@@ -398,7 +398,6 @@
 
                     <com.cl.common_base.widget.SvTextView
                         android:id="@+id/tv_btn_desc"
-                        onSingleClick="@{()-> viewModel.bubbleOnClickEvent()}"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:layout_gravity="right"
