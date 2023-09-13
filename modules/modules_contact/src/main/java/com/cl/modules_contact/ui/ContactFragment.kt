@@ -571,6 +571,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     val position = mViewMode.currentPosition.value ?: -1
                     if (oxygenNum == 0) return@success
                     if (position == -1) return@success
+                    if (adapter.data.isEmpty()) return@success
 
                     val data = adapter.data[position]
                     data.reward = oxygenNum?.let { data.reward?.plus(it) }
@@ -630,6 +631,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     // 点赞成功、更新adapter
                     val position = mViewMode.currentPosition.value ?: -1
                     if (position == -1) return@success
+                    if (adapter.data.isEmpty()) return@success
 
                     val item = adapter.data[position] as? NewPageData.Records
                     item?.let {
@@ -646,6 +648,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     // 点赞成功、更新adapter
                     val position = mViewMode.currentPosition.value ?: -1
                     if (position == -1) return@success
+                    if (adapter.data.isEmpty()) return@success
 
                     val item = adapter.data[position] as? NewPageData.Records
                     item?.let {
