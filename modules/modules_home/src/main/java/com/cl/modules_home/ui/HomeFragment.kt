@@ -2622,19 +2622,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     binding.pplantNinth.waterView.apply {
                         setClickListener { view, position, water, mViews ->
                             synchronized(context) {
-                                setViewInterpolator(null)
-                                mViews.remove(view)
-                                animRemoveView(view, position)
-                                binding.pplantNinth.tvOxy.text = "${
-                                    water.oxygen.toInt() + binding.pplantNinth.tvOxy.text.toString()
-                                        .toInt()
-                                }"
-                                // 直接在次加载氧气币
-                                setViewCount(mViews.size)
-                                logI("mmview: ${mViews.size}")
+                                // 这块toInt会格式化错误
+                                runCatching {
+                                    setViewInterpolator(null)
+                                    mViews.remove(view)
+                                    animRemoveView(view, position)
+                                    binding.pplantNinth.tvOxy.text = "${
+                                        water.oxygen.toInt() + binding.pplantNinth.tvOxy.text.toString()
+                                            .toInt()
+                                    }"
+                                    // 直接在次加载氧气币
+                                    setViewCount(mViews.size)
+                                    logI("mmview: ${mViews.size}")
 
-                                if (water.loseEfficacy != "1") {
-                                    getOxygenCoin(water.orderNo)
+                                    if (water.loseEfficacy != "1") {
+                                        getOxygenCoin(water.orderNo)
+                                    }
                                 }
                             }
                         }
