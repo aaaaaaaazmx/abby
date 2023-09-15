@@ -280,13 +280,13 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.cl_avatar -> {
                     // todo 点击头像、跳转到自己的空间， 用userID来区别是跳转到自己的，还是别人的
-                     if (item?.userId == mViewMode.userinfoBean?.userId) {
-                         context?.startActivity(Intent(context, MyJourneyActivity::class.java))
-                     } else {
-                         val intent = Intent(context, OtherJourneyActivity::class.java)
-                         intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
-                         context?.startActivity(intent)
-                     }
+                    if (item?.userId == mViewMode.userinfoBean?.userId) {
+                        context?.startActivity(Intent(context, MyJourneyActivity::class.java))
+                    } else {
+                        val intent = Intent(context, OtherJourneyActivity::class.java)
+                        intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
+                        context?.startActivity(intent)
+                    }
                 }
 
                 R.id.cl_env -> {
@@ -571,6 +571,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     val position = mViewMode.currentPosition.value ?: -1
                     if (oxygenNum == 0) return@success
                     if (position == -1) return@success
+                    if (adapter.data.isEmpty()) return@success
 
                     val data = adapter.data[position]
                     data.reward = oxygenNum?.let { data.reward?.plus(it) }
@@ -630,6 +631,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     // 点赞成功、更新adapter
                     val position = mViewMode.currentPosition.value ?: -1
                     if (position == -1) return@success
+                    if (adapter.data.isEmpty()) return@success
 
                     val item = adapter.data[position] as? NewPageData.Records
                     item?.let {
@@ -646,6 +648,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     // 点赞成功、更新adapter
                     val position = mViewMode.currentPosition.value ?: -1
                     if (position == -1) return@success
+                    if (adapter.data.isEmpty()) return@success
 
                     val item = adapter.data[position] as? NewPageData.Records
                     item?.let {

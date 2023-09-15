@@ -221,7 +221,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     deviceId = it?.data?.deviceId,
                     code = it?.data?.tuyaCountryCode,
                     email = it?.data?.email,
-                    password = AESCipher.aesDecryptString(it?.data?.tuyaPassword, AESCipher.KEY),
+                    password = AESCipher.aesDecryptString(it?.data?.tuyaPassword ?: "", AESCipher.KEY),
                     onRegisterReceiver = { devId ->
                         val intent = Intent(this@LoginActivity, TuYaDeviceUpdateReceiver::class.java)
                         startService(intent)
