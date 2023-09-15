@@ -42,5 +42,6 @@ data class PlantInfoData(
         var journeyStatus: Int? = null,
         var totalDay: Int? = null,
         var week: String? = null,
+        var unlockNow: Boolean? = null, // 是否解锁
     ) : com.joketng.timelinestepview.bean.BaseBean()
 }

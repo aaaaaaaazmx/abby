@@ -295,4 +295,33 @@ interface HttpHomeApiService {
      */
     @POST("abby/account/getAccountFlowing")
     fun oxygenCoinBillList(@Body req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>>
+
+    /**
+     * 灯光参数同步
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/syncLightParam")
+    fun syncLightParam(@Field("deviceId")deviceId: String): Flow<HttpResult<BaseBean>>
+
+
+    /**
+     * 提前解锁下一个周期
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/unlockNow")
+    fun unlockNow(@Field("plantId")deviceId: String): Flow<HttpResult<BaseBean>>
+
+
+    /**
+     * 获取滴灌参数设置
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/getTrickleIrrigationConfig")
+    fun getTrickleIrrigationConfig(@Field("deviceId")deviceId: String): Flow<HttpResult<TrickData>>
+
+    /**
+     * 滴灌参数设置
+     */
+    @POST("abby/accessory/trickleIrrigationConfig")
+    fun trickleIrrigationConfig(@Body req: TrickData): Flow<HttpResult<BaseBean>>
 }

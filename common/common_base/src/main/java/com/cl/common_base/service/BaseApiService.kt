@@ -112,4 +112,11 @@ interface BaseApiService {
     @POST("abby/calendar/snooze")
     fun snooze(@Body requestBody: SnoozeReq): Flow<HttpResult<BaseBean>>
 
+
+    /**
+     * 提前解锁下一个周期
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/unlockNow")
+    fun unlockNow(@Field("plantId")deviceId: String): Flow<HttpResult<BaseBean>>
 }

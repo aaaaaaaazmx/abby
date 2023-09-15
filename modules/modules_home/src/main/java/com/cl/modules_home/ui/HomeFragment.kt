@@ -171,13 +171,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 获取sn
         mViewMode.getSn()
         // 刷新token、放在customSplashActivity页面了。
-       /* mViewMode.refreshToken(
-            AutomaticLoginReq(
-                userName = mViewMode.account,
-                password = mViewMode.psd,
-                token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-            )
-        )*/
+        /* mViewMode.refreshToken(
+             AutomaticLoginReq(
+                 userName = mViewMode.account,
+                 password = mViewMode.psd,
+                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+             )
+         )*/
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -497,7 +497,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // How to do LTS
                     mViewMode.getUnreadMessageList().firstOrNull()?.jumpType?.let { jumpType ->
                         val messageId = mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                        when(jumpType) {
+                        when (jumpType) {
                             UnReadConstants.JumpType.KEY_LEARN_MORE -> {
                                 // 单独处理， 弹窗
                                 mViewMode.getMessageDetail("$messageId")
@@ -509,6 +509,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 mViewMode.getRead("$messageId")
                                 return@setOnClickListener
                             }
+
                             else -> {}
                         }
                     }
@@ -1040,6 +1041,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                             .lightIntensity(seekbar?.progress ?: 0)
                     }
+                }
+            }
+
+            ivDripStatus.setOnClickListener {
+                xpopup {
+                    isDestroyOnDismiss(false)
+                    enableDrag(true)
+                    dismissOnTouchOutside(false)
+                    // maxHeight(dp2px(600f))
+                    asCustom(context?.let { it1 -> HomeDripPop(it1) }).show()
                 }
             }
 
@@ -1830,7 +1841,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                  mViewMode.setPopPeriodStatus(
                      guideId = guideType, taskId = taskId, taskTime = taskTime
                  )*/
-            })
+            },
+                unLockNow = {
+                    // 跳转副本界面
+                    // 跳转到富文本界面
+                    val intent = Intent(context, KnowMoreActivity::class.java)
+                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD)
+                    intent.putExtra(
+                        BasePopActivity.KEY_FIXED_TASK_ID,
+                        Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD
+                    )
+                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                    intent.putExtra(BasePopActivity.KEY_PLANT_ID, mViewMode.plantInfo.value?.data?.plantId.toString())
+                    startActivity(intent)
+                })
         }
     }
 
@@ -2102,7 +2128,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             "Currently in privacy mode"
                                     } else {
                                         //  离线摄像头
-                                        binding.pplantNinth.tvPrivacyMode.text = "The camera is offline"
+                                        binding.pplantNinth.tvPrivacyMode.text =
+                                            "The camera is offline"
                                     }
                                     /*ViewUtils.setVisible(!online, binding.pplantNinth.tvPrivacyMode)*/
                                 })
@@ -2629,9 +2656,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     setViewInterpolator(null)
                                     mViews.remove(view)
                                     animRemoveView(view, position)
-                                    val oxygenToAdd = runCatching { water.oxygen.toInt() }.getOrDefault(0)
-                                    val currentOxygen = runCatching { binding.pplantNinth.tvOxy.text.toString().toInt() }.getOrDefault(0)
-                                    binding.pplantNinth.tvOxy.text = "${oxygenToAdd + currentOxygen}"
+                                    val oxygenToAdd =
+                                        runCatching { water.oxygen.toInt() }.getOrDefault(0)
+                                    val currentOxygen = runCatching {
+                                        binding.pplantNinth.tvOxy.text.toString().toInt()
+                                    }.getOrDefault(0)
+                                    binding.pplantNinth.tvOxy.text =
+                                        "${oxygenToAdd + currentOxygen}"
                                     // 直接在次加载氧气币
                                     setViewCount(mViews.size)
                                     logI("mmview: ${mViews.size}")

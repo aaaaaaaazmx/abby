@@ -32,6 +32,7 @@ import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 /**
  * 干燥程度
@@ -116,11 +117,16 @@ class HomeEnvlrPop(
                 HomeEnvirPopAdapter.OnCheckedChangeListener {
                 override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
                     lifecycleScope.launch {
-                        upDeviceInfo(UpDeviceInfoReq(fanAuto = if (isChecked) 1 else 0, deviceId = tuyaHomeBean?.devId))
+                        upDeviceInfo(
+                            UpDeviceInfoReq(
+                                fanAuto = if (isChecked) 1 else 0,
+                                deviceId = tuyaHomeBean?.devId
+                            )
+                        )
                     }
                 }
             })
-            adapter.addChildClickViewIds(R.id.rl_edit)
+            adapter.addChildClickViewIds(R.id.rl_edit, R.id.iv_refresh)
             adapter.setOnItemChildClickListener { adapter, view, position ->
                 when (view.id) {
                     R.id.rl_edit -> {
@@ -133,12 +139,69 @@ class HomeEnvlrPop(
                                     context,
                                     onConfirmAction = {
                                         // 跳转到InterCome文章详情里面去
-                                        InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = item.articleId)
+                                        InterComeHelp.INSTANCE.openInterComeSpace(
+                                            space = InterComeHelp.InterComeSpace.Article,
+                                            id = item.articleId
+                                        )
                                     },
                                     confirmText = "Detail",
                                     content = item.articleDetails,
                                 )
                             ).show()
+                    }
+
+                    // 刷新灯光
+                    R.id.iv_refresh -> {
+                        // 上一次刷新的时间
+                        val lastRefreshTime = Prefs.getLong(Constants.Login.KEY_REFRESH_TIME)
+                        val time = System.currentTimeMillis()
+                        // 初始化日历对象
+                        val currentCalendar = Calendar.getInstance().apply {
+                            timeInMillis = time
+                        }
+                        val lastSnapshotCalendar = Calendar.getInstance().apply {
+                            timeInMillis = lastRefreshTime
+                        }
+
+                        // 判断今天是否已经截图
+                        if (lastRefreshTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(
+                                Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(
+                                Calendar.DAY_OF_YEAR)) {
+                            XPopup.Builder(context)
+                                .dismissOnTouchOutside(false)
+                                .isDestroyOnDismiss(false)
+                                .asCustom(
+                                    BaseCenterPop(
+                                        context,
+                                        content = "In very rare case, the light is not running on schedule due to the connection issue, if you believe your lighting schedule is not correct, please click refresh.\n" +
+                                                "\n" +
+                                                "Note: you can only refresh once per day.",
+                                        isShowCancelButton = true,
+                                        cancelText = "Cancel",
+                                        confirmText = "Refresh",
+                                        onConfirmAction = {
+                                            // 刷新回调、并且记录当前时间。
+                                            lifecycleScope.launch {
+                                               syncLightParam(tuyaHomeBean?.devId.toString())
+                                            }
+                                            // 如果今天还没刷新，
+                                            Prefs.putLong(Constants.Login.KEY_REFRESH_TIME, time)
+                                        }
+                                    )
+                                ).show()
+                        } else {
+                            XPopup.Builder(context)
+                                .dismissOnTouchOutside(false)
+                                .isDestroyOnDismiss(false)
+                                .asCustom(
+                                    BaseCenterPop(
+                                        context,
+                                        content = "you can only refresh once per day.",
+                                        isShowCancelButton = false,
+                                        confirmText = "Confirm",
+                                    )
+                                ).show()
+                        }
                     }
                 }
             }
@@ -150,6 +213,33 @@ class HomeEnvlrPop(
      */
     private suspend fun upDeviceInfo(req: UpDeviceInfoReq) {
         service.updateDeviceInfo(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            logI(it.toString())
+        }
+    }
+
+
+    /**
+     * 同步灯光参数
+     */
+    private suspend fun syncLightParam(deviceId: String) {
+        service.syncLightParam(deviceId).map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg

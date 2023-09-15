@@ -201,6 +201,32 @@ public class VerificationCodeInputView  extends RelativeLayout {
         typedArray.recycle();
     }
 
+    public void setEtNumber(int number) {
+        mEtNumber = number;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            clearExistingViews(); // 清除现有的输入框和相关视图
+            initView(); // 重新初始化视图
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+    private void clearExistingViews() {
+        // 移除现有的输入框和相关视图
+        if (mRelativeLayouts != null) {
+            for (RelativeLayout relativeLayout : mRelativeLayouts) {
+                removeView(relativeLayout);
+            }
+        }
+        if (mLinearLayout != null) {
+            removeView(mLinearLayout);
+        }
+        if (mEditText != null) {
+            removeView(mEditText);
+        }
+        // 清空mCodes
+        mCodes.clear();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private void initView() {
         mRelativeLayouts = new RelativeLayout[mEtNumber];

@@ -23,6 +23,7 @@ data class LoginReq(
     var userName: String? = null,
     var version: String? = null,
     var autoToken: String? = null,
+    var autoCode: String? = null,
     var source: String? = null,
     var sourceUserId: String? = null,
     var inchMefricMode: String? = if (!Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)) "inch" else "mefric",

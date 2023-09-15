@@ -319,4 +319,38 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
     }
 
 
+    /**
+     * 提前解锁
+     */
+    private val _unLockNow = MutableLiveData<Resource<BaseBean>>()
+    val unLockNow: LiveData<Resource<BaseBean>> = _unLockNow
+    fun getUnLockNow(plantId: String) = viewModelScope.launch {
+        service.unlockNow(plantId)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _unLockNow.value = it
+            }
+    }
+
 }

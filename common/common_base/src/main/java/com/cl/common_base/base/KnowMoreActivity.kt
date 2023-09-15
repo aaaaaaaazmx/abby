@@ -109,6 +109,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     private val accessoryId by lazy { intent.getStringExtra(BasePopActivity.KEY_PART_ID) }
 
     /**
+     * 植物Id
+     */
+    private val plantId by lazy { intent.getStringExtra(BasePopActivity.KEY_PLANT_ID) }
+
+    /**
      * 摄像头Id
      */
     private val cameraId by lazy { intent.getStringExtra(BasePopActivity.KEY_CAMERA_ID) }
@@ -282,6 +287,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         if (isUnlockTask) {
             fixedId?.let {
                 when (it) {
+                    Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD -> {
+                        mViewMode.getUnLockNow(plantId.toString())
+                    }
+
                     // 如果是预览界面、那么直接开始种植、然后关闭界面
                     Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW -> {
                         mViewMode.startRunning(botanyId = "", goon = false)
@@ -414,6 +423,15 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            unLockNow.observe(this@KnowMoreActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    directShutdown()
+                }
+            })
+
             startRunning.observe(this@KnowMoreActivity, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
             })

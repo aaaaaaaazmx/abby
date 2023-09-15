@@ -175,6 +175,10 @@ class HomeRemoteRepository @Inject constructor() {
         return service.intercomDataAttributeSync()
     }
 
+    fun unlockNow(plantId: String): Flow<HttpResult<BaseBean>> {
+        return service.unlockNow(plantId)
+    }
+
     fun updateInfo(body: UpdateInfoReq): Flow<HttpResult<BaseBean>> {
         return service.updateInfo(body)
     }

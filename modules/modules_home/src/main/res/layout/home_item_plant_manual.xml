@@ -627,6 +627,57 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_drip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/background_white_r6"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cl_drain">
+
+                <TextView
+                    android:id="@+id/tv_drip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="11dp"
+                    android:layout_marginTop="21dp"
+                    android:layout_marginBottom="21dp"
+                    android:text="Drip Irrigation Timer"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/tv_drip_pump_desc"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintCircle="@+id/tv_drip"
+                    app:layout_constraintCircleAngle="84"
+                    app:layout_constraintCircleRadius="85dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="5dp"
+                    android:src="@mipmap/home_exclamation_mark" />
+
+                <ImageView
+                    android:id="@+id/iv_drip_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="11dp"
+                    android:background="@mipmap/home_chilun_bg"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_air_pump"
@@ -642,7 +693,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:paddingStart="11dp"
                 android:paddingTop="10dp"
-                app:layout_constraintTop_toBottomOf="@+id/cl_drain">
+                app:layout_constraintTop_toBottomOf="@+id/cl_drip">
 
                 <TextView
                     android:layout_marginBottom="10dp"

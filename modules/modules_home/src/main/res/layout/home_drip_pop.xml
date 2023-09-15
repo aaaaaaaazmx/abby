@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round"
+        android:orientation="vertical"
+        android:paddingTop="16dp"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Drip Irrigation Timer"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@+id/fis_item_switch"
+                app:layout_constraintTop_toTopOf="@+id/fis_item_switch" />
+
+            <com.cl.common_base.widget.SwitchButton
+                android:id="@+id/fis_item_switch"
+                android:layout_width="52dp"
+                android:layout_height="35dp"
+                android:layout_marginStart="39dp"
+                android:checked="false"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_desc"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="18dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_turn"
+                android:layout_width="58dp"
+                android:layout_height="wrap_content"
+                android:text="Turn on"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/rl_turn_time"
+                app:layout_constraintTop_toTopOf="@+id/rl_turn_time" />
+
+
+            <RelativeLayout
+                android:id="@+id/rl_turn_time"
+                android:layout_width="69.5dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="19dp"
+                android:background="@drawable/create_button_maincolor"
+                app:layout_constraintStart_toEndOf="@+id/tv_turn">
+
+                <EditText
+                    android:textStyle="bold"
+                    android:id="@+id/et_turn_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="#000000"
+                    android:textColorHint="#C9C9C9"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_seconds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Second(s)"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/rl_turn_time"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/tv_air_pump_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:src="@mipmap/home_exclamation_mark"
+                app:layout_constraintCircle="@+id/tv_seconds"
+                app:layout_constraintCircleAngle="80"
+                app:layout_constraintCircleRadius="40dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="18dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_every"
+                android:layout_width="58dp"
+                android:layout_height="wrap_content"
+                android:text="Every"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/rl_turn_min"
+                app:layout_constraintTop_toTopOf="@+id/rl_turn_min" />
+
+
+            <RelativeLayout
+                android:id="@+id/rl_turn_min"
+                android:layout_width="69.5dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="19dp"
+                android:background="@drawable/create_button_maincolor"
+                app:layout_constraintStart_toEndOf="@+id/tv_every">
+
+                <EditText
+                    android:textStyle="bold"
+                    android:id="@+id/et_turn_min"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:background="@null"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="#000000"
+                    android:textColorHint="#C9C9C9"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_min"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="Minute(s)"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/rl_turn_min"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginBottom="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="18dp">
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_dur"
+                android:layout_width="58dp"
+                android:layout_height="wrap_content"
+                android:text="During"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="@+id/rl_turn_start"
+                app:layout_constraintTop_toTopOf="@+id/rl_turn_start" />
+
+
+            <RelativeLayout
+                android:id="@+id/rl_turn_start"
+                android:layout_width="69.5dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="19dp"
+                android:background="@drawable/create_button_maincolor"
+                app:layout_constraintStart_toEndOf="@+id/tv_dur">
+
+                <TextView
+                    android:id="@+id/tv_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="ads" />
+
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@mipmap/home_xl"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="to"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/rl_turn_start"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RelativeLayout
+                android:id="@+id/rl_turn_end"
+                android:layout_width="69.5dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="19dp"
+                android:background="@drawable/create_button_maincolor"
+                app:layout_constraintStart_toEndOf="@+id/tv_to">
+
+                <TextView
+                    android:id="@+id/tv_end"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="ads" />
+
+                <ImageView
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:background="@mipmap/home_xl"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:id="@+id/xpopup_divider1"
+            android:background="@color/_xpopup_list_divider"
+            android:layout_height=".5dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Cancel"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+
+            <View
+                android:visibility="gone"
+                android:id="@+id/xpopup_divider2"
+                android:layout_width=".5dp"
+                android:layout_height="match_parent"
+                android:background="@color/_xpopup_list_divider" />
+
+            <TextView
+                android:id="@+id/tv_confirm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/base_ok"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>
