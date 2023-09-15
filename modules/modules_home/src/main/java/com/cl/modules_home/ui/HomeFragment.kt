@@ -170,14 +170,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 获取sn
         mViewMode.getSn()
-        // 刷新token
-        mViewMode.refreshToken(
+        // 刷新token、放在customSplashActivity页面了。
+       /* mViewMode.refreshToken(
             AutomaticLoginReq(
                 userName = mViewMode.account,
                 password = mViewMode.psd,
                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
             )
-        )
+        )*/
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -477,6 +477,148 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
 
+            // 未读消息气泡点击事件
+            tvBtnDesc.setOnClickListener {
+                // 自定义开始种植弹窗
+                // 判断点击时长
+                if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
+                    // 解锁第一个周期
+                    // 显示startRunning气泡的时候，必定是发芽了的
+                    // todo 这个地方直接调用startRunning接口了。
+                    mViewMode.startRunning(botanyId = "", goon = false)
+                    return@setOnClickListener
+                }
+
+                // 未读消息弹窗，获取极光消息弹窗
+                // 极光消息来了，只需要把这个消息添加到当前list就好了。
+                mViewMode.unreadMessageList.value?.let {
+                    // 调用图文信息
+                    if (it.size == 0) return@let
+                    // How to do LTS
+                    mViewMode.getUnreadMessageList().firstOrNull()?.jumpType?.let { jumpType ->
+                        val messageId = mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                        when(jumpType) {
+                            UnReadConstants.JumpType.KEY_LEARN_MORE -> {
+                                // 单独处理， 弹窗
+                                mViewMode.getMessageDetail("$messageId")
+                                mViewMode.getRead("$messageId")
+                                return@setOnClickListener
+                            }
+
+                            UnReadConstants.JumpType.KEY_GUIDE -> {
+                                mViewMode.getRead("$messageId")
+                                return@setOnClickListener
+                            }
+                            else -> {}
+                        }
+                    }
+
+                    // 状态赋值
+                    mViewMode.getUnreadMessageList().firstOrNull()?.type?.let { type ->
+                        // 目前只处理了种植状态
+                        // 周期的解锁
+                        // 气泡解锁
+                        // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
+                        /*if (mViewMode.userDetail.value?.data?.isVip == 1) {
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                                .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
+                            return@observe
+                        }*/
+
+                        // 如果不是以下四种那么就会直接调用guideInfo接口。
+                        mViewMode.setPopPeriodStatus(
+                            guideId = type,
+                            taskId = mViewMode.getUnreadMessageList().firstOrNull()?.taskId,
+                            taskTime = mViewMode.getUnreadMessageList().firstOrNull()?.taskTime
+                        )
+
+                        // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
+                        // todo 设备故障跳转环信
+                        when (type) {
+                            // 换水、加水、加肥。三步
+                            // 这玩意有三步！！！
+                            UnReadConstants.Device.KEY_CHANGING_WATER -> {
+                                specificStep()
+                            }
+                            // 加水
+                            UnReadConstants.Device.KEY_ADD_WATER -> {
+                                plantFour.show()
+                            }
+                            // 加肥
+                            UnReadConstants.Device.KEY_ADD_MANURE -> {
+                                plantFeed.show()
+                            }
+
+                            // 防烧模式
+                            UnReadConstants.Device.KEY_BURN_OUT_PROOF -> {
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
+                                // 直接跳转到日历
+                                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_SETTING)
+                                    .withBoolean("isScrollToBurn", true)
+                                    .navigation(activity)
+                            }
+
+                            UnReadConstants.Device.KEY_CHANGE_CUP_WATER -> {
+                                // 种子发芽之后的换水
+                                // 跳转到富文本
+                                val intent = Intent(context, BasePopActivity::class.java)
+                                intent.putExtra(
+                                    Constants.Global.KEY_TXT_ID,
+                                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
+                                )
+                                intent.putExtra(
+                                    BasePopActivity.KEY_FIXED_TASK_ID,
+                                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
+                                )
+                                intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                                intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
+                                intent.putExtra(
+                                    BasePopActivity.KEY_UNLOCK_TASK_ID,
+                                    mViewMode.getUnreadMessageList().firstOrNull()?.taskId
+                                )
+                                intent.putExtra(
+                                    BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                                    "Slide to Next"
+                                )
+                                startActivityLauncherSeeding.launch(intent)
+                            }
+
+                            UnReadConstants.Device.KEY_CLOSE_DOOR -> {
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
+                            }
+
+                            // 灯光
+                            UnReadConstants.Device.KEY_REMIND_LIGHT_UP -> {
+                                mViewMode.getRead(
+                                    "${
+                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                    }"
+                                )
+                            }
+
+                            else -> {
+                                // 直接跳转到日历
+                                ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                                    .withString(
+                                        Constants.Global.KEY_CATEGORYCODE,
+                                        mViewMode.plantInfo.value?.data?.categoryCode
+                                    )
+                                    .navigation(activity, HomeFragment.KEY_FOR_CALENDAR_REFRSH)
+                            }
+                        }
+                    }
+
+                }
+            }
 
             // 切换摄像头
             ivSwitchCamera.setOnClickListener {
@@ -1882,9 +2024,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                                 ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
 
-                                logI("111: $isHave,,,, $isLoadCamera")
+                                /*logI("111: $isHave,,,, $isLoadCamera")
                                 logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
-                                logI("123123123123123123: ${dataList.size},,, ${dataList.firstOrNull { it.currentDevice == 1 }}")
+                                logI("123123123123123123: ${dataList.size},,, ${dataList.firstOrNull { it.currentDevice == 1 }}")*/
                                 // 获取摄像头配件信息
                                 mViewMode.getAccessoryInfo(devId)
 
@@ -1923,7 +2065,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     if (data == null) return@success
                     runCatching {
-                        logI("123123123: ${mViewMode.listDevice.value?.data?.size},,, ${mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }}")
                         val devId =
                             mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.get(
                                 0
@@ -2340,149 +2481,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     }
                 }
             })
-            // 未读消息气泡点击事件
-            // 未读消息气泡按钮点击事件
-            bubbleOnClickEvent.observe(viewLifecycleOwner) { clickEvent ->
-                if (clickEvent == false) return@observe
-                // 自定义开始种植弹窗
-                // 判断点击时长
-                if (mViewMode.unreadMessageList.value.isNullOrEmpty()) {
-                    // 解锁第一个周期
-                    // 显示startRunning气泡的时候，必定是发芽了的
-                    // todo 这个地方直接调用startRunning接口了。
-                    mViewMode.startRunning(botanyId = "", goon = false)
-                    return@observe
-                }
-
-                // 未读消息弹窗，获取极光消息弹窗
-                // 极光消息来了，只需要把这个消息添加到当前list就好了。
-                mViewMode.unreadMessageList.value?.let {
-                    // 调用图文信息
-                    if (it.size == 0) return@let
-                    // How to do LTS
-                    mViewMode.getUnreadMessageList().firstOrNull()?.jumpType?.let { jumpType ->
-                        if (jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
-                            // 单独处理， 弹窗
-                            mViewMode.getMessageDetail(
-                                "${
-                                    mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                                }"
-                            )
-                            mViewMode.getRead(
-                                "${
-                                    mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                                }"
-                            )
-                            return@observe
-                        }
-                    }
-
-                    // 状态赋值
-                    mViewMode.getUnreadMessageList().firstOrNull()?.type?.let { type ->
-                        // 目前只处理了种植状态
-                        // 周期的解锁
-                        // 气泡解锁
-                        // 判断是否是Vip、如果是Vip那么就直接跳转到日历。反之就主页解锁
-                        /*if (mViewMode.userDetail.value?.data?.isVip == 1) {
-                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
-                                .navigation(activity, KEY_FOR_CALENDAR_REFRSH)
-                            return@observe
-                        }*/
-
-                        // 如果不是以下四种那么就会直接调用guideInfo接口。
-                        mViewMode.setPopPeriodStatus(
-                            guideId = type,
-                            taskId = mViewMode.getUnreadMessageList().firstOrNull()?.taskId,
-                            taskTime = mViewMode.getUnreadMessageList().firstOrNull()?.taskTime
-                        )
-
-                        // todo  如果不是种植状态，那么就需要弹出自定义的窗口，各种设备状态图文未处理
-                        // todo 设备故障跳转环信
-                        when (type) {
-                            // 换水、加水、加肥。三步
-                            // 这玩意有三步！！！
-                            UnReadConstants.Device.KEY_CHANGING_WATER -> {
-                                specificStep()
-                            }
-                            // 加水
-                            UnReadConstants.Device.KEY_ADD_WATER -> {
-                                plantFour.show()
-                            }
-                            // 加肥
-                            UnReadConstants.Device.KEY_ADD_MANURE -> {
-                                plantFeed.show()
-                            }
-
-                            // 防烧模式
-                            UnReadConstants.Device.KEY_BURN_OUT_PROOF -> {
-                                mViewMode.getRead(
-                                    "${
-                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                                    }"
-                                )
-                                // 直接跳转到日历
-                                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_SETTING)
-                                    .withBoolean("isScrollToBurn", true)
-                                    .navigation(activity)
-                            }
-
-                            UnReadConstants.Device.KEY_CHANGE_CUP_WATER -> {
-                                // 种子发芽之后的换水
-                                // 跳转到富文本
-                                val intent = Intent(context, BasePopActivity::class.java)
-                                intent.putExtra(
-                                    Constants.Global.KEY_TXT_ID,
-                                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
-                                )
-                                intent.putExtra(
-                                    BasePopActivity.KEY_FIXED_TASK_ID,
-                                    Constants.Fixed.KEY_FIXED_ID_WATER_CHANGE_GERMINATION
-                                )
-                                intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
-                                intent.putExtra(
-                                    BasePopActivity.KEY_UNLOCK_TASK_ID,
-                                    mViewMode.getUnreadMessageList().firstOrNull()?.taskId
-                                )
-                                intent.putExtra(
-                                    BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                    "Slide to Next"
-                                )
-                                startActivityLauncherSeeding.launch(intent)
-                            }
-
-                            UnReadConstants.Device.KEY_CLOSE_DOOR -> {
-                                mViewMode.getRead(
-                                    "${
-                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                                    }"
-                                )
-                            }
-
-                            // 灯光
-                            UnReadConstants.Device.KEY_REMIND_LIGHT_UP -> {
-                                mViewMode.getRead(
-                                    "${
-                                        mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                                    }"
-                                )
-                            }
-
-                            else -> {
-                                // 直接跳转到日历
-                                ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
-                                    .withString(
-                                        Constants.Global.KEY_CATEGORYCODE,
-                                        mViewMode.plantInfo.value?.data?.categoryCode
-                                    )
-                                    .navigation(activity, HomeFragment.KEY_FOR_CALENDAR_REFRSH)
-                            }
-                        }
-                    }
-
-                }
-            }
 
             // 未读消息
             unreadMessageList.observe(viewLifecycleOwner) {
@@ -2534,13 +2532,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
 
             // 更新信息,刷新token
-            refreshToken.observe(viewLifecycleOwner, resourceObserver {
+            /*refreshToken.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     hideProgressLoading()
 
                     // 保存Token
                     data?.token?.let { it ->
-                        Prefs.putStringAsync(
+                        Prefs.putString(
                             Constants.Login.KEY_LOGIN_DATA_TOKEN, it
                         )
                     }
@@ -2564,7 +2562,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading {
                     showProgressLoading()
                 }
-            })
+            })*/
 
             // 获取氧气币列表
             getOxygenCoinList.observe(viewLifecycleOwner, resourceObserver {
@@ -2626,18 +2624,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         setClickListener { view, position, water, mViews ->
                             if (isManual == true) return@setClickListener
                             synchronized(context) {
-                                setViewInterpolator(null)
-                                mViews.remove(view)
-                                animRemoveView(view, position)
-                                val oxygenToAdd = runCatching { water.oxygen.toInt() }.getOrDefault(0)
-                                val currentOxygen = runCatching { binding.pplantNinth.tvOxy.text.toString().toInt() }.getOrDefault(0)
-                                binding.pplantNinth.tvOxy.text = "${oxygenToAdd + currentOxygen}"
-                                // 直接在次加载氧气币
-                                setViewCount(mViews.size)
-                                logI("mmview: ${mViews.size}")
+                                // 这块toInt会格式化错误
+                                runCatching {
+                                    setViewInterpolator(null)
+                                    mViews.remove(view)
+                                    animRemoveView(view, position)
+                                    val oxygenToAdd = runCatching { water.oxygen.toInt() }.getOrDefault(0)
+                                    val currentOxygen = runCatching { binding.pplantNinth.tvOxy.text.toString().toInt() }.getOrDefault(0)
+                                    binding.pplantNinth.tvOxy.text = "${oxygenToAdd + currentOxygen}"
+                                    // 直接在次加载氧气币
+                                    setViewCount(mViews.size)
+                                    logI("mmview: ${mViews.size}")
 
-                                if (water.loseEfficacy != "1") {
-                                    getOxygenCoin(water.orderNo)
+                                    if (water.loseEfficacy != "1") {
+                                        getOxygenCoin(water.orderNo)
+                                    }
                                 }
                             }
                         }

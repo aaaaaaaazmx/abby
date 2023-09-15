@@ -3,6 +3,8 @@ package com.cl.modules_login.viewmodel
 import androidx.lifecycle.*
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AutomaticLoginData
+import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.UserinfoBean
@@ -68,6 +70,36 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
     val thirdSource: LiveData<String> = _thirdSource
     fun setThirdSource(source: String) {
         _thirdSource.value = source
+    }
+
+    /**
+     * refreshToken
+     */
+    private val _refreshToken = MutableLiveData<Resource<AutomaticLoginData>>()
+    val refreshToken: LiveData<Resource<AutomaticLoginData>> = _refreshToken
+    fun refreshToken(req: AutomaticLoginReq) {
+        viewModelScope.launch {
+            repository.automaticLogin(req).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    // 登录InterCome
+                    // easeLogin(it.data.userId, it.data)
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {}.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _refreshToken.value = it
+            }
+        }
     }
 
     /**

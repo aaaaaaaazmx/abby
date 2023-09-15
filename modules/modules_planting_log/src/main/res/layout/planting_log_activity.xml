@@ -99,8 +99,8 @@
 
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_marginBottom="10dp"
+                android:orientation="vertical"
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="19dp"
                 android:layout_marginStart="19dp"
@@ -157,6 +157,18 @@
                 app:textView2Text="F"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>-->
+
+            <com.cl.common_base.widget.FeatureItemSwitch
+                app:itemTitleBold="true"
+                android:layout_marginEnd="19dp"
+                android:layout_marginStart="19dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/ft_trend"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:hideArrow="true"
+                app:itemTitle="Post on Trend"
+                />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

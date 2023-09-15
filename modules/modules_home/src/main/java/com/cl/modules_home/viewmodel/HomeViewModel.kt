@@ -1476,15 +1476,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
-     * 气泡的点击事件
-     */
-    private val _bubbleOnClickEvent = MutableLiveData(false)
-    val bubbleOnClickEvent: LiveData<Boolean?> = _bubbleOnClickEvent
-    fun bubbleOnClickEvent() {
-        _bubbleOnClickEvent.value = true
-    }
-
-    /**
      * 已读全部消息
      *
      * 后台没有做这个操作

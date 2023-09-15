@@ -20,4 +20,5 @@ data class ModifyUserDetailReq(
     var wallAddress: String? = null,
     var wallId: String? = null,
     var inchMetricMode: String? = null,
+    var smartUsbPowder: String? = null, // USB开关：1-开启、0-关闭
 ): BaseBean()

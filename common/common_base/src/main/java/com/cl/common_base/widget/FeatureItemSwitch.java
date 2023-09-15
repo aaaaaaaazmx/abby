@@ -21,6 +21,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 import androidx.databinding.BindingAdapter;
 
 import com.cl.common_base.R;
+import com.cl.common_base.click.UncheckViewOnClick;
 
 /**
  * 功能设置项
@@ -226,6 +227,7 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
         return this;
     }
 
+    @UncheckViewOnClick
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.ff_end_drawable) {

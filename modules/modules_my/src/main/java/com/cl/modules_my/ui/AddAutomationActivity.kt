@@ -84,10 +84,10 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     val requestOptions = RequestOptions()
                     requestOptions.placeholder(R.mipmap.placeholder)
                     requestOptions.error(R.mipmap.errorholder)
-                    requestOptions.override(
+                    /*requestOptions.override(
                         Target.SIZE_ORIGINAL,
                         Target.SIZE_ORIGINAL
-                    )
+                    )*/
                     Glide.with(this@AddAutomationActivity).load(it)
                         .apply(requestOptions)
                         .into(binding.ivThenImg)

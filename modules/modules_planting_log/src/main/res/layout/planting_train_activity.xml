@@ -210,6 +210,17 @@
                     android:layout_height="match_parent"/>
             </LinearLayout>
 
+            <com.cl.common_base.widget.FeatureItemSwitch
+                app:itemTitleBold="true"
+                android:layout_marginEnd="19dp"
+                android:layout_marginStart="19dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/ft_trend"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:hideArrow="true"
+                app:itemTitle="Post on Trend"
+                />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

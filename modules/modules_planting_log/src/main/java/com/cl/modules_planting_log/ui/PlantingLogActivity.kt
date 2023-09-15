@@ -28,6 +28,7 @@ import com.cl.common_base.ext.unitsConversion
 import com.cl.common_base.ext.weightConversion
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.ChooserOptionPop
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.glide.GlideEngine
@@ -162,10 +163,21 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             ToastUtil.shortShow("Please wait for the picture to finish uploading")
             return
         }
+        if (binding.ftTrend.isItemChecked) {
+            val notes = binding.etNote.text.toString()
+            val picListUrl = viewModel.picAddress.value
+
+            if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
+                ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                binding.ftTrend.isItemChecked = false
+                return
+            }
+        }
 
         val logSaveOrUpdateReq = logAdapter.getLogData()
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
+        logSaveOrUpdateReq.syncPost = binding.ftTrend.isItemChecked
         updateNotes(logSaveOrUpdateReq)
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
@@ -276,6 +288,9 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
              this@PlantingLogActivity.chooserAdapter.enableDragItem(itemTouchHelper, R.id.iv_chooser_select, true)*/
         }
 
+        // 新增的才显示
+        ViewUtils.setVisible(isAdd, binding.ftTrend)
+
         // 获取日志详情
         viewModel.getLogById(logId)
     }
@@ -303,6 +318,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                         logAdapter.setData(it)
                         // 添加备注、添加照片、
                         binding.etNote.setText(it.notes)
+                        binding.ftTrend.isItemChecked = it.syncPost == true
                         it.plantPhoto?.let { photoList ->
                             photoList.forEach { url ->
                                 viewModel.setPicAddress(ImageUrl(imageUrl = url))
@@ -716,6 +732,18 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                             SmartGlideImageLoader()
                         )
                         .show()
+                }
+            }
+        }
+
+        binding.ftTrend.setSwitchCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                val notes = binding.etNote.text.toString()
+                val picListUrl = viewModel.picAddress.value
+
+                if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
+                    ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                    binding.ftTrend.isItemChecked = false
                 }
             }
         }

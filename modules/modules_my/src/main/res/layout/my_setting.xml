@@ -393,6 +393,22 @@
                     android:layout_marginEnd="20dp"
                     android:background="@color/lineBg" />
 
+                <com.cl.common_base.widget.FeatureItemSwitch
+                    app:itemValueEndImg="@mipmap/base_gt"
+                    android:id="@+id/ft_usb"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:hideArrow="true"
+                    app:itemTitle="Smart USB Power"
+                    />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height=".5dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@color/lineBg" />
+
 
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_replant"

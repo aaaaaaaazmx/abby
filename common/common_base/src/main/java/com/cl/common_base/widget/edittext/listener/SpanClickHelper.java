@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 
+import com.cl.common_base.click.UncheckViewOnClick;
+
 public class SpanClickHelper {
 
     /**

@@ -102,4 +102,7 @@ object ServiceCreators {
         const val OUTER_ANG_URL = Constants.HttpUrl.OUTER_ANG_URL
     }
 
+    object TokenCache {
+        var token: String? = null
+    }
 }

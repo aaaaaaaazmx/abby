@@ -14,6 +14,15 @@ import retrofit2.http.*
  */
 interface HttpLoginApiService {
     /**
+     * 自动刷新token,更新token接口
+     * /abby/user/app/automaticLogin
+     */
+    @POST("abby/user/app/automaticLogin")
+    fun automaticLogin(
+        @Body requestBody: AutomaticLoginReq,
+    ): Flow<HttpResult<AutomaticLoginData>>
+
+    /**
      * 登录
      * /abby/user/app/login
      */

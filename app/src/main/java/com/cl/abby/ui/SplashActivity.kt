@@ -3,7 +3,6 @@ package com.cl.abby.ui
 import android.animation.ObjectAnimator
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
@@ -40,25 +39,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 @Route(path = RouterPath.Welcome.PAGE_SPLASH)
 class SplashActivity : BaseActivity<ActivitySplashBinding>() {
-    private var alphaAnimation: AlphaAnimation? = null
-
-    private val userinfoBean by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        GSON.parseObject(bean, UserinfoBean::class.java)
-    }
-
-    private val tuYaInfo by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_TU_YA_INFO)
-        GSON.parseObject(bean, TuYaInfo::class.java)
-    }
-
-    private val borad by lazy {
-        BluetoothMonitorReceiver()
-    }
-
-    @Inject
-    lateinit var mViewModel: LoginViewModel
-
     var splashScreen: SplashScreen? = null
     override fun initSplash() {
         splashScreen = installSplashScreen()
@@ -72,164 +52,23 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
                 ServiceCreators.newBuilder(url)
             }
         }
-        // 初始化SDK、需要同意隐私协议
-        InitSdk.init()
+        // 屏幕打开
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             splashScreen?.setKeepOnScreenCondition { true }
         } else {
             splashScreen?.setKeepOnScreenCondition { false }
         }
         redirectTo()
-
-        //渐变展示启动屏
-//        alphaAnimation = AlphaAnimation(0.3f, 1.0f)
-//        alphaAnimation?.duration = 500
-//        alphaAnimation?.setAnimationListener(object : Animation.AnimationListener {
-//            override fun onAnimationEnd(arg0: Animation) {
-//                redirectTo()
-//            }
-//
-//            override fun onAnimationRepeat(animation: Animation) {
-//            }
-//
-//            override fun onAnimationStart(animation: Animation) {
-//            }
-//        })
-//        binding.ivLogo.startAnimation(alphaAnimation)
     }
 
     private fun redirectTo() {
-        val data = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-        if (data.isEmpty()) {
-            // 直接跳转登录界面
-            ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
-            finish()
-        } else {
-            // 主要是针对老用户，因为新增了一个key用于保存涂鸦的信息，老用户是没有的，所以会一直登录不上，如果是老用户，那么就直接跳转到登录页面，让其登录一遍。
-            val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
-            val tuyaPassword = tuYaInfo?.tuyaPassword
-            if (null == tuYaInfo || (tuyaCountryCode?.isEmpty() == true && tuyaPassword?.isEmpty() == true)) {
-                // 直接跳转登录界面
-                ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
-                finish()
-            } else {
-                // 从设备列表当中获取当前选中设备
-                mViewModel.userDetail()
-            }
-        }
+        startActivity(Intent(this@SplashActivity, CustomSplashActivity::class.java))
+        finish()
     }
 
     override fun observe() {
-        mViewModel.userDetail.observe(this@SplashActivity, resourceObserver {
-            error { errorMsg, code ->
-                if (code == -1) {
-                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
-                    finish()
-                }
-            }
-            success {
-                // 获取InterCome信息
-                mViewModel.getInterComeData()
-            }
-        })
-
-        mViewModel.getInterComeData.observe(this@SplashActivity, resourceObserver {
-            error { errorMsg, code ->
-                val email = userinfoBean?.email
-                val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
-                val tuyaPassword = tuYaInfo?.tuyaPassword
-                mViewModel.tuYaLogin(
-                    map = mapOf(),
-                    mViewModel.userDetail.value?.data?.externalId,
-                    mViewModel.userDetail.value?.data,
-                    mViewModel.userDetail.value?.data?.deviceId,
-                    tuyaCountryCode,
-                    email,
-                    AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
-                    onRegisterReceiver = { devId ->
-                        val intent = Intent(
-                            this@SplashActivity,
-                            TuYaDeviceUpdateReceiver::class.java
-                        )
-                        startService(intent)
-                    },
-                    onError = { code, error ->
-                        hideProgressLoading()
-                        error?.let { ToastUtil.shortShow(it) }
-                    }
-                )
-            }
-            success {
-                val email = userinfoBean?.email
-                val tuyaCountryCode = tuYaInfo?.tuyaCountryCode
-                val tuyaPassword = tuYaInfo?.tuyaPassword
-                mViewModel.tuYaLogin(
-                    map = mapOf(),
-                    mViewModel.userDetail.value?.data?.externalId,
-                    mViewModel.userDetail.value?.data,
-                    mViewModel.userDetail.value?.data?.deviceId,
-                    tuyaCountryCode,
-                    email,
-                    AESCipher.aesDecryptString(tuyaPassword, AESCipher.KEY),
-                    onRegisterReceiver = { devId ->
-                        val intent = Intent(
-                            this@SplashActivity,
-                            TuYaDeviceUpdateReceiver::class.java
-                        )
-                        startService(intent)
-                    },
-                    onError = { code, error ->
-                        hideProgressLoading()
-                        error?.let { ToastUtil.shortShow(it) }
-                    }
-                )
-            }
-        })
-
-
-        /**
-         * 检查是否种植过
-         */
-        mViewModel.checkPlant.observe(this@SplashActivity, resourceObserver {
-            loading { }
-            error { errorMsg, code ->
-                errorMsg?.let { msg -> ToastUtil.shortShow(msg) }
-                // 如果接口抛出异常，那么直接跳转登录页面。不能卡在这
-                if (code == -1) {
-                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
-                }
-            }
-            success {
-                data?.let { PlantCheckHelp().plantStatusCheck(this@SplashActivity, it) }
-//                when (userinfoBean?.deviceStatus) {
-//                    // 设备状态(1-绑定，2-已解绑)
-//                    "1" -> {
-//                        // 是否种植过
-//                    }
-//                    "2" -> {
-//                        // 跳转绑定界面
-//                        ARouter.getInstance()
-//                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
-//                            .navigation()
-//                    }
-//                }
-                finish()
-            }
-        })
     }
 
     override fun initData() {
-        // 开启蓝牙广播
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
-        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
-        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
-        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF")
-        intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(borad, intentFilter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(borad, intentFilter)
-        }
     }
 }

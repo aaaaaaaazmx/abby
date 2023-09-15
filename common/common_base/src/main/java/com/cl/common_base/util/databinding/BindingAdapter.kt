@@ -103,7 +103,7 @@ fun setImageUrl(imageView: ImageView, url: String?) {
         var requestOptions = RequestOptions()
         requestOptions.placeholder(R.mipmap.placeholder)
         requestOptions.error(R.mipmap.errorholder)
-        requestOptions.override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, SIZE_ORIGINAL)
+        // requestOptions.override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, SIZE_ORIGINAL)
         Glide.with(imageView.context).load(url)
             .apply(requestOptions)
             .into(imageView)
@@ -206,12 +206,12 @@ fun setStrikeThruText(tv: TextView, enable: Boolean) {
  * @param view 目标视图
  * @param onClickListener 点击回调
  */
-@BindingAdapter("onSingleClick")
+/*@BindingAdapter("onSingleClick")
 fun setOnSingleClick(view: View, onClickListener: View.OnClickListener) {
     view.setOnSingleClickListener {
         onClickListener.onClick(it)
     }
-}
+}*/
 
 /**
  * 设置视图的可见性，如果设置不可见，将完全从屏幕中消失。
