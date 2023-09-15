@@ -2606,6 +2606,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             )
                         }?.toMutableList()?.let {
                             if (it.size == 0) return@success
+                            if (isManual == true) return@success
                             binding.pplantNinth.waterView.apply {
                                 setDestroyPoint(WaterView.VIEW_CENTER)
                                 setDrawablePosition(WaterView.DRAWABLE_TOP)
@@ -2621,16 +2622,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 点击事件
                     binding.pplantNinth.waterView.apply {
                         setClickListener { view, position, water, mViews ->
+                            if (isManual == true) return@setClickListener
                             synchronized(context) {
                                 // 这块toInt会格式化错误
                                 runCatching {
                                     setViewInterpolator(null)
                                     mViews.remove(view)
                                     animRemoveView(view, position)
-                                    binding.pplantNinth.tvOxy.text = "${
-                                        water.oxygen.toInt() + binding.pplantNinth.tvOxy.text.toString()
-                                            .toInt()
-                                    }"
+                                    val oxygenToAdd = runCatching { water.oxygen.toInt() }.getOrDefault(0)
+                                    val currentOxygen = runCatching { binding.pplantNinth.tvOxy.text.toString().toInt() }.getOrDefault(0)
+                                    binding.pplantNinth.tvOxy.text = "${oxygenToAdd + currentOxygen}"
                                     // 直接在次加载氧气币
                                     setViewCount(mViews.size)
                                     logI("mmview: ${mViews.size}")

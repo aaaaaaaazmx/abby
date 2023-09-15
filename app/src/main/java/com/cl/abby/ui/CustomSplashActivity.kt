@@ -3,9 +3,11 @@ package com.cl.abby.ui
 import android.animation.ValueAnimator
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.AnimationDrawable
+import android.os.Build
 import androidx.annotation.RestrictTo
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.R
@@ -242,7 +244,11 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF")
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON")
-        registerReceiver(borad, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(borad, intentFilter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(borad, intentFilter)
+        }
     }
 
     override fun onDestroy() {

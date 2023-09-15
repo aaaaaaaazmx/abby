@@ -167,9 +167,9 @@ class RippleView : View {
      * 视图绘制
      * @param canvas Canvas
      */
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas?.apply {
+        canvas.apply {
             onDrawRippleCircle(canvas)
         }
     }

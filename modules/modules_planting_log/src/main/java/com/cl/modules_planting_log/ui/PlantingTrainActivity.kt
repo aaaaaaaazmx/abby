@@ -237,6 +237,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
+        showProgressLoading()
         if (logId.isNullOrEmpty()) {
             createNewLog(logSaveOrUpdateReq)
         } else {

@@ -181,6 +181,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
         updateNotes(logSaveOrUpdateReq)
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
+        showProgressLoading()
         if (logId.isNullOrEmpty()) {
             createNewLog(logSaveOrUpdateReq)
         } else {

@@ -1,7 +1,5 @@
 package com.cl.common_base.widget.waterview.widget;
 
-import static com.cl.common_base.ext.LogKt.logI;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
@@ -17,6 +15,7 @@ import androidx.annotation.RequiresApi;
 
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +28,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cl.common_base.R;
-import com.cl.common_base.ext.DensityKt;
 import com.cl.common_base.report.Reporter;
 import com.cl.common_base.widget.waterview.animation.CenterEvaluator;
 import com.cl.common_base.widget.waterview.bean.Water;
@@ -224,80 +222,110 @@ public class WaterView extends FrameLayout {
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void addWaterView(List<Water> waters) {
-      try {
-          for (int i = 0; i < waters.size(); i++) {
-              Water water = waters.get(i);
-              View waterView = mInflater.inflate(mChildViewRes, this, false);
-              TextView tvWater = waterView.findViewById(R.id.tv_water);
+        try {
+            for (int i = 0; i < waters.size(); i++) {
+                Water water = waters.get(i);
+                View waterView = mInflater.inflate(mChildViewRes, this, false);
+                TextView tvWater = waterView.findViewById(R.id.tv_water);
 
-              TextView tvNumber = waterView.findViewById(R.id.tv_numbeasd);
-              TextView tvTip = waterView.findViewById(R.id.tv_tip);
-              LinearLayout llTop = waterView.findViewById(R.id.ll_top);
+                TextView tvNumber = waterView.findViewById(R.id.tv_numbeasd);
+                TextView tvTip = waterView.findViewById(R.id.tv_tip);
+                LinearLayout llTop = waterView.findViewById(R.id.ll_top);
 
-              waterView.setTag(water);
-              switch (drawablePosition) {
-                  case BACKGROUND:
-                      llTop.setVisibility(GONE);
-                      tvWater.setVisibility(VISIBLE);
-                      tvWater.setBackgroundResource(mImageRes);
-                      tvWater.setText(water.getNumber());
-                      tvWater.setTextColor(textColor);
-                      tvWater.setTextSize(textSize);
-                      break;
-                  case DRAWABLE_TOP:
-                      /*tvWater.setCompoundDrawablesRelativeWithIntrinsicBounds(0, mImageRes, 0, 0);*/
-                      tvWater.setVisibility(GONE);
-                      llTop.setVisibility(VISIBLE);
-                      tvNumber.setBackgroundResource(mImageRes);
-                      tvNumber.setText(water.getNumber());
-                      String name = water.getName();
-                      if (name.contains(" ")) {
-                          String[] s = name.split(" ");
-                          String ss;
-                          for (String s1 : s) {
-                              ss = s1 + "\n";
-                              tvTip.append(ss);
-                          }
-                      }
-                      break;
-              }
-              int finalI = i;
+                waterView.setTag(water);
+                switch (drawablePosition) {
+                    case BACKGROUND:
+                        llTop.setVisibility(GONE);
+                        tvWater.setVisibility(VISIBLE);
+                        tvWater.setBackgroundResource(mImageRes);
+                        tvWater.setText(water.getNumber());
+                        tvWater.setTextColor(textColor);
+                        tvWater.setTextSize(textSize);
+                        break;
+                    case DRAWABLE_TOP:
+                        /*tvWater.setCompoundDrawablesRelativeWithIntrinsicBounds(0, mImageRes, 0, 0);*/
+                        tvWater.setVisibility(GONE);
+                        llTop.setVisibility(VISIBLE);
+                        tvNumber.setBackgroundResource(mImageRes);
+                        tvNumber.setText(water.getNumber());
+                        String name = water.getName();
+                        if (name.contains(" ")) {
+                            String[] s = name.split(" ");
+                            String ss;
+                            for (String s1 : s) {
+                                ss = s1 + "\n";
+                                tvTip.append(ss);
+                            }
+                        }
+                        break;
+                }
+                int finalI = i;
 
-              waterView.setOnClickListener(view -> {
-                  if (mClickListener != null) {
-                      view.setClickable(false);
-                      mClickListener.clickListener(view, finalI, water, mViews);
-                  }
-              });
-              mViews.add(waterView);
-          }
-          if (mViews.isEmpty()) return;
-          //生成区域内所有的点集合
-          switch (mLayoutStyle) {
-              case RECTANGLE_RANDOM:
-                  initPointsRec(left, right, top, bottom);
-                  setChildViewLocation(mViews);
-                  break;
-              case CIRCLE_RANDOM:
-                  initPointsCircular(angle);
-                  setChildViewCircleLocation(mViews);
-                  break;
-              case FAN_RANDOM:
-                  double angle = (double) 180 / mViews.size();
-                  Rect rect = new Rect(-(left * 3), 0, getWidth(), getHeight());
-                  double startAngle = Math.asin((double) getHeight() / (2 * ((double) getWidth() / 2) + getHeight())) * (180 + angle) / Math.PI;
-                  double sweepAngle = 180.0 - angle / 2 - 2 * startAngle;
-                  generateClockwiseArcPoints(rect, startAngle, sweepAngle, mViews.size(), angle);
-                  setChildViewCircleLocation(mViews);
-                  break;
-          }
-          addShowViewAnimation(mViews);
-      } catch (Exception e) {
-          Pair<String, String> pair1 = new Pair<>("addWaterView", e.toString());
-          Pair[] options = new Pair[] { pair1 };
-          Reporter.reportError(Reporter.ErrorType.ApiError, e.toString(),  options);
-      }
+                waterView.setOnClickListener(view -> {
+                    if (mClickListener != null) {
+                        view.setClickable(false);
+                        mClickListener.clickListener(view, finalI, water, mViews);
+                    }
+                });
+                mViews.add(waterView);
+            }
+            if (mViews.isEmpty()) return;
+            //生成区域内所有的点集合
+            switch (mLayoutStyle) {
+                /*case RECTANGLE_RANDOM:
+                    initPointsRec(left, right, top, bottom);
+                    setChildViewLocation(mViews);
+                    addShowViewAnimation();
+                    break;
+                case CIRCLE_RANDOM:
+                    initPointsCircular(angle);
+                    setChildViewCircleLocation(mViews);
+                    addShowViewAnimation();
+                    break;*/
+                case FAN_RANDOM:
+                    double angle = (double) 180 / mViews.size();
+                    Rect rect = new Rect(-(left * 3), 0, getWidth(), getHeight());
+                    double startAngle = Math.asin((double) getHeight() / (2 * ((double) getWidth() / 2) + getHeight())) * (180 + angle) / Math.PI;
+                    double sweepAngle = 180.0 - angle / 2 - 2 * startAngle;
+                    // 防止ANR
+                    setViewLocation(rect, startAngle, sweepAngle, mViews.size(), angle);
+                    break;
+            }
+        } catch (Exception e) {
+            Pair<String, String> pair1 = new Pair<>("addWaterView", e.toString());
+            Pair[] options = new Pair[]{pair1};
+            Reporter.reportError(Reporter.ErrorType.ApiError, e.toString(), options);
+        }
     }
+
+    private void setViewLocation(Rect rect, double startAngle, double sweepAngle, int size, double angle) {
+        new Thread(() -> {
+            generateClockwiseArcPoints(rect, startAngle, sweepAngle, size, angle);
+            /*while (randomList.size() < mViews.size()) {
+                int v = (int) (Math.random() * points.size());
+                if (!randomList.contains(v)) {
+                    randomList.add(v);
+                }
+            }*/
+            for (int i = 0; i < mViews.size(); i++) {
+                View view = mViews.get(i);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    final int index = i; // 将i的值复制到最终的局部变量
+                    view.post(() -> {
+                        view.setX(points.get(index).x);
+                        view.setY(points.get(index).y);
+                    });
+                }
+            }
+
+            // 使用Handler在主线程中执行UI更新操作
+            Handler mainHandler = new Handler(getContext().getMainLooper());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                mainHandler.post(() -> addShowViewAnimation(mViews));
+            }
+        }).start();
+    }
+
 
 
     /**

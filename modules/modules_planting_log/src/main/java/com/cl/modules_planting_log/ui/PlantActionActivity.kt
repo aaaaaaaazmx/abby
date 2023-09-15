@@ -136,6 +136,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
+        showProgressLoading()
         if (logId.isNullOrEmpty()) {
             createNewLog(logSaveOrUpdateReq)
         } else {
