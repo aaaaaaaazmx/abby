@@ -136,6 +136,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
+        showProgressLoading()
         if (logId.isNullOrEmpty()) {
             createNewLog(logSaveOrUpdateReq)
         } else {
@@ -171,11 +172,15 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
     override fun observe() {
         viewModel.apply {
             logSaveOrUpdate.observe(this@PlantActionActivity, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg) }
                 success {
+                    hideProgressLoading()
                     // 提交成功 or 修改成功
                     finish()
                 }
+                loading { showProgressLoading() }
             })
 
             getLogById.observe(this@PlantActionActivity, resourceObserver {

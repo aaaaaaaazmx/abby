@@ -491,7 +491,7 @@ open class NineGridView @JvmOverloads constructor(
         }
     }
 
-    override fun dispatchDraw(canvas: Canvas?) {
+    override fun dispatchDraw(canvas: Canvas) {
         // 开始渐变动画
         val alphaAnimator = ObjectAnimator.ofFloat(this, ALPHA, 0f, 1f)
         alphaAnimator.duration = 300L

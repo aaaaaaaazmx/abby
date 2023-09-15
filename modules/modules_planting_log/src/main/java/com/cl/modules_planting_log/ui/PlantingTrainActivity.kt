@@ -161,6 +161,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
+        showProgressLoading()
         if (logId.isNullOrEmpty()) {
             createNewLog(logSaveOrUpdateReq)
         } else {
@@ -239,12 +240,17 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(), Edit
                 }
             })
 
+            // 修改日志、以及上传日志
             logSaveOrUpdate.observe(this@PlantingTrainActivity, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg) }
                 success {
+                    hideProgressLoading()
                     // 提交成功 or 修改成功
                     finish()
                 }
+                loading { showProgressLoading() }
             })
 
             getLogById.observe(this@PlantingTrainActivity, resourceObserver {

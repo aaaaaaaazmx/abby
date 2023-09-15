@@ -3,6 +3,7 @@ package com.cl.abby.ui
 import android.animation.ObjectAnimator
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
@@ -225,6 +226,10 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF")
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON")
-        registerReceiver(borad, intentFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(borad, intentFilter, Context.RECEIVER_NOT_EXPORTED)
+        } else {
+            registerReceiver(borad, intentFilter)
+        }
     }
 }
