@@ -223,6 +223,7 @@ public class WaterView extends FrameLayout {
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void addWaterView(List<Water> waters) {
         try {
+            if (null == waters || waters.isEmpty()) return;
             for (int i = 0; i < waters.size(); i++) {
                 Water water = waters.get(i);
                 View waterView = mInflater.inflate(mChildViewRes, this, false);
@@ -301,12 +302,8 @@ public class WaterView extends FrameLayout {
     private void setViewLocation(Rect rect, double startAngle, double sweepAngle, int size, double angle) {
         new Thread(() -> {
             generateClockwiseArcPoints(rect, startAngle, sweepAngle, size, angle);
-            /*while (randomList.size() < mViews.size()) {
-                int v = (int) (Math.random() * points.size());
-                if (!randomList.contains(v)) {
-                    randomList.add(v);
-                }
-            }*/
+            if (null == points || points.isEmpty()) return;
+            if (null == mViews || mViews.isEmpty()) return;
             for (int i = 0; i < mViews.size(); i++) {
                 View view = mViews.get(i);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
