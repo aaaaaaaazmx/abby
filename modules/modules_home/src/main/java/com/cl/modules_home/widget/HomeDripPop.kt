@@ -74,9 +74,9 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
             )
         }.collectLatest {
             logI(it.toString())
-            when(it) {
+            when (it) {
                 is Resource.Success -> {
-                    it.data?.let {data ->
+                    it.data?.let { data ->
                         mBinding?.apply {
                             etTurnTime.setText(data.turnOnSecond.toString())
                             etTurnMin.setText(data.everyMinute.toString())
@@ -91,11 +91,16 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                             //  "status": false
                             //}
 
+                            val startTime = data.everyStartTime ?: 0
+                            val endTime = data.everyEndTime ?: 0
 
-                            //tvStart.text =
+                            // 将12 AM和12 PM的情况单独处理
+                            tvStart.text = if (startTime == 0) "12 AM" else "${if (startTime > 12) 24 - startTime else startTime} ${if (startTime > 12) "PM" else "AM"}"
+                            tvEnd.text = if (endTime == 0) "12 AM" else "${if (endTime > 12) 24 - endTime else endTime} ${if (endTime > 12) "PM" else "AM"}"
                         }
                     }
                 }
+
                 else -> {
                     ToastUtil.shortShow(it.errorMsg)
                 }
@@ -127,12 +132,13 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
             )
         }.collectLatest {
             logI(it.toString())
-            when(it) {
+            when (it) {
                 is Resource.Success -> {
                     it.data?.apply {
 
                     }
                 }
+
                 else -> {
                     ToastUtil.shortShow(it.errorMsg)
                 }

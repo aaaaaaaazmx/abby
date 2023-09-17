@@ -3,6 +3,7 @@ package com.cl.modules_my.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -22,14 +23,18 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.isCanToBigDecimal
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.FeatureItemSwitch
+import com.cl.modules_my.pop.MyChooerTipPop
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
@@ -210,29 +215,65 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
     override fun initData() {
         binding.ivAddDevice.setOnClickListener {
-            XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false)
-                .dismissOnTouchOutside(false)
+
+            // 弹出是添加帐篷还是添加abby
+            XPopup.Builder(this@DeviceListActivity)
+                .popupPosition(PopupPosition.Left)
+                .dismissOnTouchOutside(true)
+                .isClickThrough(false)  //点击透传
+                .hasShadowBg(true) // 去掉半透明背景
+                //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                .atView(it)
+                .isCenterHorizontal(false)
                 .asCustom(
-                    BaseCenterPop(
+                    MyChooerTipPop(
                         this@DeviceListActivity,
-                        content = "You’re about to add a new device",
-                        confirmText = "Confirm",
-                        onConfirmAction = {
-                            PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
-                                object : PermissionHelp.OnCheckResultListener {
-                                    override fun onResult(result: Boolean) {
-                                        if (!result) return
-                                        // 如果权限都已经同意了
-                                        ARouter.getInstance()
-                                            .build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
-                                            .navigation()
-                                    }
-                                })
+                        onPhotoPostAction = {
+                            // abby
+                            xpopup(this@DeviceListActivity) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(false)
+                                asCustom(
+                                    BaseCenterPop(
+                                        this@DeviceListActivity,
+                                        content = "You’re about to add a new device",
+                                        confirmText = "Confirm",
+                                        onConfirmAction = {
+                                            PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
+                                                object : PermissionHelp.OnCheckResultListener {
+                                                    override fun onResult(result: Boolean) {
+                                                        if (!result) return
+                                                        // 如果权限都已经同意了
+                                                        ARouter.getInstance()
+                                                            .build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
+                                                            .navigation()
+                                                    }
+                                                })
+                                        },
+                                        isShowCancelButton = true
+                                    )
+                                ).show()
+                            }
                         },
-                        isShowCancelButton = true
-                    )
-                )
-                .show()
+                        onReelPostAction = {
+                            // todo 这是跳转到添加帐篷
+                        }
+                    ).setBubbleBgColor(Color.WHITE) //气泡背景
+                        .setArrowWidth(XPopupUtils.dp2px(this@DeviceListActivity, 3f))
+                        .setArrowHeight(
+                            XPopupUtils.dp2px(
+                                this@DeviceListActivity,
+                                3f
+                            )
+                        )
+                        //.setBubbleRadius(100)
+                        .setArrowRadius(
+                            XPopupUtils.dp2px(
+                                this@DeviceListActivity,
+                                3f
+                            )
+                        )
+                ).show()
         }
 
         mViewModel.listDevice()
@@ -252,11 +293,15 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     // camera跳转到专属页面
                     if (deviceBean?.accessoryList?.get(0)?.accessoryName == "Smart Camera") {
                         val accessoryDeviceId = deviceBean.accessoryList?.get(0)?.accessoryDeviceId
-                        startActivityLauncher.launch(Intent(this@DeviceListActivity, CameraSettingActivity::class.java).apply {
-                            // 配件Id 就是cameraId
-                            putExtra("accessoryDeviceId", accessoryDeviceId)
-                            putExtra("deviceId", deviceBean.deviceId)
-                        })
+                        startActivityLauncher.launch(
+                            Intent(
+                                this@DeviceListActivity,
+                                CameraSettingActivity::class.java
+                            ).apply {
+                                // 配件Id 就是cameraId
+                                putExtra("accessoryDeviceId", accessoryDeviceId)
+                                putExtra("deviceId", deviceBean.deviceId)
+                            })
                         return@setOnItemChildClickListener
                     }
                     val intent =
@@ -268,6 +313,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     )
                     startActivityLauncher.launch(intent)
                 }
+
                 R.id.btn_chang -> {
                     //  修改属性、弹窗pop
                     XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false)
@@ -413,12 +459,13 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     /**
      * 回调刷新页面
      */
-    private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == RESULT_OK) {
-            // 重新请求数据
-            mViewModel.listDevice()
+    private val startActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                // 重新请求数据
+                mViewModel.listDevice()
+            }
         }
-    }
 
 
     companion object {
