@@ -7,6 +7,6 @@ data class TrickData(
     val everyEndTime: Int? = null,
     val everyMinute: String? = null,
     val everyStartTime: Int? = null,
-    val status: String? = null,
+    val status: Boolean? = null,
     val turnOnSecond: String? = null,
 ): BaseBean()

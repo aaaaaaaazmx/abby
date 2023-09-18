@@ -1,6 +1,11 @@
 package com.cl.modules_home.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.text.InputFilter
+import android.view.View
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBinderMapper
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -12,12 +17,15 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.TimePickerPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.service.HttpHomeApiService
+import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.CenterPopupView
 import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +35,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlin.jvm.internal.Intrinsics.Kotlin
+import kotlin.math.min
 
 class HomeDripPop(context: Context) : CenterPopupView(context) {
 
@@ -41,10 +51,142 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
         return R.layout.home_drip_pop
     }
 
+    private var turnOnHour: Int? = null
+    private var turnOffHour: Int? = null
+
     private var mBinding: HomeDripPopBinding? = null
+
+    @SuppressLint("SetTextI18n")
     override fun onCreate() {
         super.onCreate()
-        mBinding = DataBindingUtil.bind<HomeDripPopBinding>(popupImplView)
+        mBinding = DataBindingUtil.bind<HomeDripPopBinding>(popupImplView)?.apply {
+            tvStart.setOnClickListener {
+                // 时间开启
+                xpopup(context) {
+                    asCustom(
+                        TimePickerPop(context, onConfirmAction = { time, timeMis ->
+                            runCatching {
+                                // 返回的是24小时制度。
+                                val hour = if (time.toInt() == 0) 12 else time.toInt()
+
+                                if (hour > 12) {
+                                    tvStart.text = "${hour - 12}:00 PM"
+                                } else if (hour < 12) {
+                                    tvStart.text = "${hour}:00 AM"
+                                } else if (hour == 12) {
+                                    tvStart.text = "12:00 AM"
+                                }
+                                turnOnHour = time.toInt()
+                            }
+
+                        }, chooseTime = turnOnHour ?: 12)
+                    ).show()
+                }
+            }
+
+            tvEnd.setOnClickListener {
+                xpopup(context) {
+                    asCustom(
+                        TimePickerPop(context, onConfirmAction = { time, timeMis ->
+                            runCatching {
+                                val hour = if (time.toInt() == 0) 12 else time.toInt()
+                                if (hour > 12) {
+                                    tvEnd.text = "${hour - 12}:00 PM"
+                                } else if (hour < 12) {
+                                    tvEnd.text = "${hour}:00 AM"
+                                } else if (hour == 12) {
+                                    tvEnd.text = "12:00 PM"
+                                }
+                                // 赋值给他
+                                turnOffHour = time.toInt()
+                            }
+                        }, chooseTime = turnOffHour ?: 12)
+                    ).show()
+                }
+            }
+
+            etTurnTime.onFocusChangeListener = OnFocusChangeListener { view, hasFocus ->
+                if (!hasFocus) {
+                    // 当焦点失去时，进行10-120的判断
+                    runCatching {
+                        val inputValue = etTurnTime.text.toString().toIntOrNull()
+                        if (inputValue != null) {
+                            if (inputValue < 5) {
+                                etTurnTime.setText("5")
+                            } else if (inputValue > 30) {
+                                etTurnTime.setText("30")
+                            }
+                        }
+                    }
+                }
+            }
+
+            etTurnMin.onFocusChangeListener = OnFocusChangeListener { view, hasFocus ->
+                if (!hasFocus) {
+                    // 当焦点失去时，进行10-120的判断
+                    runCatching {
+                        val inputValue = etTurnMin.text.toString().toIntOrNull()
+                        if (inputValue != null) {
+                            if (inputValue < 10) {
+                                etTurnMin.setText("10")
+                            } else if (inputValue > 120) {
+                                etTurnMin.setText("120")
+                            }
+                        }
+                    }
+                }
+            }
+            tvConfirm.setOnClickListener {
+                // 点击确认
+                val turnTime = etTurnTime.text.toString()
+                val mins = etTurnMin.text.toString()
+                val startTime = tvStart.text.toString()
+                val endTime = tvEnd.text.toString()
+
+                val turnValue = runCatching { turnTime.toInt() }.getOrDefault(0)
+                if (turnValue < 5 || turnValue > 30) {
+                    ToastUtil.shortShow("Please enter the every value between 5 and 30.")
+                    return@setOnClickListener
+                }
+                if (turnTime.isEmpty()) {
+                    ToastUtil.shortShow("Please enter the turn on value.")
+                    return@setOnClickListener
+                }
+                val minsValue = runCatching { mins.toInt() }.getOrDefault(0)
+                if (minsValue < 10 || minsValue > 120) {
+                    ToastUtil.shortShow("Please enter the every value between 10 and 120.")
+                    return@setOnClickListener
+                }
+
+                if (mins.isEmpty()) {
+                    ToastUtil.shortShow("Please enter the every value.")
+                    return@setOnClickListener
+                }
+                if (startTime.isEmpty()) {
+                    ToastUtil.shortShow("Please enter the during start value.")
+                    return@setOnClickListener
+                }
+                if (endTime.isEmpty()) {
+                    ToastUtil.shortShow("Please enter the during end value.")
+                    return@setOnClickListener
+                }
+
+
+                lifecycleScope.launch {
+                    trickleIrrigationConfig(
+                        TrickData(
+                            deviceId = tuyaHomeBean?.devId,
+                            everyStartTime = turnOnHour,
+                            everyEndTime = turnOffHour,
+                            turnOnSecond = turnTime,
+                            everyMinute = mins,
+                            status = fisItemSwitch.isChecked
+                        )
+                    )
+                }
+            }
+
+        }
         lifecycleScope.launch {
             getTrickleIrrigationConfig(tuyaHomeBean?.devId.toString())
         }
@@ -80,6 +222,7 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                         mBinding?.apply {
                             etTurnTime.setText(data.turnOnSecond.toString())
                             etTurnMin.setText(data.everyMinute.toString())
+                            fisItemSwitch.isChecked = data.status == true
                             // 后台返回的是24小时、需要转换为12小时制度的数字
 
                             // {
@@ -95,8 +238,14 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                             val endTime = data.everyEndTime ?: 0
 
                             // 将12 AM和12 PM的情况单独处理
-                            tvStart.text = if (startTime == 0) "12 AM" else "${if (startTime > 12) 24 - startTime else startTime} ${if (startTime > 12) "PM" else "AM"}"
-                            tvEnd.text = if (endTime == 0) "12 AM" else "${if (endTime > 12) 24 - endTime else endTime} ${if (endTime > 12) "PM" else "AM"}"
+                            tvStart.text =
+                                if (startTime == 0) "12 AM" else if (startTime == 24) "12 PM" else "${if (startTime > 12) startTime -12 else startTime} ${if (startTime > 12) "PM" else "AM"}"
+                            turnOnHour =
+                                if (startTime == 0) 12 else startTime
+                            tvEnd.text =
+                                if (endTime == 0) "12 AM" else if (endTime == 24) "12 PM" else "${if (endTime > 12) endTime - 12 else endTime} ${if (endTime > 12) "PM" else "AM"}"
+                            turnOffHour =
+                                if (endTime == 0) 12 else endTime
                         }
                     }
                 }
@@ -134,9 +283,7 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
             logI(it.toString())
             when (it) {
                 is Resource.Success -> {
-                    it.data?.apply {
-
-                    }
+                    this@HomeDripPop.dismiss()
                 }
 
                 else -> {

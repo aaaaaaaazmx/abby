@@ -72,6 +72,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_turn">
 
                 <EditText
+                    android:inputType="number"
                     android:textStyle="bold"
                     android:id="@+id/et_turn_time"
                     android:layout_width="match_parent"
@@ -138,6 +139,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_every">
 
                 <EditText
+                    android:inputType="number"
                     android:textStyle="bold"
                     android:id="@+id/et_turn_min"
                     android:layout_width="match_parent"
@@ -188,7 +190,7 @@
 
             <RelativeLayout
                 android:id="@+id/rl_turn_start"
-                android:layout_width="69.5dp"
+                android:layout_width="82.5dp"
                 android:layout_height="32dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="19dp"
@@ -196,14 +198,15 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_dur">
 
                 <TextView
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_vertical"
                     android:id="@+id/tv_start"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:textColor="@color/black"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:textStyle="bold"
-                    tools:text="ads" />
+                    tools:text="5:00 AM" />
 
                 <ImageView
                     android:layout_centerVertical="true"
@@ -230,7 +233,7 @@
 
             <RelativeLayout
                 android:id="@+id/rl_turn_end"
-                android:layout_width="69.5dp"
+                android:layout_width="82.5dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="32dp"
@@ -239,10 +242,11 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_to">
 
                 <TextView
+                    android:layout_marginStart="5dp"
+                    android:gravity="center_vertical"
                     android:id="@+id/tv_end"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:textStyle="bold"
