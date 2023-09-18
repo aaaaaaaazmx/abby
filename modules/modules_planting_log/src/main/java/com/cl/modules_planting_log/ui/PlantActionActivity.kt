@@ -180,7 +180,6 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
                     // 提交成功 or 修改成功
                     finish()
                 }
-                loading { showProgressLoading() }
             })
 
             getLogById.observe(this@PlantActionActivity, resourceObserver {

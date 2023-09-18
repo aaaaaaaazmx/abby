@@ -343,7 +343,6 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                     // 提交成功 or 修改成功
                     finish()
                 }
-                loading { showProgressLoading() }
             })
 
             getLogById.observe(this@PlantingTrainActivity, resourceObserver {

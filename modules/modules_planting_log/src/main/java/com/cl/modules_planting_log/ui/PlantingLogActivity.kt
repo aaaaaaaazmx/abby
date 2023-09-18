@@ -340,7 +340,6 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                     // 提交成功 or 修改成功
                     finish()
                 }
-                loading { showProgressLoading() }
             })
 
             // 上传图片回调
