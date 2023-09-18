@@ -12,11 +12,11 @@ object Version {
         const val composeMaterial3Version = "1.0.0-alpha14"
     }
 
-    const val compileSdk = 34
+    const val compileSdk = 33
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
-    const val targetSdk = 34
-    val versionCode = 37
+    const val targetSdk = 33
+    val versionCode = 39
     const val versionName = "3.0.1"
 
     const val coreKtxVersion = "1.8.0"

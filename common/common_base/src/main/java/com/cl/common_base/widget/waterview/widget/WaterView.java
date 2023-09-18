@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.ScaleAnimation;
@@ -223,6 +224,7 @@ public class WaterView extends FrameLayout {
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void addWaterView(List<Water> waters) {
         try {
+            if (null == waters || waters.isEmpty()) return;
             for (int i = 0; i < waters.size(); i++) {
                 Water water = waters.get(i);
                 View waterView = mInflater.inflate(mChildViewRes, this, false);
@@ -301,12 +303,8 @@ public class WaterView extends FrameLayout {
     private void setViewLocation(Rect rect, double startAngle, double sweepAngle, int size, double angle) {
         new Thread(() -> {
             generateClockwiseArcPoints(rect, startAngle, sweepAngle, size, angle);
-            /*while (randomList.size() < mViews.size()) {
-                int v = (int) (Math.random() * points.size());
-                if (!randomList.contains(v)) {
-                    randomList.add(v);
-                }
-            }*/
+            if (null == points || points.isEmpty()) return;
+            if (null == mViews || mViews.isEmpty()) return;
             for (int i = 0; i < mViews.size(); i++) {
                 View view = mViews.get(i);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -325,7 +323,6 @@ public class WaterView extends FrameLayout {
             }
         }).start();
     }
-
 
 
     /**
@@ -454,38 +451,48 @@ public class WaterView extends FrameLayout {
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void addShowViewAnimation(List<View> viewList) {
-        for (View view : viewList) {
-            addView(view);
-            //view出现的动画
-            view.setAlpha(0);
-            view.setScaleX(0);
-            view.setScaleY(0);
-            view.animate().alpha(0.8f).scaleX(0.8f).scaleY(0.8f).setDuration(ANIMATION_SHOW_VIEW_DURATION).start();
+        try {
+            for (View view : viewList) {
+                // 检查View是否已经有父控件
+                if (view.getParent() != null) {
+                    ((ViewGroup) view.getParent()).removeView(view);  // 从旧的父控件中移除
+                }
 
-            //view显示后的动画
-            float x = view.getX();
-            float y = view.getY();
-            view.measure(0, 0);
-            int measuredHeight = view.getMeasuredHeight();
-            int measuredWidth = view.getMeasuredWidth();
-            switch (viewAnimation) {
-                case SCALE:
-                    ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 0.8f, 1.0f, 0.8f, x + measuredWidth / 2, y + measuredHeight / 2);
-                    scaleAnimation.setRepeatMode(Animation.REVERSE);
-                    scaleAnimation.setDuration(1000);
-                    scaleAnimation.setRepeatCount(-1);
-                    view.startAnimation(scaleAnimation);
-                    break;
-                case TRANSLATE:
-                    TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 0, 10);
-                    translateAnimation.setRepeatMode(Animation.REVERSE);
-                    translateAnimation.setDuration(1000);
-                    translateAnimation.setRepeatCount(-1);
-                    view.startAnimation(translateAnimation);
-                    break;
+                addView(view);
+
+                //view出现的动画
+                view.setAlpha(0);
+                view.setScaleX(0);
+                view.setScaleY(0);
+                view.animate().alpha(0.8f).scaleX(0.8f).scaleY(0.8f).setDuration(ANIMATION_SHOW_VIEW_DURATION).start();
+
+                //view显示后的动画
+                float x = view.getX();
+                float y = view.getY();
+                view.measure(0, 0);
+                int measuredHeight = view.getMeasuredHeight();
+                int measuredWidth = view.getMeasuredWidth();
+                switch (viewAnimation) {
+                    case SCALE:
+                        ScaleAnimation scaleAnimation = new ScaleAnimation(1.0f, 0.8f, 1.0f, 0.8f, x + measuredWidth / 2, y + measuredHeight / 2);
+                        scaleAnimation.setRepeatMode(Animation.REVERSE);
+                        scaleAnimation.setDuration(1000);
+                        scaleAnimation.setRepeatCount(-1);
+                        view.startAnimation(scaleAnimation);
+                        break;
+                    case TRANSLATE:
+                        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, 0, 10);
+                        translateAnimation.setRepeatMode(Animation.REVERSE);
+                        translateAnimation.setDuration(1000);
+                        translateAnimation.setRepeatCount(-1);
+                        view.startAnimation(translateAnimation);
+                        break;
+                }
             }
+        } catch (Exception e) {
         }
     }
+
 
     /**
      * 移除动画view
@@ -494,78 +501,81 @@ public class WaterView extends FrameLayout {
      */
     @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     public void animRemoveView(View view, int position) {
-        float x = view.getX();
-        float y = view.getY();
-        Point point = new Point((int) x, (int) y);
-        view.measure(0, 0);
-        int measuredHeight = view.getMeasuredHeight();
-        int measuredWidth = view.getMeasuredWidth();
-        ValueAnimator animator;
-        float distance;
-        switch (destroyPoint) {
-            case VIEW_RIGHT_TOP:
-                mDestroyPoint = new Point(viewWidth, 0);
-                break;
-            case VIEW_LEFT_TOP:
-                mDestroyPoint = new Point(0, 0);
-                break;
-            case VIEW_RIGHT_BOTTOM:
-                mDestroyPoint = new Point(viewWidth, viewHeight);
-                break;
-            case VIEW_LEFT_BOTTOM:
-                mDestroyPoint = new Point(0, viewHeight);
-                break;
-            case VIEW_TOP:
-                mDestroyPoint = new Point((int) x, 0);
-                break;
-            case VIEW_BOTTOM:
-                mDestroyPoint = new Point((int) x, viewHeight);
-                break;
-            case VIEW_CENTER:
-                mDestroyPoint = new Point((viewWidth - measuredWidth) / 2, (viewHeight - measuredHeight) / 2);
-                break;
-            case VIEW_SELF:
-                mDestroyPoint = new Point((int) x, (int) y);
-                break;
-        }
-        distance = getDistance(point, mDestroyPoint);
-        int i = measuredHeight / 2;
-        if (distance >= measuredHeight) {
-            animator = ValueAnimator.ofObject(new CenterEvaluator(), point, mDestroyPoint);
-            animator.setDuration((long) (REMOVE_DELAY_MILLIS / mMaxSpace * distance));
-            animator.addUpdateListener(valueAnimator -> {
-                Point currentPoint = (Point) valueAnimator.getAnimatedValue();
-                float alpha = getDistance(currentPoint, mDestroyPoint) / distance;
-                view.setX(currentPoint.x);
-                view.setY(currentPoint.y);
-                // 设置相对于屏幕的原点
-                if (alpha <= 0.9) {
-                    view.setAlpha(alpha);
-                    view.setScaleX(alpha);
-                    view.setScaleY(alpha);
+        try {
+            float x = view.getX();
+            float y = view.getY();
+            Point point = new Point((int) x, (int) y);
+            view.measure(0, 0);
+            int measuredHeight = view.getMeasuredHeight();
+            int measuredWidth = view.getMeasuredWidth();
+            ValueAnimator animator;
+            float distance;
+            switch (destroyPoint) {
+                case VIEW_RIGHT_TOP:
+                    mDestroyPoint = new Point(viewWidth, 0);
+                    break;
+                case VIEW_LEFT_TOP:
+                    mDestroyPoint = new Point(0, 0);
+                    break;
+                case VIEW_RIGHT_BOTTOM:
+                    mDestroyPoint = new Point(viewWidth, viewHeight);
+                    break;
+                case VIEW_LEFT_BOTTOM:
+                    mDestroyPoint = new Point(0, viewHeight);
+                    break;
+                case VIEW_TOP:
+                    mDestroyPoint = new Point((int) x, 0);
+                    break;
+                case VIEW_BOTTOM:
+                    mDestroyPoint = new Point((int) x, viewHeight);
+                    break;
+                case VIEW_CENTER:
+                    mDestroyPoint = new Point((viewWidth - measuredWidth) / 2, (viewHeight - measuredHeight) / 2);
+                    break;
+                case VIEW_SELF:
+                    mDestroyPoint = new Point((int) x, (int) y);
+                    break;
+            }
+            distance = getDistance(point, mDestroyPoint);
+            int i = measuredHeight / 2;
+            if (distance >= measuredHeight) {
+                animator = ValueAnimator.ofObject(new CenterEvaluator(), point, mDestroyPoint);
+                animator.setDuration((long) (REMOVE_DELAY_MILLIS / mMaxSpace * distance));
+                animator.addUpdateListener(valueAnimator -> {
+                    Point currentPoint = (Point) valueAnimator.getAnimatedValue();
+                    float alpha = getDistance(currentPoint, mDestroyPoint) / distance;
+                    view.setX(currentPoint.x);
+                    view.setY(currentPoint.y);
+                    // 设置相对于屏幕的原点
+                    if (alpha <= 0.9) {
+                        view.setAlpha(alpha);
+                        view.setScaleX(alpha);
+                        view.setScaleY(alpha);
+                    }
+                });
+            } else {
+                animator = ValueAnimator.ofFloat(0.8f, 0);
+                animator.setDuration((long) (REMOVE_DELAY_MILLIS / mMaxSpace * measuredHeight));
+                animator.addUpdateListener(valueAnimator -> {
+                    float currentValue = (float) valueAnimator.getAnimatedValue();
+                    // 设置相对于屏幕的原点
+                    view.setAlpha(currentValue);
+                    view.setScaleX(currentValue);
+                    view.setScaleY(currentValue);
+                });
+            }
+            animator.setInterpolator(mInterpolator);
+            animator.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    //结束时从容器移除水滴
+                    view.clearAnimation();
+                    removeView(view);
                 }
             });
-        } else {
-            animator = ValueAnimator.ofFloat(0.8f, 0);
-            animator.setDuration((long) (REMOVE_DELAY_MILLIS / mMaxSpace * measuredHeight));
-            animator.addUpdateListener(valueAnimator -> {
-                float currentValue = (float) valueAnimator.getAnimatedValue();
-                // 设置相对于屏幕的原点
-                view.setAlpha(currentValue);
-                view.setScaleX(currentValue);
-                view.setScaleY(currentValue);
-            });
+            animator.start();
+        } catch (Exception e) {
         }
-        animator.setInterpolator(mInterpolator);
-        animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                //结束时从容器移除水滴
-                view.clearAnimation();
-                removeView(view);
-            }
-        });
-        animator.start();
     }
 
     /**
