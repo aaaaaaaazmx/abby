@@ -226,10 +226,6 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF")
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(borad, intentFilter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(borad, intentFilter)
-        }
+        registerReceiver(borad, intentFilter)
     }
 }

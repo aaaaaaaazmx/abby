@@ -138,11 +138,7 @@ public class TimePicker extends LinearLayout implements ScopePicker.OnScopeSelec
     private void initListener() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getContext().registerReceiver(systemTimeChangedListener, intentFilter, getContext().RECEIVER_NOT_EXPORTED);
-        } else {
-            getContext().registerReceiver(systemTimeChangedListener, intentFilter);
-        }
+        getContext().registerReceiver(systemTimeChangedListener, intentFilter);
     }
 
 
