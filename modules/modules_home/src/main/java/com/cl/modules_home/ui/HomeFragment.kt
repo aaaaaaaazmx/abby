@@ -247,12 +247,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         /**
          * 设备管理界面、切换设备
          */
-        LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-            .observe(viewLifecycleOwner) {
-                if (it.isNotEmpty()) {
-                    logI("123123123: $it")
-                    mViewMode.setDeviceId(it)
-                    mViewMode.switchDevice(deviceId = it)
+        LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+            .observe(viewLifecycleOwner) {devieInfo ->
+                if (null != devieInfo) {
+                    logI("LiveDataDeviceInfoBean: ${devieInfo.deviceId},,, ${devieInfo.spaceType}")
+                    mViewMode.setDeviceInfo(devieInfo)
+                    devieInfo.deviceId?.let {
+                        mViewMode.setDeviceId(it)
+                        mViewMode.switchDevice(it)
+                    }
                 }
             }
     }
@@ -330,7 +333,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             ViewUtils.setVisible(binding.pplantNinth.root)
             //  todo 这个显示有问题，会重复隐藏
             ViewUtils.setGone(binding.pplantNinth.clContinue)
+            // 这是里刷新主要是展示当前的帐篷图片信息。
             mViewMode.listDevice()
+            // 加载帐篷所需要的植物信息。
+            mViewMode.plantInfo()
             // mViewMode.getEnvData()
             return
         }
@@ -754,8 +760,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             imageLeftSwip.setOnClickListener {
                 val listDeviceData = mViewMode.listDevice.value?.data
                 listDeviceData?.indexOfFirst { it.currentDevice == 1 }?.apply {
-                    /* if (this.isEmpty()) return@apply
-                     val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }*/
                     val nextIndex = if (this - 1 < 0) listDeviceData.size - 1 else this - 1
                     val deviceBean = listDeviceData[nextIndex]
                     mViewMode.setLeftSwaps(true)
@@ -769,8 +773,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             imageRightSwip.setOnClickListener {
                 val listDeviceData = mViewMode.listDevice.value?.data
                 listDeviceData?.indexOfFirst { it.currentDevice == 1 }?.apply {
-                    /* if (this.isEmpty()) return@apply
-                     val index = this.indexOfFirst { it.deviceId == mViewMode.deviceId.value }*/
                     val nextIndex = if (this + 1 >= listDeviceData.size) 0 else this + 1
                     val deviceBean = listDeviceData[nextIndex]
                     mViewMode.setLeftSwaps(false)
@@ -1469,11 +1471,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     ) {
                         return@HomePlantFivePop
                     }
-
-                    // 种植引导时，点击取消弹窗时，处理得事。
-                    // 状态改为2，然后
-                    // 当作 plantGuideFlag = 2 来处理
-                    //                        showView(plantFlag, "2")
                 }, onNextAction = {
                     // 如果是在换水的三步当中
                     if (mViewMode.unreadMessageList.value?.isNotEmpty() == true) {
@@ -2075,18 +2072,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             binding.pplantNinth.imageRightSwip
                         )
                     }
-
-
-                    /*data?.indexOfFirst { it.deviceId == mViewMode.deviceId.value.toString() }?.apply {
-                        if (this == -1) {
-                            ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, binding.pplantNinth.imageRightSwip)
-                            return@success
-                        }
-                        // 表示已经是第一个了。
-                        ViewUtils.setGone(binding.pplantNinth.imageLeftSwip, this - 1 < 0)
-                        // 表示是最后一个了
-                        ViewUtils.setGone(binding.pplantNinth.imageRightSwip, this + 1 == data?.size)
-                    }*/
                 }
             })
 
@@ -2163,6 +2148,39 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
                     )
 
+                    // 这是从切换设备中带过来设备信息
+                    deviceInfo.value?.spaceType?.let {
+                        if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                            // 重新注册服务
+                            // 开启服务
+                            val intent = Intent(
+                                context,
+                                TuYaDeviceUpdateReceiver::class.java
+                            )
+                            context?.startService(intent)
+
+                            // 删除未读消息
+                            mViewMode.removeFirstUnreadMessage()
+                            // 清空气泡状态
+                            mViewMode.clearPopPeriodStatus()
+                            // todo 切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
+                            // todo 因为在listDevice中隐藏了abby的植物展示图片，只需要添加个判断，是否隐藏就好了。
+                            // todo 还是有就是帐篷界面展示摄像头和abby机器展示摄像头多了张图片。
+                            // todo 如果是帐篷，如果没有摄像头、那么就显示帐篷的图片。
+                            // 是否种植过
+                            /*data?.let {
+                                PlantCheckHelp().plantStatusCheck(
+                                    activity,
+                                    it,
+                                    true,
+                                    isLeftSwapAnim = mViewMode.isLeftSwap,
+                                    isNoAnim = false
+                                )
+                            }*/
+                            return@error
+                        }
+                    }
+
                     // 更新涂鸦Bean
                     ThingHomeSdk.newHomeInstance(mViewMode.homeId)
                         .getHomeDetail(object : IThingHomeResultCallback {
@@ -2214,6 +2232,35 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
                         map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
                     )
+
+                    // 这是从切换设备中带过来设备信息
+                    deviceInfo.value?.spaceType?.let {
+                        if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                            // 重新注册服务
+                            // 开启服务
+                            val intent = Intent(
+                                context,
+                                TuYaDeviceUpdateReceiver::class.java
+                            )
+                            context?.startService(intent)
+                            // 删除未读消息
+                            mViewMode.removeFirstUnreadMessage()
+                            // 清空气泡状态
+                            mViewMode.clearPopPeriodStatus()
+                            // todo 切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
+                            // 是否种植过
+                            /*data?.let {
+                                PlantCheckHelp().plantStatusCheck(
+                                    activity,
+                                    it,
+                                    true,
+                                    isLeftSwapAnim = mViewMode.isLeftSwap,
+                                    isNoAnim = false
+                                )
+                            }*/
+                            return@success
+                        }
+                    }
 
                     // 更新涂鸦Bean
                     ThingHomeSdk.newHomeInstance(mViewMode.homeId)
@@ -2811,7 +2858,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     hideProgressLoading()
                     if (null == data) return@success
-ad
+
                     //  不是abby不走这一块。
                     if (userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) return@success
 
@@ -3928,10 +3975,10 @@ ad
 
     override fun onResume() {
         super.onResume()
-        // 刷新设备列表
-        mViewMode.listDevice()
         // 刷新数据
         mViewMode.userDetail()
+        // 刷新设备列表
+        mViewMode.listDevice()
         // 添加状态蓝高度
         ViewCompat.setOnApplyWindowInsetsListener(binding.clRoot) { v, insets ->
             binding.clRoot.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -4415,6 +4462,14 @@ ad
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
+            // 如果是帐篷，那么就请求这个就好了
+            if (mViewMode.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                // 会走到showView、然后会调用listDevice、plantInfo两个借口
+                mViewMode.userDetail()
+                return
+            }
+
+            // ABBY机器
             // 在线、并且绑定了设备
             if (mViewMode.userDetail.value?.data?.deviceStatus == "1" && mViewMode.userDetail.value?.data?.deviceOnlineStatus == "1") {
                 // 如果没有绑定过设备

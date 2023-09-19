@@ -82,6 +82,14 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _deviceId.value = deviceId
     }
 
+    private val _deviceInfo = MutableLiveData<LiveDataDeviceInfoBean>()
+    val deviceInfo: LiveData<LiveDataDeviceInfoBean> = _deviceInfo
+    fun setDeviceInfo(deviceId: LiveDataDeviceInfoBean) {
+        _deviceInfo.value = deviceId
+    }
+
+
+
     // 童锁的开闭状态
     val _childLockStatus = MutableLiveData(
         thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
@@ -468,6 +476,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     /**
      * 获取植物基本信息\Look接口
+     * 主要是用于查询当前是否是植物的关灯模式、也即是显示zzz的图片
      */
     private val _plantInfoLoop = MutableLiveData<Resource<PlantInfoData>>()
     val plantInfoLoop: LiveData<Resource<PlantInfoData>> = _plantInfoLoop

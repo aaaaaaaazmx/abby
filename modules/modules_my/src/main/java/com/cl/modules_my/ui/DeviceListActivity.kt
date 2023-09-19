@@ -20,6 +20,7 @@ import com.cl.modules_my.databinding.MyDeviceListActivityBinding
 import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.LiveDataDeviceInfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.isCanToBigDecimal
 import com.cl.common_base.ext.logI
@@ -84,12 +85,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
             // 改用Eventbus吧。
             // 切换了设备，需要重新刷新主页。
-            logI("123123123: $deviceId")
+            logI("123123123: $deviceId,,$spaceType")
             ARouter.getInstance()
                 .build(RouterPath.Main.PAGE_MAIN).navigation()
-            LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-                .postEvent(deviceId)
-            /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
+            LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+                .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
         }
         finish()
     }
@@ -438,37 +438,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         ARouter.getInstance()
                             .build(RouterPath.Main.PAGE_MAIN).navigation()
                         LiveEventBus.get()
-                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-                            .postEvent(deviceId)
+                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+                            .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
                         finish()
                     }
                 }
-
-                /*R.id.btn_start -> {
-                    // startJourney
-                    // 直接返回
-                    this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
-                        // 删除原先的、或者切换了设备
-                        // 跳转到主页、加载。
-                        // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
-                        // 改用Eventbus吧。
-                        // 切换了设备，需要重新刷新主页。
-                        ARouter.getInstance()
-                            .build(RouterPath.Main.PAGE_MAIN).navigation()
-                        LiveEventBus.get()
-                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-                            .postEvent(deviceId)
-                        finish()
-                        *//*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*//*
-                    }
-                }
-
-                R.id.btn_reconnect -> {
-                    // 如果权限都已经同意了
-                    ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
-                        .navigation()
-                }*/
-
             }
         }
     }
