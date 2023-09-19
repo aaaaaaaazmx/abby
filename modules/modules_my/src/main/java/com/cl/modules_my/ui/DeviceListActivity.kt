@@ -256,7 +256,13 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             }
                         },
                         onReelPostAction = {
-                            // todo 这是跳转到添加帐篷
+                            //  这是跳转到添加帐篷
+                            startActivity(
+                                Intent(
+                                    this@DeviceListActivity,
+                                    GrowSpaceSetActivity::class.java
+                                )
+                            )
                         }
                     ).setBubbleBgColor(Color.WHITE) //气泡背景
                         .setArrowWidth(XPopupUtils.dp2px(this@DeviceListActivity, 3f))
@@ -315,6 +321,14 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 }
 
                 R.id.btn_chang -> {
+                    // 是帐篷
+                    if (deviceBean?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                        startActivity(Intent(this@DeviceListActivity, GrowSpaceSetActivity::class.java).apply {
+                            putExtra(GrowSpaceSetActivity.KEY_DEVICE_DETAIL_INFO, deviceBean?.deviceId)
+                        })
+                        return@setOnItemChildClickListener
+                    }
+
                     //  修改属性、弹窗pop
                     XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false)
                         .dismissOnTouchOutside(false)
@@ -385,6 +399,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     val intent = Intent(this@DeviceListActivity, AddAccessoryActivity::class.java)
                     intent.putExtra("deviceId", deviceBean?.deviceId)
                     intent.putExtra("accessoryList", deviceBean?.accessoryList as Serializable?)
+                    intent.putExtra("spaceType", deviceBean?.spaceType)
                     startActivity(intent)
                 }
 
@@ -406,6 +421,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                  * 跳转到首页
                  */
                 R.id.btn_jump_to_device -> {
+                    // todo 跳转到首页
                     // (data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE
                     this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
                         if (onlineStatus.equals("Offline")) {

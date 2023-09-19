@@ -7,6 +7,7 @@
 
     </data>
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,10 +19,11 @@
             android:layout_height="wrap_content"
             app:title="plant setup" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <RelativeLayout
             android:id="@+id/ll_root"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title">
 
             <ImageView
@@ -31,20 +33,16 @@
                 android:background="@mipmap/my_plant_set_bg" />
 
             <androidx.recyclerview.widget.RecyclerView
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="49dp"
-                android:layout_marginEnd="25dp"
-                android:layout_marginStart="25dp"
                 android:id="@+id/rv_plant_set"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="49dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="MissingConstraints" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
+        </RelativeLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

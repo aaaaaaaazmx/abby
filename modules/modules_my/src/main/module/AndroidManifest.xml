@@ -89,9 +89,9 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait" />
         <activity
-            android:launchMode="singleTask"
             android:name=".ui.CalendarActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
         <activity
@@ -130,9 +130,9 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait" />
         <activity
-            android:launchMode="singleTask"
             android:name=".ui.DeviceAutomationActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" />
         <activity android:name=".ui.FeedbackActivity" />
         <activity android:name=".ui.WallActivity" />
@@ -141,6 +141,14 @@
         <activity android:name=".ui.StoraceOptioneActivity" />
         <activity android:name=".ui.PairTheCameraActivity" />
         <activity android:name=".ui.CameraSettingActivity" />
+        <activity
+            android:name=".ui.GrowSpaceSetActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".ui.PlantSetUpActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="adjustPan" />
 
 
     </application>

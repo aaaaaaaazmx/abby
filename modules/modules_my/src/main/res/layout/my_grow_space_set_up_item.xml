@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.common_base.bean.DeviceDetailInfo" />
+
+        <variable
+            name="position"
+            type="java.lang.Integer" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/background_white_r10"
+        app:l_radius="10dp"
+        app:l_shadowAlpha="1"
+        app:l_shadowElevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/tv_number_decs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="14dp"
+            android:text='@{"No." + String.valueOf(position + 1)}'
+            android:textColor="@color/mainColor"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="No.1" />
+
+        <RelativeLayout
+            android:id="@+id/rl_sync_strain"
+            android:layout_marginEnd="33dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_number_decs"
+            app:layout_constraintEnd_toStartOf="@+id/rl_syne_type"
+            app:layout_constraintTop_toTopOf="@+id/tv_number_decs">
+
+            <TextView
+                android:id="@+id/tv_snyc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="sync strain"
+                android:textColor="@color/mainColor"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
+
+            <CheckBox
+                android:checked="@{data.isSyncStrainCheck}"
+                android:id="@+id/cb_sync"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_toRightOf="@+id/tv_snyc"
+                android:background="@drawable/my_checkbox_selector"
+                android:button="@null"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_marginEnd="25dp"
+            android:id="@+id/rl_syne_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_number_decs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_number_decs">
+
+            <TextView
+                android:id="@+id/tv_snyc_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="sync type"
+                android:textColor="@color/mainColor"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
+
+            <CheckBox
+                android:checked="@{data.isSyncTypeCheck}"
+                android:id="@+id/cb_sync_type"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_toRightOf="@+id/tv_snyc_type"
+                android:background="@drawable/my_checkbox_selector"
+                android:button="@null"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
+        </RelativeLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_space_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_button_maincolor"
+            app:layout_constraintTop_toBottomOf="@+id/tv_number_decs">
+
+            <EditText
+                android:id="@+id/et_space_plant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@null"
+                android:ellipsize="end"
+                android:hint="grow space name"
+                android:inputType="number"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@{String.valueOf(data.plantName)}"
+                android:textColor="@color/mainColor"
+                android:textColorHint="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_strain_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_button_maincolor"
+            app:layout_constraintTop_toBottomOf="@+id/cl_space_name">
+
+            <EditText
+                android:id="@+id/et_strain_plant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@null"
+                android:ellipsize="end"
+                android:hint="strain name"
+                android:inputType="number"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text='@{TextUtils.isEmpty(data.syncStrainName) ? TextUtils.isEmpty(data.strainName) ? "" : String.valueOf(data.strainName) : String.valueOf(data.syncStrainName)}'
+                android:textColor="@color/mainColor"
+                android:textColorHint="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="22dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/cl_strain_name"
+            app:layout_constraintStart_toStartOf="@+id/cl_strain_name"
+            app:layout_constraintTop_toBottomOf="@+id/cl_strain_name">
+
+            <TextView
+                android:id="@+id/tv_attribute"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_main_color_r5"
+                android:drawableRight="@mipmap/my_sj_bg"
+                android:drawablePadding="11dp"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text='@{TextUtils.isEmpty(data.syncType) ? TextUtils.isEmpty(data.attribute) ? "" : String.valueOf(data.attribute) : String.valueOf(data.syncType)}'
+                android:textColor="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="Photo" />
+
+            <TextView
+                android:id="@+id/tv_plant_way"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="28dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_main_color_r5"
+                android:drawableRight="@mipmap/my_sj_bg"
+                android:drawablePadding="11dp"
+                android:gravity="center_vertical"
+                android:padding="5dp"
+                android:text="@{String.valueOf(data.plantWay)}"
+                android:textColor="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_attribute"
+                app:layout_constraintEnd_toEndOf="@+id/cl_strain_name"
+                app:layout_constraintTop_toTopOf="@+id/tv_attribute"
+                tools:text="Seed" />
+        </LinearLayout>
+    </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
+</layout>

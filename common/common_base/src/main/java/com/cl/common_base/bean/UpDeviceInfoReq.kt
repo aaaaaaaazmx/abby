@@ -21,7 +21,7 @@ data class UpDeviceInfoReq(
     var week: Int? = null,
     var deviceId: String?,
     var cupType: Int? = null, // (0-纸杯，1-塑料杯)
-    var list: MutableList<InfoList>? = null,
+    var list: MutableList<DeviceDetailInfo>? = null,
     var plantId: Int? = null, // 植物ID， 主要用于在设备列表里面修改植物名称
     var proMode: String? = null, // 专业模式
     var fanAuto: Int? = null, // 风扇是否自动
@@ -29,11 +29,11 @@ data class UpDeviceInfoReq(
     var smartUsbPowder: Int? = null, // USB开关：1-开启、0-关闭
 ) : BaseBean() {
 
-    data class InfoList(
+    /*data class InfoList(
         var day: String? = null,
         var journeyName: String? = null,
         var guideId: Int? = null,
         var journeyStatus: Int? = null,
         var week: String? = null,
-    ) : com.joketng.timelinestepview.bean.BaseBean()
+    ) : com.joketng.timelinestepview.bean.BaseBean()*/
 }

@@ -14,6 +14,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.ResetPwdReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -130,6 +131,14 @@ interface HttpMyApiService {
     @POST("abby/userDevice/updateDeviceInfo")
     fun updateDeviceInfo(
         @Body body: UpDeviceInfoReq
+    ): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 添加帐篷
+     */
+    @POST("abby/userDevice/addDevice")
+    fun addDevice(
+        @Body body: DeviceDetailsBean
     ): Flow<HttpResult<BaseBean>>
 
 
@@ -342,4 +351,11 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/accessory/getAccessoryInfo")
     fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
+
+    /**
+     * 帐篷设备的设备详情
+     */
+    @FormUrlEncoded
+    @POST("abby/userDevice/getDeviceDetails")
+    fun getDeviceDetails(@Field("deviceId") deviceId: String): Flow<HttpResult<DeviceDetailsBean>>
 }
