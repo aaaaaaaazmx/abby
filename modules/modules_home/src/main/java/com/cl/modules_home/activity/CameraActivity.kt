@@ -434,11 +434,11 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             })
 
             // 查询门是否开着的。
-            mViewModel.tuYaDeviceBean?.devId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
+            mViewModel.userInfo?.deviceId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
         }
 
         // 获取配件信息
-        mViewModel.tuYaDeviceBean?.devId?.let { mViewModel.getAccessoryInfo(it) }
+        mViewModel.userInfo?.deviceId?.let { mViewModel.getAccessoryInfo(it) }
 
         // Check if the device version >= 23 because
         // from Android 6.0 (Marshmallow) you can set the status bar color.

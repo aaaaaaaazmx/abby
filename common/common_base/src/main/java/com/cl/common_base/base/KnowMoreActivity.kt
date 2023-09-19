@@ -371,7 +371,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         mViewMode.updateDeviceInfo(
                             UpDeviceInfoReq(
                                 proMode = "On",
-                                deviceId = mViewMode.tuyaHomeBean?.devId
+                                deviceId = mViewMode.userInfo?.deviceId
                             )
                         )
                         mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }

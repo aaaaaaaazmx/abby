@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.bean.PlantInfoData
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -29,12 +30,10 @@ import javax.inject.Inject
 @ActivityRetainedScoped
 class PlantingLogViewModel @Inject constructor(private val repository: PlantRepository) : ViewModel() {
 
-    /**
-     * 设备信息\用于获取设备Id
-     */
-    val thingDeviceBean = {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+
+    val userinfoBean by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        GSON.parseObject(bean, UserinfoBean::class.java)
     }
 
     // 更改Current页码

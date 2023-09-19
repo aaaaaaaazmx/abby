@@ -134,7 +134,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
     private fun clickView() {
         binding.flGetPlantList.setOnClickListener {
             // 获取到所有的植物ID
-            viewModel.getPlantIdByDeviceId(viewModel.thingDeviceBean()?.devId ?: "")
+            viewModel.getPlantIdByDeviceId(viewModel.userinfoBean?.deviceId ?: "")
         }
 
         binding.ivAddLog.setOnClickListener {

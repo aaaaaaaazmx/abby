@@ -87,11 +87,6 @@ class HomeEnvlrPop(
     }
 
 
-    val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
     private var binding: HomeEnvlrPopBinding? = null
     override fun onCreate() {
         super.onCreate()
@@ -120,7 +115,7 @@ class HomeEnvlrPop(
                         upDeviceInfo(
                             UpDeviceInfoReq(
                                 fanAuto = if (isChecked) 1 else 0,
-                                deviceId = tuyaHomeBean?.devId
+                                deviceId = userInfo?.deviceId
                             )
                         )
                     }
@@ -182,7 +177,7 @@ class HomeEnvlrPop(
                                         onConfirmAction = {
                                             // 刷新回调、并且记录当前时间。
                                             lifecycleScope.launch {
-                                               syncLightParam(tuyaHomeBean?.devId.toString())
+                                               syncLightParam(userInfo?.deviceId.toString())
                                             }
                                             // 如果今天还没刷新，
                                             Prefs.putLong(Constants.Login.KEY_REFRESH_TIME, time)

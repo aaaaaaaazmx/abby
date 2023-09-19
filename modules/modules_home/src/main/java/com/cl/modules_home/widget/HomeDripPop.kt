@@ -13,6 +13,7 @@ import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeDripPopBinding
 import com.cl.common_base.bean.TrickData
 import com.cl.common_base.bean.UpDeviceInfoReq
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -42,9 +43,11 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
 
     private val service = ServiceCreators.create(HttpHomeApiService::class.java)
 
-    val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
     }
 
     override fun getImplLayoutId(): Int {
@@ -175,7 +178,7 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                 lifecycleScope.launch {
                     trickleIrrigationConfig(
                         TrickData(
-                            deviceId = tuyaHomeBean?.devId,
+                            deviceId = userInfo?.deviceId,
                             everyStartTime = turnOnHour,
                             everyEndTime = turnOffHour,
                             turnOnSecond = turnTime,
@@ -188,7 +191,7 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
 
         }
         lifecycleScope.launch {
-            getTrickleIrrigationConfig(tuyaHomeBean?.devId.toString())
+            getTrickleIrrigationConfig(userInfo?.deviceId ?: "")
         }
     }
 

@@ -28,6 +28,7 @@ import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.LikeReq
 import com.cl.common_base.bean.RewardReq
 import com.cl.common_base.bean.UnreadMessageData
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
@@ -90,14 +91,6 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
     }
 
     /**
-     * 获取当前设备信息
-     */
-    private val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
-    /**
      * 是否是英制
      */
     private val isFractional by lazy {
@@ -146,6 +139,13 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
      */
     private val adapter by lazy {
         PumpWaterAdapter(mutableListOf())
+    }
+
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
     }
 
     /**
@@ -513,7 +513,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
 
                             if ((value as? Boolean == false)) return@observe
                             // 查询是否排水结束
-                            ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+                            ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
                                 it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
                                     IResultCallback {
                                     override fun onError(code: String?, error: String?) {

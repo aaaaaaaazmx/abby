@@ -189,7 +189,7 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
                     data?.let {
                         binding.etApsceName.setText(it.spaceName)
                         binding.etTypeName.setText(it.spaceSize)
-                        binding.etNumberPlant.setText((it.list?.size ?: 0))
+                        binding.etNumberPlant.setText("${(it.list?.size ?: 0)}")
                         binding.etLedNumber.setText(it.ledWattage)
 
                         if (typeAdapter.data.isEmpty()) return@success

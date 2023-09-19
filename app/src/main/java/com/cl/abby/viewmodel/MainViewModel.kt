@@ -54,6 +54,15 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 用户信息
+     */
+    val userinfoBean by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        GSON.parseObject(bean, UserinfoBean::class.java)
+    }
+
+
+    /**
      * 返回当前设备所有的dps
      * 这里面的dps都是会变化的，需要实时更新
      * 不能直接用
@@ -705,49 +714,6 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
         _unreadMessageList.value?.clear()
     }
 
-    // 固件信息
-    // 获取当前设备信息
-    private val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
-    private val tuYaHomeSdk by lazy {
-        ThingHomeSdk.newOTAInstance(tuYaDeviceBean?.devId)
-    }
-
-    /**
-     * 查询固件升级信息
-     */
-    fun checkFirmwareUpdateInfo(
-        onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
-    ) {
-        tuYaHomeSdk.getOtaInfo(object : IGetOtaInfoCallback {
-            override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
-                logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
-                // 如果可以升级
-                if (hasHardwareUpdate(upgradeInfoBeans)) {
-                    onOtaInfo?.invoke(upgradeInfoBeans, true)
-                } else {
-                    // 如果不可以升级过
-                    onOtaInfo?.invoke(upgradeInfoBeans, false)
-                }
-            }
-
-            override fun onFailure(code: String?, error: String?) {
-                logI(
-                    """
-                        getOtaInfo:
-                        code: $code
-                        error: $error
-                    """.trimIndent()
-                )
-                Reporter.reportTuYaError("getOtaInfo", error, code)
-            }
-        })
-    }
-
-
     /**
      * 获取种植完成界面参数
      */
@@ -958,7 +924,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
         // 获取环信消息数量
         getEaseUINumber()
         // 获取设备环境消息
-        environmentInfo(EnvironmentInfoReq(deviceId = thingDeviceBean?.devId))
+        environmentInfo(EnvironmentInfoReq(deviceId = userinfoBean?.deviceId))
         getHomePageNumber()
     }
 

@@ -1,5 +1,6 @@
 package com.cl.common_base.util.device
 
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
@@ -17,10 +18,11 @@ import kotlin.math.log
  * @author 李志军 2022-08-09 11:16
  */
 class DeviceControlImpl : DeviceControl, IResultCallback {
-    // 获取当前设备信息
-    private val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
     }
 
     private val map by lazy {
@@ -45,7 +47,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      * 获取当前设备
      */
     override fun getCurrentDevice(): IThingDevice? {
-        return ThingHomeSdk.newDeviceInstance(tuyaHomeBean?.devId)
+        return ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)
     }
 
     /**

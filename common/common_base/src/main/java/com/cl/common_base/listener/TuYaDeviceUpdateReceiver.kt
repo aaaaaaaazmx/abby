@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.Prefs
@@ -26,11 +27,13 @@ class TuYaDeviceUpdateReceiver : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val tuyaHomeBean = GSON.parseObject(
-            Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA),
-            DeviceBean::class.java
-        )
-        val devId = tuyaHomeBean?.devId
+        // 用户信息
+        val userInfo by lazy {
+            val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+            val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+            parseObject
+        }
+        val devId = userInfo?.deviceId
         logI("TuYaDeviceUpdateReceiver devId : $devId")
         ThingHomeSdk.newDeviceInstance(devId).registerDeviceListener(object : IDeviceListener {
             /**

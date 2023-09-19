@@ -171,13 +171,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 获取sn
         mViewMode.getSn()
         // 刷新token、放在customSplashActivity页面了。
-        /* mViewMode.refreshToken(
-             AutomaticLoginReq(
-                 userName = mViewMode.account,
-                 password = mViewMode.psd,
-                 token = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
-             )
-         )*/
 
         // getAppVersion 检查版本更新
         mViewMode.getAppVersion()
@@ -323,9 +316,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             firstLoginAndNoDevice: $firstLoginAndNoDevice
         """.trimIndent()
         )
+
         if (firstLoginAndNoDevice == true) {
             // 显示出绑定设备界面
             firstLoginViewVisibile()
+            return
+        }
+
+        // 是帐篷
+        if (mViewMode.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+            // 显示布局
+            ViewUtils.setVisible(binding.pplantNinth.root)
+            //  todo 这个显示有问题，会重复隐藏
+            ViewUtils.setGone(binding.pplantNinth.clContinue)
+            mViewMode.listDevice()
+            // mViewMode.getEnvData()
             return
         }
 
@@ -626,12 +631,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 获取, 并且取反
                 val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
 
-                // 显示隐藏的布局
-                binding.pplantNinth.ivOne.setBackgroundResource(if (isSHowCamera) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
+                // 显示隐藏的布局 、显示摄像头或者是帐篷的情况下
+                binding.pplantNinth.ivOne.setBackgroundResource(if (isSHowCamera || mViewMode.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
                 ViewUtils.setVisible(isSHowCamera, binding.pplantNinth.rlBowl)
                 ViewUtils.setInvisible(binding.pplantNinth.ivBowl, isSHowCamera)
+                // 夜间模式下的植物, 不是帐篷的情况下才显示abby的夜间模式
                 ViewUtils.setVisible(
-                    !isSHowCamera && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0,
+                    (!isSHowCamera && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0) && mViewMode.userDetail.value?.data?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX,
                     binding.pplantNinth.ivThree,
                     binding.pplantNinth.ivTwo
                 )
@@ -1980,13 +1986,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             childLockStatus.observe(viewLifecycleOwner) {
                 logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}")
                 ViewUtils.setVisible(
-                    mViewMode.isShowDoorDrawable(),
+                    mViewMode.isShowDoorDrawable() && userDetail.value?.data?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX,
                     binding.pplantNinth.ivDoorLockStatus
                 )
             }
             openDoorStatus.observe(viewLifecycleOwner) {
                 ViewUtils.setVisible(
-                    mViewMode.isShowDoorDrawable(),
+                    mViewMode.isShowDoorDrawable() && userDetail.value?.data?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX,
                     binding.pplantNinth.ivDoorLockStatus
                 )
                 binding.pplantNinth.ivDoorLockStatus.setImageResource(
@@ -2012,7 +2018,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 判断设备数量，设定左右滑动图片的显示
                         val isVisible = dataList.filter { it.isSwitch == 1 }.size > 1
                         ViewUtils.setVisible(
-                            isVisible,
+                            isVisible && userDetail.value?.data?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX,
                             binding.pplantNinth.imageLeftSwip,
                             binding.pplantNinth.imageRightSwip
                         )
@@ -2034,7 +2040,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         if (dataList.isNotEmpty()) {
                             getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-                                binding.pplantNinth.ivOne.setBackgroundResource(if (isLoadCamera && isHave) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
+                                binding.pplantNinth.ivOne.setBackgroundResource(if ((isLoadCamera && isHave) || userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) R.mipmap.home_plant_three_right_angle_bg else R.mipmap.home_plant_three_bg)
                                 ViewUtils.setVisible(
                                     isHave && isLoadCamera,
                                     binding.pplantNinth.rlBowl
@@ -2044,15 +2050,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     isHave && isLoadCamera
                                 )
                                 ViewUtils.setVisible(
-                                    !isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0,
+                                    !isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0 && userDetail.value?.data?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX,
                                     binding.pplantNinth.ivThree,
                                     binding.pplantNinth.ivTwo
                                 )
                                 ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
 
-                                /*logI("111: $isHave,,,, $isLoadCamera")
-                                logI("1111111111: ${mViewMode.cameraId.value} ishava: $isHave $cameraId  $isLoadCamera  ${mViewMode.cameraId.value != cameraId}")
-                                logI("123123123123123123: ${dataList.size},,, ${dataList.firstOrNull { it.currentDevice == 1 }}")*/
                                 // 获取摄像头配件信息
                                 mViewMode.getAccessoryInfo(devId)
 
@@ -2524,6 +2527,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             // 水的容积
             getWaterVolume.observe(viewLifecycleOwner) {
+                if (mViewMode.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) return@observe
                 setWaterStatus(it)
                 if (isManual != true) return@observe
                 mViewMode.setWaterLevel(it)
@@ -2558,43 +2562,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
-            // 更新信息,刷新token
-            /*refreshToken.observe(viewLifecycleOwner, resourceObserver {
-                success {
-                    hideProgressLoading()
-
-                    // 保存Token
-                    data?.token?.let { it ->
-                        Prefs.putString(
-                            Constants.Login.KEY_LOGIN_DATA_TOKEN, it
-                        )
-                    }
-
-                    // 保存涂鸦信息
-                    val tuYaInfo = TuYaInfo(
-                        tuyaCountryCode = data?.tuyaCountryCode,
-                        tuyaPassword = data?.tuyaPassword,
-                        tuyaUserId = data?.tuyaUserId,
-                        tuyaUserType = data?.tuyaUserType
-                    )
-                    GSON.toJson(tuYaInfo)?.let { tuyainfos ->
-                        logI("tuYaInfoL: $tuyainfos")
-                        Prefs.putStringAsync(Constants.Login.KEY_TU_YA_INFO, tuyainfos)
-                    }
-                }
-                error { msg, code ->
-                    hideProgressLoading()
-                    msg?.let { it1 -> ToastUtil.shortShow(it1) }
-                }
-                loading {
-                    showProgressLoading()
-                }
-            })*/
-
             // 获取氧气币列表
             getOxygenCoinList.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
+                    if (userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) return@success
                     ViewUtils.setVisible(data?.size != 0, binding.pplantNinth.waterView)
                     if (data == null) return@success
 
@@ -2833,6 +2805,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     hideProgressLoading()
                     if (null == data) return@success
 
+                    //  不是abby不走这一块。
+                    if (userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) return@success
+
                     // 2. 【获取植物基本信息】接口新增字段 [发芽剩余时间]，类型为时间戳，0为倒计时结束，该字段只在发芽阶段返回，点了Next后返回为NULL。
                     ViewUtils.setVisible(
                         data?.germinationTime?.isNotEmpty() == true && (data?.germinationTime?.toLong()
@@ -3012,38 +2987,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             })
                             .show()
                     }
-
-
-                    // 不用属性名和名字
-                    /* if (data?.attribute.isNullOrEmpty()) {
-                         ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
-                             .withString(Constants.Global.KEY_PLANT_ID, data?.id.toString())
-                             .withBoolean(Constants.Global.KEY_USER_NO_ATTRIBUTE, true)
-                             .navigation(activity, KEY_FOR_USER_NAME)
-                         return@success
-                     }
-
-                     // 用来判断当前用户是否拥有名字 or 属性名，如果没有拥有名字，那么直接需要选择
-                     if (data?.strainName.isNullOrEmpty()) {
-                         pop.isDestroyOnDismiss(false).isDestroyOnDismiss(false)
-                             .asCustom(context?.let {
-                                 // 显示居中弹窗文案
-                                 BaseCenterPop(
-                                     it,
-                                     onConfirmAction = {
-                                         ARouter.getInstance()
-                                             .build(RouterPath.My.PAGE_MT_CLONE_SEED).withString(
-                                                 Constants.Global.KEY_PLANT_ID, data?.id.toString()
-                                             ).withBoolean(
-                                                 Constants.Global.KEY_USER_NO_STRAIN_NAME, true
-                                             ).navigation(activity, KEY_FOR_USER_NAME)
-                                     },
-                                     content = getString(com.cl.common_base.R.string.base_no_starin_name_desc),
-                                     isShowCancelButton = false
-                                 )
-                             }).show()
-                         return@success
-                     }*/
 
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
                     data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
@@ -3523,7 +3466,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    ViewUtils.setVisible((data?.size ?: 0) == 0, binding.pplantNinth.waterView)
+                    ViewUtils.setVisible((data?.size ?: 0) == 0 && userDetail.value?.data?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX, binding.pplantNinth.waterView)
                     // 气泡会消失掉，需要防止当前点了之后，这是状态之后，气泡消失掉了，但是数据还保存着, 查找当前任务不在了，那么直接消失掉
                     if (data?.firstOrNull {
                             it.taskId == mViewMode.popPeriodStatus.value?.get(
@@ -4033,7 +3976,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private fun changUnReadMessageUI() {
         // 如果是空的，那么不需要改变
         val unReadList = mViewMode.unreadMessageList.value
-        if (unReadList.isNullOrEmpty()) {
+        if (unReadList.isNullOrEmpty() || mViewMode.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
             ViewUtils.setGone(binding.pplantNinth.clContinue)
             return
         }
@@ -4470,12 +4413,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 在线、并且绑定了设备
             if (mViewMode.userDetail.value?.data?.deviceStatus == "1" && mViewMode.userDetail.value?.data?.deviceOnlineStatus == "1") {
                 // 如果没有绑定过设备
+                // 获取用户信息
+                mViewMode.userDetail()
                 // 种植过的才可以请求
                 mViewMode.plantInfo()
                 // 环境信息
                 mViewMode.getEnvData()
-                // 获取用户信息
-                mViewMode.userDetail()
             }
 
             // 手动模式

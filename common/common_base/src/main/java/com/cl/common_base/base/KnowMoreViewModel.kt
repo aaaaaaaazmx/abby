@@ -46,11 +46,6 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
         GSON.parseObject(bean, User::class.java)
     }
 
-    val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
     // 用户信息
     val userInfo by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)

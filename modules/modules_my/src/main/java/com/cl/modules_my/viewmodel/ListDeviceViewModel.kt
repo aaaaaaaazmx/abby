@@ -30,15 +30,6 @@ import javax.inject.Inject
 class ListDeviceViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
 
-
-    /**
-     * 设备信息
-     */
-    val thingDeviceBean by lazy  {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
     /**
      * 合并账号
      */

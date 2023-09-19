@@ -74,11 +74,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     @Inject
     lateinit var mViewModel: SettingViewModel
 
-    /*private val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }*/
-
     private val tuYaUser by lazy {
         val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
         GSON.parseObject(bean, User::class.java)
@@ -674,7 +669,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 .error { code, error ->
                     ToastUtil.shortShow(
                         """
-                      pumpWater: 
+                      childLock: 
                       code-> $code
                       errorMsg-> $error
                      """.trimIndent()

@@ -12,6 +12,7 @@ import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import com.cl.common_base.adapter.PumpWaterAdapter
 import com.cl.common_base.bean.AdvertisingData
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.BasePumpWaterPopBinding
 import com.cl.common_base.ext.logI
@@ -50,10 +51,11 @@ class BasePumpWaterPop(
     private var onWaterFinishedAction: (() -> Unit)? = null,
     private val onCancelAction: (() -> Unit)? = null
 ) : BottomPopupView(context) {
-    // 获取当前设备信息
-    private val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
     }
 
     private var count = 1
@@ -295,7 +297,7 @@ class BasePumpWaterPop(
 
                             if ((value as? Boolean == false)) return@observe
                             // 查询是否排水结束
-                            ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+                            ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
                                 it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
                                     IResultCallback {
                                     override fun onError(code: String?, error: String?) {

@@ -148,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8.5dp"
                 android:alpha="0.15"
-                android:background="@mipmap/home_max_water"
+                tools:background="@mipmap/home_max_water"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -158,7 +158,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:background="@mipmap/home_week_twelve"
+                tools:background="@mipmap/home_week_twelve"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

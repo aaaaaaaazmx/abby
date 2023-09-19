@@ -79,20 +79,17 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             return
         }
         list.firstOrNull { it.isChooser == true }?.apply {
-            if (deviceId != mViewModel.thingDeviceBean?.devId) {
-                // 删除原先的、或者切换了设备
-                // 跳转到主页、加载。
-                // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
-                // 改用Eventbus吧。
-                // 切换了设备，需要重新刷新主页。
-                logI("123123123: $deviceId")
-                ARouter.getInstance()
-                    .build(RouterPath.Main.PAGE_MAIN).navigation()
-                LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-                    .postEvent(deviceId)
-                finish()
-                /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
-            }
+            // 删除原先的、或者切换了设备
+            // 跳转到主页、加载。
+            // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
+            // 改用Eventbus吧。
+            // 切换了设备，需要重新刷新主页。
+            logI("123123123: $deviceId")
+            ARouter.getInstance()
+                .build(RouterPath.Main.PAGE_MAIN).navigation()
+            LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
+                .postEvent(deviceId)
+            /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
         }
         finish()
     }
@@ -148,28 +145,25 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             data?.get(this)?.isChooser = true
                             return@apply
                         }
-                        data?.indexOfFirst { it.deviceId == mViewModel.thingDeviceBean?.devId }
-                            ?.apply {
-                                if (this == -1) {
-                                    if (data.isNullOrEmpty()) return@apply
-                                    // 如果没有找到相对应的, 选中当前第一个。
-                                    data?.get(0)?.isChooser = true
-                                    return@apply
-                                }
-                                logI("thingDeviceBean ID: ${mViewModel.thingDeviceBean?.devId}")
+                        dataList.indexOfFirst { it.currentDevice == 1 }?.apply {
+                            if (this == -1) {
                                 if (data.isNullOrEmpty()) return@apply
-                                data?.get(this)?.isChooser = true
+                                // 如果没有找到相对应的, 选中当前第一个。
+                                data?.get(0)?.isChooser = true
+                                return@apply
                             }
+                            if (data.isNullOrEmpty()) return@apply
+                            data?.get(this)?.isChooser = true
+                        }
                     }
                 } else {
-                    data?.indexOfFirst { it.deviceId == mViewModel.thingDeviceBean?.devId }?.apply {
+                    data?.indexOfFirst { it.currentDevice == 1 }?.apply {
                         if (this == -1) {
                             if (data.isNullOrEmpty()) return@apply
                             // 如果没有找到相对应的, 选中当前第一个。
                             data?.get(0)?.isChooser = true
                             return@apply
                         }
-                        logI("thingDeviceBean ID: ${mViewModel.thingDeviceBean?.devId}")
                         if (data.isNullOrEmpty()) return@apply
                         data?.get(this)?.isChooser = true
                     }
@@ -323,9 +317,16 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 R.id.btn_chang -> {
                     // 是帐篷
                     if (deviceBean?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
-                        startActivity(Intent(this@DeviceListActivity, GrowSpaceSetActivity::class.java).apply {
-                            putExtra(GrowSpaceSetActivity.KEY_DEVICE_DETAIL_INFO, deviceBean?.deviceId)
-                        })
+                        startActivity(
+                            Intent(
+                                this@DeviceListActivity,
+                                GrowSpaceSetActivity::class.java
+                            ).apply {
+                                putExtra(
+                                    GrowSpaceSetActivity.KEY_DEVICE_DETAIL_INFO,
+                                    deviceBean?.deviceId
+                                )
+                            })
                         return@setOnItemChildClickListener
                     }
 

@@ -43,13 +43,6 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
         parseObject
     }
 
-
-    // 获取当前设备信息
-    val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
     // 这个变量用于存储选择的日期
     var selectedDate: Calendar = Calendar.getInstance()
 
@@ -64,7 +57,7 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
 
     // 获取SN
     fun getSn() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_REST_STATUS, object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logI(
@@ -163,7 +156,7 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
      */
     private val _getPartsInfo = MutableLiveData<Resource<UpdateInfoReq>>()
     val getPartsInfo: LiveData<Resource<UpdateInfoReq>> = _getPartsInfo
-    fun getPartsInfo(deviceId: String = tuYaDeviceBean?.devId ?: "") {
+    fun getPartsInfo(deviceId: String = userInfo?.deviceId ?: "") {
         viewModelScope.launch {
             repository.getAccessoryInfo(deviceId)
                 .map {

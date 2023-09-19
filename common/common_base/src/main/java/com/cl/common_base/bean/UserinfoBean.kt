@@ -28,6 +28,7 @@ data class UserinfoBean(
     val plantDays: String? = null,
     val growBoxCount: String? = null,
     val harvestCount: String? = null,
+    val spaceType: String? = null,
     val notBound: Int? = null, // 1 是绑定过、其他都是未绑定过
 ) : BaseBean() {
     // 用户基本信息Bean
@@ -67,5 +68,6 @@ data class UserinfoBean(
         val tuyaUserId: String? = null,
         val tuyaUserType: String? = null,
         val notBound: Int? = null,
+        val spaceType: String? = null,
     ) : BaseBean()
 }

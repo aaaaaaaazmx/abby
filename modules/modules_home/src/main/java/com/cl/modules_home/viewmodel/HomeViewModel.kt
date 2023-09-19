@@ -1457,7 +1457,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
                     // 这个周期目前自行处理、不走guideInfo接口
                     // 回调出去。自行处理
-                    _transplantPeriodicity.value = taskId
+                    taskId?.let { ids ->
+                    _transplantPeriodicity.value = ids
+                    }
                 }
 
                 else -> {
@@ -1968,7 +1970,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      *  false 表示没有摄像头
      *
      *  @param isHave 是否有摄像头
-     *  @param isLoadCamera 是否加载摄像头
+     *  @param isLoadCamera 展示摄像头
      *  @param cameraId 摄像头的ID
      */
     fun getCameraFlag(isHaveACamera: (isHave: Boolean, isLoadCamera: Boolean, cameraId: String, devId: String) -> Unit) {
