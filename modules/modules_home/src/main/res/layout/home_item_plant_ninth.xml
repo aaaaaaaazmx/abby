@@ -84,6 +84,7 @@
             app:layout_constraintCircleRadius="20dp" />
 
         <ImageView
+            android:visibility='@{viewModel.userDetail.data.spaceType.equals("box")? View.VISIBLE : View.GONE}'
             app:layout_constraintBottom_toBottomOf="@+id/tv_title"
             app:layout_constraintTop_toTopOf="@+id/tv_title"
             android:id="@+id/iv_calendar"

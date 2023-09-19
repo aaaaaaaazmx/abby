@@ -74,6 +74,7 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
+import com.tencent.bugly.proguard.ad
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.AbsP2pCameraListener
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.OperationDelegateCallBack
@@ -2328,6 +2329,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         userInfo = data
                     )
 
+                    // 如果是帐篷那么就不请求未读数量
+                    if (data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                        // 从聊天退出来之后需要刷新消息环信数量
+                        mViewMode.getHomePageNumber()
+                    }
+
                     // 获取氧气币列表
                     mViewMode.getOxygenCoinList()
 
@@ -2804,7 +2811,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 success {
                     hideProgressLoading()
                     if (null == data) return@success
-
+ad
                     //  不是abby不走这一块。
                     if (userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) return@success
 
@@ -3923,8 +3930,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         super.onResume()
         // 刷新设备列表
         mViewMode.listDevice()
-        // 从聊天退出来之后需要刷新消息环信数量
-        mViewMode.getHomePageNumber()
         // 刷新数据
         mViewMode.userDetail()
         // 添加状态蓝高度
