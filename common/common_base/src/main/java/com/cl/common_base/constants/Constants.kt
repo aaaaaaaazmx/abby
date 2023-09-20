@@ -13,7 +13,7 @@ object Constants {
     const val USER_ID = "userid"
     const val USER_NAME = "username"
     const val PASSWORD = "password"
-    const val APP_TAG = "Abby"
+    const val APP_TAG = "AbbyAbby"
 
     // 网络常量
     const val APP_SUCCESS = 200

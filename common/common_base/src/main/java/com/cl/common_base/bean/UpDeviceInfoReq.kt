@@ -19,6 +19,9 @@ data class UpDeviceInfoReq(
     var nightTimer: String? = null, // 夜间模式时间
     var plantStatus: Int? = null,
     var week: Int? = null,
+    var lightOn: String? = null,
+    var lightOff: String? = null,
+    var lightOnOff: String? = null,
     var deviceId: String?,
     var cupType: Int? = null, // (0-纸杯，1-塑料杯)
     var list: MutableList<DeviceDetailInfo>? = null,

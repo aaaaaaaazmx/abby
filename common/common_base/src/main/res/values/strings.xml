@@ -45,7 +45,7 @@
     <string name="send_email">We sent an email to </string>
     <string name="send_email_register"> Enter the verification code sent to your email address.</string>
     <string name="register_email_tips"> Enter the verification code sent to your email address. Then reset your password. </string>
-    <string name="register_email_dont_tips">Didn‘t receive an email?</string>
+    <string name="register_email_dont_tips">Didn‘t receive email?</string>
     <string name="login_account_empty">Please enter username</string>
     <string name="login_password_empty">Please enter password</string>
     <string name="home_fattening">Moving forward, you will use a full pod of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.\n\n*Note: you must cut open the packets first</string>

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.ImageUrl
 import com.cl.common_base.bean.PlantInfoData
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -41,6 +42,10 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     // 是否是公制
     val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
 
+    val userinfoBean by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        GSON.parseObject(bean, UserinfoBean::class.java)
+    }
 
     /**
      * 图片上传船地址结合

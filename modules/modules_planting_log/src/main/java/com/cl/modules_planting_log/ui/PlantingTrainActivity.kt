@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.ImageUrl
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -57,6 +58,7 @@ import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.util.XPopupUtils
+import com.thingclips.smart.home.sdk.bean.LightningSearchBean
 import dagger.hilt.android.AndroidEntryPoint
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
@@ -235,6 +237,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.logId = logId
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
+        logSaveOrUpdateReq.syncPlants = if (viewModel.userinfoBean?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX) false else binding.ftSyncZp.isItemChecked
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
         showProgressLoading()

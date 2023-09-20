@@ -677,11 +677,11 @@
 
                 <ImageView
                     android:id="@+id/iv_ox_bg"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:layout_marginStart="13dp"
                     android:layout_marginTop="9dp"
-                    android:background="@mipmap/home_plant_oxygen_bg"
+                    android:background='@{viewModel.userDetail.data.spaceType.equals("box") ? @drawable/home_plant_oxygen_bg : @drawable/home_dp_bg}'
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -690,7 +690,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
-                    android:text="Oxy Coin"
+                    android:text='@{viewModel.userDetail.data.spaceType.equals("box") ? "Oxy Coin" : "Lighting"}'
                     android:textColor="@color/mainColor"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -726,7 +726,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
                     android:layout_marginBottom="39dp"
-                    android:gravity="center"
+                    android:gravity="start"
                     android:text="----"
                     android:textColor="#161B19"
                     android:textSize="14sp"
@@ -803,6 +803,7 @@ Day1" />
                     app:layout_constraintTop_toBottomOf="@+id/tv_temperature" />
 
                 <TextView
+                    android:visibility='@{viewModel.userDetail.data.spaceType.equals("box")? View.VISIBLE : View.GONE}'
                     android:textStyle="bold"
                     android:id="@+id/tv_healthStatus"
                     android:layout_width="wrap_content"
@@ -819,6 +820,26 @@ Day1" />
                     app:layout_constraintTop_toBottomOf="@+id/vv_temperature_bg"
                     tools:text="Week24
 Day1" />
+
+                <ImageView
+                    android:visibility='@{viewModel.userDetail.data.spaceType.equals("box")? View.GONE : View.VISIBLE}'
+                    android:id="@+id/iv_zp_add"
+                    android:background="@mipmap/home_zp_add"
+                    android:textStyle="bold"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginBottom="22dp"
+                    android:gravity="center"
+                    android:textColor="#161B19"
+                    android:textSize="14sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/vv_temperature_bg"
+                    />
+
+
             </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

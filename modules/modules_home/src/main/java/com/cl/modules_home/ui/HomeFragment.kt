@@ -814,6 +814,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 点击弹出个氧气币窗口
             clOxy.setOnClickListener {
+
+                // 帐篷下，弹出设置开关灯的时间
+                if (mViewMode.isZp.value == true) {
+                    xpopup {
+                        isDestroyOnDismiss(false)
+                        enableDrag(true)
+                        dismissOnTouchOutside(false)
+                        // maxHeight(dp2px(600f))
+                        asCustom(context?.let { it1 ->
+                            HomeLightPop(
+                                it1,
+                                deviceId = mViewMode.userDetail.value?.data?.deviceId ?: "",
+                                onTime = mViewMode.plantInfo.value?.data?.lightOn ?:0 ,
+                                onOffTime = mViewMode.plantInfo.value?.data?.lightOff ?: 0,
+                                onConfirmAction = { _, _ -> mViewMode.plantInfo()}
+                            )
+                        }).show()
+                    }
+                    return@setOnClickListener
+                }
+
                 xpopup {
                     isDestroyOnDismiss(false)
                     enableDrag(true)
@@ -825,6 +846,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 点击环境弹窗
             clEnvir.setOnClickListener {
+                if (mViewMode.isZp.value == true) {
+                    // 跳转到配件
+                    mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
+                        ?.let {
+                            ARouter
+                                .getInstance()
+                                .build(RouterPath.My.PAGE_ADD_ACCESSORY)
+                                .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                                .withSerializable(
+                                    "accessoryList",
+                                    it.accessoryList as Serializable?
+                                )
+                                .withString("spaceType", it.spaceType)
+                                .navigation(context)
+                        }
+                    return@setOnClickListener
+                }
                 // 刷新植物信息以及环境信息
                 mViewMode.plantInfo()
                 // 环境信息弹窗
@@ -2860,12 +2898,51 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     if (null == data) return@success
 
                     //  不是abby不走这一块。
+                    //  这块是帐篷的处理逻辑
                     if (mViewMode.isZp.value == true) {
                         // 隐藏种植水的图片
                         ViewUtils.setVisible(isZp.value == false, binding.pplantNinth.ivWaterStatus)
                         ViewUtils.setVisible(isZp.value == false, binding.pplantNinth.clSeeding)
                         // 设置帐篷空间名字
                         binding.pplantNinth.tvTitle.text = data?.spaceName
+
+                        // 设置帐篷的光照时间
+                        // binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
+                        val startTime = data?.lightOn ?: 0
+                        val endTime = data?.lightOff ?: 0
+                        binding.pplantNinth.tvOxy.text = """
+                            ${data?.lightOnOff     ?: "---"}
+                            ON  ${
+                            when (startTime) {
+                                0 -> "12 AM"
+                                24 -> "12 PM"
+                                else -> "${if (startTime > 12) startTime - 12 else startTime} ${if (startTime > 12) "PM" else "AM"}"
+                            }
+                        }
+                            OFF ${
+                            when (endTime) {
+                                0 -> "12 AM"
+                                24 -> "12 PM"
+                                else -> "${if (endTime > 12) endTime - 12 else endTime} ${if (endTime > 12) "PM" else "AM"}"
+                            }
+                        }
+                        """.trimIndent()
+
+                        // 设置周期
+                        data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
+                            ?.let { info ->
+                                // 植物信息数据显示
+                                binding.pplantNinth.tvWeekDay.text = """
+                                ${
+                                    if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
+                                        com.cl.common_base.R.string.base_autoflowering_abbreviations
+                                    ) else info.journeyName
+                                }
+                                Week ${data?.week ?: "-"}
+                                Day ${data?.day ?: "-"}
+                            """.trimIndent()
+                            }
+
                         return@success
                     }
 

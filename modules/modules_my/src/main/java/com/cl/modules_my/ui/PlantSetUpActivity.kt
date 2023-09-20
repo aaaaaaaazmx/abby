@@ -188,7 +188,8 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
             com.cl.modules_my.R.id.tv_attribute,
             com.cl.modules_my.R.id.tv_plant_way,
             com.cl.modules_my.R.id.rl_syne_type,
-            com.cl.modules_my.R.id.rl_sync_strain
+            com.cl.modules_my.R.id.rl_sync_strain,
+
         )
         adapter.setOnItemChildClickListener { adapter, view, position ->
             if (adapter.data.isEmpty()) return@setOnItemChildClickListener

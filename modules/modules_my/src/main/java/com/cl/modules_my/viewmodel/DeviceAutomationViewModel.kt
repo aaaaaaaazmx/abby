@@ -81,6 +81,53 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
         }
     }
 
+
+    /**
+     * 是否是解绑操作
+     */
+    private val _isUnbind = MutableLiveData<Boolean>(false)
+    val isUnbind: LiveData<Boolean> = _isUnbind
+    fun setUnbind(unbind: Boolean) {
+        _isUnbind.value = unbind
+    }
+
+    /**
+     * 删除配件
+     */
+    private val _saveCameraSetting = MutableLiveData<Resource<BaseBean>>()
+    val saveCameraSetting: LiveData<Resource<BaseBean>> = _saveCameraSetting
+    fun cameraSetting(body: UpdateInfoReq) {
+        viewModelScope.launch {
+            repository.updateInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _saveCameraSetting.value = it
+                }
+        }
+    }
+
+
     /**
      * 自动化规则开关
      */

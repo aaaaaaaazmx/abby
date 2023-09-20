@@ -62,7 +62,14 @@ class EmailLoginActivity : BaseActivity<LoginEmailLoginActivityBinding>() {
                 ToastUtil.shortShow("The email address cannot be empty.")
                 return@setOnClickListener
             }
-            mViewModel.updatePwd(address, "6")
+            if (address.contains("@") && address.contains(".")) {
+                // 包含 "@" 和 "."
+                mViewModel.updatePwd(address, "6")
+            } else {
+                // 不包含 "@" 或 "."
+                ToastUtil.shortShow("Please enter the correct email address.")
+                return@setOnClickListener
+            }
         }
     }
 

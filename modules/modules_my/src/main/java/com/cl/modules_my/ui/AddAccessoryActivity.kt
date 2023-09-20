@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.camera2.internal.ZslControlNoOpImpl
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
@@ -43,6 +44,7 @@ import javax.inject.Inject
 /**
  * 添加附件页面
  */
+@Route(path =  RouterPath.My.PAGE_ADD_ACCESSORY)
 @AndroidEntryPoint
 class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
     @Inject
@@ -219,15 +221,14 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         putExtra("accessoryDeviceId", accessoryDeviceId)
                         putExtra("deviceId", deviceId)
                     })
-                return@apply
+                return
             }
             // 跳转到智能设备信息界面
-            val intent =
-                Intent(this@AddAccessoryActivity, DeviceAutomationActivity::class.java)
+            val intent = Intent(this@AddAccessoryActivity, DeviceAutomationActivity::class.java)
             intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
             intent.putExtra(BasePopActivity.KEY_PART_ID, "$accessoryId")
-            startActivity(intent)
-            return@apply
+            startActivityLauncher.launch(intent)
+            return
         }
 
         // 前面2个都不满足，表明添加的是新设备
@@ -286,6 +287,19 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
             return
         }
     }
+
+    /**
+     * 回调刷新页面
+     */
+    private val startActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                // 保存成功
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                    .navigation()
+                finish()
+            }
+        }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

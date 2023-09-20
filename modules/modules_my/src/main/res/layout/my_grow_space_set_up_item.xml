@@ -66,6 +66,7 @@
                 android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
 
             <CheckBox
+                android:clickable="false"
                 android:checked="@{data.isSyncStrainCheck}"
                 android:id="@+id/cb_sync"
                 android:layout_width="14dp"
@@ -99,6 +100,7 @@
                 android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
 
             <CheckBox
+                android:clickable="false"
                 android:checked="@{data.isSyncTypeCheck}"
                 android:id="@+id/cb_sync_type"
                 android:layout_width="14dp"
