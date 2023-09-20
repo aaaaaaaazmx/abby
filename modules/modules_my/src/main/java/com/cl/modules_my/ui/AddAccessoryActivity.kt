@@ -24,6 +24,7 @@ import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.AddAccessoryAdapter
+import com.cl.modules_my.adapter.AddTenAccessoryAdapter
 import com.cl.modules_my.databinding.MyAddAccessoryBinding
 import com.cl.modules_my.repository.AccessoryListBean
 import com.cl.modules_my.viewmodel.AddAccessoryViewModel
@@ -53,7 +54,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
     // 帐篷设备页面
     private val tenAdapter by lazy {
-        AddAccessoryAdapter(mutableListOf())
+        AddTenAccessoryAdapter(mutableListOf())
     }
 
     // 设备ID
@@ -63,7 +64,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
     // 智能设备数量
     private val accessoryList by lazy {
-        intent.getSerializableExtra("accessoryList") as? MutableList<ListDeviceBean.AccessoryList>
+       intent.getSerializableExtra("accessoryList") as? MutableList<ListDeviceBean.AccessoryList> ?: mutableListOf()
     }
 
     // 当前设备类型
@@ -72,7 +73,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
     }
 
     override fun initView() {
-        mViewModel.getAccessoryList()
+        mViewModel.getAccessoryList(if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) "tent" else "box")
         if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
             binding.rvList.layoutManager = LinearLayoutManager(this)
             binding.rvList.adapter = tenAdapter
@@ -118,7 +119,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
         }
 
 
-        // todo 帐篷条目点击
+        //  帐篷条目点击
         tenAdapter.addChildClickViewIds(R.id.tv_add, R.id.tv_buy)
         tenAdapter.setOnItemChildClickListener { adapter, view, position ->
             val itemData = adapter.data[position] as? AccessoryListBean

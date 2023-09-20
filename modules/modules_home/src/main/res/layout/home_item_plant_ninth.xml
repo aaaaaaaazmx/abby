@@ -540,6 +540,30 @@
                 app:layout_constraintTop_toTopOf="parent"
               />
 
+            <!--帐篷的背景图、以及帐篷缩小的图-->
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_switch_zp_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_switch_camera"
+                android:background="@mipmap/home_zp_camera_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_zp_bg"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@mipmap/home_zp_bg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

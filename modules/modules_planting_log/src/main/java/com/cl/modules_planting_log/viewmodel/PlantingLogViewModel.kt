@@ -31,7 +31,7 @@ import javax.inject.Inject
 class PlantingLogViewModel @Inject constructor(private val repository: PlantRepository) : ViewModel() {
 
 
-    val userinfoBean by lazy {
+    val userinfoBean = {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         GSON.parseObject(bean, UserinfoBean::class.java)
     }

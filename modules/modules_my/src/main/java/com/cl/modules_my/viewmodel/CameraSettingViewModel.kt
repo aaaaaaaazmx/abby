@@ -122,42 +122,6 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
 
 
     /**
-     * 附件列表接口
-     */
-    private val _accessoryList = MutableLiveData<Resource<MutableList<AccessoryListBean>>>()
-    val accessoryList: LiveData<Resource<MutableList<AccessoryListBean>>> = _accessoryList
-    fun getAccessoryList() {
-        viewModelScope.launch {
-            repository.accessoryList()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "${it.message}"
-                        )
-                    )
-                }.collectLatest {
-                    _accessoryList.value = it
-                }
-        }
-    }
-
-    /**
      * 删除用户设备
      */
     private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()

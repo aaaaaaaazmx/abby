@@ -1260,6 +1260,15 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 是否是帐篷，true 帐篷 false abby
+     */
+    private val _isZP = MutableLiveData<Boolean>()
+    val isZp: LiveData<Boolean> = _isZP
+    fun setZp(isZps: Boolean) {
+        _isZP.value = isZps
+    }
+
+    /**
      * 获取用户信息
      */
     private val _userDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()

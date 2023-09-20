@@ -255,8 +255,9 @@ interface HttpMyApiService {
     /**
      * 配件列表
      */
+    @FormUrlEncoded
     @POST("abby/accessory/list")
-    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>>
+    fun accessoryList(@Field("spaceType")spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
 
     /**
      * 配件规则列表

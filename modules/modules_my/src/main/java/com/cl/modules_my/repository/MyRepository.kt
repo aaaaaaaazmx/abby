@@ -229,8 +229,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.verifyCode(code, email)
     }
 
-    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>> {
-        return remoteRepository.accessoryList()
+    fun accessoryList(spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>> {
+        return remoteRepository.accessoryList(spaceType)
     }
 
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {

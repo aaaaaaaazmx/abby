@@ -52,9 +52,9 @@ class AddAccessoryViewModel @Inject constructor(private val repository: MyReposi
      */
     private val _accessoryList = MutableLiveData<Resource<MutableList<AccessoryListBean>>>()
     val accessoryList: LiveData<Resource<MutableList<AccessoryListBean>>> = _accessoryList
-    fun getAccessoryList() {
+    fun getAccessoryList(spaceType: String) {
         viewModelScope.launch {
-            repository.accessoryList()
+            repository.accessoryList(spaceType)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
