@@ -249,10 +249,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         binding.ftUsb.setPointClickListener {
             // 展示一下弹窗
-            pop.asCustom(BaseCenterPop(this@SettingActivity, content = """
-                This option is designed to control the power of 3rd party accessories.\n\n
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity, content = """
+                This option is designed to control the power of 3rd party accessories.
                 You are currently connect to a hey abby smart accessory, please remove it first from device manager.
-            """.trimIndent(), confirmText = "OK")).show()
+            """.trimIndent(), confirmText = "OK"
+                )
+            ).show()
         }
 
         // 是否可以操作设备相关的功能
@@ -290,6 +294,27 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
 
                 error { errorMsg, code ->
+                    // usb的事情。
+                    if (uspUpdate.value == true) {
+                        xpopup(this@SettingActivity) {
+                            isDestroyOnDismiss(false)
+                            dismissOnTouchOutside(false)
+                            asCustom(
+                                BaseCenterPop(
+                                    this@SettingActivity,
+                                    titleText = "This option is designed to control the power of 3rd party accessories.",
+                                    content = errorMsg,
+                                    isShowCancelButton = false,
+                                    onConfirmAction = {
+                                        // 报错就复原
+                                        binding.ftUsb.isItemChecked = !binding.ftUsb.isItemChecked
+                                    }
+                                )
+                            ).show()
+                        }
+                        setUsbUpdate(false)
+                        return@error
+                    }
                     ToastUtil.shortShow(errorMsg)
                 }
             })
@@ -510,7 +535,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 success {
                     hideProgressLoading()
                     // 缓存信息
-                    GSON.toJson(this)
+                    GSON.toJson(data)
                         ?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 是否开启通知(1-开启、0-关闭)
                     binding.ftNotif.setItemSwitch(data?.openNotify == 1)
@@ -644,6 +669,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         // usb模式
         binding.ftUsb.setSwitchCheckedChangeListener { _, isChecked ->
+            mViewModel.setUsbUpdate(true)
             // usb模式
             mViewModel.updateDeviceInfo(
                 UpDeviceInfoReq(
@@ -655,6 +681,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         // 童锁
         binding.ftChildLock.setSwitchCheckedChangeListener { _, isChecked ->
+            logI("1231231: ${mViewModel.saveDeviceId.value}")
             // 是否打开童锁
             DeviceControl.get()
                 .success {

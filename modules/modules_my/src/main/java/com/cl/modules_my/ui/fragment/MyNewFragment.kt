@@ -5,12 +5,17 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import cn.mtjsoft.barcodescanning.extentions.dp
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.cl.common_base.base.BaseFragment
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
@@ -20,6 +25,7 @@ import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyNewFragmentBinding
+import com.cl.modules_my.ui.DeviceListActivity
 import com.cl.modules_my.ui.FeedbackActivity
 import com.cl.modules_my.ui.OxygenListActivity
 import com.cl.modules_my.ui.ProfileActivity
@@ -67,7 +73,14 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
             startActivity(Intent(context, ProfileActivity::class.java))
         }
         // 跳转到个人设置界面
-        binding.ivHead.setOnClickListener { startActivity(Intent(context, ProfileActivity::class.java)) }
+        binding.ivHead.setOnClickListener {
+            startActivity(
+                Intent(
+                    context,
+                    ProfileActivity::class.java
+                )
+            )
+        }
 
         // 跳准到反馈界面
         binding.ftFeedback.setOnClickListener {
@@ -86,6 +99,28 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         }
 
         binding.ftSetting.setOnClickListener {
+            if (mViewModel.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                context?.let { ct ->
+                    xpopup(ct) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(true)
+                        asCustom(
+                            BaseThreeTextPop(
+                                ct,
+                                content = "The settings are currently not available for the grow tent space. Please switch to the hey abby grow box to access the settings",
+                                oneLineText = "Switch",
+                                twoLineText = "OK",
+                                oneLineCLickEventAction = {
+                                    // 跳转到设别列表界面
+                                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                        .navigation(ct)
+                                },
+                            )
+                        ).show()
+                    }
+                }
+                return@setOnClickListener
+            }
             startActivity(Intent(context, SettingActivity::class.java))
         }
         binding.ftOxy.setOnClickListener {
@@ -121,7 +156,12 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                 success {
                     data?.let {
                         // 缓存信息
-                        GSON.toJson(it)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
+                        GSON.toJson(it)?.let { it1 ->
+                            Prefs.putStringAsync(
+                                Constants.Login.KEY_LOGIN_DATA,
+                                it1
+                            )
+                        }
 
                         // 壁纸
                         when (data?.wallAddress) {

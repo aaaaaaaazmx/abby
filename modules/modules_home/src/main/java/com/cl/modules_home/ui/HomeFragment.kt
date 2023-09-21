@@ -180,8 +180,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         initCameraSize()
 
         liveDataObser()
+    }
 
-        // 开启定时器，每次20秒刷新未读气泡消息
+    private fun startCountDownJob() {
+        if (mViewMode.shouldRunJob.value == false) return
+
         job = mViewMode.countDownCoroutines(10 * 6 * 500000, lifecycleScope, onTick = {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
@@ -194,15 +197,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         mViewMode.listDevice()
                     }
                 } catch (e: Exception) {
-                    // 在这里处理任何可能出现的异常
+                    // Handle exception here
                     job?.cancel()
                 }
             }
             if (it == 0) {
                 job?.cancel()
             }
-        }, onStart = {}, onFinish = {
-            // todo 这个finish也指的是当前页面被关闭, 定时任务不能放在这个地方.
+        }, onStart = {
+            // onStart logic here
+        }, onFinish = {
+            // onFinish logic here
             job?.cancel()
         })
     }
@@ -334,16 +339,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 显示布局
             ViewUtils.setVisible(binding.clRoot)
             ViewUtils.setVisible(binding.pplantNinth.root)
-            // 隐藏手动模式
+            ViewUtils.setVisible(binding.pplantNinth.ivZpBg)
+            // 隐藏当前所有布局
+            ViewUtils.setGone(binding.plantExtendBg.root)
+            ViewUtils.setGone(binding.plantFirst.root)
+            ViewUtils.setGone(binding.plantAddWater.root)
+            ViewUtils.setGone(binding.plantClone.root)
+            ViewUtils.setGone(binding.bindDevice.root)
             ViewUtils.setGone(binding.plantManual.root)
-            // 隐藏气泡布局、隐藏种子倒计时布局、隐藏水的图片布局
+            ViewUtils.setGone(binding.plantComplete.root)
+            ViewUtils.setGone(binding.plantOffLine.root)
+
+            // 隐藏pplantNinth.root 都是这个布局里面的、气泡布局、隐藏种子倒计时布局、隐藏水的图片布局
             ViewUtils.setGone(binding.pplantNinth.clContinue)
             ViewUtils.setGone(binding.pplantNinth.clSeeding)
             ViewUtils.setGone(binding.pplantNinth.ivWaterStatus)
-            // 隐藏第一次绑定
-            ViewUtils.setGone(binding.bindDevice.root)
-            // 隐藏离线模式
-            ViewUtils.setGone(binding.plantOffLine.root)
+
             // 这是里刷新主要是展示当前的帐篷图片信息。
             mViewMode.listDevice()
             // 加载帐篷所需要的植物信息。
@@ -1919,7 +1930,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                     intent.putExtra(BasePopActivity.KEY_PLANT_ID, mViewMode.plantInfo.value?.data?.plantId.toString())
-                    startActivity(intent)
+                    startActivityLauncherCheck.launch(intent)
                 })
         }
     }
@@ -2182,7 +2193,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     if (online) {
                                         //  在线摄像头
                                         binding.pplantNinth.tvPrivacyMode.text =
-                                            "Currently in privacy mode"
+                                            "Private Mode"
                                     } else {
                                         //  离线摄像头
                                         binding.pplantNinth.tvPrivacyMode.text =
@@ -3510,8 +3521,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
                     }
                 }
-                error { errorMsg, _ ->
+                error { errorMsg, code ->
                     hideProgressLoading()
+                    // 植物不存在时，检查植物是否种植。
+                    if (code == 1001) {
+                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                    }
                     /*errorMsg?.let { ToastUtil.shortShow(it) }*/
                 }
             })
@@ -4065,6 +4080,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+        mViewMode.setShouldRunJob(true)
+        startCountDownJob()
         // 刷新数据
         mViewMode.userDetail()
         // 刷新设备列表
@@ -4080,6 +4097,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onPause() {
         super.onPause()
+        mViewMode.setShouldRunJob(false)
+        job?.cancel()
         cameraStopOnpause()
     }
 
@@ -4487,8 +4506,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 val isOpen = value.toString() == "true"
                 val isPrivate = mViewMode.getAccessoryInfo.value?.data?.privateModel == true
                 logI("isPrivateMode isOpen: $isOpen, isPrivate: $isPrivate")
-                ViewUtils.setVisible(isOpen && isPrivate, binding.pplantNinth.tvPrivacyMode)
-                if (isOpen && isPrivate) {
+                ViewUtils.setVisible(isOpen, binding.pplantNinth.tvPrivacyMode)
+                if (isOpen) {
                     // 打开隐私模式
                     cameraId.let {
                         mViewMode.tuYaUtils.publishDps(

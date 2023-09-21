@@ -176,7 +176,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         }
         /*binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")*/
         // 滑动解锁按钮的文案由后台下发
-        binding.slideToConfirm.setEngageText(mViewMode.sliderText.value ?: "Slide to Next")
+        binding.slideToConfirm.setEngageText(mViewMode.sliderText.value ?: unLockButtonEngage ?: "Slide to Next")
         binding.slideToConfirm.slideListener = object : ISlideListener {
             override fun onSlideStart() {
             }
@@ -428,7 +428,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    directShutdown()
+                    acFinish()
                 }
             })
 

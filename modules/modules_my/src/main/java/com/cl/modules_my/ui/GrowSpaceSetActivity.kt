@@ -6,7 +6,10 @@ import android.content.Intent
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.UpdateInfoReq
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.SoftInputUtils
@@ -52,12 +55,25 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
         GrowTypeChooserAdapter(list)
     }
 
+    override fun MyGrowSpaceActivityBinding.initBinding() {
+        binding.apply {
+            lifecycleOwner = this@GrowSpaceSetActivity
+            isAdd = this@GrowSpaceSetActivity.tenDeviceId.isNullOrEmpty()
+            executePendingBindings()
+        }
+    }
+
+
     override fun initView() {
         // 如果是编辑，那么就不能更改植物数量
         binding.etNumberPlant.apply {
             isClickable = tenDeviceId.isNullOrEmpty()
             isFocusable = tenDeviceId.isNullOrEmpty()
             isFocusableInTouchMode = tenDeviceId.isNullOrEmpty()
+        }
+
+        binding.unbindZp.setOnClickListener {
+            mViewModel.deleteDevice(tenDeviceId.toString())
         }
 
         binding.tvSend.setOnClickListener {
@@ -175,6 +191,20 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 删除帐篷
+            deleteDevice.observe(this@GrowSpaceSetActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                        .navigation(this@GrowSpaceSetActivity)
+                }
+            })
+
             deviceDetails.observe(this@GrowSpaceSetActivity, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->

@@ -88,7 +88,8 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             logI("123123123: $deviceId,,$spaceType")
             ARouter.getInstance()
                 .build(RouterPath.Main.PAGE_MAIN).navigation()
-            LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+            LiveEventBus.get()
+                .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
                 .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
         }
         finish()
@@ -138,37 +139,36 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 ToastUtil.shortShow(errorMsg)
             }
             success {
-                val dataList = adapter.data
-                if (dataList.isNotEmpty()) {
-                    dataList.indexOfFirst { it.isChooser == true }.apply {
-                        if (this != -1) {
-                            data?.get(this)?.isChooser = true
-                            return@apply
-                        }
-                        dataList.indexOfFirst { it.currentDevice == 1 }?.apply {
-                            if (this == -1) {
-                                if (data.isNullOrEmpty()) return@apply
-                                // 如果没有找到相对应的, 选中当前第一个。
-                                data?.get(0)?.isChooser = true
-                                return@apply
-                            }
-                            if (data.isNullOrEmpty()) return@apply
-                            data?.get(this)?.isChooser = true
-                        }
-                    }
-                } else {
-                    data?.indexOfFirst { it.currentDevice == 1 }?.apply {
-                        if (this == -1) {
-                            if (data.isNullOrEmpty()) return@apply
-                            // 如果没有找到相对应的, 选中当前第一个。
-                            data?.get(0)?.isChooser = true
-                            return@apply
-                        }
-                        if (data.isNullOrEmpty()) return@apply
-                        data?.get(this)?.isChooser = true
+                // 检查data是否非空和非空列表
+                val dataInfo = data
+                if (null == dataInfo) {
+                    adapter.setList(dataInfo)
+                    return@success
+                }
+                if (dataInfo.isNotEmpty()) {
+                    val indexChooser = dataInfo.indexOfFirst { it.currentDevice == 1 }
+
+                    // 检查是否找到匹配项
+                    if (indexChooser != -1) {
+                        dataInfo[indexChooser].isChooser = true  // 设置isChooser标志
+                        adapter.setList(data)
+
+                        // 设置RecyclerView的位置
+                        binding.rvList.postDelayed({
+                            binding.rvList.smoothScrollToPosition(indexChooser)
+                        }, 200)
+
+                    } else {
+                        // 处理没有找到匹配项的情况，例如选择默认项
+                        dataInfo[0].isChooser = true
+                        adapter.setList(data)
+
+                        // 设置RecyclerView的位置
+                        binding.rvList.postDelayed({
+                            binding.rvList.smoothScrollToPosition(0)
+                        }, 200)
                     }
                 }
-                adapter.setList(data)
             }
         })
 
@@ -438,7 +438,10 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         ARouter.getInstance()
                             .build(RouterPath.Main.PAGE_MAIN).navigation()
                         LiveEventBus.get()
-                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+                            .with(
+                                Constants.Global.KEY_IS_SWITCH_DEVICE,
+                                LiveDataDeviceInfoBean::class.java
+                            )
                             .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
                         finish()
                     }

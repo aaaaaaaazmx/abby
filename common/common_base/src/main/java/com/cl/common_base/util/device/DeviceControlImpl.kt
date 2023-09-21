@@ -2,6 +2,7 @@ package com.cl.common_base.util.device
 
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -47,6 +48,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      * 获取当前设备
      */
     override fun getCurrentDevice(): IThingDevice? {
+        logI("12312313123L:${Prefs.getString(Constants.Login.KEY_LOGIN_DATA)}")
         return ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)
     }
 

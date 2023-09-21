@@ -1671,6 +1671,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+
+    private var _shouldRunJob =  MutableLiveData<Boolean>()
+    val shouldRunJob:LiveData<Boolean> = _shouldRunJob
+    fun setShouldRunJob(shouldRunJob: Boolean) {
+        _shouldRunJob.value = shouldRunJob
+    }
+
     /**
      * 定时器
      */
@@ -1683,12 +1690,25 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     ): Job {
         return flow {
             for (i in total downTo 0) {
+                if (shouldRunJob.value == false) break
                 emit(i)
                 delay(1000)
             }
-        }.flowOn(Dispatchers.Main).onStart { onStart?.invoke() }.onCompletion { onFinish?.invoke() }
-            .onEach { onTick.invoke(it) }.launchIn(scope)
+        }
+            .flowOn(Dispatchers.Main)
+            .onStart { onStart?.invoke() }
+            .onCompletion { onFinish?.invoke() }
+            .onEach {
+                if (shouldRunJob.value == true) {
+                    onTick.invoke(it)
+                }
+            }
+            .catch { exception ->
+                // Handle exception here
+            }
+            .launchIn(scope)
     }
+
 
     var isLeftSwap: Boolean = false
     fun setLeftSwaps(isLeft: Boolean) {

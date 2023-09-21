@@ -108,6 +108,7 @@ class EditPlantProfilePop(
 
             // 夜间模式
             ftNight.setSwitchCheckedChangeListener { _, isChecked ->
+                logI("1231231: ${beanData?.deviceId}")
                 // muteOn:00,muteOff:001
                 ViewUtils.setVisible(isChecked, ftTimer)
                 if (!isChecked) {

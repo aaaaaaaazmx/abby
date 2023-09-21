@@ -69,6 +69,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         binding.apply {
             lifecycleOwner = this@PlantActionActivity
             plantInfoData = this@PlantActionActivity.plantInfoData
+            model = this@PlantActionActivity.viewModel
             executePendingBindings()
         }
     }

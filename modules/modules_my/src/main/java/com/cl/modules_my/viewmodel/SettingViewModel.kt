@@ -459,6 +459,16 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
         return list.firstOrNull { it.type == 9 }?.upgradeStatus == 1
     }
 
+
+    /**
+     * 是否是修改的usb
+     */
+    private val _usbUpdate = MutableLiveData<Boolean>()
+    val uspUpdate: LiveData<Boolean> = _usbUpdate
+    fun setUsbUpdate(update: Boolean) {
+        _usbUpdate.value = update
+    }
+
     /**
      * 修改植物信息
      */

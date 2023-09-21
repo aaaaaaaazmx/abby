@@ -968,99 +968,101 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         data: Calendar?,
         isExecutionAlphaAni: Boolean? = false
     ) {
-        val getCalendarDate = mViewMode.getCalendar.value?.data
-        if (getCalendarDate?.isEmpty() == true) return
-        val calendarData = getCalendarDate?.firstOrNull { it.date == data?.ymd }
-        // 刷新上面的背景框
-        val startTime = calendarData?.epochStartTime ?: ""
-        val endTime = calendarData?.epochEndTime ?: ""
-        // 计算两个时间相差多少天
-        val diffDay = CalendarUtil.getDatePoor(
-            DateHelper.formatToLong(endTime, "yyyy-MM-dd"),
-            DateHelper.formatToLong(startTime, "yyyy-MM-dd")
-        )
-        val currentPosition = adapter.data.indexOfFirst { it.ymd == startTime }
-        adapter.data.filter { it.isShowBg }.forEach {
-            val i = adapter.data.indexOf(it)
-            adapter.data[i].isShowBg = false
-            adapter.notifyItemChanged(i)
-        }
-        // 如果当前没有选中日期的，手动设置当前日期为选中日期
-        // 只会加载一次，因为有了isChooser 就不会走了。
-        adapter.data.firstOrNull { it.isChooser }.apply {
-            if (null == this) {
-                adapter.data.indexOfFirst { it.isCurrentDay }.apply {
-                    adapter.data[this].isChooser = true
-                    adapter.notifyItemChanged(this)
+        runCatching {
+            val getCalendarDate = mViewMode.getCalendar.value?.data
+            if (getCalendarDate?.isEmpty() == true) return
+            val calendarData = getCalendarDate?.firstOrNull { it.date == data?.ymd }
+            // 刷新上面的背景框
+            val startTime = calendarData?.epochStartTime ?: ""
+            val endTime = calendarData?.epochEndTime ?: ""
+            // 计算两个时间相差多少天
+            val diffDay = CalendarUtil.getDatePoor(
+                DateHelper.formatToLong(endTime, "yyyy-MM-dd"),
+                DateHelper.formatToLong(startTime, "yyyy-MM-dd")
+            )
+            val currentPosition = adapter.data.indexOfFirst { it.ymd == startTime }
+            adapter.data.filter { it.isShowBg }.forEach {
+                val i = adapter.data.indexOf(it)
+                adapter.data[i].isShowBg = false
+                adapter.notifyItemChanged(i)
+            }
+            // 如果当前没有选中日期的，手动设置当前日期为选中日期
+            // 只会加载一次，因为有了isChooser 就不会走了。
+            adapter.data.firstOrNull { it.isChooser }.apply {
+                if (null == this) {
+                    adapter.data.indexOfFirst { it.isCurrentDay }.apply {
+                        adapter.data[this].isChooser = true
+                        adapter.notifyItemChanged(this)
+                    }
                 }
             }
-        }
-        logI(
-            """
+            logI(
+                """
             diffDay：
             $diffDay
             $currentPosition
         """.trimIndent()
-        )
-
-        // 绘制点击之后的
-        // 相差多天，然后统一通知，刷新背景
-        if (currentPosition != -1) {
-            for (i in currentPosition..(currentPosition + diffDay)) {
-                adapter.data[i].isShowBg = true
-                // 设置时间背景标志
-                when (i) {
-                    currentPosition -> {
-                        adapter.data[i].bgFlag = Calendar.KEY_START
-                    }
-
-                    currentPosition + diffDay -> {
-                        adapter.data[i].bgFlag = Calendar.KEY_END
-                    }
-
-                    else -> {
-                        adapter.data[i].bgFlag = Calendar.KEY_NORMAL
-                    }
-                }
-                adapter.notifyItemChanged(i)
-            }
-        }
-
-        if (isExecutionAlphaAni == true) {
-            // 产品需要一个从0-1的alpha动画
-            // Alpha动画 安排！
-            val animation = AlphaAnimation(
-                0f, 1f
             )
-            animation.duration = 1000 //执行时间
-            animation.repeatCount = 0 //重复执行动画
-            binding.llRoot.startAnimation(animation) //使用View启动动画
-        }
 
-        // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
-        ViewUtils.setVisible(
-            null == calendarData,
-            binding.svtDayBg,
-            binding.svtPeriodBg,
-            binding.svtTaskListBg
-        )
-        // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
-        ViewUtils.setGone(binding.timeLine, null == calendarData)
+            // 绘制点击之后的
+            // 相差多天，然后统一通知，刷新背景
+            if (currentPosition != -1) {
+                for (i in currentPosition..(currentPosition + diffDay)) {
+                    adapter.data[i].isShowBg = true
+                    // 设置时间背景标志
+                    when (i) {
+                        currentPosition -> {
+                            adapter.data[i].bgFlag = Calendar.KEY_START
+                        }
 
-        // 如果日历数据不为空，那么开始加载数据
-        calendarData?.let {
-            // 设置下面卡片的数据
-            // 为null的数据都不显示
-            ViewUtils.setVisible(!it.epoch.isNullOrEmpty(), binding.tvCycle, binding.ivAsk)
-            ViewUtils.setVisible(!it.day.isNullOrEmpty(), binding.tvDay)
-            // 周期
-            binding.tvCycle.text = it.epoch
-            // 天数
-            binding.tvDay.text = "Week ${it.week} Day ${it.day}"
-            // 判断当前周期有无任务, 显示空布局 or 展示时间轴
-            ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
-            ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
-            initTime(it.taskList ?: mutableListOf())
+                        currentPosition + diffDay -> {
+                            adapter.data[i].bgFlag = Calendar.KEY_END
+                        }
+
+                        else -> {
+                            adapter.data[i].bgFlag = Calendar.KEY_NORMAL
+                        }
+                    }
+                    adapter.notifyItemChanged(i)
+                }
+            }
+
+            if (isExecutionAlphaAni == true) {
+                // 产品需要一个从0-1的alpha动画
+                // Alpha动画 安排！
+                val animation = AlphaAnimation(
+                    0f, 1f
+                )
+                animation.duration = 1000 //执行时间
+                animation.repeatCount = 0 //重复执行动画
+                binding.llRoot.startAnimation(animation) //使用View启动动画
+            }
+
+            // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
+            ViewUtils.setVisible(
+                null == calendarData,
+                binding.svtDayBg,
+                binding.svtPeriodBg,
+                binding.svtTaskListBg
+            )
+            // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
+            ViewUtils.setGone(binding.timeLine, null == calendarData)
+
+            // 如果日历数据不为空，那么开始加载数据
+            calendarData?.let {
+                // 设置下面卡片的数据
+                // 为null的数据都不显示
+                ViewUtils.setVisible(!it.epoch.isNullOrEmpty(), binding.tvCycle, binding.ivAsk)
+                ViewUtils.setVisible(!it.day.isNullOrEmpty(), binding.tvDay)
+                // 周期
+                binding.tvCycle.text = it.epoch
+                // 天数
+                binding.tvDay.text = "Week ${it.week} Day ${it.day}"
+                // 判断当前周期有无任务, 显示空布局 or 展示时间轴
+                ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
+                ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
+                initTime(it.taskList ?: mutableListOf())
+            }
         }
     }
 

@@ -22,6 +22,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.AddAccessoryAdapter
@@ -44,15 +45,15 @@ import javax.inject.Inject
 /**
  * 添加附件页面
  */
-@Route(path =  RouterPath.My.PAGE_ADD_ACCESSORY)
+@Route(path = RouterPath.My.PAGE_ADD_ACCESSORY)
 @AndroidEntryPoint
 class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
     @Inject
     lateinit var mViewModel: AddAccessoryViewModel
 
-    private val adapter by lazy {
+    /*private val adapter by lazy {
         AddAccessoryAdapter(mutableListOf())
-    }
+    }*/
 
     // 帐篷设备页面
     private val tenAdapter by lazy {
@@ -66,7 +67,8 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
     // 智能设备数量
     private val accessoryList by lazy {
-       intent.getSerializableExtra("accessoryList") as? MutableList<ListDeviceBean.AccessoryList> ?: mutableListOf()
+        intent.getSerializableExtra("accessoryList") as? MutableList<ListDeviceBean.AccessoryList>
+            ?: mutableListOf()
     }
 
     // 当前设备类型
@@ -76,13 +78,9 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
     override fun initView() {
         mViewModel.getAccessoryList(if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) "tent" else "box")
-        if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
-            binding.rvList.layoutManager = LinearLayoutManager(this)
-            binding.rvList.adapter = tenAdapter
-        } else {
-            binding.rvList.layoutManager = GridLayoutManager(this, 2)
-            binding.rvList.adapter = adapter
-        }
+
+        binding.rvList.layoutManager = LinearLayoutManager(this)
+        binding.rvList.adapter = tenAdapter
     }
 
     override fun observe() {
@@ -95,11 +93,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
-                        tenAdapter.setList(data)
-                    } else {
-                        adapter.setList(data)
-                    }
+                    tenAdapter.setList(data)
                 }
             })
         }
@@ -109,7 +103,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
         binding.ftbTitle.setLeftClickListener { finish() }
 
         // 条目点击事件
-        adapter.addChildClickViewIds(R.id.cl_root)
+        /*adapter.addChildClickViewIds(R.id.cl_root)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val itemData = adapter.data[position] as? AccessoryListBean
             mViewModel.setAccessoryId("${itemData?.accessoryId}")
@@ -118,20 +112,23 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                     addAccess(itemData)
                 }
             }
-        }
+        }*/
 
 
         //  帐篷条目点击
         tenAdapter.addChildClickViewIds(R.id.tv_add, R.id.tv_buy)
         tenAdapter.setOnItemChildClickListener { adapter, view, position ->
             val itemData = adapter.data[position] as? AccessoryListBean
-            when(view.id) {
+            when (view.id) {
                 R.id.tv_add -> {
                     addAccess(itemData)
                 }
 
                 R.id.tv_buy -> {
-                    ToastUtil.shortShow("buy now")
+                    // 跳转到网页
+                    val intent = Intent(this@AddAccessoryActivity, WebActivity::class.java)
+                    intent.putExtra(WebActivity.KEY_WEB_URL, itemData?.buyLink)
+                    startActivity(intent)
                 }
             }
         }

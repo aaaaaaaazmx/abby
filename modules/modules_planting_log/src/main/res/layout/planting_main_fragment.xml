@@ -29,7 +29,7 @@
                 android:id="@+id/cl_bg"
                 android:layout_width="match_parent"
                 android:layout_height="109dp"
-                android:background="@mipmap/plant_bg">
+                android:background='@{viewModel.userinfoBean.invoke().spaceType.equals("box") ? @drawable/plant_bg : @drawable/plant_zp_bg}'>
 
                 <FrameLayout
                     android:id="@+id/fl_get_plant_list"

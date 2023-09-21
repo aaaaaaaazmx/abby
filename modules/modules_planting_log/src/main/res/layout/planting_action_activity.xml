@@ -9,6 +9,9 @@
             name="plantInfoData"
             type="com.cl.modules_planting_log.request.PlantInfoByPlantIdData" />
 
+        <variable
+            name="model"
+            type="com.cl.modules_planting_log.viewmodel.PlantingLogAcViewModel" />
     </data>
 
 
@@ -30,7 +33,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="88dp"
-                android:background="@mipmap/plant_bg">
+                android:background='@{model.userinfoBean.spaceType.equals("box") ? @drawable/plant_bg : @drawable/plant_zp_bg}'>
 
                 <com.cl.common_base.widget.AbTextViewSimpleCalendar
                     android:text="@{String.valueOf(plantInfoData.plantName)}"

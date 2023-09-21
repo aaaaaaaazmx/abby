@@ -53,7 +53,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
     override fun PlantingMainFragmentBinding.initBinding() {
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
-            binding.viewModel = this@PlantingLogFragment.viewModel
+            viewModel = this@PlantingLogFragment.viewModel
             executePendingBindings()
         }
     }
@@ -325,6 +325,9 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                     // 找到相同周期，然后设置选中属性
                     periodVoList?.find { data?.period == it.period }?.isSelect = true
                     chooserPeriodAdapter.setList(periodVoList)
+                    runCatching {
+                        periodVoList?.indexOfFirst { it.isSelect }?.let { if (it != -1) binding.rvPeriod.smoothScrollToPosition(it) }
+                    }
 
                     // 2、根据返回的当前周期选择需要展示的log列表
                     updateCurrent(1)

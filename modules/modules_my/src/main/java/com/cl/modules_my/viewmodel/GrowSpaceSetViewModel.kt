@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.UpDeviceInfoReq
+import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -27,7 +28,7 @@ class GrowSpaceSetViewModel @Inject constructor(private val repository: MyReposi
      */
     private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
     val deleteDevice: LiveData<Resource<BaseBean>> = _deleteDevice
-    private fun deleteDevice(devId: String) = viewModelScope.launch {
+    fun deleteDevice(devId: String) = viewModelScope.launch {
         repository.deleteDevice(devId)
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
@@ -124,6 +125,42 @@ class GrowSpaceSetViewModel @Inject constructor(private val repository: MyReposi
                     )
                 }.collectLatest {
                     _addDevice.value = it
+                }
+        }
+    }
+
+    /**
+     * 删除配件
+     */
+    private val _saveCameraSetting = MutableLiveData<Resource<BaseBean>>()
+    val saveCameraSetting: LiveData<Resource<BaseBean>> = _saveCameraSetting
+    fun cameraSetting(body: UpdateInfoReq) {
+        viewModelScope.launch {
+            repository.updateInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _saveCameraSetting.value = it
                 }
         }
     }
