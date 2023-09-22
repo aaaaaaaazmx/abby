@@ -79,7 +79,7 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                                 } else if (hour == 12) {
                                     tvStart.text = "12:00 AM"
                                 }
-                                turnOnHour = time.toInt()
+                                turnOnHour = hour
                             }
 
                         }, chooseTime = turnOnHour ?: 12)
@@ -98,10 +98,10 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                                 } else if (hour < 12) {
                                     tvEnd.text = "${hour}:00 AM"
                                 } else if (hour == 12) {
-                                    tvEnd.text = "12:00 PM"
+                                    tvEnd.text = "12:00 AM"
                                 }
                                 // 赋值给他
-                                turnOffHour = time.toInt()
+                                turnOffHour = hour
                             }
                         }, chooseTime = turnOffHour ?: 12)
                     ).show()

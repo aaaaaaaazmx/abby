@@ -114,7 +114,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                     DeviceDetailInfo(
                         attribute = "Photo",
                         plantWay = "Seed",
-                        plantName = "grow space name$it",
+                        plantName = "grow space name${it+1}",
                     )
                 }
                 adapter.setList(newList)
@@ -241,7 +241,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                         if (list.isEmpty()) return@setOnItemChildClickListener
                         list.forEachIndexed { index, deviceDetailInfo ->
                             deviceDetailInfo.syncStrainName =
-                                if (isCheckboxChecked) list[0].strainName else null
+                                if (isCheckboxChecked) list[0].strainName else list[index].strainName
                             deviceDetailInfo.isSyncStrainCheck = isCheckboxChecked
                             // 这里不需要重新设置适配器数据，因为我们已经直接修改了原有列表中的元素
                             this@PlantSetUpActivity.adapter.notifyItemChanged(index)
