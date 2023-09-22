@@ -147,6 +147,13 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                 }
             }
             success {
+                // 缓存信息
+                GSON.toJson(data)?.let { it1 ->
+                    Prefs.putString(
+                        Constants.Login.KEY_LOGIN_DATA,
+                        it1
+                    )
+                }
                 // 获取InterCome信息
                 mViewModel.getInterComeData()
             }

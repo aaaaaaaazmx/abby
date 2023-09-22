@@ -536,7 +536,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     hideProgressLoading()
                     // 缓存信息
                     GSON.toJson(data)
-                        ?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
+                        ?.let { it1 -> Prefs.putString(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 是否开启通知(1-开启、0-关闭)
                     binding.ftNotif.setItemSwitch(data?.openNotify == 1)
                     // 订阅时间
