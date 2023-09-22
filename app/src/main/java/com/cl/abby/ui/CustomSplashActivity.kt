@@ -149,7 +149,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
             success {
                 // 缓存信息
                 GSON.toJson(data)?.let { it1 ->
-                    Prefs.putString(
+                    Prefs.putStringAsync(
                         Constants.Login.KEY_LOGIN_DATA,
                         it1
                     )
