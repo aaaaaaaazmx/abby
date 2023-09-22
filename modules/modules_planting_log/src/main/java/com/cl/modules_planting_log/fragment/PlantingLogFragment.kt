@@ -325,9 +325,9 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                     // 找到相同周期，然后设置选中属性
                     periodVoList?.find { data?.period == it.period }?.isSelect = true
                     chooserPeriodAdapter.setList(periodVoList)
-                    runCatching {
+                   /* runCatching {
                         periodVoList?.indexOfFirst { it.isSelect }?.let { if (it != -1) binding.rvPeriod.smoothScrollToPosition(it) }
-                    }
+                    }*/
 
                     // 2、根据返回的当前周期选择需要展示的log列表
                     updateCurrent(1)

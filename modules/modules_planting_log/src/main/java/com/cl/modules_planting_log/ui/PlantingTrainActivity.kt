@@ -246,7 +246,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.logId = logId
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
-        // logSaveOrUpdateReq.syncPlants = if (viewModel.userinfoBean?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX) false else binding.ftSyncZp.isItemChecked
+        logSaveOrUpdateReq.syncPlants = if (viewModel.userinfoBean?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX) false else binding.ftSyncZp.isItemChecked
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
         showProgressLoading()

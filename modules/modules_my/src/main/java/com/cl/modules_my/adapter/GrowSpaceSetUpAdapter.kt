@@ -25,18 +25,18 @@ class GrowSpaceSetUpAdapter(data: MutableList<DeviceDetailInfo>?) :
             executePendingBindings()
         }
 
-        holder.getView<EditText>(R.id.et_space_plant).apply {
+        /*holder.getView<EditText>(R.id.et_space_plant).apply {
             doAfterTextChanged {
                 data[holder.layoutPosition].plantName = it.toString()
                 logI("1231plantName: ${data[holder.layoutPosition].plantName}")
             }
-        }
+        }*/
 
         holder.getView<EditText>(R.id.et_strain_plant).apply {
-            doAfterTextChanged {
+            /*doAfterTextChanged {
                 data[holder.layoutPosition].strainName = it.toString()
                 logI("1231strainName: ${data[holder.layoutPosition].strainName}")
-            }
+            }*/
         }
     }
 }

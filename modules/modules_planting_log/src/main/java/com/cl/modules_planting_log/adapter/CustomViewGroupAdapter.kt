@@ -186,6 +186,16 @@ class CustomViewGroupAdapter(
                 }
             }
 
+            // 开灯时间
+            LogSaveOrUpdateReq.KEY_LIGHTING_ON -> {
+                //asda
+            }
+
+            // 关灯时间
+            LogSaveOrUpdateReq.KEY_LIGHTING_OFF -> {
+
+            }
+
             LogSaveOrUpdateReq.KEY_LOG_TYPE
             -> {
                 // 弹出日志类型选择列表

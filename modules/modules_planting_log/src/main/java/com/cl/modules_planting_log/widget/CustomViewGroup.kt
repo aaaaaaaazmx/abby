@@ -230,7 +230,9 @@ class CustomViewGroup : LinearLayout {
                 rvChoose?.let { fadeAnimation(it, false) }
                 return true
             }
-            rvChoose?.let { fadeAnimation(it, true) }
+            rvChoose?.let {
+                fadeAnimation(it, chooserAdapter.data.isNotEmpty())
+            }
             listener?.onEditTextClick(tag as Int, editText1!!, this)
             return true
         }

@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.widget.EditText
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.gallonConversion
 import com.cl.common_base.ext.letMultiple
@@ -136,6 +137,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
+        logSaveOrUpdateReq.syncPlants = if (viewModel.userinfoBean?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX) false else binding.ftSyncZp.isItemChecked
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
         showProgressLoading()
         if (logId.isNullOrEmpty()) {

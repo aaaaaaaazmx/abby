@@ -374,7 +374,6 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                 deviceId = mViewMode.userInfo?.deviceId
                             )
                         )
-                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
                         /*mViewMode.startRunning(botanyId = "", goon = false)*/
                     }
                     // 新增配件
@@ -429,6 +428,14 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 }
                 success {
                     acFinish()
+                }
+            })
+
+            updateDeviceInfo.observe(this@KnowMoreActivity, resourceObserver {
+                success {
+                    if (fixedId == Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE) {
+                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                    }
                 }
             })
 

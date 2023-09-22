@@ -1917,20 +1917,33 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                      guideId = guideType, taskId = taskId, taskTime = taskTime
                  )*/
             },
-                unLockNow = {
-                    // 跳转副本界面
-                    // 跳转到富文本界面
-                    val intent = Intent(context, KnowMoreActivity::class.java)
-                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD)
-                    intent.putExtra(
-                        BasePopActivity.KEY_FIXED_TASK_ID,
-                        Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD
-                    )
-                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
-                    intent.putExtra(BasePopActivity.KEY_PLANT_ID, mViewMode.plantInfo.value?.data?.plantId.toString())
-                    startActivityLauncherCheck.launch(intent)
+                unLockNow = { pop ->
+                    xpopup {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(
+                            context?.let {
+                                BaseCenterPop(it, titleText = "Unlock Now", isShowCancelButton = true, cancelText = "Cancel", confirmText = "Unlock", onConfirmAction = {
+                                    pop.dismiss()
+                                    // 跳转副本界面
+                                    // 跳转到富文本界面
+                                    val intent = Intent(context, KnowMoreActivity::class.java)
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD)
+                                    intent.putExtra(
+                                        BasePopActivity.KEY_FIXED_TASK_ID,
+                                        Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD
+                                    )
+                                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                                    intent.putExtra(BasePopActivity.KEY_PLANT_ID, mViewMode.plantInfo.value?.data?.plantId.toString())
+                                    startActivityLauncherCheck.launch(intent)
+                                }, onCancelAction = {
+                                })
+                            }
+                        ).show()
+                    }
+
                 })
         }
     }
@@ -2954,6 +2967,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             """.trimIndent()
                             }
 
+                        // 植物的period 周期
+                        data?.list?.let {
+                            mViewMode.setPeriodList(it)
+                        }
                         return@success
                     }
 

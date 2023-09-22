@@ -254,7 +254,6 @@
                 />
 
             <com.cl.common_base.widget.FeatureItemSwitch
-                android:visibility="gone"
                 app:itemTitleBold="true"
                 android:layout_marginEnd="19dp"
                 android:layout_marginStart="19dp"

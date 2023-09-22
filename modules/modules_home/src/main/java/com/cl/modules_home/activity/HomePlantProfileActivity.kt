@@ -311,9 +311,13 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
     private fun updateUi(it: List<String>) {
         searchAdapter.setList(it)
         binding.neSc.post {
-            //滚到底部
-            binding.neSc.fullScroll(View.FOCUS_DOWN)
+            binding.neSc.smoothScrollTo(0, binding.neSc.bottom)
         }
+
+        // 在滚动之后，再次让 EditText 获取焦点（如果需要）
+        binding.etEmail.postDelayed({
+            binding.etEmail.requestFocus()
+        }, 300)  // 300 毫秒的延迟，或者你认为合适的其他时间
     }
 
     // 搜索时

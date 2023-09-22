@@ -37,6 +37,8 @@ data class LogSaveOrUpdateReq(
 ): BaseBean() {
     companion object {
         const val KEY_LOG_TIME = "logTime"
+        const val KEY_LIGHTING_ON = "lightingOn"
+        const val KEY_LIGHTING_OFF = "lightingOff"
         const val KEY_SPACE_TEMP  = "spaceTemp"
         const val KEY_WATER_TEMP  = "waterTemp"
         const val KEY_PLANT_HEIGHT  = "plantHeight"

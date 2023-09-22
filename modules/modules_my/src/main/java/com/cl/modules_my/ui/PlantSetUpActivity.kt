@@ -114,7 +114,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                     DeviceDetailInfo(
                         attribute = "Photo",
                         plantWay = "Seed",
-                        plantName = "grow space name${it+1}",
+                        plantName = "${growDetailInfo?.spaceName}${it + 1}",
                     )
                 }
                 adapter.setList(newList)
@@ -190,36 +190,39 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
             com.cl.modules_my.R.id.rl_syne_type,
             com.cl.modules_my.R.id.rl_sync_strain,
 
-        )
+            )
         adapter.setOnItemChildClickListener { adapter, view, position ->
             if (adapter.data.isEmpty()) return@setOnItemChildClickListener
             val dataInfo = adapter.data[position] as? DeviceDetailInfo
             when (view.id) {
                 com.cl.modules_my.R.id.tv_attribute -> {
+                    if (!isAdd) {
+                        ToastUtil.shortShow("Existing grow space cannot be modified")
+                        return@setOnItemChildClickListener
+                    }
                     val newList = List(2) {
                         MyPlantInfoData(
                             plantName = if (it == 0) "Photo" else "Auto",
                             isSelected = false
                         )
                     }
+
                     pop(view, newList, dataInfo?.attribute) {
                         dataInfo?.attribute = it
+                        val newList =  getPlantWayList(it)
+                        if (newList.isNotEmpty()){
+                            dataInfo?.plantWay = newList[0].plantName
+                        }
                         adapter.notifyItemChanged(position)
                     }
                 }
 
                 com.cl.modules_my.R.id.tv_plant_way -> {
-                    val newList = List(3) {
-                        MyPlantInfoData(
-                            plantName = when (it) {
-                                0 -> "Seeding"
-                                1 -> "Clone"
-                                2 -> "Seed"
-                                else -> ""
-                            },
-                            isSelected = false
-                        )
+                    if (!isAdd) {
+                        ToastUtil.shortShow("Existing grow space cannot be modified")
+                        return@setOnItemChildClickListener
                     }
+                    val newList = getPlantWayList(dataInfo?.attribute)
                     pop(view, newList, dataInfo?.plantWay) {
                         dataInfo?.plantWay = it
                         adapter.notifyItemChanged(position)
@@ -240,8 +243,9 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                     (adapter.data as? MutableList<DeviceDetailInfo>)?.let { list ->
                         if (list.isEmpty()) return@setOnItemChildClickListener
                         list.forEachIndexed { index, deviceDetailInfo ->
-                            deviceDetailInfo.syncStrainName =
-                                if (isCheckboxChecked) list[0].strainName else list[index].strainName
+                            if (isCheckboxChecked) {
+                                deviceDetailInfo.strainName = list[0].strainName
+                            }
                             deviceDetailInfo.isSyncStrainCheck = isCheckboxChecked
                             // 这里不需要重新设置适配器数据，因为我们已经直接修改了原有列表中的元素
                             this@PlantSetUpActivity.adapter.notifyItemChanged(index)
@@ -265,8 +269,10 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                     (adapter.data as? MutableList<DeviceDetailInfo>)?.let { list ->
                         if (list.isEmpty()) return@setOnItemChildClickListener
                         list.forEachIndexed { index, deviceDetailInfo ->
-                            deviceDetailInfo.syncType =
-                                if (isCheckboxChecked) list[0].attribute else null
+                            if (isCheckboxChecked) {
+                                deviceDetailInfo.attribute =  list[0].attribute
+                                deviceDetailInfo.plantWay = list[0].plantWay
+                            }
                             deviceDetailInfo.isSyncTypeCheck = isCheckboxChecked
                             // 这里不需要重新设置适配器数据，因为我们已经直接修改了原有列表中的元素
                             this@PlantSetUpActivity.adapter.notifyItemChanged(index)
@@ -275,6 +281,33 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                 }
             }
         }
+    }
+
+    private fun getPlantWayList(attribute: String?): List<MyPlantInfoData> {
+        val newList = if (attribute == "Photo") {
+            List(2) {
+                MyPlantInfoData(
+                    plantName = when (it) {
+                        0 -> "Clone"
+                        1 -> "Seed"
+                        else -> ""
+                    },
+                    isSelected = false
+                )
+            }
+        } else {
+            List(2) {
+                MyPlantInfoData(
+                    plantName = when (it) {
+                        0 -> "Clone"
+                        1 -> "Seeding"
+                        else -> ""
+                    },
+                    isSelected = false
+                )
+            }
+        }
+        return newList
     }
 
     private fun pop(
