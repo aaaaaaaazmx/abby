@@ -284,7 +284,6 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
         names: ((name: String) -> Unit)? = null,
     ) {
         xpopup(this@PlantSetUpActivity) {
-            popupPosition(PopupPosition.Bottom)
             isDestroyOnDismiss(false)
             dismissOnTouchOutside(true)
             isClickThrough(false)
