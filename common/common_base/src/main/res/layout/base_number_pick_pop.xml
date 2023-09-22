@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round"
+        android:orientation="vertical"
+        android:paddingTop="16dp">
+
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="#111010"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <NumberPicker
+                android:id="@+id/numberPicker1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:selectionDividerHeight="0.5dp"
+                tools:ignore="NewApi" />
+
+            <NumberPicker
+                android:id="@+id/numberPicker2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:selectionDividerHeight="0.5dp"
+                tools:ignore="NewApi" />
+
+            <NumberPicker
+                android:id="@+id/numberPicker3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:selectionDividerHeight="0.5dp"
+                tools:ignore="NewApi" />
+
+            <NumberPicker
+                android:id="@+id/numberPicker4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:selectionDividerHeight="0.5dp"
+                tools:ignore="NewApi" />
+
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/xpopup_divider1"
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/_xpopup_list_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Cancel"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+
+            <View
+                android:id="@+id/xpopup_divider2"
+                android:layout_width=".5dp"
+                android:layout_height="match_parent"
+                android:background="@color/_xpopup_list_divider" />
+
+            <TextView
+                android:id="@+id/tv_confirm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/base_ok"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

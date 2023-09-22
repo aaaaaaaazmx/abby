@@ -21,7 +21,11 @@ fun Any?.safeToBigDecimal(): BigDecimal {
 
 fun Any?.safeToInt(): Int {
     return this?.let {
-        this.safeToBigDecimal().toInt()
+        if (this is String) {
+            this.safeToBigDecimal().toInt()
+        } else {
+            this.toString().safeToBigDecimal().toInt()
+        }
     } ?: 0
 }
 

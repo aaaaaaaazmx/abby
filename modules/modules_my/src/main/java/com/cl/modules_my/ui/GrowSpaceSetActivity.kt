@@ -12,6 +12,8 @@ import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.help.BaseNumberPickPop
 import com.cl.common_base.util.SoftInputUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
@@ -67,9 +69,40 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
     override fun initView() {
         // 如果是编辑，那么就不能更改植物数量
         binding.etNumberPlant.apply {
-            isClickable = tenDeviceId.isNullOrEmpty()
-            isFocusable = tenDeviceId.isNullOrEmpty()
-            isFocusableInTouchMode = tenDeviceId.isNullOrEmpty()
+            setOnClickListener {
+                if (tenDeviceId?.isNotEmpty() == true) {
+                    SoftInputUtils.hideSoftInput(this@GrowSpaceSetActivity)
+                    ToastUtil.shortShow("Non-editable")
+                    return@setOnClickListener
+                }
+                xpopup(this@GrowSpaceSetActivity) {
+                    asCustom(
+                        BaseNumberPickPop(
+                            this@GrowSpaceSetActivity,
+                            showNumber = 1,
+                            dataNumber = binding.etNumberPlant.text.safeToInt(),
+                            onConfirm = {
+                                binding.etNumberPlant.text = "$it"
+                            })
+                    ).show()
+                }
+            }
+        }
+
+        binding.etLedNumber.apply {
+            setOnClickListener {
+                xpopup(this@GrowSpaceSetActivity) {
+                    asCustom(
+                        BaseNumberPickPop(
+                            this@GrowSpaceSetActivity,
+                            showNumber = 4,
+                            dataNumber = binding.etLedNumber.text.safeToInt(),
+                            onConfirm = {
+                                binding.etLedNumber.text = "$it"
+                            })
+                    ).show()
+                }
+            }
         }
 
         binding.unbindZp.setOnClickListener {
@@ -77,13 +110,13 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
         }
 
         binding.tvSend.setOnClickListener {
-            val spaceName = binding.etApsceName.text.toString()
-            val type = binding.etTypeName.text.toString()
+            val spaceName = binding.etApsceName.text
+            val type = binding.etTypeName.text
             val number =
                 runCatching { binding.etNumberPlant.text.toString().toInt() }.getOrDefault(-1)
-            val led = binding.etLedNumber.text.toString()
+            val led = binding.etLedNumber.text
 
-            if (spaceName.isNullOrEmpty() || type.isNullOrEmpty() || binding.etNumberPlant.text.toString()
+            if (spaceName.isNullOrEmpty() || type.isNullOrEmpty() || binding.etNumberPlant.text
                     .isNullOrEmpty() || led.isNullOrEmpty()
             ) {
                 ToastUtil.shortShow("Please improve the content")

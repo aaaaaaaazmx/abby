@@ -85,6 +85,8 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <EditText
+                        android:maxLength="10"
+                        android:maxEms="10"
                         android:singleLine="true"
                         android:id="@+id/et_apsce_name"
                         android:layout_width="0dp"
@@ -199,7 +201,9 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <EditText
+                    <TextView
+                        android:maxEms="2"
+                        android:maxLength="2"
                         android:inputType="number"
                         android:singleLine="true"
                         android:id="@+id/et_number_plant"
@@ -243,7 +247,9 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <EditText
+                    <TextView
+                        android:maxEms="4"
+                        android:maxLength="4"
                         android:inputType="number"
                         android:id="@+id/et_led_number"
                         android:singleLine="true"

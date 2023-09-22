@@ -4575,6 +4575,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
+            mViewMode.setShouldRunJob(true)
+            startCountDownJob()
             // 如果是帐篷，那么就请求这个就好了
             if (mViewMode.isZp.value == true) {
                 // 会走到showView、然后会调用listDevice、plantInfo两个借口
@@ -4607,6 +4609,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         temperatureConversion(getWaterWenDu.value).toString()
                 }
             }
+        } else {
+            mViewMode.setShouldRunJob(false)
+            job?.cancel()
         }
     }
 
