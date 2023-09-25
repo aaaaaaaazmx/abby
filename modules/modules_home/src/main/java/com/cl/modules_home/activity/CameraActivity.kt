@@ -1499,8 +1499,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         val isOpen = value.toString() == "true"
         val isPrivate = mViewModel.getAccessoryInfo.value?.data?.privateModel == true
         logI("isPrivateMode isOpen: $isOpen, isPrivate: $isPrivate")
-        ViewUtils.setVisible(isOpen, binding.tvPrivacyMode)
-        if (isOpen) {
+        ViewUtils.setVisible(isOpen && isPrivate, binding.tvPrivacyMode)
+        if (isOpen && isPrivate) {
             // 开门，打开隐私模式
             devId?.let { tuYaUtils.publishDps(it, DPConstants.PRIVATE_MODE, true) }
         } else {

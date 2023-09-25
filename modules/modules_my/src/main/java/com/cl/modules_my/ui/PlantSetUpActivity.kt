@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.CheckBox
 import androidx.fragment.app.strictmode.RetainInstanceUsageViolation
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.launcher.ARouter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
@@ -19,6 +20,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.BaseSearchPop
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.adapter.GrowSpaceSetUpAdapter
 import com.cl.modules_my.adapter.GrowTypeChooserAdapter
@@ -29,6 +31,7 @@ import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.MyPlantInfoData
 import com.cl.modules_my.viewmodel.GrowSpaceSetViewModel
 import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupAnimation
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.smart.android.sweeper.IThingSweeperDataListener
@@ -65,8 +68,55 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
         intent.getSerializableExtra(KEY_GROW_DETAIL_INFO) as? DeviceDetailsBean
     }
 
+    private val pop by lazy {
+        val pop = BaseSearchPop(this@PlantSetUpActivity, onItemClickAction = {
+
+        }).setBubbleBgColor(Color.WHITE) //气泡背景
+            .setArrowWidth(XPopupUtils.dp2px(this@PlantSetUpActivity, 3f))
+            .setArrowHeight(
+                XPopupUtils.dp2px(
+                    this@PlantSetUpActivity,
+                    3f
+                )
+            )
+            //.setBubbleRadius(100)
+            .setArrowRadius(
+                XPopupUtils.dp2px(
+                    this@PlantSetUpActivity,
+                    3f
+                )
+            )
+        pop as? BaseSearchPop
+    }
+
     private val adapter by lazy {
-        GrowSpaceSetUpAdapter(mutableListOf())
+        GrowSpaceSetUpAdapter(mutableListOf(), onEditDoAfterAction = { editable, editText, clRoot ->
+            // 联想搜索
+            xpopup(this@PlantSetUpActivity) {
+                atView(editText)
+                isDestroyOnDismiss(true)
+                dismissOnTouchOutside(true)
+                isViewMode(true)
+                isRequestFocus(false)
+                isClickThrough(true)
+                isTouchThrough(true)
+                hasShadowBg(false)
+                positionByWindowCenter(true)
+                popupAnimation(PopupAnimation.ScaleAlphaFromCenter)
+                val basePop = asCustom(pop)
+
+                pop?.setData(editText.text.toString(), editText)
+                mViewModel.getName(editText.text.toString())
+                if(editText.text.toString().isEmpty()){
+                    basePop.dismiss()
+                    return@xpopup
+                }
+                if(basePop.isDismiss){
+                    basePop.show()
+                }
+            }
+
+        })
     }
 
     override fun initView() {
@@ -92,7 +142,11 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                             mViewModel.updateDeviceInfo(
                                 UpDeviceInfoReq(
                                     deviceId = deviceId,
-                                    list = it
+                                    list = it,
+                                    spaceName = spaceName,
+                                    spaceSize = spaceSize,
+                                    numPlant = numPlant.toString(),
+                                    ledWattage = ledWattage
                                 )
                             )
                         }
@@ -103,6 +157,22 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
 
         binding.rvPlantSet.layoutManager = LinearLayoutManager(this@PlantSetUpActivity)
         binding.rvPlantSet.adapter = this@PlantSetUpActivity.adapter
+        binding.rvPlantSet.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (pop?.isShow == true) pop?.dismiss()
+                // dx 和 dy 分别表示水平和垂直方向的滚动距离
+                // 在这里，你可以添加你自己的逻辑
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                // newState 表示新的滚动状态
+                // 在这里，你可以添加你自己的逻辑
+            }
+        })
+
 
         // 暂时编辑帐篷不能填写
         // 获取列表的大小，如果列表为空则默认为0
@@ -155,6 +225,12 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            stranNameList.observe(this@PlantSetUpActivity, resourceObserver {
+                success {
+                    pop?.setDatas(data)
+                }
+            })
+
             addDevice.observe(this@PlantSetUpActivity, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->
@@ -209,8 +285,8 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
 
                     pop(view, newList, dataInfo?.attribute) {
                         dataInfo?.attribute = it
-                        val newList =  getPlantWayList(it)
-                        if (newList.isNotEmpty()){
+                        val newList = getPlantWayList(it)
+                        if (newList.isNotEmpty()) {
                             dataInfo?.plantWay = newList[0].plantName
                         }
                         adapter.notifyItemChanged(position)
@@ -270,7 +346,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                         if (list.isEmpty()) return@setOnItemChildClickListener
                         list.forEachIndexed { index, deviceDetailInfo ->
                             if (isCheckboxChecked) {
-                                deviceDetailInfo.attribute =  list[0].attribute
+                                deviceDetailInfo.attribute = list[0].attribute
                                 deviceDetailInfo.plantWay = list[0].plantWay
                             }
                             deviceDetailInfo.isSyncTypeCheck = isCheckboxChecked

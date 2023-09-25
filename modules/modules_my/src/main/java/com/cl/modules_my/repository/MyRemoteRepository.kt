@@ -221,4 +221,8 @@ class MyRemoteRepository @Inject constructor() {
     fun getDeviceDetails(deviceId: String): Flow<HttpResult<DeviceDetailsBean>> {
         return service.getDeviceDetails(deviceId)
     }
+
+    fun getStrainName(strainName: String): Flow<HttpResult<MutableList<String>>> {
+        return service.getStrainName(strainName)
+    }
 }

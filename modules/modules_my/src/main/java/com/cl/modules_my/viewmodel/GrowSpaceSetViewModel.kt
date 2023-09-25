@@ -10,6 +10,7 @@ import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.ext.logI
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.DeviceDetailsBean
 import kotlinx.coroutines.Dispatchers
@@ -54,6 +55,40 @@ class GrowSpaceSetViewModel @Inject constructor(private val repository: MyReposi
                 )
             }.collectLatest {
                 _deleteDevice.value = it
+            }
+    }
+
+    /**
+     * 获取属性名
+     */
+    private val _stranNameList = MutableLiveData<Resource<MutableList<String>>>()
+    val stranNameList: LiveData<Resource<MutableList<String>>> = _stranNameList
+    fun getName(devId: String) = viewModelScope.launch {
+        repository.getStrainName(devId)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "$it"
+                    )
+                )
+            }.collectLatest {
+                _stranNameList.value = it
             }
     }
 

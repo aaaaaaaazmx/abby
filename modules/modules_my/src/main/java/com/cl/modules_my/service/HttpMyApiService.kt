@@ -359,4 +359,13 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/userDevice/getDeviceDetails")
     fun getDeviceDetails(@Field("deviceId") deviceId: String): Flow<HttpResult<DeviceDetailsBean>>
+
+    /**
+     * 获取名字
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/getStrainName")
+    fun getStrainName(
+        @Field("strainName") strainName: String
+    ): Flow<HttpResult<MutableList<String>>>
 }

@@ -20,7 +20,7 @@ buildscript {
         classpath(Deps.ClassPath.arouterPlugin)
         classpath(Deps.ClassPath.googleService)
         classpath(Deps.ClassPath.uploadPlugin)
-        classpath("io.github.leavesczy:trace:0.0.3")
+        // classpath("io.github.leavesczy:trace:0.0.3")
     }
 }
 

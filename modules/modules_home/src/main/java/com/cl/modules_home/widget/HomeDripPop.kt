@@ -18,7 +18,9 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.TimePickerPop
@@ -29,6 +31,7 @@ import com.cl.modules_home.service.HttpHomeApiService
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.CenterPopupView
 import com.thingclips.smart.sdk.bean.DeviceBean
+import io.intercom.android.sdk.Intercom
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
@@ -63,6 +66,12 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
     override fun onCreate() {
         super.onCreate()
         mBinding = DataBindingUtil.bind<HomeDripPopBinding>(popupImplView)?.apply {
+            tvAirPumpDesc.setOnClickListener {
+                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_DRIP)
+            }
+            tvSeconds.setOnClickListener {
+                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_DRIP)
+            }
             tvStart.setOnClickListener {
                 // 时间开启
                 xpopup(context) {
@@ -179,8 +188,8 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                     trickleIrrigationConfig(
                         TrickData(
                             deviceId = userInfo?.deviceId,
-                            everyStartTime = turnOnHour,
-                            everyEndTime = turnOffHour,
+                            everyStartTime = if (turnOnHour == 24) 12 else if (turnOnHour == 12) 0 else turnOnHour,
+                            everyEndTime = if (turnOffHour == 24) 12 else if (turnOffHour == 12) 0 else turnOffHour,
                             turnOnSecond = turnTime,
                             everyMinute = mins,
                             status = fisItemSwitch.isChecked
@@ -237,18 +246,25 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                             //  "status": false
                             //}
 
-                            val startTime = data.everyStartTime ?: 0
-                            val endTime = data.everyEndTime ?: 0
+                            val startTime = when (data.everyStartTime) {
+                                0 -> 12
+                                12 -> 24
+                                else -> data.everyStartTime ?: 12
+                            }
+
+                            val endTime = when (data.everyEndTime) {
+                                0 -> 12
+                                12 -> 24
+                                else -> data.everyEndTime ?: 12
+                            }
 
                             // 将12 AM和12 PM的情况单独处理
                             tvStart.text =
                                 if (startTime == 0) "12 AM" else if (startTime == 24) "12 PM" else "${if (startTime > 12) startTime -12 else startTime} ${if (startTime > 12) "PM" else "AM"}"
-                            turnOnHour =
-                                if (startTime == 0) 12 else startTime
+                            turnOnHour = startTime
                             tvEnd.text =
                                 if (endTime == 0) "12 AM" else if (endTime == 24) "12 PM" else "${if (endTime > 12) endTime - 12 else endTime} ${if (endTime > 12) "PM" else "AM"}"
-                            turnOffHour =
-                                if (endTime == 0) 12 else endTime
+                            turnOffHour = endTime
                         }
                     }
                 }

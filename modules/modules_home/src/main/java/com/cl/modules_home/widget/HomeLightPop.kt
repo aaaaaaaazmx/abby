@@ -52,21 +52,32 @@ class HomeLightPop(
         super.onCreate()
         DataBindingUtil.bind<HomeLightPopBinding>(popupImplView)?.apply {
 
-            val startTime = onTime.safeToInt()
-            val endTime = onOffTime.safeToInt()
+            /*val startTime = onTime.safeToInt()
+            val endTime = onOffTime.safeToInt()*/
+
+            val startTime = when (onTime.safeToInt()) {
+                0 -> 12
+                12 -> 24
+                else -> onTime.safeToInt()
+            }
+
+            val endTime = when (onOffTime.safeToInt()) {
+                0 -> 12
+                12 -> 24
+                else -> onOffTime.safeToInt()
+            }
+
 
             // 将12 AM和12 PM的情况单独处理
             tvStart.text =
                 if (startTime == 0) "12 AM" else if (startTime == 24) "12 PM" else "${if (startTime > 12) startTime - 12 else startTime} ${if (startTime > 12) "PM" else "AM"}"
-            turnOnHour =
-                if (startTime == 0) 12 else startTime
+            turnOnHour = startTime
             tvEnd.text =
                 if (endTime == 0) "12 AM" else if (endTime == 24) "12 PM" else "${if (endTime > 12) endTime - 12 else endTime} ${if (endTime > 12) "PM" else "AM"}"
-            turnOffHour =
-                if (endTime == 0) 12 else endTime
+            turnOffHour = endTime
 
 
-            tvStart.setOnClickListener {
+            rlTurnStart.setOnClickListener {
                 // 时间开启
                 xpopup(context) {
                     asCustom(
@@ -91,7 +102,7 @@ class HomeLightPop(
             }
 
 
-            tvEnd.setOnClickListener {
+            rlTurnEnd.setOnClickListener {
                 xpopup(context) {
                     asCustom(
                         TimePickerPop(context, onConfirmAction = { time, timeMis ->
@@ -126,13 +137,14 @@ class HomeLightPop(
                     return@setOnClickListener
                 }
 
+                // 0-23  12AM = 0, 24 = 12
                 lifecycleScope.launch {
                     upDeviceInfo(
                         UpDeviceInfoReq(
                             deviceId = deviceId,
-                            lightOn = turnOnHour.toString(),
-                            lightOff = turnOffHour.toString(),
-                            lightOnOff = "$turnOnHour+$turnOffHour"
+                            lightOn = if (turnOnHour == 24) "12" else if (turnOnHour == 12) "0" else turnOnHour.toString(),
+                            lightOff = if (turnOffHour == 24) "12" else if (turnOffHour == 12) "0" else turnOffHour.toString(),
+                            // lightOnOff = "$turnOnHour+$turnOffHour"
                         )
                     )
                 }
@@ -169,6 +181,7 @@ class HomeLightPop(
                     onConfirmAction?.invoke(turnOnHour ?: 0, turnOffHour ?: 0)
                     dismiss()
                 }
+
                 is Resource.DataError -> {
                     ToastUtil.shortShow(it.errorMsg)
                 }

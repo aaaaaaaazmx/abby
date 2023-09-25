@@ -30,6 +30,10 @@ data class UpDeviceInfoReq(
     var fanAuto: Int? = null, // 风扇是否自动
     var burnOutProof: Int? = null, // 防烧模式是否开启
     var smartUsbPowder: Int? = null, // USB开关：1-开启、0-关闭
+    var spaceName: String? = null,
+    var spaceSize: String? = null,
+    var numPlant: String? = null,
+    var ledWattage: String? = null,
 ) : BaseBean() {
 
     /*data class InfoList(

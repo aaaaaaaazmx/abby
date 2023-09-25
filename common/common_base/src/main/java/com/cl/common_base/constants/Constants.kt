@@ -151,6 +151,9 @@ object Constants {
 
         // 绑定摄像头相关问题说明
         const val KEY_INTER_COME_BIND_CAMERA = "8074254"
+
+        // dirp文章
+        const val KEY_INTER_COME_DRIP = "8407831"
     }
 
     // APP应用内消息

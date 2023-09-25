@@ -14,6 +14,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.BaseNumberPickPop
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.SoftInputUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
@@ -106,7 +107,13 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
         }
 
         binding.unbindZp.setOnClickListener {
-            mViewModel.deleteDevice(tenDeviceId.toString())
+            xpopup(this@GrowSpaceSetActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@GrowSpaceSetActivity, content = "Are you certain you wish to delete", isShowCancelButton = true, onConfirmAction = {
+                    mViewModel.deleteDevice(tenDeviceId.toString())
+                })).show()
+            }
         }
 
         binding.tvSend.setOnClickListener {

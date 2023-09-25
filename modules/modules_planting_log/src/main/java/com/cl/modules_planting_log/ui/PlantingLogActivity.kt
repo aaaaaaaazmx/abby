@@ -107,7 +107,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                 "plantHeight", "lightingOn", "lightingOff", "co2Concentration"
             ),
             listOf(
-                "logTime"
+                "logTime", "lightingOn", "lightingOff"
             ),
             maps,
         )

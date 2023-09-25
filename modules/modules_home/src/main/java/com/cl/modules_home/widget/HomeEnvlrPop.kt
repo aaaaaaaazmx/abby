@@ -18,6 +18,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
@@ -32,6 +33,7 @@ import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.net.ConnectException
 import java.util.Calendar
 
 /**
@@ -160,8 +162,11 @@ class HomeEnvlrPop(
 
                         // 判断今天是否已经截图
                         if (lastRefreshTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(
-                                Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(
-                                Calendar.DAY_OF_YEAR)) {
+                                Calendar.YEAR
+                            ) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(
+                                Calendar.DAY_OF_YEAR
+                            )
+                        ) {
                             XPopup.Builder(context)
                                 .dismissOnTouchOutside(false)
                                 .isDestroyOnDismiss(false)
@@ -177,7 +182,7 @@ class HomeEnvlrPop(
                                         onConfirmAction = {
                                             // 刷新回调、并且记录当前时间。
                                             lifecycleScope.launch {
-                                               syncLightParam(userInfo?.deviceId.toString())
+                                                syncLightParam(userInfo?.deviceId.toString())
                                             }
                                             // 如果今天还没刷新，
                                             Prefs.putLong(Constants.Login.KEY_REFRESH_TIME, time)
@@ -253,6 +258,17 @@ class HomeEnvlrPop(
             )
         }.collectLatest {
             logI(it.toString())
+            when (it) {
+                is Resource.Success -> {
+                    xpopup(context) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(BaseCenterPop(context, content = "Light schedule and intensity have been synced with the server. If you still believe there is an error, please contact 1-on-1 support.", isShowCancelButton = false, confirmText = "OK")).show()
+                    }
+                }
+
+                else -> {}
+            }
         }
     }
 }

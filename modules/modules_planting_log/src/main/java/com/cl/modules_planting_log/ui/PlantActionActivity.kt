@@ -13,6 +13,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.temperatureConversion
 import com.cl.common_base.ext.unitsConversion
 import com.cl.common_base.ext.weightConversion
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.adapter.CustomViewGroupAdapter
 import com.cl.modules_planting_log.adapter.EditTextValueChangeListener

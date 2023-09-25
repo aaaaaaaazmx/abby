@@ -32,7 +32,7 @@ class EnvironmentInfoData(
         override val itemType: Int
             get() = when (detectionValue) {
                 "Fan" -> KEY_TYPE_FAN
-                "Grow light" -> KEY_TYPE_LIGHT
+                "Grow Light" -> KEY_TYPE_LIGHT
                 else -> KEY_TYPE_NORMAL
             }
     }

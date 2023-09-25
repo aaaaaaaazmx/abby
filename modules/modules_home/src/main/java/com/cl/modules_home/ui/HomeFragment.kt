@@ -339,7 +339,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 显示布局
             ViewUtils.setVisible(binding.clRoot)
             ViewUtils.setVisible(binding.pplantNinth.root)
-            ViewUtils.setVisible(binding.pplantNinth.ivZpBg)
+            // ViewUtils.setVisible(binding.pplantNinth.ivZpBg)
+            ViewUtils.setGone(binding.pplantNinth.tvPrivacyMode)
+            ViewUtils.setGone(binding.pplantNinth.ivZpCamera)
             // 隐藏当前所有布局
             ViewUtils.setGone(binding.plantExtendBg.root)
             ViewUtils.setGone(binding.plantFirst.root)
@@ -510,6 +512,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         binding.pplantNinth.apply {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
+
+            ivZpCamera.setOnClickListener {
+                // 跳转到配件
+                mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
+                    ?.let {
+                        ARouter
+                            .getInstance()
+                            .build(RouterPath.My.PAGE_ADD_ACCESSORY)
+                            .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                            .withSerializable(
+                                "accessoryList",
+                                it.accessoryList as Serializable?
+                            )
+                            .withString("spaceType", it.spaceType)
+                            .navigation(context)
+                    }
+                return@setOnClickListener
+            }
 
             // 未读消息气泡点击事件
             tvBtnDesc.setOnClickListener {
@@ -894,6 +914,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            tvDripPumpDesc.setOnClickListener {
+                InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_DRIP)
+            }
+
             ivDeviceList.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                     .navigation(activity)
@@ -2132,11 +2156,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     (isHave && isLoadCamera) || mViewMode.isZp.value == true
                                 )
 
-                                // 显示帐篷背景图的逻辑
-                                // 如果isHave和isLoadCamera都为true，则显示ivSwitchZpBg
-                                ViewUtils.setVisible(isHave && isLoadCamera && mViewMode.isZp.value == true, binding.pplantNinth.ivSwitchZpBg)
-                                val shouldShowIvZpBg = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == true
-                                ViewUtils.setVisible(shouldShowIvZpBg, binding.pplantNinth.ivZpBg)
+
+                                // 如果是帐篷、并且没有摄像头时。
+                                val isZpEnabled = mViewMode.isZp.value == true
+
+                                if (isZpEnabled && !isHave) {
+                                    ViewUtils.setVisible(binding.pplantNinth.rlBowl)
+                                    ViewUtils.setGone(binding.pplantNinth.cameraVideoView, binding.pplantNinth.ivZpBg)
+                                    ViewUtils.setVisible(binding.pplantNinth.ivZpCamera, binding.pplantNinth.ivSwitchZpBg)
+                                } else {
+                                    val shouldShowSwitch = isHave && isLoadCamera && isZpEnabled
+                                    ViewUtils.setVisible(shouldShowSwitch, binding.pplantNinth.ivSwitchZpBg)
+
+                                    val shouldShowIvZpBg = ((isHave && !isLoadCamera) || !isHave) && isZpEnabled
+                                    ViewUtils.setVisible(shouldShowIvZpBg, binding.pplantNinth.ivZpBg)
+                                }
+
 
 
                                 ViewUtils.setVisible(
@@ -2144,7 +2179,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     binding.pplantNinth.ivThree,
                                     binding.pplantNinth.ivTwo
                                 )
-                                ViewUtils.setVisible(isHave, binding.pplantNinth.ivSwitchCamera)
+                                ViewUtils.setInvisible(binding.pplantNinth.ivSwitchCamera, !isHave)
 
                                 // 获取摄像头配件信息
                                 mViewMode.getAccessoryInfo(devId)
@@ -2939,14 +2974,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ON  ${
                             when (startTime) {
                                 0 -> "12 AM"
-                                24 -> "12 PM"
+                                12 -> "12 PM"
                                 else -> "${if (startTime > 12) startTime - 12 else startTime} ${if (startTime > 12) "PM" else "AM"}"
                             }
                         }
                             OFF ${
                             when (endTime) {
                                 0 -> "12 AM"
-                                24 -> "12 PM"
+                                12 -> "12 PM"
                                 else -> "${if (endTime > 12) endTime - 12 else endTime} ${if (endTime > 12) "PM" else "AM"}"
                             }
                         }
@@ -3185,11 +3220,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     binding.pplantNinth.ivBowl.visibility = View.VISIBLE
                                 }
 
-                                // 显示帐篷背景图的逻辑
-                                // 如果isHave和isLoadCamera都为true，则显示ivSwitchZpBg
-                                ViewUtils.setVisible(isHave && isLoadCamera && mViewMode.isZp.value == true, binding.pplantNinth.ivSwitchZpBg)
-                                val shouldShowIvZpBg = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == true
-                                ViewUtils.setVisible(shouldShowIvZpBg, binding.pplantNinth.ivZpBg)
+                                // 如果是帐篷、并且没有摄像头时。
+                                if (mViewMode.isZp.value == true && !isHave) {
+                                    ViewUtils.setVisible(binding.pplantNinth.rlBowl)
+                                    ViewUtils.setGone(binding.pplantNinth.cameraVideoView)
+                                    ViewUtils.setGone(binding.pplantNinth.ivZpBg)
+                                    ViewUtils.setVisible(binding.pplantNinth.ivZpCamera)
+                                    ViewUtils.setVisible(binding.pplantNinth.ivSwitchZpBg)
+                                } else {
+                                    // 显示帐篷背景图的逻辑
+                                    // 如果isHave和isLoadCamera都为true，则显示ivSwitchZpBg
+                                    ViewUtils.setVisible(isHave && isLoadCamera && mViewMode.isZp.value == true, binding.pplantNinth.ivSwitchZpBg)
+                                    val shouldShowIvZpBg = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == true
+                                    ViewUtils.setVisible(shouldShowIvZpBg, binding.pplantNinth.ivZpBg)
+                                }
                             }
                             if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) {
                                 // 显示种子背景图
@@ -4518,13 +4562,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 是否开启隐私模式
      */
     private fun isPrivateMode(value: Any?) {
+        if (mViewMode.isZp.value == true) return
         mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
             if (isHave && isLoadCamera) {
                 val isOpen = value.toString() == "true"
                 val isPrivate = mViewMode.getAccessoryInfo.value?.data?.privateModel == true
                 logI("isPrivateMode isOpen: $isOpen, isPrivate: $isPrivate")
-                ViewUtils.setVisible(isOpen, binding.pplantNinth.tvPrivacyMode)
-                if (isOpen) {
+                ViewUtils.setVisible(isOpen && isPrivate, binding.pplantNinth.tvPrivacyMode)
+                if (isOpen && isPrivate) {
                     // 打开隐私模式
                     cameraId.let {
                         mViewMode.tuYaUtils.publishDps(

@@ -185,6 +185,21 @@
                         android:id="@+id/camera_video_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
+
+                    <!--无摄像头时，帐篷的背景图-->
+                    <RelativeLayout
+                        android:visibility="gone"
+                        android:id="@+id/iv_zp_camera"
+                        android:background="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <ImageView
+                            android:layout_centerInParent="true"
+                            android:background="@mipmap/home_camera_zp_bg"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+                    </RelativeLayout>
+
                     <!-- 添加其他子视图 -->
                     <TextView
                         android:background="@color/black"
