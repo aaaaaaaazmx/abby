@@ -272,7 +272,7 @@
 
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:visibility="@{isAdd ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{isAdd ? View.INVISIBLE : View.VISIBLE}"
                     android:id="@+id/unbind_zp"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginEnd="20dp"
