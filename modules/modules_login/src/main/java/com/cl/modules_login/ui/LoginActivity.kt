@@ -5,6 +5,7 @@ import android.os.Build
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
+import chip.setuppayload.SetupPayloadParser.InvalidEntryCodeFormatException
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.R
@@ -284,6 +285,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         binding.tvForget.setOnClickListener { // 跳转到忘记密码界面
             val intent = Intent(this, ForgetPasswordActivity::class.java)
             intent.putExtra(ForgetPasswordActivity.KEY_FORGET_NAME, binding.accountEditText.text.toString())
+            startActivity(intent)
+        }
+
+        // 邮箱登录
+        binding.tvEmailLogin.setOnClickListener {
+            val intent = Intent(this, EmailLoginActivity::class.java)
+            intent.putExtra(EmailLoginActivity.KEY_FORGET_NAME, binding.accountEditText.text.toString())
             startActivity(intent)
         }
 

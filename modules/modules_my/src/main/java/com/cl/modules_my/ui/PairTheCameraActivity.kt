@@ -109,17 +109,19 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
                 override fun onQRCodeSuccess(qrcodeUrl: String?) {
                 }
 
-                override fun onError(errorCode: String, errorMsg: String) {
+                override fun onError(errorCode: String?, errorMsg: String?) {
                     hideProgressLoading()
-                    ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
-                    logI("123123: errorCode: $errorCode errorMsg: $errorMsg")
+                    if (!errorCode.isNullOrEmpty() && !errorMsg.isNullOrEmpty()) {
+                        ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
+                    }
+                    // logI("123123: errorCode: $errorCode errorMsg: $errorMsg")
                 }
 
                 override fun onActiveSuccess(devResp: DeviceBean?) {
                     // 绑定成功、 跳转到视频界面
                     hideProgressLoading()
                     cameraId = devResp?.devId ?: ""
-                    logI("123123: cameraId: $cameraId  deviceId: $deviceId")
+                    // logI("123123: cameraId: $cameraId  deviceId: $deviceId")
 
                     // 设置摄像头为连续摄像模式
                     // 设备设置页面-存储卡设置 SD卡录像模式选择，1为事件录像（检测到移动再录像到SD卡），2为连续录像

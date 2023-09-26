@@ -78,5 +78,6 @@
         <activity
             android:screenOrientation="portrait"
             android:name="com.cl.modules_login.ui.SetPasswordActivity" />
+        <activity android:name=".ui.EmailLoginActivity" />
     </application>
 </manifest>

@@ -291,10 +291,11 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
         }
     }
 
-    // 获取当前设备信息
-    private val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
     }
 
     /**
@@ -303,7 +304,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuYaDeviceBean?.devId?.let {
+        userInfo?.deviceId?.let {
             ThingHomeSdk.newOTAInstance(it).getOtaInfo(object : IGetOtaInfoCallback {
                 override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                     logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
@@ -406,7 +407,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
 
     // 获取SN
     fun getSn() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_REST_STATUS, object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logI(
@@ -429,7 +430,7 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
 
     // 获取激活状态
     fun getActivationStatus() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logI(
@@ -456,6 +457,16 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     private fun hasHardwareUpdate(list: MutableList<UpgradeInfoBean>?): Boolean {
         if (null == list || list.size == 0) return false
         return list.firstOrNull { it.type == 9 }?.upgradeStatus == 1
+    }
+
+
+    /**
+     * 是否是修改的usb
+     */
+    private val _usbUpdate = MutableLiveData<Boolean>()
+    val uspUpdate: LiveData<Boolean> = _usbUpdate
+    fun setUsbUpdate(update: Boolean) {
+        _usbUpdate.value = update
     }
 
     /**

@@ -9,6 +9,7 @@ import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.pop.ChooseHumidityPop
 import com.cl.common_base.pop.ChooseTemperaturePop
@@ -191,7 +192,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                         if (this == null) {
                                             binding.tvIfText.text =
                                                 if (mViewModel.isMetricSystem) "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} ${
-                                                    ((mViewModel.setTemperature.value?.toInt()
+                                                    ((mViewModel.setTemperature.value?.safeToInt()
                                                         ?.minus(32))?.times(5f)
                                                         ?.div(9f))?.roundToInt()
                                                 }°C" else "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} 70F"
@@ -291,9 +292,9 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                             operator = if (binding.tvIfType.text.toString() == "Temperature") if (mViewModel.setTemperatureType.value == 0) ">=" else "<=" else if (mViewModel.setHumidityType.value == 0) ">=" else "<=",
                             type = binding.tvIfType.text.toString(),
                             value = when (binding.tvIfType.text.toString()) {
-                                "Temperature" -> mViewModel.setTemperature.value?.toInt()
-                                "Humidity" -> mViewModel.setHumidity.value?.toInt()
-                                else -> mViewModel.setTime.value?.toInt()
+                                "Temperature" -> mViewModel.setTemperature.value?.safeToInt()
+                                "Humidity" -> mViewModel.setHumidity.value?.safeToInt()
+                                else -> mViewModel.setTime.value?.safeToInt()
                             }
                         )
                     )
@@ -328,7 +329,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                 if (mViewModel.isMetricSystem) {
                                                     // 摄氏度
                                                     "≥ ${
-                                                        ((value.toInt().minus(32)).times(5f)
+                                                        ((value.safeToInt().minus(32)).times(5f)
                                                             .div(9f)).roundToInt()
                                                     }°C"
                                                 } else {
@@ -341,7 +342,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                 if (mViewModel.isMetricSystem) {
                                                     // 摄氏度
                                                     "≤ ${
-                                                        ((value.toInt().minus(32)).times(5f)
+                                                        ((value.safeToInt().minus(32)).times(5f)
                                                             .div(9f)).roundToInt()
                                                     }°C"
                                                 } else {
@@ -386,7 +387,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     .asCustom(
                         ChooseTimerPop(
                             this@AddAutomationActivity,
-                            time = mViewModel.setTime.value?.toInt() ?: 7,
+                            time = mViewModel.setTime.value?.safeToInt() ?: 7,
                             onConfirmAction = {
                                 binding.tvIfText.text = "$it:00"
                                 mViewModel.setTime("$it")

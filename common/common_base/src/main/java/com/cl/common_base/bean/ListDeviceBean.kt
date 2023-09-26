@@ -23,6 +23,7 @@ data class ListDeviceBean(
     val isBurnOutProof: Int? = null, // 是否显示防烧模式
     var deviceType: String? = null, // 判断设备是OG还是O1
     var smartUsbPowder: Int? = null, // USB开关：1-开启、0-关闭
+    var spaceType: String? = null, // 判断是abby还是帐篷
     var accessoryList: MutableList<AccessoryList>? = null,
 ) : BaseBean() {
     data class AccessoryList(
@@ -34,4 +35,7 @@ data class ListDeviceBean(
         val textId: String? = null,
         val status: Int? = null,
     ) : BaseBean()
+    companion object {
+        const val KEY_SPACE_TYPE_BOX = "box"
+    }
 }

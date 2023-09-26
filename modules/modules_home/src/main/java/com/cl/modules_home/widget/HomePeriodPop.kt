@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,6 +16,8 @@ import com.cl.common_base.bean.PlantInfoData
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomePeriodPopBinding
 import com.cl.common_base.ext.logI
+import com.cl.common_base.util.ViewUtils
+import com.google.api.Distribution.BucketOptions.Linear
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.TimeLineState
@@ -30,7 +33,8 @@ import com.lxj.xpopup.core.BottomPopupView
 class HomePeriodPop(
     context: Context,
     private var data: MutableList<PlantInfoData.InfoList>? = null,
-    val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?, taskTime: String?) -> Unit)? = null
+    val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?, taskTime: String?) -> Unit)? = null,
+    val unLockNow: ((pop: HomePeriodPop) -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_period_pop
@@ -46,22 +50,27 @@ class HomePeriodPop(
                     // 进行中
                     info.timeLineState = TimeLineState.CURRENT
                 }
+
                 KEY_LOCK_COMPLETED -> {
                     // 3
                     info.timeLineState = TimeLineState.INACTIVE
                 }
+
                 KEY_ALLOW_UNLOCKING -> {
                     // 4
                     info.timeLineState = TimeLineState.INACTIVE
                 }
+
                 KEY_WAIT -> {
                     // 0
                     info.timeLineState = TimeLineState.INACTIVE
                 }
+
                 KEY_UNLOCKING_COMPLETED -> {
                     // 1
                     info.timeLineState = TimeLineState.ACTIVE
                 }
+
                 else -> {
                     // 0
                     info.timeLineState = TimeLineState.INACTIVE
@@ -112,29 +121,42 @@ class HomePeriodPop(
                         val ivGou = holder.itemView.findViewById<ImageView>(R.id.iv_gou)
                         val svtUnlock = holder.itemView.findViewById<SvTextView>(R.id.svt_unlock)
                         val tvGoing = holder.itemView.findViewById<TextView>(R.id.tv_going)
+                        val isLock = holder.itemView.findViewById<FrameLayout>(R.id.fl_root)
 
                         tvGoing.visibility = View.GONE
                         svtUnlock.visibility = View.GONE
                         ivGou.visibility = View.GONE
                         svtWaitUnlock.visibility = View.GONE
                         periodTime.visibility = View.GONE
+                        if (data?.isEmpty() == true) return
+                        ViewUtils.setInvisible(isLock, data?.get(position)?.unlockNow == false)
+
+                        // 提前解锁
+                        isLock.setOnClickListener {
+                            unLockNow?.invoke(this@HomePeriodPop)
+                        }
 
                         // 解锁
                         svtUnlock.setOnClickListener {
-                            logI("""
+                            logI(
+                                """
                                 guideType: ${data?.get(position)?.guideType.toString()}
                                 taskId: ${data?.get(position)?.taskId.toString()}
-                            """.trimIndent())
+                            """.trimIndent()
+                            )
                             if ((data?.size ?: 0) > 0) {
                                 unLockAction?.invoke(
                                     data?.get(position)?.guideType.toString(),
                                     data?.get(position)?.taskId.toString(),
-                                    if (position != 0) data?.get(position - 1)?.guideType.toString() else data?.get(0)?.guideType.toString(),
+                                    if (position != 0) data?.get(position - 1)?.guideType.toString() else data?.get(
+                                        0
+                                    )?.guideType.toString(),
                                     data?.get(position)?.taskTime.toString()
                                 )
                             }
                             dismiss()
                         }
+
 
                         // 赋值
                         periodTitle.text =
@@ -162,6 +184,7 @@ class HomePeriodPop(
                                         Color.BLACK
                                     )
                                 }
+
                                 KEY_UNLOCKING_COMPLETED -> {
                                     ivGou.visibility = View.VISIBLE
                                     periodTime.visibility = View.VISIBLE
@@ -178,6 +201,7 @@ class HomePeriodPop(
                                         Color.WHITE
                                     )
                                 }
+
                                 KEY_ON_GOING -> {
                                     tvGoing.visibility = View.VISIBLE
                                     periodTime.visibility = View.VISIBLE
@@ -202,6 +226,7 @@ class HomePeriodPop(
                                     tvGoing.visibility =
                                         View.VISIBLE
                                 }
+
                                 KEY_ALLOW_UNLOCKING -> {
                                     svtUnlock.text = "Unlock"
                                     svtUnlock.visibility = View.VISIBLE
@@ -218,6 +243,7 @@ class HomePeriodPop(
                                         Color.BLACK
                                     )
                                 }
+
                                 KEY_LOCK_COMPLETED -> {
                                     svtUnlock.text = "Unlock"
                                     svtUnlock.visibility = View.VISIBLE
@@ -234,6 +260,7 @@ class HomePeriodPop(
                                         Color.BLACK
                                     )
                                 }
+
                                 else -> {
                                     svtWaitUnlock.text = "Unlock"
                                     svtWaitUnlock.visibility = View.VISIBLE

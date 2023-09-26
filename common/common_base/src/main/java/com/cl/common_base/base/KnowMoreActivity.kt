@@ -109,6 +109,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     private val accessoryId by lazy { intent.getStringExtra(BasePopActivity.KEY_PART_ID) }
 
     /**
+     * 植物Id
+     */
+    private val plantId by lazy { intent.getStringExtra(BasePopActivity.KEY_PLANT_ID) }
+
+    /**
      * 摄像头Id
      */
     private val cameraId by lazy { intent.getStringExtra(BasePopActivity.KEY_CAMERA_ID) }
@@ -171,7 +176,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         }
         /*binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")*/
         // 滑动解锁按钮的文案由后台下发
-        binding.slideToConfirm.setEngageText(mViewMode.sliderText.value ?: "Slide to Next")
+        binding.slideToConfirm.setEngageText(mViewMode.sliderText.value ?: unLockButtonEngage ?: "Slide to Next")
         binding.slideToConfirm.slideListener = object : ISlideListener {
             override fun onSlideStart() {
             }
@@ -282,6 +287,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         if (isUnlockTask) {
             fixedId?.let {
                 when (it) {
+                    Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD -> {
+                        mViewMode.getUnLockNow(plantId.toString())
+                    }
+
                     // 如果是预览界面、那么直接开始种植、然后关闭界面
                     Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW -> {
                         mViewMode.startRunning(botanyId = "", goon = false)
@@ -362,10 +371,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         mViewMode.updateDeviceInfo(
                             UpDeviceInfoReq(
                                 proMode = "On",
-                                deviceId = mViewMode.tuyaHomeBean?.devId
+                                deviceId = mViewMode.userInfo?.deviceId
                             )
                         )
-                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
                         /*mViewMode.startRunning(botanyId = "", goon = false)*/
                     }
                     // 新增配件
@@ -414,6 +422,23 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            unLockNow.observe(this@KnowMoreActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    acFinish()
+                }
+            })
+
+            updateDeviceInfo.observe(this@KnowMoreActivity, resourceObserver {
+                success {
+                    if (fixedId == Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE) {
+                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                    }
+                }
+            })
+
             startRunning.observe(this@KnowMoreActivity, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
             })

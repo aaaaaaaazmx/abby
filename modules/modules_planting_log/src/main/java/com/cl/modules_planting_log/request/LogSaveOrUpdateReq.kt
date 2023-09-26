@@ -33,9 +33,12 @@ data class LogSaveOrUpdateReq(
     var declareDeathType: String? = null,
     var inchMetricMode: String? = null,
     var syncPost: Boolean? = null,
+    var syncPlants: Boolean? = null, // 帐篷内同步所有植物
 ): BaseBean() {
     companion object {
         const val KEY_LOG_TIME = "logTime"
+        const val KEY_LIGHTING_ON = "lightingOn"
+        const val KEY_LIGHTING_OFF = "lightingOff"
         const val KEY_SPACE_TEMP  = "spaceTemp"
         const val KEY_WATER_TEMP  = "waterTemp"
         const val KEY_PLANT_HEIGHT  = "plantHeight"

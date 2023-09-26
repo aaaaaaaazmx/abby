@@ -582,15 +582,25 @@ public class MentionEditText extends AppCompatEditText {
             assert clipboardManager != null;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                 if (clipboardManager.hasPrimaryClip()) {
-                    String text = clipboardManager.getPrimaryClip().getItemAt(0).getText().toString();
-                    final int start = getSelectionStart();
-                    final int oldEnd = getSelectionEnd();
-                    // 先删除 后插入
-                    Editable editable = getText();
-                    if (start != oldEnd) {
-                        editable.delete(start, oldEnd);
+                    if (null != clipboardManager.getPrimaryClip()) {
+                        if (clipboardManager.getPrimaryClip().getItemCount() > 0) {
+                            if (clipboardManager.getPrimaryClip().getItemCount() > 0) {
+                                String text = clipboardManager.getPrimaryClip().getItemAt(0).getText().toString();
+                                final int start = getSelectionStart();
+                                final int oldEnd = getSelectionEnd();
+                                // 先删除 后插入
+                                Editable editable = getText();
+                                if (start != oldEnd) {
+                                    if (editable != null) {
+                                        editable.delete(start, oldEnd);
+                                    }
+                                }
+                                if (editable != null) {
+                                    editable.insert(start, text);
+                                }
+                            }
+                        }
                     }
-                    editable.insert(start, text);
                 }
             }
             return true;

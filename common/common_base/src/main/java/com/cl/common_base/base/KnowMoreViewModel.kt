@@ -46,11 +46,6 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
         GSON.parseObject(bean, User::class.java)
     }
 
-    val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
     // 用户信息
     val userInfo by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
@@ -318,5 +313,39 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
         }
     }
 
+
+    /**
+     * 提前解锁
+     */
+    private val _unLockNow = MutableLiveData<Resource<BaseBean>>()
+    val unLockNow: LiveData<Resource<BaseBean>> = _unLockNow
+    fun getUnLockNow(plantId: String) = viewModelScope.launch {
+        service.unlockNow(plantId)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _unLockNow.value = it
+            }
+    }
 
 }

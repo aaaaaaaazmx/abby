@@ -1,6 +1,7 @@
 package com.cl.modules_login.response
 
 import androidx.annotation.Keep
+import com.cl.common_base.bean.UserinfoBean
 import java.io.Serializable
 
 @Keep
@@ -28,4 +29,16 @@ data class LoginData(
     val deviceId: String? = null,
     val userId: String? = null,
     val externalId: String? = null,
+    val plantDays: String? = null,
+    val growBoxCount: String? = null,
+    val harvestCount: String? = null,
+    val spaceType: String? = null,
+    val newMessage: Boolean? = false,
+    val nightMode: Int? = null,
+    val nightTimer: String? = null,
+    val openNotify: Int? = null,
+    val personSign: String? = null,
+    val wallAddress: String? = null,
+    val wallId: Int? = null,
+    val inchMetricMode: String? = null,
 ) : Serializable

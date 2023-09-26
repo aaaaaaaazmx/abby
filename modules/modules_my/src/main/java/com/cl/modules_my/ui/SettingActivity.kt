@@ -74,11 +74,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     @Inject
     lateinit var mViewModel: SettingViewModel
 
-    /*private val tuyaHomeBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }*/
-
     private val tuYaUser by lazy {
         val bean = Prefs.getString(Constants.Tuya.KEY_DEVICE_USER)
         GSON.parseObject(bean, User::class.java)
@@ -254,10 +249,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         binding.ftUsb.setPointClickListener {
             // 展示一下弹窗
-            pop.asCustom(BaseCenterPop(this@SettingActivity, content = """
-                This option is designed to control the power of 3rd party accessories.\n\n
+            pop.asCustom(
+                BaseCenterPop(
+                    this@SettingActivity, content = """
+                This option is designed to control the power of 3rd party accessories.
                 You are currently connect to a hey abby smart accessory, please remove it first from device manager.
-            """.trimIndent(), confirmText = "OK")).show()
+            """.trimIndent(), confirmText = "OK"
+                )
+            ).show()
         }
 
         // 是否可以操作设备相关的功能
@@ -295,6 +294,27 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
 
                 error { errorMsg, code ->
+                    // usb的事情。
+                    if (uspUpdate.value == true) {
+                        xpopup(this@SettingActivity) {
+                            isDestroyOnDismiss(false)
+                            dismissOnTouchOutside(false)
+                            asCustom(
+                                BaseCenterPop(
+                                    this@SettingActivity,
+                                    titleText = "This option is designed to control the power of 3rd party accessories.",
+                                    content = errorMsg,
+                                    isShowCancelButton = false,
+                                    onConfirmAction = {
+                                        // 报错就复原
+                                        binding.ftUsb.isItemChecked = !binding.ftUsb.isItemChecked
+                                    }
+                                )
+                            ).show()
+                        }
+                        setUsbUpdate(false)
+                        return@error
+                    }
                     ToastUtil.shortShow(errorMsg)
                 }
             })
@@ -342,8 +362,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         if (m.find()) {
                             muteOn = m.group(1)
                             muteOff = m.group(2)
-                            var onHour = muteOn?.toInt() ?: 0
-                            var offHour = muteOff?.toInt() ?: 0
+                            var onHour = muteOn?.safeToInt() ?: 0
+                            var offHour = muteOff?.safeToInt() ?: 0
 
                             // 判断前缀是AM还是PM
                             val pattern = Pattern.compile("(PM|AM)")
@@ -355,7 +375,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 val group = matcher.group()
                                 if (i == 0) {
                                     if (group == "PM") {
-                                        muteOn = "${(m.group(1)?.toInt() ?: 0) + 12}"
+                                        muteOn = "${(m.group(1)?.safeToInt() ?: 0) + 12}"
                                     }
                                     openTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
                                     i++
@@ -364,7 +384,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                                 if (i > 0) {
                                     if (group == "PM") {
-                                        muteOff = "${(m.group(2)?.toInt() ?: 0) + 12}"
+                                        muteOff = "${(m.group(2)?.safeToInt() ?: 0) + 12}"
                                     }
                                     closeTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
                                     i = 0
@@ -488,7 +508,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         }
                         // 判断当前的版本号是否需要升级
                         kotlin.runCatching {
-                            if (netWorkVersion.toInt() > localVersion.toInt()) {
+                            if (netWorkVersion.safeToInt() > localVersion.safeToInt()) {
                                 if (isClickUpdate.value == true) {
                                     versionPop.setData(versionData)
                                     versionUpdatePop.show()
@@ -515,8 +535,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 success {
                     hideProgressLoading()
                     // 缓存信息
-                    GSON.toJson(this)
-                        ?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
+                    GSON.toJson(data)
+                        ?.let { it1 -> Prefs.putString(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 是否开启通知(1-开启、0-关闭)
                     binding.ftNotif.setItemSwitch(data?.openNotify == 1)
                     // 订阅时间
@@ -649,6 +669,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         // usb模式
         binding.ftUsb.setSwitchCheckedChangeListener { _, isChecked ->
+            mViewModel.setUsbUpdate(true)
             // usb模式
             mViewModel.updateDeviceInfo(
                 UpDeviceInfoReq(
@@ -660,6 +681,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         // 童锁
         binding.ftChildLock.setSwitchCheckedChangeListener { _, isChecked ->
+            logI("1231231: ${mViewModel.saveDeviceId.value}")
             // 是否打开童锁
             DeviceControl.get()
                 .success {
@@ -674,7 +696,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 .error { code, error ->
                     ToastUtil.shortShow(
                         """
-                      pumpWater: 
+                      childLock: 
                       code-> $code
                       errorMsg-> $error
                      """.trimIndent()
@@ -758,7 +780,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.toInt() == 24) 12 else muteOff}")
+                    .nightMode("muteOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}")
             }
 
             // 调用接口更新后台夜间模式
@@ -775,8 +797,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             pop.asCustom(
                 ChooseTimePop(
                     this@SettingActivity,
-                    turnOnHour = muteOn?.toInt(),
-                    turnOffHour = muteOff?.toInt(),
+                    turnOnHour = muteOn?.safeToInt(),
+                    turnOffHour = muteOff?.safeToInt(),
                     onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
                         binding.ftTimer.itemValue = "$onTime-$offMinute"
                         muteOn = timeOn.toString().padStart(2, '0')

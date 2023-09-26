@@ -1,6 +1,8 @@
 package com.cl.common_base.widget.toast;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 
 import com.cl.common_base.BaseApplication;
 import com.cl.common_base.R;
+
 
 
 /**
@@ -71,8 +74,18 @@ public class ToastUtil {
             sToastUtil = new ToastUtil(BaseApplication.Companion.getContext());
         }
         if (TextUtils.isEmpty(msg)) return;
-        sToastUtil.setText(msg);
-        sToastUtil.createShort().show();
+        // 这确保Toast在UI线程上显示
+        // 如果当前线程是主线程，直接显示Toast
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            sToastUtil.setText(msg);
+            sToastUtil.createShort().show();
+        } else {
+            // 否则，确保Toast在UI线程上显示
+            new Handler(Looper.getMainLooper()).post(() -> {
+                sToastUtil.setText(msg);
+                sToastUtil.createShort().show();
+            });
+        }
     }
 
     /**

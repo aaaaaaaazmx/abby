@@ -498,7 +498,6 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                             user?.uid?.let { uid ->
                                 checkPlant(uid)
                             }
-                            logI("123123123:: ${Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)}")
                         }
 
                         else -> {}

@@ -8,6 +8,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.ResetPwdReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
@@ -40,6 +41,10 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
 
     fun updateDeviceInfo(body: UpDeviceInfoReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.updateDeviceInfo(body)
+    }
+
+    fun addDevice(body: DeviceDetailsBean): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.addDevice(body)
     }
 
     /**
@@ -224,8 +229,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.verifyCode(code, email)
     }
 
-    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>> {
-        return remoteRepository.accessoryList()
+    fun accessoryList(spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>> {
+        return remoteRepository.accessoryList(spaceType)
     }
 
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
@@ -253,5 +258,13 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
 
     fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
         return remoteRepository.getAccessoryInfo(deviceId)
+    }
+
+    fun getDeviceDetails(deviceId: String): Flow<HttpResult<DeviceDetailsBean>> {
+        return remoteRepository.getDeviceDetails(deviceId)
+    }
+
+    fun getStrainName(strainName: String): Flow<HttpResult<MutableList<String>>> {
+        return remoteRepository.getStrainName(strainName)
     }
 }

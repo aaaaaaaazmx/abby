@@ -41,6 +41,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.viewmodel.ContactCommentViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -238,7 +239,7 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                         .isClickThrough(false)  //点击透传
                         .hasShadowBg(false) // 去掉半透明背景
                         .offsetY(0)
-                        .offsetX(-(view.measuredWidth / 2.2).toInt())
+                        .offsetX(-(view.measuredWidth / 2.2).safeToInt())
                         .atView(view)
                         .asCustom(
                             ContactDeletePop(this@ContactCommentActivity, onDeleteAction = {
@@ -604,7 +605,7 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                             KEY_MOMENTS -> {
                                 // 点赞成功
                                 binding.curingBoxLove.isChecked = true
-                                binding.tvLoveNum.text = (binding.tvLoveNum.text.toString().toInt() + 1).toString()
+                                binding.tvLoveNum.text = (binding.tvLoveNum.text.toString().safeToInt() + 1).toString()
                                 mViewModel.updateCurrentPosition(1)
                             }
 
@@ -632,7 +633,7 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                             KEY_MOMENTS -> {
                                 // 取消点赞成功
                                 binding.curingBoxLove.isChecked = false
-                                binding.tvLoveNum.text = (binding.tvLoveNum.text.toString().toInt() - 1).toString()
+                                binding.tvLoveNum.text = (binding.tvLoveNum.text.toString().safeToInt() - 1).toString()
                                 mViewModel.updateCurrentPosition(0)
                             }
 

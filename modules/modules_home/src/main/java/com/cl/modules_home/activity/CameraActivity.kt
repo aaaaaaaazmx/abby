@@ -43,6 +43,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -205,9 +206,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private fun showTimePieceAtDay(inputStr: String?) {
         if (!inputStr.isNullOrEmpty() && inputStr.contains("/")) {
             val substring = inputStr.split("/".toRegex()).toTypedArray()
-            val year = substring[0].toInt()
-            val mouth = substring[1].toInt()
-            val day = substring[2].toInt()
+            val year = substring[0].safeToInt()
+            val mouth = substring[1].safeToInt()
+            val day = substring[2].safeToInt()
             mCameraP2P?.queryRecordTimeSliceByDay(
                 year,
                 mouth,
@@ -434,11 +435,11 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             })
 
             // 查询门是否开着的。
-            mViewModel.tuYaDeviceBean?.devId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
+            mViewModel.userInfo?.deviceId?.let { it1 -> tuYaUtils.queryAbbyValueByDPID(it1, TuYaDeviceConstants.KEY_DEVICE_DOOR) }
         }
 
         // 获取配件信息
-        mViewModel.tuYaDeviceBean?.devId?.let { mViewModel.getAccessoryInfo(it) }
+        mViewModel.userInfo?.deviceId?.let { mViewModel.getAccessoryInfo(it) }
 
         // Check if the device version >= 23 because
         // from Android 6.0 (Marshmallow) you can set the status bar color.
@@ -463,7 +464,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             TypedValue.COMPLEX_UNIT_DIP,
             165f,
             displayMetrics
-        ).toInt()
+        ).safeToInt()
 
         val layoutParams = RelativeLayout.LayoutParams(width, height).apply {
             addRule(RelativeLayout.BELOW, R.id.fl_back)
@@ -834,8 +835,8 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         val substring = currentDate.split("/".toRegex()).toTypedArray()
         if (substring.size >= 2) {
             try {
-                val year = substring[0].toInt()
-                val mouth = substring[1].toInt()
+                val year = substring[0].safeToInt()
+                val mouth = substring[1].safeToInt()
                 mCameraP2P?.queryRecordDaysByMonth(
                     year,
                     mouth,
@@ -1673,7 +1674,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                     binding.timeline.setCanQueryData()
                     binding.timeline.setQueryNewVideoData(false)
                     if (startTime != -1L && endTime != -1L && binding.ivCameraButton.isChecked) {
-                        playback(startTime.toInt(), endTime.toInt(), currentTime.toInt())
+                        playback(startTime.safeToInt(), endTime.safeToInt(), currentTime.safeToInt())
                     }
                 }
         }

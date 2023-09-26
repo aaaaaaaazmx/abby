@@ -24,14 +24,6 @@ class HomePlantProfileViewModel  @Inject constructor(private val repository: Hom
 
 
     /**
-     * 设备信息
-     */
-    val thingDeviceBean by lazy  {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
-    /**
      * 合并账号
      */
     private val _listDevice = MutableLiveData<Resource<MutableList<ListDeviceBean>>>()

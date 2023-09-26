@@ -122,42 +122,6 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
 
 
     /**
-     * 附件列表接口
-     */
-    private val _accessoryList = MutableLiveData<Resource<MutableList<AccessoryListBean>>>()
-    val accessoryList: LiveData<Resource<MutableList<AccessoryListBean>>> = _accessoryList
-    fun getAccessoryList() {
-        viewModelScope.launch {
-            repository.accessoryList()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "${it.message}"
-                        )
-                    )
-                }.collectLatest {
-                    _accessoryList.value = it
-                }
-        }
-    }
-
-    /**
      * 删除用户设备
      */
     private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
@@ -398,10 +362,11 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
         }
     }
 
-    // 获取当前设备信息
-    private val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
     }
 
     /**
@@ -410,7 +375,7 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
     fun checkFirmwareUpdateInfo(
         onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
     ) {
-        tuYaDeviceBean?.devId?.let {
+        userInfo?.deviceId?.let {
             ThingHomeSdk.newOTAInstance(it).getOtaInfo(object : IGetOtaInfoCallback {
                 override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
                     logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
@@ -513,7 +478,7 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
 
     // 获取SN
     fun getSn() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_REST_STATUS, object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logI(
@@ -536,7 +501,7 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
 
     // 获取激活状态
     fun getActivationStatus() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
                 override fun onError(code: String?, error: String?) {
                     logI(

@@ -1,5 +1,6 @@
 package com.cl.common_base.util
 
+import com.cl.common_base.ext.safeToInt
 import java.security.MessageDigest
 import java.util.*
 
@@ -30,7 +31,7 @@ class MD5Utils {
             val hexStr = StringBuffer()
             var num: Int
             for (i in bytes.indices) {
-                num = bytes[i].toInt()
+                num = bytes[i].safeToInt()
                 if (num < 0) {
                     num += 256
                 }

@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.R
 import kotlin.math.ceil
 
@@ -65,7 +66,7 @@ open class NineGridView @JvmOverloads constructor(
             val typedArray = context.obtainStyledAttributes(attrs, R.styleable.NineGridView)
             spanCount = typedArray.getInt(R.styleable.NineGridView_ngv_spanCount, spanCount)
             maxCount = typedArray.getInt(R.styleable.NineGridView_ngv_maxCount, maxCount)
-            itemGap = typedArray.getDimension(R.styleable.NineGridView_ngv_itemGap, 2f).toInt()
+            itemGap = typedArray.getDimension(R.styleable.NineGridView_ngv_itemGap, 2f).safeToInt()
 
             singleStrategy = typedArray.getInt(
                 R.styleable.NineGridView_ngv_single_strategy,
@@ -438,7 +439,7 @@ open class NineGridView @JvmOverloads constructor(
 
     //获取行数
     private fun getLineCount(): Int {
-        return ceil(getDisplayCount().toDouble() / spanCount).toInt()
+        return ceil(getDisplayCount().toDouble() / spanCount).safeToInt()
     }
 
     //适配器

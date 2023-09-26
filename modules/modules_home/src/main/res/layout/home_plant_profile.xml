@@ -185,6 +185,8 @@
                     android:background="@drawable/background_gray_r5">
 
                     <EditText
+                        android:maxLines="1"
+                        android:singleLine="true"
                         android:id="@+id/et_email"
                         android:layout_width="match_parent"
                         android:layout_height="60dp"

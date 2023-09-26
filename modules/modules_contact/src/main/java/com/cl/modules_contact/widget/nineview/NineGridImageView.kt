@@ -29,6 +29,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.R
 import java.util.*
 import kotlin.math.min
@@ -145,7 +146,7 @@ class NineGridImageView @JvmOverloads constructor(
 
     private fun setParentContainerSize() {
         val params = layoutParams
-        params.height = (imageWidth * rows + spacing * (rows - 1)).toInt()
+        params.height = (imageWidth * rows + spacing * (rows - 1)).safeToInt()
         layoutParams = params
     }
 
@@ -155,8 +156,8 @@ class NineGridImageView @JvmOverloads constructor(
         // 拿到该图片所在行和列坐标
         val internalPosition: IntArray = findRowColumnByPosition(position)
         // 求得图片所处位置
-        val left = ((singleWidth + spacing) * internalPosition[1]).toInt()
-        val top = ((singleWidth + spacing) * internalPosition[0]).toInt()
+        val left = ((singleWidth + spacing) * internalPosition[1]).safeToInt()
+        val top = ((singleWidth + spacing) * internalPosition[0]).safeToInt()
         val right = left + singleWidth
         val bottom = top + singleWidth
 
@@ -240,7 +241,7 @@ class NineGridImageView @JvmOverloads constructor(
     }
 
     private fun getSingleWidth(): Int {
-        return ((totalWidth - spacing * (3 - 1)) / 3).toInt()
+        return ((totalWidth - spacing * (3 - 1)) / 3).safeToInt()
     }
 
     private fun changeVisibility() {

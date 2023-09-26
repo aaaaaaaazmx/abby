@@ -98,3 +98,4 @@ lint/tmp/
 .cxx
 /.idea/
 .idea
+app/proguardMapping.txt

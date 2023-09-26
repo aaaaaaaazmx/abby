@@ -15,6 +15,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.R
@@ -53,7 +54,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
     override fun PlantingMainFragmentBinding.initBinding() {
         binding.apply {
             lifecycleOwner = viewLifecycleOwner
-            binding.viewModel = this@PlantingLogFragment.viewModel
+            viewModel = this@PlantingLogFragment.viewModel
             executePendingBindings()
         }
     }
@@ -134,7 +135,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
     private fun clickView() {
         binding.flGetPlantList.setOnClickListener {
             // 获取到所有的植物ID
-            viewModel.getPlantIdByDeviceId(viewModel.thingDeviceBean()?.devId ?: "")
+            viewModel.getPlantIdByDeviceId(viewModel.userinfoBean()?.deviceId ?: "")
         }
 
         binding.ivAddLog.setOnClickListener {
@@ -325,6 +326,9 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                     // 找到相同周期，然后设置选中属性
                     periodVoList?.find { data?.period == it.period }?.isSelect = true
                     chooserPeriodAdapter.setList(periodVoList)
+                   /* runCatching {
+                        periodVoList?.indexOfFirst { it.isSelect }?.let { if (it != -1) binding.rvPeriod.smoothScrollToPosition(it) }
+                    }*/
 
                     // 2、根据返回的当前周期选择需要展示的log列表
                     updateCurrent(1)
@@ -389,7 +393,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                         .offsetX(XPopupUtils.dp2px(context, -5f))
                         .offsetY(XPopupUtils.dp2px(context, 10f))
                         .atView(binding.ivGetPlantList).asCustom(context?.let {
-                            PlantIdListPop(it, plantId.value?.toInt(), data, onConfirmAction = { plantId ->
+                            PlantIdListPop(it, plantId.value?.safeToInt(), data, onConfirmAction = { plantId ->
                                 // 设置植物ID
                                 setPlantIds(plantId)
                                 // 根据plantId获取植物信息

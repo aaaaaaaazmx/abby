@@ -7,4 +7,5 @@ data class AccessoryListBean(
     val accessoryName: String? = null,
     val image: String? = null,
     val textId: String? = null,
+    val buyLink: String? = null,
 ): BaseBean()

@@ -37,7 +37,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="88dp"
-                android:background="@mipmap/plant_bg">
+                android:background='@{viewModel.userinfoBean.spaceType.equals("box") ? @drawable/plant_bg : @drawable/plant_zp_bg}'>
 
                 <com.cl.common_base.widget.AbTextViewSimpleCalendar
                     android:text="@{String.valueOf(plantInfoData.plantName)}"
@@ -99,6 +99,21 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <ProgressBar
+                        android:visibility="gone"
+                        android:id="@+id/before_loading"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="43dp"
+                        android:layout_height="5dp"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:progress="65"
+                        android:progressDrawable="@drawable/contact_progress_shape"
+                        app:layout_constraintBottom_toBottomOf="@+id/beforeImage"
+                        app:layout_constraintEnd_toEndOf="@+id/beforeImage"
+                        app:layout_constraintStart_toStartOf="@+id/beforeImage"
+                        app:layout_constraintTop_toTopOf="@+id/beforeImage" />
+
                     <ImageView
                         android:visibility="@{TextUtils.isEmpty(viewModel.beforePicAddress) ? View.GONE : View.VISIBLE}"
                         android:id="@+id/beforeClose"
@@ -118,6 +133,22 @@
                         android:layout_height="70dp"
                         android:layout_marginStart="10dp"
                         app:layout_constraintStart_toEndOf="@+id/beforeImage" />
+
+
+                    <ProgressBar
+                        android:visibility="gone"
+                        android:id="@+id/after_loading"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="43dp"
+                        android:layout_height="5dp"
+                        android:layout_centerInParent="true"
+                        android:background="@null"
+                        android:progress="65"
+                        android:progressDrawable="@drawable/contact_progress_shape"
+                        app:layout_constraintBottom_toBottomOf="@+id/afterImage"
+                        app:layout_constraintEnd_toEndOf="@+id/afterImage"
+                        app:layout_constraintStart_toStartOf="@+id/afterImage"
+                        app:layout_constraintTop_toTopOf="@+id/afterImage" />
 
                     <ImageView
                         android:visibility="@{TextUtils.isEmpty(viewModel.afterPicAddress) ? View.GONE : View.VISIBLE}"
@@ -220,6 +251,19 @@
                 android:layout_height="60dp"
                 app:hideArrow="true"
                 app:itemTitle="Post on Trend"
+                />
+
+            <com.cl.common_base.widget.FeatureItemSwitch
+                app:itemTitleBold="true"
+                android:layout_marginEnd="19dp"
+                android:layout_marginStart="19dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/ft_sync_zp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:itemChecked="true"
+                app:hideArrow="true"
+                app:itemTitle="Sync to all plants"
                 />
 
         </LinearLayout>

@@ -13,7 +13,7 @@ object Constants {
     const val USER_ID = "userid"
     const val USER_NAME = "username"
     const val PASSWORD = "password"
-    const val APP_TAG = "Abby"
+    const val APP_TAG = "AbbyAbby"
 
     // 网络常量
     const val APP_SUCCESS = 200
@@ -70,6 +70,9 @@ object Constants {
 
         // 涂鸦相关信息
         const val KEY_TU_YA_INFO = "key_tuya_info"
+
+        // 记录当天刷新的时间，在同一天之内是能刷新一次。
+        const val KEY_REFRESH_TIME = "key_refresh_time"
     }
 
     object Plant {
@@ -148,6 +151,9 @@ object Constants {
 
         // 绑定摄像头相关问题说明
         const val KEY_INTER_COME_BIND_CAMERA = "8074254"
+
+        // dirp文章
+        const val KEY_INTER_COME_DRIP = "8407831"
     }
 
     // APP应用内消息
@@ -338,6 +344,10 @@ object Constants {
         const val KEY_FIXED_ID_TRANSPLANT_3 = "6b05ffbadee746e6979a314613df75b2"
         const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
         const val KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW = "d966091a08c048db962b710212eb223d"
+
+
+        // 提前解锁周期
+        const val KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD = "dc2d55199a45b60fd324d6c4c75de0e3"
 
         // 新增配件
         const val KEY_FIXED_ID_NEW_ACCESSORIES = "xxxxx"

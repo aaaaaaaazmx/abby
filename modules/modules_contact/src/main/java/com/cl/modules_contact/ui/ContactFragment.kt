@@ -53,6 +53,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
 import com.cl.modules_contact.pop.ContactChooseTipPop
 import com.cl.modules_contact.pop.ContactDeletePop
@@ -329,7 +330,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         .asCustom(
                             context?.let {
                                 RewardPop(it, onRewardListener = { oxygenNum ->
-                                    mViewMode.updateRewardOxygen(oxygenNum.toInt())
+                                    mViewMode.updateRewardOxygen(oxygenNum.safeToInt())
                                     mViewMode.reward(
                                         RewardReq(
                                             momentsId = item?.id.toString(),
@@ -461,7 +462,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
             .dismissOnTouchOutside(false)
             .moveUpToKeyboard(false)
             .enableDrag(false)
-            .maxHeight((XPopupUtils.getScreenHeight(context) * 0.9f).toInt())
+            .maxHeight((XPopupUtils.getScreenHeight(context) * 0.9f).safeToInt())
             .asCustom(
                 context?.let {
                     CommentPop(it, item?.userId == mViewMode.userinfoBean?.userId, item?.id, onDismissAction = { commentListData ->

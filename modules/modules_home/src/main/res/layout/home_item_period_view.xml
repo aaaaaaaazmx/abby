@@ -12,20 +12,41 @@
         tools:background="@drawable/background_main_color_r6"
         android:id="@+id/cl_root"
         android:layout_width="match_parent"
-        android:layout_height="64dp">
+        android:layout_height="70dp">
 
-        <TextView
-            android:textStyle="bold"
+        <LinearLayout
+            android:id="@+id/ll_title"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="13dp"
+            android:layout_marginStart="11dp"
             app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/period_title"
+            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            tools:text="Vegetation" />
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:padding="6dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/period_title"
+                app:layout_constraintStart_toStartOf="parent"
+                android:id="@+id/fl_root"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:background="@mipmap/home_three_point_bg"
+                    android:layout_width="16dp"
+                    android:layout_height="4dp"
+                    android:importantForAccessibility="no" />
+            </FrameLayout>
+            <TextView
+                android:layout_marginStart="5dp"
+                android:textStyle="bold"
+                android:id="@+id/period_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                tools:text="Vegetation" />
+        </LinearLayout>
+
 
         <TextView
             app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +67,7 @@
             android:id="@+id/svt_unlock"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
-            app:layout_constraintTop_toTopOf="@+id/period_title"
+            app:layout_constraintTop_toTopOf="@+id/ll_title"
             android:gravity="center"
             android:textSize="13sp"
             android:textColor="@color/white"
@@ -63,7 +84,7 @@
             android:id="@+id/svt_wait_unlock"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
-            app:layout_constraintTop_toTopOf="@+id/period_title"
+            app:layout_constraintTop_toTopOf="@+id/ll_title"
             android:gravity="center"
             android:textSize="13sp"
             android:textColor="@color/white"
@@ -80,7 +101,7 @@
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
-            app:layout_constraintTop_toTopOf="@+id/period_title"
+            app:layout_constraintTop_toTopOf="@+id/ll_title"
             android:visibility="gone"
             android:id="@+id/tv_going"
             android:text="Ongoing.."
@@ -96,7 +117,7 @@
             android:layout_marginEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@+id/period_time"
-            app:layout_constraintTop_toTopOf="@+id/period_title"
+            app:layout_constraintTop_toTopOf="@+id/ll_title"
             android:background="@mipmap/base_period_gou"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

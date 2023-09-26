@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.TimePickerPop
 import com.cl.common_base.util.Prefs
 import com.cl.modules_planting_log.databinding.PlantingCustomViewGroupItemBinding
 import com.cl.modules_planting_log.request.FieldAttributes
@@ -163,6 +166,10 @@ class CustomViewGroupAdapter(
         data[position] = newValue
     }
 
+    // 开关灯时间
+    private var turnOnHour: Int? = null
+    private var turnOffHour: Int? = null
+
     /**
      * EditText的点击事件
      */
@@ -183,6 +190,88 @@ class CustomViewGroupAdapter(
                     timeInMillis = (timeMill)
                     // 月份从0开始，所以需要加1
                     DatePickerDialog(context, dateSetListener, get(Calendar.YEAR), get(Calendar.MONTH), get(Calendar.DAY_OF_MONTH)).show()
+                }
+            }
+
+            // 开灯时间
+            LogSaveOrUpdateReq.KEY_LIGHTING_ON -> {
+                // todo 弹窗
+                val currentOnTime = editText.text.toString()
+                val pattern = """(\d{1,2}):(\d{2}) ([AP]M)""".toRegex()
+                val matchResult = pattern.matchEntire(currentOnTime)
+                if (matchResult != null) {
+                    val (housr, minute, amPm) = matchResult.destructured  // 使用解构声明来获取组的值
+                    turnOnHour = housr.safeToInt()
+                    if (amPm == "PM") {
+                        turnOnHour = (turnOnHour ?: 0) + 12
+                    }
+                    xpopup(context) {
+                        asCustom(
+                            TimePickerPop(context, onConfirmAction = { time, timeMis ->
+                                runCatching {
+                                    // 返回的是24小时制度。
+                                    val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
+
+                                    if (hour > 12) {
+                                        editText.setText("${hour - 12}:00 PM")
+                                    } else if (hour < 12) {
+                                        editText.setText("${hour}:00 AM")
+                                    } else if (hour == 12) {
+                                        editText.setText("12:00 AM")
+                                    }
+                                    turnOnHour = hour
+                                    logI("123123: $turnOnHour")
+                                }
+
+                            }, chooseTime = turnOnHour ?: 12)
+                        ).show()
+                    }
+                    logI("Hour: $housr")
+                    logI("Minute: $minute")
+                    logI("AM/PM: $amPm")
+                } else {
+                    logI("The time string does not match the expected format.")
+                }
+            }
+
+            // 关灯时间
+            LogSaveOrUpdateReq.KEY_LIGHTING_OFF -> {
+                // todo 弹窗
+                val currentOnTime = editText.text.toString()
+                val pattern = """(\d{1,2}):(\d{2}) ([AP]M)""".toRegex()
+                val matchResult = pattern.matchEntire(currentOnTime)
+                if (matchResult != null) {
+                    val (housr, minute, amPm) = matchResult.destructured  // 使用解构声明来获取组的值
+                    turnOnHour = housr.safeToInt()
+                    if (amPm == "PM") {
+                        turnOnHour = (turnOnHour ?: 0) + 12
+                    }
+                    xpopup(context) {
+                        asCustom(
+                            TimePickerPop(context, onConfirmAction = { time, timeMis ->
+                                runCatching {
+                                    // 返回的是24小时制度。
+                                    val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
+
+                                    if (hour > 12) {
+                                        editText.setText("${hour - 12}:00 PM")
+                                    } else if (hour < 12) {
+                                        editText.setText("${hour}:00 AM")
+                                    } else if (hour == 12) {
+                                        editText.setText("12:00 AM")
+                                    }
+                                    turnOnHour = hour
+                                    logI("123123: $turnOnHour")
+                                }
+
+                            }, chooseTime = turnOnHour ?: 12)
+                        ).show()
+                    }
+                    logI("Hour: $housr")
+                    logI("Minute: $minute")
+                    logI("AM/PM: $amPm")
+                } else {
+                    logI("The time string does not match the expected format.")
                 }
             }
 

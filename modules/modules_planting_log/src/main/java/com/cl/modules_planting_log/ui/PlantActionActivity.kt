@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.widget.EditText
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.gallonConversion
 import com.cl.common_base.ext.letMultiple
@@ -12,6 +13,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.temperatureConversion
 import com.cl.common_base.ext.unitsConversion
 import com.cl.common_base.ext.weightConversion
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.adapter.CustomViewGroupAdapter
 import com.cl.modules_planting_log.adapter.EditTextValueChangeListener
@@ -69,6 +71,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         binding.apply {
             lifecycleOwner = this@PlantActionActivity
             plantInfoData = this@PlantActionActivity.plantInfoData
+            model = this@PlantActionActivity.viewModel
             executePendingBindings()
         }
     }
@@ -135,6 +138,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
+        logSaveOrUpdateReq.syncPlants = if (viewModel.userinfoBean?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX) false else binding.ftSyncZp.isItemChecked
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
         showProgressLoading()
         if (logId.isNullOrEmpty()) {
@@ -180,7 +184,6 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
                     // 提交成功 or 修改成功
                     finish()
                 }
-                loading { showProgressLoading() }
             })
 
             getLogById.observe(this@PlantActionActivity, resourceObserver {

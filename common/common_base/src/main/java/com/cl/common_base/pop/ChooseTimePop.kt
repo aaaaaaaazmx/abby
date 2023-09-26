@@ -9,6 +9,7 @@ import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.MyChooseTimePopBinding
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
@@ -92,7 +93,7 @@ class ChooseTimePop(
                 // 时间开启
                 XPopup.Builder(context)
                     .asCustom(TimePickerPop(context, onConfirmAction = { time, timeMis ->
-                        val hour = if (time.toInt() == 0) 12 else time.toInt()
+                        val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
                         /*turnOffHour?.let {
                             if (it < 12) { // 表示是AM、也就是第二天
                                 // val turnOff = format24Hour(24 + it, 0).toInt()
@@ -141,7 +142,7 @@ class ChooseTimePop(
                 // 时间关闭
                 XPopup.Builder(context)
                     .asCustom(TimePickerPop(context, onConfirmAction = { time, timeMis ->
-                        val hour = time.toInt()
+                        val hour = time.safeToInt()
 
                         /*turnOnHour?.let {
                             if (it < 12) {
@@ -170,13 +171,13 @@ class ChooseTimePop(
                         if (hour > 12) {
                             ftTurnOff.itemValue = "${hour - 12}:00 PM"
                         } else if (hour < 12) {
-                            ftTurnOff.itemValue = "${if (time.toInt() == 0) 12 else time.toInt()}:00 AM"
+                            ftTurnOff.itemValue = "${if (time.safeToInt() == 0) 12 else time.safeToInt()}:00 AM"
                         } else if (hour == 12) {
                             ftTurnOff.itemValue = "12:00 PM"
                         }
                         btnSuccess.isEnabled = true
                         // 赋值给他
-                        turnOffHour =  if (time.toInt() == 0) 12 else time.toInt()
+                        turnOffHour =  if (time.safeToInt() == 0) 12 else time.safeToInt()
                     }, chooseTime = turnOffHour ?: 12))
                     .show()
             }

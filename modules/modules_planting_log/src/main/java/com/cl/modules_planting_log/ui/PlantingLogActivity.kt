@@ -107,7 +107,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                 "plantHeight", "lightingOn", "lightingOff", "co2Concentration"
             ),
             listOf(
-                "logTime"
+                "logTime", "lightingOn", "lightingOff"
             ),
             maps,
         )
@@ -164,10 +164,10 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             return
         }
         if (binding.ftTrend.isItemChecked) {
-            val notes = binding.etNote.text.toString()
-            val picListUrl = viewModel.picAddress.value
+            val notes = binding.etNote.text
+            val picListUrl = viewModel.picAddress.value ?: mutableListOf()
 
-            if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
+            if (picListUrl.isEmpty() || notes.isNullOrEmpty()) {
                 ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
                 binding.ftTrend.isItemChecked = false
                 return
@@ -239,6 +239,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
         binding.apply {
             lifecycleOwner = this@PlantingLogActivity
             plantInfoData = this@PlantingLogActivity.plantInfoData
+            model = this@PlantingLogActivity.viewModel
             executePendingBindings()
         }
     }
@@ -340,7 +341,6 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                     // 提交成功 or 修改成功
                     finish()
                 }
-                loading { showProgressLoading() }
             })
 
             // 上传图片回调
@@ -738,10 +738,10 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
 
         binding.ftTrend.setSwitchCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                val notes = binding.etNote.text.toString()
-                val picListUrl = viewModel.picAddress.value
+                val notes = binding.etNote.text
+                val picListUrl = viewModel.picAddress.value ?: mutableListOf()
 
-                if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
+                if (picListUrl.isEmpty() || notes.isNullOrEmpty()) {
                     ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
                     binding.ftTrend.isItemChecked = false
                 }

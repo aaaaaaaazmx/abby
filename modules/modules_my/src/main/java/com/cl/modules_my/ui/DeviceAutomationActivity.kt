@@ -1,15 +1,18 @@
 package com.cl.modules_my.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.resourceObserver
@@ -96,6 +99,28 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     @SuppressLint("CheckResult")
     override fun observe() {
         mViewModel.apply {
+            saveCameraSetting.observe(this@DeviceAutomationActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+
+                loading { showProgressLoading() }
+
+                success {
+                    hideProgressLoading()
+                    if (mViewModel.isUnbind.value == true) {
+                        setResult(Activity.RESULT_OK)
+                        finish()
+                    } else {
+                        // 保存成功
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                            .navigation()
+                        finish()
+                    }
+                }
+            })
+
             // 删除自动化
             deleteAutomation.observe(this@DeviceAutomationActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -153,7 +178,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                         binding.ftCheck.setItemChecked(it == 1)
                     }
                     // 主开关需要开启，才显示
-                    binding.tvAutoDesc.text = if (data?.status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
+                    binding.tvAutoDesc.text =
+                        if (data?.status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
 
                     adapter.setList(data?.list)
                 }
@@ -178,6 +204,47 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
             letMultiple(accessoryId, deviceId) { a, b ->
                 mViewModel.getAccessoryStatus(a, b, if (isChecked) "1" else "0")
             }
+        }
+
+        binding.unbindCamera.setOnClickListener {
+            XPopup.Builder(this@DeviceAutomationActivity).isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(false).asCustom(
+                BaseCenterPop(this@DeviceAutomationActivity,
+                    content = "Are you certain you wish to delete the BudCam?",
+                    cancelText = "No",
+                    confirmText = "Yes",
+                    onCancelAction = {},
+                    onConfirmAction = { // 解绑设备
+                        // 上传解绑状态
+                        mViewModel.setUnbind(true)
+                        mViewModel.cameraSetting(
+                            UpdateInfoReq(
+                                binding = false,
+                                deviceId = deviceId
+                            )
+                        )
+                    })
+            ).show()
+            /* xpopup {
+                 title("解绑摄像头")
+                 content("确定要解绑摄像头吗？")
+                 positiveButton("确定") {
+                     unBindDevice()
+                     // 解绑相机
+                     accessoryDeviceId?.let { it1 ->
+                         tuyaUtils.unBindCamera(it1, onErrorAction = {
+                             ToastUtil.shortShow(it)
+                         }) {
+                             // 绑定成功，结束当前页面，刷新配件列表
+                             setResult(Activity.RESULT_OK)
+                             finish()
+                         }
+                     }
+                 }
+                 negativeButton("取消") {
+                     dismiss()
+                 }
+             }.show()*/
         }
 
         binding.ivAddDevice.setOnClickListener {

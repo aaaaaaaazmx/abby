@@ -17,6 +17,7 @@ import androidx.core.view.NestedScrollingChildHelper
 import androidx.core.view.NestedScrollingParent3
 import androidx.core.view.NestedScrollingParentHelper
 import androidx.core.view.ViewCompat
+import com.cl.common_base.ext.safeToInt
 import kotlin.math.abs
 
 /**
@@ -185,7 +186,7 @@ open class BehavioralScrollView @JvmOverloads constructor(
         onEndListener = onEnd
         // 这里不区分滚动方向，在分发滚动量的时候会处理
         scroller.startScroll(
-                lastX.toInt(), lastY.toInt(),
+                lastX.safeToInt(), lastY.toInt(),
                 scroll - scrollX, scroll - scrollY,
                 duration
         )

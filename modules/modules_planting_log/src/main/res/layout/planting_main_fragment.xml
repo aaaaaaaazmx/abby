@@ -29,7 +29,7 @@
                 android:id="@+id/cl_bg"
                 android:layout_width="match_parent"
                 android:layout_height="109dp"
-                android:background="@mipmap/plant_bg">
+                android:background='@{viewModel.userinfoBean.invoke().spaceType.equals("box") ? @drawable/plant_bg : @drawable/plant_zp_bg}'>
 
                 <FrameLayout
                     android:id="@+id/fl_get_plant_list"
@@ -85,10 +85,12 @@
                     tools:text="Mary" />
 
                 <com.cl.common_base.widget.AbTextViewSimpleCalendar
+                    android:gravity="right"
                     android:visibility="@{viewModel.getPlantInfoByPlantId.data == null ? View.GONE : View.VISIBLE}"
                     android:text='@{String.valueOf(viewModel.getPlantInfoByPlantId.data.plantName)}'
                     android:id="@+id/tv_nick_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    app:layout_constraintStart_toStartOf="parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"
                     android:textColor="#006241"

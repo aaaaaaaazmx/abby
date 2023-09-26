@@ -32,6 +32,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -295,7 +296,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                         .dismissOnTouchOutside(true)
                         .asCustom(
                             RewardPop(this@MyJourneyActivity, onRewardListener = { oxygenNum ->
-                                viewModel.updateRewardOxygen(oxygenNum.toInt())
+                                viewModel.updateRewardOxygen(oxygenNum.safeToInt())
                                 viewModel.reward(
                                     RewardReq(
                                         momentsId = item?.id.toString(),
@@ -393,7 +394,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
             .dismissOnTouchOutside(false)
             .moveUpToKeyboard(false)
             .enableDrag(false)
-            .maxHeight((XPopupUtils.getScreenHeight(this@MyJourneyActivity) * 0.9f).toInt())
+            .maxHeight((XPopupUtils.getScreenHeight(this@MyJourneyActivity) * 0.9f).safeToInt())
             .asCustom(
                     CommentPop(this@MyJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData ->
                         // 更新当前position

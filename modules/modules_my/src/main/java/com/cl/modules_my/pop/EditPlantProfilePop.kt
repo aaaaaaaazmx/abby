@@ -12,6 +12,7 @@ import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.ChooseTimePop
@@ -108,6 +109,7 @@ class EditPlantProfilePop(
 
             // 夜间模式
             ftNight.setSwitchCheckedChangeListener { _, isChecked ->
+                logI("1231231: ${beanData?.deviceId}")
                 // muteOn:00,muteOff:001
                 ViewUtils.setVisible(isChecked, ftTimer)
                 if (!isChecked) {
@@ -139,7 +141,7 @@ class EditPlantProfilePop(
                                 """.trimIndent()
                             )
                         }
-                        .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.toInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
+                        .nightMode("muteOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
                 }
 
                 // 调用接口更新后台夜间模式
@@ -163,8 +165,8 @@ class EditPlantProfilePop(
                     .asCustom(
                         ChooseTimePop(
                             context,
-                            turnOnHour = muteOn?.toInt(),
-                            turnOffHour = muteOff?.toInt(),
+                            turnOnHour = muteOn?.safeToInt(),
+                            turnOffHour = muteOff?.safeToInt(),
                             onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
                                 ftTimer.itemValue = "$onTime-$offMinute"
                                 muteOn = "$timeOn"
@@ -244,8 +246,8 @@ class EditPlantProfilePop(
         if (m.find()) {
             muteOn = m.group(1)
             muteOff = m.group(2)
-            val onHour = muteOn?.toInt() ?: 0
-            val offHour = muteOff?.toInt() ?: 0
+            val onHour = muteOn?.safeToInt() ?: 0
+            val offHour = muteOff?.safeToInt() ?: 0
 
             // 判断前缀是AM还是PM
             val pattern = Pattern.compile("(PM|AM)")
@@ -257,7 +259,7 @@ class EditPlantProfilePop(
                 val group = matcher.group()
                 if (i == 0) {
                     if (group == "PM") {
-                        muteOn = "${(m.group(1)?.toInt() ?: 0) + 12}"
+                        muteOn = "${(m.group(1)?.safeToInt() ?: 0) + 12}"
                     }
                     openTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
                     i++
@@ -266,7 +268,7 @@ class EditPlantProfilePop(
 
                 if (i > 0) {
                     if (group == "PM") {
-                        muteOff = "${(m.group(2)?.toInt() ?: 0) + 12}"
+                        muteOff = "${(m.group(2)?.safeToInt() ?: 0) + 12}"
                     }
                     closeTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
                     i = 0

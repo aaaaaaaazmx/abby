@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -30,10 +31,11 @@ import javax.inject.Inject
 class PairFrontScanCodeViewModel @Inject constructor(private val repository: PairRepository) :
     ViewModel() {
 
-    // 获取当前设备信息
-    val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+    // 用户信息
+    val userInfo by lazy {
+        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
+        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
+        parseObject
     }
 
     /**
@@ -77,7 +79,7 @@ class PairFrontScanCodeViewModel @Inject constructor(private val repository: Pai
     }
 
     fun getActivationStatus() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
+        ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
             it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
                 override fun onError(code: String, error: String?) {
                     logI(

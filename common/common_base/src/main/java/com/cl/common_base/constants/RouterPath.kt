@@ -103,6 +103,8 @@ class RouterPath {
         const val PAGE_MY_DEVICE_SETTING = "/deviceSetting/$MY"
         // 摄像头二维码配对界面
         const val PAGE_CAMERA_QR_CODE = "/cameraQrCode/$MY"
+        // 添加配件页面
+        const val PAGE_ADD_ACCESSORY = "/AddAccessory/$MY"
     }
 
     /**

@@ -127,42 +127,6 @@ class AddAutomationViewModel @Inject constructor(private val repository: MyRepos
 
 
     /**
-     * 附件列表接口
-     */
-    private val _accessoryList = MutableLiveData<Resource<MutableList<AccessoryListBean>>>()
-    val accessoryList: LiveData<Resource<MutableList<AccessoryListBean>>> = _accessoryList
-    fun getAccessoryList() {
-        viewModelScope.launch {
-            repository.accessoryList()
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "${it.message}"
-                        )
-                    )
-                }.collectLatest {
-                    _accessoryList.value = it
-                }
-        }
-    }
-
-    /**
      * 删除用户设备
      */
     private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
@@ -403,46 +367,6 @@ class AddAutomationViewModel @Inject constructor(private val repository: MyRepos
         }
     }
 
-    // 获取当前设备信息
-    private val tuYaDeviceBean by lazy {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
-    }
-
-    /**
-     * 查询固件升级信息
-     */
-    fun checkFirmwareUpdateInfo(
-        onOtaInfo: ((upgradeInfoBeans: MutableList<UpgradeInfoBean>?, isShow: Boolean) -> Unit)? = null,
-    ) {
-        tuYaDeviceBean?.devId?.let {
-            ThingHomeSdk.newOTAInstance(it).getOtaInfo(object : IGetOtaInfoCallback {
-                override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
-                    logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
-                    // 如果可以升级
-                    if (hasHardwareUpdate(upgradeInfoBeans)) {
-                        onOtaInfo?.invoke(upgradeInfoBeans, true)
-                    } else {
-                        // 如果不可以升级过
-                        onOtaInfo?.invoke(upgradeInfoBeans, false)
-                    }
-                }
-
-                override fun onFailure(code: String?, error: String?) {
-                    logI(
-                        """
-                        getOtaInfo:
-                        code: $code
-                        error: $error
-                    """.trimIndent()
-                    )
-                    Reporter.reportTuYaError("newOTAInstance", error, code)
-                }
-            })
-        }
-
-    }
-
     /**
      * 获取图文广告
      */
@@ -512,53 +436,6 @@ class AddAutomationViewModel @Inject constructor(private val repository: MyRepos
                 }.collectLatest {
                     _giveUpCheck.value = it
                 }
-        }
-    }
-
-
-    // 获取SN
-    fun getSn() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
-            it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_REST_STATUS, object : IResultCallback {
-                override fun onError(code: String?, error: String?) {
-                    logI(
-                        """
-                        KEY_DEVICE_REPAIR_REST_STATUS: error
-                        code: $code
-                        error: $error
-                    """.trimIndent()
-                    )
-                    ToastUtil.shortShow(error)
-                    Reporter.reportTuYaError("newDeviceInstance", error, code)
-                }
-
-                override fun onSuccess() {
-                    logI("sdasdas")
-                }
-            })
-        }
-    }
-
-    // 获取激活状态
-    fun getActivationStatus() {
-        ThingHomeSdk.newDeviceInstance(tuYaDeviceBean?.devId)?.let {
-            it.getDp(TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN, object : IResultCallback {
-                override fun onError(code: String?, error: String?) {
-                    logI(
-                        """
-                        KEY_DEVICE_REPAIR_REST_STATUS: error
-                        code: $code
-                        error: $error
-                    """.trimIndent()
-                    )
-                    ToastUtil.shortShow(error)
-                    Reporter.reportTuYaError("newDeviceInstance", error, code)
-                }
-
-                override fun onSuccess() {
-                    logI("sdasdas")
-                }
-            })
         }
     }
 

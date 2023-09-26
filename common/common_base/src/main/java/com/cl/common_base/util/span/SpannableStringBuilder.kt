@@ -19,6 +19,7 @@ import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 import androidx.core.text.inSpans
 import com.cl.common_base.BaseApplication
+import com.cl.common_base.ext.safeToInt
 
 // https://github.com/DylanCaiCoding/Longan/blob/master/docs/usage/spannablestring.md
 
@@ -28,7 +29,7 @@ private const val SPACE_SPAN_TEXT = "<space/>"
 inline fun SpannableStringBuilder.size(
     size: Float,
     builderAction: SpannableStringBuilder.() -> Unit
-): SpannableStringBuilder = size(size.toInt(), builderAction)
+): SpannableStringBuilder = size(size.safeToInt(), builderAction)
 
 inline fun SpannableStringBuilder.size(
     size: Int,

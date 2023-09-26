@@ -9,6 +9,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -37,6 +38,10 @@ class MyRemoteRepository @Inject constructor() {
 
     fun updateDeviceInfo(body: UpDeviceInfoReq): Flow<HttpResult<BaseBean>> {
         return service.updateDeviceInfo(body)
+    }
+
+    fun addDevice(body: DeviceDetailsBean): Flow<HttpResult<BaseBean>> {
+        return service.addDevice(body)
     }
 
     fun plantInfo(): Flow<HttpResult<PlantInfoData>> {
@@ -161,7 +166,10 @@ class MyRemoteRepository @Inject constructor() {
         return service.openAutomation(req)
     }
 
-    fun getAutomationRule(automationId: String?, accessoryId: String?): Flow<HttpResult<GetAutomationRuleBean>> {
+    fun getAutomationRule(
+        automationId: String?,
+        accessoryId: String?
+    ): Flow<HttpResult<GetAutomationRuleBean>> {
         return service.getAutomationRule(automationId, accessoryId)
     }
 
@@ -177,8 +185,8 @@ class MyRemoteRepository @Inject constructor() {
         return service.verifyCode(code, email)
     }
 
-    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>> {
-        return service.accessoryList()
+    fun accessoryList(spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>> {
+        return service.accessoryList(spaceType)
     }
 
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
@@ -197,6 +205,7 @@ class MyRemoteRepository @Inject constructor() {
     fun oxygenCoinBillList(req: AccountFlowingReq): Flow<HttpResult<OxygenCoinBillList>> {
         return service.oxygenCoinBillList(req)
     }
+
     fun resetPwd(req: ResetPwdReq): Flow<HttpResult<BaseBean>> {
         return service.resetPwd(req)
     }
@@ -207,5 +216,13 @@ class MyRemoteRepository @Inject constructor() {
 
     fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
         return service.getAccessoryInfo(deviceId)
+    }
+
+    fun getDeviceDetails(deviceId: String): Flow<HttpResult<DeviceDetailsBean>> {
+        return service.getDeviceDetails(deviceId)
+    }
+
+    fun getStrainName(strainName: String): Flow<HttpResult<MutableList<String>>> {
+        return service.getStrainName(strainName)
     }
 }

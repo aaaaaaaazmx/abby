@@ -82,6 +82,14 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _deviceId.value = deviceId
     }
 
+    private val _deviceInfo = MutableLiveData<LiveDataDeviceInfoBean>()
+    val deviceInfo: LiveData<LiveDataDeviceInfoBean> = _deviceInfo
+    fun setDeviceInfo(deviceId: LiveDataDeviceInfoBean) {
+        _deviceInfo.value = deviceId
+    }
+
+
+
     // 童锁的开闭状态
     val _childLockStatus = MutableLiveData(
         thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK }
@@ -468,6 +476,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     /**
      * 获取植物基本信息\Look接口
+     * 主要是用于查询当前是否是植物的关灯模式、也即是显示zzz的图片
      */
     private val _plantInfoLoop = MutableLiveData<Resource<PlantInfoData>>()
     val plantInfoLoop: LiveData<Resource<PlantInfoData>> = _plantInfoLoop
@@ -1251,6 +1260,15 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 是否是帐篷，true 帐篷 false abby
+     */
+    private val _isZP = MutableLiveData<Boolean>()
+    val isZp: LiveData<Boolean> = _isZP
+    fun setZp(isZps: Boolean) {
+        _isZP.value = isZps
+    }
+
+    /**
      * 获取用户信息
      */
     private val _userDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()
@@ -1457,7 +1475,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT -> {
                     // 这个周期目前自行处理、不走guideInfo接口
                     // 回调出去。自行处理
-                    _transplantPeriodicity.value = taskId
+                    taskId?.let { ids ->
+                    _transplantPeriodicity.value = ids
+                    }
                 }
 
                 else -> {
@@ -1651,6 +1671,13 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+
+    private var _shouldRunJob =  MutableLiveData<Boolean>()
+    val shouldRunJob:LiveData<Boolean> = _shouldRunJob
+    fun setShouldRunJob(shouldRunJob: Boolean) {
+        _shouldRunJob.value = shouldRunJob
+    }
+
     /**
      * 定时器
      */
@@ -1663,12 +1690,25 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     ): Job {
         return flow {
             for (i in total downTo 0) {
+                if (shouldRunJob.value == false) break
                 emit(i)
                 delay(1000)
             }
-        }.flowOn(Dispatchers.Main).onStart { onStart?.invoke() }.onCompletion { onFinish?.invoke() }
-            .onEach { onTick.invoke(it) }.launchIn(scope)
+        }
+            .flowOn(Dispatchers.Main)
+            .onStart { onStart?.invoke() }
+            .onCompletion { onFinish?.invoke() }
+            .onEach {
+                if (shouldRunJob.value == true) {
+                    onTick.invoke(it)
+                }
+            }
+            .catch { exception ->
+                // Handle exception here
+            }
+            .launchIn(scope)
     }
+
 
     var isLeftSwap: Boolean = false
     fun setLeftSwaps(isLeft: Boolean) {
@@ -1705,12 +1745,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getWenDu.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().toInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().safeToInt()
         }
     }
 
     fun setWenDu(wendu: String?) {
-        _getWenDu.value = wendu?.toDouble()?.toInt()
+        _getWenDu.value = wendu?.toDouble()?.safeToInt()
     }
 
 
@@ -1722,12 +1762,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getHumidity.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().toInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().safeToInt()
         }
     }
 
     fun setHumidity(humidity: String?) {
-        _getHumidity.value = humidity?.toDouble()?.toInt()
+        _getHumidity.value = humidity?.toDouble()?.safeToInt()
     }
 
     private val _getWaterWenDu = MutableLiveData<Int>()
@@ -1738,12 +1778,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getWaterWenDu.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().toInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().safeToInt()
         }
     }
 
     fun setWaterWenDu(waterWenDu: String?) {
-        _getWaterWenDu.value = waterWenDu?.toDouble()?.toInt()
+        _getWaterWenDu.value = waterWenDu?.toDouble()?.safeToInt()
     }
 
     private val _getFanIntake = MutableLiveData<Int>()
@@ -1754,12 +1794,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getFanIntake.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().toInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().safeToInt()
         }
     }
 
     fun setFanIntake(gear: String) {
-        _getFanIntake.value = gear.toDouble().toInt()
+        _getFanIntake.value = gear.toDouble().safeToInt()
     }
 
     private val _getFanExhaust = MutableLiveData<Int>()
@@ -1769,12 +1809,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getFanExhaust.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().toInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().safeToInt()
         }
     }
 
     fun setFanExhaust(gear: String) {
-        _getFanExhaust.value = gear.toDouble().toInt()
+        _getFanExhaust.value = gear.toDouble().safeToInt()
     }
 
     // 植物灯光
@@ -1785,12 +1825,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getGrowLight.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().toInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
         }
     }
 
     fun setGrowLight(gear: String) {
-        _getGrowLight.value = gear.toDouble().toInt()
+        _getGrowLight.value = gear.toDouble().safeToInt()
     }
 
     // 气泵
@@ -1840,8 +1880,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     private fun getTimeText(): String {
         kotlin.runCatching {
-            val lightTime = _getLightTime.value?.toDouble()?.toInt() ?: 0
-            val closeLightTime = _getCloseLightTime.value?.toDouble()?.toInt() ?: 0
+            val lightTime = _getLightTime.value?.toDouble()?.safeToInt() ?: 0
+            val closeLightTime = _getCloseLightTime.value?.toDouble()?.safeToInt() ?: 0
 
             muteOn = lightTime.toString()
             muteOff = closeLightTime.toString()
@@ -1854,16 +1894,16 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 muteOff = "12"
             }
 
-            val startTime = if ((muteOn?.toInt() ?: 12) <= 12) {
-                "${(muteOn?.toInt() ?: 12)}:00 AM"
+            val startTime = if ((muteOn?.safeToInt() ?: 12) <= 12) {
+                "${(muteOn?.safeToInt() ?: 12)}:00 AM"
             } else {
-                "${((muteOn?.toInt() ?: 12) - 12)}:00 PM"
+                "${((muteOn?.safeToInt() ?: 12) - 12)}:00 PM"
             }
 
-            val closeTime = if ((muteOff?.toInt() ?: 12) <= 12) {
-                "${(muteOff?.toInt() ?: 12)}:00 AM"
+            val closeTime = if ((muteOff?.safeToInt() ?: 12) <= 12) {
+                "${(muteOff?.safeToInt() ?: 12)}:00 AM"
             } else {
-                "${((muteOff?.toInt() ?: 12) - 12)}:00 PM"
+                "${((muteOff?.safeToInt() ?: 12) - 12)}:00 PM"
             }
             setTimeText("$startTime-$closeTime")
             return "$startTime-$closeTime"
@@ -1903,7 +1943,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
                 return String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble()
-                    .toInt()
+                    .safeToInt()
             }.getOrElse {
                 return text
             }
@@ -1937,7 +1977,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     return if (incPlant <= 20) {
                         "<20 cm"
                     } else {
-                        "${incPlant.toInt()} cm"
+                        "${incPlant.safeToInt()} cm"
                     }
                 }
             }
@@ -1968,7 +2008,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      *  false 表示没有摄像头
      *
      *  @param isHave 是否有摄像头
-     *  @param isLoadCamera 是否加载摄像头
+     *  @param isLoadCamera 展示摄像头
      *  @param cameraId 摄像头的ID
      */
     fun getCameraFlag(isHaveACamera: (isHave: Boolean, isLoadCamera: Boolean, cameraId: String, devId: String) -> Unit) {

@@ -80,10 +80,22 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
         booleanExtra
     }
 
+    /**
+     * 判断是否用于邮箱登录，优先级大于之前2个参数
+     */
+    private val isEmailLogin by lazy {
+        intent.getBooleanExtra(KEY_IS_VERIFY, false)
+    }
+
     private val sendPop by lazy {
         RetransmissionPop(context = this@VerifyEmailActivity, onAgainAction = {
             if (!thirdSource.isNullOrEmpty()) {
                 emailName?.let { mViewModel.verifyEmail(it, "5") }
+                return@RetransmissionPop
+            }
+            // 邮箱验证码登录
+            if (isEmailLogin) {
+                emailName?.let { mViewModel.verifyEmail(it, "6") }
                 return@RetransmissionPop
             }
             // 重新发送验证,
@@ -108,10 +120,10 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
     override fun initView() {
         ARouter.getInstance().inject(this)
-
+        binding.codeView.setEtNumber(if (isEmailLogin) 4 else 6)
         //We sent an email to pinnachan@abby.com enter the verification code sent to your email address，and you can reset you password.
         binding.tvDesc.text =
-            if (isRegister) {
+            if (isRegister || isEmailLogin) {
                 buildSpannedString {
                     append(getString(com.cl.common_base.R.string.send_email))
                     color(
@@ -146,7 +158,8 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
             }
 
         // 文字修改
-        binding.vmLog.text = if (isRegister) "Verify email" else "Reset password"
+        binding.vmLog.text = if (isEmailLogin) "Enter the OTP" else if (isRegister) "Verify email" else "Reset password"
+        binding.btnSuccess.text = if (isEmailLogin) "Login" else "Continue"
         binding.codeView.setOnInputListener(this)
     }
 
@@ -334,7 +347,6 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         hideProgressLoading()
                         logD("isVerifySuccess: ${it.data}")
 
-
                         // 判断是否是第三方登录，用第三方来源是否为空来判断
                         if (!thirdSource.isNullOrEmpty()) {
                             // 检查邮箱是否被绑定过
@@ -374,6 +386,15 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
         binding.btnSuccess.setOnClickListener {
             // 验证验证吗
             if (binding.codeView.code.isNullOrEmpty()) return@setOnClickListener
+            // 邮箱登录
+            if (isEmailLogin) {
+                mViewModel.loginReq.value?.let {
+                    it.userName = emailName
+                    it.autoCode = binding.codeView.code
+                    mViewModel.login()
+                }
+                return@setOnClickListener
+            }
             emailName?.let { name -> mViewModel.verifyCode(binding.codeView.code, name) }
         }
 
@@ -400,6 +421,9 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
     companion object {
         // 是否是注册还是忘记密码?
         const val KEY_IS_REGISTER = "key_is_register"
+
+        // 是否是用验证码登录
+        const val KEY_IS_VERIFY = "key_is_verify"
 
         // 邮箱
         const val KEY_EMAIL_NAME = "key_email_name"

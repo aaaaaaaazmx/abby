@@ -18,6 +18,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.SoftInputUtils
 import com.cl.modules_planting_log.R
 import com.cl.modules_planting_log.adapter.EditTextValueChangeListener
@@ -200,7 +201,7 @@ class CustomViewGroup : LinearLayout {
                     val value = editText1?.text.toString()
                     val floatValue = value.toDoubleOrNull()
                     // 检查是否整数，如果是，则添加".0"
-                    if (floatValue != null && !value.contains(".") && floatValue == floatValue.toInt()
+                    if (floatValue != null && !value.contains(".") && floatValue == floatValue.safeToInt()
                             .toDouble()
                     ) {
                         val formattedValue = "$value.0"
@@ -230,7 +231,9 @@ class CustomViewGroup : LinearLayout {
                 rvChoose?.let { fadeAnimation(it, false) }
                 return true
             }
-            rvChoose?.let { fadeAnimation(it, true) }
+            rvChoose?.let {
+                fadeAnimation(it, chooserAdapter.data.isNotEmpty())
+            }
             listener?.onEditTextClick(tag as Int, editText1!!, this)
             return true
         }

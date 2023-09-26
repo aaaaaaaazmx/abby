@@ -772,5 +772,8 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 只是起到预览, 不限时not ready 也不显示按钮
         const val KEY_PREVIEW = "key_preview"
+
+        // 植物Id
+        const val KEY_PLANT_ID = "key_plant_id"
     }
 }

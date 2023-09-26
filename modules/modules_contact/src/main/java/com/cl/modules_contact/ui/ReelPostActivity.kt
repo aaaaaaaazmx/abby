@@ -57,6 +57,7 @@ import com.cl.modules_contact.request.AddTrendReq
 import com.cl.common_base.bean.ImageUrl
 import com.cl.modules_contact.request.Mention
 import com.cl.common_base.bean.ChoosePicBean
+import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.ui.pic.ChoosePicActivity
 import com.cl.modules_contact.util.DeviceConstants
 import com.cl.modules_contact.viewmodel.PostViewModel
@@ -710,8 +711,8 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
             logI("123123123: delayTime: $delayTime")
             val num = delayTime
             val formatted = String.format("%.2f", num) // 将浮点数格式化为字符串，保留两位小数
-            logI("123123123: delayTime: $formatted,,,, ${(formatted.toFloat() * 100).toInt()}")
-            Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay((formatted.toFloat() * 100).toInt()).setIsVideo(isVideo).start(object : Gif.ResultCallback {
+            logI("123123123: delayTime: $formatted,,,, ${(formatted.toFloat() * 100).safeToInt()}")
+            Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay((formatted.toFloat() * 100).safeToInt()).setIsVideo(isVideo).start(object : Gif.ResultCallback {
                 override fun onSuccess(destPath: String?) {
                     parm?.invoke(true)
                     if (isVideo) {
@@ -777,7 +778,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
             val imageHeight = options.outHeight
             val scaleFactor = min(1f, min(828f / imageWidth, 1124f / imageHeight))
             options.inJustDecodeBounds = false
-            options.inSampleSize = scaleFactor.toInt()
+            options.inSampleSize = scaleFactor.safeToInt()
             val bitmap = BitmapFactory.decodeFile(path, options)
 
             // 缩放图片

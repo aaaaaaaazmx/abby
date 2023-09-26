@@ -28,7 +28,20 @@ data class UserinfoBean(
     val plantDays: String? = null,
     val growBoxCount: String? = null,
     val harvestCount: String? = null,
+    val spaceType: String? = null,
     val notBound: Int? = null, // 1 是绑定过、其他都是未绑定过
+    val newMessage: Boolean? = false,
+    val nightMode: Int? = null,
+    val nightTimer: String? = null,
+    val openNotify: Int? = null,
+    val personSign: String? = null,
+    val userName: String? = null,
+    val wallAddress: String? = null,
+    val wallId: Int? = null,
+    val externalId: String? = null,
+    val inchMetricMode: String? = null,
+    // val easemobPassword: String? = null,
+    // val easemobUserName: String? = null,
 ) : BaseBean() {
     // 用户基本信息Bean
     // 从用户详情接口返回
@@ -67,5 +80,6 @@ data class UserinfoBean(
         val tuyaUserId: String? = null,
         val tuyaUserType: String? = null,
         val notBound: Int? = null,
+        val spaceType: String? = null,
     ) : BaseBean()
 }

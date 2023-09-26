@@ -14,6 +14,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.ResetPwdReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
@@ -132,6 +133,14 @@ interface HttpMyApiService {
         @Body body: UpDeviceInfoReq
     ): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 添加帐篷
+     */
+    @POST("abby/userDevice/addDevice")
+    fun addDevice(
+        @Body body: DeviceDetailsBean
+    ): Flow<HttpResult<BaseBean>>
+
 
     /**
      * 获取植物的基本信息
@@ -246,8 +255,9 @@ interface HttpMyApiService {
     /**
      * 配件列表
      */
+    @FormUrlEncoded
     @POST("abby/accessory/list")
-    fun accessoryList(): Flow<HttpResult<MutableList<AccessoryListBean>>>
+    fun accessoryList(@Field("spaceType")spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
 
     /**
      * 配件规则列表
@@ -342,4 +352,20 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/accessory/getAccessoryInfo")
     fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
+
+    /**
+     * 帐篷设备的设备详情
+     */
+    @FormUrlEncoded
+    @POST("abby/userDevice/getDeviceDetails")
+    fun getDeviceDetails(@Field("deviceId") deviceId: String): Flow<HttpResult<DeviceDetailsBean>>
+
+    /**
+     * 获取名字
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/getStrainName")
+    fun getStrainName(
+        @Field("strainName") strainName: String
+    ): Flow<HttpResult<MutableList<String>>>
 }

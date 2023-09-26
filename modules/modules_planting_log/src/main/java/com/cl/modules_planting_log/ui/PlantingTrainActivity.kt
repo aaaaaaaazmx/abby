@@ -15,9 +15,11 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.trackPipAnimationHintView
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.ImageUrl
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -57,6 +59,7 @@ import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.util.XPopupUtils
+import com.thingclips.smart.home.sdk.bean.LightningSearchBean
 import dagger.hilt.android.AndroidEntryPoint
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
@@ -219,15 +222,23 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
             ToastUtil.shortShow("Please select the Training type")
             return
         }
-        if (binding.ftTrend.isItemChecked) {
-            val notes = binding.etNote.text.toString()
-            val picListUrl = viewModel.picAddress.value
 
-            if (picListUrl?.isEmpty() == true || notes.isEmpty()) {
+        if (binding.beforeLoading.isVisible || binding.afterLoading.isVisible) {
+            ToastUtil.shortShow("Please wait for the image to finish uploading.")
+            return
+        }
+
+        if (binding.ftTrend.isItemChecked) {
+            val beforeUrl = viewModel.beforePicAddress.value
+            val afterUrl = viewModel.afterPicAddress.value
+            val notes = binding.etNote.text.toString()
+
+            if (beforeUrl.isNullOrEmpty() || afterUrl.isNullOrEmpty() || notes.isEmpty()) {
                 ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
                 binding.ftTrend.isItemChecked = false
+                return
             }
-            return
+
         }
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         logSaveOrUpdateReq.syncPost = binding.ftTrend.isItemChecked
@@ -235,6 +246,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.logId = logId
         logSaveOrUpdateReq.notes = binding.etNote.text.toString()
+        logSaveOrUpdateReq.syncPlants = if (viewModel.userinfoBean?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX) false else binding.ftSyncZp.isItemChecked
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
         showProgressLoading()
@@ -319,13 +331,19 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                                     // 更新用户信息
                                     // 更新集合
                                     // setPicAddress(ImageUrl(imageUrl = result[0]))
-                                    if (chooserTips.value == true) setBeforeAddress(
-                                        (viewModel.beforePicAddress.value
-                                            ?: "").plus("--------${result[0]}")
-                                    ) else setAfterAddress(
-                                        (viewModel.afterPicAddress.value
-                                            ?: "").plus("--------${result[0]}")
-                                    )
+                                    if (chooserTips.value == true) {
+                                        ViewUtils.setGone(binding.beforeLoading)
+                                        setBeforeAddress(
+                                            (viewModel.beforePicAddress.value
+                                                ?: "").plus("--------${result[0]}")
+                                        )
+                                    } else {
+                                        ViewUtils.setGone(binding.afterLoading)
+                                        setAfterAddress(
+                                            (viewModel.afterPicAddress.value
+                                                ?: "").plus("--------${result[0]}")
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -343,7 +361,6 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                     // 提交成功 or 修改成功
                     finish()
                 }
-                loading { showProgressLoading() }
             })
 
             getLogById.observe(this@PlantingTrainActivity, resourceObserver {
@@ -686,8 +703,10 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                 // 判断当前是点击before还是after
                 path?.let {
                     if (viewModel.chooserTips.value == true) {
+                        ViewUtils.setVisible(binding.beforeLoading)
                         viewModel.setBeforeAddress(it)
                     } else {
+                        ViewUtils.setVisible(binding.afterLoading)
                         viewModel.setAfterAddress(it)
                     }
                     // 直接上传
@@ -710,8 +729,10 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                     val cropImagePath = getRealFilePathFromUri(applicationContext, imageUri)
                     cropImagePath?.let {
                         if (viewModel.chooserTips.value == true) {
+                            ViewUtils.setVisible(binding.beforeLoading)
                             viewModel.setBeforeAddress(it)
                         } else {
+                            ViewUtils.setVisible(binding.afterLoading)
                             viewModel.setAfterAddress(it)
                         }
                         // 直接上传
@@ -738,9 +759,9 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
             if (isChecked) {
                 val beforeUrl = viewModel.beforePicAddress.value
                 val afterUrl = viewModel.afterPicAddress.value
-                val notes = binding.etNote.text.toString()
+                val notes = binding.etNote.text
 
-                if (beforeUrl?.isEmpty() == true || afterUrl?.isEmpty() == true || notes.isEmpty()) {
+                if (beforeUrl.isNullOrEmpty() || afterUrl.isNullOrEmpty() || notes.isNullOrEmpty()) {
                     ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
                     binding.ftTrend.isItemChecked = false
                 }

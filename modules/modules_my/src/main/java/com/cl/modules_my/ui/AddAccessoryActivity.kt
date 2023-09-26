@@ -9,6 +9,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.camera2.internal.ZslControlNoOpImpl
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
@@ -21,9 +22,11 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.AddAccessoryAdapter
+import com.cl.modules_my.adapter.AddTenAccessoryAdapter
 import com.cl.modules_my.databinding.MyAddAccessoryBinding
 import com.cl.modules_my.repository.AccessoryListBean
 import com.cl.modules_my.viewmodel.AddAccessoryViewModel
@@ -31,6 +34,7 @@ import com.cl.modules_my.viewmodel.SettingViewModel
 import com.lxj.xpopup.XPopup
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.DeviceType
 import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.api.IResultCallback
@@ -41,13 +45,19 @@ import javax.inject.Inject
 /**
  * 添加附件页面
  */
+@Route(path = RouterPath.My.PAGE_ADD_ACCESSORY)
 @AndroidEntryPoint
 class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
     @Inject
     lateinit var mViewModel: AddAccessoryViewModel
 
-    private val adapter by lazy {
+    /*private val adapter by lazy {
         AddAccessoryAdapter(mutableListOf())
+    }*/
+
+    // 帐篷设备页面
+    private val tenAdapter by lazy {
+        AddTenAccessoryAdapter(mutableListOf())
     }
 
     // 设备ID
@@ -58,13 +68,19 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
     // 智能设备数量
     private val accessoryList by lazy {
         intent.getSerializableExtra("accessoryList") as? MutableList<ListDeviceBean.AccessoryList>
+            ?: mutableListOf()
+    }
+
+    // 当前设备类型
+    private val spaceType by lazy {
+        intent.getStringExtra("spaceType")
     }
 
     override fun initView() {
-        mViewModel.getAccessoryList()
+        mViewModel.getAccessoryList(if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) "tent" else "box")
 
-        binding.rvList.layoutManager = GridLayoutManager(this, 2)
-        binding.rvList.adapter = adapter
+        binding.rvList.layoutManager = LinearLayoutManager(this)
+        binding.rvList.adapter = tenAdapter
     }
 
     override fun observe() {
@@ -77,7 +93,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    adapter.setList(data)
+                    tenAdapter.setList(data)
                 }
             })
         }
@@ -87,137 +103,200 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
         binding.ftbTitle.setLeftClickListener { finish() }
 
         // 条目点击事件
-        adapter.addChildClickViewIds(R.id.cl_root)
+        /*adapter.addChildClickViewIds(R.id.cl_root)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val itemData = adapter.data[position] as? AccessoryListBean
             mViewModel.setAccessoryId("${itemData?.accessoryId}")
             when (view.id) {
                 R.id.cl_root -> {
-                    // 判断当前是否是camera，并且是没有添加过的
-                    if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == true && itemData?.accessoryName == "Smart Camera") {
-                        if ((accessoryList?.size ?: 0) > 0) {
-                            XPopup.Builder(this@AddAccessoryActivity)
-                                .isDestroyOnDismiss(false)
-                                .dismissOnTouchOutside(false)
-                                .asCustom(
-                                    BaseCenterPop(
-                                        this@AddAccessoryActivity,
-                                        content = "Hey abby only contains one USB port to support a single smart accessory. If you add a new accessory, the current one will be deleted. Are you sure you want to proceed?",
-                                        cancelText = "No",
-                                        confirmText = "Yes",
-                                        onConfirmAction = {
-                                            // 跳转到摄像头配对页面
-                                            ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
-                                                .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
-                                                .withString("deviceId", deviceId)
-                                                .withString("accessoryId", "${itemData.accessoryId}")
-                                                .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
-                                        }
-                                    )
-                                ).show()
-                            return@setOnItemChildClickListener
-                        } else {
-                            // 跳转到摄像头配对页面
-                            ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
-                                .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
-                                .withString("deviceId", deviceId)
-                                .withString("accessoryId", "${itemData.accessoryId}")
-                                .navigation(this@AddAccessoryActivity, Constants.Global.KEY_WIFI_PAIRING_BACK)
-                        }
-                        return@setOnItemChildClickListener
-                    }
+                    addAccess(itemData)
+                }
+            }
+        }*/
 
-                    // 判断当前有几个智能设备
-                    if (accessoryList?.size == 0) {
-                        // 跳转到富文本界面
-                        val intent = Intent(this, KnowMoreActivity::class.java)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, itemData?.textId)
-                        intent.putExtra(
-                            BasePopActivity.KEY_FIXED_TASK_ID,
-                            Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
-                        )
-                        intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
-                        intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
-                        intent.putExtra(BasePopActivity.KEY_PART_ID, "${itemData?.accessoryId}")
-                        startActivity(intent)
-                        return@setOnItemChildClickListener
-                    }
 
-                    // 如果点击的是当前已经添加过的。
-                    accessoryList?.firstOrNull { it.accessoryId == itemData?.accessoryId }?.apply {
-                        // 跳转到摄像头界面
-                        if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == false && itemData?.accessoryName == "Smart Camera") {
-                            startActivity(Intent(this@AddAccessoryActivity, CameraSettingActivity::class.java).apply {
-                                putExtra("accessoryDeviceId", accessoryDeviceId)
-                                putExtra("deviceId", deviceId)
-                            })
-                            return@setOnItemChildClickListener
-                        }
-                        // 跳转到智能设备信息界面
-                        val intent = Intent(this@AddAccessoryActivity, DeviceAutomationActivity::class.java)
-                        intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
-                        intent.putExtra(BasePopActivity.KEY_PART_ID, "$accessoryId")
-                        startActivity(intent)
-                        return@setOnItemChildClickListener
-                    }
+        //  帐篷条目点击
+        tenAdapter.addChildClickViewIds(R.id.tv_add, R.id.tv_buy)
+        tenAdapter.setOnItemChildClickListener { adapter, view, position ->
+            val itemData = adapter.data[position] as? AccessoryListBean
+            when (view.id) {
+                R.id.tv_add -> {
+                    addAccess(itemData)
+                }
 
-                    // 前面2个都不满足，表明添加的是新设备
-                    if ((accessoryList?.size ?: 0) > 0) {
-
-                        XPopup.Builder(this@AddAccessoryActivity)
-                            .isDestroyOnDismiss(false)
-                            .dismissOnTouchOutside(false)
-                            .asCustom(
-                                BaseCenterPop(
-                                    this@AddAccessoryActivity,
-                                    content = "Hey abby only contains one USB port to support a single smart accessory. If you add a new accessory, the current one will be deleted. Are you sure you want to proceed?",
-                                    cancelText = "No",
-                                    confirmText = "Yes",
-                                    onConfirmAction = {
-                                        val intent = Intent(this, KnowMoreActivity::class.java)
-                                        intent.putExtra(
-                                            Constants.Global.KEY_TXT_ID,
-                                            itemData?.textId
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_FIXED_TASK_ID,
-                                            Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_INTENT_UNLOCK_TASK,
-                                            true
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
-                                            true
-                                        )
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                            "Slide to Unlock"
-                                        )
-                                        intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
-
-                                        // 解绑的是传递过来的cameraId
-                                        accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }?.apply {
-                                            intent.putExtra(BasePopActivity.KEY_CAMERA_ID, accessoryDeviceId)
-                                        }
-
-                                        intent.putExtra(
-                                            BasePopActivity.KEY_PART_ID,
-                                            "${itemData?.accessoryId}"
-                                        )
-                                        startActivity(intent)
-                                    }
-                                )
-                            ).show()
-                        return@setOnItemChildClickListener
-                    }
+                R.id.tv_buy -> {
+                    // 跳转到网页
+                    val intent = Intent(this@AddAccessoryActivity, WebActivity::class.java)
+                    intent.putExtra(WebActivity.KEY_WEB_URL, itemData?.buyLink)
+                    startActivity(intent)
                 }
             }
         }
     }
+
+    /**
+     * 添加配件。
+     */
+    private fun addAccess(itemData: AccessoryListBean?) {
+        // 判断当前是否是camera，并且是没有添加过的
+        if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == true && itemData?.accessoryName == "Smart Camera") {
+            if ((accessoryList?.size ?: 0) > 0) {
+                XPopup.Builder(this@AddAccessoryActivity)
+                    .isDestroyOnDismiss(false)
+                    .dismissOnTouchOutside(false)
+                    .asCustom(
+                        BaseCenterPop(
+                            this@AddAccessoryActivity,
+                            content = "Hey abby only contains one USB port to support a single smart accessory. If you add a new accessory, the current one will be deleted. Are you sure you want to proceed?",
+                            cancelText = "No",
+                            confirmText = "Yes",
+                            onConfirmAction = {
+                                // 跳转到摄像头配对页面
+                                ARouter.getInstance()
+                                    .build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                                    .withBoolean(
+                                        Constants.Global.KEY_WIFI_PAIRING_PARAMS,
+                                        true
+                                    )
+                                    .withString("deviceId", deviceId)
+                                    .withString(
+                                        "accessoryId",
+                                        "${itemData.accessoryId}"
+                                    )
+                                    .navigation(
+                                        this@AddAccessoryActivity,
+                                        Constants.Global.KEY_WIFI_PAIRING_BACK
+                                    )
+                            }
+                        )
+                    ).show()
+                return
+            } else {
+                // 跳转到摄像头配对页面
+                ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                    .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
+                    .withString("deviceId", deviceId)
+                    .withString("accessoryId", "${itemData.accessoryId}")
+                    .navigation(
+                        this@AddAccessoryActivity,
+                        Constants.Global.KEY_WIFI_PAIRING_BACK
+                    )
+            }
+            return
+        }
+
+        // 判断当前有几个智能设备
+        if (accessoryList?.size == 0) {
+            // 跳转到富文本界面
+            val intent = Intent(this, KnowMoreActivity::class.java)
+            intent.putExtra(Constants.Global.KEY_TXT_ID, itemData?.textId)
+            intent.putExtra(
+                BasePopActivity.KEY_FIXED_TASK_ID,
+                Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
+            )
+            intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+            intent.putExtra(
+                BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                "Slide to Unlock"
+            )
+            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+            intent.putExtra(BasePopActivity.KEY_PART_ID, "${itemData?.accessoryId}")
+            startActivity(intent)
+            return
+        }
+
+        // 如果点击的是当前已经添加过的。
+        accessoryList?.firstOrNull { it.accessoryId == itemData?.accessoryId }?.apply {
+            // 跳转到摄像头界面
+            if (accessoryList?.none { it.accessoryId == itemData?.accessoryId } == false && itemData?.accessoryName == "Smart Camera") {
+                startActivity(
+                    Intent(
+                        this@AddAccessoryActivity,
+                        CameraSettingActivity::class.java
+                    ).apply {
+                        putExtra("accessoryDeviceId", accessoryDeviceId)
+                        putExtra("deviceId", deviceId)
+                    })
+                return
+            }
+            // 跳转到智能设备信息界面
+            val intent = Intent(this@AddAccessoryActivity, DeviceAutomationActivity::class.java)
+            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+            intent.putExtra(BasePopActivity.KEY_PART_ID, "$accessoryId")
+            startActivityLauncher.launch(intent)
+            return
+        }
+
+        // 前面2个都不满足，表明添加的是新设备
+        if ((accessoryList?.size ?: 0) > 0) {
+
+            XPopup.Builder(this@AddAccessoryActivity)
+                .isDestroyOnDismiss(false)
+                .dismissOnTouchOutside(false)
+                .asCustom(
+                    BaseCenterPop(
+                        this@AddAccessoryActivity,
+                        content = "Hey abby only contains one USB port to support a single smart accessory. If you add a new accessory, the current one will be deleted. Are you sure you want to proceed?",
+                        cancelText = "No",
+                        confirmText = "Yes",
+                        onConfirmAction = {
+                            val intent = Intent(this, KnowMoreActivity::class.java)
+                            intent.putExtra(
+                                Constants.Global.KEY_TXT_ID,
+                                itemData?.textId
+                            )
+                            intent.putExtra(
+                                BasePopActivity.KEY_FIXED_TASK_ID,
+                                Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES
+                            )
+                            intent.putExtra(
+                                BasePopActivity.KEY_INTENT_UNLOCK_TASK,
+                                true
+                            )
+                            intent.putExtra(
+                                BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON,
+                                true
+                            )
+                            intent.putExtra(
+                                BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
+                                "Slide to Unlock"
+                            )
+                            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+
+                            // 解绑的是传递过来的cameraId
+                            accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                                ?.apply {
+                                    intent.putExtra(
+                                        BasePopActivity.KEY_CAMERA_ID,
+                                        accessoryDeviceId
+                                    )
+                                }
+
+                            intent.putExtra(
+                                BasePopActivity.KEY_PART_ID,
+                                "${itemData?.accessoryId}"
+                            )
+                            startActivity(intent)
+                        }
+                    )
+                ).show()
+            return
+        }
+    }
+
+    /**
+     * 回调刷新页面
+     */
+    private val startActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                // 保存成功
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                    .navigation()
+                finish()
+            }
+        }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -231,14 +310,18 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
 
                     // 说明绑定成功，跳转到二维码生成界面
-                    startActivity(Intent(this@AddAccessoryActivity, PairTheCameraActivity::class.java).apply {
-                        putExtra("qrcodeUrl", url)
-                        putExtra("deviceId", deviceId)
-                        putExtra("wifiName", wifiName)
-                        putExtra("wifiPsd", wifiPwd)
-                        putExtra("token", token)
-                        putExtra("accessoryId", mViewModel.accessoryId.value)
-                    })
+                    startActivity(
+                        Intent(
+                            this@AddAccessoryActivity,
+                            PairTheCameraActivity::class.java
+                        ).apply {
+                            putExtra("qrcodeUrl", url)
+                            putExtra("deviceId", deviceId)
+                            putExtra("wifiName", wifiName)
+                            putExtra("wifiPsd", wifiPwd)
+                            putExtra("token", token)
+                            putExtra("accessoryId", mViewModel.accessoryId.value)
+                        })
                 }
             }
         }

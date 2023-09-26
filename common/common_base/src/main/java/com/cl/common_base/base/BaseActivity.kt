@@ -262,7 +262,7 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
         }
         loadingDialog.setCancelable(cancelable)
 
-        if (!loadingDialog.isShowing) {
+        if (!isFinishing && !loadingDialog.isShowing) {
             loadingDialog.show()
         }
     }

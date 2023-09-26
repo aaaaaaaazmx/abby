@@ -13,6 +13,7 @@ data class PlantInfoData(
     var attribute: String? = null, // 种植属性(Photo、Auto)
     var strainName: String? = null, // 种植名字
     var plantWay: String? = null, // 种植方式
+    var spaceName: String? = null,// 帐篷名字
     var day: Int? = null,
     var flushingWeight: Int? = 0, // 称重重量
     var healthStatus: String? = null,
@@ -20,6 +21,9 @@ data class PlantInfoData(
     var heigh: Int? = null,
     var id: Int? = null,
     var plantId: Int? = null,
+    var lightOn: Int? = null,
+    var lightOff: Int? = null,
+    var lightOnOff: String? = null,
     var oxygen: Int? = null,
     var plantStatus: Int? = null,
     var week: Int? = null,
@@ -42,5 +46,6 @@ data class PlantInfoData(
         var journeyStatus: Int? = null,
         var totalDay: Int? = null,
         var week: String? = null,
+        var unlockNow: Boolean? = null, // 是否解锁
     ) : com.joketng.timelinestepview.bean.BaseBean()
 }

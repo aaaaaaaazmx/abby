@@ -3,6 +3,7 @@ package com.cl.modules_my.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -19,17 +20,22 @@ import com.cl.modules_my.databinding.MyDeviceListActivityBinding
 import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.LiveDataDeviceInfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.isCanToBigDecimal
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.FeatureItemSwitch
+import com.cl.modules_my.pop.MyChooerTipPop
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.lxj.xpopup.XPopup
+import com.lxj.xpopup.enums.PopupPosition
+import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,20 +80,17 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             return
         }
         list.firstOrNull { it.isChooser == true }?.apply {
-            if (deviceId != mViewModel.thingDeviceBean?.devId) {
-                // 删除原先的、或者切换了设备
-                // 跳转到主页、加载。
-                // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
-                // 改用Eventbus吧。
-                // 切换了设备，需要重新刷新主页。
-                logI("123123123: $deviceId")
-                ARouter.getInstance()
-                    .build(RouterPath.Main.PAGE_MAIN).navigation()
-                LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-                    .postEvent(deviceId)
-                finish()
-                /*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*/
-            }
+            // 删除原先的、或者切换了设备
+            // 跳转到主页、加载。
+            // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
+            // 改用Eventbus吧。
+            // 切换了设备，需要重新刷新主页。
+            logI("123123123: $deviceId,,$spaceType")
+            ARouter.getInstance()
+                .build(RouterPath.Main.PAGE_MAIN).navigation()
+            LiveEventBus.get()
+                .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+                .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
         }
         finish()
     }
@@ -136,40 +139,36 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 ToastUtil.shortShow(errorMsg)
             }
             success {
-                val dataList = adapter.data
-                if (dataList.isNotEmpty()) {
-                    dataList.indexOfFirst { it.isChooser == true }.apply {
-                        if (this != -1) {
-                            data?.get(this)?.isChooser = true
-                            return@apply
-                        }
-                        data?.indexOfFirst { it.deviceId == mViewModel.thingDeviceBean?.devId }
-                            ?.apply {
-                                if (this == -1) {
-                                    if (data.isNullOrEmpty()) return@apply
-                                    // 如果没有找到相对应的, 选中当前第一个。
-                                    data?.get(0)?.isChooser = true
-                                    return@apply
-                                }
-                                logI("thingDeviceBean ID: ${mViewModel.thingDeviceBean?.devId}")
-                                if (data.isNullOrEmpty()) return@apply
-                                data?.get(this)?.isChooser = true
-                            }
-                    }
-                } else {
-                    data?.indexOfFirst { it.deviceId == mViewModel.thingDeviceBean?.devId }?.apply {
-                        if (this == -1) {
-                            if (data.isNullOrEmpty()) return@apply
-                            // 如果没有找到相对应的, 选中当前第一个。
-                            data?.get(0)?.isChooser = true
-                            return@apply
-                        }
-                        logI("thingDeviceBean ID: ${mViewModel.thingDeviceBean?.devId}")
-                        if (data.isNullOrEmpty()) return@apply
-                        data?.get(this)?.isChooser = true
+                // 检查data是否非空和非空列表
+                val dataInfo = data
+                if (null == dataInfo) {
+                    adapter.setList(dataInfo)
+                    return@success
+                }
+                if (dataInfo.isNotEmpty()) {
+                    val indexChooser = dataInfo.indexOfFirst { it.currentDevice == 1 }
+
+                    // 检查是否找到匹配项
+                    if (indexChooser != -1) {
+                        dataInfo[indexChooser].isChooser = true  // 设置isChooser标志
+                        adapter.setList(data)
+
+                        // 设置RecyclerView的位置
+                        binding.rvList.postDelayed({
+                            binding.rvList.smoothScrollToPosition(indexChooser)
+                        }, 200)
+
+                    } else {
+                        // 处理没有找到匹配项的情况，例如选择默认项
+                        dataInfo[0].isChooser = true
+                        adapter.setList(data)
+
+                        // 设置RecyclerView的位置
+                        binding.rvList.postDelayed({
+                            binding.rvList.smoothScrollToPosition(0)
+                        }, 200)
                     }
                 }
-                adapter.setList(data)
             }
         })
 
@@ -210,29 +209,71 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
     override fun initData() {
         binding.ivAddDevice.setOnClickListener {
-            XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false)
-                .dismissOnTouchOutside(false)
+
+            // 弹出是添加帐篷还是添加abby
+            XPopup.Builder(this@DeviceListActivity)
+                .popupPosition(PopupPosition.Left)
+                .dismissOnTouchOutside(true)
+                .isClickThrough(false)  //点击透传
+                .hasShadowBg(true) // 去掉半透明背景
+                //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                .atView(it)
+                .isCenterHorizontal(false)
                 .asCustom(
-                    BaseCenterPop(
+                    MyChooerTipPop(
                         this@DeviceListActivity,
-                        content = "You’re about to add a new device",
-                        confirmText = "Confirm",
-                        onConfirmAction = {
-                            PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
-                                object : PermissionHelp.OnCheckResultListener {
-                                    override fun onResult(result: Boolean) {
-                                        if (!result) return
-                                        // 如果权限都已经同意了
-                                        ARouter.getInstance()
-                                            .build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
-                                            .navigation()
-                                    }
-                                })
+                        onPhotoPostAction = {
+                            // abby
+                            xpopup(this@DeviceListActivity) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(false)
+                                asCustom(
+                                    BaseCenterPop(
+                                        this@DeviceListActivity,
+                                        content = "You’re about to add a new device",
+                                        confirmText = "Confirm",
+                                        onConfirmAction = {
+                                            PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
+                                                object : PermissionHelp.OnCheckResultListener {
+                                                    override fun onResult(result: Boolean) {
+                                                        if (!result) return
+                                                        // 如果权限都已经同意了
+                                                        ARouter.getInstance()
+                                                            .build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
+                                                            .navigation()
+                                                    }
+                                                })
+                                        },
+                                        isShowCancelButton = true
+                                    )
+                                ).show()
+                            }
                         },
-                        isShowCancelButton = true
-                    )
-                )
-                .show()
+                        onReelPostAction = {
+                            //  这是跳转到添加帐篷
+                            startActivity(
+                                Intent(
+                                    this@DeviceListActivity,
+                                    GrowSpaceSetActivity::class.java
+                                )
+                            )
+                        }
+                    ).setBubbleBgColor(Color.WHITE) //气泡背景
+                        .setArrowWidth(XPopupUtils.dp2px(this@DeviceListActivity, 3f))
+                        .setArrowHeight(
+                            XPopupUtils.dp2px(
+                                this@DeviceListActivity,
+                                3f
+                            )
+                        )
+                        //.setBubbleRadius(100)
+                        .setArrowRadius(
+                            XPopupUtils.dp2px(
+                                this@DeviceListActivity,
+                                3f
+                            )
+                        )
+                ).show()
         }
 
         mViewModel.listDevice()
@@ -252,11 +293,15 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     // camera跳转到专属页面
                     if (deviceBean?.accessoryList?.get(0)?.accessoryName == "Smart Camera") {
                         val accessoryDeviceId = deviceBean.accessoryList?.get(0)?.accessoryDeviceId
-                        startActivityLauncher.launch(Intent(this@DeviceListActivity, CameraSettingActivity::class.java).apply {
-                            // 配件Id 就是cameraId
-                            putExtra("accessoryDeviceId", accessoryDeviceId)
-                            putExtra("deviceId", deviceBean.deviceId)
-                        })
+                        startActivityLauncher.launch(
+                            Intent(
+                                this@DeviceListActivity,
+                                CameraSettingActivity::class.java
+                            ).apply {
+                                // 配件Id 就是cameraId
+                                putExtra("accessoryDeviceId", accessoryDeviceId)
+                                putExtra("deviceId", deviceBean.deviceId)
+                            })
                         return@setOnItemChildClickListener
                     }
                     val intent =
@@ -268,7 +313,23 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     )
                     startActivityLauncher.launch(intent)
                 }
+
                 R.id.btn_chang -> {
+                    // 是帐篷
+                    if (deviceBean?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                        startActivity(
+                            Intent(
+                                this@DeviceListActivity,
+                                GrowSpaceSetActivity::class.java
+                            ).apply {
+                                putExtra(
+                                    GrowSpaceSetActivity.KEY_DEVICE_DETAIL_INFO,
+                                    deviceBean?.deviceId
+                                )
+                            })
+                        return@setOnItemChildClickListener
+                    }
+
                     //  修改属性、弹窗pop
                     XPopup.Builder(this@DeviceListActivity).isDestroyOnDismiss(false)
                         .dismissOnTouchOutside(false)
@@ -339,6 +400,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     val intent = Intent(this@DeviceListActivity, AddAccessoryActivity::class.java)
                     intent.putExtra("deviceId", deviceBean?.deviceId)
                     intent.putExtra("accessoryList", deviceBean?.accessoryList as Serializable?)
+                    intent.putExtra("spaceType", deviceBean?.spaceType)
                     startActivity(intent)
                 }
 
@@ -360,6 +422,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                  * 跳转到首页
                  */
                 R.id.btn_jump_to_device -> {
+                    // todo 跳转到首页
                     // (data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE
                     this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
                         if (onlineStatus.equals("Offline")) {
@@ -375,37 +438,14 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         ARouter.getInstance()
                             .build(RouterPath.Main.PAGE_MAIN).navigation()
                         LiveEventBus.get()
-                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-                            .postEvent(deviceId)
+                            .with(
+                                Constants.Global.KEY_IS_SWITCH_DEVICE,
+                                LiveDataDeviceInfoBean::class.java
+                            )
+                            .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
                         finish()
                     }
                 }
-
-                /*R.id.btn_start -> {
-                    // startJourney
-                    // 直接返回
-                    this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
-                        // 删除原先的、或者切换了设备
-                        // 跳转到主页、加载。
-                        // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
-                        // 改用Eventbus吧。
-                        // 切换了设备，需要重新刷新主页。
-                        ARouter.getInstance()
-                            .build(RouterPath.Main.PAGE_MAIN).navigation()
-                        LiveEventBus.get()
-                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, String::class.java)
-                            .postEvent(deviceId)
-                        finish()
-                        *//*setResult(RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SWITCH_DEVICE, deviceId))*//*
-                    }
-                }
-
-                R.id.btn_reconnect -> {
-                    // 如果权限都已经同意了
-                    ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
-                        .navigation()
-                }*/
-
             }
         }
     }
@@ -413,12 +453,13 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     /**
      * 回调刷新页面
      */
-    private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        if (it.resultCode == RESULT_OK) {
-            // 重新请求数据
-            mViewModel.listDevice()
+    private val startActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                // 重新请求数据
+                mViewModel.listDevice()
+            }
         }
-    }
 
 
     companion object {

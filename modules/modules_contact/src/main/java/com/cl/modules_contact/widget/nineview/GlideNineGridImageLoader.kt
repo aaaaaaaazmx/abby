@@ -31,6 +31,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 
 class GlideNineGridImageLoader : INineGridImageLoader {
 
@@ -55,10 +56,10 @@ class GlideNineGridImageLoader : INineGridImageLoader {
             val calHeight: Int
             if (originalImageWidth > originalImageHeight) {
                 calHeight = onlyOneSize
-                calWidth = (calHeight * radio).toInt()
+                calWidth = (calHeight * radio).safeToInt()
             } else {
                 calWidth = onlyOneSize
-                calHeight = (calWidth / radio).toInt()
+                calHeight = (calWidth / radio).safeToInt()
             }
 
             // 将计算好的值回调，重新进行布局

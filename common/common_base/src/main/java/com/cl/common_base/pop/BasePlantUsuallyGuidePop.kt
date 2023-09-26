@@ -15,6 +15,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.HomePlantUsuallyPopBinding
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
@@ -93,10 +94,10 @@ class BasePlantUsuallyGuidePop(
                 UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
                     when (isCurrentStatus) {
                         UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_CURING -> {
-                            it[it.size - 1].isCurrentStatus = UnReadConstants.Plant.KEY_CURING.toInt()
+                            it[it.size - 1].isCurrentStatus = UnReadConstants.Plant.KEY_CURING.safeToInt()
                         }
                         UnReadConstants.PlantStatus.TASK_TYPE_CHECK_CHECK_DRYING -> {
-                            it[it.size - 1].isCurrentStatus = UnReadConstants.Plant.KEY_DRYING.toInt()
+                            it[it.size - 1].isCurrentStatus = UnReadConstants.Plant.KEY_DRYING.safeToInt()
                         }
                     }
                 }
@@ -104,7 +105,7 @@ class BasePlantUsuallyGuidePop(
                 UnReadConstants.Plant.KEY_INCUBATION -> {
                     it.forEach { bean ->
                         if (bean.url.isNullOrEmpty()) {
-                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
+                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.safeToInt()
                         } else {
                             bean.isCurrentStatus = GuideInfoData.KEY_URL_TYPE
                         }
@@ -136,9 +137,9 @@ class BasePlantUsuallyGuidePop(
                 else -> {
                     it.forEach { bean ->
                         if (bean.interaction == 0) {
-                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.toInt()
+                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_INCUBATION.safeToInt()
                         } else {
-                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_PLANT.toInt()
+                            bean.isCurrentStatus = UnReadConstants.Plant.KEY_PLANT.safeToInt()
                         }
                     }
                     // 这个没有勾选框，默认为可选状态

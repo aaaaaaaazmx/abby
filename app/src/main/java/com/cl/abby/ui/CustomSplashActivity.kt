@@ -56,7 +56,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
 
     @Inject
     lateinit var mViewModel: LoginViewModel
-    
+
     private val images = intArrayOf(
         R.mipmap.plant_one,
         R.mipmap.plant_two,
@@ -71,6 +71,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
         R.mipmap.plant_eleven,
         R.mipmap.plant_twelve
     )
+
     // 初始化动画
     private lateinit var animator: ValueAnimator
     override fun initView() {
@@ -88,7 +89,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
         }
         restrictTo()
     }
-    
+
     private fun restrictTo() {
         val data = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
         if (data.isEmpty()) {
@@ -146,6 +147,13 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                 }
             }
             success {
+                // 缓存信息
+                GSON.toJson(data)?.let { it1 ->
+                    Prefs.putStringAsync(
+                        Constants.Login.KEY_LOGIN_DATA,
+                        it1
+                    )
+                }
                 // 获取InterCome信息
                 mViewModel.getInterComeData()
             }
@@ -244,11 +252,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF")
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(borad, intentFilter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(borad, intentFilter)
-        }
+        registerReceiver(borad, intentFilter)
     }
 
     override fun onDestroy() {
