@@ -2287,6 +2287,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             //  还是有就是帐篷界面展示摄像头和abby机器展示摄像头多了张图片。
                             //  如果是帐篷，如果没有摄像头、那么就显示帐篷的图片。
                             mViewMode.userDetail()
+                            PlantCheckHelp().plantStatusCheck(
+                                activity,
+                                CheckPlantData(plantExistingStatus = "1"),
+                                true,
+                                isLeftSwapAnim = mViewMode.isLeftSwap,
+                                isNoAnim = false)
                             return@error
                         }
                     }
@@ -2352,6 +2358,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             mViewMode.removeFirstUnreadMessage()
                             // 清空气泡状态
                             mViewMode.clearPopPeriodStatus()
+                            PlantCheckHelp().plantStatusCheck(
+                                activity,
+                                CheckPlantData(plantExistingStatus = "1"),
+                                true,
+                                isLeftSwapAnim = mViewMode.isLeftSwap,
+                                isNoAnim = false)
                             return@success
                         }
                     }
@@ -3221,17 +3233,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 }
 
                                 // 如果是帐篷、并且没有摄像头时。
-                                if (mViewMode.isZp.value == true && !isHave) {
+                                val isZpEnabled = mViewMode.isZp.value == true
+
+                                if (isZpEnabled && !isHave) {
                                     ViewUtils.setVisible(binding.pplantNinth.rlBowl)
-                                    ViewUtils.setGone(binding.pplantNinth.cameraVideoView)
-                                    ViewUtils.setGone(binding.pplantNinth.ivZpBg)
-                                    ViewUtils.setVisible(binding.pplantNinth.ivZpCamera)
-                                    ViewUtils.setVisible(binding.pplantNinth.ivSwitchZpBg)
+                                    ViewUtils.setGone(binding.pplantNinth.cameraVideoView, binding.pplantNinth.ivZpBg)
+                                    ViewUtils.setVisible(binding.pplantNinth.ivZpCamera, binding.pplantNinth.ivSwitchZpBg)
                                 } else {
-                                    // 显示帐篷背景图的逻辑
-                                    // 如果isHave和isLoadCamera都为true，则显示ivSwitchZpBg
-                                    ViewUtils.setVisible(isHave && isLoadCamera && mViewMode.isZp.value == true, binding.pplantNinth.ivSwitchZpBg)
-                                    val shouldShowIvZpBg = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == true
+                                    val shouldShowSwitch = isHave && isLoadCamera && isZpEnabled
+                                    ViewUtils.setVisible(shouldShowSwitch, binding.pplantNinth.ivSwitchZpBg)
+
+                                    val shouldShowIvZpBg = ((isHave && !isLoadCamera) || !isHave) && isZpEnabled
                                     ViewUtils.setVisible(shouldShowIvZpBg, binding.pplantNinth.ivZpBg)
                                 }
                             }
