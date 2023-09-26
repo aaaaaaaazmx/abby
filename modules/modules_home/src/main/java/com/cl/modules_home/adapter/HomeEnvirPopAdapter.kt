@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.EnvironmentInfoData
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
@@ -221,7 +222,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
             if (isF) {
                 kotlin.runCatching {
                     val replace = text.replace("℉", "")
-                    val te = replace.toInt()
+                    val te = replace.safeToInt()
                     // (1°F − 32) × 5/9
                     // String result1 = String.format("%.2f", d);
                     return "${String.format("%.1f", (te - 32).times(5f).div(9f))}℃"

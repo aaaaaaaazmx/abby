@@ -39,6 +39,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -381,7 +382,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     }
                     XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(true).asCustom(
                         RewardPop(this@OtherJourneyActivity, onRewardListener = { oxygenNum ->
-                            viewModel.updateRewardOxygen(oxygenNum.toInt())
+                            viewModel.updateRewardOxygen(oxygenNum.safeToInt())
                             viewModel.reward(
                                 RewardReq(
                                     momentsId = item?.id.toString(), oxygenNum = oxygenNum, type = ContactCommentActivity.KEY_MOMENTS, relationId = item?.id.toString()
@@ -450,7 +451,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
     }
 
     private fun toCommentPop(item: NewPageData.Records?, position: Int, adapter: BaseQuickAdapter<*, *>) {
-        XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).moveUpToKeyboard(false).maxHeight((XPopupUtils.getScreenHeight(this@OtherJourneyActivity) * 0.9f).toInt()).asCustom(
+        XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).moveUpToKeyboard(false).maxHeight((XPopupUtils.getScreenHeight(this@OtherJourneyActivity) * 0.9f).safeToInt()).asCustom(
             CommentPop(this@OtherJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData -> // 更新当前position
                 val commentsList = this@OtherJourneyActivity.adapter.data[position].comments
                 if (commentListData?.size == 0) return@CommentPop

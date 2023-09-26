@@ -61,6 +61,7 @@ import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.modules_my.adapter.TaskListAdapter
@@ -152,7 +153,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     private fun initCalendarData() {
         // 添加本地12个月的数据
         mViewMode.getLocalCalendar(
-            year = CalendarUtil.getFormat("yyyy").format(Date().time).toInt()
+            year = CalendarUtil.getFormat("yyyy").format(Date().time).safeToInt()
         )
     }
 

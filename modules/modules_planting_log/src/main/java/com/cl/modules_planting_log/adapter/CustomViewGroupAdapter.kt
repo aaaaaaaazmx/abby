@@ -210,7 +210,7 @@ class CustomViewGroupAdapter(
                             TimePickerPop(context, onConfirmAction = { time, timeMis ->
                                 runCatching {
                                     // 返回的是24小时制度。
-                                    val hour = if (time.toInt() == 0) 12 else time.toInt()
+                                    val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
 
                                     if (hour > 12) {
                                         editText.setText("${hour - 12}:00 PM")
@@ -251,7 +251,7 @@ class CustomViewGroupAdapter(
                             TimePickerPop(context, onConfirmAction = { time, timeMis ->
                                 runCatching {
                                     // 返回的是24小时制度。
-                                    val hour = if (time.toInt() == 0) 12 else time.toInt()
+                                    val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
 
                                     if (hour > 12) {
                                         editText.setText("${hour - 12}:00 PM")

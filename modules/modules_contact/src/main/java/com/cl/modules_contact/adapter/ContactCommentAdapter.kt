@@ -16,6 +16,7 @@ import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_contact.R
@@ -101,7 +102,7 @@ class ContactCommentAdapter(
                             .isClickThrough(false)  //点击透传
                             .hasShadowBg(false) // 去掉半透明背景
                             .offsetY(0)
-                            .offsetX(- (view.measuredWidth / 2.2).toInt())
+                            .offsetX(- (view.measuredWidth / 2.2).safeToInt())
                             .atView(view)
                             .asCustom(
                                 ContactDeletePop(context,

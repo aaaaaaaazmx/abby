@@ -11,6 +11,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.px2dp
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.screenHeight
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
@@ -38,7 +39,7 @@ class InterComeHelp {
         // 是否显示右下角悬浮图标
         // Intercom.client().setLauncherVisibility(Intercom.Visibility.VISIBLE)
         // 设置底部弹窗的高度
-        Intercom.client().setBottomPadding((px2dp(screenHeight.toFloat()) * 2.5).toInt())
+        Intercom.client().setBottomPadding((px2dp(screenHeight.toFloat()) * 2.5).safeToInt())
         // 消息显示。
         Intercom.client().setInAppMessageVisibility(Intercom.Visibility.VISIBLE)
         // 添加未读消息监听

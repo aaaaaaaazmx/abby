@@ -40,6 +40,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.pop.RewardPop
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.PublishData
@@ -667,7 +668,7 @@ class CommentPop(
                         .isClickThrough(false)  //点击透传
                         .hasShadowBg(false) // 去掉半透明背景
                         .offsetY(0)
-                        .offsetX(-(view.measuredWidth / 2.2).toInt())
+                        .offsetX(-(view.measuredWidth / 2.2).safeToInt())
                         .atView(view)
                         .asCustom(
                             ContactDeletePop(context,

@@ -24,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.cl.common_base.R
+import com.cl.common_base.ext.safeToInt
 
 /**
  * BindingAdapter extensions.
@@ -228,7 +229,7 @@ fun setVisible(view: View, visible: Boolean) {
 fun setTopMargin(view: View, topMargin: Float) {
     val layoutParams = view.layoutParams as ViewGroup.MarginLayoutParams
     layoutParams.setMargins(
-        layoutParams.leftMargin, topMargin.toInt(),
+        layoutParams.leftMargin, topMargin.safeToInt(),
         layoutParams.rightMargin, layoutParams.bottomMargin
     )
     view.layoutParams = layoutParams

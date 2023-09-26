@@ -3,6 +3,7 @@ package com.cl.modules_contact.ui.pic
 import android.graphics.Bitmap
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation
+import com.cl.common_base.ext.safeToInt
 import java.security.MessageDigest
 
 class LanczosTransformation(private val radius: Int) : BitmapTransformation() {
@@ -14,8 +15,8 @@ class LanczosTransformation(private val radius: Int) : BitmapTransformation() {
         val width = toTransform.width
         val height = toTransform.height
         val ratio = Math.min(outWidth.toFloat() / width, outHeight.toFloat() / height)
-        val targetWidth = (width * ratio).toInt()
-        val targetHeight = (height * ratio).toInt()
+        val targetWidth = (width * ratio).safeToInt()
+        val targetHeight = (height * ratio).safeToInt()
         return Bitmap.createScaledBitmap(toTransform, targetWidth, targetHeight, true)
     }
 }

@@ -22,6 +22,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.drawerlayout.widget.DrawerLayout
 import com.cl.common_base.R
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 
 /**
  * Created by Jaeger on 16/2/14.
@@ -807,9 +808,9 @@ object StatusBarUtil {
         var red = color shr 16 and 0xff
         var green = color shr 8 and 0xff
         var blue = color and 0xff
-        red = (red * a + 0.5).toInt()
-        green = (green * a + 0.5).toInt()
-        blue = (blue * a + 0.5).toInt()
+        red = (red * a + 0.5).safeToInt()
+        green = (green * a + 0.5).safeToInt()
+        blue = (blue * a + 0.5).safeToInt()
         return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
     }
 

@@ -362,8 +362,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         if (m.find()) {
                             muteOn = m.group(1)
                             muteOff = m.group(2)
-                            var onHour = muteOn?.toInt() ?: 0
-                            var offHour = muteOff?.toInt() ?: 0
+                            var onHour = muteOn?.safeToInt() ?: 0
+                            var offHour = muteOff?.safeToInt() ?: 0
 
                             // 判断前缀是AM还是PM
                             val pattern = Pattern.compile("(PM|AM)")
@@ -375,7 +375,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 val group = matcher.group()
                                 if (i == 0) {
                                     if (group == "PM") {
-                                        muteOn = "${(m.group(1)?.toInt() ?: 0) + 12}"
+                                        muteOn = "${(m.group(1)?.safeToInt() ?: 0) + 12}"
                                     }
                                     openTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
                                     i++
@@ -384,7 +384,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                                 if (i > 0) {
                                     if (group == "PM") {
-                                        muteOff = "${(m.group(2)?.toInt() ?: 0) + 12}"
+                                        muteOff = "${(m.group(2)?.safeToInt() ?: 0) + 12}"
                                     }
                                     closeTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
                                     i = 0
@@ -508,7 +508,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         }
                         // 判断当前的版本号是否需要升级
                         kotlin.runCatching {
-                            if (netWorkVersion.toInt() > localVersion.toInt()) {
+                            if (netWorkVersion.safeToInt() > localVersion.safeToInt()) {
                                 if (isClickUpdate.value == true) {
                                     versionPop.setData(versionData)
                                     versionUpdatePop.show()
@@ -780,7 +780,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .nightMode("muteOn:${if (muteOn?.toInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.toInt() == 24) 12 else muteOff}")
+                    .nightMode("muteOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}")
             }
 
             // 调用接口更新后台夜间模式
@@ -797,8 +797,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             pop.asCustom(
                 ChooseTimePop(
                     this@SettingActivity,
-                    turnOnHour = muteOn?.toInt(),
-                    turnOffHour = muteOff?.toInt(),
+                    turnOnHour = muteOn?.safeToInt(),
+                    turnOffHour = muteOff?.safeToInt(),
                     onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
                         binding.ftTimer.itemValue = "$onTime-$offMinute"
                         muteOn = timeOn.toString().padStart(2, '0')

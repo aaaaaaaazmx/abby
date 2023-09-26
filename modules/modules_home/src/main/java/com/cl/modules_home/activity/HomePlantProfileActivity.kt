@@ -78,7 +78,7 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
             kotlin.runCatching {
                 mViewModel.updatePlantInfo(
                     UpPlantInfoReq(
-                        plantId = plantId.toInt(),
+                        plantId = plantId.safeToInt(),
                         plantName = plantName ?: "",
                         strainName = binding.etEmail.text.toString(),
                         categoryCode = "$category"
@@ -256,7 +256,7 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
                     kotlin.runCatching {
                         mViewModel.updatePlantInfo(
                             UpPlantInfoReq(
-                                plantId = plantId.toInt(),
+                                plantId = plantId.safeToInt(),
                                 plantName = plantName ?: "",
                                 strainName = binding.etEmail.text.toString(),
                                 categoryCode = "$category"

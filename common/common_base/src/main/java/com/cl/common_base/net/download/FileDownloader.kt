@@ -1,6 +1,7 @@
 package com.cl.common_base.net.download
 
 import com.cl.common_base.ext.logE
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.net.download.api.DownloadApiService
 import kotlinx.coroutines.Dispatchers
@@ -80,7 +81,7 @@ object FileDownloader {
     }
 
     private fun notifyProgress() {
-        val progress = ((downloadLength.toFloat() / contentLength.toFloat()) * 100).toInt()
+        val progress = ((downloadLength.toFloat() / contentLength.toFloat()) * 100).safeToInt()
         listener?.onProgress(progress, contentLength.toFloat())
     }
 }

@@ -1,11 +1,13 @@
 package com.cl.abby
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.core.view.contains
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
@@ -42,6 +44,7 @@ import javax.inject.Inject
 /**
  * 主页入口
  */
+@SuppressLint("RestrictedApi")
 @Route(path = RouterPath.Main.PAGE_MAIN)
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
@@ -149,7 +152,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
         badgeView
     }
-
     override fun onResume() {
         super.onResume()
         // logI("1111: ${(userInfo.invoke())?.deviceStatus == "1"}")
@@ -223,85 +225,29 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    if (null == data) return@success
-
-                    /**
-                     * 只有2个中有一个是不等于0、那么就可以添加弹窗
-                     */
                     val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
-                    //获取第1个itemView
                     val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if ((mViewModel.unReadMessageNumber.value
-                            ?: 0) > 0 || (data?.calendarHighMsgCount ?: 0) > 0
-                    ) {
-                        if (!itemView.contains(badgeView)) {
-                            //把badgeView添加到itemView中
-                            itemView.addView(badgeView)
-                        }
-                        // 不是第0个的时候才显示弹窗、不然只显示下面的小红点
-                        if (mIndex != 0) {
-                            // 弹窗
-                            if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                                if (data?.calendarHighMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0) {
-                                    // 三个及其以上会变形
-                                    // 所以不居中显示
-                                    bubblePopHor.atView(
-                                        (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
-                                    ).isCenterHorizontal(false).asCustom(asPop).show()
-                                } else {
-                                    bubblePopHor
-                                        .isCenterHorizontal(true).atView(
-                                            (binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView).getChildAt(0)
-                                        ).asCustom(asPop).show()
-                                }
-                            }
-                            // 不再显示气泡
-                            Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
-                        }
-                        // 学院消息
-                    } else if ((data?.academyMsgCount ?: 0) > 0) {
-                        if (!itemView.contains(badgeView)) {
-                            //把badgeView添加到itemView中
-                            itemView.addView(badgeView)
-                        }
-                    }
-                    // 低优先级环境
-                    else if ((mViewModel.environmentInfo.value?.data?.environmentLowCount
-                            ?: 0) > 0
-                    ) {
-                        if (!itemView.contains(badgeView)) {
-                            //把badgeView添加到itemView中
-                            itemView.addView(badgeView)
-                        }
-                    }
-                    // 低优先级日历
-                    else if ((data?.calendarHighMsgCount ?: 0) > 0) {
-                        if (!itemView.contains(badgeView)) {
-                            //把badgeView添加到itemView中
-                            itemView.addView(badgeView)
-                        }
-                    }
-                    // 环信消息、日历、学院、环境 == 0 那么就移除
-                    else if ((mViewModel.unReadMessageNumber.value
-                            ?: 0) == 0 && (data?.calendarHighMsgCount
-                            ?: 0) == 0 && (data?.academyMsgCount ?: 0) == 0
-                    ) {
-                        if (itemView.contains(badgeView)) {
-                            //把badgeView添加到itemView中
-                            itemView.removeView(badgeView)
-                            if (asPop.isShow) asPop.dismiss()
-                        }
-                    }
+
+                    val shouldAddBadge = (mViewModel.unReadMessageNumber.value ?: 0) > 0 ||
+                            (data?.calendarHighMsgCount ?: 0) > 0 ||
+                            (data?.academyMsgCount ?: 0) > 0 ||
+                            (mViewModel.environmentInfo.value?.data?.environmentLowCount ?: 0) > 0
+
+                    updateBadgeViewStatus(itemView, shouldAddBadge)
+
                     data?.calendarHighMsgCount?.let { asPop.setCalendarNumbers(it) }
 
-                    // 选中其他TAb的时候、请求这个接口、弹出弹窗、然后在10秒内隐藏。
-                    if (mIndex != 0) {
-                        // 判断当前的气泡是否弹出
+                    if (mIndex != 0 && shouldAddBadge) {
+                        val showPopHorizontallyCentered = (data?.calendarHighMsgCount != 0 && mViewModel.unReadMessageNumber.value != 0)
+                        bubblePopHor.isCenterHorizontal(!showPopHorizontallyCentered).atView(itemView).asCustom(asPop).show()
+
                         if (asPop.isShow) {
                             Handler().postDelayed({
                                 asPop.dismiss()
                             }, 10000)
                         }
+
+                        Constants.Global.KEY_IS_ONLY_ONE_SHOW = false
                     }
                 }
             })
@@ -309,25 +255,26 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             // 环境消息的统计
             environmentInfo.observe(this@MainActivity, resourceObserver {
                 success {
-                    if (null == data) return@success
-                    /**
-                     * 只有2个中有一个是不等于0、那么就可以添加弹窗
-                     */
-                    val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
-                    //获取第1个itemView
-                    val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if (data?.healthStatus != "Ideal" || (data?.environmentLowCount ?: 0) > 0) {
-                        if (!itemView.contains(badgeView)) {
-                            itemView.addView(badgeView)
-                        }
-                    } else {
-                        // 表示健康的
-                        // 需要判断上面的消息还有没有没有的话那就直接消除
-                        val easeMessage = mViewModel.unReadMessageNumber.value
-                        val calendarMessage = mViewModel.getHomePageNumber.value?.data?.calendarHighMsgCount
-                        val acadeMessage = mViewModel.getHomePageNumber.value?.data?.academyMsgCount
-                        if (easeMessage == 0 && calendarMessage == 0 && acadeMessage == 0) {
-                            if (itemView.contains(badgeView)) {
+                    data?.let {
+                        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
+                        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
+
+                        val shouldShowBadge = it.healthStatus != "Ideal" || (it.environmentLowCount ?: 0) > 0
+
+                        if (shouldShowBadge) {
+                            if (badgeView.parent != null) {
+                                (badgeView.parent as ViewGroup).removeView(badgeView)
+                            }
+                            if (!itemView.contains(badgeView)) {
+                                itemView.addView(badgeView)
+                            }
+                        } else {
+                            val easeMessage = mViewModel.unReadMessageNumber.value ?: 0
+                            val calendarMessage = mViewModel.getHomePageNumber.value?.data?.calendarHighMsgCount ?: 0
+                            val acadeMessage = mViewModel.getHomePageNumber.value?.data?.academyMsgCount ?: 0
+                            val shouldRemoveBadge = easeMessage == 0 && calendarMessage == 0 && acadeMessage == 0
+
+                            if (shouldRemoveBadge && itemView.contains(badgeView)) {
                                 itemView.removeView(badgeView)
                             }
                         }
@@ -369,6 +316,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     }
                 }*/
             }
+    }
+
+    private fun updateBadgeViewStatus(itemView: BottomNavigationItemView, shouldAdd: Boolean) {
+        if (shouldAdd && !itemView.contains(badgeView)) {
+            if (badgeView.parent != null) {
+                (badgeView.parent as ViewGroup).removeView(badgeView)
+            }
+            itemView.addView(badgeView)
+        } else if (!shouldAdd && itemView.contains(badgeView)) {
+            itemView.removeView(badgeView)
+            if (asPop.isShow) asPop.dismiss()
+        }
     }
 
     override fun initData() {

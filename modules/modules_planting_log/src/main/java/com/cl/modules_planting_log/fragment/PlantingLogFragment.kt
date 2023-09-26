@@ -15,6 +15,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.R
@@ -392,7 +393,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                         .offsetX(XPopupUtils.dp2px(context, -5f))
                         .offsetY(XPopupUtils.dp2px(context, 10f))
                         .atView(binding.ivGetPlantList).asCustom(context?.let {
-                            PlantIdListPop(it, plantId.value?.toInt(), data, onConfirmAction = { plantId ->
+                            PlantIdListPop(it, plantId.value?.safeToInt(), data, onConfirmAction = { plantId ->
                                 // 设置植物ID
                                 setPlantIds(plantId)
                                 // 根据plantId获取植物信息

@@ -3,6 +3,8 @@ package com.cl.modules_pairing_connection.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.text.InputType
 import android.view.View
@@ -142,10 +144,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             })
             bindDevice.observe(this@PairDistributionWifiActivity, resourceObserver {
                 success {
-                    // 开启服务
-                    val intent =
-                        Intent(this@PairDistributionWifiActivity, TuYaDeviceUpdateReceiver::class.java)
-                    startService(intent)
+                    if (isAppInForeground(this@PairDistributionWifiActivity)) {
+                        // 开启服务
+                        val intent =
+                            Intent(this@PairDistributionWifiActivity, TuYaDeviceUpdateReceiver::class.java)
+                        startService(intent)
+                    }
                     mViewModel.userDetail()
                 }
                 error { errorMsg, code ->
@@ -548,5 +552,17 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     Reporter.reportTuYaError("getActivatorInstance", errorMsg, errorCode)
                 }
             })
+    }
+
+   private fun isAppInForeground(context: Context): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val appProcesses = activityManager.runningAppProcesses ?: return false
+
+        for (appProcess in appProcesses) {
+            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName == context.packageName) {
+                return true
+            }
+        }
+        return false
     }
 }

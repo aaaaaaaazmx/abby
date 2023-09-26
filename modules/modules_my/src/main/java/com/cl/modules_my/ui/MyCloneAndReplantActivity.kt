@@ -17,6 +17,7 @@ import com.cl.common_base.constants.Constants.Global.KEY_USER_NO_STRAIN_NAME
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.ViewUtils
@@ -154,7 +155,7 @@ class MyCloneAndReplantActivity : BaseActivity<MyCloneAndReplantBinding>() {
 
         plantId?.let {
             kotlin.runCatching {
-                mViewModel.upPlantInfoReq.value?.id = it.toInt()
+                mViewModel.upPlantInfoReq.value?.id = it.safeToInt()
             }
         }
         // 没有tips弹窗

@@ -341,7 +341,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             ViewUtils.setVisible(binding.pplantNinth.root)
             // ViewUtils.setVisible(binding.pplantNinth.ivZpBg)
             ViewUtils.setGone(binding.pplantNinth.tvPrivacyMode)
-            ViewUtils.setGone(binding.pplantNinth.ivZpCamera)
+            // ViewUtils.setGone(binding.pplantNinth.ivZpCamera)
             // 隐藏当前所有布局
             ViewUtils.setGone(binding.plantExtendBg.root)
             ViewUtils.setGone(binding.plantFirst.root)
@@ -997,8 +997,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         turnOffText = "Turn off Light",
                         isShowNightMode = false,
                         isTheSpacingHours = false,
-                        turnOnHour = mViewMode.muteOn?.toInt(),
-                        turnOffHour = mViewMode.muteOff?.toInt(),
+                        turnOnHour = mViewMode.muteOn?.safeToInt(),
+                        turnOffHour = mViewMode.muteOff?.safeToInt(),
                         onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
                             ftTimer.itemValue = "$onTime-$offMinute"
                             mViewMode.setmuteOn("$timeOn")
@@ -2716,7 +2716,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         }
                         // 判断当前的版本号是否需要升级
                         kotlin.runCatching {
-                            if (netWorkVersion.toInt() > localVersion.toInt()) {
+                            if (netWorkVersion.safeToInt() > localVersion.safeToInt()) {
                                 versionPop?.setData(versionData)
                                 versionUpdatePop.show()
                             }
@@ -2792,9 +2792,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     mViews.remove(view)
                                     animRemoveView(view, position)
                                     val oxygenToAdd =
-                                        runCatching { water.oxygen.toInt() }.getOrDefault(0)
+                                        runCatching { water.oxygen.safeToInt() }.getOrDefault(0)
                                     val currentOxygen = runCatching {
-                                        binding.pplantNinth.tvOxy.text.toString().toInt()
+                                        binding.pplantNinth.tvOxy.text.toString().safeToInt()
                                     }.getOrDefault(0)
                                     binding.pplantNinth.tvOxy.text =
                                         "${oxygenToAdd + currentOxygen}"
@@ -3885,7 +3885,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             TypedValue.COMPLEX_UNIT_DIP,
             32f,
             resources.displayMetrics
-        ).toInt()
+        ).safeToInt()
         val windowManager =
             activity?.getSystemService(AppCompatActivity.WINDOW_SERVICE) as WindowManager
         val width = windowManager.defaultDisplay.width - marginTopPx
