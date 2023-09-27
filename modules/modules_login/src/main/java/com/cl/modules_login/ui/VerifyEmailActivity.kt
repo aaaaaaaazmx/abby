@@ -120,7 +120,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
     override fun initView() {
         ARouter.getInstance().inject(this)
-        binding.codeView.setEtNumber(if (isEmailLogin) 4 else 6)
+        // binding.codeView.setEtNumber(if (isEmailLogin) 4 else 6)
         //We sent an email to pinnachan@abby.com enter the verification code sent to your email address，and you can reset you password.
         binding.tvDesc.text =
             if (isRegister || isEmailLogin) {

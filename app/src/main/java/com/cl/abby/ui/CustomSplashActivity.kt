@@ -255,8 +255,12 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
         registerReceiver(borad, intentFilter)
     }
 
+    override fun onPause() {
+        super.onPause()
+        animator.cancel()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        animator.cancel()
     }
 }
