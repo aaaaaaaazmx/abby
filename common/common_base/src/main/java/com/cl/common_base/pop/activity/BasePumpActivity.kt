@@ -349,7 +349,8 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
     @SuppressLint("UseCompatLoadingForDrawables")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun initPumpWater() {
-        mWakeLock?.acquire()
+        // 最长持有10分钟
+        mWakeLock?.acquire(10*60*1000L)
         if (data?.size != 0) {
             // 卡片布局需要展示3张，所以需要多添加几张
             if ((data?.size ?: 0) == 1) {
