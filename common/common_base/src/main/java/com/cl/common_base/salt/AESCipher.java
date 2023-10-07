@@ -44,6 +44,10 @@ public class AESCipher {
         if (TextUtils.isEmpty(key)) {
             key = KEY;
         }
+        // 如果内容为空，那么直接返回错误的字符串
+        if (TextUtils.isEmpty(content)) {
+            return "";
+        }
         Decoder decoder = Base64.getDecoder();
         byte[] encryptedBytes = decoder.decode(content);
         byte[] keyBytes = key.getBytes(charset);

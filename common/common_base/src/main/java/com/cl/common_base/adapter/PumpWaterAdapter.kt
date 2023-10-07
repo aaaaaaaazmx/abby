@@ -1,15 +1,11 @@
 package com.cl.common_base.adapter
 
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
 import com.cl.common_base.R
 import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.databinding.BaseItemPumpWaterBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
-import com.chad.library.adapter.base.viewholder.BaseViewHolder
-import com.cl.common_base.video.videoUiHelp
-import com.cl.common_base.video.SampleCoverVideo
+
 
 /**
  * 排水适配器
