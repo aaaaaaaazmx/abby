@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.bhm.ble.BleManager
 import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.abby.viewmodel.MainViewModel
 import com.cl.common_base.base.BaseActivity
@@ -501,6 +502,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         super.onDestroy()
         // 注销InterCome
         InterComeHelp.INSTANCE.logout()
+        // 释放所有蓝牙连接的资源
+        BleManager.get().closeAll()
     }
 
     override fun inAppInfoChange(status: String) {

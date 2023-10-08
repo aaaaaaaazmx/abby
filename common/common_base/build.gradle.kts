@@ -120,6 +120,7 @@ dependencies {
     /*api(project(mapOf("path" to ":common:kefu-easeui")))*/
     api(project(mapOf("path" to ":common:ipc")))
     api(project(mapOf("path" to ":common:mylibrary")))
+    api(project(mapOf("path" to ":common:ble")))
     // lottie
     api(Deps.lottie)
     // viewPager指示器

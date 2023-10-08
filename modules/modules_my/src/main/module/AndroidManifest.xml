@@ -149,6 +149,8 @@
             android:name=".ui.PlantSetUpActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".ui.PhPairActivity" />
+        <activity android:name=".ui.PHSettingActivity" />
 
 
     </application>
