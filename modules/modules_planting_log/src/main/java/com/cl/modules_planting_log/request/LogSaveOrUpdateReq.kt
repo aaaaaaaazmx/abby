@@ -36,6 +36,7 @@ data class LogSaveOrUpdateReq(
     var syncPlants: Boolean? = null, // 帐篷内同步所有植物
 ): BaseBean() {
     companion object {
+        const val KEY_LOG_PH = "ph"
         const val KEY_LOG_TIME = "logTime"
         const val KEY_LIGHTING_ON = "lightingOn"
         const val KEY_LIGHTING_OFF = "lightingOff"

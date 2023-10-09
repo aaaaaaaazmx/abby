@@ -12,6 +12,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -31,6 +32,7 @@ import com.cl.modules_planting_log.request.LogTypeListDataItem
  */
 class CustomViewGroup : LinearLayout {
     private var textView1: TextView? = null
+    private var ivRefresh: ImageView? = null
     private var editText1: EditText? = null
     private var textView2: TextView? = null
     private var rvChoose: RecyclerView? = null
@@ -50,6 +52,7 @@ class CustomViewGroup : LinearLayout {
     private fun init(context: Context, attrs: AttributeSet?) {
         inflate(context, R.layout.planting_custom_layout, this)
         textView1 = findViewById(R.id.textView1)
+        ivRefresh = findViewById(R.id.iv_refresh)
         editText1 = findViewById(R.id.editText1)
         textView2 = findViewById(R.id.textView2)
         rvChoose = findViewById(R.id.rv_choose)
@@ -66,6 +69,7 @@ class CustomViewGroup : LinearLayout {
             a.recycle()
             initRv()
             setEditeTextViewListener()
+            setRefreshListener()
             setTextView1Text(textView1Text)
             setEditText1HintText(editText1HintText)
             setEditText1Text(tag, editText1Text)
@@ -240,6 +244,12 @@ class CustomViewGroup : LinearLayout {
         return false
     }
 
+    private fun setRefreshListener() {
+        ivRefresh?.setOnClickListener {
+            listener?.onRefreshData(tag as Int, ivRefresh!!, this)
+        }
+    }
+
     fun setTextView1Text(text: String?) {
         textView1!!.text = text
     }
@@ -265,6 +275,11 @@ class CustomViewGroup : LinearLayout {
 
     fun setTextView2Visibility(isVisible: Boolean) {
         textView2?.let { fadeAnimation(it, isVisible) }
+    }
+
+    fun setRefreshIconVisibility(isVisible: Boolean, isConnect: Boolean) {
+        ivRefresh?.let { fadeAnimation(it, isVisible) }
+        ivRefresh?.setBackgroundResource(if (isConnect) R.mipmap.plant_log_refresh else R.mipmap.plant_log_unrefresh)
     }
 
     fun setRootVisible(isVisible: Boolean) {

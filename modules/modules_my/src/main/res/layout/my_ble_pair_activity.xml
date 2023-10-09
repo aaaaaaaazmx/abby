@@ -42,7 +42,7 @@
                     android:layout_marginEnd="24dp"
                     android:lineSpacingExtra="5dp"
                     android:text="Searching for the device...
-Please make sure your PH meter has been turned on and the blue LED is flashing"
+Please press the on/off button for 3-5 seconds till you see the Bluetooth icon."
                     android:textColor="#161B19"
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -50,16 +50,16 @@ Please make sure your PH meter has been turned on and the blue LED is flashing"
                     app:layout_constraintTop_toTopOf="parent" />
 
 
-                <com.airbnb.lottie.LottieAnimationView
+                <ImageView
+                    android:layout_marginTop="12dp"
+                    android:background="@mipmap/my_ph_pair"
                     android:id="@+id/iv_one"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="@+id/tv_desc"
                     app:layout_constraintStart_toStartOf="@+id/tv_desc"
                     app:layout_constraintTop_toBottomOf="@+id/tv_desc"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="reconnect.json"
-                    app:lottie_loop="true" />
+                   />
 
                 <TextView
                     android:visibility="gone"

@@ -121,7 +121,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
             val itemData = adapter.data[position] as? AccessoryListBean
             when (view.id) {
                 R.id.tv_add -> {
-                    addAccess(itemData)
+                     addAccess(itemData)
                 }
 
                 R.id.tv_buy -> {

@@ -2,6 +2,7 @@ package com.cl.modules_planting_log.ui
 
 import android.graphics.Color
 import android.widget.EditText
+import android.widget.ImageView
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.ListDeviceBean
@@ -250,5 +251,9 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
                 it, true
             )
         }
+    }
+
+    override fun onRefreshData(position: Int, imageview: ImageView, customViewGroup: CustomViewGroup) {
+
     }
 }

@@ -8,4 +8,6 @@ data class FieldAttributes(
     var isVisible: Boolean = true, // 是否显示当前条目，因为需求是选中特定条目之后，显示多个附加条目
     val metricUnits: String? = "", // 公制单位
     var imperialUnits : String? = "", // 英制单位
+    var isShowRefreshIcon: Boolean = false, // 是否显示刷新按钮
+    var isConnect: Boolean = false, // 是否连接
 )

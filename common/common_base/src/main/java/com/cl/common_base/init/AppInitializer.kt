@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.startup.Initializer
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.launcher.ARouter
+import com.bhm.ble.BleManager
+import com.bhm.ble.attribute.BleOptions
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.constants.Constants
 import com.orhanobut.logger.AndroidLogAdapter
@@ -45,6 +47,24 @@ class AppInitializer : Initializer<Unit> {
             false,
             strategy
         )
+
+        // 蓝牙SDK初始化
+        (context.applicationContext as? Application)?.let {
+            BleManager.get().init(
+                it,
+                BleOptions.Builder()
+                    .setScanMillisTimeOut(5000)
+                    .setConnectMillisTimeOut(5000)
+                    //一般不推荐autoSetMtu，因为如果设置的等待时间会影响其他操作
+                    .setMtu(100, true)
+                    .setScanDeviceName(Constants.Ble.KEY_PH_DEVICE_NAME)
+                    .setAutoConnect(true)
+                    .setMaxConnectNum(Constants.Ble.KEY_BLE_MAX_CONNECT)
+                    .setConnectRetryCountAndInterval(2, 1000)
+                    .build()
+            )
+        }
+
         return Unit
     }
 

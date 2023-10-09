@@ -10,6 +10,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.PairBleAdapter
@@ -20,6 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.math.cos
 
 /**
  * Ph笔配对界面
@@ -31,10 +33,14 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
     @Inject
     lateinit var mViewMode: BlePairViewModel
 
+    // 蓝牙类型
+    private val bleType by lazy {
+        intent.getStringExtra(Constants.Ble.KEY_BLE_TYPE) ?: Constants.Ble.TYPE_PH
+    }
 
-    companion object {
-        // 固定扫描名字
-        const val DEVICE_NAME = "BLE-9908"
+    // 是否是第一次绑定
+    private val isFirstBind by lazy {
+        intent.getBooleanExtra(Constants.Ble.KEY_BLE_IS_FIRST_BIND, true)
     }
 
     override fun initView() {
@@ -44,7 +50,7 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
     }
 
     private fun initBle() {
-        BleManager.get().init(
+        /*BleManager.get().init(
             application,
             BleOptions.Builder()
                 .setScanMillisTimeOut(5000)
@@ -53,15 +59,15 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
                 .setMtu(100, true)
                 .setScanDeviceName(DEVICE_NAME)
                 .setAutoConnect(true)
-                .setMaxConnectNum(2)
+                .setMaxConnectNum(Constants.Ble.KEY_BLE_MAX_CONNECT)
                 .setConnectRetryCountAndInterval(2, 1000)
                 .build()
-        )
+        )*/
     }
 
     // 列表适配器
     private val adapter by lazy {
-        PairBleAdapter(mutableListOf())
+        PairBleAdapter(mViewMode.listDRData)
     }
 
     override fun onBleChange(status: String) {
@@ -74,6 +80,8 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
             }
 
             Constants.Ble.KEY_BLE_OFF -> {
+                adapter.notifyItemRangeRemoved(0, mViewMode.listDRData.size)
+                mViewMode.listDRData.clear()
                 ToastUtil.shortShow("Bluetooth is turned off")
                 logI("KEY_BLE_OFF")
             }
@@ -130,14 +138,24 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
                     val isConnected= mViewMode.isConnected(bleDevice)
                     if (isConnected) {
                         logI("BLe -> msg: 连接成功")
-                        ToastUtil.shortShow("连接成功")
-                        //  todo 连接成功，那么就绑定设备。 然后进行跳转到设置界面
-                        // 跳转到设备列表界面
-                        startActivity(Intent(this@PhPairActivity, PHSettingActivity::class.java))
-                        finish()
+                        ToastUtil.shortShow("Connection successful.")
+                        if (isFirstBind) {
+                            // todo 连接成功，那么就绑定设备。 然后进行跳转到设置界面
+                            // todo 第一次绑定，那么就跳转到设置界面
+                            when(bleType) {
+                                Constants.Ble.TYPE_PH -> {
+                                    startActivity(Intent(this@PhPairActivity, PHSettingActivity::class.java))
+                                    finish()
+                                }
+                            }
+                        } else {
+                            // 不是第一次绑定，那么就直接返回
+                            setResult(RESULT_OK)
+                            finish()
+                        }
                     } else {
                         logI("BLe -> msg: 连接失败")
-                        ToastUtil.shortShow("连接失败")
+                        ToastUtil.shortShow("Connection failed.")
                     }
                    /* if (it.bleDevice.deviceAddress == "7C:DF:A1:A3:5A:BE") {
                         viewBinding.btnConnect.isEnabled = !isConnected
@@ -159,10 +177,10 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
             val bleDevice: BleDevice? = adapter.data[position] as BleDevice?
             if (view.id == R.id.svt_add) {
                 if (mViewMode.isConnected(bleDevice)) {
-                    showProgressLoading("断开中...")
+                    showProgressLoading("Disconnecting...")
                     mViewMode.disConnect(bleDevice)
                 } else {
-                    showProgressLoading("连接中...")
+                    showProgressLoading("Connecting...")
                     mViewMode.connect(bleDevice)
                 }
             }

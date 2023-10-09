@@ -1,6 +1,8 @@
 package com.cl.modules_planting_log.ui
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothGattCharacteristic
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -10,23 +12,30 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bhm.ble.BleManager
+import com.bhm.ble.utils.BleLogger
+import com.chad.library.adapter.base.entity.node.BaseNode
 import com.cl.common_base.R
 import com.cl.common_base.adapter.ChooserAdapter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.CharacteristicNode
 import com.cl.common_base.bean.ChoosePicBean
 import com.cl.common_base.bean.ImageUrl
+import com.cl.common_base.bean.ServiceNode
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.ext.temperatureConversion
-import com.cl.common_base.ext.unitsConversion
-import com.cl.common_base.ext.weightConversion
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.ChooserOptionPop
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
@@ -38,7 +47,7 @@ import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.adapter.CustomViewGroupAdapter
-import com.cl.modules_planting_log.databinding.PlantingActionActivityBinding
+import com.cl.modules_planting_log.adapter.EditTextValueChangeListener
 import com.cl.modules_planting_log.databinding.PlantingLogActivityBinding
 import com.cl.modules_planting_log.request.FieldAttributes
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
@@ -61,6 +70,8 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
 import com.lxj.xpopup.util.SmartGlideImageLoader
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import top.zibin.luban.Luban
 import top.zibin.luban.OnNewCompressListener
 import java.io.File
@@ -72,7 +83,7 @@ import javax.inject.Inject
  * 种植日志记录页面
  */
 @AndroidEntryPoint
-class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
+class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditTextValueChangeListener {
 
     @Inject
     lateinit var viewModel: PlantingLogAcViewModel
@@ -83,8 +94,9 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             "spaceTemp" to FieldAttributes("Space Temp(ST)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
             "waterTemp" to FieldAttributes("Water Temp (WT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
             "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-            "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, isShowRefreshIcon = true),
             "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            //"ec" to FieldAttributes("EC", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             "plantHeight" to FieldAttributes("Height (HT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "cm", imperialUnits = "In"),
             /*"vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
             /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
@@ -101,15 +113,16 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
      */
     private val logAdapter by lazy {
         CustomViewGroupAdapter(
-            this@PlantingLogActivity,
-            listOf(
+            context = this@PlantingLogActivity,
+            fields = listOf(
                 "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc",
                 "plantHeight", "lightingOn", "lightingOff", "co2Concentration"
             ),
-            listOf(
+            noKeyboardFields = listOf(
                 "logTime", "lightingOn", "lightingOff"
             ),
-            maps,
+            fieldsAttributes = maps,
+            interFaceEditTextValueChangeListener = this@PlantingLogActivity
         )
     }
 
@@ -211,7 +224,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     }
 
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
-        logSaveOrUpdateReq.logTime = if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        logSaveOrUpdateReq.logTime =
+            if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
         /*logSaveOrUpdateReq.spaceTemp = temperatureConversion(logSaveOrUpdateReq.spaceTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.waterTemp = temperatureConversion(logSaveOrUpdateReq.waterTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.plantHeight = unitsConversion(logSaveOrUpdateReq.plantHeight?.toFloatOrNull() ?: 0f, isMetric, isUpload)
@@ -245,6 +259,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
     }
 
     override fun initView() {
+        checkPermissionAndStartScan()
+
         binding.title
             .setRightButtonTextBack(R.drawable.background_check_tags_r5)
             .setRightButtonText("Save")
@@ -313,7 +329,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                             val values = declaredFiled.get(it)?.toString()
                             // 转换公英制,有些是默认填的，那么就不需要转换
                             if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
-                                logAdapter.fieldsAttributes[field]?.unit = if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
+                                logAdapter.fieldsAttributes[field]?.unit =
+                                    if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
                             }
                         }
                         logAdapter.setData(it)
@@ -335,7 +352,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
             logSaveOrUpdate.observe(this@PlantingLogActivity, resourceObserver {
                 error { errorMsg, code ->
                     hideProgressLoading()
-                    ToastUtil.shortShow(errorMsg) }
+                    ToastUtil.shortShow(errorMsg)
+                }
                 success {
                     hideProgressLoading()
                     // 提交成功 or 修改成功
@@ -373,6 +391,65 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                     }
                 }
             })
+        }
+
+        // 蓝牙相关
+        bleListener()
+    }
+
+    private fun bleListener() {
+        lifecycleScope.launch {
+            viewModel.listLogStateFlow.collect {
+                hideProgressLoading()
+                // 解析当前特征值
+                val value = it.byteArray
+                value?.let { it1 ->
+                    parseValues(deCode(it1), time = it.time)
+                } ?: let { _ ->
+                    if (it.msg.contains("数据")) return@collect
+                    ToastUtil.shortShow(it.msg)
+                }
+            }
+        }
+
+        // 扫描设备
+        lifecycleScope.launch {
+            viewModel.listDRStateFlow.collect {
+                // 扫描到的设备, 用于填充adapter
+                if (it.deviceName != null && it.deviceAddress != null) {
+                    if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
+                        // 停止扫描
+                        viewModel.stopScan()
+                        // 连接设备
+                        viewModel.connect(it)
+                    }
+                }
+            }
+        }
+
+        // 连接成功回调
+        lifecycleScope.launch {
+            viewModel.refreshStateFlow.collect {
+                // 刷新设备，点击连接，成功与否。
+                delay(300)
+                hideProgressLoading()
+                it?.bleDevice?.let { bleDevice ->
+                    val isConnected = viewModel.isConnected(bleDevice)
+                    if (isConnected) {
+                        logI("BLe -> msg: 连接成功")
+                        ToastUtil.shortShow("Connection successful.")
+                        indicatingIconChanged()
+                        // 有设备，那么就获取数据
+                        viewModel.setCurrentBleDevice(bleDevice)
+                        // 获取数据
+                        checkPermissionAndStartScan()
+                    } else {
+                        indicatingIconChanged()
+                        logI("BLe -> msg: 连接失败")
+                        ToastUtil.shortShow("Connection failed.")
+                    }
+                }
+            }
         }
     }
 
@@ -745,6 +822,232 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>() {
                     ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
                     binding.ftTrend.isItemChecked = false
                 }
+            }
+        }
+    }
+
+
+    override fun onValueChanged(position: Int, newValue: String) {
+
+    }
+
+    override fun onEditTextClick(position: Int, editText: EditText, customViewGroup: CustomViewGroup) {
+    }
+
+    /**
+     * 刷新ph、tds、ec的值
+     */
+    override fun onRefreshData(position: Int, imageview: ImageView, customViewGroup: CustomViewGroup) {
+        // 获取当前的值，然后刷新整个。
+        if (BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME } == null) {
+            xpopup(this@PlantingLogActivity) {
+                isDestroyOnDismiss(false)
+                asCustom(
+                    BaseCenterPop(this@PlantingLogActivity, content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.", isShowCancelButton = true, onConfirmAction = {
+                        checkPermissionAndStartScan()
+                    })
+                ).show()
+            }
+            return
+        }
+        // 判断当前是否连接成功，如果连接不成功，那么就弹窗
+        checkPermissionAndStartScan()
+    }
+
+    private fun checkPermissionAndStartScan() {
+        PermissionHelp().checkConnect(
+            this@PlantingLogActivity,
+            supportFragmentManager,
+            true,
+            object : PermissionHelp.OnCheckResultListener {
+                override fun onResult(result: Boolean) {
+                    if (!result) return
+                    checkHasPhBle()
+                }
+            })
+    }
+
+    /**
+     * 查找当前设备是否有连接过
+     */
+    private fun checkHasPhBle() {
+        // 没有指定链接设备，因为老板认为用户只能买的起一个
+        // 那么就只能判断，当前是否连接，没连接那么就开始扫描，然后连接第一个BLE-9908的设备。
+        BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }.apply {
+            indicatingIconChanged()
+            if (this == null) {
+                // 开始扫描，连接第一个扫描出来的设备
+                BleManager.get().startScan(viewModel.getScanCallback(true))
+                return
+            }
+            if (!viewModel.isConnected(this)) {
+                xpopup(this@PlantingLogActivity) {
+                    isDestroyOnDismiss(false)
+                    asCustom(
+                        BaseCenterPop(
+                            this@PlantingLogActivity,
+                            content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
+                            isShowCancelButton = true,
+                            onConfirmAction = {
+                                checkPermissionAndStartScan()
+                            })
+                    ).show()
+                }
+                return
+            }
+            showProgressLoading()
+            // 有设备，那么就获取数据
+            viewModel.setCurrentBleDevice(this)
+            // 获取值
+            getPhData()
+        }
+    }
+
+    /**
+     * 获取当前ph的数据
+     */
+    private fun getPhData() {
+        // 获取ph的数据
+        viewModel.currentBleDevice.value?.let {
+            val gatt = BleManager.get().getBluetoothGatt(it)
+            val list: MutableList<BaseNode> = arrayListOf()
+            gatt?.services?.forEachIndexed { index, service ->
+                val childList: MutableList<BaseNode> = arrayListOf()
+                service.characteristics?.forEachIndexed { position, characteristics ->
+                    val characteristicNode = CharacteristicNode(
+                        position.toString(),
+                        service.uuid.toString(),
+                        characteristics.uuid.toString(),
+                        getOperateType(characteristics),
+                        characteristics.properties,
+                        enableNotify = false,
+                        enableIndicate = false,
+                        enableWrite = false
+                    )
+                    // 设置当前的服务ID、特征ID
+                    if (characteristics.uuid.toString() == Constants.Ble.KEY_BLE_PH_CHARACTERISTIC_UUID) {
+                        viewModel.setCurrentCharacteristicId(characteristics.uuid.toString())
+                        viewModel.setCurrentServiceId(service.uuid.toString())
+                        viewModel.currentBleDevice.value?.let { bleDevice ->
+                            viewModel.readData(bleDevice, characteristicNode)
+                        }
+                    }
+                    childList.add(characteristicNode)
+                }
+                val serviceNode = ServiceNode(
+                    index.toString(),
+                    service.uuid.toString(),
+                    childList
+                )
+                list.add(serviceNode)
+            }
+        }
+    }
+
+    /**
+     * 获取特征值的属性
+     */
+    private fun getOperateType(characteristic: BluetoothGattCharacteristic): String {
+        val property = StringBuilder()
+        val charaProp: Int = characteristic.properties
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+            property.append("Read")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
+            property.append("Write")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE != 0) {
+            property.append("Write No Response")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
+            property.append("Notify")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0) {
+            property.append("Indicate")
+            property.append(" , ")
+        }
+        if (property.length > 1) {
+            property.delete(property.length - 2, property.length - 1)
+        }
+        return if (property.isNotEmpty()) {
+            property.toString()
+        } else {
+            ""
+        }
+    }
+
+
+    // 解密
+    private fun deCode(pValue: ByteArray): ByteArray {
+        val len = pValue.size
+        for (i in len - 1 downTo 1) {
+            var tmp = pValue[i].toInt()
+            val hibit1 = (tmp and 0x55) shl 1
+            val lobit1 = (tmp and 0xAA) shr 1
+            tmp = pValue[i - 1].toInt()
+            val hibit = (tmp and 0x55) shl 1
+            val lobit = (tmp and 0xAA) shr 1
+
+            pValue[i] = (hibit1 or lobit).inv().toByte()
+            pValue[i - 1] = (hibit or lobit1).inv().toByte()
+        }
+        BleLogger.i("pValue: $pValue")
+        return pValue
+    }
+
+    // 解析
+    @SuppressLint("SetTextI18n")
+    private fun parseValues(decrypted: ByteArray, time: Long) {
+        val phHigh = decrypted[3].toInt() and 0xFF
+        val phLow = decrypted[4].toInt() and 0xFF
+        val ecHigh = decrypted[5].toInt() and 0xFF
+        val ecLow = decrypted[6].toInt() and 0xFF
+        val tdsHigh = decrypted[7].toInt() and 0xFF
+        val tdsLow = decrypted[8].toInt() and 0xFF
+        val tempHigh = decrypted[13].toInt() and 0xFF
+        val tempLow = decrypted[14].toInt() and 0xFF
+
+        val ph = (phHigh shl 8) or phLow
+        val ec = (ecHigh shl 8) or ecLow
+        val tds = (tdsHigh shl 8) or tdsLow
+        val temp = (tempHigh shl 8) or tempLow
+
+        //BleLogger.i("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
+        logI("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
+        // 赋值给到adapter当中 todo tds ec 没有赋值
+        logAdapter.setData(maps.keys.toList().indexOf(LogSaveOrUpdateReq.KEY_LOG_PH) , ph.toString())
+    }
+
+    override fun onBleChange(status: String) {
+        super.onBleChange(status)
+        when (status) {
+            Constants.Ble.KEY_BLE_ON -> {
+                // 这个界面是不需要是否有连接过设备的， 其他界面在蓝牙开关的时候，都需要判断之前是否连接过设备，连接过那么就直接连接了。
+                checkPermissionAndStartScan()
+                logI("KEY_BLE_ON")
+            }
+
+            Constants.Ble.KEY_BLE_OFF -> {
+                indicatingIconChanged()
+                viewModel.listDRData.clear()
+                ToastUtil.shortShow("Bluetooth is turned off")
+                logI("KEY_BLE_OFF")
+            }
+        }
+    }
+
+    private fun indicatingIconChanged() {
+        runCatching {
+            logAdapter.fieldsAttributes.keys.toList().indexOf(LogSaveOrUpdateReq.KEY_LOG_PH).let {
+                // 修改属性
+                logAdapter.fieldsAttributes[LogSaveOrUpdateReq.KEY_LOG_PH]?.let { attribute ->
+                    attribute.isConnect = BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME } != null
+                }
+                logAdapter.notifyItemChanged(it)
             }
         }
     }

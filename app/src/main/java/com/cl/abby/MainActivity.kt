@@ -1,6 +1,7 @@
 package com.cl.abby
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bhm.ble.BleManager
+import com.bhm.ble.attribute.BleOptions
 import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.abby.viewmodel.MainViewModel
 import com.cl.common_base.base.BaseActivity
@@ -29,6 +31,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.ui.PhPairActivity
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.lxj.xpopup.XPopup
@@ -153,6 +156,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
         badgeView
     }
+
     override fun onResume() {
         super.onResume()
         // logI("1111: ${(userInfo.invoke())?.deviceStatus == "1"}")
@@ -502,8 +506,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         super.onDestroy()
         // 注销InterCome
         InterComeHelp.INSTANCE.logout()
-        // 释放所有蓝牙连接的资源
-        BleManager.get().closeAll()
+        // BleManager.get().closeAll()
     }
 
     override fun inAppInfoChange(status: String) {

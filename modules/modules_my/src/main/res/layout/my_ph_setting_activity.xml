@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <TextView
+            <com.cl.common_base.widget.AbTextViewSimpleCalendar
                 android:layout_marginTop="9dp"
                 android:layout_marginEnd="19dp"
                 android:layout_marginStart="19dp"
@@ -42,7 +42,7 @@
                 android:layout_marginEnd="19dp"
                 tools:ignore="MissingConstraints" />
 
-            <TextView
+            <com.cl.common_base.widget.AbTextViewSimpleCalendar
                 android:layout_marginTop="9dp"
                 android:layout_marginEnd="19dp"
                 android:layout_marginStart="19dp"
@@ -304,6 +304,7 @@
 
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/tv_sync_desc"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="19dp"
@@ -311,6 +312,17 @@
                 android:textSize="15sp"
                 android:textColor="#979797"
                 tools:text="Last data synced on 08/22/2023 11:23AM."
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tv_un_connect"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="19dp"
+                android:layout_marginStart="19dp"
+                android:textColor="#F72E47"
+                android:text="Your Bluetooth pH meter is turned off or out of range. Please turn on the power to sync the data."
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 

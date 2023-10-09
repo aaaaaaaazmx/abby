@@ -1,6 +1,7 @@
 package com.cl.modules_my.viewmodel
 
-import android.widget.Toast
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.bhm.ble.BleManager
 import com.bhm.ble.callback.BleConnectCallback
@@ -9,18 +10,42 @@ import com.bhm.ble.data.BleConnectFailType
 import com.bhm.ble.data.BleScanFailType
 import com.bhm.ble.device.BleDevice
 import com.bhm.ble.utils.BleLogger
+import com.cl.common_base.bean.CharacteristicNode
+import com.cl.common_base.bean.LogEntity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
-import com.cl.modules_my.repository.RefreshBleDevice
+import com.cl.common_base.bean.RefreshBleDevice
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.logging.Level
 import javax.inject.Inject
 
 @ActivityRetainedScoped
 class BlePairViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
+
+    // 当前连接中的BleDevice
+    private val _currentBleDevice = MutableLiveData<BleDevice?>()
+    val currentBleDevice:LiveData<BleDevice?> = _currentBleDevice
+    // 设置当前连接中的BleDevice
+    fun setCurrentBleDevice(bleDevice: BleDevice?) {
+        _currentBleDevice.value = bleDevice
+    }
+
+    // 当前的服务ID、特征ID
+    private val _currentServiceId = MutableLiveData<String?>()
+    val currentServiceId:LiveData<String?> = _currentServiceId
+    private val _currentCharacteristicId = MutableLiveData<String?>()
+    val currentCharacteristicId:LiveData<String?> = _currentCharacteristicId
+    // 设置当前的服务ID、特征ID
+    fun setCurrentServiceId(serviceId: String?) {
+        _currentServiceId.value = serviceId
+    }
+    fun setCurrentCharacteristicId(characteristicId: String?) {
+        _currentCharacteristicId.value = characteristicId
+    }
 
     /**
      * 蓝牙数据类
@@ -41,9 +66,6 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
     )
 
     val refreshStateFlow: StateFlow<RefreshBleDevice?> = refreshMutableStateFlow
-
-    // 当前已经连接的设备
-    val connectedDevice = BleManager.get().getAllConnectedDevice()
 
     /**
      * 扫描之后的回调
@@ -82,27 +104,28 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                 }
                 scanStopMutableStateFlow.value = true
                 if (listDRData.isEmpty() && showData) {
-                    logI("BLe -> msg: 没有扫描到数据")
+                    logI("BLe -> msg: 没有扫描到设备")
+                    ToastUtil.shortShow("The device was not detected.")
                 }
             }
             onScanFail {
                 val msg: String = when (it) {
-                    is BleScanFailType.UnSupportBle -> "设备不支持蓝牙"
-                    is BleScanFailType.NoBlePermission -> "权限不足，请检查"
-                    is BleScanFailType.GPSDisable -> "设备未打开GPS定位"
-                    is BleScanFailType.BleDisable -> "蓝牙未打开"
-                    is BleScanFailType.AlReadyScanning -> "正在扫描"
+                    is BleScanFailType.UnSupportBle -> "The device does not support Bluetooth."
+                    is BleScanFailType.NoBlePermission -> "Insufficient permissions, please check."
+                    is BleScanFailType.GPSDisable -> "The device has not enabled GPS positioning."
+                    is BleScanFailType.BleDisable -> "Bluetooth is not turned on."
+                    is BleScanFailType.AlReadyScanning -> "Scanning in progress."
                     is BleScanFailType.ScanError -> {
                         "${it.throwable?.message}"
                     }
                 }
                 BleLogger.e(msg)
                 logI("BLe -> msg: $msg")
+                ToastUtil.shortShow(msg)
                 scanStopMutableStateFlow.value = true
             }
         }
     }
-
 
 
     /**
@@ -123,6 +146,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
     fun connect(address: String) {
         connect(BleManager.get().buildBleDeviceByDeviceAddress(address))
     }
+
     /**
      * 开始连接
      */
@@ -139,14 +163,14 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
         }
         onConnectFail { bleDevice, connectFailType ->
             val msg: String = when (connectFailType) {
-                is BleConnectFailType.UnSupportBle -> "设备不支持蓝牙"
-                is BleConnectFailType.NoBlePermission -> "权限不足，请检查"
-                is BleConnectFailType.NullableBluetoothDevice -> "设备为空"
-                is BleConnectFailType.BleDisable -> "蓝牙未打开"
-                is BleConnectFailType.ConnectException -> "连接异常(${connectFailType.throwable.message})"
-                is BleConnectFailType.ConnectTimeOut -> "连接超时"
-                is BleConnectFailType.AlreadyConnecting -> "连接中"
-                is BleConnectFailType.ScanNullableBluetoothDevice -> "连接失败，扫描数据为空"
+                is BleConnectFailType.UnSupportBle -> "The device does not support Bluetooth."
+                is BleConnectFailType.NoBlePermission -> "Insufficient permissions, please check."
+                is BleConnectFailType.NullableBluetoothDevice -> "The device is empty."
+                is BleConnectFailType.BleDisable -> "Bluetooth not turned on."
+                is BleConnectFailType.ConnectException -> "Connection abnormal.(${connectFailType.throwable.message})"
+                is BleConnectFailType.ConnectTimeOut -> "Connection timed out."
+                is BleConnectFailType.AlreadyConnecting -> "Connecting"
+                is BleConnectFailType.ScanNullableBluetoothDevice -> "Connection failed, scan data is empty."
             }
             BleLogger.e(msg)
             logI("BLe -> msg: $msg")
@@ -157,20 +181,24 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
             BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnecting: $isActiveDisConnected")
         }
         onDisConnected { isActiveDisConnected, bleDevice, _, _ ->
-            logI("BLe -> msg: 断开连接(${bleDevice.deviceAddress}，isActiveDisConnected: " +
-                    "$isActiveDisConnected)")
+            logI(
+                "BLe -> msg: Disconnect(${bleDevice.deviceAddress}，isActiveDisConnected: " +
+                        "$isActiveDisConnected)"
+            )
             BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnected: $isActiveDisConnected")
-            ToastUtil.shortShow("断开连接:${bleDevice.deviceAddress}，isActiveDisConnected: " +
-                    "$isActiveDisConnected")
+            ToastUtil.shortShow(
+                "Disconnect:${bleDevice.deviceAddress}，isActiveDisConnected: " +
+                        "$isActiveDisConnected"
+            )
             refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
             //发送断开的通知
-           /* val message = MessageEvent()
-            message.data = bleDevice
-            EventBus.getDefault().post(message)*/
+            /* val message = MessageEvent()
+             message.data = bleDevice
+             EventBus.getDefault().post(message)*/
         }
         onConnectSuccess { bleDevice, _ ->
-            logI("BLe -> msg: 连接成功(${bleDevice.deviceAddress})")
-            ToastUtil.shortShow("连接成功:${bleDevice.deviceAddress}")
+            logI("BLe -> msg: Connection successful: (${bleDevice.deviceAddress})")
+            ToastUtil.shortShow("Connection successful:${bleDevice.deviceAddress}")
             refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
         }
     }
@@ -190,4 +218,35 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
     fun close() {
         BleManager.get().closeAll()
     }
+
+
+    /**
+     * 读特征值数据
+     */
+    private val listLogMutableStateFlow = MutableStateFlow(LogEntity(Level.INFO, "数据适配完毕"))
+    val listLogStateFlow: StateFlow<LogEntity> = listLogMutableStateFlow
+    fun readData(bleDevice: BleDevice,
+                 node: CharacteristicNode
+    ) {
+        BleManager.get().readData(bleDevice, node.serviceUUID, node.characteristicUUID) {
+            onReadFail {
+                addLogMsg(LogEntity(Level.OFF, "Failed to read feature value data.：${it.message}"))
+            }
+            onReadSuccess {
+                // addLogMsg(LogEntity(Level.FINE, "${node.characteristicUUID} -> 读特征值数据成功：${BleUtil.bytesToHex(it)}"))
+                addLogMsg(LogEntity(Level.FINE, msg = "$it", it))
+            }
+        }
+    }
+
+    /**
+     * 添加日志显示
+     */
+    @Synchronized
+    fun addLogMsg(logEntity: LogEntity) {
+        listLogMutableStateFlow.value = logEntity
+    }
+
+
+
 }

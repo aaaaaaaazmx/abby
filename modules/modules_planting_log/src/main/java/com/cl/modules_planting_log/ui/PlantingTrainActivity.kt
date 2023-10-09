@@ -880,6 +880,10 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
         }
     }
 
+    override fun onRefreshData(position: Int, imageview: ImageView, customViewGroup: CustomViewGroup) {
+
+    }
+
     companion object {
         // 请求相机
         private const val REQUEST_CAPTURE = 100
