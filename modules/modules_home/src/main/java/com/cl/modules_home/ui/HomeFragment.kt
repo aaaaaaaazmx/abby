@@ -2090,13 +2090,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             childLockStatus.observe(viewLifecycleOwner) {
-                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}")
+                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false}")
                 ViewUtils.setVisible(
                     mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false,
                     binding.pplantNinth.ivDoorLockStatus
                 )
+                binding.pplantNinth.ivDoorLockStatus.setImageResource(
+                    if (it == "true") {
+                        R.drawable.home_plant_close_door
+                    } else {
+                        R.drawable.home_plant_open_door
+                    }
+                )
             }
             openDoorStatus.observe(viewLifecycleOwner) {
+                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false}")
                 ViewUtils.setVisible(
                     mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false,
                     binding.pplantNinth.ivDoorLockStatus
