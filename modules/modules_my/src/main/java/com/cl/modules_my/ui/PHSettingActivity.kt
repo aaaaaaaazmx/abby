@@ -3,7 +3,10 @@ package com.cl.modules_my.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothGattCharacteristic
+import android.content.Context
 import android.content.Intent
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -203,6 +206,16 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
 
         //BleLogger.i("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
         logI("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
+        // 上述的代码
+        val toSpeak = "The pH value is: $ph, The EC value is: $ec, $ec, The TDS value is: $tds"
+        val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        // 检查TalkBack是否启用
+        if (accessibilityManager.isEnabled && accessibilityManager.isTouchExplorationEnabled) {
+            val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT)
+            event.text.add(toSpeak)
+            accessibilityManager.sendAccessibilityEvent(event)
+        }
+
         binding.editText1.text = ph.toString()
         binding.editText1.setTextColor(ContextCompat.getColor(this@PHSettingActivity, com.cl.common_base.R.color.mainColor))
 

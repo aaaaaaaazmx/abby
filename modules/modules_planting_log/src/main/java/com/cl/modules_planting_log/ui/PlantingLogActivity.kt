@@ -12,6 +12,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.FileProvider
@@ -843,9 +845,13 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             xpopup(this@PlantingLogActivity) {
                 isDestroyOnDismiss(false)
                 asCustom(
-                    BaseCenterPop(this@PlantingLogActivity, content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.", isShowCancelButton = true, onConfirmAction = {
-                        checkPermissionAndStartScan()
-                    })
+                    BaseCenterPop(
+                        this@PlantingLogActivity,
+                        content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
+                        isShowCancelButton = true,
+                        onConfirmAction = {
+                            checkPermissionAndStartScan()
+                        })
                 ).show()
             }
             return
@@ -1018,8 +1024,18 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
 
         //BleLogger.i("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
         logI("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
+        // 无障碍模式
+        // 上述的代码
+        val toSpeak = "The pH value is: $ph, The EC value is: $ec, $ec, The TDS value is: $tds"
+        val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        // 检查TalkBack是否启用
+        if (accessibilityManager.isEnabled && accessibilityManager.isTouchExplorationEnabled) {
+            val event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_ANNOUNCEMENT)
+            event.text.add(toSpeak)
+            accessibilityManager.sendAccessibilityEvent(event)
+        }
         // 赋值给到adapter当中 todo tds ec 没有赋值
-        logAdapter.setData(maps.keys.toList().indexOf(LogSaveOrUpdateReq.KEY_LOG_PH) , ph.toString())
+        logAdapter.setData(maps.keys.toList().indexOf(LogSaveOrUpdateReq.KEY_LOG_PH), ph.toString())
     }
 
     override fun onBleChange(status: String) {

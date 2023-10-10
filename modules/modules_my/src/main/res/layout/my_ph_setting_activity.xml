@@ -65,6 +65,7 @@
                 tools:ignore="MissingConstraints">
 
                 <TextView
+                    android:labelFor="@+id/editText1"
                     android:text="PH"
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
@@ -143,6 +144,7 @@
                 tools:ignore="MissingConstraints">
 
                 <TextView
+                    android:labelFor="@+id/editText11"
                     android:text="TDS"
                     android:id="@+id/textView11"
                     android:layout_width="wrap_content"
@@ -221,6 +223,7 @@
                 tools:ignore="MissingConstraints">
 
                 <TextView
+                    android:labelFor="@+id/editText12"
                     android:text="EC"
                     android:id="@+id/textView12"
                     android:layout_width="wrap_content"
@@ -290,6 +293,7 @@
 
 
             <TextView
+                android:contentDescription="Sync Data"
                 android:id="@+id/tv_sync"
                 android:gravity="center"
                 android:text="Sync Data"

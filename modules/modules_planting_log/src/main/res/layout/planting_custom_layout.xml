@@ -25,6 +25,7 @@
             tools:ignore="MissingConstraints">
 
             <TextView
+                android:labelFor="@+id/editText1"
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -42,6 +43,7 @@
                 tools:text="textView1textView1textView1" />
 
             <ImageView
+                android:contentDescription="refresh ph"
                 android:visibility="gone"
                 android:layout_marginStart="5dp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView1"

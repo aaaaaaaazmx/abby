@@ -529,7 +529,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
             )
             BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnected: $isActiveDisConnected")
             ToastUtil.shortShow(
-                "Disconnect:${bleDevice.deviceAddress}，isActiveDisConnected: " +
+                "Disconnect:${bleDevice.deviceName}，isActiveDisConnected: " +
                         "$isActiveDisConnected"
             )
             refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
@@ -540,7 +540,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
         }
         onConnectSuccess { bleDevice, _ ->
             logI("BLe -> msg: Connection successful: (${bleDevice.deviceAddress})")
-            ToastUtil.shortShow("Connection successful:${bleDevice.deviceAddress}")
+            ToastUtil.shortShow("Connection successful:${bleDevice.deviceName}")
             refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
         }
     }
