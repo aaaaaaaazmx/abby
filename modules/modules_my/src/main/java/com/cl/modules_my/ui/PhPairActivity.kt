@@ -8,7 +8,9 @@ import com.bhm.ble.attribute.BleOptions
 import com.bhm.ble.device.BleDevice
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.widget.toast.ToastUtil
@@ -32,6 +34,16 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
 
     @Inject
     lateinit var mViewMode: BlePairViewModel
+
+    // 配件ID
+    private val accessoryId by lazy {
+        intent.getStringExtra("accessoryId")
+    }
+
+    // 设备Id
+    private val deviceId by lazy {
+        intent.getStringExtra("deviceId")
+    }
 
     // 蓝牙类型
     private val bleType by lazy {
@@ -63,6 +75,15 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
                 .setConnectRetryCountAndInterval(2, 1000)
                 .build()
         )*/
+
+        // 进入蓝牙配对界面，首先断开蓝牙。
+        when(bleType) {
+            Constants.Ble.TYPE_PH -> {
+                BleManager.get().getAllConnectedDevice()?.firstOrNull{ it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }?.let {
+                    BleManager.get().disConnect(it)
+                }
+            }
+        }
     }
 
     // 列表适配器
@@ -108,6 +129,31 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
     }
 
     override fun observe() {
+
+        mViewMode.apply {
+            accessoryAdd.observe(this@PhPairActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    val devId = data?.accessoryDeviceId
+                    when (bleType) {
+                        Constants.Ble.TYPE_PH -> {
+                            startActivity(Intent(this@PhPairActivity, PHSettingActivity::class.java).apply {
+                                putExtra("intent_flag", true).apply {
+                                    putExtra("deviceId", devId)
+                                }
+                            })
+                            finish()
+                        }
+                    }
+                }
+                loading { showProgressLoading() }
+            })
+        }
+
         lifecycleScope.launch {
             mViewMode.scanStopStateFlow.collect {
                 // 扫描停止
@@ -135,35 +181,25 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
                     if (position >= 0) {
                         adapter.notifyItemChanged(position)
                     }
-                    val isConnected= mViewMode.isConnected(bleDevice)
+                    val isConnected = mViewMode.isConnected(bleDevice)
                     if (isConnected) {
                         logI("BLe -> msg: 连接成功")
-                        ToastUtil.shortShow("Connection successful.")
-                        if (isFirstBind) {
-                            // todo 连接成功，那么就绑定设备。 然后进行跳转到设置界面
-                            // todo 第一次绑定，那么就跳转到设置界面
-                            when(bleType) {
-                                Constants.Ble.TYPE_PH -> {
-                                    startActivity(Intent(this@PhPairActivity, PHSettingActivity::class.java))
-                                    finish()
-                                }
-                            }
-                        } else {
-                            // 不是第一次绑定，那么就直接返回
-                            setResult(RESULT_OK)
-                            finish()
+                        // ToastUtil.shortShow("Connection successful.")
+                        // 连接成功，那么就绑定设备。 然后进行跳转到设置界面
+                        letMultiple(accessoryId, deviceId) { a, b ->
+                            mViewMode.accessoryAdd(a, b)
                         }
                     } else {
                         logI("BLe -> msg: 连接失败")
-                        ToastUtil.shortShow("Connection failed.")
+                        // ToastUtil.shortShow("Connection failed.")
                     }
-                   /* if (it.bleDevice.deviceAddress == "7C:DF:A1:A3:5A:BE") {
-                        viewBinding.btnConnect.isEnabled = !isConnected
-                    }
-                    if (isConnected && autoOpenDetailsActivity) {
-                        openDetails(it.bleDevice)
-                    }
-                    autoOpenDetailsActivity = false*/
+                    /* if (it.bleDevice.deviceAddress == "7C:DF:A1:A3:5A:BE") {
+                         viewBinding.btnConnect.isEnabled = !isConnected
+                     }
+                     if (isConnected && autoOpenDetailsActivity) {
+                         openDetails(it.bleDevice)
+                     }
+                     autoOpenDetailsActivity = false*/
                 }
             }
         }

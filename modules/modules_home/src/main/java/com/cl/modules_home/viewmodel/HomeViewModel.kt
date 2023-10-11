@@ -2015,7 +2015,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         val isShowCamera = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
 
         listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-            ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }.apply {
+            ?.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }.apply {
                 if (this == null) {
                     isHaveACamera.invoke(false, isShowCamera, "", "")
                 } else {

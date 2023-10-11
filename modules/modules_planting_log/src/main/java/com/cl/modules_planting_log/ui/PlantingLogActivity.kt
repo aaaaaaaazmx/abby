@@ -439,7 +439,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                     val isConnected = viewModel.isConnected(bleDevice)
                     if (isConnected) {
                         logI("BLe -> msg: 连接成功")
-                        ToastUtil.shortShow("Connection successful.")
+                        // ToastUtil.shortShow("Connection successful.")
                         indicatingIconChanged()
                         // 有设备，那么就获取数据
                         viewModel.setCurrentBleDevice(bleDevice)
@@ -448,7 +448,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                     } else {
                         indicatingIconChanged()
                         logI("BLe -> msg: 连接失败")
-                        ToastUtil.shortShow("Connection failed.")
+                        // ToastUtil.shortShow("Connection failed.")
                     }
                 }
             }

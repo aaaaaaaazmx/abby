@@ -725,7 +725,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 val cameraAccessory =
                     mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                        ?.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }
                 // 跳转到IPC界面
                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(
                     it.context,
@@ -934,7 +934,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 val cameraAccessory =
                     mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                        ?.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }
                 // 跳转到IPC界面
                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(
                     it.context,
@@ -2141,7 +2141,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
                             // 是否显示摄像头
                             val isCameraVisible =
-                                device.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" } != null
+                                device.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA } != null
                             ViewUtils.setVisible(isCameraVisible, binding.pplantNinth.ivCamera)
                             ViewUtils.setVisible(isCameraVisible, binding.plantManual.ivCamera)
 

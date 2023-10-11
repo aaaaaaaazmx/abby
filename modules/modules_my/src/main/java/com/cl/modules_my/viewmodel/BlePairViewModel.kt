@@ -3,6 +3,7 @@ package com.cl.modules_my.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.bhm.ble.BleManager
 import com.bhm.ble.callback.BleConnectCallback
 import com.bhm.ble.callback.BleScanCallback
@@ -10,15 +11,29 @@ import com.bhm.ble.data.BleConnectFailType
 import com.bhm.ble.data.BleScanFailType
 import com.bhm.ble.device.BleDevice
 import com.bhm.ble.utils.BleLogger
+import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AccessoryAddData
 import com.cl.common_base.bean.CharacteristicNode
 import com.cl.common_base.bean.LogEntity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
 import com.cl.common_base.bean.RefreshBleDevice
+import com.cl.common_base.bean.SystemConfigBeanItem
+import com.cl.common_base.bean.UpDeviceInfoReq
+import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.Resource
+import com.cl.common_base.ext.logD
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import java.util.logging.Level
 import javax.inject.Inject
 
@@ -187,8 +202,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
             )
             BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnected: $isActiveDisConnected")
             ToastUtil.shortShow(
-                "Disconnect:${bleDevice.deviceName}，isActiveDisConnected: " +
-                        "$isActiveDisConnected"
+                "Disconnect:${bleDevice.deviceName}"
             )
             refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
             //发送断开的通知
@@ -245,6 +259,116 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
     @Synchronized
     fun addLogMsg(logEntity: LogEntity) {
         listLogMutableStateFlow.value = logEntity
+    }
+
+
+    /**
+     * 添加蓝牙配件接口
+     */
+    private val _accessoryAdd = MutableLiveData<Resource<AccessoryAddData>>()
+    val accessoryAdd: LiveData<Resource<AccessoryAddData>> = _accessoryAdd
+    fun accessoryAdd(automationId: String, deviceId: String, accessoryDeviceId: String? = null) {
+        viewModelScope.launch {
+            repository.accessoryAdd(automationId, deviceId, accessoryDeviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _accessoryAdd.value = it
+                }
+        }
+    }
+
+
+    /**
+     * 删除设备接口、用于删除通用配件
+     */
+    private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
+    val deleteDevice: LiveData<Resource<BaseBean>> = _deleteDevice
+    fun deleteDevice(deviceId: String) {
+        viewModelScope.launch {
+            repository.deleteDevice(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _deleteDevice.value = it
+                }
+        }
+    }
+
+    /**
+     * 获取系统配置
+     */
+    private val _systemConfig = MutableLiveData<Resource<MutableList<SystemConfigBeanItem>>>()
+    val systemConfig: LiveData<Resource<MutableList<SystemConfigBeanItem>>> = _systemConfig
+    fun systemConfig() {
+        viewModelScope.launch {
+            repository.getSystemConfig("PH_METER_VIDEO")
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _systemConfig.value = it
+                }
+        }
     }
 
 

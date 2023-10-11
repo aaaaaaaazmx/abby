@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bhm.ble.BleManager
 import com.bhm.ble.attribute.BleOptions
 import com.bhm.ble.device.BleDevice
@@ -20,13 +21,16 @@ import com.cl.common_base.bean.CharacteristicNode
 import com.chad.library.adapter.base.entity.node.BaseNode
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyPhSettingActivityBinding
 import com.cl.modules_my.viewmodel.BlePairViewModel
@@ -45,9 +49,37 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
     @Inject
     lateinit var mViewMode: BlePairViewModel
 
+    // true 直接跳转到设备列表、 false 直接关闭当前页面
+    private val intentFlag by lazy {
+        intent.getBooleanExtra("intent_flag", false)
+    }
+
+    // 设备ID
+    private val deviceId by lazy {
+        intent.getStringExtra("deviceId")
+    }
+
     override fun initView() {
+        binding.title.setLeftClickListener {
+            if (intentFlag) {
+                // 跳转到设备列表
+                ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                    .navigation()
+            }
+            finish()
+        }
+        mViewMode.systemConfig()
         // 检查当前连接的设备。
         checkPermissionAndStartScan()
+    }
+
+    override fun onBackPressed() {
+        if (intentFlag) {
+            // 跳转到设备列表
+            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                .navigation()
+        }
+        finish()
     }
 
     /**
@@ -112,6 +144,45 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
     }
 
     override fun observe() {
+        mViewMode.apply {
+            systemConfig.observe(this@PHSettingActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    if (data == null) return@success
+                    if (data?.isEmpty() == true) return@success
+                    runCatching {
+                        data?.get(0)?.value?.let {
+                            binding.videoItemPlayer.apply {
+                                videoUiHelp(it, 1)
+                                // seekOnStart = item.videoPosition ?: 0L
+                            }
+                        }
+                    }
+                }
+            })
+
+            deleteDevice.observe(this@PHSettingActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    // 断开当前蓝牙
+                    BleManager.get().getAllConnectedDevice()?.firstOrNull{ it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }?.let {
+                        BleManager.get().disConnect(it)
+                    }
+                    setResult(Activity.RESULT_OK)
+                    finish()
+                }
+            })
+        }
+
         lifecycleScope.launch {
             mViewMode.listLogStateFlow.collect {
                 hideProgressLoading()
@@ -148,10 +219,10 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                 delay(300)
                 hideProgressLoading()
                 it?.bleDevice?.let { bleDevice ->
-                    val isConnected= mViewMode.isConnected(bleDevice)
+                    val isConnected = mViewMode.isConnected(bleDevice)
                     if (isConnected) {
                         logI("BLe -> msg: 连接成功")
-                        ToastUtil.shortShow("Connection successful.")
+                        // ToastUtil.shortShow("Connection successful.")
                         binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_check)
                         ViewUtils.setGone(binding.tvUnConnect)
                         // 有设备，那么就获取数据
@@ -162,7 +233,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                         binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_uncheck)
                         ViewUtils.setVisible(binding.tvUnConnect)
                         logI("BLe -> msg: 连接失败")
-                        ToastUtil.shortShow("Connection failed.")
+                        // ToastUtil.shortShow("Connection failed.")
                     }
                 }
             }
@@ -227,7 +298,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
 
         // Last data synced on 08/22/2023 11:23AM.
         ViewUtils.setVisible(binding.tvSyncDesc)
-        binding.tvSyncDesc.text =  "Last data synced on ${DateHelper.formatTime(time, "MM/dd/yyyy hh:mm a")}"
+        binding.tvSyncDesc.text = "Last data synced on ${DateHelper.formatTime(time, "MM/dd/yyyy hh:mm a")}"
     }
 
     override fun initData() {
@@ -236,9 +307,13 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                 xpopup(this@PHSettingActivity) {
                     isDestroyOnDismiss(false)
                     asCustom(
-                        BaseCenterPop(this@PHSettingActivity, content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.", isShowCancelButton = true, onConfirmAction = {
-                            checkPermissionAndStartScan()
-                        })
+                        BaseCenterPop(
+                            this@PHSettingActivity,
+                            content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
+                            isShowCancelButton = true,
+                            onConfirmAction = {
+                                checkPermissionAndStartScan()
+                            })
                     ).show()
                 }
                 return@setOnClickListener
@@ -257,7 +332,8 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                         cancelText = "No",
                         confirmText = "Yes",
                         onConfirmAction = {
-                            // todo 删除Ph笔
+                            // 删除Ph笔
+                            mViewMode.deleteDevice(deviceId.toString())
                         })
                 ).show()
             }
@@ -289,7 +365,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                     if (characteristics.uuid.toString() == Constants.Ble.KEY_BLE_PH_CHARACTERISTIC_UUID) {
                         mViewMode.setCurrentCharacteristicId(characteristics.uuid.toString())
                         mViewMode.setCurrentServiceId(service.uuid.toString())
-                        mViewMode.currentBleDevice.value?.let { bleDevice->
+                        mViewMode.currentBleDevice.value?.let { bleDevice ->
                             mViewMode.readData(bleDevice, characteristicNode)
                         }
                     }

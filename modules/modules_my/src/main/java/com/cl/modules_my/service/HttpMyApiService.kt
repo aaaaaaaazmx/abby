@@ -4,7 +4,7 @@ import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.bean.DetailByLearnMoreIdData
 import com.cl.common_base.bean.ListDeviceBean
-import com.cl.modules_my.repository.AccessoryListBean
+import com.cl.common_base.bean.AccessoryListBean
 import com.cl.modules_my.repository.GetAutomationRuleBean
 import com.cl.modules_my.repository.MyTroubleData
 import com.cl.common_base.bean.OxygenCoinBillList
@@ -301,6 +301,17 @@ interface HttpMyApiService {
     fun deleteAutomation(@Field("automationId") automationId: String): Flow<HttpResult<BaseBean>>
 
     /**
+     * 新增配件接口
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/add")
+    fun accessoryAdd(
+        @Field("accessoryId") accessoryId: String,
+        @Field("deviceId") deviceId: String,
+        @Field("accessoryDeviceId")accessoryDeviceId: String? = null,
+    ): Flow<HttpResult<AccessoryAddData>>
+
+    /**
      * 配置自动执行规划
      */
     @POST("abby/accessory/configuationExecuteRule")
@@ -368,4 +379,10 @@ interface HttpMyApiService {
     fun getStrainName(
         @Field("strainName") strainName: String
     ): Flow<HttpResult<MutableList<String>>>
+
+    /**
+     * 获取系统配置
+     */
+    @GET("abby/sysParams/getConfig")
+    fun getSystemConfig(@Query("code") code: String): Flow<HttpResult<MutableList<SystemConfigBeanItem>>>
 }

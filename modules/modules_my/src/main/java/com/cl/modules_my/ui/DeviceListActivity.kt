@@ -1,46 +1,41 @@
 package com.cl.modules_my.ui
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.os.Parcelable
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.bhm.ble.BleManager
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.report.Reporter
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.DeviceListAdapter
 import com.cl.modules_my.databinding.MyDeviceListActivityBinding
 import com.cl.modules_my.pop.EditPlantProfilePop
-import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.LiveDataDeviceInfoBean
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.ext.isCanToBigDecimal
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.livedatabus.LiveEventBus
-import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.pop.MyChooerTipPop
+import com.cl.common_base.bean.AccessoryListBean
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
-import com.cl.modules_my.widget.MyDeleteDevicePop
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
-import com.thingclips.smart.home.sdk.ThingHomeSdk
-import com.thingclips.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.FileInputStream
 import java.io.Serializable
+import java.util.ArrayList
 import javax.inject.Inject
 
 
@@ -284,14 +279,23 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             R.id.btn_jump_to_device,
             R.id.cl_root,
             R.id.iv_luosi,
+            R.id.iv_pair_luosi,
         )
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val deviceBean = (adapter.data[position] as? ListDeviceBean)
             logI("123131231: ${deviceBean?.deviceId},,,,${deviceBean?.nightTimer}")
             when (view.id) {
+                R.id.iv_pair_luosi -> {
+                    startActivityLauncher.launch(Intent(
+                        this@DeviceListActivity,
+                        PHSettingActivity::class.java
+                    ).apply {
+                        putExtra("deviceId", deviceBean?.deviceId)
+                    })
+                }
                 R.id.iv_luosi -> {
                     // camera跳转到专属页面
-                    if (deviceBean?.accessoryList?.get(0)?.accessoryName == "Smart Camera") {
+                    if (deviceBean?.accessoryList?.get(0)?.accessoryType == AccessoryListBean.KEY_CAMERA) {
                         val accessoryDeviceId = deviceBean.accessoryList?.get(0)?.accessoryDeviceId
                         startActivityLauncher.launch(
                             Intent(
@@ -398,8 +402,9 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                  */
                 R.id.btn_add_accessory -> {
                     val intent = Intent(this@DeviceListActivity, AddAccessoryActivity::class.java)
+                    intent.putExtra("deviceList", adapter.data as? Serializable)
                     intent.putExtra("deviceId", deviceBean?.deviceId)
-                    intent.putExtra("accessoryList", deviceBean?.accessoryList as Serializable?)
+                    intent.putExtra("accessoryList", deviceBean?.accessoryList as? Serializable)
                     intent.putExtra("spaceType", deviceBean?.spaceType)
                     startActivity(intent)
                 }
