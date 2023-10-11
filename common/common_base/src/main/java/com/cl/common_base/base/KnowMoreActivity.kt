@@ -268,7 +268,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         } else {
                             // 解锁接口
                             mViewMode.finishTask(FinishTaskReq(taskId = unLockId))
-                            mViewMode.tuYaUser?.uid?.let { it1 -> mViewMode.checkPlant(it1) }
+                            mViewMode.checkPlant()
                         }
                     }
 
@@ -434,7 +434,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
             updateDeviceInfo.observe(this@KnowMoreActivity, resourceObserver {
                 success {
                     if (fixedId == Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE) {
-                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                        mViewMode.checkPlant()
                     }
                 }
             })

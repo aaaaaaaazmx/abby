@@ -184,7 +184,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                         }
                     }
                     // 种植检查
-                    tuYaUser?.uid?.let { mViewModel.checkPlant(it) }
+                    mViewModel.checkPlant()
                 }
                 error { errorMsg, code ->
                     hideProgressLoading()

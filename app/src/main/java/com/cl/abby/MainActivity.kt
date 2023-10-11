@@ -93,6 +93,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var contactFragment: Fragment? = null
     private var myFragment: Fragment? = null
 
+    // 第一次也就是新用户进入的时候，显示的界面
+    private var firstJoinInFragment: Fragment? = null
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt("currTabIndex", mIndex)
@@ -412,6 +415,24 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     Constants.Global.KEY_MANUAL_MODE,
                     manualMode
                 )
+
+                // 第一次进入的界面
+                if (firstLoginAndNoDevice) {
+                    firstJoinInFragment?.let {
+                        it.arguments = bundle
+                        transaction.show(it)
+                    } ?: kotlin.run {
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_FIRST_JOIN).navigation()?.let {
+                            firstJoinInFragment = it as Fragment
+                            firstJoinInFragment?.let { fragment ->
+                                fragment.arguments = bundle
+                                transaction.add(R.id.container, fragment, null)
+                            }
+                        }
+                    }
+                    return
+                }
+
                 // todo 跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
                 // todo RouterPath.Home.PAGE_HOME 种植引导页面
                 homeFragment?.let {
@@ -467,6 +488,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun hideFragment(transaction: FragmentTransaction) {
+        firstJoinInFragment?.let { transaction.hide(it) }
         homeFragment?.let { transaction.hide(it) }
         contactFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
@@ -476,6 +498,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun recreate() {
         kotlin.runCatching {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
+            firstJoinInFragment?.let {
+                fragmentTransaction.remove(it)
+            }
             homeFragment?.let {
                 fragmentTransaction.remove(it)
             }

@@ -150,8 +150,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 检查是否种植过
      */
-    fun checkPlant(uuid: String): Flow<HttpResult<CheckPlantData>> {
-        return remoteRepository.checkPlant(uuid)
+    fun checkPlant(deviceSn: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return remoteRepository.checkPlant(deviceSn)
     }
 
 

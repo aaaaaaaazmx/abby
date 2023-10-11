@@ -454,7 +454,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()*/
 
-                    tuYaUser?.uid?.let { mViewModel.checkPlant(it) }
+                    mViewModel.checkPlant()
                 }
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
@@ -473,7 +473,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
 
                 success {
-                    tuYaUser?.uid?.let { mViewModel.checkPlant(it) }
+                    mViewModel.checkPlant()
                 }
             })
             // 检查植物

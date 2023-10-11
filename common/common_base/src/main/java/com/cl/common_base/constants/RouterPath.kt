@@ -74,6 +74,8 @@ class RouterPath {
         const val PAGE_PLANT_NAME = "/plantName/$HOME"
         // 摄像头显示界面
         const val PAGE_CAMERA = "/camera/$HOME"
+        // 新用户第一次进入的界面
+        const val PAGE_FIRST_JOIN = "/firstJoin/$HOME"
     }
 
     /**
@@ -105,6 +107,8 @@ class RouterPath {
         const val PAGE_CAMERA_QR_CODE = "/cameraQrCode/$MY"
         // 添加配件页面
         const val PAGE_ADD_ACCESSORY = "/AddAccessory/$MY"
+        // 添加帐篷界面
+        const val PAGE_ADD_TENT = "/AddTent/$MY"
     }
 
     /**

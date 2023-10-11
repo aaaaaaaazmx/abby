@@ -77,7 +77,7 @@ interface HttpLoginApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/check")
-    fun checkPlant(@Field("deviceUuid") body: String): Flow<HttpResult<CheckPlantData>>
+    fun checkPlant(@Field("deviceUuid") body: String? = ""): Flow<HttpResult<CheckPlantData>>
 
     /**
      * 获取InterCome同步信息

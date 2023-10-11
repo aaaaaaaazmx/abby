@@ -123,10 +123,8 @@ class PairDistributionWifiViewModel @Inject constructor(private val repository: 
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    fun checkPlant(
-        body: String
-    ) = viewModelScope.launch {
-        repository.checkPlant(body)
+    fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant()
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(

@@ -1,6 +1,7 @@
 package com.cl.common_base.bean
 
 import androidx.annotation.Keep
+import com.cl.common_base.ext.DateHelper
 
 @Keep
 data class UserinfoBean(

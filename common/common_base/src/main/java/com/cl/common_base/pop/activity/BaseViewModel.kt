@@ -154,7 +154,7 @@ class BaseViewModel @Inject constructor(): ViewModel() {
                 when(it) {
                    is Resource.Success -> {
                        // 检查是否种植
-                       tuYaUser?.uid?.let { uid -> checkPlant(uid) }
+                       checkPlant()
                     }
                     else -> _startRunning.value = it
                 }
@@ -232,8 +232,8 @@ class BaseViewModel @Inject constructor(): ViewModel() {
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    fun checkPlant(uuid: String) = viewModelScope.launch {
-        service.checkPlant(uuid).map {
+    fun checkPlant() = viewModelScope.launch {
+        service.checkPlant("").map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg

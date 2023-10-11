@@ -2090,9 +2090,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             childLockStatus.observe(viewLifecycleOwner) {
-                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false}")
+                logI("123123333: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable()}")
                 ViewUtils.setVisible(
-                    mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false,
+                    mViewMode.isShowDoorDrawable(),
                     binding.pplantNinth.ivDoorLockStatus
                 )
                 binding.pplantNinth.ivDoorLockStatus.setImageResource(
@@ -2104,9 +2104,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 )
             }
             openDoorStatus.observe(viewLifecycleOwner) {
-                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false}")
+                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable()}")
                 ViewUtils.setVisible(
-                    mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false,
+                    mViewMode.isShowDoorDrawable(),
                     binding.pplantNinth.ivDoorLockStatus
                 )
                 binding.pplantNinth.ivDoorLockStatus.setImageResource(
@@ -2287,20 +2287,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     deviceInfo.value?.spaceType?.let {
                         if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                             // 删除未读消息
-                            mViewMode.removeFirstUnreadMessage()
+                            // mViewMode.removeFirstUnreadMessage()
                             // 清空气泡状态
-                            mViewMode.clearPopPeriodStatus()
+                            // mViewMode.clearPopPeriodStatus()
                             //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
                             //  因为在listDevice中隐藏了abby的植物展示图片，只需要添加个判断，是否隐藏就好了。
                             //  还是有就是帐篷界面展示摄像头和abby机器展示摄像头多了张图片。
                             //  如果是帐篷，如果没有摄像头、那么就显示帐篷的图片。
-                            mViewMode.userDetail()
-                            PlantCheckHelp().plantStatusCheck(
-                                activity,
-                                CheckPlantData(plantExistingStatus = "1"),
-                                true,
-                                isLeftSwapAnim = mViewMode.isLeftSwap,
-                                isNoAnim = false)
+                            // mViewMode.userDetail()
+                            mViewMode.checkPlant()
                             return@error
                         }
                     }
@@ -2341,7 +2336,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                             context?.startService(intent)
                                             // 切换之后需要重新刷新所有的东西
-                                            mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                            mViewMode.checkPlant()
                                         }
                                 }
                             }
@@ -2361,17 +2356,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     deviceInfo.value?.spaceType?.let {
                         if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                             //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
-                            mViewMode.userDetail()
+                            // mViewMode.userDetail()
                             // 删除未读消息
-                            mViewMode.removeFirstUnreadMessage()
+                            // mViewMode.removeFirstUnreadMessage()
                             // 清空气泡状态
-                            mViewMode.clearPopPeriodStatus()
-                            PlantCheckHelp().plantStatusCheck(
-                                activity,
-                                CheckPlantData(plantExistingStatus = "1"),
-                                true,
-                                isLeftSwapAnim = mViewMode.isLeftSwap,
-                                isNoAnim = false)
+                            // mViewMode.clearPopPeriodStatus()
+                            mViewMode.checkPlant()
                             return@success
                         }
                     }
@@ -2412,7 +2402,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                             context?.startService(intent)
                                             // 切换之后需要重新刷新所有的东西
-                                            mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                            mViewMode.checkPlant()
                                         }
                                 }
                             }
@@ -2497,6 +2487,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     if (data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                         // 从聊天退出来之后需要刷新消息环信数量
                         mViewMode.getHomePageNumber()
+                        ViewUtils.setGone(binding.pplantNinth.ivDoorLockStatus)
                     }
 
                     // 获取氧气币列表
@@ -3606,7 +3597,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     hideProgressLoading()
                     // 植物不存在时，检查植物是否种植。
                     if (code == 1001) {
-                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                        mViewMode.checkPlant()
                     }
                     /*errorMsg?.let { ToastUtil.shortShow(it) }*/
                 }
@@ -3694,7 +3685,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             plantDelete.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     // 删除植物、需要更新信息。
-                    mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                    mViewMode.checkPlant()
                 }
                 error { errorMsg, _ ->
                     errorMsg?.let { ToastUtil.shortShow(it) }

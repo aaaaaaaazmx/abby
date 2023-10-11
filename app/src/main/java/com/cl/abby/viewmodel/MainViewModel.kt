@@ -757,7 +757,7 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
                 )
             } else {
                 // 检查是否种植过
-                tuYaUser?.uid?.let { uid -> checkPlant(uid) }
+                checkPlant()
                 Resource.Success(it.data)
             }
         }.flowOn(Dispatchers.IO).onStart {
@@ -779,8 +779,8 @@ class MainViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    private fun checkPlant(uuid: String) = viewModelScope.launch {
-        repository.checkPlant(uuid).map {
+    private fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant().map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg

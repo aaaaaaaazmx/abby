@@ -79,8 +79,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     /**
      * 是否种植
      */
-    fun checkPlant(uuid: String): Flow<HttpResult<CheckPlantData>> {
-        return remoteRepository.checkPlant(uuid)
+    fun checkPlant(deviceSn: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return remoteRepository.checkPlant(deviceSn)
     }
 
     /**

@@ -22,8 +22,8 @@ class PairRepository @Inject constructor(private var remoteRepository: PairRemot
     /**
      * 检查用户是否种植过植物
      */
-    fun checkPlant(body: String): Flow<HttpResult<CheckPlantData>> {
-        return remoteRepository.checkPlant(body)
+    fun checkPlant(deviceSn: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return remoteRepository.checkPlant(deviceSn)
     }
 
     /**

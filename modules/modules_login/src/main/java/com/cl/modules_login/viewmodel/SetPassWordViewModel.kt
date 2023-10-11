@@ -255,9 +255,7 @@ class SetPassWordViewModel @Inject constructor(private val repository: RegisterL
                                                     bean?.let { homeBean ->
                                                         if (homeBean.deviceList.size == 0 || deviceId.isNullOrEmpty()) {
                                                             // 种植检查
-                                                            user?.uid?.let { uid ->
-                                                                checkPlant(uid)
-                                                            }
+                                                             checkPlant()
                                                             // 跳转绑定界面
                                                             //                                                        ARouter.getInstance()
                                                             //                                                            .build(RouterPath.PairConnect.PAGE_PLANT_CHECK)
@@ -321,9 +319,7 @@ class SetPassWordViewModel @Inject constructor(private val repository: RegisterL
                                                             // 3、最终的显示结果还是由后台那边返回为准。故取消掉上面的跳转到登录界面的操作。
 
                                                             // 种植检查
-                                                            user?.uid?.let { uid ->
-                                                                checkPlant(uid)
-                                                            }
+                                                             checkPlant()
                                                         }.onFailure { }
                                                     }
                                                 }
@@ -356,9 +352,7 @@ class SetPassWordViewModel @Inject constructor(private val repository: RegisterL
                             override fun onError(errorCode: String, error: String?) {
                                 // 查询当前家庭列表失败，也要进行下一步
                                 // 种植检查
-                                user?.uid?.let { uid ->
-                                    checkPlant(uid)
-                                }
+                                checkPlant()
                                 Reporter.reportTuYaError("getHomeManagerInstance", error, errorCode)
                                 ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
                                     .navigation()
@@ -386,10 +380,8 @@ class SetPassWordViewModel @Inject constructor(private val repository: RegisterL
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    fun checkPlant(
-        body: String
-    ) = viewModelScope.launch {
-        repository.checkPlant(body)
+    fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant()
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(

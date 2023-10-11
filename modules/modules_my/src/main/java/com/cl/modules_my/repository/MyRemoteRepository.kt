@@ -60,8 +60,8 @@ class MyRemoteRepository @Inject constructor() {
         return service.plantDelete(uuid)
     }
 
-    fun checkPlant(uuid: String): Flow<HttpResult<CheckPlantData>> {
-        return service.checkPlant(uuid)
+    fun checkPlant(deviceSn: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return service.checkPlant(deviceSn)
     }
 
     fun getAppVersion(): Flow<HttpResult<AppVersionData>> {

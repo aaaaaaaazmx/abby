@@ -42,7 +42,7 @@ interface HttpPlantApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/check")
-    fun checkPlant(@Field("deviceUuid") body: String): Flow<HttpResult<CheckPlantData>>
+    fun checkPlant(@Field("deviceUuid") body: String? = ""): Flow<HttpResult<CheckPlantData>>
 
     /**
      * 获取用户信息
