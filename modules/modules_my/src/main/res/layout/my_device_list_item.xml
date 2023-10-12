@@ -259,8 +259,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
                 <com.cl.common_base.widget.FeatureItemSwitch
-                    android:visibility="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).isAuto == 1 ? View.GONE : View.VISIBLE : View.VISIBLE}"
-                    isItemCheck="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).status == 1 : false}"
+                    android:visibility="gone"
                     android:id="@+id/ft_check"
                     android:layout_width="wrap_content"
                     app:hideArrow="true"
@@ -268,8 +267,8 @@
                     />
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_auto_desc"
-                    android:visibility="@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).isAuto == 1 ? View.VISIBLE : View.GONE : View.GONE}"
                     android:layout_marginEnd="10dp"
                     tools:text="Auto\non"
                     android:textColor="@color/black"

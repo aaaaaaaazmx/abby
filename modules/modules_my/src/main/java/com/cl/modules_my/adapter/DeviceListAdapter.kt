@@ -3,6 +3,7 @@ package com.cl.modules_my.adapter
 import android.provider.ContactsContract.CommonDataKinds.Relation
 import android.text.TextUtils
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.bhm.ble.BleManager
@@ -12,6 +13,7 @@ import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDeviceListItemBinding
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.databinding.MyPairListItemBinding
 
@@ -19,10 +21,10 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
     BaseMultiItemQuickAdapter<ListDeviceBean, BaseViewHolder>(data) {
 
 
-        init {
-            addItemType(ListDeviceBean.KEY_TYPE_BOX, R.layout.my_device_list_item)  // 舍诶
-            addItemType(ListDeviceBean.KEY_TYPE_PH, R.layout.my_pair_list_item)  // 配件
-        }
+    init {
+        addItemType(ListDeviceBean.KEY_TYPE_BOX, R.layout.my_device_list_item)  // 舍诶
+        addItemType(ListDeviceBean.KEY_TYPE_PH, R.layout.my_pair_list_item)  // 配件
+    }
 
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
@@ -51,17 +53,41 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
     override fun convert(holder: BaseViewHolder, item: ListDeviceBean) {
         when (holder.itemViewType) {
             ListDeviceBean.KEY_TYPE_BOX -> {
-                holder.getView<FeatureItemSwitch>(R.id.ft_check).apply {
-                    setSwitchCheckedChangeListener { buttonView, isChecked ->
-                        if ((item.accessoryList?.size ?: 0) > 0) {
-                            switchListener?.invoke(item.accessoryList?.get(0)?.accessoryId.toString(), item.deviceId ?: "", isChecked)
+                val accList = item.accessoryList ?: mutableListOf()
+                if (accList.isNotEmpty()) {
+                    val pairData = accList[0]
+                    val checkView = holder.getView<FeatureItemSwitch>(R.id.ft_check)
+                    val textView = holder.getView<TextView>(R.id.tv_auto_desc)
+                    // 配件的相关事件
+                    checkView.apply {
+                        setSwitchCheckedChangeListener { _, isChecked ->
+                            if ((item.accessoryList?.size ?: 0) > 0) {
+                                switchListener?.invoke(pairData.accessoryId.toString(), item.deviceId ?: "", isChecked)
+                            }
                         }
                     }
+                    // 显示checkView & textView
+                    val openSize  = pairData.isAuto
+                    val status = pairData.status
+                    ViewUtils.setVisible(openSize == 0, checkView)
+                    ViewUtils.setVisible(openSize != 0, textView)
+                    checkView.setItemChecked(status == 1)
+                    textView.text =  if (status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
                 }
 
-                if ((item.accessoryList?.size ?: 0) > 0) {
-                    holder.setText(R.id.tv_auto_desc, if (item.accessoryList?.get(0)?.isAuto == 1) "Auto\nOn" else "Auto\nOff")
-                }
+
+                /**
+                 *        val openSize = data?.list?.filter { it.status == 1 }?.size ?: 0
+                 *                     ViewUtils.setVisible(openSize == 0, binding.ftCheck)
+                 *                     ViewUtils.setVisible(openSize != 0, binding.tvAutoDesc)
+                 *                     data?.status?.let {
+                 *                         binding.ftCheck.setItemChecked(it == 1)
+                 *                     }
+                 *                     // 主开关需要开启，才显示
+                 *                       binding.tvAutoDesc.text =
+                 *                         if (data?.status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
+                 */
+
             }
 
             ListDeviceBean.KEY_TYPE_PH -> {

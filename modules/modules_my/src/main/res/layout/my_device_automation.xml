@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="50dp"
                 android:gravity="center"
-                android:text="Delete Budcam"
+                android:text="Delete"
                 android:textColor="#F72E47"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
