@@ -54,39 +54,28 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
         when (holder.itemViewType) {
             ListDeviceBean.KEY_TYPE_BOX -> {
                 val accList = item.accessoryList ?: mutableListOf()
-                if (accList.isNotEmpty()) {
-                    val pairData = accList[0]
-                    val checkView = holder.getView<FeatureItemSwitch>(R.id.ft_check)
-                    val textView = holder.getView<TextView>(R.id.tv_auto_desc)
-                    // 配件的相关事件
-                    checkView.apply {
-                        setSwitchCheckedChangeListener { _, isChecked ->
-                            if ((item.accessoryList?.size ?: 0) > 0) {
-                                switchListener?.invoke(pairData.accessoryId.toString(), item.deviceId ?: "", isChecked)
+                runCatching {
+                    if (accList.isNotEmpty()) {
+                        val pairData = accList[0]
+                        val checkView = holder.getView<FeatureItemSwitch>(R.id.ft_check)
+                        val textView = holder.getView<TextView>(R.id.tv_auto_desc)
+                        // 配件的相关事件
+                        checkView.apply {
+                            setSwitchCheckedChangeListener { _, isChecked ->
+                                if ((item.accessoryList?.size ?: 0) > 0) {
+                                    switchListener?.invoke(pairData.accessoryId.toString(), item.deviceId ?: "", isChecked)
+                                }
                             }
                         }
+                        // 显示checkView & textView
+                        val openSize  = pairData.isAuto
+                        val status = pairData.status
+                        ViewUtils.setVisible(openSize == 0, checkView)
+                        ViewUtils.setVisible(openSize != 0, textView)
+                        checkView.setItemChecked(status == 1)
+                        textView.text =  if (status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
                     }
-                    // 显示checkView & textView
-                    val openSize  = pairData.isAuto
-                    val status = pairData.status
-                    ViewUtils.setVisible(openSize == 0, checkView)
-                    ViewUtils.setVisible(openSize != 0, textView)
-                    checkView.setItemChecked(status == 1)
-                    textView.text =  if (status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
                 }
-
-
-                /**
-                 *        val openSize = data?.list?.filter { it.status == 1 }?.size ?: 0
-                 *                     ViewUtils.setVisible(openSize == 0, binding.ftCheck)
-                 *                     ViewUtils.setVisible(openSize != 0, binding.tvAutoDesc)
-                 *                     data?.status?.let {
-                 *                         binding.ftCheck.setItemChecked(it == 1)
-                 *                     }
-                 *                     // 主开关需要开启，才显示
-                 *                       binding.tvAutoDesc.text =
-                 *                         if (data?.status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
-                 */
 
             }
 

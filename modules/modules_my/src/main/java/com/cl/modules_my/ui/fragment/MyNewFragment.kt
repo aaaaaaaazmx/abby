@@ -99,7 +99,8 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         }
 
         binding.ftSetting.setOnClickListener {
-            if (mViewModel.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+            // 改为缓存
+            if (mViewModel.userInfo?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                 context?.let { ct ->
                     xpopup(ct) {
                         isDestroyOnDismiss(false)
@@ -121,6 +122,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                 }
                 return@setOnClickListener
             }
+
             startActivity(Intent(context, SettingActivity::class.java))
         }
         binding.ftOxy.setOnClickListener {
