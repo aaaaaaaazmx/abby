@@ -41,6 +41,7 @@ data class UserinfoBean(
     val wallId: Int? = null,
     val externalId: String? = null,
     val inchMetricMode: String? = null,
+    val discordGlobalName: String? = null,
     // val easemobPassword: String? = null,
     // val easemobUserName: String? = null,
 ) : BaseBean() {
@@ -82,5 +83,6 @@ data class UserinfoBean(
         val tuyaUserType: String? = null,
         val notBound: Int? = null,
         val spaceType: String? = null,
+        val discordGlobalName: String? = null,
     ) : BaseBean()
 }

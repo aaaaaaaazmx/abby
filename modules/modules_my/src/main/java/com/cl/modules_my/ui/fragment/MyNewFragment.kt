@@ -11,10 +11,10 @@ import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
-import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -23,9 +23,8 @@ import com.cl.common_base.widget.scroll.behavior.BehavioralScrollListener
 import com.cl.common_base.widget.scroll.behavior.BehavioralScrollView
 import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyNewFragmentBinding
-import com.cl.modules_my.ui.DeviceListActivity
+import com.cl.modules_my.pop.MyDiscordPop
 import com.cl.modules_my.ui.FeedbackActivity
 import com.cl.modules_my.ui.OxygenListActivity
 import com.cl.modules_my.ui.ProfileActivity
@@ -58,6 +57,10 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
     override fun onResume() {
         super.onResume()
         mViewModel.userDetail()
+        if (discordPop?.isShow == true) {
+            // XPopup当前是显示状态，执行你想要的操作
+            discordPop?.setQueryBind()
+        }
     }
 
     override fun lazyLoad() {
@@ -65,6 +68,15 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         mViewModel.userDetail()
 
         initCllick()
+    }
+
+
+    private val discordPop by lazy {
+        context?.let {
+            MyDiscordPop(it) { email, code ->
+                logI("email: $email, code: $code")
+            }
+        }
     }
 
     private fun initCllick() {
@@ -96,6 +108,20 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
         binding.ftMessage.setOnClickListener {
             InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.HelpCenter)
+        }
+
+        binding.ftDiscord.setOnClickListener {
+            if (!mViewModel.userInfo?.discordGlobalName.isNullOrEmpty()) {
+                ToastUtil.shortShow("You have already bound your discord account")
+                return@setOnClickListener
+            }
+            context?.let {
+                xpopup(it) {
+                    isDestroyOnDismiss(false)
+                    dismissOnTouchOutside(false)
+                    asCustom(discordPop).show()
+                }
+            }
         }
 
         binding.ftSetting.setOnClickListener {
