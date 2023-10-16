@@ -416,8 +416,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     manualMode
                 )
 
-                // 第一次进入的界面
-                if (firstLoginAndNoDevice) {
+                // 第一次进入的界面、或者没绑定过设备
+                if (mViewModel.userinfoBean?.deviceId.isNullOrEmpty() || firstLoginAndNoDevice) {
                     firstJoinInFragment?.let {
                         it.arguments = bundle
                         transaction.show(it)
@@ -430,20 +430,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             }
                         }
                     }
-                    return
-                }
-
-                // todo 跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
-                // todo RouterPath.Home.PAGE_HOME 种植引导页面
-                homeFragment?.let {
-                    it.arguments = bundle
-                    transaction.show(it)
-                } ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.Home.PAGE_HOME).navigation()?.let {
-                        homeFragment = it as Fragment
-                        homeFragment?.let { fragment ->
-                            fragment.arguments = bundle
-                            transaction.add(R.id.container, fragment, null)
+                } else {
+                    //  跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
+                    //  RouterPath.Home.PAGE_HOME 种植引导页面
+                    homeFragment?.let {
+                        it.arguments = bundle
+                        transaction.show(it)
+                    } ?: kotlin.run {
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_HOME).navigation()?.let {
+                            homeFragment = it as Fragment
+                            homeFragment?.let { fragment ->
+                                fragment.arguments = bundle
+                                transaction.add(R.id.container, fragment, null)
+                            }
                         }
                     }
                 }

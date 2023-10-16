@@ -66,6 +66,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                 ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                     .navigation()
             }
+            setResult(RESULT_OK)
             finish()
         }
         mViewMode.systemConfig()
@@ -79,6 +80,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                 .navigation()
         }
+        setResult(RESULT_OK)
         finish()
     }
 

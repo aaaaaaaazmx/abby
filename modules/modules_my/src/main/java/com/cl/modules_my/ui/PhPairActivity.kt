@@ -59,6 +59,11 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
         binding.rvList.layoutManager = LinearLayoutManager(this)
         binding.rvList.adapter = adapter
         initBle()
+
+        binding.title.setRightButtonText("Refresh").setRightClickListener {
+            BleManager.get().stopScan()
+            checkPermissionAndStartScan()
+        }
     }
 
     private fun initBle() {

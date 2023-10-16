@@ -1,6 +1,7 @@
 package com.cl.modules_login.response
 
 import androidx.annotation.Keep
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.UserinfoBean
 import java.io.Serializable
 
@@ -32,7 +33,7 @@ data class LoginData(
     val plantDays: String? = null,
     val growBoxCount: String? = null,
     val harvestCount: String? = null,
-    val spaceType: String? = null,
+    val spaceType: String? = ListDeviceBean.KEY_SPACE_TYPE_BOX,
     val newMessage: Boolean? = false,
     val nightMode: Int? = null,
     val nightTimer: String? = null,

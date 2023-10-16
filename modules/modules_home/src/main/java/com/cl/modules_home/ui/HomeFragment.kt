@@ -459,13 +459,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     private fun firstLoginViewVisibile() {
-        ViewUtils.setVisible(binding.bindDevice.root)
+       /* ViewUtils.setVisible(binding.bindDevice.root)
         ViewUtils.setGone(binding.plantOffLine.root)
         ViewUtils.setGone(binding.clRoot)
 
         // 如果是第一次、也从未绑定过设备、显示出气泡
         ViewUtils.setVisible(binding.bindDevice.tvScan)
-        ViewUtils.setGone(binding.bindDevice.clContinue, binding.bindDevice.connectDevice)
+        ViewUtils.setGone(binding.bindDevice.clContinue, binding.bindDevice.connectDevice)*/
+
+        //
+        mViewMode.checkPlant()
     }
 
     /**

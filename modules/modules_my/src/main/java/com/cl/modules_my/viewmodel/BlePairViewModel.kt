@@ -202,7 +202,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
             )
             BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnected: $isActiveDisConnected")
             ToastUtil.shortShow(
-                "Disconnect:${bleDevice.deviceName}"
+                "Disconnect"
             )
             refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
             //发送断开的通知
@@ -212,7 +212,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
         }
         onConnectSuccess { bleDevice, _ ->
             logI("BLe -> msg: Connection successful: (${bleDevice.deviceAddress})")
-            ToastUtil.shortShow("Connection successful:${bleDevice.deviceName}")
+            //ToastUtil.shortShow("Connection successful:${bleDevice.deviceName}")
             refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
         }
     }

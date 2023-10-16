@@ -314,10 +314,12 @@ class CustomViewGroupAdapter(
      * 外部处理interFaceEditTextValueChangeListener回调时调用的设置单个数据的方法
      */
     fun setData(position: Int, inputData: String) {
-        when (fields[position]) {
-            LogSaveOrUpdateReq.KEY_LOG_PH -> {
-                data[position] = inputData
-                notifyItemChanged(position)
+        runCatching {
+            when (fields[position]) {
+                LogSaveOrUpdateReq.KEY_LOG_PH -> {
+                    data[position] = inputData
+                    notifyItemChanged(position)
+                }
             }
         }
 

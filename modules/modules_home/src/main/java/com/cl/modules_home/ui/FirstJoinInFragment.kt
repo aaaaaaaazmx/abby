@@ -21,10 +21,15 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.web.WebActivity
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.adapter.FirstJoinAdapter
 import com.cl.modules_home.request.GrowSpaceData
 import com.cl.modules_home.viewmodel.HomeViewModel
@@ -53,6 +58,16 @@ class FirstJoinInFragment : BaseFragment<HomeFirstJoinFragmentBinding>() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        mViewMode.userDetail()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        if (!hidden) {
+            mViewMode.userDetail()
+        }
+    }
 
     // 上一个滚动的视图。
     var lastPosition = 0
@@ -128,12 +143,11 @@ class FirstJoinInFragment : BaseFragment<HomeFirstJoinFragmentBinding>() {
         }
 
 
-
         /**
          * 设备管理界面、切换设备
          */
         LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
-            .observe(viewLifecycleOwner) {devieInfo ->
+            .observe(viewLifecycleOwner) { devieInfo ->
                 if (null != devieInfo) {
                     logI("LiveDataDeviceInfoBean: ${devieInfo.deviceId},,, ${devieInfo.spaceType}")
                     // 切换设备如果有摄像头的话，都是隐藏，会占用内存,
@@ -142,6 +156,44 @@ class FirstJoinInFragment : BaseFragment<HomeFirstJoinFragmentBinding>() {
                     mViewMode.checkPlant()
                 }
             }
+    }
+
+    override fun observe() {
+        super.observe()
+        mViewMode.apply {
+            userDetail.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    // 保存当前的信息.
+                    GSON.toJson(data)?.let {
+                        logI("refreshToken: $it")
+                        Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
+                    }
+                    if (!data?.deviceId.isNullOrEmpty()) checkPlant()
+                }
+            })
+
+            checkPlant.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    // 是否种植过
+                    data?.let {
+                        PlantCheckHelp().plantStatusCheck(
+                            activity,
+                            it,
+                            true,
+                            isLeftSwapAnim = mViewMode.isLeftSwap,
+                            isNoAnim = false
+                        )
+                    }
+                }
+            })
+        }
     }
 
     class StartMarginItemDecoration(private val marginStart: Int, private val totalWidth: Int, private val itemWidth: Int) : RecyclerView.ItemDecoration() {
