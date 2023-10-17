@@ -57,7 +57,6 @@ class AppInitializer : Initializer<Unit> {
                     .setConnectMillisTimeOut(5000)
                     //一般不推荐autoSetMtu，因为如果设置的等待时间会影响其他操作
                     .setMtu(100, true)
-                    .setScanDeviceName(Constants.Ble.KEY_PH_DEVICE_NAME)
                     .setAutoConnect(true)
                     .setMaxConnectNum(Constants.Ble.KEY_BLE_MAX_CONNECT)
                     .setConnectRetryCountAndInterval(2, 1000)

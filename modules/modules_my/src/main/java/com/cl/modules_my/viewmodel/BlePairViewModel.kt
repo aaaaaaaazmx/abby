@@ -43,7 +43,8 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
 
     // 当前连接中的BleDevice
     private val _currentBleDevice = MutableLiveData<BleDevice?>()
-    val currentBleDevice:LiveData<BleDevice?> = _currentBleDevice
+    val currentBleDevice: LiveData<BleDevice?> = _currentBleDevice
+
     // 设置当前连接中的BleDevice
     fun setCurrentBleDevice(bleDevice: BleDevice?) {
         _currentBleDevice.value = bleDevice
@@ -51,13 +52,15 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
 
     // 当前的服务ID、特征ID
     private val _currentServiceId = MutableLiveData<String?>()
-    val currentServiceId:LiveData<String?> = _currentServiceId
+    val currentServiceId: LiveData<String?> = _currentServiceId
     private val _currentCharacteristicId = MutableLiveData<String?>()
-    val currentCharacteristicId:LiveData<String?> = _currentCharacteristicId
+    val currentCharacteristicId: LiveData<String?> = _currentCharacteristicId
+
     // 设置当前的服务ID、特征ID
     fun setCurrentServiceId(serviceId: String?) {
         _currentServiceId.value = serviceId
     }
+
     fun setCurrentCharacteristicId(characteristicId: String?) {
         _currentCharacteristicId.value = characteristicId
     }
@@ -85,7 +88,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
     /**
      * 扫描之后的回调
      */
-    fun getScanCallback(showData: Boolean): BleScanCallback.() -> Unit {
+    fun getScanCallback(): BleScanCallback.() -> Unit {
         return {
             onScanStart {
                 BleLogger.d("onScanStart")
@@ -99,10 +102,8 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
             }
             onLeScanDuplicateRemoval { bleDevice, _ ->
                 bleDevice.deviceName?.let { _ ->
-                    if (showData) {
-                        listDRData.add(bleDevice)
-                        listDRMutableStateFlow.value = bleDevice
-                    }
+                    listDRData.add(bleDevice)
+                    listDRMutableStateFlow.value = bleDevice
                 }
             }
             onScanComplete { bleDeviceList, bleDeviceDuplicateRemovalList ->
@@ -118,7 +119,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                     }
                 }
                 scanStopMutableStateFlow.value = true
-                if (listDRData.isEmpty() && showData) {
+                if (listDRData.isEmpty()) {
                     logI("BLe -> msg: 没有扫描到设备")
                     ToastUtil.shortShow("The device was not detected.")
                 }
@@ -148,6 +149,15 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
      */
     fun stopScan() {
         BleManager.get().stopScan()
+    }
+
+    /**
+     * 断开Ph设备
+     */
+    fun disConnectPhDevice() {
+        BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }?.let {
+            BleManager.get().disConnect(it)
+        }
     }
 
     /**
@@ -239,8 +249,9 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
      */
     private val listLogMutableStateFlow = MutableStateFlow(LogEntity(Level.INFO, "数据适配完毕"))
     val listLogStateFlow: StateFlow<LogEntity> = listLogMutableStateFlow
-    fun readData(bleDevice: BleDevice,
-                 node: CharacteristicNode
+    fun readData(
+        bleDevice: BleDevice,
+        node: CharacteristicNode
     ) {
         BleManager.get().readData(bleDevice, node.serviceUUID, node.characteristicUUID) {
             onReadFail {
@@ -370,7 +381,4 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                 }
         }
     }
-
-
-
 }

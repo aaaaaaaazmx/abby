@@ -477,6 +477,16 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
         BleManager.get().stopScan()
     }
 
+
+    /**
+     * 断开Ph设备
+     */
+    fun disConnectPhDevice() {
+        BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }?.let {
+            BleManager.get().disConnect(it)
+        }
+    }
+
     /**
      * 是否已连接
      */

@@ -21,6 +21,7 @@ import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
 import com.cl.modules_planting_log.request.LogTypeListDataItem
 import com.cl.modules_planting_log.widget.CustomViewGroup
 import java.util.Calendar
+import kotlin.math.log
 
 /**
  * 自定义ViewGroup适配器
@@ -341,20 +342,22 @@ class CustomViewGroupAdapter(
     // 提供方法获取数据并填充到LogData对象
     // 提供方法获取数据并填充到LogData对象
     fun getLogData(): LogSaveOrUpdateReq {
-        val logData = LogSaveOrUpdateReq()
-        fields.forEachIndexed { index, field ->
-            val declaredFiled = logData::class.java.getDeclaredField(field)
-            declaredFiled.isAccessible = true
-            when (field) {
-                // 用户选择了时间，可能会返回字符串
-                LogSaveOrUpdateReq.KEY_LOG_TIME -> {
-                    declaredFiled.set(logData, DateHelper.formatToLong(data[index], KEY_FORMAT_TIME).toString())
-                }
+        return runCatching {
+            val logData = LogSaveOrUpdateReq()
+            fields.forEachIndexed { index, field ->
+                val declaredFiled = logData::class.java.getDeclaredField(field)
+                declaredFiled.isAccessible = true
+                when (field) {
+                    // 用户选择了时间，可能会返回字符串
+                    LogSaveOrUpdateReq.KEY_LOG_TIME -> {
+                        declaredFiled.set(logData, DateHelper.formatToLong(data[index], KEY_FORMAT_TIME).toString())
+                    }
 
-                else -> declaredFiled.set(logData, data[index])
+                    else -> declaredFiled.set(logData, data[index])
+                }
             }
-        }
-        return logData
+            logData
+        }.getOrElse { LogSaveOrUpdateReq() }
     }
 
     class ViewHolder(val binding: PlantingCustomViewGroupItemBinding) : RecyclerView.ViewHolder(binding.root) {

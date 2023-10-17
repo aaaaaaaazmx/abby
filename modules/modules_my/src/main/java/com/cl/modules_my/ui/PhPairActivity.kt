@@ -128,7 +128,7 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
             object : PermissionHelp.OnCheckResultListener {
                 override fun onResult(result: Boolean) {
                     if (!result) return
-                    BleManager.get().startScan(mViewMode.getScanCallback(true))
+                    BleManager.get().startScan(mViewMode.getScanCallback())
                 }
             })
     }
@@ -230,6 +230,11 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mViewMode.stopScan()
+        // 移除回调，免得viewModel不会被销毁。
+        BleManager.get().removeBleScanCallback()
+        mViewMode.currentBleDevice.value?.let {
+            BleManager.get().removeAllCharacterCallback(it)
+            BleManager.get().removeBleConnectCallback(it)
+        }
     }
 }

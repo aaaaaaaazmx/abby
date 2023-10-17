@@ -88,6 +88,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
      * 查找当前设备是否有连接过
      */
     private fun checkHasPhBle() {
+        showProgressLoading()
         // 没有指定链接设备，因为老板认为用户只能买的起一个
         // 那么就只能判断，当前是否连接，没连接那么就开始扫描，然后连接第一个BLE-9908的设备。
         BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }.apply {
@@ -96,16 +97,17 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             )
             ViewUtils.setVisible(this == null, binding.tvUnConnect)
             if (this == null) {
+                hideProgressLoading()
                 // 开始扫描，连接第一个扫描出来的设备
-                BleManager.get().startScan(mViewMode.getScanCallback(true))
+                BleManager.get().startScan(mViewMode.getScanCallback())
                 return
             }
             if (!mViewMode.isConnected(this)) {
+                hideProgressLoading()
                 // 连接设备
                 mViewMode.connect(this)
                 return
             }
-            showProgressLoading()
             // 有设备，那么就获取数据
             mViewMode.setCurrentBleDevice(this)
             // 获取值
@@ -176,9 +178,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                 success {
                     hideProgressLoading()
                     // 断开当前蓝牙
-                    BleManager.get().getAllConnectedDevice()?.firstOrNull{ it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }?.let {
-                        BleManager.get().disConnect(it)
-                    }
+                    mViewMode.disConnectPhDevice()
                     setResult(Activity.RESULT_OK)
                     finish()
                 }
@@ -205,9 +205,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                 // 扫描到的设备, 用于填充adapter
                 if (it.deviceName != null && it.deviceAddress != null) {
                     if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
-                        // 停止扫描
-                        mViewMode.stopScan()
-                        // 连接设备
+                        // 连接设备/内部实现了stopScan
                         mViewMode.connect(it)
                     }
                 }
@@ -312,8 +310,11 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                         BaseCenterPop(
                             this@PHSettingActivity,
                             content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
-                            isShowCancelButton = true,
+                            isShowCancelButton = false,
                             onConfirmAction = {
+                                // 先断开次设备、
+                                mViewMode.disConnectPhDevice()
+                                mViewMode.stopScan()
                                 checkPermissionAndStartScan()
                             })
                     ).show()
@@ -416,6 +417,16 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             property.toString()
         } else {
             ""
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 移除回调，免得viewModel不会被销毁。
+        BleManager.get().removeBleScanCallback()
+        mViewMode.currentBleDevice.value?.let {
+            BleManager.get().removeAllCharacterCallback(it)
+            BleManager.get().removeBleConnectCallback(it)
         }
     }
 }

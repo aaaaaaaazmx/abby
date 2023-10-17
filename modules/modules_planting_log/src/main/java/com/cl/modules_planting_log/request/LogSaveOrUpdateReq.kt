@@ -19,6 +19,7 @@ data class LogSaveOrUpdateReq(
     var showType: String? = null,
     var spaceTemp: String? = null,
     var tdsEc: String? = null,
+    var ec: String? = null,
     var trainingAfterPhoto: String? = null,
     var trainingBeforePhoto: String? = null,
     var vpd: String? = null,
@@ -37,6 +38,8 @@ data class LogSaveOrUpdateReq(
 ): BaseBean() {
     companion object {
         const val KEY_LOG_PH = "ph"
+        const val KEY_LOG_TDS = "tdsEc"
+        const val KEY_LOG_EC = "ec"
         const val KEY_LOG_TIME = "logTime"
         const val KEY_LIGHTING_ON = "lightingOn"
         const val KEY_LIGHTING_OFF = "lightingOff"

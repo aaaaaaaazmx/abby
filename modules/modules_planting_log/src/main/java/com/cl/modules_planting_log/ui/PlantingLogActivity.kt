@@ -98,7 +98,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, isShowRefreshIcon = true),
             "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-            //"ec" to FieldAttributes("EC", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "ec" to FieldAttributes("EC", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             "plantHeight" to FieldAttributes("Height (HT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "cm", imperialUnits = "In"),
             /*"vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
             /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
@@ -117,7 +117,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
         CustomViewGroupAdapter(
             context = this@PlantingLogActivity,
             fields = listOf(
-                "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc",
+                "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc", "ec",
                 "plantHeight", "lightingOn", "lightingOff", "co2Concentration"
             ),
             noKeyboardFields = listOf(
@@ -320,35 +320,36 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             getLogById.observe(this@PlantingLogActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
-                    if (null == data) return@success
-                    data?.let {
-                        // 后台返回的都是英制，那么转换就需要根据用户选中的来判断了。
-                        updateUnit(it, viewModel.isMetric, false)
-                        maps.forEach { (field, value) ->
-                            // 只针对默认显示为False的条目进行判断，为true的都是必须显示的。
-                            val declaredFiled = it::class.java.getDeclaredField(field)
-                            declaredFiled.isAccessible = true
-                            val values = declaredFiled.get(it)?.toString()
-                            // 转换公英制,有些是默认填的，那么就不需要转换
-                            if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
-                                logAdapter.fieldsAttributes[field]?.unit =
-                                    if (data?.inchMetricMode == "inch") logAdapter.fieldsAttributes[field]?.imperialUnits.toString() else logAdapter.fieldsAttributes[field]?.metricUnits.toString()
+                    data?.run {
+                        runCatching {
+                            updateUnit(this, viewModel.isMetric, false)
+                            maps.forEach { (field, value) ->
+                                if (logAdapter.fieldsAttributes[field]?.unit?.isEmpty() == true) {
+                                    val unit = if (inchMetricMode == "inch") {
+                                        logAdapter.fieldsAttributes[field]?.imperialUnits.toString()
+                                    } else {
+                                        logAdapter.fieldsAttributes[field]?.metricUnits.toString()
+                                    }
+                                    logAdapter.fieldsAttributes[field]?.unit = unit
+                                }
                             }
-                        }
-                        logAdapter.setData(it)
-                        // 添加备注、添加照片、
-                        binding.etNote.setText(it.notes)
-                        binding.ftTrend.isItemChecked = it.syncPost == true
-                        it.plantPhoto?.let { photoList ->
-                            photoList.forEach { url ->
-                                viewModel.setPicAddress(ImageUrl(imageUrl = url))
-                                picList.add(0, ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = url))
+                            logAdapter.setData(this)
+                            binding.etNote.setText(notes)
+                            binding.ftTrend.isItemChecked = syncPost == true
+                            plantPhoto?.run {
+                                forEach { url ->
+                                    viewModel.setPicAddress(ImageUrl(imageUrl = url))
+                                    picList.add(0, ChoosePicBean(type = ChoosePicBean.KEY_TYPE_PIC, picAddress = url))
+                                }
+                                chooserAdapter.setList(picList)
                             }
-                            chooserAdapter.setList(picList)
+                        }.onFailure {
+                            it.printStackTrace()
                         }
                     }
                 }
             })
+
 
             // 修改日志、以及上传日志
             logSaveOrUpdate.observe(this@PlantingLogActivity, resourceObserver {
@@ -420,8 +421,6 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                 // 扫描到的设备, 用于填充adapter
                 if (it.deviceName != null && it.deviceAddress != null) {
                     if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
-                        // 停止扫描
-                        viewModel.stopScan()
                         // 连接设备
                         viewModel.connect(it)
                     }
@@ -850,6 +849,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                         content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
                         isShowCancelButton = true,
                         onConfirmAction = {
+                            viewModel.disConnectPhDevice()
+                            viewModel.stopScan()
                             checkPermissionAndStartScan()
                         })
                 ).show()
@@ -877,23 +878,26 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
      * 查找当前设备是否有连接过
      */
     private fun checkHasPhBle() {
+        showProgressLoading()
         // 没有指定链接设备，因为老板认为用户只能买的起一个
         // 那么就只能判断，当前是否连接，没连接那么就开始扫描，然后连接第一个BLE-9908的设备。
         BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }.apply {
             indicatingIconChanged()
             if (this == null) {
+                hideProgressLoading()
                 // 开始扫描，连接第一个扫描出来的设备
                 BleManager.get().startScan(viewModel.getScanCallback(true))
                 return
             }
             if (!viewModel.isConnected(this)) {
+                hideProgressLoading()
                 xpopup(this@PlantingLogActivity) {
                     isDestroyOnDismiss(false)
                     asCustom(
                         BaseCenterPop(
                             this@PlantingLogActivity,
                             content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
-                            isShowCancelButton = true,
+                            isShowCancelButton = false,
                             onConfirmAction = {
                                 checkPermissionAndStartScan()
                             })
@@ -901,7 +905,6 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                 }
                 return
             }
-            showProgressLoading()
             // 有设备，那么就获取数据
             viewModel.setCurrentBleDevice(this)
             // 获取值
@@ -1034,8 +1037,10 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             event.text.add(toSpeak)
             accessibilityManager.sendAccessibilityEvent(event)
         }
-        // 赋值给到adapter当中 todo tds ec 没有赋值
+        // 赋值给到adapter当中 tds、ec、ph
         logAdapter.setData(maps.keys.toList().indexOf(LogSaveOrUpdateReq.KEY_LOG_PH), ph.toString())
+        logAdapter.setData(maps.keys.toList().indexOf(LogSaveOrUpdateReq.KEY_LOG_TDS), tds.toString())
+        logAdapter.setData(maps.keys.toList().indexOf(LogSaveOrUpdateReq.KEY_LOG_EC), ec.toString())
     }
 
     override fun onBleChange(status: String) {
@@ -1065,6 +1070,16 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                 }
                 logAdapter.notifyItemChanged(it)
             }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 移除回调，免得viewModel不会被销毁。
+        BleManager.get().removeBleScanCallback()
+        viewModel.currentBleDevice.value?.let {
+            BleManager.get().removeAllCharacterCallback(it)
+            BleManager.get().removeBleConnectCallback(it)
         }
     }
 
