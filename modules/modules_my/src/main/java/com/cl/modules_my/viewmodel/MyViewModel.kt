@@ -23,7 +23,7 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
     ViewModel() {
 
     // 用户信息
-    val userInfo by lazy {
+    val userInfo = {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
         parseObject

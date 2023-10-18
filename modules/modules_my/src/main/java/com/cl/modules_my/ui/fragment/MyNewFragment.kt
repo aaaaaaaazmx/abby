@@ -57,10 +57,10 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
     override fun onResume() {
         super.onResume()
         mViewModel.userDetail()
-        if (discordPop?.isShow == true) {
+        /*if (discordPop?.isShow == true) {
             // XPopup当前是显示状态，执行你想要的操作
             discordPop?.setQueryBind()
-        }
+        }*/
     }
 
     override fun lazyLoad() {
@@ -73,8 +73,10 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
     private val discordPop by lazy {
         context?.let {
-            MyDiscordPop(it) { email, code ->
-                logI("email: $email, code: $code")
+            activity?.let { it1 ->
+                MyDiscordPop(it, it1) { email, code ->
+                    logI("email: $email, code: $code")
+                }
             }
         }
     }
@@ -111,7 +113,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         }
 
         binding.ftDiscord.setOnClickListener {
-            if (!mViewModel.userInfo?.discordGlobalName.isNullOrEmpty()) {
+            if (!mViewModel.userInfo()?.discordGlobalName.isNullOrEmpty()) {
                 ToastUtil.shortShow("You have already bound your discord account")
                 return@setOnClickListener
             }
@@ -126,7 +128,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
         binding.ftSetting.setOnClickListener {
             // 改为缓存
-            if (mViewModel.userInfo?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+            if (mViewModel.userInfo()?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                 context?.let { ct ->
                     xpopup(ct) {
                         isDestroyOnDismiss(false)

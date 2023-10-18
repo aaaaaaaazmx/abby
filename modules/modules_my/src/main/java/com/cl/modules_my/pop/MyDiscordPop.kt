@@ -1,9 +1,9 @@
 package com.cl.modules_my.pop
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.text.method.LinkMovementMethod
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.buildSpannedString
 import androidx.databinding.DataBindingUtil
@@ -21,15 +21,20 @@ import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDiscordPopBinding
 import com.lxj.xpopup.core.BottomPopupView
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
+
 class MyDiscordPop(
     context: Context,
+    activity: Activity,
     private val onConfirmAction: ((email: String?, code: String?) -> Unit)? = null,
 ) : BottomPopupView(context) {
 
@@ -67,7 +72,7 @@ class MyDiscordPop(
             tvJoin.text = buildSpannedString {
                 append("Not in the discord community yet? Click ")
                 appendClickable("here", isUnderlineText = true) {
-                     //  跳转到discord指定的频道
+                    //  跳转到discord指定的频道
                     // https://discord.gg/8F747ZGbuv
                     val intent = Intent(context, WebActivity::class.java)
                     intent.putExtra(WebActivity.KEY_WEB_URL, "https://discord.gg/8F747ZGbuv")
@@ -83,10 +88,26 @@ class MyDiscordPop(
                 context.theme
             )
         }
+        query
+    }
+
+    private val query by lazy {
+        lifecycleScope.launch {
+            timerFlow().collect {}
+        }
+    }
+
+    private fun timerFlow(): Flow<Unit> = flow {
+        var counter = 0
+        while (true) {
+            queryBind()
+            counter++
+            delay(5000)  // Delay for 1 second
+        }
     }
 
     private var discordLink = ""
-    private suspend fun getLink(){
+    private suspend fun getLink() {
         service.authorizeLink().map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
@@ -106,13 +127,15 @@ class MyDiscordPop(
             )
         }.collectLatest {
             logI(it.toString())
-            when(it){
+            when (it) {
                 is Resource.Success -> {
                     discordLink = it.data.toString()
                 }
+
                 is Resource.DataError -> {
                     ToastUtil.shortShow(it.errorMsg)
                 }
+
                 else -> {}
             }
         }
@@ -140,19 +163,27 @@ class MyDiscordPop(
             )
         }.collectLatest {
             logI(it.toString())
-            when(it){
+            when (it) {
                 is Resource.Success -> {
                     if (it.data.toString() == "true") {
                         // 绑定成功
                         ToastUtil.shortShow("Binding successful.")
+                        query.cancel()
                         dismiss()
                     }
                 }
+
                 is Resource.DataError -> {
                     ToastUtil.shortShow(it.errorMsg)
                 }
+
                 else -> {}
             }
         }
+    }
+
+    override fun onDismiss() {
+        super.onDismiss()
+        query.cancel()
     }
 }

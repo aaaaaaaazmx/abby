@@ -21,7 +21,6 @@ import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
 import com.cl.modules_planting_log.request.LogTypeListDataItem
 import com.cl.modules_planting_log.widget.CustomViewGroup
 import java.util.Calendar
-import kotlin.math.log
 
 /**
  * 自定义ViewGroup适配器
@@ -317,7 +316,9 @@ class CustomViewGroupAdapter(
     fun setData(position: Int, inputData: String) {
         runCatching {
             when (fields[position]) {
-                LogSaveOrUpdateReq.KEY_LOG_PH -> {
+                LogSaveOrUpdateReq.KEY_LOG_PH,
+                LogSaveOrUpdateReq.KEY_LOG_TDS,
+                LogSaveOrUpdateReq.KEY_LOG_EC -> {
                     data[position] = inputData
                     notifyItemChanged(position)
                 }
