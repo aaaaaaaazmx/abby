@@ -56,6 +56,59 @@ internal class BleConnectRequest(
 
     private val waitTime = getBleOptions()?.operateInterval?: DEFAULT_OPERATE_INTERVAL
 
+
+    /**
+     * 通过buildOption传入的连接CallBack
+     */
+    @Synchronized
+    fun connect() {
+        BleLogger.e("bleConnectCallback是否为空：${bleConnectCallback == null}")
+        val bleConnectCallback = getBleOptions()?.bleConnectCallback ?: return
+        if (null == this@BleConnectRequest.bleConnectCallback) {
+            addBleConnectCallback(bleConnectCallback)
+        }
+        if (bleDevice.deviceInfo == null) {
+            BleLogger.e("连接失败：BluetoothDevice为空")
+            removeBleConnectedDevice()
+            bleConnectCallback.callConnectFail(createNewDeviceInfo(), BleConnectFailType.NullableBluetoothDevice)
+            return
+        }
+        val bleManager = getBleManager()
+        if (!BleUtil.isPermission(bleManager.getContext()?.applicationContext)) {
+            BleLogger.e("权限不足，请检查")
+            removeBleConnectedDevice()
+            bleConnectCallback.callConnectFail(createNewDeviceInfo(), BleConnectFailType.NoBlePermission)
+            return
+        }
+        if (!bleManager.isBleSupport()) {
+            BleLogger.e("设备不支持蓝牙")
+            removeBleConnectedDevice()
+            bleConnectCallback.callConnectFail(createNewDeviceInfo(), BleConnectFailType.UnSupportBle)
+            return
+        }
+        if (!bleManager.isBleEnable()) {
+            BleLogger.e("蓝牙未打开")
+            removeBleConnectedDevice()
+            bleConnectCallback.callConnectFail(createNewDeviceInfo(), BleConnectFailType.BleDisable)
+            return
+        }
+        if (lastState == BleConnectLastState.Connecting || lastState == BleConnectLastState.ConnectIdle) {
+            BleLogger.e("连接中")
+            removeBleConnectedDevice()
+            bleConnectCallback.callConnectFail(createNewDeviceInfo(), BleConnectFailType.AlreadyConnecting)
+            return
+        }
+        if (bleManager.isConnected(bleDevice, false)) {
+            lastState =  BleConnectLastState.Connected
+            BleLogger.e("已连接")
+            bleConnectCallback.callConnectSuccess(createNewDeviceInfo(), bluetoothGatt)
+            autoSetMtu()
+            return
+        }
+        bleConnectCallback.callConnectStart()
+        startConnectJob()
+    }
+
     /**
      * 连接设备
      */

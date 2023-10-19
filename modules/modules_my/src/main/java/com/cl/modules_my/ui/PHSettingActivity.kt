@@ -4,17 +4,16 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.bluetooth.BluetoothGattCharacteristic
 import android.content.Context
-import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bhm.ble.BleManager
-import com.bhm.ble.attribute.BleOptions
-import com.bhm.ble.device.BleDevice
 import com.bhm.ble.utils.BleLogger
 import com.cl.common_base.bean.ServiceNode
 import com.cl.common_base.bean.CharacteristicNode
@@ -28,7 +27,6 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
-import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.widget.toast.ToastUtil
@@ -70,7 +68,14 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             finish()
         }
         mViewMode.systemConfig()
-        // 检查当前连接的设备。
+
+        // 检查背景状态
+        /*if (mViewMode.notFindConnectPhDevice()) binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_uncheck) else binding.tvSync.setBackgroundResource(
+            com.cl.common_base.R.drawable.create_button_check
+        )
+        ViewUtils.setVisible(mViewMode.notFindConnectPhDevice(), binding.tvUnConnect)
+        mViewMode.currentBleDevice.value?.let { BleManager.get().replaceBleConnectCallback(it, mViewMode.getConnectCallback()) }*/
+
         checkPermissionAndStartScan()
     }
 
@@ -88,7 +93,6 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
      * 查找当前设备是否有连接过
      */
     private fun checkHasPhBle() {
-        showProgressLoading()
         // 没有指定链接设备，因为老板认为用户只能买的起一个
         // 那么就只能判断，当前是否连接，没连接那么就开始扫描，然后连接第一个BLE-9908的设备。
         BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }.apply {
@@ -97,17 +101,25 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             )
             ViewUtils.setVisible(this == null, binding.tvUnConnect)
             if (this == null) {
-                hideProgressLoading()
-                // 开始扫描，连接第一个扫描出来的设备
-                BleManager.get().startScan(mViewMode.getScanCallback())
+                mViewMode.disConnectPhDevice()
+                lifecycleScope.launch {
+                    showProgressLoading()
+                    delay(1200)
+                    // 开始扫描，连接第一个扫描出来的设备
+                    BleManager.get().startScan(mViewMode.getScanCallback(true))
+                }
                 return
             }
             if (!mViewMode.isConnected(this)) {
-                hideProgressLoading()
-                // 连接设备
-                mViewMode.connect(this)
+                lifecycleScope.launch {
+                    showProgressLoading()
+                    delay(1200)
+                    // 连接设备
+                    mViewMode.connect(this@apply)
+                }
                 return
             }
+            showProgressLoading()
             // 有设备，那么就获取数据
             mViewMode.setCurrentBleDevice(this)
             // 获取值
@@ -127,7 +139,6 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             Constants.Ble.KEY_BLE_OFF -> {
                 binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_uncheck)
                 ViewUtils.setVisible(binding.tvUnConnect)
-                mViewMode.listDRData.clear()
                 ToastUtil.shortShow("Bluetooth is turned off")
                 logI("KEY_BLE_OFF")
             }
@@ -195,19 +206,6 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                 } ?: let { _ ->
                     if (it.msg.contains("数据")) return@collect
                     ToastUtil.shortShow(it.msg)
-                }
-            }
-        }
-
-        // 扫描设备
-        lifecycleScope.launch {
-            mViewMode.listDRStateFlow.collect {
-                // 扫描到的设备, 用于填充adapter
-                if (it.deviceName != null && it.deviceAddress != null) {
-                    if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
-                        // 连接设备/内部实现了stopScan
-                        mViewMode.connect(it)
-                    }
                 }
             }
         }
@@ -313,7 +311,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                             isShowCancelButton = false,
                             onConfirmAction = {
                                 // 先断开次设备、
-                                mViewMode.disConnectPhDevice()
+                                // mViewMode.disConnectPhDevice()
                                 mViewMode.stopScan()
                                 checkPermissionAndStartScan()
                             })
@@ -417,16 +415,6 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             property.toString()
         } else {
             ""
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // 移除回调，免得viewModel不会被销毁。
-        BleManager.get().removeBleScanCallback()
-        mViewMode.currentBleDevice.value?.let {
-            BleManager.get().removeAllCharacterCallback(it)
-            BleManager.get().removeBleConnectCallback(it)
         }
     }
 }

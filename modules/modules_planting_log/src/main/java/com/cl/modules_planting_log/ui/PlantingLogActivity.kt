@@ -415,8 +415,16 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             }
         }
 
-        // 扫描设备
+
         lifecycleScope.launch {
+            viewModel.scanStopStateFlow.collect {
+                // 扫描停止
+                hideProgressLoading()
+            }
+        }
+
+        // 扫描设备
+        /*lifecycleScope.launch {
             viewModel.listDRStateFlow.collect {
                 // 扫描到的设备, 用于填充adapter
                 if (it.deviceName != null && it.deviceAddress != null) {
@@ -426,7 +434,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                     }
                 }
             }
-        }
+        }*/
 
         // 连接成功回调
         lifecycleScope.launch {
@@ -847,9 +855,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                     BaseCenterPop(
                         this@PlantingLogActivity,
                         content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
-                        isShowCancelButton = true,
+                        isShowCancelButton = false,
                         onConfirmAction = {
-                            viewModel.disConnectPhDevice()
                             viewModel.stopScan()
                             checkPermissionAndStartScan()
                         })
@@ -878,33 +885,31 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
      * 查找当前设备是否有连接过
      */
     private fun checkHasPhBle() {
-        showProgressLoading()
         // 没有指定链接设备，因为老板认为用户只能买的起一个
         // 那么就只能判断，当前是否连接，没连接那么就开始扫描，然后连接第一个BLE-9908的设备。
         BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME }.apply {
             indicatingIconChanged()
+
             if (this == null) {
-                hideProgressLoading()
-                // 开始扫描，连接第一个扫描出来的设备
-                BleManager.get().startScan(viewModel.getScanCallback(true))
-                return
-            }
-            if (!viewModel.isConnected(this)) {
-                hideProgressLoading()
-                xpopup(this@PlantingLogActivity) {
-                    isDestroyOnDismiss(false)
-                    asCustom(
-                        BaseCenterPop(
-                            this@PlantingLogActivity,
-                            content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
-                            isShowCancelButton = false,
-                            onConfirmAction = {
-                                checkPermissionAndStartScan()
-                            })
-                    ).show()
+                viewModel.disConnectPhDevice()
+                lifecycleScope.launch {
+                    showProgressLoading()
+                    delay(1200)
+                    // 开始扫描，连接第一个扫描出来的设备
+                    BleManager.get().startScan(viewModel.getScanCallback(true))
                 }
                 return
             }
+            if (!viewModel.isConnected(this)) {
+                lifecycleScope.launch {
+                    showProgressLoading()
+                    delay(1200)
+                    // 连接设备
+                    viewModel.connect(this@apply)
+                }
+                return
+            }
+            showProgressLoading()
             // 有设备，那么就获取数据
             viewModel.setCurrentBleDevice(this)
             // 获取值
@@ -1054,7 +1059,6 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
 
             Constants.Ble.KEY_BLE_OFF -> {
                 indicatingIconChanged()
-                viewModel.listDRData.clear()
                 ToastUtil.shortShow("Bluetooth is turned off")
                 logI("KEY_BLE_OFF")
             }
@@ -1070,16 +1074,6 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                 }
                 logAdapter.notifyItemChanged(it)
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // 移除回调，免得viewModel不会被销毁。
-        BleManager.get().removeBleScanCallback()
-        viewModel.currentBleDevice.value?.let {
-            BleManager.get().removeAllCharacterCallback(it)
-            BleManager.get().removeBleConnectCallback(it)
         }
     }
 

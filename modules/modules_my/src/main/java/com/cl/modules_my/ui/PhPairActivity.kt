@@ -1,6 +1,7 @@
 package com.cl.modules_my.ui
 
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bhm.ble.BleManager
@@ -128,7 +129,7 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
             object : PermissionHelp.OnCheckResultListener {
                 override fun onResult(result: Boolean) {
                     if (!result) return
-                    BleManager.get().startScan(mViewMode.getScanCallback())
+                    BleManager.get().startScan(mViewMode.getScanCallback(false))
                 }
             })
     }
@@ -162,6 +163,7 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
         lifecycleScope.launch {
             mViewMode.scanStopStateFlow.collect {
                 // 扫描停止
+                hideProgressLoading()
             }
         }
 
@@ -169,9 +171,11 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
             mViewMode.listDRStateFlow.collect {
                 // 扫描到的设备, 用于填充adapter
                 if (it.deviceName != null && it.deviceAddress != null) {
-                    val position = (adapter.itemCount) - 1
-                    adapter.notifyItemInserted(position)
-                    binding.rvList.smoothScrollToPosition(position)
+                    if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
+                        val position = (adapter.itemCount) - 1
+                        adapter.notifyItemInserted(position)
+                        binding.rvList.smoothScrollToPosition(position)
+                    }
                 }
             }
         }
@@ -225,16 +229,6 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
                     mViewMode.connect(bleDevice)
                 }
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // 移除回调，免得viewModel不会被销毁。
-        BleManager.get().removeBleScanCallback()
-        mViewMode.currentBleDevice.value?.let {
-            BleManager.get().removeAllCharacterCallback(it)
-            BleManager.get().removeBleConnectCallback(it)
         }
     }
 }

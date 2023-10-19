@@ -201,6 +201,11 @@ internal class BleConnectedDevice(val bleDevice: BleDevice) : BluetoothGattCallb
         bleConnectRequest?.connect(bleConnectCallback)
     }
 
+    fun connect() {
+        initBleConnectRequest()
+        bleConnectRequest?.connect()
+    }
+
     /**
      * 主动断开连接，上层API调用
      */

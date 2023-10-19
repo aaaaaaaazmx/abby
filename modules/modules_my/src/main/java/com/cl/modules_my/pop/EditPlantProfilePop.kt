@@ -126,7 +126,7 @@ class EditPlantProfilePop(
                                 """.trimIndent()
                             )
                         }
-                        .nightMode("muteOn:00,muteOff:00", devId = beanData?.deviceId)
+                        .nightMode("lightOn:00,lightOff:00", devId = beanData?.deviceId)
                 } else {
                     DeviceControl.get()
                         .success {
@@ -141,7 +141,7 @@ class EditPlantProfilePop(
                                 """.trimIndent()
                             )
                         }
-                        .nightMode("muteOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
+                        .nightMode("lightOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},lightOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
                 }
 
                 // 调用接口更新后台夜间模式
@@ -184,7 +184,7 @@ class EditPlantProfilePop(
                                 DeviceControl.get()
                                     .success {
                                         // "141":"muteOn:10,muteOff:22"
-                                        logI("123312313: muteOn:$timeOn,muteOff:$timeOff")
+                                        logI("123312313: lightOn:$timeOn,lightOff:$timeOff")
                                     }
                                     .error { code, error ->
                                         ToastUtil.shortShow(
@@ -195,7 +195,7 @@ class EditPlantProfilePop(
                                             """.trimIndent()
                                         )
                                     }
-                                    .nightMode("muteOn:${if (timeOn == 12) 24 else timeOn},muteOff:${if (timeOff == 24) 12 else timeOff}", devId = beanData?.deviceId)
+                                    .nightMode("lightOn:${if (timeOn == 12) 24 else timeOn},lightOff:${if (timeOff == 24) 12 else timeOff}", devId = beanData?.deviceId)
                             })
                     ).show()
             }

@@ -605,4 +605,9 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
         byStartedClick = true;
         super.onStartTrackingTouch(seekBar);
     }
+
+    @Override
+    public boolean isNeedShowWifiTip() {
+        return false;
+    }
 }

@@ -185,8 +185,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private fun startCountDownJob() {
         if (mViewMode.shouldRunJob.value == false) return
 
-        job = mViewMode.countDownCoroutines(10 * 6 * 500000, lifecycleScope, onTick = {
-            lifecycleScope.launch(Dispatchers.IO) {
+        job = mViewMode.countDownCoroutines(10 * 6 * 500000, viewLifecycleOwner.lifecycleScope, onTick = {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     if (it % 30 == 0) {
                         // 表示过了30秒

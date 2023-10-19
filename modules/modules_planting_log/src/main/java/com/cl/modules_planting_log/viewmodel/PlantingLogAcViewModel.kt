@@ -22,6 +22,8 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.help.BleConnectHandler
+import com.cl.common_base.help.ConnectEvent
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
@@ -70,6 +72,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     fun setPicAddress(url: ImageUrl) {
         _picAddress.value?.add(0, url)
     }
+
     fun deletePicAddress(index: Int) {
         if ((_picAddress.value?.size ?: 0) > 0) {
             _picAddress.value?.removeAt(index)
@@ -86,6 +89,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     fun setBeforeAddress(address: String) {
         _beforePicAddress.value = address
     }
+
     fun setClearBeforeAddress() {
         _beforePicAddress.value = null
     }
@@ -95,6 +99,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     fun setAfterAddress(address: String) {
         _afterPicAddress.value = address
     }
+
     fun setClearAfterAddress() {
         _afterPicAddress.value = null
     }
@@ -105,7 +110,32 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
         _chooserTips.value = address
     }
 
+    init {
+        viewModelScope.launch {
+            BleConnectHandler.get().connectEvents.collect {
+                when (it) {
+                    is ConnectEvent.ConnectStart -> {
 
+                    }
+
+                    is ConnectEvent.ConnectFail -> {
+                        refreshMutableStateFlow.value = RefreshBleDevice(it.bleDevice, System.currentTimeMillis())
+                    }
+
+                    is ConnectEvent.ConnectDisConnecting -> {
+                    }
+
+                    is ConnectEvent.ConnectDisConnected -> {
+                        refreshMutableStateFlow.value = RefreshBleDevice(it.bleDevice, System.currentTimeMillis())
+                    }
+
+                    is ConnectEvent.ConnectSuccess -> {
+                        refreshMutableStateFlow.value = RefreshBleDevice(it.bleDevice, System.currentTimeMillis())
+                    }
+                }
+            }
+        }
+    }
 
 
     /**
@@ -369,7 +399,8 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
      */
     // 当前连接中的BleDevice
     private val _currentBleDevice = MutableLiveData<BleDevice?>()
-    val currentBleDevice:LiveData<BleDevice?> = _currentBleDevice
+    val currentBleDevice: LiveData<BleDevice?> = _currentBleDevice
+
     // 设置当前连接中的BleDevice
     fun setCurrentBleDevice(bleDevice: BleDevice?) {
         _currentBleDevice.value = bleDevice
@@ -377,26 +408,18 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
 
     // 当前的服务ID、特征ID
     private val _currentServiceId = MutableLiveData<String?>()
-    val currentServiceId:LiveData<String?> = _currentServiceId
+    val currentServiceId: LiveData<String?> = _currentServiceId
     private val _currentCharacteristicId = MutableLiveData<String?>()
-    val currentCharacteristicId:LiveData<String?> = _currentCharacteristicId
+    val currentCharacteristicId: LiveData<String?> = _currentCharacteristicId
+
     // 设置当前的服务ID、特征ID
     fun setCurrentServiceId(serviceId: String?) {
         _currentServiceId.value = serviceId
     }
+
     fun setCurrentCharacteristicId(characteristicId: String?) {
         _currentCharacteristicId.value = characteristicId
     }
-
-    /**
-     * 蓝牙数据类
-     */
-    private val listDRMutableStateFlow = MutableStateFlow(
-        BleDevice(null, null, null, null, null, null, null)
-    )
-    val listDRStateFlow: StateFlow<BleDevice> = listDRMutableStateFlow
-
-    val listDRData = mutableListOf<BleDevice>()
 
     private val scanStopMutableStateFlow = MutableStateFlow(true)
 
@@ -408,6 +431,8 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
 
     val refreshStateFlow: StateFlow<RefreshBleDevice?> = refreshMutableStateFlow
 
+    val listDRData = mutableListOf<BleDevice>()
+
     /**
      * 扫描之后的回调
      */
@@ -415,6 +440,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
         return {
             onScanStart {
                 BleLogger.d("onScanStart")
+                listDRData.clear()
                 scanStopMutableStateFlow.value = false
             }
             onLeScan { bleDevice, _ ->
@@ -425,9 +451,9 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
             }
             onLeScanDuplicateRemoval { bleDevice, _ ->
                 bleDevice.deviceName?.let { _ ->
-                    if (showData) {
+                    if (bleDevice.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
                         listDRData.add(bleDevice)
-                        listDRMutableStateFlow.value = bleDevice
+                        connect(bleDevice)
                     }
                 }
             }
@@ -443,10 +469,10 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
                         BleLogger.e("bleDeviceDuplicateRemovalList-> $deviceName, ${it.deviceAddress}")
                     }
                 }
-                scanStopMutableStateFlow.value = true
-                if (listDRData.isEmpty() && showData) {
+                if (listDRData.isEmpty()) {
                     logI("BLe -> msg: 没有扫描到设备")
-                    ToastUtil.shortShow("The device was not detected.")
+                    // ToastUtil.shortShow("The device was not detected.")
+                    scanStopMutableStateFlow.value = true
                 }
             }
             onScanFail {
@@ -459,6 +485,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
                     is BleScanFailType.ScanError -> {
                         "${it.throwable?.message}"
                     }
+
                     else -> ""
                 }
                 BleLogger.e(msg)
@@ -504,53 +531,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
      */
     fun connect(bleDevice: BleDevice?) {
         bleDevice?.let { device ->
-            BleManager.get().connect(device, connectCallback)
-        }
-    }
-
-    // 监听回调。
-    private val connectCallback: BleConnectCallback.() -> Unit = {
-        onConnectStart {
-            BleLogger.e("-----onConnectStart")
-        }
-        onConnectFail { bleDevice, connectFailType ->
-            val msg: String = when (connectFailType) {
-                is BleConnectFailType.UnSupportBle -> "The device does not support Bluetooth."
-                is BleConnectFailType.NoBlePermission -> "Insufficient permissions, please check."
-                is BleConnectFailType.NullableBluetoothDevice -> "The device is empty."
-                is BleConnectFailType.BleDisable -> "Bluetooth not turned on."
-                is BleConnectFailType.ConnectException -> "Connection abnormal.(${connectFailType.throwable.message})"
-                is BleConnectFailType.ConnectTimeOut -> "Connection timed out."
-                is BleConnectFailType.AlreadyConnecting -> "Connecting"
-                is BleConnectFailType.ScanNullableBluetoothDevice -> "Connection failed, scan data is empty."
-            }
-            BleLogger.e(msg)
-            logI("BLe -> msg: $msg")
-            ToastUtil.shortShow(msg)
-            refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
-        }
-        onDisConnecting { isActiveDisConnected, bleDevice, _, _ ->
-            BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnecting: $isActiveDisConnected")
-        }
-        onDisConnected { isActiveDisConnected, bleDevice, _, _ ->
-            logI(
-                "BLe -> msg: Disconnect(${bleDevice.deviceAddress}，isActiveDisConnected: " +
-                        "$isActiveDisConnected)"
-            )
-            BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnected: $isActiveDisConnected")
-            ToastUtil.shortShow(
-                "Disconnect"
-            )
-            refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
-            //发送断开的通知
-            /* val message = MessageEvent()
-             message.data = bleDevice
-             EventBus.getDefault().post(message)*/
-        }
-        onConnectSuccess { bleDevice, _ ->
-            logI("BLe -> msg: Connection successful: (${bleDevice.deviceAddress})")
-            // ToastUtil.shortShow("Connection successful:${bleDevice.deviceName}")
-            refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
+            BleManager.get().connect(device)
         }
     }
 
@@ -576,8 +557,9 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
      */
     private val listLogMutableStateFlow = MutableStateFlow(LogEntity(Level.INFO, "数据适配完毕"))
     val listLogStateFlow: StateFlow<LogEntity> = listLogMutableStateFlow
-    fun readData(bleDevice: BleDevice,
-                 node: CharacteristicNode
+    fun readData(
+        bleDevice: BleDevice,
+        node: CharacteristicNode
     ) {
         BleManager.get().readData(bleDevice, node.serviceUUID, node.characteristicUUID) {
             onReadFail {

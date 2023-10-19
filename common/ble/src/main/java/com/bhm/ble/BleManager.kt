@@ -155,6 +155,16 @@ class BleManager private constructor() {
     }
 
     /**
+     * 连接
+     */
+    @Synchronized
+    fun connect(bleDevice: BleDevice) {
+        checkInitialize()
+        stopScan()
+        bleBaseRequest?.connect(bleDevice)
+    }
+
+    /**
      * 通过地址连接
      */
     @Synchronized

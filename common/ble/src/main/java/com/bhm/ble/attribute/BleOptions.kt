@@ -5,6 +5,7 @@
  */
 package com.bhm.ble.attribute
 
+import com.bhm.ble.callback.BleConnectCallback
 import com.bhm.ble.data.BleTaskQueueType
 import com.bhm.ble.data.Constants.AUTO_CONNECT
 import com.bhm.ble.data.Constants.CONTAIN_SCAN_DEVICE_NAME
@@ -30,6 +31,8 @@ import com.bhm.ble.data.Constants.ENABLE_LOG
  * @date 2023年05月18日 15时04分
  */
 class BleOptions private constructor(builder: Builder) {
+
+    var bleConnectCallback: BleConnectCallback? = builder.bleConnectCallback
 
     var scanServiceUuids = builder.scanServiceUuids
 
@@ -77,6 +80,8 @@ class BleOptions private constructor(builder: Builder) {
     }
 
     class Builder {
+
+        internal var bleConnectCallback: BleConnectCallback? = null
 
         internal var scanServiceUuids: ArrayList<String> = ArrayList(1)
 
@@ -159,6 +164,15 @@ class BleOptions private constructor(builder: Builder) {
          */
         fun setAutoConnect(autoConnect: Boolean) = apply {
             this.autoConnect = autoConnect
+        }
+
+        /**
+         * 设置默认的连接callBack
+         */
+        fun setBleConnectCallback(bleConnectCallback: BleConnectCallback.() -> Unit) = apply {
+            val callback = BleConnectCallback()
+            callback.apply(bleConnectCallback)
+            this.bleConnectCallback = callback
         }
 
         /**

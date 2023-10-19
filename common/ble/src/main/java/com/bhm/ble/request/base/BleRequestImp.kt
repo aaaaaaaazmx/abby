@@ -8,6 +8,7 @@ package com.bhm.ble.request.base
 
 import android.bluetooth.BluetoothGatt
 import android.util.SparseArray
+import com.bhm.ble.BleManager
 import com.bhm.ble.callback.BleConnectCallback
 import com.bhm.ble.callback.BleIndicateCallback
 import com.bhm.ble.callback.BleMtuChangedCallback
@@ -170,6 +171,18 @@ internal class BleRequestImp private constructor() : BleBaseRequest {
         val exception = UnDefinedException("${bleDevice.deviceAddress} -> 连接失败，BleConnectedDevice为空")
         BleLogger.e(exception.message)
         callback.callConnectFail(bleDevice, BleConnectFailType.ConnectException(exception))
+    }
+
+    override fun connect(bleDevice: BleDevice) {
+        val request = bleConnectedDeviceManager.buildBleConnectedDevice(bleDevice)
+        request?.let {
+            it.connect()
+            return
+        }
+
+        val exception = UnDefinedException("${bleDevice.deviceAddress} -> 连接失败，BleConnectedDevice为空")
+        BleLogger.e(exception.message)
+        BleManager.get().getOptions()?.bleConnectCallback?.callConnectFail(bleDevice, BleConnectFailType.ConnectException(exception))
     }
 
     /**

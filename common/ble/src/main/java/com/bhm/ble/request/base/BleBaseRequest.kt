@@ -48,6 +48,11 @@ internal interface BleBaseRequest {
                 bleConnectCallback: BleConnectCallback.() -> Unit)
 
     /**
+     * 开始连接
+     */
+    fun connect(bleDevice: BleDevice)
+
+    /**
      * 断开连接
      */
     fun disConnect(bleDevice: BleDevice)

@@ -24,10 +24,16 @@ import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.help.BleConnectHandler
+import com.cl.common_base.help.ConnectEvent
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
@@ -75,9 +81,9 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
 
     val listDRData = mutableListOf<BleDevice>()
 
-    private val scanStopMutableStateFlow = MutableStateFlow(true)
+    private val scanStopMutableStateFlow = MutableStateFlow(false)
 
-    val scanStopStateFlow: StateFlow<Boolean> = scanStopMutableStateFlow
+    val scanStopStateFlow: StateFlow<Boolean> = scanStopMutableStateFlow.asStateFlow()
 
     private val refreshMutableStateFlow = MutableStateFlow(
         RefreshBleDevice(null, null)
@@ -85,24 +91,58 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
 
     val refreshStateFlow: StateFlow<RefreshBleDevice?> = refreshMutableStateFlow
 
+    init {
+        viewModelScope.launch {
+            BleConnectHandler.get().connectEvents.collect {
+                when (it) {
+                    is ConnectEvent.ConnectStart -> {
+
+                    }
+
+                    is ConnectEvent.ConnectFail -> {
+                        refreshMutableStateFlow.value = RefreshBleDevice(it.bleDevice, System.currentTimeMillis())
+                    }
+
+                    is ConnectEvent.ConnectDisConnecting -> {
+                    }
+
+                    is ConnectEvent.ConnectDisConnected -> {
+                        refreshMutableStateFlow.value = RefreshBleDevice(it.bleDevice, System.currentTimeMillis())
+                    }
+
+                    is ConnectEvent.ConnectSuccess -> {
+                        refreshMutableStateFlow.value = RefreshBleDevice(it.bleDevice, System.currentTimeMillis())
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
     /**
      * 扫描之后的回调
      */
-    fun getScanCallback(): BleScanCallback.() -> Unit {
+    fun getScanCallback(isAdd: Boolean): BleScanCallback.() -> Unit {
         return {
             onScanStart {
                 BleLogger.d("onScanStart")
-                scanStopMutableStateFlow.value = false
+                scanStopMutableStateFlow.tryEmit(false)
             }
             onLeScan { bleDevice, _ ->
                 //可以根据currentScanCount是否已有清空列表数据
                 bleDevice.deviceName?.let { _ ->
-
                 }
             }
             onLeScanDuplicateRemoval { bleDevice, _ ->
                 bleDevice.deviceName?.let { _ ->
-                    listDRData.add(bleDevice)
+                    logI("onLeScanDuplicateRemoval: bleDevice.deviceName = ${bleDevice.deviceName}")
+                    if (bleDevice.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
+                        listDRData.add(bleDevice)
+                        if (isAdd) {
+                            connect(bleDevice)
+                        }
+                    }
                     listDRMutableStateFlow.value = bleDevice
                 }
             }
@@ -118,10 +158,10 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                         BleLogger.e("bleDeviceDuplicateRemovalList-> $deviceName, ${it.deviceAddress}")
                     }
                 }
-                scanStopMutableStateFlow.value = true
                 if (listDRData.isEmpty()) {
                     logI("BLe -> msg: 没有扫描到设备")
-                    ToastUtil.shortShow("The device was not detected.")
+                    // ToastUtil.shortShow("The device was not detected.")
+                    scanStopMutableStateFlow.tryEmit(true)
                 }
             }
             onScanFail {
@@ -138,7 +178,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                 BleLogger.e(msg)
                 logI("BLe -> msg: $msg")
                 ToastUtil.shortShow(msg)
-                scanStopMutableStateFlow.value = true
+                scanStopMutableStateFlow.tryEmit(true)
             }
         }
     }
@@ -161,6 +201,16 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
     }
 
     /**
+     * 查找当前Ph笔
+     *
+     * true 表示没找到
+     * false 表示找到了
+     */
+    fun notFindConnectPhDevice(): Boolean {
+        return BleManager.get().getAllConnectedDevice()?.firstOrNull { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME } == null
+    }
+
+    /**
      * 是否已连接
      */
     fun isConnected(bleDevice: BleDevice?) = BleManager.get().isConnected(bleDevice)
@@ -177,53 +227,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
      */
     fun connect(bleDevice: BleDevice?) {
         bleDevice?.let { device ->
-            BleManager.get().connect(device, connectCallback)
-        }
-    }
-
-    // 监听回调。
-    private val connectCallback: BleConnectCallback.() -> Unit = {
-        onConnectStart {
-            BleLogger.e("-----onConnectStart")
-        }
-        onConnectFail { bleDevice, connectFailType ->
-            val msg: String = when (connectFailType) {
-                is BleConnectFailType.UnSupportBle -> "The device does not support Bluetooth."
-                is BleConnectFailType.NoBlePermission -> "Insufficient permissions, please check."
-                is BleConnectFailType.NullableBluetoothDevice -> "The device is empty."
-                is BleConnectFailType.BleDisable -> "Bluetooth not turned on."
-                is BleConnectFailType.ConnectException -> "Connection abnormal.(${connectFailType.throwable.message})"
-                is BleConnectFailType.ConnectTimeOut -> "Connection timed out."
-                is BleConnectFailType.AlreadyConnecting -> "Connecting"
-                is BleConnectFailType.ScanNullableBluetoothDevice -> "Connection failed, scan data is empty."
-            }
-            BleLogger.e(msg)
-            logI("BLe -> msg: $msg")
-            ToastUtil.shortShow(msg)
-            refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
-        }
-        onDisConnecting { isActiveDisConnected, bleDevice, _, _ ->
-            BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnecting: $isActiveDisConnected")
-        }
-        onDisConnected { isActiveDisConnected, bleDevice, _, _ ->
-            logI(
-                "BLe -> msg: Disconnect(${bleDevice.deviceAddress}，isActiveDisConnected: " +
-                        "$isActiveDisConnected)"
-            )
-            BleLogger.e("-----${bleDevice.deviceAddress} -> onDisConnected: $isActiveDisConnected")
-            ToastUtil.shortShow(
-                "Disconnect"
-            )
-            refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
-            //发送断开的通知
-            /* val message = MessageEvent()
-             message.data = bleDevice
-             EventBus.getDefault().post(message)*/
-        }
-        onConnectSuccess { bleDevice, _ ->
-            logI("BLe -> msg: Connection successful: (${bleDevice.deviceAddress})")
-            //ToastUtil.shortShow("Connection successful:${bleDevice.deviceName}")
-            refreshMutableStateFlow.value = RefreshBleDevice(bleDevice, System.currentTimeMillis())
+            BleManager.get().connect(device)
         }
     }
 

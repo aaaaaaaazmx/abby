@@ -9,6 +9,7 @@ import com.bhm.ble.BleManager
 import com.bhm.ble.attribute.BleOptions
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.help.BleConnectHandler
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
@@ -53,13 +54,15 @@ class AppInitializer : Initializer<Unit> {
             BleManager.get().init(
                 it,
                 BleOptions.Builder()
+                    .setBleConnectCallback(BleConnectHandler.connectCallBack)
                     .setScanMillisTimeOut(5000)
                     .setConnectMillisTimeOut(5000)
+                    .setScanDeviceName(Constants.Ble.KEY_PH_DEVICE_NAME)
                     //一般不推荐autoSetMtu，因为如果设置的等待时间会影响其他操作
                     .setMtu(100, true)
-                    .setAutoConnect(true)
+                    .setAutoConnect(false) // 不自动重连
                     .setMaxConnectNum(Constants.Ble.KEY_BLE_MAX_CONNECT)
-                    .setConnectRetryCountAndInterval(2, 1000)
+                    // .setConnectRetryCountAndInterval(2, 1000) // 掉线不重连
                     .build()
             )
         }
