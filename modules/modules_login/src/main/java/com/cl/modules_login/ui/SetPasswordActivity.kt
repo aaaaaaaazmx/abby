@@ -75,6 +75,14 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
     }
 
     /**
+     * 验证码
+     */
+    private val emailCode by lazy {
+        val code = intent.getStringExtra(VerifyEmailActivity.KEY_EMAIL_CODE) ?: ""
+        code
+    }
+
+    /**
      * 判断是否是注册还是忘记密码, 默认是注册
      */
     private val isRegisterOrForget by lazy {
@@ -276,6 +284,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                         binding.etPassword.text.toString(),
                         AESCipher.KEY
                     )
+                    updatePwdReq.autoCode = emailCode
                     updatePwdReq.userEmail = emailName
                     mViewModel.updatePwd(updatePwdReq)
                 }

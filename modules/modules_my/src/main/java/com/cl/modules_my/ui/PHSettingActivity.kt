@@ -9,6 +9,7 @@ import android.view.accessibility.AccessibilityManager
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -194,44 +195,52 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                     finish()
                 }
             })
+
+            scanLiveData.observe(this@PHSettingActivity, Observer {
+                hideProgressLoading()
+            })
         }
 
         lifecycleScope.launch {
-            mViewMode.listLogStateFlow.collect {
-                hideProgressLoading()
-                // 解析当前特征值
-                val value = it.byteArray
-                value?.let { it1 ->
-                    parseValues(deCode(it1), time = it.time)
-                } ?: let { _ ->
-                    if (it.msg.contains("数据")) return@collect
-                    ToastUtil.shortShow(it.msg)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    mViewMode.listLogStateFlow.collect {
+                        hideProgressLoading()
+                        // 解析当前特征值
+                        val value = it.byteArray
+                        value?.let { it1 ->
+                            parseValues(deCode(it1), time = it.time)
+                        } ?: let { _ ->
+                            if (it.msg.contains("数据")) return@collect
+                            ToastUtil.shortShow(it.msg)
+                        }
+                    }
                 }
-            }
-        }
 
-        // 连接成功回调
-        lifecycleScope.launch {
-            mViewMode.refreshStateFlow.collect {
-                // 刷新设备，点击连接，成功与否。
-                delay(300)
-                hideProgressLoading()
-                it?.bleDevice?.let { bleDevice ->
-                    val isConnected = mViewMode.isConnected(bleDevice)
-                    if (isConnected) {
-                        logI("BLe -> msg: 连接成功")
-                        // ToastUtil.shortShow("Connection successful.")
-                        binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_check)
-                        ViewUtils.setGone(binding.tvUnConnect)
-                        // 有设备，那么就获取数据
-                        mViewMode.setCurrentBleDevice(bleDevice)
-                        // 获取数据
-                        checkPermissionAndStartScan()
-                    } else {
-                        binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_uncheck)
-                        ViewUtils.setVisible(binding.tvUnConnect)
-                        logI("BLe -> msg: 连接失败")
-                        // ToastUtil.shortShow("Connection failed.")
+                // 连接成功回调
+                launch {
+                    mViewMode.refreshStateFlow.collect {
+                        // 刷新设备，点击连接，成功与否。
+                        delay(300)
+                        hideProgressLoading()
+                        it?.bleDevice?.let { bleDevice ->
+                            val isConnected = mViewMode.isConnected(bleDevice)
+                            if (isConnected) {
+                                logI("BLe -> msg: 连接成功")
+                                // ToastUtil.shortShow("Connection successful.")
+                                binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_check)
+                                ViewUtils.setGone(binding.tvUnConnect)
+                                // 有设备，那么就获取数据
+                                mViewMode.setCurrentBleDevice(bleDevice)
+                                // 获取数据
+                                checkPermissionAndStartScan()
+                            } else {
+                                binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_uncheck)
+                                ViewUtils.setVisible(binding.tvUnConnect)
+                                logI("BLe -> msg: 连接失败")
+                                // ToastUtil.shortShow("Connection failed.")
+                            }
+                        }
                     }
                 }
             }
@@ -268,7 +277,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
         val tempHigh = decrypted[13].toInt() and 0xFF
         val tempLow = decrypted[14].toInt() and 0xFF
 
-        val ph = (phHigh shl 8) or phLow
+        val ph = ((phHigh shl 8) or phLow) / 100.0
         val ec = (ecHigh shl 8) or ecLow
         val tds = (tdsHigh shl 8) or tdsLow
         val temp = (tempHigh shl 8) or tempLow

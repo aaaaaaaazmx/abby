@@ -7,4 +7,5 @@ import com.cl.common_base.BaseBean
 data class UpdatePwdReq(
     var password: String? = null,
     var userEmail: String? = null,
+    var autoCode: String? = null
 ) : BaseBean()

@@ -24,6 +24,7 @@ import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.BluetoothMonitorReceiver
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
+import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -134,6 +135,12 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                     logI("tuYaInfoL: $tuyainfos")
                     Prefs.putStringAsync(Constants.Login.KEY_TU_YA_INFO, tuyainfos)
                 }
+                data?.token?.let {
+                    Prefs.putStringAsync(
+                        Constants.Login.KEY_LOGIN_DATA_TOKEN, it
+                    )
+                }
+                ServiceCreators.TokenCache.token = data?.token
                 // 从设备列表当中获取当前选中设备
                 mViewModel.userDetail()
             }

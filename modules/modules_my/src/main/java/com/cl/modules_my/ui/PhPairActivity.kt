@@ -1,8 +1,11 @@
 package com.cl.modules_my.ui
 
+import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bhm.ble.BleManager
 import com.bhm.ble.attribute.BleOptions
@@ -161,58 +164,54 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
         }
 
         lifecycleScope.launch {
-            mViewMode.scanStopStateFlow.collect {
-                // 扫描停止
-                hideProgressLoading()
-            }
-        }
-
-        lifecycleScope.launch {
-            mViewMode.listDRStateFlow.collect {
-                // 扫描到的设备, 用于填充adapter
-                if (it.deviceName != null && it.deviceAddress != null) {
-                    if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
-                        val position = (adapter.itemCount) - 1
-                        adapter.notifyItemInserted(position)
-                        binding.rvList.smoothScrollToPosition(position)
-                    }
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            mViewMode.refreshStateFlow.collect {
-                // 刷新设备，点击连接，成功与否。
-                delay(300)
-                hideProgressLoading()
-                it?.bleDevice?.let { bleDevice ->
-                    val position = adapter.data.indexOf(bleDevice)
-                    if (position >= 0) {
-                        adapter.notifyItemChanged(position)
-                    }
-                    val isConnected = mViewMode.isConnected(bleDevice)
-                    if (isConnected) {
-                        logI("BLe -> msg: 连接成功")
-                        // ToastUtil.shortShow("Connection successful.")
-                        // 连接成功，那么就绑定设备。 然后进行跳转到设置界面
-                        letMultiple(accessoryId, deviceId) { a, b ->
-                            mViewMode.accessoryAdd(a, b)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    mViewMode.listDRStateFlow.collect {
+                        // 扫描到的设备, 用于填充adapter
+                        if (it.deviceName != null && it.deviceAddress != null) {
+                            if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
+                                val position = (adapter.itemCount) - 1
+                                adapter.notifyItemInserted(position)
+                                binding.rvList.smoothScrollToPosition(position)
+                            }
                         }
-                    } else {
-                        logI("BLe -> msg: 连接失败")
-                        // ToastUtil.shortShow("Connection failed.")
                     }
-                    /* if (it.bleDevice.deviceAddress == "7C:DF:A1:A3:5A:BE") {
-                         viewBinding.btnConnect.isEnabled = !isConnected
-                     }
-                     if (isConnected && autoOpenDetailsActivity) {
-                         openDetails(it.bleDevice)
-                     }
-                     autoOpenDetailsActivity = false*/
+                }
+
+                launch {
+                    mViewMode.refreshStateFlow.collect {
+                        // 刷新设备，点击连接，成功与否。
+                        delay(300)
+                        hideProgressLoading()
+                        it?.bleDevice?.let { bleDevice ->
+                            val position = adapter.data.indexOf(bleDevice)
+                            if (position >= 0) {
+                                adapter.notifyItemChanged(position)
+                            }
+                            val isConnected = mViewMode.isConnected(bleDevice)
+                            if (isConnected) {
+                                logI("BLe -> msg: 连接成功")
+                                // ToastUtil.shortShow("Connection successful.")
+                                // 连接成功，那么就绑定设备。 然后进行跳转到设置界面
+                                letMultiple(accessoryId, deviceId) { a, b ->
+                                    mViewMode.accessoryAdd(a, b)
+                                }
+                            } else {
+                                logI("BLe -> msg: 连接失败")
+                                // ToastUtil.shortShow("Connection failed.")
+                            }
+                            /* if (it.bleDevice.deviceAddress == "7C:DF:A1:A3:5A:BE") {
+                                 viewBinding.btnConnect.isEnabled = !isConnected
+                             }
+                             if (isConnected && autoOpenDetailsActivity) {
+                                 openDetails(it.bleDevice)
+                             }
+                             autoOpenDetailsActivity = false*/
+                        }
+                    }
                 }
             }
         }
-
     }
 
     override fun initData() {

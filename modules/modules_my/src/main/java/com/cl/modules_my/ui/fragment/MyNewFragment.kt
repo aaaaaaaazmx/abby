@@ -15,6 +15,7 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -114,7 +115,13 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
         binding.ftDiscord.setOnClickListener {
             if (!mViewModel.userInfo()?.discordGlobalName.isNullOrEmpty()) {
-                ToastUtil.shortShow("You have already bound your discord account")
+                context?.let {
+                    xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(BaseCenterPop(it, isShowCancelButton = false, confirmText = "OK", content = "Connected with Discord ID ${mViewModel.userInfo()?.discordGlobalName}")).show()
+                    }
+                }
                 return@setOnClickListener
             }
             context?.let {

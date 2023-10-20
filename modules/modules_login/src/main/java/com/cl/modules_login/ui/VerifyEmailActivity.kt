@@ -270,6 +270,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                             userRegisterBean
                         )
                         intent.putExtra(KEY_EMAIL_NAME, emailName)
+                        intent.putExtra(KEY_EMAIL_CODE, binding.codeView.code)
                         intent.putExtra(LoginActivity.KEY_SOURCE, thirdSource)
                         intent.putExtra(LoginActivity.KEY_THIRD_TOKEN, thirdToken)
                         startActivity(intent)
@@ -326,6 +327,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                             userRegisterBean
                         )
                         intent.putExtra(KEY_EMAIL_NAME, emailName)
+                        intent.putExtra(KEY_EMAIL_CODE, binding.codeView.code)
                         intent.putExtra(LoginActivity.KEY_SOURCE, thirdSource)
                         intent.putExtra(LoginActivity.KEY_THIRD_TOKEN, thirdToken)
                         startActivity(intent)
@@ -368,6 +370,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                             userRegisterBean
                         )
                         intent.putExtra(KEY_EMAIL_NAME, emailName)
+                        intent.putExtra(KEY_EMAIL_CODE, binding.codeView.code)
                         startActivity(intent)
                     }
 
@@ -427,5 +430,8 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
         // 邮箱
         const val KEY_EMAIL_NAME = "key_email_name"
+
+        // 验证码
+        const val KEY_EMAIL_CODE = "key_code"
     }
 }

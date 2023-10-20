@@ -153,4 +153,6 @@ dependencies {
     api(Deps.epMedia)
     // 图片压缩
     api(Deps.choosePhotoComproress)
+    // JWT解析
+    implementation("com.auth0.android:jwtdecode:2.0.2")
 }

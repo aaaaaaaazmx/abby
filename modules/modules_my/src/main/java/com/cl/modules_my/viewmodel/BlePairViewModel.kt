@@ -81,10 +81,6 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
 
     val listDRData = mutableListOf<BleDevice>()
 
-    private val scanStopMutableStateFlow = MutableStateFlow(false)
-
-    val scanStopStateFlow: StateFlow<Boolean> = scanStopMutableStateFlow.asStateFlow()
-
     private val refreshMutableStateFlow = MutableStateFlow(
         RefreshBleDevice(null, null)
     )
@@ -120,6 +116,10 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
         }
     }
 
+    // livedata 扫描
+    private val _scanLiveData = MutableLiveData<Boolean>()
+    val scanLiveData: LiveData<Boolean> = _scanLiveData
+
     /**
      * 扫描之后的回调
      */
@@ -127,7 +127,6 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
         return {
             onScanStart {
                 BleLogger.d("onScanStart")
-                scanStopMutableStateFlow.tryEmit(false)
             }
             onLeScan { bleDevice, _ ->
                 //可以根据currentScanCount是否已有清空列表数据
@@ -160,8 +159,8 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                 }
                 if (listDRData.isEmpty()) {
                     logI("BLe -> msg: 没有扫描到设备")
-                    // ToastUtil.shortShow("The device was not detected.")
-                    scanStopMutableStateFlow.tryEmit(true)
+                    ToastUtil.shortShow("The device was not detected.")
+                    _scanLiveData.value = true
                 }
             }
             onScanFail {
@@ -178,7 +177,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                 BleLogger.e(msg)
                 logI("BLe -> msg: $msg")
                 ToastUtil.shortShow(msg)
-                scanStopMutableStateFlow.tryEmit(true)
+                _scanLiveData.value = true
             }
         }
     }

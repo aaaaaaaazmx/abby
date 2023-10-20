@@ -17,7 +17,9 @@ import android.view.accessibility.AccessibilityManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.FileProvider
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -402,63 +404,59 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
 
     private fun bleListener() {
         lifecycleScope.launch {
-            viewModel.listLogStateFlow.collect {
-                hideProgressLoading()
-                // 解析当前特征值
-                val value = it.byteArray
-                value?.let { it1 ->
-                    parseValues(deCode(it1), time = it.time)
-                } ?: let { _ ->
-                    if (it.msg.contains("数据")) return@collect
-                    ToastUtil.shortShow(it.msg)
-                }
-            }
-        }
-
-
-        lifecycleScope.launch {
-            viewModel.scanStopStateFlow.collect {
-                // 扫描停止
-                hideProgressLoading()
-            }
-        }
-
-        // 扫描设备
-        /*lifecycleScope.launch {
-            viewModel.listDRStateFlow.collect {
-                // 扫描到的设备, 用于填充adapter
-                if (it.deviceName != null && it.deviceAddress != null) {
-                    if (it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME) {
-                        // 连接设备
-                        viewModel.connect(it)
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.listLogStateFlow.collect {
+                        hideProgressLoading()
+                        // 解析当前特征值
+                        val value = it.byteArray
+                        value?.let { it1 ->
+                            parseValues(deCode(it1), time = it.time)
+                        } ?: let { _ ->
+                            if (it.msg.contains("数据")) return@collect
+                            ToastUtil.shortShow(it.msg)
+                        }
                     }
                 }
-            }
-        }*/
 
-        // 连接成功回调
-        lifecycleScope.launch {
-            viewModel.refreshStateFlow.collect {
-                // 刷新设备，点击连接，成功与否。
-                delay(300)
-                hideProgressLoading()
-                it?.bleDevice?.let { bleDevice ->
-                    val isConnected = viewModel.isConnected(bleDevice)
-                    if (isConnected) {
-                        logI("BLe -> msg: 连接成功")
-                        // ToastUtil.shortShow("Connection successful.")
-                        indicatingIconChanged()
-                        // 有设备，那么就获取数据
-                        viewModel.setCurrentBleDevice(bleDevice)
-                        // 获取数据
-                        checkPermissionAndStartScan()
-                    } else {
-                        indicatingIconChanged()
-                        logI("BLe -> msg: 连接失败")
-                        // ToastUtil.shortShow("Connection failed.")
+                launch {
+                    lifecycleScope.launch {
+                        viewModel.scanStopStateFlow.collect {
+                            if (it) {
+                                // 扫描停止
+                                hideProgressLoading()
+                            }
+                        }
                     }
                 }
+
+                // 连接成功回调
+                launch {
+                    viewModel.refreshStateFlow.collect {
+                        // 刷新设备，点击连接，成功与否。
+                        delay(300)
+                        hideProgressLoading()
+                        it?.bleDevice?.let { bleDevice ->
+                            val isConnected = viewModel.isConnected(bleDevice)
+                            if (isConnected) {
+                                logI("BLe -> msg: 连接成功")
+                                // ToastUtil.shortShow("Connection successful.")
+                                indicatingIconChanged()
+                                // 有设备，那么就获取数据
+                                viewModel.setCurrentBleDevice(bleDevice)
+                                // 获取数据
+                                checkPermissionAndStartScan()
+                            } else {
+                                indicatingIconChanged()
+                                logI("BLe -> msg: 连接失败")
+                                // ToastUtil.shortShow("Connection failed.")
+                            }
+                        }
+                    }
+                }
+
             }
+
         }
     }
 
@@ -1025,7 +1023,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
         val tempHigh = decrypted[13].toInt() and 0xFF
         val tempLow = decrypted[14].toInt() and 0xFF
 
-        val ph = (phHigh shl 8) or phLow
+        val ph = ((phHigh shl 8) or phLow) / 100.0
         val ec = (ecHigh shl 8) or ecLow
         val tds = (tdsHigh shl 8) or tdsLow
         val temp = (tempHigh shl 8) or tempLow

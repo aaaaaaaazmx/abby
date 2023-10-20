@@ -63,7 +63,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     override fun initView() {
         ARouter.getInstance().inject(this) // 设置默认的账号
         binding.accountEditText.setText(mViewModel.account)
-
+        ServiceCreators.TokenCache.token = null
+        Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
         binding.passwordEditText.imeOptions = EditorInfo.IME_ACTION_DONE
         binding.passwordEditText.setOnEditorActionListener { v, actionId, event ->
             if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER) { // 调用Login
@@ -311,13 +312,41 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     }
 
     private fun login() { // 账号密码
+        if (BuildConfig.DEBUG) {
+            when(binding.accountEditText.text.toString()) {
+                "1" -> {
+                    binding.accountEditText.setText("xianlin.zhang@baypacclub.com")
+                    binding.passwordEditText.setText("zxl123456")
+                    login()
+                    return
+                }
+                "2" -> {
+                    binding.accountEditText.setText("448477235@qq.com")
+                    binding.passwordEditText.setText("zxl123456")
+                    login()
+                    return
+                }
+                "3" -> {
+                    binding.accountEditText.setText("286440803@qq.com")
+                    binding.passwordEditText.setText("lll000000")
+                    login()
+                    return
+                }
+                "4" -> {
+                    binding.accountEditText.setText("2192292392@qq.com")
+                    binding.passwordEditText.setText("lll000000")
+                    login()
+                    return
+                }
+            }
+        }
         val account = binding.accountEditText.text.toString()
         val password = binding.passwordEditText.text.toString() // 直接劝退
-        if (account.isNullOrEmpty()) {
+        if (account.isEmpty()) {
             ToastUtil.shortShow(getString(R.string.login_account_empty))
             return
         }
-        if (password.isNullOrEmpty()) {
+        if (password.isEmpty()) {
             ToastUtil.shortShow(getString(R.string.login_password_empty))
             return
         }
@@ -336,11 +365,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         val account = binding.accountEditText.text.toString()
         val password = binding.passwordEditText.text.toString() // 直接劝退
         // 直接劝退
-        if (account.isNullOrEmpty()) {
+        if (account.isEmpty()) {
             ToastUtil.shortShow("Account cannot be empty")
             return
         }
-        if (password.isNullOrEmpty()) {
+        if (password.isEmpty()) {
             ToastUtil.shortShow("Password cannot be empty")
             return
         }

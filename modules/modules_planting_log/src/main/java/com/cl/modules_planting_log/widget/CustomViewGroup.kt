@@ -258,8 +258,12 @@ class CustomViewGroup : LinearLayout {
         if (tags == tag) {
             if (editText1?.inputType == InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL) {
                 editText1?.setText(text?.toDoubleOrNull()?.toString() ?: "")
+                // 将光标设置到文本的末尾
+                editText1?.setSelection(editText1?.text.toString().length)
             } else {
                 editText1?.setText(text)
+                // 将光标设置到文本的末尾
+                editText1?.setSelection(editText1?.text.toString().length)
             }
         }
 
