@@ -2,11 +2,13 @@ package com.cl.common_base.init
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import androidx.startup.Initializer
-import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bhm.ble.BleManager
 import com.bhm.ble.attribute.BleOptions
+import com.bhm.demo.util.JavaAirBagConfig
+import com.cl.common_base.util.crash.StabilityOptimize
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.help.BleConnectHandler
@@ -65,6 +67,11 @@ class AppInitializer : Initializer<Unit> {
                     // .setConnectRetryCountAndInterval(2, 1000) // 掉线不重连
                     .build()
             )
+        }
+
+        // crash兜底
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+            StabilityOptimize.setUpJavaAirBag(mutableListOf<JavaAirBagConfig>().toList())
         }
 
         return Unit
