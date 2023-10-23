@@ -62,7 +62,7 @@ class TuYaDeviceConstants {
         const val KEY_DEVICE_CHILD_LOCK = "142"
 
         // 夜间模式
-        const val KEY_DEVICE_NIGHT_MODE = "141"
+        const val KEY_DEVICE_NIGHT_MODE = "133"
 
         // 风干期开门迎宾模式打开
         const val KEY_DEVICE_FAN_ENABLE = "132"
@@ -83,7 +83,7 @@ class TuYaDeviceConstants {
         const val KEY_DEVICE_INTAKE = "115"
 
         // 静音模式
-        const val KEY_DEVICE_SILENT_MODE = "141"
+        const val KEY_DEVICE_SILENT_MODE = "133"
 
         // 设备开关
         const val KEY_DEVICE_SWITCH = "1"

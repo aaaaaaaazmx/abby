@@ -1,6 +1,8 @@
 package com.cl.common_base.bean
 
 import androidx.annotation.Keep
+import com.cl.common_base.ext.DateHelper
+import com.thingclips.smart.home.sdk.bean.LightningSearchBean
 
 @Keep
 data class UserinfoBean(
@@ -28,7 +30,7 @@ data class UserinfoBean(
     val plantDays: String? = null,
     val growBoxCount: String? = null,
     val harvestCount: String? = null,
-    val spaceType: String? = null,
+    val spaceType: String? = ListDeviceBean.KEY_SPACE_TYPE_BOX,
     val notBound: Int? = null, // 1 是绑定过、其他都是未绑定过
     val newMessage: Boolean? = false,
     val nightMode: Int? = null,
@@ -40,6 +42,7 @@ data class UserinfoBean(
     val wallId: Int? = null,
     val externalId: String? = null,
     val inchMetricMode: String? = null,
+    val discordGlobalName: String? = null,
     // val easemobPassword: String? = null,
     // val easemobUserName: String? = null,
 ) : BaseBean() {
@@ -80,6 +83,7 @@ data class UserinfoBean(
         val tuyaUserId: String? = null,
         val tuyaUserType: String? = null,
         val notBound: Int? = null,
-        val spaceType: String? = null,
+        val spaceType: String? = ListDeviceBean.KEY_SPACE_TYPE_BOX,
+        val discordGlobalName: String? = null,
     ) : BaseBean()
 }

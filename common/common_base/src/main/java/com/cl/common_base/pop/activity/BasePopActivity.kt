@@ -204,7 +204,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             mViewModel.startRunning(botanyId = "", goon = false)
                         } else { // 解锁接口
                             mViewModel.finishTask(FinishTaskReq(taskId = unLockId))
-                            mViewModel.tuYaUser?.uid?.let { it1 -> mViewModel.checkPlant(it1) }
+                            mViewModel.checkPlant()
                         }
                     }
 

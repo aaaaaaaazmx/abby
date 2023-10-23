@@ -9,5 +9,5 @@ import com.cl.common_base.BaseBean
  */
 data class LiveDataDeviceInfoBean(
     var deviceId: String?= null,
-    var spaceType: String? = null,
+    var spaceType: String? = ListDeviceBean.KEY_SPACE_TYPE_BOX,
 ): BaseBean()

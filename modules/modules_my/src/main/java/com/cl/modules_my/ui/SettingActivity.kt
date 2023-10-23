@@ -454,7 +454,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()*/
 
-                    tuYaUser?.uid?.let { mViewModel.checkPlant(it) }
+                    mViewModel.checkPlant()
                 }
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
@@ -473,7 +473,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
 
                 success {
-                    tuYaUser?.uid?.let { mViewModel.checkPlant(it) }
+                    mViewModel.checkPlant()
                 }
             })
             // 检查植物
@@ -765,7 +765,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .nightMode("muteOn:00,muteOff:00")
+                    .nightMode("lightOn:00,lightOff:00")
             } else {
                 DeviceControl.get()
                     .success {
@@ -780,7 +780,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .nightMode("muteOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},muteOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}")
+                    .nightMode("lightOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},lightOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}")
             }
 
             // 调用接口更新后台夜间模式
@@ -815,9 +815,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             .success {
                                 // "141":"muteOn:10,muteOff:22"
                                 logI(
-                                    "123312313: muteOn:${
+                                    "123312313: lightOn:${
                                         timeOn.toString().padStart(2, '0')
-                                    },muteOff:${timeOff.toString().padStart(2, '0')}"
+                                    },lightOff:${timeOff.toString().padStart(2, '0')}"
                                 )
                             }
                             .error { code, error ->
@@ -830,9 +830,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 )
                             }
                             .nightMode(
-                                "muteOn:${
+                                "lightOn:${
                                     if (timeOn == 12) 24 else timeOn.toString().padStart(2, '0')
-                                },muteOff:${
+                                },lightOff:${
                                     if (timeOff == 24) 12 else timeOff.toString().padStart(2, '0')
                                 }"
                             )

@@ -11,6 +11,7 @@ import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
@@ -23,9 +24,8 @@ import com.cl.common_base.widget.scroll.behavior.BehavioralScrollListener
 import com.cl.common_base.widget.scroll.behavior.BehavioralScrollView
 import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyNewFragmentBinding
-import com.cl.modules_my.ui.DeviceListActivity
+import com.cl.modules_my.pop.MyDiscordPop
 import com.cl.modules_my.ui.FeedbackActivity
 import com.cl.modules_my.ui.OxygenListActivity
 import com.cl.modules_my.ui.ProfileActivity
@@ -58,6 +58,10 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
     override fun onResume() {
         super.onResume()
         mViewModel.userDetail()
+        /*if (discordPop?.isShow == true) {
+            // XPopup当前是显示状态，执行你想要的操作
+            discordPop?.setQueryBind()
+        }*/
     }
 
     override fun lazyLoad() {
@@ -65,6 +69,17 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         mViewModel.userDetail()
 
         initCllick()
+    }
+
+
+    private val discordPop by lazy {
+        context?.let {
+            activity?.let { it1 ->
+                MyDiscordPop(it, it1) { email, code ->
+                    logI("email: $email, code: $code")
+                }
+            }
+        }
     }
 
     private fun initCllick() {
@@ -98,8 +113,29 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
             InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.HelpCenter)
         }
 
+        binding.ftDiscord.setOnClickListener {
+            if (!mViewModel.userInfo()?.discordGlobalName.isNullOrEmpty()) {
+                context?.let {
+                    xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(BaseCenterPop(it, isShowCancelButton = false, confirmText = "OK", content = "Connected with Discord ID ${mViewModel.userInfo()?.discordGlobalName}")).show()
+                    }
+                }
+                return@setOnClickListener
+            }
+            context?.let {
+                xpopup(it) {
+                    isDestroyOnDismiss(false)
+                    dismissOnTouchOutside(false)
+                    asCustom(discordPop).show()
+                }
+            }
+        }
+
         binding.ftSetting.setOnClickListener {
-            if (mViewModel.userDetail.value?.data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+            // 改为缓存
+            if (mViewModel.userInfo()?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                 context?.let { ct ->
                     xpopup(ct) {
                         isDestroyOnDismiss(false)
@@ -121,6 +157,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                 }
                 return@setOnClickListener
             }
+
             startActivity(Intent(context, SettingActivity::class.java))
         }
         binding.ftOxy.setOnClickListener {

@@ -179,6 +179,17 @@ object Constants {
         const val KEY_BLE_STATE = "key_ble_state"
         const val KEY_BLE_OFF = "key_ble_off"
         const val KEY_BLE_ON = "key_ble_on"
+        // 蓝牙类型
+        const val KEY_BLE_TYPE = "key_ble_type"
+        const val TYPE_PH = "type_ph"
+        // 蓝牙最大连接数量
+        const val KEY_BLE_MAX_CONNECT = 2
+        // 是否是第一次绑定
+        const val KEY_BLE_IS_FIRST_BIND = "key_ble_is_first_bind"
+
+        // 蓝牙笔的特征值，基于这个特征值的UUID来读数据和写数据
+        const val KEY_BLE_PH_CHARACTERISTIC_UUID = "0000ff02-0000-1000-8000-00805f9b34fb"
+        const val KEY_PH_DEVICE_NAME = "BLE-9908"
     }
 
     /**

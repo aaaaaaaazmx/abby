@@ -29,4 +29,5 @@ data class AutomaticLoginData(
     var timeZone: String? = DateHelper.getTimeZOneNumber().toString(),
     val userId: String? = null,
     val externalId: String? = null,
+    val discordGlobalName: String? = null,
     ) : Serializable

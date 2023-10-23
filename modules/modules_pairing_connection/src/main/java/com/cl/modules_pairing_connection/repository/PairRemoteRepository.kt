@@ -22,8 +22,8 @@ class PairRemoteRepository @Inject constructor() {
         return service.bindDevice(deviceId, deviceUuid)
     }
 
-    fun checkPlant(body: String): Flow<HttpResult<CheckPlantData>> {
-        return service.checkPlant(body)
+    fun checkPlant(deviceUuid: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return service.checkPlant(deviceUuid)
     }
 
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {

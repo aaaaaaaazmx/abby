@@ -51,7 +51,7 @@ interface BaseApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/check")
-    fun checkPlant(@Field("deviceUuid") body: String): Flow<HttpResult<CheckPlantData>>
+    fun checkPlant(@Field("deviceUuid") body: String? = ""): Flow<HttpResult<CheckPlantData>>
 
     @POST("abby/plant/intoPlantBasket")
     fun intoPlantBasket(): Flow<HttpResult<BaseBean>>
@@ -119,4 +119,16 @@ interface BaseApiService {
     @FormUrlEncoded
     @POST("abby/plant/unlockNow")
     fun unlockNow(@Field("plantId")deviceId: String): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取DisCord的token连接
+     */
+    @GET("abby/discord/authorizeLink")
+    fun authorizeLink(): Flow<HttpResult<String>>
+
+    /**
+     * 是否绑定成功
+     */
+    @GET("abby/discord/isBind")
+    fun isBind(): Flow<HttpResult<Boolean>>
 }

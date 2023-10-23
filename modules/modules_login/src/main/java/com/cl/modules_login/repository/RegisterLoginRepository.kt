@@ -70,8 +70,8 @@ class RegisterLoginRepository @Inject constructor(private var remoteRepository: 
     /**
      * 检查用户是否种植过植物
      */
-    fun checkPlant(body: String): Flow<HttpResult<CheckPlantData>> {
-        return remoteRepository.checkPlant(body)
+    fun checkPlant(device: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return remoteRepository.checkPlant(device)
     }
 
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {

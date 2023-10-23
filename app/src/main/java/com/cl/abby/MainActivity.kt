@@ -1,6 +1,7 @@
 package com.cl.abby
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -14,6 +15,8 @@ import androidx.fragment.app.FragmentTransaction
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.bhm.ble.BleManager
+import com.bhm.ble.attribute.BleOptions
 import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.abby.viewmodel.MainViewModel
 import com.cl.common_base.base.BaseActivity
@@ -28,6 +31,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.ui.PhPairActivity
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.lxj.xpopup.XPopup
@@ -88,6 +92,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var plantingLogFragment: Fragment? = null
     private var contactFragment: Fragment? = null
     private var myFragment: Fragment? = null
+
+    // 第一次也就是新用户进入的时候，显示的界面
+    private var firstJoinInFragment: Fragment? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -152,6 +159,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             LayoutInflater.from(this).inflate(R.layout.layout_badge_view, menuView, false)
         badgeView
     }
+
     override fun onResume() {
         super.onResume()
         // logI("1111: ${(userInfo.invoke())?.deviceStatus == "1"}")
@@ -407,17 +415,34 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     Constants.Global.KEY_MANUAL_MODE,
                     manualMode
                 )
-                // todo 跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
-                // todo RouterPath.Home.PAGE_HOME 种植引导页面
-                homeFragment?.let {
-                    it.arguments = bundle
-                    transaction.show(it)
-                } ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.Home.PAGE_HOME).navigation()?.let {
-                        homeFragment = it as Fragment
-                        homeFragment?.let { fragment ->
-                            fragment.arguments = bundle
-                            transaction.add(R.id.container, fragment, null)
+
+                // 第一次进入的界面、或者没绑定过设备
+                if (mViewModel.userinfoBean?.deviceId.isNullOrEmpty() || firstLoginAndNoDevice) {
+                    firstJoinInFragment?.let {
+                        it.arguments = bundle
+                        transaction.show(it)
+                    } ?: kotlin.run {
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_FIRST_JOIN).navigation()?.let {
+                            firstJoinInFragment = it as Fragment
+                            firstJoinInFragment?.let { fragment ->
+                                fragment.arguments = bundle
+                                transaction.add(R.id.container, fragment, null)
+                            }
+                        }
+                    }
+                } else {
+                    //  跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
+                    //  RouterPath.Home.PAGE_HOME 种植引导页面
+                    homeFragment?.let {
+                        it.arguments = bundle
+                        transaction.show(it)
+                    } ?: kotlin.run {
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_HOME).navigation()?.let {
+                            homeFragment = it as Fragment
+                            homeFragment?.let { fragment ->
+                                fragment.arguments = bundle
+                                transaction.add(R.id.container, fragment, null)
+                            }
                         }
                     }
                 }
@@ -462,6 +487,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun hideFragment(transaction: FragmentTransaction) {
+        firstJoinInFragment?.let { transaction.hide(it) }
         homeFragment?.let { transaction.hide(it) }
         contactFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
@@ -471,6 +497,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun recreate() {
         kotlin.runCatching {
             val fragmentTransaction = supportFragmentManager.beginTransaction()
+            firstJoinInFragment?.let {
+                fragmentTransaction.remove(it)
+            }
             homeFragment?.let {
                 fragmentTransaction.remove(it)
             }
@@ -501,6 +530,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         super.onDestroy()
         // 注销InterCome
         InterComeHelp.INSTANCE.logout()
+        // BleManager.get().closeAll()
     }
 
     override fun inAppInfoChange(status: String) {

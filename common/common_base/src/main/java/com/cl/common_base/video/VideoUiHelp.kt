@@ -39,7 +39,8 @@ fun SampleCoverVideo.videoUiHelp(url: String, tag: Int? = -1) {
     setIsTouchWiget(false)
     // 暂停状态下显示封面
     isShowPauseCover = true
-
+    // 点击封面可以播放
+    setThumbPlay(true)
     /* 新的 */
     //设置全屏按键功能
     fullscreenButton.setOnClickListener { resolveFullBtn(context, this, orientationUtils) }
@@ -127,15 +128,17 @@ private fun onQuitFullscreenn() {
 }
 
 private fun onAutoCompletee() {
-    orientationUtils?.isEnable = false
-    orientationUtils?.releaseListener()
-    orientationUtils = null
+    /* orientationUtils?.isEnable = false
+     orientationUtils?.releaseListener()
+     orientationUtils = null*/
     // isPlay = false
 }
 
 var orientationUtils: OrientationUtils? = null
 private fun initOrientationUtils(standardGSYVideoPlayer: StandardGSYVideoPlayer, full: Boolean, context: Context) {
-    orientationUtils = OrientationUtils(context as Activity?, standardGSYVideoPlayer)
+    if (orientationUtils == null) {
+        orientationUtils = OrientationUtils(context as Activity?, standardGSYVideoPlayer)
+    }
     //是否需要跟随系统旋转设置
     //orientationUtils.setRotateWithSystem(false);
     orientationUtils?.isEnable = false

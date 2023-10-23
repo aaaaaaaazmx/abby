@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="data"
+            type="com.cl.common_base.bean.ListDeviceBean" />
+
+        <variable
+            name="adapter"
+            type="com.cl.modules_my.adapter.DeviceListAdapter" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginBottom="24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:id="@+id/cl_device"
+            android:layout_marginTop="13dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@drawable/background_white_r6"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <ImageView
+                url="@{data.picture}"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@mipmap/my_night_model"
+                android:id="@+id/iv_icon"
+                android:layout_width="32dp"
+                android:layout_height="35dp"/>
+
+            <TextView
+                android:text="@{String.valueOf(data.deviceName)}"
+                android:textStyle="bold"
+                android:layout_marginStart="17.8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/mainColor"
+                android:textSize="11sp"
+                tools:text="Smart humidifier"
+                android:id="@+id/tv_device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+
+            <RelativeLayout
+                android:id="@+id/rl_ble_status"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_pair_luosi"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="75dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:padding="2dp"
+                    android:id="@+id/tv_ble_status"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_marginEnd="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/iv_pair_luosi"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@mipmap/my_luosi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

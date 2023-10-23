@@ -6,6 +6,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
@@ -72,7 +73,7 @@ class CustomViewGroupAdapter(
 
     // 这个是根据选择的logType来对应的下面的可选列表，目前写死。
     // key 是对应 后台返回LogTypeListDataItem类里面的showUiText字段
-    val chooseTypedData = mapOf(
+    private val chooseTypedData = mapOf(
         LogSaveOrUpdateReq.KEY_LOG_TYPE_WATER_TYPE to mutableListOf(
             LogTypeListDataItem("Purified", "Purified", false),
             LogTypeListDataItem("Distilled", "Distilled", false),
@@ -129,6 +130,7 @@ class CustomViewGroupAdapter(
             holder.customViewGroup.setEditText1HintText(attributes?.hintDescription)
             holder.customViewGroup.setTextView2Text(attributes?.unit)
             holder.customViewGroup.setTextView2Visibility(!attributes?.unit.isNullOrBlank())
+            holder.customViewGroup.setRefreshIconVisibility(attributes?.isShowRefreshIcon == true, attributes?.isConnect == true)
             chooseTypedData[fields[position]]?.let { list ->
                 val updatedList = list.map { item ->
                     item.copy(isSelected = item.showUiText == data[position])
@@ -168,7 +170,6 @@ class CustomViewGroupAdapter(
 
     // 开关灯时间
     private var turnOnHour: Int? = null
-    private var turnOffHour: Int? = null
 
     /**
      * EditText的点击事件
@@ -201,36 +202,37 @@ class CustomViewGroupAdapter(
                 val matchResult = pattern.matchEntire(currentOnTime)
                 if (matchResult != null) {
                     val (housr, minute, amPm) = matchResult.destructured  // 使用解构声明来获取组的值
+                    logI("Hour: $housr")
+                    logI("Minute: $minute")
+                    logI("AM/PM: $amPm")
                     turnOnHour = housr.safeToInt()
                     if (amPm == "PM") {
                         turnOnHour = (turnOnHour ?: 0) + 12
                     }
-                    xpopup(context) {
-                        asCustom(
-                            TimePickerPop(context, onConfirmAction = { time, timeMis ->
-                                runCatching {
-                                    // 返回的是24小时制度。
-                                    val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
-
-                                    if (hour > 12) {
-                                        editText.setText("${hour - 12}:00 PM")
-                                    } else if (hour < 12) {
-                                        editText.setText("${hour}:00 AM")
-                                    } else if (hour == 12) {
-                                        editText.setText("12:00 AM")
-                                    }
-                                    turnOnHour = hour
-                                    logI("123123: $turnOnHour")
-                                }
-
-                            }, chooseTime = turnOnHour ?: 12)
-                        ).show()
-                    }
-                    logI("Hour: $housr")
-                    logI("Minute: $minute")
-                    logI("AM/PM: $amPm")
                 } else {
                     logI("The time string does not match the expected format.")
+                    turnOnHour = 12
+                }
+                xpopup(context) {
+                    asCustom(
+                        TimePickerPop(context, onConfirmAction = { time, timeMis ->
+                            runCatching {
+                                // 返回的是24小时制度。
+                                val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
+
+                                if (hour > 12) {
+                                    editText.setText("${hour - 12}:00 PM")
+                                } else if (hour < 12) {
+                                    editText.setText("${hour}:00 AM")
+                                } else if (hour == 12) {
+                                    editText.setText("12:00 AM")
+                                }
+                                turnOnHour = hour
+                                logI("123123: $turnOnHour")
+                            }
+
+                        }, chooseTime = turnOnHour ?: 12)
+                    ).show()
                 }
             }
 
@@ -246,32 +248,33 @@ class CustomViewGroupAdapter(
                     if (amPm == "PM") {
                         turnOnHour = (turnOnHour ?: 0) + 12
                     }
-                    xpopup(context) {
-                        asCustom(
-                            TimePickerPop(context, onConfirmAction = { time, timeMis ->
-                                runCatching {
-                                    // 返回的是24小时制度。
-                                    val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
-
-                                    if (hour > 12) {
-                                        editText.setText("${hour - 12}:00 PM")
-                                    } else if (hour < 12) {
-                                        editText.setText("${hour}:00 AM")
-                                    } else if (hour == 12) {
-                                        editText.setText("12:00 AM")
-                                    }
-                                    turnOnHour = hour
-                                    logI("123123: $turnOnHour")
-                                }
-
-                            }, chooseTime = turnOnHour ?: 12)
-                        ).show()
-                    }
                     logI("Hour: $housr")
                     logI("Minute: $minute")
                     logI("AM/PM: $amPm")
                 } else {
                     logI("The time string does not match the expected format.")
+                    turnOnHour = 12
+                }
+                xpopup(context) {
+                    asCustom(
+                        TimePickerPop(context, onConfirmAction = { time, timeMis ->
+                            runCatching {
+                                // 返回的是24小时制度。
+                                val hour = if (time.safeToInt() == 0) 12 else time.safeToInt()
+
+                                if (hour > 12) {
+                                    editText.setText("${hour - 12}:00 PM")
+                                } else if (hour < 12) {
+                                    editText.setText("${hour}:00 AM")
+                                } else if (hour == 12) {
+                                    editText.setText("12:00 AM")
+                                }
+                                turnOnHour = hour
+                                logI("123123: $turnOnHour")
+                            }
+
+                        }, chooseTime = turnOnHour ?: 12)
+                    ).show()
                 }
             }
 
@@ -292,47 +295,70 @@ class CustomViewGroupAdapter(
         }
     }
 
+
+    /**
+     * 刷新按钮的点击事件
+     */
+    override fun onRefreshData(position: Int, imageview: ImageView, customViewGroup: CustomViewGroup) {
+        when (fields[position]) {
+            LogSaveOrUpdateReq.KEY_LOG_PH -> {
+                // 点击Ph按钮时，需要刷新当前的Ph、tds、ec值
+                interFaceEditTextValueChangeListener?.onRefreshData(position, imageview, customViewGroup)
+            }
+
+            else -> {}
+        }
+    }
+
     /**
      * 外部处理interFaceEditTextValueChangeListener回调时调用的设置单个数据的方法
      */
-    fun setData(position: Int, editText: EditText, inputData: String) {
-        when (fields[position]) {
-            LogSaveOrUpdateReq.KEY_LOG_TYPE -> {
-                editText.setText(inputData)
-                data[position] = inputData
+    fun setData(position: Int, inputData: String) {
+        runCatching {
+            when (fields[position]) {
+                LogSaveOrUpdateReq.KEY_LOG_PH,
+                LogSaveOrUpdateReq.KEY_LOG_TDS,
+                LogSaveOrUpdateReq.KEY_LOG_EC -> {
+                    data[position] = inputData
+                    notifyItemChanged(position)
+                }
             }
         }
 
     }
 
     fun setData(logData: LogSaveOrUpdateReq) {
-        // 使用反射设置对应的值
-        fields.forEachIndexed { index, field ->
-            val declaredFiled = logData::class.java.getDeclaredField(field)
-            declaredFiled.isAccessible = true
-            val value = declaredFiled.get(logData)?.toString()
-            data[index] = value ?: ""
+        runCatching {
+            // 使用反射设置对应的值
+            fields.forEachIndexed { index, field ->
+                val declaredFiled = logData::class.java.getDeclaredField(field)
+                declaredFiled.isAccessible = true
+                val value = declaredFiled.get(logData)?.toString()
+                data[index] = value ?: ""
+            }
+            notifyDataSetChanged()
         }
-        notifyDataSetChanged()
     }
 
     // 提供方法获取数据并填充到LogData对象
     // 提供方法获取数据并填充到LogData对象
     fun getLogData(): LogSaveOrUpdateReq {
-        val logData = LogSaveOrUpdateReq()
-        fields.forEachIndexed { index, field ->
-            val declaredFiled = logData::class.java.getDeclaredField(field)
-            declaredFiled.isAccessible = true
-            when (field) {
-                // 用户选择了时间，可能会返回字符串
-                LogSaveOrUpdateReq.KEY_LOG_TIME -> {
-                    declaredFiled.set(logData, DateHelper.formatToLong(data[index], KEY_FORMAT_TIME).toString())
-                }
+        return runCatching {
+            val logData = LogSaveOrUpdateReq()
+            fields.forEachIndexed { index, field ->
+                val declaredFiled = logData::class.java.getDeclaredField(field)
+                declaredFiled.isAccessible = true
+                when (field) {
+                    // 用户选择了时间，可能会返回字符串
+                    LogSaveOrUpdateReq.KEY_LOG_TIME -> {
+                        declaredFiled.set(logData, DateHelper.formatToLong(data[index], KEY_FORMAT_TIME).toString())
+                    }
 
-                else -> declaredFiled.set(logData, data[index])
+                    else -> declaredFiled.set(logData, data[index])
+                }
             }
-        }
-        return logData
+            logData
+        }.getOrElse { LogSaveOrUpdateReq() }
     }
 
     class ViewHolder(val binding: PlantingCustomViewGroupItemBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -369,6 +395,8 @@ class CustomViewGroupAdapter(
 interface EditTextValueChangeListener {
     fun onValueChanged(position: Int, newValue: String)
     fun onEditTextClick(position: Int, editText: EditText, customViewGroup: CustomViewGroup)
+
+    fun onRefreshData(position: Int, imageview: ImageView, customViewGroup: CustomViewGroup)
 }
 
 interface ShowOrHideTypeChangListener {

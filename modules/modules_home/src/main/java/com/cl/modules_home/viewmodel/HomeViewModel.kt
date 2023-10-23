@@ -1214,7 +1214,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 )
             } else {
                 // 检查是否种植过
-                tuYaUser?.uid?.let { uid -> checkPlant(uid) }
+                checkPlant()
                 Resource.Success(it.data)
             }
         }.flowOn(Dispatchers.IO).onStart {
@@ -1236,8 +1236,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    fun checkPlant(uuid: String) = viewModelScope.launch {
-        repository.checkPlant(uuid).map {
+    fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant().map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg
@@ -2015,7 +2015,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         val isShowCamera = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
 
         listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-            ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }.apply {
+            ?.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }.apply {
                 if (this == null) {
                     isHaveACamera.invoke(false, isShowCamera, "", "")
                 } else {

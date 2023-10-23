@@ -6,6 +6,7 @@ import android.content.Intent
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpdateInfoReq
@@ -33,6 +34,7 @@ import javax.inject.Inject
  *
  * 添加帐篷设置界面
  */
+@Route(path = RouterPath.My.PAGE_ADD_TENT)
 @AndroidEntryPoint
 class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
 

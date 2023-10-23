@@ -60,8 +60,8 @@ class MyRemoteRepository @Inject constructor() {
         return service.plantDelete(uuid)
     }
 
-    fun checkPlant(uuid: String): Flow<HttpResult<CheckPlantData>> {
-        return service.checkPlant(uuid)
+    fun checkPlant(deviceSn: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return service.checkPlant(deviceSn)
     }
 
     fun getAppVersion(): Flow<HttpResult<AppVersionData>> {
@@ -177,6 +177,10 @@ class MyRemoteRepository @Inject constructor() {
         return service.deleteAutomation(automationId)
     }
 
+    fun accessoryAdd(automationId: String, deviceId: String, accessoryDeviceId: String? = null): Flow<HttpResult<AccessoryAddData>> {
+        return service.accessoryAdd(automationId, deviceId, accessoryDeviceId)
+    }
+
     fun configuationExecuteRule(req: ConfiguationExecuteRuleReq): Flow<HttpResult<BaseBean>> {
         return service.configuationExecuteRule(req)
     }
@@ -224,5 +228,9 @@ class MyRemoteRepository @Inject constructor() {
 
     fun getStrainName(strainName: String): Flow<HttpResult<MutableList<String>>> {
         return service.getStrainName(strainName)
+    }
+
+    fun getSystemConfig(strainName: String): Flow<HttpResult<MutableList<SystemConfigBeanItem>>> {
+        return service.getSystemConfig(strainName)
     }
 }

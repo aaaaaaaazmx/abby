@@ -122,8 +122,8 @@ class CloneAndReplantViewModel @Inject constructor(private val repository: MyRep
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    fun checkPlant(uuid: String) = viewModelScope.launch {
-        repository.checkPlant(uuid)
+    fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant()
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(

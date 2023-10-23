@@ -120,6 +120,7 @@ dependencies {
     /*api(project(mapOf("path" to ":common:kefu-easeui")))*/
     api(project(mapOf("path" to ":common:ipc")))
     api(project(mapOf("path" to ":common:mylibrary")))
+    api(project(mapOf("path" to ":common:ble")))
     // lottie
     api(Deps.lottie)
     // viewPager指示器
@@ -152,4 +153,6 @@ dependencies {
     api(Deps.epMedia)
     // 图片压缩
     api(Deps.choosePhotoComproress)
+    // JWT解析
+    implementation("com.auth0.android:jwtdecode:2.0.2")
 }

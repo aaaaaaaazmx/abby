@@ -51,8 +51,8 @@ class RegisterLoginRemoteRepository @Inject constructor() {
         return service.updatePwd(body)
     }
 
-    fun checkPlant(body: String): Flow<HttpResult<CheckPlantData>> {
-        return service.checkPlant(body)
+    fun checkPlant(device: String? = ""): Flow<HttpResult<CheckPlantData>> {
+        return service.checkPlant(device)
     }
 
     fun userDetail(): Flow<HttpResult<UserinfoBean.BasicUserBean>> {

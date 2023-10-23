@@ -25,6 +25,7 @@
             tools:ignore="MissingConstraints">
 
             <TextView
+                android:labelFor="@+id/editText1"
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,6 +41,19 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="textView1textView1textView1" />
+
+            <ImageView
+                android:contentDescription="refresh ph"
+                android:visibility="gone"
+                android:layout_marginStart="5dp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView1"
+                app:layout_constraintTop_toTopOf="@+id/textView1"
+                app:layout_constraintStart_toEndOf="@+id/textView1"
+                android:id="@+id/iv_refresh"
+                android:background="@mipmap/plant_log_refresh"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                 />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/frame1"

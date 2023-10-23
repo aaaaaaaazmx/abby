@@ -24,6 +24,9 @@
 #保持bean类不被混淆
 -keep public class cn.mtjsoft.barcodescanning.**{*;}
 
+#保持蓝牙相关的类不被混淆
+-keep public class com.bhm.ble.**{*;}
+
 # 涂鸦下面的ipc的所有类
 -keep public class com.tuya.smart.android.demo.camera.**{*;}
 

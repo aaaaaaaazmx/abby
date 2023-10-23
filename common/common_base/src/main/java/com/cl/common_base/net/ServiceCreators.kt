@@ -46,11 +46,11 @@ object ServiceCreators {
         .readTimeout(5, TimeUnit.SECONDS)
         .writeTimeout(5, TimeUnit.SECONDS)
         .retryOnConnectionFailure(true)
-        .addInterceptor(TokenInterceptor())
-        .addInterceptor(MultiBaseUrlInterceptor())
-        .addInterceptor(LoggingInterceptor())
         .addInterceptor(AddHeadInterceptor())
-        .addInterceptor(BasicParamsInterceptor())
+        .addInterceptor(TokenInterceptor())
+        //.addInterceptor(MultiBaseUrlInterceptor())
+        .addInterceptor(LoggingInterceptor())
+        //.addInterceptor(BasicParamsInterceptor())
         /*.hostnameVerifier { hostname, session ->
             // 信任主机
             // 也可以使用DNS优化政策

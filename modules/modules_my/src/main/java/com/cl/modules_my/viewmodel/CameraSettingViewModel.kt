@@ -1,6 +1,5 @@
 package com.cl.modules_my.viewmodel
 
-import android.app.Presentation
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,14 +15,12 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.repository.AccessoryListBean
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
 import com.thingclips.smart.sdk.api.IResultCallback
-import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -196,8 +193,8 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
     val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
-    fun checkPlant(uuid: String) = viewModelScope.launch {
-        repository.checkPlant(uuid)
+    fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant()
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(

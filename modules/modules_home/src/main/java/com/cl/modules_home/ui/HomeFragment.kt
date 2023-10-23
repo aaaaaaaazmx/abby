@@ -185,8 +185,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private fun startCountDownJob() {
         if (mViewMode.shouldRunJob.value == false) return
 
-        job = mViewMode.countDownCoroutines(10 * 6 * 500000, lifecycleScope, onTick = {
-            lifecycleScope.launch(Dispatchers.IO) {
+        job = mViewMode.countDownCoroutines(10 * 6 * 500000, viewLifecycleOwner.lifecycleScope, onTick = {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     if (it % 30 == 0) {
                         // 表示过了30秒
@@ -459,13 +459,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     private fun firstLoginViewVisibile() {
-        ViewUtils.setVisible(binding.bindDevice.root)
+       /* ViewUtils.setVisible(binding.bindDevice.root)
         ViewUtils.setGone(binding.plantOffLine.root)
         ViewUtils.setGone(binding.clRoot)
 
         // 如果是第一次、也从未绑定过设备、显示出气泡
         ViewUtils.setVisible(binding.bindDevice.tvScan)
-        ViewUtils.setGone(binding.bindDevice.clContinue, binding.bindDevice.connectDevice)
+        ViewUtils.setGone(binding.bindDevice.clContinue, binding.bindDevice.connectDevice)*/
+
+        //
+        mViewMode.checkPlant()
     }
 
     /**
@@ -725,7 +728,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 val cameraAccessory =
                     mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                        ?.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }
                 // 跳转到IPC界面
                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(
                     it.context,
@@ -934,7 +937,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 val cameraAccessory =
                     mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                        ?.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" }
+                        ?.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }
                 // 跳转到IPC界面
                 com.cl.common_base.util.ipc.CameraUtils.ipcProcess(
                     it.context,
@@ -2090,15 +2093,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             childLockStatus.observe(viewLifecycleOwner) {
-                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}")
+                logI("123123333: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable()}")
                 ViewUtils.setVisible(
-                    mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false,
+                    mViewMode.isShowDoorDrawable(),
                     binding.pplantNinth.ivDoorLockStatus
+                )
+                binding.pplantNinth.ivDoorLockStatus.setImageResource(
+                    if (it == "true") {
+                        R.drawable.home_plant_close_door
+                    } else {
+                        R.drawable.home_plant_open_door
+                    }
                 )
             }
             openDoorStatus.observe(viewLifecycleOwner) {
+                logI("123123: $it,,,, ${mViewMode.thingDeviceBean()?.devId}, ${mViewMode.isShowDoorDrawable()}")
                 ViewUtils.setVisible(
-                    mViewMode.isShowDoorDrawable() && mViewMode.isZp.value == false,
+                    mViewMode.isShowDoorDrawable(),
                     binding.pplantNinth.ivDoorLockStatus
                 )
                 binding.pplantNinth.ivDoorLockStatus.setImageResource(
@@ -2133,7 +2144,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
                             // 是否显示摄像头
                             val isCameraVisible =
-                                device.accessoryList?.firstOrNull { it.accessoryName == "Smart Camera" } != null
+                                device.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA } != null
                             ViewUtils.setVisible(isCameraVisible, binding.pplantNinth.ivCamera)
                             ViewUtils.setVisible(isCameraVisible, binding.plantManual.ivCamera)
 
@@ -2279,20 +2290,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     deviceInfo.value?.spaceType?.let {
                         if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                             // 删除未读消息
-                            mViewMode.removeFirstUnreadMessage()
+                            // mViewMode.removeFirstUnreadMessage()
                             // 清空气泡状态
-                            mViewMode.clearPopPeriodStatus()
+                            // mViewMode.clearPopPeriodStatus()
                             //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
                             //  因为在listDevice中隐藏了abby的植物展示图片，只需要添加个判断，是否隐藏就好了。
                             //  还是有就是帐篷界面展示摄像头和abby机器展示摄像头多了张图片。
                             //  如果是帐篷，如果没有摄像头、那么就显示帐篷的图片。
-                            mViewMode.userDetail()
-                            PlantCheckHelp().plantStatusCheck(
-                                activity,
-                                CheckPlantData(plantExistingStatus = "1"),
-                                true,
-                                isLeftSwapAnim = mViewMode.isLeftSwap,
-                                isNoAnim = false)
+                            // mViewMode.userDetail()
+                            mViewMode.checkPlant()
                             return@error
                         }
                     }
@@ -2333,7 +2339,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                             context?.startService(intent)
                                             // 切换之后需要重新刷新所有的东西
-                                            mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                            mViewMode.checkPlant()
                                         }
                                 }
                             }
@@ -2353,17 +2359,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     deviceInfo.value?.spaceType?.let {
                         if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                             //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
-                            mViewMode.userDetail()
+                            // mViewMode.userDetail()
                             // 删除未读消息
-                            mViewMode.removeFirstUnreadMessage()
+                            // mViewMode.removeFirstUnreadMessage()
                             // 清空气泡状态
-                            mViewMode.clearPopPeriodStatus()
-                            PlantCheckHelp().plantStatusCheck(
-                                activity,
-                                CheckPlantData(plantExistingStatus = "1"),
-                                true,
-                                isLeftSwapAnim = mViewMode.isLeftSwap,
-                                isNoAnim = false)
+                            // mViewMode.clearPopPeriodStatus()
+                            mViewMode.checkPlant()
                             return@success
                         }
                     }
@@ -2404,7 +2405,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             )
                                             context?.startService(intent)
                                             // 切换之后需要重新刷新所有的东西
-                                            mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                                            mViewMode.checkPlant()
                                         }
                                 }
                             }
@@ -2489,6 +2490,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     if (data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
                         // 从聊天退出来之后需要刷新消息环信数量
                         mViewMode.getHomePageNumber()
+                        ViewUtils.setGone(binding.pplantNinth.ivDoorLockStatus)
                     }
 
                     // 获取氧气币列表
@@ -3598,7 +3600,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     hideProgressLoading()
                     // 植物不存在时，检查植物是否种植。
                     if (code == 1001) {
-                        mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                        mViewMode.checkPlant()
                     }
                     /*errorMsg?.let { ToastUtil.shortShow(it) }*/
                 }
@@ -3686,7 +3688,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             plantDelete.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     // 删除植物、需要更新信息。
-                    mViewMode.tuYaUser?.uid?.let { mViewMode.checkPlant(it) }
+                    mViewMode.checkPlant()
                 }
                 error { errorMsg, _ ->
                     errorMsg?.let { ToastUtil.shortShow(it) }

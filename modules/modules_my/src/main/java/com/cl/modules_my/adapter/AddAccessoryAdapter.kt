@@ -5,7 +5,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyAddAccessoryListItemBinding
-import com.cl.modules_my.repository.AccessoryListBean
+import com.cl.common_base.bean.AccessoryListBean
 
 class AddAccessoryAdapter(data: MutableList<AccessoryListBean>?) :
     BaseQuickAdapter<AccessoryListBean, BaseViewHolder>(R.layout.my_add_accessory_list_item, data) {
