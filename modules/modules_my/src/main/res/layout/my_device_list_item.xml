@@ -41,7 +41,6 @@
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@{adapter.showName(data.deviceName, data.plantName, data.strainName)}"
                 android:textColor="#006241"
                 android:textSize="15sp"
                 tools:text="hey abby#1 | OG Kushhey " />

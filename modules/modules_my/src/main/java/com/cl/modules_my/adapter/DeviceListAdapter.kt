@@ -13,6 +13,7 @@ import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDeviceListItemBinding
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.databinding.MyPairListItemBinding
@@ -77,6 +78,7 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
                     }
                 }
 
+                holder.setText(R.id.tv_title, showName(item.deviceName, item.plantName, item.strainName))
             }
 
             ListDeviceBean.KEY_TYPE_PH -> {
