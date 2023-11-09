@@ -14,8 +14,12 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.DeviceDetailsBean
+import com.cl.modules_my.request.DigitalAsset
+import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
+import com.cl.modules_my.request.ShowAchievementReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -257,7 +261,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/list")
-    fun accessoryList(@Field("spaceType")spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
+    fun accessoryList(@Field("spaceType") spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
 
     /**
      * 配件规则列表
@@ -308,7 +312,7 @@ interface HttpMyApiService {
     fun accessoryAdd(
         @Field("accessoryId") accessoryId: String,
         @Field("deviceId") deviceId: String,
-        @Field("accessoryDeviceId")accessoryDeviceId: String? = null,
+        @Field("accessoryDeviceId") accessoryDeviceId: String? = null,
     ): Flow<HttpResult<AccessoryAddData>>
 
     /**
@@ -347,7 +351,7 @@ interface HttpMyApiService {
      */
     @POST("abby/user/resetPwd")
     fun resetPwd(
-       @Body req: ResetPwdReq
+        @Body req: ResetPwdReq
     ): Flow<HttpResult<BaseBean>>
 
 
@@ -385,4 +389,37 @@ interface HttpMyApiService {
      */
     @GET("abby/sysParams/getConfig")
     fun getSystemConfig(@Query("code") code: String): Flow<HttpResult<MutableList<SystemConfigBeanItem>>>
+
+    /**
+     * 获取资产
+     */
+    @POST("abby/digitalAsset/homePage")
+    fun getDigitalAsset(@Body body: DigitalAsset): Flow<HttpResult<DigitalAssetData>>
+
+    /**
+     * 获取成就列表
+     */
+    @POST("abby/digitalAsset/achievements")
+    fun getAchievements(): Flow<HttpResult<MutableList<AchievementBean>>>
+
+    /**
+     * 保存展示成就
+     */
+    @FormUrlEncoded
+    @POST("abby/digitalAsset/showAchievement")
+    fun showAchievement(@Field("achievementId") achievementId: Int): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取frames列表
+     */
+    @POST("abby/digitalAsset/frames")
+    fun getFrames(): Flow<HttpResult<MutableList<AchievementBean>>>
+
+    /**
+     * 保存展示frames
+     */
+    @FormUrlEncoded
+    @POST("abby/digitalAsset/showFrame")
+    fun showFrame(@Field("frameId") frameId: Int): Flow<HttpResult<BaseBean>>
+
 }

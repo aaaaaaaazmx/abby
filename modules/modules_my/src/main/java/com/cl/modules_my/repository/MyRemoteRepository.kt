@@ -9,8 +9,12 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.DeviceDetailsBean
+import com.cl.modules_my.request.DigitalAsset
+import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
+import com.cl.modules_my.request.ShowAchievementReq
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -232,5 +236,25 @@ class MyRemoteRepository @Inject constructor() {
 
     fun getSystemConfig(strainName: String): Flow<HttpResult<MutableList<SystemConfigBeanItem>>> {
         return service.getSystemConfig(strainName)
+    }
+
+    fun getDigitalAsset(body: DigitalAsset): Flow<HttpResult<DigitalAssetData>> {
+        return service.getDigitalAsset(body)
+    }
+
+    fun showAchievement(achievementId: Int): Flow<HttpResult<BaseBean>> {
+        return service.showAchievement(achievementId)
+    }
+
+    fun getAchievements(): Flow<HttpResult<MutableList<AchievementBean>>> {
+        return service.getAchievements()
+    }
+
+    fun getFrames(): Flow<HttpResult<MutableList<AchievementBean>>> {
+        return service.getFrames()
+    }
+
+    fun showFrame(frameId: Int): Flow<HttpResult<BaseBean>> {
+        return service.showFrame(frameId)
     }
 }

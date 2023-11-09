@@ -26,6 +26,7 @@ import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyNewFragmentBinding
 import com.cl.modules_my.pop.MyDiscordPop
+import com.cl.modules_my.ui.DigitalActivity
 import com.cl.modules_my.ui.FeedbackActivity
 import com.cl.modules_my.ui.OxygenListActivity
 import com.cl.modules_my.ui.ProfileActivity
@@ -100,6 +101,11 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
         // 跳准到反馈界面
         binding.ftFeedback.setOnClickListener {
             startActivity(Intent(context, FeedbackActivity::class.java))
+        }
+
+        // 跳转到资产界面
+        binding.ftDigital.setOnClickListener {
+            startActivity(Intent(context, DigitalActivity::class.java))
         }
 
         binding.rlVip.setOnClickListener {

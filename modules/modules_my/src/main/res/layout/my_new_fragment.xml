@@ -274,6 +274,21 @@
                                 android:layout_marginStart="20dp"
                                 android:layout_marginEnd="20dp"
                                 android:background="@color/lineBg" />
+
+                            <com.cl.common_base.widget.FeatureItemView
+                                app:itemTitleBold="true"
+                                android:id="@+id/ft_digital"
+                                android:layout_width="match_parent"
+                                android:layout_height="60dp"
+                                app:itemIcon="@mipmap/my_message"
+                                app:itemTitle="digital assets" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height=".5dp"
+                                android:layout_marginStart="20dp"
+                                android:layout_marginEnd="20dp"
+                                android:background="@color/lineBg" />
                             <com.cl.common_base.widget.FeatureItemView
                                 app:itemTitleBold="true"
                                 android:id="@+id/ft_oxy"

@@ -12,10 +12,13 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
+import com.cl.modules_my.request.DigitalAsset
+import com.cl.modules_my.request.DigitalAssetData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import retrofit2.http.Body
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -98,6 +101,39 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
                 )
             }.collectLatest {
                 _wallpaperList.value = it
+            }
+    }
+
+    /**
+     * 获取个人资产
+     */
+    private val _userAssets = MutableLiveData<Resource<DigitalAssetData>>()
+    val userAssets: LiveData<Resource<DigitalAssetData>> = _userAssets
+    fun userAssets() = viewModelScope.launch {
+        repository.getDigitalAsset(DigitalAsset(userInfo()?.userId))
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _userAssets.value = it
             }
     }
 }
