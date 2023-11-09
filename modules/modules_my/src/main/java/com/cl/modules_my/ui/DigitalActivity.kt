@@ -21,11 +21,9 @@ import com.cl.common_base.widget.scroll.behavior.BehavioralScrollListener
 import com.cl.common_base.widget.scroll.behavior.BehavioralScrollView
 import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.adapter.MedialAdapter
+import com.cl.common_base.adapter.MedialAdapter
 import com.cl.modules_my.databinding.MyDigitalActivityBinding
-import com.cl.modules_my.databinding.MyNewFragmentBinding
 import com.cl.modules_my.viewmodel.MyViewModel
-import com.thingclips.smart.camera.middleware.p2p.ThingSmartCameraP2P
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -56,7 +54,7 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
             }
         })
 
-        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MAX, 400.dp, 400.dp)
+        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MID, 400.dp, 550.dp)
         updateFloatState()
 
         // 成就列表

@@ -16,6 +16,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="@color/white"
         android:id="@+id/my_achievement_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

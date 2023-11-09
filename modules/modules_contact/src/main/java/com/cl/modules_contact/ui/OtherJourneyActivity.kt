@@ -14,6 +14,7 @@ import cn.mtjsoft.barcodescanning.extentions.dp
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.cl.common_base.adapter.MedialAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -39,7 +40,10 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.bean.UpdateFollowStatusReq
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -73,6 +77,10 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
     private val adapter by lazy {
         OtherJourneyAdapter(mutableListOf())
+    }
+
+    private val mediaAdapter by lazy {
+        MedialAdapter(mutableListOf())
     }
 
 
@@ -142,6 +150,9 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
             )
         )
 
+        // 获取他人的信息
+        userId?.let { viewModel.otherUserDetail(it) }
+
         binding.refreshLayout.apply {
             ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
             ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
@@ -175,10 +186,43 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
             layoutManager = LinearLayoutManager(this@OtherJourneyActivity)
             adapter = this@OtherJourneyActivity.adapter
         }
+
+        // 成就列表
+        binding.rvMedal.layoutManager = LinearLayoutManager(this@OtherJourneyActivity, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvMedal.adapter = mediaAdapter
     }
 
     override fun observe() {
         viewModel.apply {
+            updateFollowStatus.observe(this@OtherJourneyActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                loading { showProgressLoading() }
+                success {
+                    hideProgressLoading()
+                    if (userAssets.value?.data?.followStatus == true) {
+                        binding.tvFollower.text = "Follow"
+                    } else {
+                        binding.tvFollower.text = "Following"
+                    }
+                }
+            })
+
+            userAssets.observe(this@OtherJourneyActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    mediaAdapter.setList(data?.userFlags)
+                    if (data?.followStatus == true) {
+                        binding.tvFollower.text = "Following"
+                    } else {
+                        binding.tvFollower.text = "Follow"
+                    }
+                }
+            })
 
             wallpaperList.observe(this@OtherJourneyActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
@@ -335,6 +379,17 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
             viewModel.userDetail(it)
         }
         initAdapterClick()
+        binding.flBack.setOnClickListener { finish() }
+        binding.clFollower.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@OtherJourneyActivity, content = "Do you want to follow this grower?", isShowCancelButton = true, confirmText = "Confirm", onConfirmAction = {
+                    //  修改跟随状态
+                    viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !(viewModel.userAssets.value?.data?.followStatus ?: false), otherUserId = userId ?: ""))
+                })).show()
+            }
+        }
     }
 
     private fun initAdapterClick() {
@@ -351,7 +406,8 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
                 R.id.cl_env -> { // 点击环境信息
                     val envInfoData = GSON.parseObjectList(item?.environment, ContactEnvData::class.java).toMutableList() // 弹出环境信息
-                    XPopup.Builder(this@OtherJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(ContactEnvPop(this@OtherJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()
+                    XPopup.Builder(this@OtherJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false)
+                        .asCustom(ContactEnvPop(this@OtherJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()
                 }
 
                 R.id.cl_love -> { // 点赞
@@ -371,8 +427,8 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     } else {
                         viewModel.unlike(LikeReq(learnMoreId = item?.learnMoreId, likeId = item?.id.toString(), type = "moments"))
                     }
-                        // 震动
-                        SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
+                    // 震动
+                    SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
                 }
 
                 R.id.cl_gift -> { //  打赏
@@ -451,23 +507,24 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
     }
 
     private fun toCommentPop(item: NewPageData.Records?, position: Int, adapter: BaseQuickAdapter<*, *>) {
-        XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).moveUpToKeyboard(false).maxHeight((XPopupUtils.getScreenHeight(this@OtherJourneyActivity) * 0.9f).safeToInt()).asCustom(
-            CommentPop(this@OtherJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData -> // 更新当前position
-                val commentsList = this@OtherJourneyActivity.adapter.data[position].comments
-                if (commentListData?.size == 0) return@CommentPop
-                if (commentListData?.size == commentsList?.size) return@CommentPop // 实行替换操作
-                val newCommentsList = mutableListOf<NewPageData.Records.Comments>()
-                commentListData?.forEach { data ->
-                    val comment = NewPageData.Records.Comments()
-                    comment.commentName = data.commentName
-                    comment.comment = data.comment
-                    newCommentsList.add(comment)
-                } // 更新聊天数目集合
-                this@OtherJourneyActivity.adapter.data[position].comments = newCommentsList // 更新聊天数量
-                this@OtherJourneyActivity.adapter.data[position].comment = commentListData?.size
-                adapter.notifyItemChanged(position)
-            })
-        ).show()
+        XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).moveUpToKeyboard(false)
+            .maxHeight((XPopupUtils.getScreenHeight(this@OtherJourneyActivity) * 0.9f).safeToInt()).asCustom(
+                CommentPop(this@OtherJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData -> // 更新当前position
+                    val commentsList = this@OtherJourneyActivity.adapter.data[position].comments
+                    if (commentListData?.size == 0) return@CommentPop
+                    if (commentListData?.size == commentsList?.size) return@CommentPop // 实行替换操作
+                    val newCommentsList = mutableListOf<NewPageData.Records.Comments>()
+                    commentListData?.forEach { data ->
+                        val comment = NewPageData.Records.Comments()
+                        comment.commentName = data.commentName
+                        comment.comment = data.comment
+                        newCommentsList.add(comment)
+                    } // 更新聊天数目集合
+                    this@OtherJourneyActivity.adapter.data[position].comments = newCommentsList // 更新聊天数量
+                    this@OtherJourneyActivity.adapter.data[position].comment = commentListData?.size
+                    adapter.notifyItemChanged(position)
+                })
+            ).show()
     }
 
     companion object {

@@ -119,4 +119,8 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
     fun getTrendPicture(body: TrendPictureReq): Flow<HttpResult<TrendPictureData>> {
         return remoteRepository.getTrendPicture(body)
     }
+
+    fun updateFollowStatus(body: UpdateFollowStatusReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateFollowStatus(body)
+    }
 }

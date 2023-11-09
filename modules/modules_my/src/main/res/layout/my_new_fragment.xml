@@ -280,8 +280,8 @@
                                 android:id="@+id/ft_digital"
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
-                                app:itemIcon="@mipmap/my_message"
-                                app:itemTitle="digital assets" />
+                                app:itemIcon="@mipmap/my_digital"
+                                app:itemTitle="Digital Assets" />
 
                             <View
                                 android:layout_width="match_parent"

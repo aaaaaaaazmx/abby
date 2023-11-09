@@ -114,54 +114,35 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
         adapter.addChildClickViewIds(R.id.my_achievement_item)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val currentDataInfo = adapter.data[position] as? AchievementBean ?: return@setOnItemChildClickListener
+            val dataList = adapter.data as? MutableList<AchievementBean> ?: return@setOnItemChildClickListener
             when (view.id) {
                 R.id.my_achievement_item -> {
                     //  选中操作逻辑
-                    when (isAchievement) {
-                        true -> {
-                            if (!currentDataInfo.isGain) {
-                                // 未获得
-                                ToastUtil.shortShow("You have not gained this achievement yet")
-                                return@setOnItemChildClickListener
-                            }
-                            // achievement
-                            /*dataInfo?.selectedStatus = !(dataInfo?.selectedStatus ?: true)
-                            adapter.notifyItemChanged(position)*/
-                            // 只能选一个
-                            // 先找到已经选中的项目，并取消其选中状态
-                            adapter.data.forEachIndexed { index, data ->
-                                (data as? AchievementBean)?.let {
-                                    if (it.selectedStatus) {
-                                        it.selectedStatus = false
-                                        adapter.notifyItemChanged(index)
-                                    }
-                                }
-                            }
-                            // 选中当前点击的项目
-                            currentDataInfo.selectedStatus = true
-                            adapter.notifyItemChanged(position)
-                        }
+                    /*if (!currentDataInfo.isGain) {
+                        val toastMessage = if (isAchievement) "You have not gained this achievement yet" else "You have not gained this frame yet"
+                        ToastUtil.shortShow(toastMessage)
+                        return@setOnItemChildClickListener
+                    }*/
 
-                        false -> {
-                            if (!currentDataInfo.isGain) {
-                                // 未获得
-                                ToastUtil.shortShow("You have not gained this frame yet")
-                                return@setOnItemChildClickListener
-                            }
-                            // frame
-                            // 只能选一个
-                            adapter.data.forEachIndexed { index, data ->
-                                (data as? AchievementBean)?.let {
-                                    if (it.selectedStatus) {
-                                        it.selectedStatus = false
-                                        adapter.notifyItemChanged(index)
-                                    }
-                                }
-                            }
-                            // 选中当前点击的项目
-                            currentDataInfo.selectedStatus = true
-                            adapter.notifyItemChanged(position)
+                    if (currentDataInfo.selectedStatus) return@setOnItemChildClickListener // 如果已选中则不处理
+
+                    // 取消之前选中的项
+                    dataList.find { it.selectedStatus }?.let {
+                        it.selectedStatus = false
+                        adapter.notifyItemChanged(dataList.indexOf(it))
+                    }
+
+                    // 选中点击的项
+                    currentDataInfo.selectedStatus = true
+                    adapter.notifyItemChanged(position)
+
+                    // 如果点击的不是第一项，移动到第一项
+                    if (position > 0) {
+                        dataList.removeAt(position).apply {
+                            dataList.add(0, this)
                         }
+                        adapter.notifyItemMoved(position, 0)
+                        adapter.notifyItemRangeChanged(0, position + 1)
                     }
                 }
             }

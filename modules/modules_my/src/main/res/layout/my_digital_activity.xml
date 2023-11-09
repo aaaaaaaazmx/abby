@@ -117,7 +117,7 @@
                     android:id="@+id/rvLinkageBottom"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="200dp">
+                    >
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -255,8 +255,8 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="15dp"
-                                    android:paddingStart="20dp"
-                                    android:paddingEnd="20dp"
+                                    android:paddingStart="30dp"
+                                    android:paddingEnd="30dp"
                                     android:textColor="#C4C4C4"
                                     android:textSize="13sp"
                                     app:layout_constraintEnd_toEndOf="parent"
@@ -806,6 +806,7 @@
                                     android:textSize="40sp"
                                     android:textStyle="bold"
                                     android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.VISIBLE : View.GONE}" />
+
                             </RelativeLayout>
 
                             <ImageView
@@ -849,11 +850,10 @@
             app:srlEnableLoadMore="true"
             app:srlEnablePureScrollMode="true">-->
 
-            <com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
-                android:id="@+id/bottomSheet"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="100dp" />
+        <com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
+            android:id="@+id/bottomSheet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <!--</com.scwang.smart.refresh.layout.SmartRefreshLayout>-->
 
