@@ -869,13 +869,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     return@setOnClickListener
                 }
 
-                xpopup {
+                // 跳转到资产界面
+                ARouter
+                    .getInstance()
+                    .build(RouterPath.My.PAGE_DIGITAL)
+                    .navigation(context)
+
+                /*xpopup {
                     isDestroyOnDismiss(false)
                     enableDrag(true)
                     dismissOnTouchOutside(true)
                     maxHeight(dp2px(600f))
                     asCustom(context?.let { it1 -> HomeOxyPop(it1) }).show()
-                }
+                }*/
             }
 
             // 点击环境弹窗
@@ -3577,7 +3583,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         }
 
                     // 植物的氧气
-                    binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
+                    binding.pplantNinth.tvOxy.text = """
+                        oxygan
+                        ${data?.oxygen ?: "---"}
+                    """.trimIndent()
 
                     // 植物的名字
                     binding.pplantNinth.tvTitle.text = data?.plantName

@@ -8,10 +8,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.extentions.dp
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -27,6 +29,7 @@ import com.thingclips.smart.camera.middleware.p2p.ThingSmartCameraP2P
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@Route(path = RouterPath.My.PAGE_DIGITAL)
 @AndroidEntryPoint
 class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
 

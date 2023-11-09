@@ -109,6 +109,8 @@ class RouterPath {
         const val PAGE_ADD_ACCESSORY = "/AddAccessory/$MY"
         // 添加帐篷界面
         const val PAGE_ADD_TENT = "/AddTent/$MY"
+        // 资产界面DIGITAL
+        const val PAGE_DIGITAL = "/digital/$MY"
     }
 
     /**
