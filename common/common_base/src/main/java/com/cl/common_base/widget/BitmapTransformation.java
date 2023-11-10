@@ -1,5 +1,6 @@
-package com.cl.modules_my.widget;
+package com.cl.common_base.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -41,7 +42,8 @@ public abstract class BitmapTransformation implements Transformation<Bitmap> {
         return result;
     }
 
-    void setCanvasBitmapDensity(@NonNull Bitmap toTransform, @NonNull Bitmap canvasBitmap) {
+    @SuppressLint("NewApi")
+    public void setCanvasBitmapDensity(@NonNull Bitmap toTransform, @NonNull Bitmap canvasBitmap) {
         canvasBitmap.setDensity(toTransform.getDensity());
     }
 

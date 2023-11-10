@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
@@ -53,6 +55,8 @@ import com.lxj.xpopup.util.XPopupUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.math.max
 
 /**
  * 其他人的空间
@@ -122,15 +126,33 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 updateFloatState()
             }
         })
-
-        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MID, 400.dp, 550.dp)/*binding.bottomSheet.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MID, 400.dp, 550.dp)
+        binding.bottomSheet.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (binding.bottomSheet.firstLayout || oldScrollY == 0) return@setOnScrollChangeListener
+            if (binding.flRoot.background == null) {
+                binding.flRoot.setBackgroundColor(Color.WHITE)
+            }
             var alphaProgress = abs(100.div(scrollY.toFloat()))
             if (alphaProgress < 0.3) alphaProgress = 0f
+            if (alphaProgress > 1) alphaProgress = 1f
             logI("123123123: $scrollY, $oldScrollY , ${abs(100.div(scrollY.toFloat()))}")
-            binding.title.background.alpha = abs(255.times(alphaProgress).toInt())
-        }*/
+            binding.flRoot.background.alpha = abs(255.times(alphaProgress).toInt())
+            if (alphaProgress == 1f) {
+                // 改变颜色和状态
+                binding.ivBack.background = ContextCompat.getDrawable(this@OtherJourneyActivity, com.cl.common_base.R.mipmap.left)
+                binding.tvTitle.setTextColor(Color.BLACK)
+                binding.clFollower.setBackgroundResource(com.cl.common_base.R.drawable.background_black_r4)
+                binding.ivFollower.setBackgroundResource(com.cl.common_base.R.drawable.my_down_white)
+                binding.tvFollower.setTextColor(Color.WHITE)
+            } else {
+                binding.ivBack.background = ContextCompat.getDrawable(this@OtherJourneyActivity, com.cl.common_base.R.mipmap.left_white)
+                binding.tvTitle.setTextColor(Color.WHITE)
+                binding.clFollower.setBackgroundResource(com.cl.common_base.R.drawable.background_white_r4)
+                binding.ivFollower.setBackgroundResource(com.cl.common_base.R.drawable.my_down_blue)
+                binding.tvFollower.setTextColor(ContextCompat.getColor(this@OtherJourneyActivity, com.cl.common_base.R.color.mainColor))
+            }
+        }
         updateFloatState()
-
         binding.superLikeLayout.provider = BitmapProvider.Builder(this@OtherJourneyActivity).setDrawableArray(
             intArrayOf(
                 R.mipmap.emoji_one,

@@ -71,7 +71,9 @@ class AppInitializer : Initializer<Unit> {
 
         // crash兜底
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
-            StabilityOptimize.setUpJavaAirBag(mutableListOf<JavaAirBagConfig>().toList())
+            if (!BuildConfig.DEBUG) {
+                StabilityOptimize.setUpJavaAirBag(mutableListOf<JavaAirBagConfig>().toList())
+            }
         }
 
         return Unit

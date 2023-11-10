@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.cl.common_base.widget.BitmapTransformation;
 
 
 import java.security.MessageDigest;

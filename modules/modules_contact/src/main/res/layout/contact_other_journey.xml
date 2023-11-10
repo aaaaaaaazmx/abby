@@ -40,79 +40,6 @@
                     android:layout_height="342dp"
                     android:background="@mipmap/my_bg"
                     android:paddingTop="10dp" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/fl_root"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="MissingConstraints">
-
-                    <FrameLayout
-                        android:id="@+id/fl_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="10dp">
-
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@mipmap/left_white" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Digital"
-                        android:textColor="@color/white"
-                        android:textSize="17sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/fl_back"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fl_back" />
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/cl_follower"
-                        android:layout_width="wrap_content"
-                        android:layout_height="26dp"
-                        android:layout_marginEnd="10dp"
-                        android:background="@drawable/background_white_r4"
-                        android:minWidth="66dp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/fl_back"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fl_back">
-
-                        <TextView
-                            android:textStyle="bold"
-                            android:id="@+id/tv_follower"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Follow"
-                            android:textColor="@color/mainColor"
-                            android:textSize="11sp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageView
-                            android:background="@drawable/my_down_blue"
-                            android:id="@+id/iv_follower"
-                            android:layout_width="8dp"
-                            android:layout_height="4dp"
-                            android:layout_marginStart="5dp"
-                            app:layout_constraintBottom_toBottomOf="@+id/tv_follower"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/tv_follower"
-                            app:layout_constraintTop_toTopOf="@+id/tv_follower"
-                            tools:background="@drawable/my_down_blue" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
             </FrameLayout>
 
             <FrameLayout
@@ -438,6 +365,81 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
            />-->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/fl_root"
+            android:layout_width="match_parent"
+            android:layout_height="76dp"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints">
+
+            <FrameLayout
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/fl_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/left_white" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Digital"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@+id/fl_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/fl_back" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_follower"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/background_white_r4"
+                android:minWidth="66dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/fl_back"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/fl_back">
+
+                <TextView
+                    android:textStyle="bold"
+                    android:id="@+id/tv_follower"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Follow"
+                    android:textColor="@color/mainColor"
+                    android:textSize="11sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:background="@drawable/my_down_blue"
+                    android:id="@+id/iv_follower"
+                    android:layout_width="8dp"
+                    android:layout_height="4dp"
+                    android:layout_marginStart="5dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_follower"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_follower"
+                    app:layout_constraintTop_toTopOf="@+id/tv_follower"
+                    tools:background="@drawable/my_down_blue" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <com.cl.modules_contact.widget.emoji.SuperLikeLayout
