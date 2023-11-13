@@ -142,9 +142,10 @@
                                 android:layout_marginTop="58dp">
 
                                 <TextView
+                                    android:gravity="center"
                                     android:text="@{String.valueOf(viewModel.userAssets.data.basicInfo.posts)}"
                                     android:id="@+id/tv_pots_number"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/mainColor"
                                     android:textSize="15sp"
@@ -196,9 +197,10 @@
 
 
                                 <TextView
+                                    android:gravity="center"
                                     android:text="@{String.valueOf(viewModel.userAssets.data.basicInfo.follower)}"
                                     android:id="@+id/tv_follow_number"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/mainColor"
                                     android:textSize="15sp"
@@ -222,9 +224,10 @@
 
 
                                 <TextView
+                                    android:gravity="center"
                                     android:text="@{String.valueOf(viewModel.userAssets.data.basicInfo.following)}"
                                     android:id="@+id/tv_following_number"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/mainColor"
                                     android:textSize="15sp"
@@ -287,6 +290,7 @@
 
 
                             <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+                                android:id="@+id/ll_digital_wallet"
                                 android:minHeight="55dp"
                                 android:layout_marginTop="16dp"
                                 android:layout_marginEnd="20dp"
@@ -646,6 +650,7 @@
                             </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
 
                             <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+                                android:id="@+id/ll_digital_wallpaper"
                                 android:layout_marginTop="5dp"
                                 android:minHeight="55dp"
                                 android:layout_marginEnd="20dp"
@@ -810,6 +815,7 @@
                             </RelativeLayout>
 
                             <ImageView
+                                android:background="@mipmap/vip"
                                 android:visibility="@{viewModel.userAssets.data.basicInfo.isVip == 0 ? View.GONE : View.VISIBLE}"
                                 android:id="@+id/iv_vip"
                                 android:layout_width="20dp"
@@ -817,7 +823,7 @@
                                 app:layout_constraintCircle="@id/iv_heads"
                                 app:layout_constraintCircleAngle="130"
                                 app:layout_constraintCircleRadius="48dp"
-                                tools:background="@drawable/background_red_r8" />
+                                tools:background="@mipmap/vip" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <FrameLayout

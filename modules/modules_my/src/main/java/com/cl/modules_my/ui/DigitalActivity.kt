@@ -9,6 +9,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.extentions.dp
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
@@ -160,6 +161,35 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
             startActivity(Intent(this@DigitalActivity, AchievementActivity::class.java).apply {
                 putExtra(AchievementActivity.IS_ACHIEVEMENT, false)
             })
+        }
+
+        binding.tvPots.setOnClickListener {
+            // 跳转到
+            ARouter.getInstance().build(RouterPath.My.PAGE_MY_JOURNEY).navigation()
+        }
+        binding.tvPotsNumber.setOnClickListener {
+            // 跳转到
+            ARouter.getInstance().build(RouterPath.My.PAGE_MY_JOURNEY).navigation()
+        }
+
+        // follow
+        binding.tvFollow.setOnClickListener { }
+        binding.tvFollowNumber.setOnClickListener { }
+
+        // following
+        binding.tvFollowing.setOnClickListener { }
+        binding.tvFollowingNumber.setOnClickListener { }
+
+        // wallpaper
+        binding.llDigitalWallpaper.setOnClickListener {
+            // 跳转壁纸界面
+            startActivity(Intent(this@DigitalActivity, WallActivity::class.java))
+        }
+
+        // wallet
+        binding.llDigitalWallet.setOnClickListener {
+            // 跳转到氧气币种
+            startActivity(Intent(this@DigitalActivity, OxygenListActivity::class.java))
         }
     }
 

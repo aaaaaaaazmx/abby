@@ -7,11 +7,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.AchievementAdapter
 import com.cl.modules_my.databinding.MyAchievementLayoutBinding
+import com.cl.modules_my.pop.AchievementPop
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.ShowAchievementReq
 import com.cl.modules_my.viewmodel.AchievementViewModel
@@ -117,33 +119,67 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
             val dataList = adapter.data as? MutableList<AchievementBean> ?: return@setOnItemChildClickListener
             when (view.id) {
                 R.id.my_achievement_item -> {
-                    //  选中操作逻辑
-                    /*if (!currentDataInfo.isGain) {
-                        val toastMessage = if (isAchievement) "You have not gained this achievement yet" else "You have not gained this frame yet"
-                        ToastUtil.shortShow(toastMessage)
-                        return@setOnItemChildClickListener
-                    }*/
+                    when(isAchievement) {
+                        true -> {
+                            // 弹窗详情弹窗
+                            xpopup(this@AchievementActivity) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(true)
+                                asCustom(
+                                    AchievementPop(this@AchievementActivity, currentDataInfo.achDescribe) {
+                                        //  选中操作逻辑
+                                        if (!currentDataInfo.isGain) {
+                                            val toastMessage = if (isAchievement) "You have not gained this achievement yet" else "You have not gained this frame yet"
+                                            ToastUtil.shortShow(toastMessage)
+                                            return@AchievementPop
+                                        }
 
-                    if (currentDataInfo.selectedStatus) return@setOnItemChildClickListener // 如果已选中则不处理
+                                        if (currentDataInfo.selectedStatus) return@AchievementPop // 如果已选中则不处理
 
-                    // 取消之前选中的项
-                    dataList.find { it.selectedStatus }?.let {
-                        it.selectedStatus = false
-                        adapter.notifyItemChanged(dataList.indexOf(it))
+                                        // 取消之前选中的项
+                                        dataList.find { it.selectedStatus }?.let {
+                                            it.selectedStatus = false
+                                            adapter.notifyItemChanged(dataList.indexOf(it))
+                                        }
+
+                                        // 选中点击的项
+                                        currentDataInfo.selectedStatus = true
+                                        adapter.notifyItemChanged(position)
+                                    }
+                                ).show()
+                            }
+                        }
+
+                        else -> {
+                            //  选中操作逻辑
+                            if (!currentDataInfo.isGain) {
+                                val toastMessage = if (isAchievement) "You have not gained this achievement yet" else "You have not gained this frame yet"
+                                ToastUtil.shortShow(toastMessage)
+                                return@setOnItemChildClickListener
+                            }
+
+                            if (currentDataInfo.selectedStatus) return@setOnItemChildClickListener // 如果已选中则不处理
+
+                            // 取消之前选中的项
+                            dataList.find { it.selectedStatus }?.let {
+                                it.selectedStatus = false
+                                adapter.notifyItemChanged(dataList.indexOf(it))
+                            }
+
+                            // 选中点击的项
+                            currentDataInfo.selectedStatus = true
+                            adapter.notifyItemChanged(position)
+                        }
                     }
 
-                    // 选中点击的项
-                    currentDataInfo.selectedStatus = true
-                    adapter.notifyItemChanged(position)
-
                     // 如果点击的不是第一项，移动到第一项
-                    if (position > 0) {
+                    /*if (position > 0) {
                         dataList.removeAt(position).apply {
                             dataList.add(0, this)
                         }
                         adapter.notifyItemMoved(position, 0)
                         adapter.notifyItemRangeChanged(0, position + 1)
-                    }
+                    }*/
                 }
             }
         }

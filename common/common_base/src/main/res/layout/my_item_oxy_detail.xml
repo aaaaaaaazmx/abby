@@ -9,6 +9,9 @@
             name="data"
             type="com.cl.common_base.bean.RunnerWater" />
 
+        <import type="android.text.TextUtils"/>
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -43,6 +46,17 @@
             android:textSize="13sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:visibility="@{TextUtils.isEmpty(data.rewardHeadPicture) ? View.GONE : View.VISIBLE}"
+            android:id="@+id/iv_avatar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_date"
+            app:layout_constraintTop_toTopOf="@+id/tv_reward"
+            url="@{data.rewardHeadPicture}"
+            android:layout_width="40dp"
+            android:layout_height="40dp"/>
 
         <TextView
             colorText='@{data.oxygen.startsWith("+") ? "#F72E47" : "#008961"}'

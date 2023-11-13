@@ -85,7 +85,6 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
     }
 
     public FeatureItemSwitch setTitleValueEndDrawable(Drawable drawable) {
-        logI("123123");
         itemValueEndDrawable.setVisibility(View.VISIBLE);
         if (drawable == null) {
         } else {

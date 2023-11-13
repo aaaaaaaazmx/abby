@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.extentions.dp
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.cl.common_base.adapter.MedialAdapter
@@ -43,6 +44,7 @@ import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
 import com.cl.common_base.bean.UpdateFollowStatusReq
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
@@ -61,6 +63,7 @@ import kotlin.math.max
 /**
  * 其他人的空间
  */
+@Route(path = RouterPath.Contact.PAGE_OTHER_JOURNEY)
 @AndroidEntryPoint
 class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
@@ -412,6 +415,13 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 })).show()
             }
         }
+
+        // follow
+        binding.tvFollower.setOnClickListener {  }
+        binding.tvFollowNumber.setOnClickListener {  }
+        // following
+        binding.tvFollowing.setOnClickListener {  }
+        binding.tvFollowingNumber.setOnClickListener {  }
     }
 
     private fun initAdapterClick() {

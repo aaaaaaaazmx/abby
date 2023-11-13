@@ -143,8 +143,9 @@
 
 
                                 <TextView
+                                    android:gravity="center"
                                     android:id="@+id/tv_follow_number"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:text="@{String.valueOf(viewModel.userAssets.data.basicInfo.follower)}"
                                     android:textColor="@color/mainColor"
@@ -169,8 +170,9 @@
 
 
                                 <TextView
+                                    android:gravity="center"
                                     android:id="@+id/tv_following_number"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:text="@{String.valueOf(viewModel.userAssets.data.basicInfo.following)}"
                                     android:textColor="@color/mainColor"
@@ -305,6 +307,7 @@
                             </RelativeLayout>
 
                             <ImageView
+                                android:background="@mipmap/vip"
                                 android:id="@+id/iv_vip"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
@@ -312,7 +315,7 @@
                                 app:layout_constraintCircle="@id/iv_heads"
                                 app:layout_constraintCircleAngle="130"
                                 app:layout_constraintCircleRadius="48dp"
-                                tools:background="@drawable/background_red_r8" />
+                                tools:background="@mipmap/vip" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <!--  <FrameLayout

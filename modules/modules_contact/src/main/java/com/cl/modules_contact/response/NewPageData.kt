@@ -23,9 +23,14 @@ data class NewPageData(
 
     data class Records(
         val id: Int? = null,
+        val deviceEdition: String? = null,
+        val showAchievement: String? = null,
+        val framesHeads: String? = null,
+        val userFlagImage: String? = null,
         val articleId: Int? = null,
         val userId: String? = null,
         val avatarPicture: String? = null,
+        val isVip: Int? = null,
         val learnMoreId: String? = null,
         val nickName: String? = null,
         val abbyId: String? = null,

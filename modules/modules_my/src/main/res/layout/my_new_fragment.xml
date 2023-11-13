@@ -338,35 +338,56 @@
                                 app:itemTitle="Feedback" />
                         </LinearLayout>
 
-                        <RelativeLayout
-                            android:background="@drawable/my_head_broad_bg"
+
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/iv_head"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            android:id="@+id/iv_head"
-                            android:layout_width="102dp"
-                            android:layout_height="102dp">
+                           >
+
+                            <RelativeLayout
+                                android:background="@drawable/my_head_broad_bg"
+                                android:id="@+id/iv_heads"
+                                android:layout_width="102dp"
+                                android:layout_height="102dp">
+
+                                <ImageView
+                                    android:gravity="center"
+                                    android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}"
+                                    android:layout_centerInParent="true"
+                                    circleUrl="@{viewModel.userDetail.data.avatarPicture}"
+                                    android:layout_width="98dp"
+                                    android:layout_height="98dp"
+                                    />
+
+                                <TextView
+                                    android:layout_width="98dp"
+                                    android:layout_height="98dp"
+                                    android:layout_centerInParent="true"
+                                    android:background="@drawable/my_head_bg"
+                                    android:gravity="center"
+                                    android:text="@{viewModel.userDetail.data.nickName.substring(0,1)}"
+                                    android:textColor="@color/mainColor"
+                                    android:textSize="40sp"
+                                    android:textStyle="bold"
+                                    android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.VISIBLE : View.GONE}" />
+                            </RelativeLayout>
 
                             <ImageView
-                                android:gravity="center"
-                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}"
-                                android:layout_centerInParent="true"
-                                circleUrl="@{viewModel.userDetail.data.avatarPicture}"
-                                android:layout_width="98dp"
-                                android:layout_height="98dp"
-                               />
+                                android:background="@mipmap/vip"
+                                android:id="@+id/iv_vip"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:visibility="@{viewModel.userAssets.data.basicInfo.isVip == 0 ? View.GONE : View.VISIBLE}"
+                                app:layout_constraintCircle="@id/iv_heads"
+                                app:layout_constraintCircleAngle="130"
+                                app:layout_constraintCircleRadius="48dp"
+                                tools:background="@mipmap/vip" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
-                            <TextView
-                                android:layout_width="98dp"
-                                android:layout_height="98dp"
-                                android:layout_centerInParent="true"
-                                android:background="@drawable/my_head_bg"
-                                android:gravity="center"
-                                android:text="@{viewModel.userDetail.data.nickName.substring(0,1)}"
-                                android:textColor="@color/mainColor"
-                                android:textSize="40sp"
-                                android:textStyle="bold"
-                                android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.VISIBLE : View.GONE}" />
-                        </RelativeLayout>
 
                         <FrameLayout
                             android:id="@+id/rl_edit"

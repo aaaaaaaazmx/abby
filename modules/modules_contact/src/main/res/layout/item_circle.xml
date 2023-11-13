@@ -28,12 +28,17 @@
         app:layout_constraintHorizontal_chainStyle="spread"
         tools:ignore="MissingConstraints">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent">
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_avatar"
+            android:id="@+id/iv_heads"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+           >
 
             <ImageView
                 android:id="@+id/ivAvatar"
@@ -57,6 +62,18 @@
                 android:visibility="@{TextUtils.isEmpty(data.avatarPicture) ? View.VISIBLE : View.GONE}" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <ImageView
+            android:background="@mipmap/vip"
+            android:visibility="@{data.isVip == 0 ? View.GONE : View.VISIBLE}"
+            android:id="@+id/iv_vip"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            app:layout_constraintCircle="@id/iv_heads"
+            app:layout_constraintCircleAngle="20"
+            app:layout_constraintCircleRadius="50dp"
+            tools:background="@mipmap/vip"
+             />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/tvNick"
@@ -70,6 +87,32 @@
             app:layout_constraintStart_toEndOf="@id/cl_avatar"
             app:layout_constraintTop_toTopOf="@id/cl_avatar"
             tools:text="妹纸" />
+
+        <!--用户标签-->
+        <ImageView
+            android:visibility="@{TextUtils.isEmpty(data.userFlagImage) ? View.GONE : View.VISIBLE}"
+            url="@{data.userFlagImage}"
+            app:layout_constraintBottom_toBottomOf="@+id/tvNick"
+            app:layout_constraintTop_toTopOf="@+id/tvNick"
+            android:background="@mipmap/ic_launcher"
+            android:layout_marginEnd="6dp"
+            app:layout_constraintEnd_toStartOf="@+id/iv_medal"
+            android:id="@+id/iv_tag"
+            android:layout_width="16dp"
+            android:layout_height="16dp"/>
+
+        <!--用户勋章-->
+        <ImageView
+            android:visibility="@{TextUtils.isEmpty(data.showAchievement) ? View.GONE : View.VISIBLE}"
+            url="@{data.showAchievement}"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvNick"
+            app:layout_constraintTop_toTopOf="@+id/tvNick"
+            app:layout_constraintEnd_toStartOf="@+id/tvNum"
+            android:background="@mipmap/ic_launcher"
+            android:id="@+id/iv_medal"
+            android:layout_width="16dp"
+            android:layout_height="16dp"/>
 
         <TextView
             android:id="@+id/tvNum"
@@ -150,76 +193,98 @@
             app:layout_constraintTop_toBottomOf="@+id/ff_banner" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_env"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:background="@drawable/background_main_color_r0"
-            android:paddingStart="9dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="9dp"
-            android:paddingBottom="3dp"
-            android:visibility="@{data.openData == 1 ? View.VISIBLE : View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/tvNick"
-            app:layout_constraintTop_toBottomOf="@+id/tv_learn_more">
-
+            app:layout_constraintTop_toBottomOf="@+id/tv_learn_more"
+            android:id="@+id/cl_envs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content">
             <TextView
-                android:id="@+id/tv_periodicity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{data.journeyName}"
-                android:textColor="#000000"
-                android:textSize="11sp"
+                android:visibility="@{TextUtils.isEmpty(data.deviceEdition) ? View.GONE : View.VISIBLE}"
+                android:paddingBottom="3dp"
+                android:text="@{data.deviceEdition}"
+                app:layout_constraintTop_toTopOf="@+id/cl_env"
                 android:textStyle="bold"
-                android:visibility="@{TextUtils.isEmpty(data.journeyName)? View.GONE : View.VISIBLE}"
-                tools:text="FFFFFF" />
-
-            <TextView
-                android:id="@+id/tv_day"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
-                android:text='@{"Week" + data.week + " Day" + data.day}'
-                android:textColor="#000000"
+                tools:text="black edition"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
                 android:textSize="11sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@+id/tv_periodicity"
-                tools:text="Week3 Day5" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/tv_env"
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_env"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:drawableStart="@mipmap/v"
-                android:drawablePadding="5dp"
-                android:text="ENVIR"
-                android:textColor="#008961"
-                android:textSize="11sp"
-                app:layout_constraintTop_toBottomOf="@+id/tv_day" />
+                android:background="@drawable/background_main_color_r0"
+                android:paddingStart="9dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="9dp"
+                android:paddingBottom="3dp"
+                android:visibility="@{data.openData == 1 ? View.VISIBLE : View.GONE}"
+              >
 
-            <TextView
-                android:id="@+id/tv_env_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:text="@{data.healthStatus}"
-                android:textColor="#161B19"
-                android:textSize="11sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_env"
-                app:layout_constraintStart_toEndOf="@+id/tv_env"
-                app:layout_constraintTop_toTopOf="@+id/tv_env"
-                tools:text="Ideal" />
+                <TextView
+                    android:id="@+id/tv_periodicity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{data.journeyName}"
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="@{TextUtils.isEmpty(data.journeyName)? View.GONE : View.VISIBLE}"
+                    tools:text="FFFFFF" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:background="@mipmap/vv"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_env_value"
-                app:layout_constraintStart_toEndOf="@+id/tv_env_value"
-                app:layout_constraintTop_toTopOf="@+id/tv_env_value" />
+                <TextView
+                    android:id="@+id/tv_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:text='@{"Week" + data.week + " Day" + data.day}'
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_periodicity"
+                    tools:text="Week3 Day5" />
+
+                <TextView
+                    android:id="@+id/tv_env"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:drawableStart="@mipmap/v"
+                    android:drawablePadding="5dp"
+                    android:text="ENVIR"
+                    android:textColor="#008961"
+                    android:textSize="11sp"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_day" />
+
+                <TextView
+                    android:id="@+id/tv_env_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="@{data.healthStatus}"
+                    android:textColor="#161B19"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_env"
+                    app:layout_constraintStart_toEndOf="@+id/tv_env"
+                    app:layout_constraintTop_toTopOf="@+id/tv_env"
+                    tools:text="Ideal" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@mipmap/vv"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_env_value"
+                    app:layout_constraintStart_toEndOf="@+id/tv_env_value"
+                    app:layout_constraintTop_toTopOf="@+id/tv_env_value" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
@@ -229,8 +294,8 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/cl_env"
-            app:layout_constraintTop_toBottomOf="@+id/cl_env">
+            app:layout_constraintStart_toStartOf="@id/cl_envs"
+            app:layout_constraintTop_toBottomOf="@+id/cl_envs">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_love"
