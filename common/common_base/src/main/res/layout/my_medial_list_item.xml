@@ -13,8 +13,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_marginEnd="10dp"
-        android:layout_width="88dp"
-        android:layout_height="32dp"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
         android:background="@drawable/background_main_color_r5"
         tools:ignore="MissingConstraints">
 
@@ -31,6 +31,7 @@
             android:layout_height="18dp" />
 
         <TextView
+            app:layout_goneMarginEnd="6dp"
             android:text="@{String.valueOf(info.name)}"
             android:layout_marginEnd="6dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -42,10 +43,10 @@
             tools:text="havhavsethavsetset"
             app:layout_constraintStart_toEndOf="@+id/iv_head"
             android:id="@+id/tv_name"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/mainColor"
-            android:textSize="13sp" />
+            android:textSize="10sp" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,4 +12,6 @@ data class AchievementBean(
     val goodsName: String,
     val goodsType: String,
     val goodsId: Int,
+    val title: String,
+    val backgroundPicture: String,
 )

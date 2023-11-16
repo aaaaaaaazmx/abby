@@ -24,6 +24,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.cl.common_base.R
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToInt
 
 /**

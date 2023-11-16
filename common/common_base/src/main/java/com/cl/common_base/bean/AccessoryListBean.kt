@@ -9,7 +9,7 @@ data class AccessoryListBean(
     val image: String? = null,
     val textId: String? = null,
     val buyLink: String? = null,
-    val isAdd: Int? = null, // 是否允许被添加
+    val isAdd: Boolean? = null, // 是否允许被添加
 ): BaseBean() {
     // fan、humidifier、camera、phb
     companion object {

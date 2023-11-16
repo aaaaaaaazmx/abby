@@ -23,6 +23,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.DateHelper
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
@@ -32,6 +33,7 @@ import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyPhSettingActivityBinding
+import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.BlePairViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -283,7 +285,8 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
         val temp = (tempHigh shl 8) or tempLow
 
         //BleLogger.i("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
-        logI("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp")
+        logI("decrypted: ${decrypted.toList()}")
+        logI("pH: $ph, EC: $ec, TDS: $tds, TEMP: $temp, backlightStatus: ${getBacklightStatus(decrypted)}")
         // 上述的代码
         val toSpeak = "The pH value is: $ph, The EC value is: $ec, $ec, The TDS value is: $tds"
         val accessibilityManager = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
@@ -306,9 +309,20 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
         // Last data synced on 08/22/2023 11:23AM.
         ViewUtils.setVisible(binding.tvSyncDesc)
         binding.tvSyncDesc.text = "Last data synced on ${DateHelper.formatTime(time, "MM/dd/yyyy hh:mm a")}"
+
+        // 背光状态
+        binding.editText123.isChecked = getBacklightStatus(decrypted)
     }
 
     override fun initData() {
+        binding.editText123.setOnClickListener {
+            logI("editText123")
+            mViewMode.currentBleDevice.value?.let { device ->
+                showProgressLoading()
+                mViewMode.writeDataForPh(device, binding.editText123.isChecked)
+            }
+        }
+
         binding.tvSync.setOnClickListener {
             if (binding.tvUnConnect.isVisible) {
                 xpopup(this@PHSettingActivity) {
@@ -372,7 +386,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                         enableWrite = false
                     )
                     // 设置当前的服务ID、特征ID
-                    if (characteristics.uuid.toString() == Constants.Ble.KEY_BLE_PH_CHARACTERISTIC_UUID) {
+                    if (characteristics.uuid.toString().startsWith(Constants.Ble.KEY_BLE_PH_CHARACTERISTIC_UUID)) {
                         mViewMode.setCurrentCharacteristicId(characteristics.uuid.toString())
                         mViewMode.setCurrentServiceId(service.uuid.toString())
                         mViewMode.currentBleDevice.value?.let { bleDevice ->
@@ -425,5 +439,25 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
         } else {
             ""
         }
+    }
+
+    /**
+     * 获取背光状态
+     */
+    fun getBacklightStatus(pValue: ByteArray): Boolean {
+        /*val len = pValue.size
+        for (i in 0 until len - 1) {
+            val tmp = pValue[i].toInt().inv()
+            val hibit = (tmp and 0xAA) shr 1
+            val lobit = (tmp and 0x55) shl 1
+            val tmp1 = pValue[i + 1].toInt().inv()
+            val hibit1 = (tmp1 and 0xAA) shr 1
+            val lobit1 = (tmp1 and 0x55) shl 1
+
+            pValue[i] = (hibit or lobit1).toByte()
+            pValue[i + 1] = (hibit1 or lobit).toByte()
+        }*/
+        // 第17个字节第3位（从1开始计数）
+        return (pValue[17].toInt() shr 3 and 1) == 1
     }
 }

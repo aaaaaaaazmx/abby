@@ -188,7 +188,7 @@ object Constants {
         const val KEY_BLE_IS_FIRST_BIND = "key_ble_is_first_bind"
 
         // 蓝牙笔的特征值，基于这个特征值的UUID来读数据和写数据
-        const val KEY_BLE_PH_CHARACTERISTIC_UUID = "0000ff02-0000-1000-8000-00805f9b34fb"
+        const val KEY_BLE_PH_CHARACTERISTIC_UUID = "0000ff02"
         const val KEY_PH_DEVICE_NAME = "BLE-9908"
     }
 

@@ -32,7 +32,6 @@
             android:paddingBottom="12dp">
 
             <ImageView
-                android:scaleType="centerCrop"
                 android:id="@+id/iv_achievement"
                 android:layout_width="68dp"
                 android:layout_height="78dp"

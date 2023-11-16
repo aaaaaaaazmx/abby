@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,9 +46,11 @@ import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
 import com.cl.common_base.bean.UpdateFollowStatusReq
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.FollowAndFolloerPop
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -215,6 +218,10 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
         // 成就列表
         binding.rvMedal.layoutManager = LinearLayoutManager(this@OtherJourneyActivity, LinearLayoutManager.HORIZONTAL, false)
         binding.rvMedal.adapter = mediaAdapter
+
+
+        viewModel.followList()
+        viewModel.followingList()
     }
 
     override fun observe() {
@@ -246,6 +253,17 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     } else {
                         binding.tvFollower.text = "Follow"
                     }
+
+                    // 动态更改宽高 iv_head_bg
+                    val layoutParams = binding.ivHeadBg.layoutParams
+                    layoutParams.height = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    layoutParams.width = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    binding.ivHeadBg.layoutParams = layoutParams
+
+                    // ll_head 动态设备margin top
+                    val layoutParams1 = binding.llHead.layoutParams as ConstraintLayout.LayoutParams
+                    layoutParams1.topMargin = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 42f else 62f)
+                    binding.llHead.layoutParams = layoutParams1
                 }
             })
 
@@ -412,16 +430,50 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 asCustom(BaseCenterPop(this@OtherJourneyActivity, content = "Do you want to follow this grower?", isShowCancelButton = true, confirmText = "Confirm", onConfirmAction = {
                     //  修改跟随状态
                     viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !(viewModel.userAssets.value?.data?.followStatus ?: false), otherUserId = userId ?: ""))
+                    val followerNumber = binding.tvFollowNumber.text.safeToInt()
+                    if (viewModel.userAssets.value?.data?.followStatus == true) {
+                        binding.tvFollowNumber.text = "${followerNumber.minus(1)}"
+                    } else {
+                        binding.tvFollowNumber.text = "${followerNumber.plus(1)}"
+                    }
                 })).show()
             }
         }
 
         // follow
-        binding.tvFollower.setOnClickListener {  }
-        binding.tvFollowNumber.setOnClickListener {  }
+        /*binding.tvFollower.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followList.value?.data)).show()
+            }
+        }
+        binding.tvFollowNumber.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followList.value?.data)).show()
+            }
+        }
         // following
-        binding.tvFollowing.setOnClickListener {  }
-        binding.tvFollowingNumber.setOnClickListener {  }
+        binding.tvFollowing.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followingList.value?.data)).show()
+            }
+        }
+        binding.tvFollowingNumber.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followingList.value?.data)).show()
+            }
+        }*/
     }
 
     private fun initAdapterClick() {

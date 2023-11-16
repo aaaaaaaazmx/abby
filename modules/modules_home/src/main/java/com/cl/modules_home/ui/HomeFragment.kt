@@ -195,6 +195,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         mViewMode.plantInfoLoop()
                         // 刷新设备列表
                         mViewMode.listDevice()
+                        // 刷新是否获取勋章
+                        mViewMode.getMedal()
                     }
                 } catch (e: Exception) {
                     // Handle exception here
@@ -253,7 +255,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
          * 设备管理界面、切换设备
          */
         LiveEventBus.get().with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
-            .observe(viewLifecycleOwner) {devieInfo ->
+            .observe(viewLifecycleOwner) { devieInfo ->
                 if (null != devieInfo) {
                     logI("LiveDataDeviceInfoBean: ${devieInfo.deviceId},,, ${devieInfo.spaceType}")
                     // 切换设备如果有摄像头的话，都是隐藏，会占用内存,
@@ -459,13 +461,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     private fun firstLoginViewVisibile() {
-       /* ViewUtils.setVisible(binding.bindDevice.root)
-        ViewUtils.setGone(binding.plantOffLine.root)
-        ViewUtils.setGone(binding.clRoot)
+        /* ViewUtils.setVisible(binding.bindDevice.root)
+         ViewUtils.setGone(binding.plantOffLine.root)
+         ViewUtils.setGone(binding.clRoot)
 
-        // 如果是第一次、也从未绑定过设备、显示出气泡
-        ViewUtils.setVisible(binding.bindDevice.tvScan)
-        ViewUtils.setGone(binding.bindDevice.clContinue, binding.bindDevice.connectDevice)*/
+         // 如果是第一次、也从未绑定过设备、显示出气泡
+         ViewUtils.setVisible(binding.bindDevice.tvScan)
+         ViewUtils.setGone(binding.bindDevice.clContinue, binding.bindDevice.connectDevice)*/
 
         //
         mViewMode.checkPlant()
@@ -860,9 +862,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             HomeLightPop(
                                 it1,
                                 deviceId = mViewMode.userDetail.value?.data?.deviceId ?: "",
-                                onTime = mViewMode.plantInfo.value?.data?.lightOn ?:0 ,
+                                onTime = mViewMode.plantInfo.value?.data?.lightOn ?: 0,
                                 onOffTime = mViewMode.plantInfo.value?.data?.lightOff ?: 0,
-                                onConfirmAction = { _, _ -> mViewMode.plantInfo()}
+                                onConfirmAction = { _, _ -> mViewMode.plantInfo() }
                             )
                         }).show()
                     }
@@ -2063,6 +2065,22 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
+            getMedal.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.show(errorMsg) }
+                success {
+                    data?.forEach { bean ->
+                        context?.let { cx ->
+                            xpopup(cx) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(true)
+                                maxHeight(dp2px(700f))
+                                asCustom(MedalPop(cx, bean)).show()
+                            }
+                        }
+                    }
+                }
+            })
+
             getFanIntake.observe(viewLifecycleOwner) {
                 binding.plantManual.fanIntakeSeekbar.setProgress(it.toFloat())
             }
@@ -2990,7 +3008,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         val startTime = data?.lightOn ?: 0
                         val endTime = data?.lightOff ?: 0
                         binding.pplantNinth.tvOxy.text = """
-                            ${data?.lightOnOff     ?: "---"}
+                            ${data?.lightOnOff ?: "---"}
                             ON  ${
                             when (startTime) {
                                 0 -> "12 AM"

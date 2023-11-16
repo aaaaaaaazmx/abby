@@ -17,7 +17,11 @@ import androidx.core.view.isGone
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.cl.common_base.BuildConfig
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val TAG = "ViewUtils"
 
@@ -285,6 +289,21 @@ private class HideAndExecOnEndListener(private val view: View, execOnEnd: Runnab
     override fun onAnimationEnd(animation: Animator) {
         view.isGone = true
         super.onAnimationEnd(animation)
+    }
+}
+
+fun View.setSafeOnClickListener(lifecycleScope: LifecycleCoroutineScope, onSafeClick: (View) -> Unit) {
+    // 定义一个Job变量，用于在新的点击事件发生时取消旧的协程任务
+    var job: Job? = null
+    setOnClickListener {
+        // 取消旧的协程任务
+        job?.cancel()
+        // 启动一个新的协程任务
+        job = lifecycleScope.launch {
+            // 延迟一段时间后执行点击事件处理函数
+            delay(500)  // 500毫秒内的点击都会被认为是连续点击，只有最后一次点击会生效
+            onSafeClick(it)
+        }
     }
 }
 

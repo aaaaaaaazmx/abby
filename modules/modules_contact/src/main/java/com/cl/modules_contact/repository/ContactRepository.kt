@@ -123,4 +123,13 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
     fun updateFollowStatus(body: UpdateFollowStatusReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.updateFollowStatus(body)
     }
+
+
+    fun follower(): Flow<HttpResult<MutableList<FolowerData>>> {
+        return remoteRepository.follower()
+    }
+
+    fun following(): Flow<HttpResult<MutableList<FolowerData>>> {
+        return remoteRepository.following()
+    }
 }

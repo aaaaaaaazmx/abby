@@ -203,10 +203,10 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
     }
 
 
-    /*public FeatureItemSwitch setSwitchClickListener(OnClickListener onClickListener) {
+    public FeatureItemSwitch setSwitchClickListener(OnClickListener onClickListener) {
         swToggle.setOnClickListener(onClickListener);
         return this;
-    }*/
+    }
 
     public FeatureItemSwitch setSwitchCheckedChangeListener(CompoundButton.OnCheckedChangeListener onCheckedChangeListener) {
         swToggle.setOnCheckedChangeListener(onCheckedChangeListener);

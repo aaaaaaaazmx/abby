@@ -2,6 +2,7 @@ package com.cl.modules_my.ui.fragment
 
 import android.content.Intent
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import cn.mtjsoft.barcodescanning.extentions.dp
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -11,6 +12,7 @@ import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
@@ -18,6 +20,7 @@ import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.scroll.behavior.BehavioralScrollListener
@@ -197,6 +200,18 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
+                    // 动态更改宽高 iv_head_bg
+                    val layoutParams = binding.ivHeadBg.layoutParams
+                    layoutParams.height = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    layoutParams.width = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    binding.ivHeadBg.layoutParams = layoutParams
+
+                    // ll_head 动态设备margin top
+                    val layoutParams1 = binding.llHead.layoutParams as ConstraintLayout.LayoutParams
+                    layoutParams1.topMargin = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 42f else 62f)
+                    binding.llHead.layoutParams = layoutParams1
+
+
                     data?.let {
                         // 缓存信息
                         GSON.toJson(it)?.let { it1 ->

@@ -63,9 +63,10 @@
 
 
                         <LinearLayout
+                            android:id="@+id/ll_head"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="49dp"
+                            android:layout_marginTop="42dp"
                             android:background="@color/white"
                             android:gravity="center"
                             android:orientation="vertical"
@@ -290,6 +291,7 @@
                                 android:layout_marginEnd="20dp"
                                 android:background="@color/lineBg" />
                             <com.cl.common_base.widget.FeatureItemView
+                                android:visibility="gone"
                                 app:itemTitleBold="true"
                                 android:id="@+id/ft_oxy"
                                 android:layout_width="match_parent"
@@ -297,6 +299,7 @@
                                 app:itemIcon="@mipmap/my_oxy_bg"
                                 app:itemTitle="Oxygen Bag" />
                             <View
+                                android:visibility="gone"
                                 android:layout_width="match_parent"
                                 android:layout_height=".5dp"
                                 android:layout_marginStart="20dp"
@@ -349,23 +352,27 @@
                            >
 
                             <RelativeLayout
+                                app:layout_constraintBottom_toBottomOf="@+id/iv_head_bg"
+                                app:layout_constraintTop_toTopOf="@+id/iv_head_bg"
+                                app:layout_constraintEnd_toEndOf="@+id/iv_head_bg"
+                                app:layout_constraintStart_toStartOf="@+id/iv_head_bg"
                                 android:background="@drawable/my_head_broad_bg"
                                 android:id="@+id/iv_heads"
-                                android:layout_width="102dp"
-                                android:layout_height="102dp">
+                                android:layout_width="84dp"
+                                android:layout_height="84dp">
 
                                 <ImageView
                                     android:gravity="center"
                                     android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}"
                                     android:layout_centerInParent="true"
                                     circleUrl="@{viewModel.userDetail.data.avatarPicture}"
-                                    android:layout_width="98dp"
-                                    android:layout_height="98dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
                                     />
 
                                 <TextView
-                                    android:layout_width="98dp"
-                                    android:layout_height="98dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
                                     android:layout_centerInParent="true"
                                     android:background="@drawable/my_head_bg"
                                     android:gravity="center"
@@ -377,14 +384,21 @@
                             </RelativeLayout>
 
                             <ImageView
+                                android:visibility="@{TextUtils.isEmpty(viewModel.userDetail.data.basicInfo.framesHeads) ? View.INVISIBLE : View.VISIBLE}"
+                                url="@{viewModel.userDetail.data.basicInfo.framesHeads}"
+                                android:id="@+id/iv_head_bg"
+                                android:layout_width="84dp"
+                                android:layout_height="84dp"/>
+
+                            <ImageView
                                 android:background="@mipmap/vip"
                                 android:id="@+id/iv_vip"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:visibility="@{viewModel.userAssets.data.basicInfo.isVip == 0 ? View.GONE : View.VISIBLE}"
+                                android:visibility="@{viewModel.userDetail.data.basicInfo.isVip == 0 ? View.GONE : View.VISIBLE}"
                                 app:layout_constraintCircle="@id/iv_heads"
                                 app:layout_constraintCircleAngle="130"
-                                app:layout_constraintCircleRadius="48dp"
+                                app:layout_constraintCircleRadius="38dp"
                                 tools:background="@mipmap/vip" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 

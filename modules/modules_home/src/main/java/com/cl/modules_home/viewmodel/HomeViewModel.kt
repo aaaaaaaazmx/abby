@@ -18,6 +18,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_home.repository.HomeRepository
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.pop.MedalPop
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.widget.toast.ToastUtil
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
@@ -2046,6 +2047,42 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             isHaveACamera.invoke(false, false, "", "")
         }*/
     }
+
+    // popupList
+    // 查看是否获取到了勋章
+    private val _getMedal = MutableLiveData<Resource<MutableList<MedalPopData>>>()
+    val getMedal: LiveData<Resource<MutableList<MedalPopData>>> = _getMedal
+    fun getMedal() {
+        viewModelScope.launch {
+            repository.popupList()
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _getMedal.value = it
+                }
+        }
+    }
+
 
 
     /**

@@ -43,10 +43,11 @@ class PermissionHelp {
             return
         }
 
-        //Android 12适配
+        // Android 12适配
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (PermissionChecker.hasPermissions(activity, Manifest.permission.BLUETOOTH_SCAN)
                 && PermissionChecker.hasPermissions(activity, Manifest.permission.BLUETOOTH_CONNECT)
+                && PermissionChecker.hasPermissions(activity, Manifest.permission.BLUETOOTH_ADVERTISE)
             ) {
                 logI(
                     "checkConnect BLUETOOTH_SCAN BLUETOOTH_CONNECT grant"
@@ -85,103 +86,110 @@ class PermissionHelp {
                 .request { allGranted, grantedList, deniedList ->
                     if (allGranted) {
                         logI("These permissions are Granted: $deniedList")
-                        // todo 相关事项
-                        listener?.onResult(true)
+                        //  相关事项
+                        if (discoveryDevice) {
+                            checkLocationPermiss(activity, true, listener)
+                        } else {
+                            listener?.onResult(true)
+                        }
                     } else {
                         // 权限拒绝
                         listener?.onResult(false)
                     }
                 }
 
-        } else {
-            // todo 打开定位开关
-            if (!LocationUtil.isLocationEnabled(activity)) {
-                XPopup.Builder(activity)
-                    .isDestroyOnDismiss(false)
-                    .enableDrag(false)
-                    .dismissOnTouchOutside(true)
-                    .asCustom(
-                        PairLocationPop(activity) {
-                            val intent =
-                                Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-                            activity.startActivity(intent)
-                        }
-                    ).show()
-                return
-            }
+        } else  {
+            checkLocationPermiss(activity, discoveryDevice, listener)
+        }
+    }
 
-            //如果不需要发现附近蓝牙设备，则不需要申请定位权限
-            if (!discoveryDevice) {
-                listener?.onResult(true)
-                return
-            }
-            if (PermissionChecker.hasPermissions(
-                    activity,
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION,
-                )
-            ) {
-                logI(
-                    "checkConnect location grant"
-                )
-                listener?.onResult(true)
-                return
-            }
-            logI(
-                "checkConnect location request"
+    private fun checkLocationPermiss(activity: FragmentActivity, discoveryDevice: Boolean, listener: OnCheckResultListener?) {
+        // 打开定位开关
+        if (!LocationUtil.isLocationEnabled(activity)) {
+            XPopup.Builder(activity)
+                .isDestroyOnDismiss(false)
+                .enableDrag(false)
+                .dismissOnTouchOutside(true)
+                .asCustom(
+                    PairLocationPop(activity) {
+                        val intent =
+                            Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                        activity.startActivity(intent)
+                    }
+                ).show()
+            return
+        }
+        //如果不需要发现附近蓝牙设备，则不需要申请定位权限
+        if (!discoveryDevice) {
+            listener?.onResult(true)
+            return
+        }
+        if (PermissionChecker.hasPermissions(
+                activity,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
             )
-            PermissionX.init(activity)
-                .permissions(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
+        ) {
+            logI(
+                "checkConnect location grant"
+            )
+            listener?.onResult(true)
+            return
+        }
+        logI(
+            "checkConnect location request"
+        )
+        PermissionX.init(activity)
+            .permissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            .onForwardToSettings { scope, deniedList ->
+                // 用户点击不再询问时,回调
+                // 或者点击肯定时,也会回调此方法
+                scope.showForwardToSettingsDialog(
+                    deniedList,
+                    "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
+                    "To set",
+                    "Cancel"
                 )
-                .onForwardToSettings { scope, deniedList ->
-                    // 用户点击不再询问时,回调
-                    // 或者点击肯定时,也会回调此方法
-                    scope.showForwardToSettingsDialog(
-                        deniedList,
-                        "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
-                        "To set",
-                        "Cancel"
-                    )
-                }
-                .explainReasonBeforeRequest()
-                .onExplainRequestReason { scope, deniedList ->
-                    // 用户单次拒绝权限时,回调
-                    scope.showRequestReasonDialog(
-                        deniedList,
-                        "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
-                        "Allow",
-                        "Cancel"
-                    )
-                }
-                .request { allGranted, grantedList, deniedList ->
-                    if (allGranted) {
-                        logI("These permissions are Granted: $deniedList")
+            }
+            .explainReasonBeforeRequest()
+            .onExplainRequestReason { scope, deniedList ->
+                // 用户单次拒绝权限时,回调
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
+                    "Allow",
+                    "Cancel"
+                )
+            }
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    logI("These permissions are Granted: $deniedList")
 
-                        listener?.onResult(true)
-                        // 这个需要用到定位权限
-                    } else {
-                        // todo 拒绝的提示
-                        logE("These permissions are denied: $deniedList")
-                        // todo 弹出提示框, 然后跳转到设置界面
-                        var intent = Intent()
-                        try {
-                            logI(
-                                "checkConnect to ACTION_APPLICATION_DETAILS_SETTINGS"
-                            )
-                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                            intent.data =
-                                Uri.fromParts("package", activity.packageName, null)
-                            activity.startActivity(intent)
-                        } catch (e: Exception) { //抛出异常就直接打开设置页面
-                            logE("checkConnect to ACTION_SETTINGS")
-                            intent = Intent(Settings.ACTION_SETTINGS)
-                            activity.startActivity(intent)
-                        }
+                    listener?.onResult(true)
+                    // 这个需要用到定位权限
+                } else {
+                    // todo 拒绝的提示
+                    logE("These permissions are denied: $deniedList")
+                    // todo 弹出提示框, 然后跳转到设置界面
+                    var intent = Intent()
+                    try {
+                        logI(
+                            "checkConnect to ACTION_APPLICATION_DETAILS_SETTINGS"
+                        )
+                        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        intent.data =
+                            Uri.fromParts("package", activity.packageName, null)
+                        activity.startActivity(intent)
+                    } catch (e: Exception) { //抛出异常就直接打开设置页面
+                        logE("checkConnect to ACTION_SETTINGS")
+                        intent = Intent(Settings.ACTION_SETTINGS)
+                        activity.startActivity(intent)
                     }
                 }
-        }
+            }
     }
 
 

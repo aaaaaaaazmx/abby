@@ -3,6 +3,7 @@ package com.cl.modules_my.ui
 import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.updateLayoutParams
@@ -23,6 +24,10 @@ import com.cl.common_base.widget.scroll.behavior.BehavioralScrollView
 import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.common_base.adapter.MedialAdapter
+import com.cl.common_base.ext.dp2px
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.FollowAndFolloerPop
+import com.cl.common_base.util.ViewUtils
 import com.cl.modules_my.databinding.MyDigitalActivityBinding
 import com.cl.modules_my.viewmodel.MyViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,12 +60,16 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
             }
         })
 
-        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MID, 400.dp, 550.dp)
+        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MID, 450.dp, 550.dp)
         updateFloatState()
 
         // 成就列表
         binding.rvMedal.layoutManager = LinearLayoutManager(this@DigitalActivity, LinearLayoutManager.HORIZONTAL, false)
         binding.rvMedal.adapter = adapter
+
+        // 关注者和被关注者列表
+        mViewModel.followList()
+        mViewModel.followingList()
     }
 
     override fun observe() {
@@ -133,6 +142,33 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
                     // 个人标签
                     adapter.setList(data?.userFlags)
 
+                    // 动态更改宽高 iv_head_bg
+                    // 相差26f
+                    val layoutParams = binding.ivHeadBg.layoutParams
+                    layoutParams.height = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    layoutParams.width = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    binding.ivHeadBg.layoutParams = layoutParams
+
+                    // ll_head 动态设备margin top
+                    val layoutParams1 = binding.llHead.layoutParams as ConstraintLayout.LayoutParams
+                    layoutParams1.topMargin = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 42f else 62f)
+                    binding.llHead.layoutParams = layoutParams1
+
+                    // 更新背景墙
+                    val imageViews = listOf(binding.ivWallpaperOne, binding.ivWallpaperTwo, binding.ivWallpaperThree, binding.ivWallpaperFour)
+                    data?.wallpapers?.forEachIndexed { index, wallpaper ->
+                        if (index < imageViews.size) {
+                            val drawableRes = when (wallpaper.picture) {
+                                "banner01" -> R.mipmap.banner01
+                                "banner02" -> R.mipmap.banner02
+                                "banner03" -> R.mipmap.banner03
+                                else -> null
+                            }
+                            drawableRes?.let {
+                                imageViews[index].background = ContextCompat.getDrawable(this@DigitalActivity, it)
+                            }
+                        }
+                    }
                 }
             })
         }
@@ -173,12 +209,40 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
         }
 
         // follow
-        binding.tvFollow.setOnClickListener { }
-        binding.tvFollowNumber.setOnClickListener { }
+        binding.tvFollow.setOnClickListener {
+            xpopup(this@DigitalActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@DigitalActivity, mViewModel.followList.value?.data, true)).show()
+            }
+        }
+        binding.tvFollowNumber.setOnClickListener {
+            xpopup(this@DigitalActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@DigitalActivity, mViewModel.followList.value?.data, true)).show()
+            }
+        }
 
         // following
-        binding.tvFollowing.setOnClickListener { }
-        binding.tvFollowingNumber.setOnClickListener { }
+        binding.tvFollowing.setOnClickListener {
+            xpopup(this@DigitalActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@DigitalActivity, mViewModel.followingList.value?.data, false)).show()
+            }
+        }
+        binding.tvFollowingNumber.setOnClickListener {
+            xpopup(this@DigitalActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@DigitalActivity, mViewModel.followingList.value?.data, false)).show()
+            }
+        }
 
         // wallpaper
         binding.llDigitalWallpaper.setOnClickListener {

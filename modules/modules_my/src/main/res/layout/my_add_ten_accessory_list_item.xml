@@ -50,8 +50,8 @@
             tools:text="Smart Fan" />
 
         <TextView
-            android:clickable="@{data.isAdd == 1 ? true : false}"
-            android:enabled="@{data.isAdd == 1 ? true : false}"
+            android:clickable="@{data.isAdd ? true : false}"
+            android:enabled="@{data.isAdd ? true : false}"
             android:id="@+id/tv_add"
             android:layout_marginEnd="20dp"
             android:gravity="center"
@@ -62,7 +62,7 @@
             android:text="ADD"
             android:textSize="10sp"
             tools:background="@drawable/background_circle_gray_color_r20"
-            android:background="@{data.isAdd == 1 ? @drawable/background_circle_main_color_r20 : @drawable/background_circle_gray_color_r20}"
+            android:background="@{data.isAdd ? @drawable/background_circle_main_color_r20 : @drawable/background_circle_gray_color_r20}"
             android:layout_width="77dp"
             android:layout_height="25dp"/>
 

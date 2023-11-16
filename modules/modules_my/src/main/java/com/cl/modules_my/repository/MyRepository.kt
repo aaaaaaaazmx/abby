@@ -299,4 +299,12 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun showFrame(frameId: Int): Flow<HttpResult<BaseBean>> {
         return remoteRepository.showFrame(frameId)
     }
+
+    fun follower(): Flow<HttpResult<MutableList<FolowerData>>> {
+        return remoteRepository.follower()
+    }
+
+    fun following(): Flow<HttpResult<MutableList<FolowerData>>> {
+        return remoteRepository.following()
+    }
 }

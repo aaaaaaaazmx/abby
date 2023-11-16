@@ -3,6 +3,7 @@ package com.cl.modules_contact.service
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.FolowerData
 import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.bean.WallpaperListBean
@@ -207,5 +208,13 @@ interface HttpContactApiService {
     fun updateFollowStatus(
         @Body requestBody: UpdateFollowStatusReq,
     ): Flow<HttpResult<BaseBean>>
+
+    // 被关注列表 abby/user/follower
+    @POST("abby/user/follower")
+    fun follower(): Flow<HttpResult<MutableList<FolowerData>>>
+
+    // 关注列表 abby/user/following
+    @POST("abby/user/following")
+    fun following(): Flow<HttpResult<MutableList<FolowerData>>>
 
 }

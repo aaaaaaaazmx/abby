@@ -127,9 +127,10 @@
 
 
                         <LinearLayout
+                            android:id="@+id/ll_head"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="49dp"
+                            android:layout_marginTop="42dp"
                             android:background="@color/white"
                             android:gravity="center"
                             android:orientation="vertical"
@@ -255,16 +256,17 @@
                                     android:visibility='@{TextUtils.isEmpty(viewModel.userAssets.data.basicInfo.personSign) ? View.GONE : View.VISIBLE}'
                                     android:text="@{String.valueOf(viewModel.userAssets.data.basicInfo.personSign)}"
                                     android:id="@+id/tv_persion"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="15dp"
-                                    android:paddingStart="30dp"
-                                    android:paddingEnd="30dp"
+                                    android:paddingStart="20dp"
+                                    android:paddingEnd="20dp"
                                     android:textColor="#C4C4C4"
                                     android:textSize="13sp"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@+id/tv_following"
+                                    android:gravity="start"
                                     tools:text="Personal introduction,Personal introduction,Personal introductionPersonal introduction..." />
 
 
@@ -275,7 +277,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="15dp"
                                     android:layout_marginTop="20dp"
-                                    android:layout_marginEnd="15dp"
+                                    android:layout_marginEnd="20dp"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@+id/tv_persion" />
@@ -443,7 +445,7 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.achievements.size() > 1 ? String.valueOf(viewModel.userAssets.data.achievements.get(0).picture) :""}'
+                                    url='@{viewModel.userAssets.data.achievements.size() >= 1 ? String.valueOf(viewModel.userAssets.data.achievements.get(0).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.achievements.size() &lt;= 0 ? View.GONE : View.VISIBLE}'
                                     android:id="@+id/iv_achievements_one"
                                     tools:background="@mipmap/ic_launcher"
@@ -461,7 +463,7 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.achievements.size() > 2 ? String.valueOf(viewModel.userAssets.data.achievements.get(1).picture) :""}'
+                                    url='@{viewModel.userAssets.data.achievements.size() >= 2 ? String.valueOf(viewModel.userAssets.data.achievements.get(1).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.achievements.size() &lt;= 1 ? View.GONE : View.VISIBLE}'
                                     app:layout_goneMarginStart="15dp"
                                     app:layout_constraintStart_toEndOf="@+id/iv_achievements_one"
@@ -481,7 +483,7 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.achievements.size() > 3 ? String.valueOf(viewModel.userAssets.data.achievements.get(2).picture) :""}'
+                                    url='@{viewModel.userAssets.data.achievements.size() >= 3 ? String.valueOf(viewModel.userAssets.data.achievements.get(2).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.achievements.size() &lt;= 2 ? View.GONE : View.VISIBLE}'
                                     android:id="@+id/iv_achievements_three"
                                     app:layout_goneMarginStart="15dp"
@@ -501,7 +503,7 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.achievements.size() > 4 ? String.valueOf(viewModel.userAssets.data.achievements.get(3).picture) :""}'
+                                    url='@{viewModel.userAssets.data.achievements.size() >= 4 ? String.valueOf(viewModel.userAssets.data.achievements.get(3).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.achievements.size() &lt;= 3 ? View.GONE : View.VISIBLE}'
                                     app:layout_constraintStart_toEndOf="@+id/iv_achievements_three"
                                     app:layout_goneMarginStart="15dp"
@@ -573,14 +575,14 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.frames.size() > 1 ? String.valueOf(viewModel.userAssets.data.frames.get(0).picture) :""}'
+                                    url='@{viewModel.userAssets.data.frames.size() >= 1 ? String.valueOf(viewModel.userAssets.data.frames.get(0).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.frames.size() &lt;= 0 ? View.GONE : View.VISIBLE}'
                                     android:id="@+id/iv_frames_one"
                                     tools:background="@mipmap/ic_launcher"
                                     android:layout_marginBottom="13dp"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     android:layout_marginTop="15dp"
-                                    android:layout_marginStart="20dp"
+                                    android:layout_marginStart="10dp"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toBottomOf="@+id/iv_frames"
                                     tools:text="1234567"
@@ -591,7 +593,7 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.frames.size() > 2 ? String.valueOf(viewModel.userAssets.data.frames.get(1).picture) :""}'
+                                    url='@{viewModel.userAssets.data.frames.size() >= 2 ? String.valueOf(viewModel.userAssets.data.frames.get(1).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.frames.size() &lt;= 1 ? View.GONE : View.VISIBLE}'
                                     app:layout_goneMarginStart="15dp"
                                     app:layout_constraintStart_toEndOf="@+id/iv_frames_one"
@@ -611,7 +613,7 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.frames.size() > 3 ? String.valueOf(viewModel.userAssets.data.frames.get(2).picture) :""}'
+                                    url='@{viewModel.userAssets.data.frames.size() >= 3 ? String.valueOf(viewModel.userAssets.data.frames.get(2).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.frames.size() &lt;= 2 ? View.GONE : View.VISIBLE}'
                                     android:id="@+id/iv_frames_three"
                                     app:layout_goneMarginStart="15dp"
@@ -631,7 +633,7 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.frames.size() > 4 ? String.valueOf(viewModel.userAssets.data.frames.get(3).picture) :""}'
+                                    url='@{viewModel.userAssets.data.frames.size() >= 4 ? String.valueOf(viewModel.userAssets.data.frames.get(3).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.frames.size() &lt;= 3 ? View.GONE : View.VISIBLE}'
                                     app:layout_constraintStart_toEndOf="@+id/iv_frames_three"
                                     app:layout_goneMarginStart="15dp"
@@ -700,7 +702,6 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.wallpapers.size() > 1 ? String.valueOf(viewModel.userAssets.data.wallpapers.get(0).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.wallpapers.size() &lt;= 0 ? View.GONE : View.VISIBLE}'
                                     android:id="@+id/iv_wallpaper_one"
                                     tools:background="@mipmap/ic_launcher"
@@ -718,7 +719,6 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.wallpapers.size() > 2 ? String.valueOf(viewModel.userAssets.data.wallpapers.get(1).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.wallpapers.size() &lt;= 1 ? View.GONE : View.VISIBLE}'
                                     app:layout_goneMarginStart="15dp"
                                     app:layout_constraintStart_toEndOf="@+id/iv_wallpaper_one"
@@ -738,7 +738,6 @@
 
                                 <ImageView
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.wallpapers.size() > 3 ? String.valueOf(viewModel.userAssets.data.wallpapers.get(2).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.wallpapers.size() &lt;= 2 ? View.GONE : View.VISIBLE}'
                                     android:id="@+id/iv_wallpaper_three"
                                     app:layout_goneMarginStart="15dp"
@@ -757,8 +756,8 @@
 
 
                                 <ImageView
+                                    android:id="@+id/iv_wallpaper_four"
                                     android:scaleType="centerCrop"
-                                    url='@{viewModel.userAssets.data.wallpapers.size() > 4 ? String.valueOf(viewModel.userAssets.data.wallpapers.get(3).picture) :""}'
                                     android:visibility='@{viewModel.userAssets.data.wallpapers.size() &lt;= 3 ? View.GONE : View.VISIBLE}'
                                     app:layout_constraintStart_toEndOf="@+id/iv_wallpaper_three"
                                     app:layout_goneMarginStart="15dp"
@@ -786,9 +785,13 @@
                             app:layout_constraintStart_toStartOf="parent">
 
                             <RelativeLayout
+                                app:layout_constraintBottom_toBottomOf="@+id/iv_head_bg"
+                                app:layout_constraintTop_toTopOf="@+id/iv_head_bg"
+                                app:layout_constraintEnd_toEndOf="@+id/iv_head_bg"
+                                app:layout_constraintStart_toStartOf="@+id/iv_head_bg"
                                 android:id="@+id/iv_heads"
-                                android:layout_width="102dp"
-                                android:layout_height="102dp"
+                                android:layout_width="84dp"
+                                android:layout_height="84dp"
                                 android:background="@drawable/my_head_broad_bg">
 
                                 <ImageView
@@ -796,13 +799,13 @@
                                     android:visibility="@{viewModel.userDetail.data.avatarPicture == null ? View.GONE : View.VISIBLE}"
                                     android:layout_centerInParent="true"
                                     circleUrl="@{viewModel.userDetail.data.avatarPicture}"
-                                    android:layout_width="98dp"
-                                    android:layout_height="98dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
                                     />
 
                                 <TextView
-                                    android:layout_width="98dp"
-                                    android:layout_height="98dp"
+                                    android:layout_width="80dp"
+                                    android:layout_height="80dp"
                                     android:layout_centerInParent="true"
                                     android:background="@drawable/my_head_bg"
                                     android:gravity="center"
@@ -815,6 +818,15 @@
                             </RelativeLayout>
 
                             <ImageView
+                                tools:background="@mipmap/test_head"
+                                tools:visibility="visible"
+                                android:visibility="@{TextUtils.isEmpty(viewModel.userAssets.data.basicInfo.framesHeads) ? View.INVISIBLE : View.VISIBLE}"
+                                url="@{viewModel.userAssets.data.basicInfo.framesHeads}"
+                                android:id="@+id/iv_head_bg"
+                                android:layout_width="84dp"
+                                android:layout_height="84dp"/>
+
+                            <ImageView
                                 android:background="@mipmap/vip"
                                 android:visibility="@{viewModel.userAssets.data.basicInfo.isVip == 0 ? View.GONE : View.VISIBLE}"
                                 android:id="@+id/iv_vip"
@@ -822,7 +834,7 @@
                                 android:layout_height="20dp"
                                 app:layout_constraintCircle="@id/iv_heads"
                                 app:layout_constraintCircleAngle="130"
-                                app:layout_constraintCircleRadius="48dp"
+                                app:layout_constraintCircleRadius="38dp"
                                 tools:background="@mipmap/vip" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -830,7 +842,7 @@
                             android:id="@+id/rl_edit"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:layout_marginTop="20dp"
+                            android:layout_marginTop="40dp"
                             app:layout_constraintEnd_toEndOf="parent">
 
                             <ImageView

@@ -422,4 +422,11 @@ interface HttpMyApiService {
     @POST("abby/digitalAsset/showFrame")
     fun showFrame(@Field("frameId") frameId: Int): Flow<HttpResult<BaseBean>>
 
+    // 被关注列表 abby/user/follower
+    @POST("abby/user/follower")
+    fun follower(): Flow<HttpResult<MutableList<FolowerData>>>
+
+    // 关注列表 abby/user/following
+    @POST("abby/user/following")
+    fun following(): Flow<HttpResult<MutableList<FolowerData>>>
 }

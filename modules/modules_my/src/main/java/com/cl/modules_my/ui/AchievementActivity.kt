@@ -42,7 +42,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
     override fun initView() {
         binding.featureTitleBar
             .setTitle(if (isAchievement) "Achievement" else "Frame")
-            .setRightButtonTextBack(com.cl.common_base.R.drawable.background_check_tags_r5)
+            /*.setRightButtonTextBack(com.cl.common_base.R.drawable.background_check_tags_r5)
             .setRightButtonText("Save")
             .setRightButtonTextSize(13f)
             .setRightButtonTextHeight(25f)
@@ -53,7 +53,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
                 } else {
                     mViewModel.showFrame(adapter.data.firstOrNull { it.selectedStatus }?.goodsId ?: 0)
                 }
-            }
+            }*/
 
         binding.rvAchievement.layoutManager = GridLayoutManager(this, 3)
         binding.rvAchievement.addItemDecoration(
@@ -74,6 +74,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
                 }
                 success {
                     adapter.setList(data)
+                    binding.featureTitleBar.setTitle("Achievement( ${data?.filter { it.isGain }?.size ?: 0}/${data?.size ?: 0} )")
                 }
             })
 
@@ -85,7 +86,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    finish()
+                    // finish()
                 }
             })
 
@@ -95,6 +96,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
                 }
                 success {
                     adapter.setList(data)
+                    binding.featureTitleBar.setTitle("Frame( ${data?.filter { it.isGain }?.size ?: 0}/${data?.size ?: 0} )")
                 }
             })
 
@@ -119,57 +121,52 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
             val dataList = adapter.data as? MutableList<AchievementBean> ?: return@setOnItemChildClickListener
             when (view.id) {
                 R.id.my_achievement_item -> {
-                    when(isAchievement) {
-                        true -> {
-                            // 弹窗详情弹窗
-                            xpopup(this@AchievementActivity) {
-                                isDestroyOnDismiss(false)
-                                dismissOnTouchOutside(true)
-                                asCustom(
-                                    AchievementPop(this@AchievementActivity, currentDataInfo.achDescribe) {
-                                        //  选中操作逻辑
-                                        if (!currentDataInfo.isGain) {
-                                            val toastMessage = if (isAchievement) "You have not gained this achievement yet" else "You have not gained this frame yet"
-                                            ToastUtil.shortShow(toastMessage)
-                                            return@AchievementPop
-                                        }
+                    //  选中操作逻辑
+                    /*if (!currentDataInfo.isGain) {
+                        val toastMessage = if (isAchievement) "You have not gained this achievement yet" else "You have not gained this frame yet"
+                        ToastUtil.shortShow(toastMessage)
+                        return@setOnItemChildClickListener
+                    }*/
 
-                                        if (currentDataInfo.selectedStatus) return@AchievementPop // 如果已选中则不处理
-
-                                        // 取消之前选中的项
-                                        dataList.find { it.selectedStatus }?.let {
-                                            it.selectedStatus = false
-                                            adapter.notifyItemChanged(dataList.indexOf(it))
-                                        }
-
-                                        // 选中点击的项
-                                        currentDataInfo.selectedStatus = true
-                                        adapter.notifyItemChanged(position)
+                    // 弹窗详情弹窗
+                    xpopup(this@AchievementActivity) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(true)
+                        asCustom(
+                            AchievementPop(
+                                this@AchievementActivity,
+                                currentDataInfo.achDescribe,
+                                currentDataInfo.backgroundPicture,
+                                currentDataInfo.title,
+                                currentDataInfo.selectedStatus,
+                                currentDataInfo.isGain,
+                            ) {
+                                // 如果已选中则取消选中
+                                if (currentDataInfo.selectedStatus) {
+                                    // 取消之前选中的项
+                                    dataList.find { it.selectedStatus }?.let {
+                                        it.selectedStatus = false
+                                        adapter.notifyItemChanged(dataList.indexOf(it))
                                     }
-                                ).show()
+                                    // 保存
+                                    if (isAchievement) mViewModel.showAsset(0) else mViewModel.showFrame(0)
+                                    return@AchievementPop
+                                }
+
+                                // 取消之前选中的项
+                                dataList.find { it.selectedStatus }?.let {
+                                    it.selectedStatus = false
+                                    adapter.notifyItemChanged(dataList.indexOf(it))
+                                }
+
+                                // 选中点击的项
+                                currentDataInfo.selectedStatus = true
+                                adapter.notifyItemChanged(position)
+
+                                // 保存
+                                if (isAchievement) mViewModel.showAsset(currentDataInfo.achievementId) else mViewModel.showFrame(currentDataInfo.goodsId)
                             }
-                        }
-
-                        else -> {
-                            //  选中操作逻辑
-                            if (!currentDataInfo.isGain) {
-                                val toastMessage = if (isAchievement) "You have not gained this achievement yet" else "You have not gained this frame yet"
-                                ToastUtil.shortShow(toastMessage)
-                                return@setOnItemChildClickListener
-                            }
-
-                            if (currentDataInfo.selectedStatus) return@setOnItemChildClickListener // 如果已选中则不处理
-
-                            // 取消之前选中的项
-                            dataList.find { it.selectedStatus }?.let {
-                                it.selectedStatus = false
-                                adapter.notifyItemChanged(dataList.indexOf(it))
-                            }
-
-                            // 选中点击的项
-                            currentDataInfo.selectedStatus = true
-                            adapter.notifyItemChanged(position)
-                        }
+                        ).show()
                     }
 
                     // 如果点击的不是第一项，移动到第一项

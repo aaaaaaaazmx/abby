@@ -21,10 +21,6 @@
             name="isSelect"
             type="java.lang.Boolean" />
 
-        <variable
-            name="isGain"
-            type="java.lang.Boolean" />
-
         <import type="android.text.TextUtils"/>
         <import type="android.view.View"/>
 
@@ -48,27 +44,26 @@
             android:layout_marginBottom="13dp"
             android:background="@mipmap/iv_close" />
 
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/iv_close"
             android:id="@+id/rl_add_accessory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="20dp"
             android:layout_marginEnd="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_close"
             >
 
             <ImageView
-                android:scaleType="centerCrop"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:layout_height="240dp"
                 android:layout_width="240dp"
                 android:id="@+id/iv_add_accessory"
                 tools:background="@mipmap/ic_launcher" />
-
 
             <TextView
                 app:layout_constraintEnd_toEndOf="parent"
@@ -82,14 +77,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="21sp"
-                tools:text="Harvest #28 Complete  "
-                android:visibility="@{TextUtils.isEmpty(title) ? View.GONE : View.VISIBLE}"
-                android:text="@{title}"
-             />
+                tools:text="Harvest #28 Complete  " />
 
             <TextView
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory_title"
@@ -102,22 +92,22 @@
                 android:textColor="#979797"
                 android:textSize="15sp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="@{TextUtils.isEmpty(desc) ? View.GONE : View.VISIBLE}"
-                android:text="@{desc}"
-              />
+                android:layout_height="wrap_content" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+
+
+
         <com.cl.common_base.widget.SvTextView
-            android:visibility="@{!isGain ? View.GONE : View.VISIBLE}"
             android:id="@+id/tv_add"
             android:layout_width="150dp"
             android:layout_height="35dp"
-            android:layout_marginTop="37dp"
+            android:layout_marginTop="57dp"
             android:layout_marginBottom="40dp"
             android:gravity="center"
-            android:text="@{isSelect ? `Remove` : `Use`}"
+            android:text="佩戴勋章"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"

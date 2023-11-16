@@ -69,7 +69,7 @@
             android:layout_centerInParent="true"
             android:layout_gravity="center"
             android:layout_marginTop="21dp"
-            android:background="@mipmap/ic_launcher"
+            tools:background="@mipmap/ic_launcher"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

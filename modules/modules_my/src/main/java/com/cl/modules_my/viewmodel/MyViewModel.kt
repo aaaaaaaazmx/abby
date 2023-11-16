@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cl.common_base.bean.FolowerData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.bean.WallpaperListBean
 import com.cl.common_base.constants.Constants
@@ -136,4 +137,71 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
                 _userAssets.value = it
             }
     }
+
+    /**
+     * 获取关注着列表 follower
+     */
+    private val _followList = MutableLiveData<Resource<MutableList<FolowerData>>>()
+    val followList: LiveData<Resource<MutableList<FolowerData>>> = _followList
+    fun followList() = viewModelScope.launch {
+        repository.follower()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _followList.value = it
+            }
+    }
+
+    /**
+     * 获取关注着列表 following
+     */
+    private val _followingList = MutableLiveData<Resource<MutableList<FolowerData>>>()
+    val followingList: LiveData<Resource<MutableList<FolowerData>>> = _followingList
+    fun followingList() = viewModelScope.launch {
+        repository.following()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _followingList.value = it
+            }
+    }
+
 }

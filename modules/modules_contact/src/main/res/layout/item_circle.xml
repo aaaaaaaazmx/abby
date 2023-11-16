@@ -35,6 +35,10 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent">
         <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintBottom_toBottomOf="@+id/iv_head_bg"
+            app:layout_constraintTop_toTopOf="@+id/iv_head_bg"
+            app:layout_constraintEnd_toEndOf="@+id/iv_head_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_head_bg"
             android:id="@+id/iv_heads"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,14 +67,22 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
+            android:visibility="@{TextUtils.isEmpty(data.framesHeads) ? View.INVISIBLE : View.VISIBLE}"
+            tools:background="@mipmap/test_head"
+            url="@{data.framesHeads}"
+            android:id="@+id/iv_head_bg"
+            android:layout_width="60dp"
+            android:layout_height="60dp"/>
+
+        <ImageView
             android:background="@mipmap/vip"
             android:visibility="@{data.isVip == 0 ? View.GONE : View.VISIBLE}"
             android:id="@+id/iv_vip"
             android:layout_width="12dp"
             android:layout_height="12dp"
             app:layout_constraintCircle="@id/iv_heads"
-            app:layout_constraintCircleAngle="20"
-            app:layout_constraintCircleRadius="50dp"
+            app:layout_constraintCircleAngle="125"
+            app:layout_constraintCircleRadius="21dp"
             tools:background="@mipmap/vip"
              />
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -94,7 +106,7 @@
             url="@{data.userFlagImage}"
             app:layout_constraintBottom_toBottomOf="@+id/tvNick"
             app:layout_constraintTop_toTopOf="@+id/tvNick"
-            android:background="@mipmap/ic_launcher"
+            tools:background="@mipmap/ic_launcher"
             android:layout_marginEnd="6dp"
             app:layout_constraintEnd_toStartOf="@+id/iv_medal"
             android:id="@+id/iv_tag"
@@ -109,7 +121,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/tvNick"
             app:layout_constraintTop_toTopOf="@+id/tvNick"
             app:layout_constraintEnd_toStartOf="@+id/tvNum"
-            android:background="@mipmap/ic_launcher"
+            tools:background="@mipmap/ic_launcher"
             android:id="@+id/iv_medal"
             android:layout_width="16dp"
             android:layout_height="16dp"/>
