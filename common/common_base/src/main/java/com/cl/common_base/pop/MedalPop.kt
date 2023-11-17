@@ -118,6 +118,7 @@ class MedalPop(context: Context, private val medalPopData: MedalPopData?) : Bott
                 } else {
                     binding?.tvAdd?.text = "Remove"
                 }
+                dismiss()
             }
         }
     }
@@ -151,6 +152,7 @@ class MedalPop(context: Context, private val medalPopData: MedalPopData?) : Bott
                 } else {
                     binding?.tvAdd?.text = "Remove"
                 }
+                dismiss()
             }
         }
     }

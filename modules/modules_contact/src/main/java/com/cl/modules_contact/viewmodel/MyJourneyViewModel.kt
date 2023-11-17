@@ -39,6 +39,14 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
         GSON.parseObject(bean, UserinfoBean::class.java)
     }
 
+    /**
+     * 判断是否取消和关注的动作
+     */
+    private val _isFollowAction = MutableLiveData<Boolean>(false)
+    val isFollowAction: LiveData<Boolean> = _isFollowAction
+    fun updateIsFollowAction(isFollow: Boolean) {
+        _isFollowAction.value = isFollow
+    }
 
     /**
      * 获取壁纸列表

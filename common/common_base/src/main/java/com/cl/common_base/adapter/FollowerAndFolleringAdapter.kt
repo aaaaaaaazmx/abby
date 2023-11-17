@@ -22,6 +22,7 @@ class FollowerAndFolleringAdapter (data: MutableList<FolowerData>?) :
             clRoot.setOnClickListener {
                 ARouter.getInstance().build(RouterPath.Contact.PAGE_OTHER_JOURNEY)
                     .withString("key_user_id", item.userId.toString())
+                    .withString("key_user_name", item.nickName)
                     .navigation()
             }
         }

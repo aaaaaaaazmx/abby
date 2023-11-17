@@ -38,9 +38,9 @@ class AchievementPop(context: Context, private val url: String?, private val bac
                 // isGain
                 val requestOptions = RequestOptions()
                 // 判断是否需要应用灰度转换
-                if (!this@AchievementPop.isGain) {
+                /*if (!this@AchievementPop.isGain) {
                     requestOptions.transform(GrayscaleTransformation())
-                }
+                }*/
                 // 设置 placeholder 和 error
                 requestOptions.placeholder(com.cl.common_base.R.mipmap.placeholder)
                 requestOptions.error(com.cl.common_base.R.mipmap.errorholder)

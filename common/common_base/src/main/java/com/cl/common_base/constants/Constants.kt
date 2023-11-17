@@ -92,6 +92,8 @@ object Constants {
         const val KEY_PLANT_DATA_IS_VISIBLE = "key_plant_data_is_visible"
         // timelapse提示是否只展示一次
         const val KEY_TIMELAPSE_TIP_IS_SHOW = "key_timelapse_tip_is_show"
+        // 关注提醒是否只展示一次
+        const val KEY_FOLLOW_TIP_IS_SHOW = "key_follow_tip_is_show"
     }
 
     // 隐私合规相关

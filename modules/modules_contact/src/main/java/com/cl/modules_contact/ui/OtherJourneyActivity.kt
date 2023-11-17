@@ -2,6 +2,7 @@ package com.cl.modules_contact.ui
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -77,6 +78,10 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
         intent.getStringExtra(KEY_USER_ID)
     }
 
+    private val userName by lazy {
+        intent.getStringExtra(KEY_USER_NAME)
+    }
+
     /*private val nickName by lazy {
         intent.getStringExtra(KEY_NICK_NAME)
     }
@@ -126,6 +131,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
     }
 
     override fun initView() {
+        binding.tvTitle.text = userName ?: "Digital"
         binding.linkageScroll.topScrollTarget = { binding.rvLinkageTop }
         binding.linkageScroll.listeners.add(object : BehavioralScrollListener {
             override fun onScrollChanged(v: BehavioralScrollView, from: Int, to: Int) {
@@ -234,10 +240,13 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    if (userAssets.value?.data?.followStatus == true) {
+                    val followText = binding.tvFollower.text.toString()
+                    if (followText == "Following") {
                         binding.tvFollower.text = "Follow"
+                        viewModel.updateIsFollowAction(false)
                     } else {
                         binding.tvFollower.text = "Following"
+                        viewModel.updateIsFollowAction(true)
                     }
                 }
             })
@@ -264,6 +273,9 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     val layoutParams1 = binding.llHead.layoutParams as ConstraintLayout.LayoutParams
                     layoutParams1.topMargin = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 42f else 62f)
                     binding.llHead.layoutParams = layoutParams1
+
+                    // 设置是否关注
+                    viewModel.updateIsFollowAction(data?.followStatus == true)
                 }
             })
 
@@ -422,21 +434,33 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
             viewModel.userDetail(it)
         }
         initAdapterClick()
-        binding.flBack.setOnClickListener { finish() }
+        binding.flBack.setOnClickListener {
+            setResult(Activity.RESULT_OK, Intent().putExtra(ContactFragment.KEY_FOLLOW_STATUS, viewModel.isFollowAction.value))
+            finish()
+        }
         binding.clFollower.setOnClickListener {
+            val followText = binding.tvFollower.text.toString()
+            val isFollowStatus = followText == "Following" // 判断是否是false
             xpopup(this@OtherJourneyActivity) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
-                asCustom(BaseCenterPop(this@OtherJourneyActivity, content = "Do you want to follow this grower?", isShowCancelButton = true, confirmText = "Confirm", onConfirmAction = {
-                    //  修改跟随状态
-                    viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !(viewModel.userAssets.value?.data?.followStatus ?: false), otherUserId = userId ?: ""))
-                    val followerNumber = binding.tvFollowNumber.text.safeToInt()
-                    if (viewModel.userAssets.value?.data?.followStatus == true) {
-                        binding.tvFollowNumber.text = "${followerNumber.minus(1)}"
-                    } else {
-                        binding.tvFollowNumber.text = "${followerNumber.plus(1)}"
-                    }
-                })).show()
+                asCustom(
+                    BaseCenterPop(
+                        this@OtherJourneyActivity,
+                        content = if (isFollowStatus) "Unfollow this grower" else "Do you want to follow this grower?",
+                        isShowCancelButton = true,
+                        confirmText = "Confirm",
+                        onConfirmAction = {
+                            //  修改跟随状态
+                            viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !isFollowStatus, otherUserId = userId ?: ""))
+                            val followerNumber = binding.tvFollowNumber.text.safeToInt()
+                            if (isFollowStatus) {
+                                binding.tvFollowNumber.text = "${followerNumber.minus(1)}"
+                            } else {
+                                binding.tvFollowNumber.text = "${followerNumber.plus(1)}"
+                            }
+                        })
+                ).show()
             }
         }
 
@@ -611,8 +635,15 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
             ).show()
     }
 
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_OK, Intent().putExtra(ContactFragment.KEY_FOLLOW_STATUS, viewModel.isFollowAction.value))
+        finish()
+    }
+
     companion object {
         const val REFRESH_SIZE = 10
         const val KEY_USER_ID = "key_user_id"
+        // KEY_USER_NAME
+        const val KEY_USER_NAME = "key_user_name"
     }
 }

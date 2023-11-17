@@ -52,6 +52,8 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
             }
             return@setOnApplyWindowInsetsListener insets
         }
+        // 名字
+        binding.tvTitle.text = mViewModel.userInfo()?.nickName
 
         binding.linkageScroll.topScrollTarget = { binding.rvLinkageTop }
         binding.linkageScroll.listeners.add(object : BehavioralScrollListener {

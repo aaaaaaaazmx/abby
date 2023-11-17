@@ -29,6 +29,7 @@ data class NewPageData(
         val userFlagImage: String? = null,
         val articleId: Int? = null,
         val userId: String? = null,
+        var isFollow: Boolean? = null,
         val avatarPicture: String? = null,
         val isVip: Int? = null,
         val learnMoreId: String? = null,

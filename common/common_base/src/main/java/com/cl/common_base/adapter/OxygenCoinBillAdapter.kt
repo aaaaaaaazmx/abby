@@ -47,6 +47,7 @@ class OxygenCoinBillAdapter(
                     // 跳转到他的资产界面
                     ARouter.getInstance().build(RouterPath.Contact.PAGE_OTHER_JOURNEY)
                         .withString("key_user_id", oxygenAdapter.data[position].rewardUserId)
+                        .withString("key_user_name", oxygenAdapter.data[position].tips)
                         .navigation()
                 }
             }
