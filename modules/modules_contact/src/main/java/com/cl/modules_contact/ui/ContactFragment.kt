@@ -335,7 +335,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     SoundPoolUtil.instance.startVibrator(context = context)
 
                     // 是否展示关注弹窗
-                    isShowFollowDialog(item, adapter, position)
+                    isShowFollowDialog(item, adapter, position, false)
                 }
 
                 R.id.cl_gift -> {
@@ -361,7 +361,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                     )
 
                                     // 是否展示关注弹窗
-                                    isShowFollowDialog(item, adapter, position)
+                                    isShowFollowDialog(item, adapter, position, true)
                                 })
                             }
                         ).show()
@@ -506,8 +506,11 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         }
     }
 
-    private fun isShowFollowDialog(item: NewPageData.Records?, adapter: BaseQuickAdapter<*, *>, position: Int) {
-        if (item?.isPraise == 1) return
+    private fun isShowFollowDialog(item: NewPageData.Records?, adapter: BaseQuickAdapter<*, *>, position: Int, isGifts: Boolean) {
+        if (item?.userId == mViewMode.userinfoBean?.userId) return
+        if (!isGifts) {
+            if (item?.isPraise == 1) return
+        }
         // 获取KEY_FOLLOW_TIP_IS_SHOW的值
         val isShow = Prefs.getBoolean(Constants.Contact.KEY_FOLLOW_TIP_IS_SHOW, false)
         if (!isShow) {
@@ -516,12 +519,12 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 context?.let {
                     xpopup(it) {
                         isDestroyOnDismiss(false)
-                        dismissOnTouchOutside(false)
+                        dismissOnTouchOutside(true)
                         asCustom(
                             BaseThreeTextPop(
                                 it,
                                 content = "Do you want to follow this grower?",
-                                oneLineText = "Do not remind me again",
+                                oneLineText = "Don't show it again",
                                 twoLineText = "Follow",
                                 threeLineText = "Cancel",
                                 twoLineCLickEventAction = {

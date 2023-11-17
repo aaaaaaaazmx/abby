@@ -108,7 +108,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/tvNick"
             app:layout_constraintTop_toTopOf="@+id/tvNick"
             tools:background="@mipmap/ic_launcher"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             android:id="@+id/iv_tag"
             android:layout_width="16dp"
             android:layout_height="16dp"/>
@@ -118,7 +118,7 @@
             app:layout_constraintStart_toEndOf="@+id/iv_tag"
             android:visibility="@{TextUtils.isEmpty(data.showAchievement) ? View.GONE : View.VISIBLE}"
             url="@{data.showAchievement}"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/tvNick"
             app:layout_constraintTop_toTopOf="@+id/tvNick"
             tools:background="@mipmap/ic_launcher"

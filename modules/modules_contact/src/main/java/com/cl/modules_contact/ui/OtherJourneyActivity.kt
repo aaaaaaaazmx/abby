@@ -276,6 +276,8 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
                     // 设置是否关注
                     viewModel.updateIsFollowAction(data?.followStatus == true)
+
+                    binding.tvTitle.text = data?.nickName
                 }
             })
 
@@ -579,7 +581,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
                         .atView(view).isCenterHorizontal(false).asCustom(this@OtherJourneyActivity.let {
                             ContactPotionPop(
-                                it, isShowShareToPublic = item?.syncTrend != 1,
+                                it, isShowShareToPublic = item?.userId.toString() == viewModel.userinfoBean?.userId,
                                 deleteAction = { //  删除
                                     viewModel.delete(DeleteReq(momentId = item?.id.toString()))
                                 },
@@ -594,6 +596,30 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                                     viewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                                 },
                                 isShowReport = item?.userId.toString() == viewModel.userinfoBean?.userId,
+                                isFollow = binding.tvFollower.text.toString() == "Following",
+                                followAction = {
+                                    val isFollowing = binding.tvFollower.text.toString() == "Following"
+                                    // 跟随
+                                    xpopup(this@OtherJourneyActivity) {
+                                        isDestroyOnDismiss(false)
+                                        dismissOnTouchOutside(false)
+                                        asCustom(
+                                            BaseCenterPop(
+                                                this@OtherJourneyActivity,
+                                                confirmText = if (isFollowing) "Unfollow" else "Follow",
+                                                isShowCancelButton = true,
+                                                cancelText = "Cancel",
+                                                content = if (isFollowing) "Unfollow this grower" else "Do you want to follow this grower?",
+                                                onConfirmAction = {
+                                                    if (isFollowing) {
+                                                        viewModel.updateFollowStatus(UpdateFollowStatusReq(false, item?.userId.toString()))
+                                                    } else {
+                                                        viewModel.updateFollowStatus(UpdateFollowStatusReq(true, item?.userId.toString()))
+                                                    }
+                                                })
+                                        ).show()
+                                    }
+                                }
                             ).setBubbleBgColor(Color.WHITE) //气泡背景
                                 .setArrowWidth(XPopupUtils.dp2px(this@OtherJourneyActivity, 3f)).setArrowHeight(
                                     XPopupUtils.dp2px(

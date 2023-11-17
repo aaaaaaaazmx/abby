@@ -48,6 +48,7 @@
             android:layout_height="wrap_content"/>
 
         <ImageView
+            android:layout_marginStart="50dp"
             android:visibility="@{TextUtils.isEmpty(data.rewardHeadPicture) ? View.GONE : View.VISIBLE}"
             android:id="@+id/iv_avatar"
             app:layout_constraintEnd_toEndOf="parent"
