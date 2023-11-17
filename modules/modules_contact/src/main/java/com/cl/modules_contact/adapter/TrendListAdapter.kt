@@ -54,6 +54,7 @@ class TrendListAdapter(
             binding.executePendingBindings()
         }
         // 设置富文本
+        ViewUtils.setVisible(!item.content.isNullOrEmpty() || !item.mentions.isNullOrEmpty(), holder.getView(R.id.tvDesc))
         holder.setText(R.id.tvDesc, getContents(item.content, item.mentions))
         holder.setText(R.id.tvNum, convertTime(item.createTime))
         // 轮播图

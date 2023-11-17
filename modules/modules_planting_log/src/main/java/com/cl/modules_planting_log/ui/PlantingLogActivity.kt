@@ -195,6 +195,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
         logSaveOrUpdateReq.period = period
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode
         logSaveOrUpdateReq.syncPost = binding.ftTrend.isItemChecked
+        logSaveOrUpdateReq.isPhb = viewModel.refreshPh.value ?: false
         updateNotes(logSaveOrUpdateReq)
         updatePhotos(logSaveOrUpdateReq)
         updateUnit(logSaveOrUpdateReq, viewModel.isMetric, true)
@@ -408,6 +409,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                 launch {
                     viewModel.listLogStateFlow.collect {
                         hideProgressLoading()
+                        viewModel.setRefreshPh(true)
                         // 解析当前特征值
                         val value = it.byteArray
                         value?.let { it1 ->
@@ -937,7 +939,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                         enableWrite = false
                     )
                     // 设置当前的服务ID、特征ID
-                    if (characteristics.uuid.toString() == Constants.Ble.KEY_BLE_PH_CHARACTERISTIC_UUID) {
+                    if (characteristics.uuid.toString().startsWith(Constants.Ble.KEY_BLE_PH_CHARACTERISTIC_UUID)) {
                         viewModel.setCurrentCharacteristicId(characteristics.uuid.toString())
                         viewModel.setCurrentServiceId(service.uuid.toString())
                         viewModel.currentBleDevice.value?.let { bleDevice ->

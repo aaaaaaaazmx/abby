@@ -573,6 +573,16 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     }
 
     /**
+     * 点击refreshPh时保存状态
+     * 默认是false
+     */
+    private val _refreshPh = MutableLiveData<Boolean>(false)
+    val refreshPh: LiveData<Boolean> = _refreshPh
+    fun setRefreshPh(isRefresh: Boolean) {
+        _refreshPh.value = isRefresh
+    }
+
+    /**
      * 添加日志显示
      */
     @Synchronized
