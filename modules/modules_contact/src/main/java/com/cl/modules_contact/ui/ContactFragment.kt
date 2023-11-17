@@ -423,7 +423,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                             asCustom(
                                                 BaseCenterPop(
                                                     cc,
-                                                    confirmText = "Follow",
+                                                    confirmText = if (item?.isFollow == true) "Unfollow" else "Follow",
                                                     isShowCancelButton = true,
                                                     cancelText = "Cancel",
                                                     content = if (item?.isFollow == true) "Unfollow this grower" else "Do you want to follow this grower?",
@@ -433,6 +433,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                                         } else {
                                                             mViewMode.updateFollowStatus(UpdateFollowStatusReq(true, item?.userId.toString()))
                                                         }
+                                                        // 更新当前follow状态
+                                                        item?.isFollow = !(item?.isFollow ?: false)
+                                                        adapter.notifyItemChanged(position)
                                                     })
                                             ).show()
                                         }
@@ -504,6 +507,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
     }
 
     private fun isShowFollowDialog(item: NewPageData.Records?, adapter: BaseQuickAdapter<*, *>, position: Int) {
+        if (item?.isPraise == 1) return
         // 获取KEY_FOLLOW_TIP_IS_SHOW的值
         val isShow = Prefs.getBoolean(Constants.Contact.KEY_FOLLOW_TIP_IS_SHOW, false)
         if (!isShow) {
@@ -517,8 +521,8 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                             BaseThreeTextPop(
                                 it,
                                 content = "Do you want to follow this grower?",
-                                twoLineText = "Do not remind me again",
-                                oneLineText = "Follow",
+                                oneLineText = "Do not remind me again",
+                                twoLineText = "Follow",
                                 threeLineText = "Cancel",
                                 twoLineCLickEventAction = {
                                     // 关注

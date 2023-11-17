@@ -441,7 +441,16 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
         binding.clFollower.setOnClickListener {
             val followText = binding.tvFollower.text.toString()
             val isFollowStatus = followText == "Following" // 判断是否是false
-            xpopup(this@OtherJourneyActivity) {
+            //  修改跟随状态
+            viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !isFollowStatus, otherUserId = userId ?: ""))
+            val followerNumber = binding.tvFollowNumber.text.safeToInt()
+            if (isFollowStatus) {
+                binding.tvFollowNumber.text = "${followerNumber.minus(1)}"
+            } else {
+                binding.tvFollowNumber.text = "${followerNumber.plus(1)}"
+            }
+            // 取消和关注都不弹窗
+            /*xpopup(this@OtherJourneyActivity) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(
@@ -461,7 +470,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                             }
                         })
                 ).show()
-            }
+            }*/
         }
 
         // follow
