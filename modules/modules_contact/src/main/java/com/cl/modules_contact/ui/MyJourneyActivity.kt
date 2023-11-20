@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
@@ -32,6 +33,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.safeToInt
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
@@ -46,6 +48,7 @@ import javax.inject.Inject
 /**
  * 个人空间
  */
+@Route(path = RouterPath.My.PAGE_MY_JOURNEY)
 @AndroidEntryPoint
 class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
 

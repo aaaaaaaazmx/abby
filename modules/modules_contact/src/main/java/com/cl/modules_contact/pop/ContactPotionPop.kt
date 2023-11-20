@@ -12,10 +12,12 @@ class ContactPotionPop(
     private val isShowReport: Boolean = false,
     private val isShowShareToPublic: Boolean = false,
     private val fisItemSwitchIsCheck: Boolean = true,
+    private val isFollow: Boolean = false,
     private val deleteAction: (() -> Unit)? = null,
     private val reportAction: (() -> Unit)? = null,
     private val shareAction: (() -> Unit)? = null,
     private val itemSwitchAction: ((isCheck: Boolean) -> Unit)? = null,
+    private val followAction: (() -> Unit)? = null,
 ) : BubbleAttachPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.contact_potion_pop
@@ -27,9 +29,14 @@ class ContactPotionPop(
             lifecycleOwner = this@ContactPotionPop
             executePendingBindings()
 
-            ViewUtils.setVisible(!isShowReport, clReport)
+            // 不是举报就隐藏，其实就是查看trend是不是自己的
+            ViewUtils.setVisible(!isShowReport, clReport, clFollow, vv1)
+            // 是举报就显示，删除和分享
             ViewUtils.setVisible(isShowReport, clDelete, clShare, vv)
+            // 是分享，其实就是查看trend是不是自己的
             ViewUtils.setVisible(isShowShareToPublic, clShare)
+
+            tvFollow.text = if (isFollow) "Unfollow" else "Follow"
 
             clDelete.setOnClickListener {
                 deleteAction?.invoke()
@@ -43,6 +50,11 @@ class ContactPotionPop(
 
             clShare.setOnClickListener {
                 shareAction?.invoke()
+                dismiss()
+            }
+
+            clFollow.setOnClickListener {
+                followAction?.invoke()
                 dismiss()
             }
 

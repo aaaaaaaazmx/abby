@@ -20,7 +20,7 @@ class BottomSheetLayout @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : BehavioralScrollView(context, attrs, defStyleAttr) {
 
-    private var firstLayout = true
+    var firstLayout = true
 
     /**
      * 中间高度 [POSITION_MID] 时 scrollY 的值

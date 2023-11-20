@@ -71,7 +71,9 @@ class AppInitializer : Initializer<Unit> {
 
         // crash兜底
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
-            StabilityOptimize.setUpJavaAirBag(mutableListOf<JavaAirBagConfig>().toList())
+            if (!BuildConfig.DEBUG) {
+                StabilityOptimize.setUpJavaAirBag(mutableListOf<JavaAirBagConfig>().toList())
+            }
         }
 
         return Unit
@@ -83,8 +85,8 @@ class AppInitializer : Initializer<Unit> {
     private fun initLogConfig() {
         val formatStrategy = PrettyFormatStrategy.newBuilder()
             .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
-            .methodCount(0)         // (Optional) How many method line to show. Default 2
-            .methodOffset(7)        // (Optional) Hides internal method calls up to offset. Default 5
+            .methodCount(1)         // (Optional) How many method line to show. Default 2
+            .methodOffset(2)        // (Optional) Hides internal method calls up to offset. Default 5
             .tag(Constants.APP_TAG)   // (Optional) Global tag for every log. Default PRETTY_LOGGER
             .build()
         Logger.addLogAdapter(object : AndroidLogAdapter(formatStrategy) {

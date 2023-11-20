@@ -131,4 +131,24 @@ interface BaseApiService {
      */
     @GET("abby/discord/isBind")
     fun isBind(): Flow<HttpResult<Boolean>>
+
+    /**
+     * 获得勋章时的弹窗
+     */
+    @POST("abby/digitalAsset/popupList")
+    fun popupList(): Flow<HttpResult<MutableList<MedalPopData>>>
+
+    /**
+     * 保存展示frames
+     */
+    @FormUrlEncoded
+    @POST("abby/digitalAsset/showFrame")
+    fun showFrame(@Field("frameId") frameId: Int): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 保存展示成就
+     */
+    @FormUrlEncoded
+    @POST("abby/digitalAsset/showAchievement")
+    fun showAchievement(@Field("achievementId") achievementId: Int): Flow<HttpResult<BaseBean>>
 }

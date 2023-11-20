@@ -1,5 +1,7 @@
 package com.cl.modules_my.viewmodel
 
+import android.bluetooth.BluetoothGattCharacteristic
+import android.util.SparseArray
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,6 +13,8 @@ import com.bhm.ble.data.BleConnectFailType
 import com.bhm.ble.data.BleScanFailType
 import com.bhm.ble.device.BleDevice
 import com.bhm.ble.utils.BleLogger
+import com.bhm.ble.utils.BleUtil
+import com.chad.library.adapter.base.entity.node.BaseNode
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AccessoryAddData
 import com.cl.common_base.bean.CharacteristicNode
@@ -19,10 +23,12 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
 import com.cl.common_base.bean.RefreshBleDevice
+import com.cl.common_base.bean.ServiceNode
 import com.cl.common_base.bean.SystemConfigBeanItem
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logD
 import com.cl.common_base.help.BleConnectHandler
 import com.cl.common_base.help.ConnectEvent
@@ -42,6 +48,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.util.logging.Level
 import javax.inject.Inject
+import kotlin.experimental.xor
 
 @ActivityRetainedScoped
 class BlePairViewModel @Inject constructor(private val repository: MyRepository) :
@@ -382,6 +389,127 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
                 }.collectLatest {
                     _systemConfig.value = it
                 }
+        }
+    }
+
+    /**
+     * 写数据
+     * 注意：因为分包后每一个包，可能是包含完整的协议，所以分包由业务层处理，组件只会根据包的长度和mtu值对比后是否拦截
+     */
+    fun writeData(
+        bleDevice: BleDevice,
+        node: CharacteristicNode,
+        text: String
+    ) {
+        // 使用示例
+        val bytesToWrite = ByteArray(19)
+        // bytesToWrite[0] = 0x01
+        // bytesToWrite[1] = 0x00
+        // 计算并设置校验码到bytesToWrite[2]
+        bytesToWrite[2] = checksum(bytesToWrite, 1)  // 只计算前两个字节的校验码
+        val data = text.toByteArray()
+        BleLogger.i("data is: ${BleUtil.bytesToHex(data)}")
+        val mtu = BleManager.get().getOptions()?.mtu ?: com.bhm.ble.data.Constants.DEFAULT_MTU
+        //mtu长度包含了ATT的opcode一个字节以及ATT的handle2个字节
+        val maxLength = mtu - 3
+        val listData: SparseArray<ByteArray> = BleUtil.subpackage(bytesToWrite, maxLength)
+        BleManager.get().writeData(bleDevice, node.serviceUUID, node.characteristicUUID, listData) {
+            onWriteFail { currentPackage, _, t ->
+                addLogMsg(LogEntity(Level.OFF, "第${currentPackage}包数据写失败：${t.message}"))
+            }
+            onWriteSuccess { currentPackage, _, justWrite ->
+                addLogMsg(
+                    LogEntity(
+                        Level.FINE, "${node.characteristicUUID} -> 第${currentPackage}包数据写成功：" +
+                                BleUtil.bytesToHex(justWrite)
+                    )
+                )
+            }
+            onWriteComplete { allSuccess ->
+                //代表所有数据写成功，可以在这个方法中处理成功的逻辑
+                addLogMsg(LogEntity(Level.FINE, "${node.characteristicUUID} -> 写数据完成，是否成功：$allSuccess"))
+            }
+        }
+    }
+
+
+    fun writeDataForPh(
+        bleDevice: BleDevice,
+        open: Boolean
+    ) {
+        // 使用示例
+        val bytesToWrite = ByteArray(19)
+        bytesToWrite[0] = 0x01
+        // 计算并设置校验码到bytesToWrite[2]
+        bytesToWrite[2] = checksum(bytesToWrite, 1)  // 只计算前两个字节的校验码
+        // val data = text.toByteArray()
+        // BleLogger.i("data is: ${BleUtil.bytesToHex(data)}")
+        val mtu = BleManager.get().getOptions()?.mtu ?: com.bhm.ble.data.Constants.DEFAULT_MTU
+        //mtu长度包含了ATT的opcode一个字节以及ATT的handle2个字节
+        val maxLength = mtu - 3
+        val listData: SparseArray<ByteArray> = BleUtil.subpackage(bytesToWrite, maxLength)
+        letMultiple(currentServiceId.value, currentCharacteristicId.value) { serviceId, characteristicId ->
+            BleManager.get().writeData(bleDevice, serviceId, characteristicId, listData) {
+                onWriteFail { currentPackage, _, t ->
+                    addLogMsg(LogEntity(Level.OFF, "第${currentPackage}包数据写失败：${t.message}"))
+                }
+                onWriteSuccess { currentPackage, _, justWrite ->
+                    addLogMsg(
+                        LogEntity(
+                            Level.FINE, "$characteristicId -> 第${currentPackage}包数据写成功：" +
+                                    BleUtil.bytesToHex(justWrite)
+                        )
+                    )
+                }
+                onWriteComplete { allSuccess ->
+                    //代表所有数据写成功，可以在这个方法中处理成功的逻辑
+                    addLogMsg(LogEntity(Level.FINE, "$characteristicId -> 写数据完成，是否成功：$allSuccess"))
+                }
+            }
+        }
+    }
+
+    private fun checksum(data: ByteArray, len: Int): Byte {
+        var chksum: Byte = 0
+        for (i in 0 until len) {
+            chksum = (chksum xor data[i])
+        }
+        return chksum
+    }
+
+    /**
+     * 获取特征值的属性
+     */
+    private fun getOperateType(characteristic: BluetoothGattCharacteristic): String {
+        val property = StringBuilder()
+        val charaProp: Int = characteristic.properties
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_READ != 0) {
+            property.append("Read")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_WRITE != 0) {
+            property.append("Write")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE != 0) {
+            property.append("Write No Response")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_NOTIFY != 0) {
+            property.append("Notify")
+            property.append(" , ")
+        }
+        if (charaProp and BluetoothGattCharacteristic.PROPERTY_INDICATE != 0) {
+            property.append("Indicate")
+            property.append(" , ")
+        }
+        if (property.length > 1) {
+            property.delete(property.length - 2, property.length - 1)
+        }
+        return if (property.isNotEmpty()) {
+            property.toString()
+        } else {
+            ""
         }
     }
 }

@@ -88,6 +88,8 @@ class RouterPath {
         const val PAGE_TREND = "/trend/$CONTACT"
         // 发布gif页面
         const val PAGE_GIF = "/gif/$CONTACT"
+        // PAGE_OTHER_JOURNEY
+        const val PAGE_OTHER_JOURNEY = "/otherJourney/$CONTACT"
     }
 
     /**
@@ -109,6 +111,10 @@ class RouterPath {
         const val PAGE_ADD_ACCESSORY = "/AddAccessory/$MY"
         // 添加帐篷界面
         const val PAGE_ADD_TENT = "/AddTent/$MY"
+        // 资产界面DIGITAL
+        const val PAGE_DIGITAL = "/digital/$MY"
+        // PAGE_MY_JOURNEY
+        const val PAGE_MY_JOURNEY = "/journey/$MY"
     }
 
     /**

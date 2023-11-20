@@ -85,5 +85,8 @@ data class UserinfoBean(
         val notBound: Int? = null,
         val spaceType: String? = ListDeviceBean.KEY_SPACE_TYPE_BOX,
         val discordGlobalName: String? = null,
+        val basicInfo: BasicInfo? = null,
+        val userFlags: List<UserFlag>? = null,
+        val followStatus: Boolean? = false,
     ) : BaseBean()
 }

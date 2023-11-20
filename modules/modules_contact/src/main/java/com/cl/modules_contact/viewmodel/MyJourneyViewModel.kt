@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cl.common_base.bean.FolowerData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.bean.WallpaperListBean
 import com.cl.common_base.constants.Constants
@@ -17,6 +18,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.bean.UpdateFollowStatusReq
 import com.cl.modules_contact.response.NewPageData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +39,14 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
         GSON.parseObject(bean, UserinfoBean::class.java)
     }
 
+    /**
+     * 判断是否取消和关注的动作
+     */
+    private val _isFollowAction = MutableLiveData<Boolean>(false)
+    val isFollowAction: LiveData<Boolean> = _isFollowAction
+    fun updateIsFollowAction(isFollow: Boolean) {
+        _isFollowAction.value = isFollow
+    }
 
     /**
      * 获取壁纸列表
@@ -220,6 +230,39 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
         }
     }
 
+    /**
+     * 获取用户信息
+     */
+    private val _otherDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()
+    val userAssets: LiveData<Resource<UserinfoBean.BasicUserBean>> = _otherDetail
+    fun otherUserDetail(userId: String) = viewModelScope.launch {
+        repository.getOtherUserInfo(userId)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _otherDetail.value = it
+            }
+    }
+
 
     /**
      * 删除动态
@@ -312,5 +355,99 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
     fun updateCurrentPosition(position: Int) {
         _currentPosition.value = position
     }
+
+    /**
+     * 修改跟随者状态
+     */
+    private val _updateFollowStatus = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val updateFollowStatus: LiveData<Resource<com.cl.common_base.BaseBean>> = _updateFollowStatus
+    fun updateFollowStatus(req: UpdateFollowStatusReq) = viewModelScope.launch {
+        repository.updateFollowStatus(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _updateFollowStatus.value = it
+        }
+    }
+
+
+    /**
+     * 获取关注着列表 follower
+     */
+    private val _followList = MutableLiveData<Resource<MutableList<FolowerData>>>()
+    val followList: LiveData<Resource<MutableList<FolowerData>>> = _followList
+    fun followList() = viewModelScope.launch {
+        repository.follower()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _followList.value = it
+            }
+    }
+
+    /**
+     * 获取关注着列表 following
+     */
+    private val _followingList = MutableLiveData<Resource<MutableList<FolowerData>>>()
+    val followingList: LiveData<Resource<MutableList<FolowerData>>> = _followingList
+    fun followingList() = viewModelScope.launch {
+        repository.following()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _followingList.value = it
+            }
+    }
+
 
 }

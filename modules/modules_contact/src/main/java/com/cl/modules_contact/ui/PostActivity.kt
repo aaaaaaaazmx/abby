@@ -15,6 +15,7 @@ import android.text.TextUtils
 import android.widget.ImageView
 import androidx.core.content.FileProvider
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -48,6 +49,7 @@ import com.cl.modules_contact.request.AddTrendReq
 import com.cl.common_base.bean.ImageUrl
 import com.cl.modules_contact.request.Mention
 import com.cl.common_base.bean.ChoosePicBean
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.modules_contact.viewmodel.PostViewModel
 import com.luck.picture.lib.basic.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -313,17 +315,17 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
         binding.textView.setOnClickListener { finish() }
 
-        binding.btnPost.setOnClickListener {
+        binding.btnPost.setSafeOnClickListener(this@PostActivity.lifecycleScope) {
             if (chooserAdapter.data.any { it.isUploading == true }) {
                 ToastUtil.shortShow("Please wait for the picture to finish uploading")
-                return@setOnClickListener
+                return@setSafeOnClickListener
             }
 
             if (isFastClick()) {
                 // 所有内容都是空的，
                 if (picList.size == 1 && TextUtils.isEmpty(binding.etConnect.text.toString())) {
                     ToastUtil.shortShow("Cannot post when empty")
-                    return@setOnClickListener
+                    return@setSafeOnClickListener
                 }
                 // @的人
                 val mentions: MutableList<Mention> = mutableListOf()
@@ -332,6 +334,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 }
 
                 // 图片是空的，但是有文字
+                showProgressLoading()
                 if (picList.size == 1) {
                     // 没有图片，直接发帖
                     viewModel.add(

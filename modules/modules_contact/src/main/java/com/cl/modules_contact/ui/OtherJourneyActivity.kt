@@ -2,18 +2,24 @@ package com.cl.modules_contact.ui
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
 import android.widget.CheckBox
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.extentions.dp
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
 import com.chad.library.adapter.base.BaseQuickAdapter
+import com.cl.common_base.adapter.MedialAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -39,7 +45,13 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.bean.UpdateFollowStatusReq
+import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.FollowAndFolloerPop
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -49,10 +61,13 @@ import com.lxj.xpopup.util.XPopupUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.math.max
 
 /**
  * 其他人的空间
  */
+@Route(path = RouterPath.Contact.PAGE_OTHER_JOURNEY)
 @AndroidEntryPoint
 class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
@@ -61,6 +76,10 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
     private val userId by lazy {
         intent.getStringExtra(KEY_USER_ID)
+    }
+
+    private val userName by lazy {
+        intent.getStringExtra(KEY_USER_NAME)
     }
 
     /*private val nickName by lazy {
@@ -73,6 +92,10 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
     private val adapter by lazy {
         OtherJourneyAdapter(mutableListOf())
+    }
+
+    private val mediaAdapter by lazy {
+        MedialAdapter(mutableListOf())
     }
 
 
@@ -108,21 +131,40 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
     }
 
     override fun initView() {
+        binding.tvTitle.text = userName ?: "Digital"
         binding.linkageScroll.topScrollTarget = { binding.rvLinkageTop }
         binding.linkageScroll.listeners.add(object : BehavioralScrollListener {
             override fun onScrollChanged(v: BehavioralScrollView, from: Int, to: Int) {
                 updateFloatState()
             }
         })
-
-        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MID, 400.dp, 550.dp)/*binding.bottomSheet.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+        binding.bottomSheet.setup(BottomSheetLayout.POSITION_MID, 400.dp, 550.dp)
+        binding.bottomSheet.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            if (binding.bottomSheet.firstLayout || oldScrollY == 0) return@setOnScrollChangeListener
+            if (binding.flRoot.background == null) {
+                binding.flRoot.setBackgroundColor(Color.WHITE)
+            }
             var alphaProgress = abs(100.div(scrollY.toFloat()))
             if (alphaProgress < 0.3) alphaProgress = 0f
+            if (alphaProgress > 1) alphaProgress = 1f
             logI("123123123: $scrollY, $oldScrollY , ${abs(100.div(scrollY.toFloat()))}")
-            binding.title.background.alpha = abs(255.times(alphaProgress).toInt())
-        }*/
+            binding.flRoot.background.alpha = abs(255.times(alphaProgress).toInt())
+            if (alphaProgress == 1f) {
+                // 改变颜色和状态
+                binding.ivBack.background = ContextCompat.getDrawable(this@OtherJourneyActivity, com.cl.common_base.R.mipmap.left)
+                binding.tvTitle.setTextColor(Color.BLACK)
+                binding.clFollower.setBackgroundResource(com.cl.common_base.R.drawable.background_black_r4)
+                binding.ivFollower.setBackgroundResource(com.cl.common_base.R.drawable.my_down_white)
+                binding.tvFollower.setTextColor(Color.WHITE)
+            } else {
+                binding.ivBack.background = ContextCompat.getDrawable(this@OtherJourneyActivity, com.cl.common_base.R.mipmap.left_white)
+                binding.tvTitle.setTextColor(Color.WHITE)
+                binding.clFollower.setBackgroundResource(com.cl.common_base.R.drawable.background_white_r4)
+                binding.ivFollower.setBackgroundResource(com.cl.common_base.R.drawable.my_down_blue)
+                binding.tvFollower.setTextColor(ContextCompat.getColor(this@OtherJourneyActivity, com.cl.common_base.R.color.mainColor))
+            }
+        }
         updateFloatState()
-
         binding.superLikeLayout.provider = BitmapProvider.Builder(this@OtherJourneyActivity).setDrawableArray(
             intArrayOf(
                 R.mipmap.emoji_one,
@@ -141,6 +183,9 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 current = 1, size = REFRESH_SIZE, userId = userId
             )
         )
+
+        // 获取他人的信息
+        userId?.let { viewModel.otherUserDetail(it) }
 
         binding.refreshLayout.apply {
             ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
@@ -175,10 +220,66 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
             layoutManager = LinearLayoutManager(this@OtherJourneyActivity)
             adapter = this@OtherJourneyActivity.adapter
         }
+
+        // 成就列表
+        binding.rvMedal.layoutManager = LinearLayoutManager(this@OtherJourneyActivity, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvMedal.adapter = mediaAdapter
+
+
+        viewModel.followList()
+        viewModel.followingList()
     }
 
     override fun observe() {
         viewModel.apply {
+            updateFollowStatus.observe(this@OtherJourneyActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                loading { showProgressLoading() }
+                success {
+                    hideProgressLoading()
+                    val followText = binding.tvFollower.text.toString()
+                    if (followText == "Following") {
+                        binding.tvFollower.text = "Follow"
+                        viewModel.updateIsFollowAction(false)
+                    } else {
+                        binding.tvFollower.text = "Following"
+                        viewModel.updateIsFollowAction(true)
+                    }
+                }
+            })
+
+            userAssets.observe(this@OtherJourneyActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    mediaAdapter.setList(data?.userFlags)
+                    if (data?.followStatus == true) {
+                        binding.tvFollower.text = "Following"
+                    } else {
+                        binding.tvFollower.text = "Follow"
+                    }
+
+                    // 动态更改宽高 iv_head_bg
+                    val layoutParams = binding.ivHeadBg.layoutParams
+                    layoutParams.height = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    layoutParams.width = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 84f else 110f)
+                    binding.ivHeadBg.layoutParams = layoutParams
+
+                    // ll_head 动态设备margin top
+                    val layoutParams1 = binding.llHead.layoutParams as ConstraintLayout.LayoutParams
+                    layoutParams1.topMargin = dp2px(if (data?.basicInfo?.framesHeads.isNullOrEmpty()) 42f else 62f)
+                    binding.llHead.layoutParams = layoutParams1
+
+                    // 设置是否关注
+                    viewModel.updateIsFollowAction(data?.followStatus == true)
+
+                    binding.tvTitle.text = data?.nickName
+                }
+            })
 
             wallpaperList.observe(this@OtherJourneyActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
@@ -335,6 +436,79 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
             viewModel.userDetail(it)
         }
         initAdapterClick()
+        binding.flBack.setOnClickListener {
+            setResult(Activity.RESULT_OK, Intent().putExtra(ContactFragment.KEY_FOLLOW_STATUS, viewModel.isFollowAction.value))
+            finish()
+        }
+        binding.clFollower.setOnClickListener {
+            val followText = binding.tvFollower.text.toString()
+            val isFollowStatus = followText == "Following" // 判断是否是false
+            //  修改跟随状态
+            viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !isFollowStatus, otherUserId = userId ?: ""))
+            val followerNumber = binding.tvFollowNumber.text.safeToInt()
+            if (isFollowStatus) {
+                binding.tvFollowNumber.text = "${followerNumber.minus(1)}"
+            } else {
+                binding.tvFollowNumber.text = "${followerNumber.plus(1)}"
+            }
+            // 取消和关注都不弹窗
+            /*xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(
+                    BaseCenterPop(
+                        this@OtherJourneyActivity,
+                        content = if (isFollowStatus) "Unfollow this grower" else "Do you want to follow this grower?",
+                        isShowCancelButton = true,
+                        confirmText = "Confirm",
+                        onConfirmAction = {
+                            //  修改跟随状态
+                            viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !isFollowStatus, otherUserId = userId ?: ""))
+                            val followerNumber = binding.tvFollowNumber.text.safeToInt()
+                            if (isFollowStatus) {
+                                binding.tvFollowNumber.text = "${followerNumber.minus(1)}"
+                            } else {
+                                binding.tvFollowNumber.text = "${followerNumber.plus(1)}"
+                            }
+                        })
+                ).show()
+            }*/
+        }
+
+        // follow
+        /*binding.tvFollower.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followList.value?.data)).show()
+            }
+        }
+        binding.tvFollowNumber.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followList.value?.data)).show()
+            }
+        }
+        // following
+        binding.tvFollowing.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followingList.value?.data)).show()
+            }
+        }
+        binding.tvFollowingNumber.setOnClickListener {
+            xpopup(this@OtherJourneyActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                maxHeight(dp2px(700f))
+                asCustom(FollowAndFolloerPop(this@OtherJourneyActivity, viewModel.followingList.value?.data)).show()
+            }
+        }*/
     }
 
     private fun initAdapterClick() {
@@ -351,7 +525,8 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
                 R.id.cl_env -> { // 点击环境信息
                     val envInfoData = GSON.parseObjectList(item?.environment, ContactEnvData::class.java).toMutableList() // 弹出环境信息
-                    XPopup.Builder(this@OtherJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(ContactEnvPop(this@OtherJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()
+                    XPopup.Builder(this@OtherJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false)
+                        .asCustom(ContactEnvPop(this@OtherJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()
                 }
 
                 R.id.cl_love -> { // 点赞
@@ -371,8 +546,8 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     } else {
                         viewModel.unlike(LikeReq(learnMoreId = item?.learnMoreId, likeId = item?.id.toString(), type = "moments"))
                     }
-                        // 震动
-                        SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
+                    // 震动
+                    SoundPoolUtil.instance.startVibrator(this@OtherJourneyActivity)
                 }
 
                 R.id.cl_gift -> { //  打赏
@@ -406,7 +581,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
                         .atView(view).isCenterHorizontal(false).asCustom(this@OtherJourneyActivity.let {
                             ContactPotionPop(
-                                it, isShowShareToPublic = item?.syncTrend != 1,
+                                it, isShowShareToPublic = item?.userId.toString() == viewModel.userinfoBean?.userId,
                                 deleteAction = { //  删除
                                     viewModel.delete(DeleteReq(momentId = item?.id.toString()))
                                 },
@@ -421,6 +596,30 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                                     viewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                                 },
                                 isShowReport = item?.userId.toString() == viewModel.userinfoBean?.userId,
+                                isFollow = binding.tvFollower.text.toString() == "Following",
+                                followAction = {
+                                    val isFollowing = binding.tvFollower.text.toString() == "Following"
+                                    // 跟随
+                                    xpopup(this@OtherJourneyActivity) {
+                                        isDestroyOnDismiss(false)
+                                        dismissOnTouchOutside(false)
+                                        asCustom(
+                                            BaseCenterPop(
+                                                this@OtherJourneyActivity,
+                                                confirmText = if (isFollowing) "Unfollow" else "Follow",
+                                                isShowCancelButton = true,
+                                                cancelText = "Cancel",
+                                                content = if (isFollowing) "Unfollow this grower" else "Do you want to follow this grower?",
+                                                onConfirmAction = {
+                                                    if (isFollowing) {
+                                                        viewModel.updateFollowStatus(UpdateFollowStatusReq(false, item?.userId.toString()))
+                                                    } else {
+                                                        viewModel.updateFollowStatus(UpdateFollowStatusReq(true, item?.userId.toString()))
+                                                    }
+                                                })
+                                        ).show()
+                                    }
+                                }
                             ).setBubbleBgColor(Color.WHITE) //气泡背景
                                 .setArrowWidth(XPopupUtils.dp2px(this@OtherJourneyActivity, 3f)).setArrowHeight(
                                     XPopupUtils.dp2px(
@@ -451,27 +650,35 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
     }
 
     private fun toCommentPop(item: NewPageData.Records?, position: Int, adapter: BaseQuickAdapter<*, *>) {
-        XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).moveUpToKeyboard(false).maxHeight((XPopupUtils.getScreenHeight(this@OtherJourneyActivity) * 0.9f).safeToInt()).asCustom(
-            CommentPop(this@OtherJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData -> // 更新当前position
-                val commentsList = this@OtherJourneyActivity.adapter.data[position].comments
-                if (commentListData?.size == 0) return@CommentPop
-                if (commentListData?.size == commentsList?.size) return@CommentPop // 实行替换操作
-                val newCommentsList = mutableListOf<NewPageData.Records.Comments>()
-                commentListData?.forEach { data ->
-                    val comment = NewPageData.Records.Comments()
-                    comment.commentName = data.commentName
-                    comment.comment = data.comment
-                    newCommentsList.add(comment)
-                } // 更新聊天数目集合
-                this@OtherJourneyActivity.adapter.data[position].comments = newCommentsList // 更新聊天数量
-                this@OtherJourneyActivity.adapter.data[position].comment = commentListData?.size
-                adapter.notifyItemChanged(position)
-            })
-        ).show()
+        XPopup.Builder(this@OtherJourneyActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).moveUpToKeyboard(false)
+            .maxHeight((XPopupUtils.getScreenHeight(this@OtherJourneyActivity) * 0.9f).safeToInt()).asCustom(
+                CommentPop(this@OtherJourneyActivity, item?.userId == viewModel.userinfoBean?.userId, item?.id, onDismissAction = { commentListData -> // 更新当前position
+                    val commentsList = this@OtherJourneyActivity.adapter.data[position].comments
+                    if (commentListData?.size == 0) return@CommentPop
+                    if (commentListData?.size == commentsList?.size) return@CommentPop // 实行替换操作
+                    val newCommentsList = mutableListOf<NewPageData.Records.Comments>()
+                    commentListData?.forEach { data ->
+                        val comment = NewPageData.Records.Comments()
+                        comment.commentName = data.commentName
+                        comment.comment = data.comment
+                        newCommentsList.add(comment)
+                    } // 更新聊天数目集合
+                    this@OtherJourneyActivity.adapter.data[position].comments = newCommentsList // 更新聊天数量
+                    this@OtherJourneyActivity.adapter.data[position].comment = commentListData?.size
+                    adapter.notifyItemChanged(position)
+                })
+            ).show()
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_OK, Intent().putExtra(ContactFragment.KEY_FOLLOW_STATUS, viewModel.isFollowAction.value))
+        finish()
     }
 
     companion object {
         const val REFRESH_SIZE = 10
         const val KEY_USER_ID = "key_user_id"
+        // KEY_USER_NAME
+        const val KEY_USER_NAME = "key_user_name"
     }
 }

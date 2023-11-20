@@ -19,6 +19,7 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.bean.UpdateFollowStatusReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.NewPageData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -37,6 +38,13 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     val userinfoBean by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         GSON.parseObject(bean, UserinfoBean::class.java)
+    }
+
+    // 保存点击之后跳转的position，用于刷新
+    private val _position = MutableLiveData<Int>()
+    val position: LiveData<Int> = _position
+    fun updatePosition(position: Int) {
+        _position.value = position
     }
 
     /**
@@ -364,5 +372,31 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     val currentTag: LiveData<String?> = _currentTag
     fun updateCurrentTag(tag: String?) {
         _currentTag.value = tag
+    }
+
+    /**
+     * 修改跟随者状态
+     */
+    private val _updateFollowStatus = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
+    val updateFollowStatus: LiveData<Resource<com.cl.common_base.BaseBean>> = _updateFollowStatus
+    fun updateFollowStatus(req: UpdateFollowStatusReq) = viewModelScope.launch {
+        repository.updateFollowStatus(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _updateFollowStatus.value = it
+        }
     }
 }

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="info"
+            type="com.cl.common_base.bean.UserFlag" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_marginEnd="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:background="@drawable/background_main_color_r5"
+        tools:ignore="MissingConstraints">
+
+
+        <ImageView
+            android:layout_marginStart="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@mipmap/ic_launcher"
+            android:id="@+id/iv_head"
+            circleUrl="@{info.icon}"
+            android:layout_width="18dp"
+            android:layout_height="18dp" />
+
+        <TextView
+            app:layout_goneMarginEnd="6dp"
+            android:text="@{String.valueOf(info.name)}"
+            android:layout_marginEnd="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:ellipsize="end"
+            android:singleLine="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="6dp"
+            tools:text="havhavsethavsetset"
+            app:layout_constraintStart_toEndOf="@+id/iv_head"
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/mainColor"
+            android:textSize="10sp" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

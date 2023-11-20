@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="info"
+            type="com.cl.modules_my.request.AchievementBean" />
+
+        <variable
+            name="isAchievement"
+            type="java.lang.Boolean" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/my_achievement_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <FrameLayout
+            android:background="@color/white"
+            android:id="@+id/fl_root"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+           >
+
+            <ImageView
+                android:id="@+id/iv_achievement"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                tools:background="@mipmap/ic_launcher" />
+        </FrameLayout>
+
+
+        <com.cl.common_base.widget.AbTextViewSimpleCalendar
+            android:gravity="center"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:layout_marginTop="8dp"
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text='@{isAchievement ? String.valueOf(info.name) : String.valueOf(info.goodsName)}'
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            app:layout_constraintEnd_toEndOf="@+id/fl_root"
+            app:layout_constraintStart_toStartOf="@+id/fl_root"
+            app:layout_constraintTop_toBottomOf="@+id/fl_root"
+            tools:text="121231231231231231231231231231233"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -3,6 +3,7 @@ package com.cl.modules_contact.service
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.FolowerData
 import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.bean.WallpaperListBean
@@ -17,6 +18,7 @@ import com.cl.modules_contact.request.PublishReq
 import com.cl.modules_contact.request.ReplyReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.bean.UpdateFollowStatusReq
 import com.cl.modules_contact.request.TrendPictureReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.CommentDetailsData
@@ -198,4 +200,21 @@ interface HttpContactApiService {
     fun getTrendPicture(
         @Body requestBody: TrendPictureReq,
     ): Flow<HttpResult<TrendPictureData>>
+
+    /**
+     * 修改关注状态
+     */
+    @POST("abby/moments/updateFollowStatus")
+    fun updateFollowStatus(
+        @Body requestBody: UpdateFollowStatusReq,
+    ): Flow<HttpResult<BaseBean>>
+
+    // 被关注列表 abby/user/follower
+    @POST("abby/user/follower")
+    fun follower(): Flow<HttpResult<MutableList<FolowerData>>>
+
+    // 关注列表 abby/user/following
+    @POST("abby/user/following")
+    fun following(): Flow<HttpResult<MutableList<FolowerData>>>
+
 }

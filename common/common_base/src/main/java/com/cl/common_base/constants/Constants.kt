@@ -92,6 +92,8 @@ object Constants {
         const val KEY_PLANT_DATA_IS_VISIBLE = "key_plant_data_is_visible"
         // timelapse提示是否只展示一次
         const val KEY_TIMELAPSE_TIP_IS_SHOW = "key_timelapse_tip_is_show"
+        // 关注提醒是否只展示一次
+        const val KEY_FOLLOW_TIP_IS_SHOW = "key_follow_tip_is_show"
     }
 
     // 隐私合规相关
@@ -188,7 +190,7 @@ object Constants {
         const val KEY_BLE_IS_FIRST_BIND = "key_ble_is_first_bind"
 
         // 蓝牙笔的特征值，基于这个特征值的UUID来读数据和写数据
-        const val KEY_BLE_PH_CHARACTERISTIC_UUID = "0000ff02-0000-1000-8000-00805f9b34fb"
+        const val KEY_BLE_PH_CHARACTERISTIC_UUID = "0000ff02"
         const val KEY_PH_DEVICE_NAME = "BLE-9908"
     }
 

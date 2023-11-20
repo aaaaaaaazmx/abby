@@ -324,4 +324,10 @@ interface HttpHomeApiService {
      */
     @POST("abby/accessory/trickleIrrigationConfig")
     fun trickleIrrigationConfig(@Body req: TrickData): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获得勋章时的弹窗
+     */
+    @POST("abby/digitalAsset/popupList")
+    fun popupList(): Flow<HttpResult<MutableList<MedalPopData>>>
 }

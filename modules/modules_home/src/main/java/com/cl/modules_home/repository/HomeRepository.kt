@@ -268,4 +268,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun getGrantOxygen(orderNo: String): Flow<HttpResult<BaseBean>> {
         return remoteRepository.getGrantOxygen(orderNo)
     }
+
+    fun popupList(): Flow<HttpResult<MutableList<MedalPopData>>> {
+        return remoteRepository.popupList()
+    }
 }

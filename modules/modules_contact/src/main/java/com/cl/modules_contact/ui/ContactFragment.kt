@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
@@ -53,7 +54,11 @@ import com.cl.common_base.bean.LikeReq
 import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.bean.UpdateFollowStatusReq
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
 import com.cl.modules_contact.pop.ContactChooseTipPop
 import com.cl.modules_contact.pop.ContactDeletePop
@@ -249,9 +254,14 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         // 头像点击
         binding.clAvatar.setOnClickListener {
             // 个人头像点击啊
-            context?.let {
+            /*context?.let {
                 startActivity(Intent(it, MyJourneyActivity::class.java))
-            }
+            }*/
+            // 跳转到资产界面
+            ARouter
+                .getInstance()
+                .build(RouterPath.My.PAGE_DIGITAL)
+                .navigation(context)
         }
 
         // 消息点击
@@ -282,11 +292,18 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 R.id.cl_avatar -> {
                     // todo 点击头像、跳转到自己的空间， 用userID来区别是跳转到自己的，还是别人的
                     if (item?.userId == mViewMode.userinfoBean?.userId) {
-                        context?.startActivity(Intent(context, MyJourneyActivity::class.java))
+                        // context?.startActivity(Intent(context, MyJourneyActivity::class.java))
+                        // 跳转到资产界面
+                        ARouter
+                            .getInstance()
+                            .build(RouterPath.My.PAGE_DIGITAL)
+                            .navigation(context)
                     } else {
-                        val intent = Intent(context, OtherJourneyActivity::class.java)
-                        intent.putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
-                        context?.startActivity(intent)
+                        mViewMode.updatePosition(position)
+                        refreshPositionLauncher.launch(Intent(context, OtherJourneyActivity::class.java).apply {
+                            putExtra(OtherJourneyActivity.KEY_USER_ID, item?.userId)
+                            putExtra(OtherJourneyActivity.KEY_USER_NAME, item?.nickName)
+                        })
                     }
                 }
 
@@ -316,6 +333,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     }
                     // 震动
                     SoundPoolUtil.instance.startVibrator(context = context)
+
+                    // 是否展示关注弹窗
+                    isShowFollowDialog(item, adapter, position, false)
                 }
 
                 R.id.cl_gift -> {
@@ -339,6 +359,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                             relationId = item?.id.toString()
                                         )
                                     )
+
+                                    // 是否展示关注弹窗
+                                    isShowFollowDialog(item, adapter, position, true)
                                 })
                             }
                         ).show()
@@ -351,6 +374,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.rl_point -> {
                     logI("1231231231: ${item?.userId}")
+                    logI("1231231231: ${item?.isFollow}")
                     logI("1231231231111: ${mViewMode.userinfoBean?.userId}")
                     logI("12312312311111111: ${mViewMode.userinfoBean?.userId == item?.userId}")
                     // 点击三个点
@@ -363,21 +387,21 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         .atView(view)
                         .isCenterHorizontal(false)
                         .asCustom(
-                            context?.let {
+                            context?.let { cc ->
                                 ContactPotionPop(
-                                    it,
+                                    cc,
                                     deleteAction = {
                                         //  删除
                                         mViewMode.delete(DeleteReq(momentId = item?.id.toString()))
                                     },
                                     reportAction = {
                                         // 举报弹窗
-                                        XPopup.Builder(it)
+                                        XPopup.Builder(cc)
                                             .isDestroyOnDismiss(false)
                                             .dismissOnTouchOutside(false)
                                             .asCustom(
                                                 ContactReportPop(
-                                                    it,
+                                                    cc,
                                                     onConfirmAction = { txt ->
                                                         // 举报
                                                         mViewMode.report(ReportReq(momentId = item?.id.toString(), reportContent = txt))
@@ -390,6 +414,32 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                     },
                                     isShowReport = item?.userId.toString() == mViewMode.userinfoBean?.userId,
                                     isShowShareToPublic = item?.userId.toString() == mViewMode.userinfoBean?.userId,
+                                    isFollow = item?.isFollow == true,
+                                    followAction = {
+                                        // 跟随
+                                        xpopup(cc) {
+                                            isDestroyOnDismiss(false)
+                                            dismissOnTouchOutside(false)
+                                            asCustom(
+                                                BaseCenterPop(
+                                                    cc,
+                                                    confirmText = if (item?.isFollow == true) "Unfollow" else "Follow",
+                                                    isShowCancelButton = true,
+                                                    cancelText = "Cancel",
+                                                    content = if (item?.isFollow == true) "Unfollow this grower" else "Do you want to follow this grower?",
+                                                    onConfirmAction = {
+                                                        if (item?.isFollow == true) {
+                                                            mViewMode.updateFollowStatus(UpdateFollowStatusReq(false, item.userId.toString()))
+                                                        } else {
+                                                            mViewMode.updateFollowStatus(UpdateFollowStatusReq(true, item?.userId.toString()))
+                                                        }
+                                                        // 更新当前follow状态
+                                                        item?.isFollow = !(item?.isFollow ?: false)
+                                                        adapter.notifyItemChanged(position)
+                                                    })
+                                            ).show()
+                                        }
+                                    }
                                 )
                                     .setBubbleBgColor(Color.WHITE) //气泡背景
                                     .setArrowWidth(XPopupUtils.dp2px(context, 3f))
@@ -451,6 +501,43 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                             tags = item?.number
                         )
                     )
+                }
+            }
+        }
+    }
+
+    private fun isShowFollowDialog(item: NewPageData.Records?, adapter: BaseQuickAdapter<*, *>, position: Int, isGifts: Boolean) {
+        if (item?.userId == mViewMode.userinfoBean?.userId) return
+        if (!isGifts) {
+            if (item?.isPraise == 1) return
+        }
+        // 获取KEY_FOLLOW_TIP_IS_SHOW的值
+        val isShow = Prefs.getBoolean(Constants.Contact.KEY_FOLLOW_TIP_IS_SHOW, false)
+        if (!isShow) {
+            // 判断是否关注，弹出需要关注的弹窗
+            if (item?.isFollow == false) {
+                context?.let {
+                    xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(true)
+                        asCustom(
+                            BaseThreeTextPop(
+                                it,
+                                content = "Do you want to follow this grower?",
+                                oneLineText = "Don't show it again",
+                                twoLineText = "Follow",
+                                threeLineText = "Cancel",
+                                twoLineCLickEventAction = {
+                                    // 关注
+                                    mViewMode.updateFollowStatus(UpdateFollowStatusReq(true, item.userId.toString()))
+                                    item.isFollow = !(item.isFollow ?: false)
+                                    adapter.notifyItemChanged(position)
+                                }, oneLineCLickEventAction = {
+                                    // 保存到本地，以后都不再提问
+                                    Prefs.putBoolean(Constants.Contact.KEY_FOLLOW_TIP_IS_SHOW, true)
+                                })
+                        ).show()
+                    }
                 }
             }
         }
@@ -713,8 +800,24 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
      */
     private val startActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == AppCompatActivity.RESULT_OK) {
+            mViewMode.updateCurrent(1)
             // 重新请求数据
             mViewMode.getNewPage(NewPageReq(current = 1, size = 10, period = mViewMode.currentPeriod.value, tags = mViewMode.currentTag.value))
+        }
+    }
+
+    /**
+     * 刷新单个position
+     */
+    private val refreshPositionLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == AppCompatActivity.RESULT_OK) {
+            val isFollow = it.data?.getBooleanExtra(KEY_FOLLOW_STATUS, false)
+            val position = mViewMode.position.value ?: -1
+            if (position == -1) return@registerForActivityResult
+            if (adapter.data.isEmpty()) return@registerForActivityResult
+            val item = adapter.data[position] as? NewPageData.Records
+            item?.isFollow = isFollow
+            adapter.notifyItemChanged(position)
         }
     }
 
@@ -728,5 +831,8 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     companion object {
         const val REFRESH_SIZE = 10
+
+        // KEY_FOLLOW_STATUS
+        const val KEY_FOLLOW_STATUS = "KEY_FOLLOW_STATUS"
     }
 }

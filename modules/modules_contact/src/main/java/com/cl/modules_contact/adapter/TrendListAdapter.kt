@@ -8,6 +8,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.lifecycle.LifecycleOwner
@@ -16,6 +17,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.ext.DateHelper
+import com.cl.common_base.ext.dp2px
+import com.cl.common_base.util.ViewUtils
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ItemCircleBinding
 import com.cl.modules_contact.response.NewPageData
@@ -51,6 +54,7 @@ class TrendListAdapter(
             binding.executePendingBindings()
         }
         // 设置富文本
+        ViewUtils.setVisible(!item.content.isNullOrEmpty() || !item.mentions.isNullOrEmpty(), holder.getView(R.id.tvDesc))
         holder.setText(R.id.tvDesc, getContents(item.content, item.mentions))
         holder.setText(R.id.tvNum, convertTime(item.createTime))
         // 轮播图
@@ -66,6 +70,13 @@ class TrendListAdapter(
             }
             setAdapter(ImageAdapter(urlList, context))
         }
+
+
+        // 动态更改宽高 iv_head_bg
+        val layoutParams = binding?.ivHeadBg?.layoutParams
+        layoutParams?.height = dp2px(if (item.framesHeads.isNullOrEmpty()) 40f else 60f)
+        layoutParams?.width = dp2px(if (item.framesHeads.isNullOrEmpty()) 60f else 60f)
+        binding?.ivHeadBg?.layoutParams = layoutParams
     }
 
     private fun convertTime(createTime: String? = null): String {

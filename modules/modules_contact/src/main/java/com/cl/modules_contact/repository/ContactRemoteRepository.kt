@@ -126,4 +126,17 @@ class ContactRemoteRepository @Inject constructor() {
     fun getTrendPicture(body: TrendPictureReq): Flow<HttpResult<TrendPictureData>> {
         return service.getTrendPicture(body)
     }
+
+    fun updateFollowStatus(body: UpdateFollowStatusReq): Flow<HttpResult<BaseBean>> {
+        return service.updateFollowStatus(body)
+    }
+
+
+    fun follower(): Flow<HttpResult<MutableList<FolowerData>>> {
+        return service.follower()
+    }
+
+    fun following(): Flow<HttpResult<MutableList<FolowerData>>> {
+        return service.following()
+    }
 }

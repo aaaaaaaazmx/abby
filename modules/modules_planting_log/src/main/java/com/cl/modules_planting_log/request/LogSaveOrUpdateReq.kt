@@ -34,6 +34,7 @@ data class LogSaveOrUpdateReq(
     var declareDeathType: String? = null,
     var inchMetricMode: String? = null,
     var syncPost: Boolean? = null,
+    var isPhb: Boolean? = null, // 是自己写的还是从蓝牙获取的。
     var syncPlants: Boolean? = null, // 帐篷内同步所有植物
 ): BaseBean() {
     companion object {
