@@ -711,7 +711,7 @@
                     android:layout_marginStart="2dp"
                     android:text='@{viewModel.userDetail.data.spaceType.equals("box") ? "Digtal Assets" : "Lighting"}'
                     android:textColor="@color/mainColor"
-                    android:textSize="10sp"
+                    android:textSize="9sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@id/iv_ox_bg"
                     app:layout_constraintStart_toEndOf="@+id/iv_ox_bg"
