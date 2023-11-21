@@ -110,6 +110,9 @@ dependencies {
     // Import the BoM for the Firebase platform
     api(platform("com.google.firebase:firebase-bom:30.5.0"))
     api("com.google.firebase:firebase-auth-ktx")
+    /*{
+        exclude("play-services-safetynet")
+    }*/
     api("com.google.android.gms:play-services-auth:20.5.0")
     // 启动
     api("androidx.core:core-splashscreen:1.0.0-beta02")

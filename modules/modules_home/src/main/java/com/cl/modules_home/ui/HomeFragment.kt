@@ -74,7 +74,6 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
-import com.tencent.bugly.proguard.ad
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.AbsP2pCameraListener
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.OperationDelegateCallBack
@@ -97,13 +96,9 @@ import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.Serializable
-import java.lang.Thread.sleep
 import java.nio.ByteBuffer
 import java.util.Calendar
-import java.util.LinkedList
-import java.util.Queue
 import javax.inject.Inject
-import kotlin.concurrent.thread
 import kotlin.random.Random
 
 
@@ -3601,10 +3596,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         }
 
                     // 植物的氧气
-                    binding.pplantNinth.tvOxy.text = """
-                        oxygan
-                        ${data?.oxygen ?: "---"}
-                    """.trimIndent()
+                    binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
 
                     // 植物的名字
                     binding.pplantNinth.tvTitle.text = data?.plantName
