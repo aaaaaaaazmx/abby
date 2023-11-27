@@ -315,162 +315,50 @@
                 app:layout_constraintTop_toBottomOf="@+id/cl_value_show">
 
                 <TextView
-                    android:id="@+id/tv_fan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Fan Intake"
-                    android:textColor="@color/mainColor"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
+                    android:layout_marginStart="11dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:text="@{String.valueOf(viewModel.getFanIntake)}"
-                    android:id="@+id/tv_fan_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_load"
+                    app:layout_constraintTop_toTopOf="@+id/tv_load"
+                    android:id="@+id/tv_manipulation"
+                    android:text="Automation"
                     android:textColor="@color/mainColor"
                     android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_fan"
-                    app:layout_constraintStart_toEndOf="@+id/tv_fan"
-                    app:layout_constraintTop_toTopOf="@+id/tv_fan"
-                    tools:text="20" />
-
-                <TextView
-                    android:id="@+id/tv_fan_value_unit_one"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_fan_value"
-                    app:layout_constraintStart_toEndOf="@+id/tv_fan_value"
-                    app:layout_constraintTop_toTopOf="@+id/tv_fan_value" />
-
-                <com.warkiz.widget.IndicatorSeekBar
-                    app:isb_show_indicator="rounded_rectangle"
-                    app:isb_indicator_color="@color/mainColor"
-                    android:id="@+id/fan_intake_seekbar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginEnd="10dp"
-                    app:isb_progress="0"
-                    app:isb_thumb_adjust_auto="true"
-                    app:isb_thumb_drawable="@mipmap/bbbbb"
-                    app:isb_thumb_size="27dp"
-                    app:isb_ticks_count="10"
-                    app:isb_max="10"
-                    app:isb_track_background_color="#99006241"
-                    app:isb_track_background_size="5dp"
-                    app:isb_track_progress_color="#008961"
-                    app:isb_track_progress_size="5dp"
-                    app:isb_track_rounded_corners="true"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_fan_value_unit_two"
-                    app:layout_constraintStart_toEndOf="@+id/tv_fan_value_unit_one"
-                    app:layout_constraintStart_toStartOf="@+id/tv_fan_value_unit_one"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/tv_fan_value_unit_two"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:text="10"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/fan_intake_seekbar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/fan_intake_seekbar" />
-
-
-                <TextView
-                    android:id="@+id/tv_fan_exhaust"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="27dp"
-                    android:text="Fan Exhaust"
-                    android:textColor="@color/mainColor"
+                    android:layout_height="wrap_content" />
+                
+                <com.cl.common_base.widget.SvTextView
+                    android:layout_marginEnd="14dp"
+                    app:layout_constraintTop_toTopOf="@+id/tv_load"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_load"
+                    android:id="@+id/tv_save"
+                    android:gravity="center"
+                    android:text="Save"
+                    app:svSolidType="solid"
+                    app:svSolidColor="@color/mainColor"
                     android:textSize="12sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_fan_value_unit_two" />
+                    android:textColor="@color/white"
+                    app:svRadius="5dp"
+                    android:layout_width="50dp"
+                    android:layout_height="24dp"/>
 
-                <TextView
-                    android:text="@{String.valueOf(viewModel.getFanExhaust)}"
-                    android:id="@+id/tv_fan_exhaust_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:textColor="@color/mainColor"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust"
-                    app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust"
-                    app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust"
-                    tools:text="20" />
-
-                <TextView
-                    android:id="@+id/tv_fan_exhaust_value_unit_one"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_fan_exhaust_value"
-                    app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value"
-                    app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value" />
-
-                <com.warkiz.widget.IndicatorSeekBar
-                    app:isb_show_indicator="rounded_rectangle"
-                    app:isb_indicator_color="@color/mainColor"
-                    android:id="@+id/fan_exhaust_seekbar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    app:isb_progress="0"
-                    app:isb_max="10"
-                    app:isb_thumb_adjust_auto="true"
-                    app:isb_thumb_drawable="@mipmap/bbbbb"
-                    app:isb_thumb_size="27dp"
-                    app:isb_ticks_count="10"
-                    app:isb_track_background_color="#99006241"
-                    app:isb_track_background_size="5dp"
-                    app:isb_track_progress_color="#008961"
-                    app:isb_track_progress_size="5dp"
-                    app:isb_track_rounded_corners="true"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust_value_unit_one"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_fan_exhaust_value_unit_two"
-                    app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value_unit_one"
-                    app:layout_constraintStart_toStartOf="@+id/tv_fan_exhaust_value_unit_one"
-                    app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one" />
-
-                <TextView
-                    android:id="@+id/tv_fan_exhaust_value_unit_two"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:text="10"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/fan_exhaust_seekbar"
+                <com.cl.common_base.widget.SvTextView
+                    android:layout_marginTop="11dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="11dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/fan_exhaust_seekbar" />
+                    android:id="@+id/tv_load"
+                    android:gravity="center"
+                    android:text="Load"
+                    app:svSolidType="solid"
+                    app:svSolidColor="@color/mainColor"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    app:svRadius="5dp"
+                    android:layout_width="50dp"
+                    android:layout_height="24dp"/>
 
                 <View
-                    android:id="@+id/vv_view_vv"
+                    android:id="@+id/vv_view_vv_vv"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_marginStart="10dp"
@@ -479,112 +367,287 @@
                     android:background="#F7F7F7"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_fan_exhaust_value_unit_two" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_load" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    app:layout_constraintTop_toBottomOf="@+id/vv_view_vv_vv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/tv_fan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="13dp"
+                        android:text="Fan Intake"
+                        android:textColor="@color/mainColor"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        />
+
+                    <TextView
+                        android:text="@{String.valueOf(viewModel.getFanIntake)}"
+                        android:id="@+id/tv_fan_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="30dp"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_fan"
+                        app:layout_constraintStart_toEndOf="@+id/tv_fan"
+                        app:layout_constraintTop_toTopOf="@+id/tv_fan"
+                        tools:text="20" />
+
+                    <TextView
+                        android:id="@+id/tv_fan_value_unit_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_fan_value"
+                        app:layout_constraintStart_toEndOf="@+id/tv_fan_value"
+                        app:layout_constraintTop_toTopOf="@+id/tv_fan_value" />
+
+                    <com.warkiz.widget.IndicatorSeekBar
+                        app:isb_show_indicator="rounded_rectangle"
+                        app:isb_indicator_color="@color/mainColor"
+                        android:id="@+id/fan_intake_seekbar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginEnd="10dp"
+                        app:isb_progress="0"
+                        app:isb_thumb_adjust_auto="true"
+                        app:isb_thumb_drawable="@mipmap/bbbbb"
+                        app:isb_thumb_size="27dp"
+                        app:isb_ticks_count="10"
+                        app:isb_max="10"
+                        app:isb_track_background_color="#99006241"
+                        app:isb_track_background_size="5dp"
+                        app:isb_track_progress_color="#008961"
+                        app:isb_track_progress_size="5dp"
+                        app:isb_track_rounded_corners="true"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_fan_value_unit_two"
+                        app:layout_constraintStart_toEndOf="@+id/tv_fan_value_unit_one"
+                        app:layout_constraintStart_toStartOf="@+id/tv_fan_value_unit_one"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_fan_value_unit_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="10"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/fan_intake_seekbar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/fan_intake_seekbar" />
 
 
-                <TextView
-                    android:id="@+id/tv_light_schedule"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="13dp"
-                    android:text="Light Schedule"
-                    android:textColor="@color/mainColor"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/vv_view_vv" />
+                    <TextView
+                        android:id="@+id/tv_fan_exhaust"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="27dp"
+                        android:text="Fan Exhaust"
+                        android:textColor="@color/mainColor"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_fan_value_unit_two" />
+
+                    <TextView
+                        android:text="@{String.valueOf(viewModel.getFanExhaust)}"
+                        android:id="@+id/tv_fan_exhaust_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust"
+                        app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust"
+                        app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust"
+                        tools:text="20" />
+
+                    <TextView
+                        android:id="@+id/tv_fan_exhaust_value_unit_one"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_fan_exhaust_value"
+                        app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value"
+                        app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value" />
+
+                    <com.warkiz.widget.IndicatorSeekBar
+                        app:isb_show_indicator="rounded_rectangle"
+                        app:isb_indicator_color="@color/mainColor"
+                        android:id="@+id/fan_exhaust_seekbar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        app:isb_progress="0"
+                        app:isb_max="10"
+                        app:isb_thumb_adjust_auto="true"
+                        app:isb_thumb_drawable="@mipmap/bbbbb"
+                        app:isb_thumb_size="27dp"
+                        app:isb_ticks_count="10"
+                        app:isb_track_background_color="#99006241"
+                        app:isb_track_background_size="5dp"
+                        app:isb_track_progress_color="#008961"
+                        app:isb_track_progress_size="5dp"
+                        app:isb_track_rounded_corners="true"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust_value_unit_one"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_fan_exhaust_value_unit_two"
+                        app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value_unit_one"
+                        app:layout_constraintStart_toStartOf="@+id/tv_fan_exhaust_value_unit_one"
+                        app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one" />
+
+                    <TextView
+                        android:id="@+id/tv_fan_exhaust_value_unit_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:text="10"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/fan_exhaust_seekbar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/fan_exhaust_seekbar" />
+
+                    <View
+                        android:id="@+id/vv_view_vv"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="13dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="#F7F7F7"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_fan_exhaust_value_unit_two" />
 
 
-                <com.cl.common_base.widget.FeatureItemView
-                    android:id="@+id/ft_timer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    app:hideArrow="false"
-                    app:itemTitle="@string/my_time"
-                    itemValues="@{viewModel.getTimeText}"
-                    app:itemValueSize="4sp"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_light_schedule"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_light_schedule" />
+                    <TextView
+                        android:id="@+id/tv_light_schedule"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="13dp"
+                        android:text="Light Schedule"
+                        android:textColor="@color/mainColor"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/vv_view_vv" />
 
 
-                <TextView
-                    android:id="@+id/tv_light_intensity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="17dp"
-                    android:layout_marginBottom="22dp"
-                    android:text="Light Intensity"
-                    android:textColor="@color/mainColor"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ft_timer" />
+                    <com.cl.common_base.widget.FeatureItemView
+                        android:id="@+id/ft_timer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        app:hideArrow="false"
+                        app:itemTitle="@string/my_time"
+                        itemValues="@{viewModel.getTimeText}"
+                        app:itemValueSize="4sp"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_light_schedule"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_light_schedule" />
 
-                <TextView
-                    android:text="@{String.valueOf(viewModel.getGrowLight)}"
-                    android:id="@+id/tv_light_intensity_value"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/mainColor"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toEndOf="@+id/tv_light_intensity"
-                    app:layout_constraintTop_toTopOf="@+id/tv_light_intensity"
-                    tools:text="20" />
 
-                <TextView
-                    android:id="@+id/tv_light_intensity_value_unit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:text="0"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_light_intensity_value"
-                    app:layout_constraintStart_toEndOf="@+id/tv_light_intensity_value"
-                    app:layout_constraintTop_toTopOf="@+id/tv_light_intensity_value" />
+                    <TextView
+                        android:id="@+id/tv_light_intensity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="17dp"
+                        android:layout_marginBottom="22dp"
+                        android:text="Light Intensity"
+                        android:textColor="@color/mainColor"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/ft_timer" />
 
-                <com.warkiz.widget.IndicatorSeekBar
-                    app:isb_show_indicator="rounded_rectangle"
-                    app:isb_indicator_color="@color/mainColor"
-                    android:id="@+id/light_intensity_seekbar"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    app:isb_progress="0"
-                    app:isb_max="10"
-                    app:isb_thumb_adjust_auto="true"
-                    app:isb_thumb_drawable="@mipmap/bbbbb"
-                    app:isb_thumb_size="27dp"
-                    app:isb_ticks_count="10"
-                    app:isb_track_background_color="#99006241"
-                    app:isb_track_background_size="5dp"
-                    app:isb_track_progress_color="#008961"
-                    app:isb_track_progress_size="5dp"
-                    app:isb_track_rounded_corners="true"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_light_intensity_value_unit"
-                    app:layout_constraintEnd_toEndOf="@+id/tv_light_intensity_value_unit_two"
-                    app:layout_constraintStart_toEndOf="@+id/tv_light_intensity_value_unit_two"
-                    app:layout_constraintStart_toStartOf="@+id/tv_light_intensity_value_unit"
-                    app:layout_constraintTop_toTopOf="@+id/tv_light_intensity_value_unit" />
+                    <TextView
+                        android:text="@{String.valueOf(viewModel.getGrowLight)}"
+                        android:id="@+id/tv_light_intensity_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        app:layout_constraintStart_toEndOf="@+id/tv_light_intensity"
+                        app:layout_constraintTop_toTopOf="@+id/tv_light_intensity"
+                        tools:text="20" />
 
-                <TextView
-                    android:id="@+id/tv_light_intensity_value_unit_two"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text="10"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/light_intensity_seekbar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/light_intensity_seekbar" />
+                    <TextView
+                        android:id="@+id/tv_light_intensity_value_unit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_light_intensity_value"
+                        app:layout_constraintStart_toEndOf="@+id/tv_light_intensity_value"
+                        app:layout_constraintTop_toTopOf="@+id/tv_light_intensity_value" />
+
+                    <com.warkiz.widget.IndicatorSeekBar
+                        app:isb_show_indicator="rounded_rectangle"
+                        app:isb_indicator_color="@color/mainColor"
+                        android:id="@+id/light_intensity_seekbar"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        app:isb_progress="0"
+                        app:isb_max="10"
+                        app:isb_thumb_adjust_auto="true"
+                        app:isb_thumb_drawable="@mipmap/bbbbb"
+                        app:isb_thumb_size="27dp"
+                        app:isb_ticks_count="10"
+                        app:isb_track_background_color="#99006241"
+                        app:isb_track_background_size="5dp"
+                        app:isb_track_progress_color="#008961"
+                        app:isb_track_progress_size="5dp"
+                        app:isb_track_rounded_corners="true"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_light_intensity_value_unit"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_light_intensity_value_unit_two"
+                        app:layout_constraintStart_toEndOf="@+id/tv_light_intensity_value_unit_two"
+                        app:layout_constraintStart_toStartOf="@+id/tv_light_intensity_value_unit"
+                        app:layout_constraintTop_toTopOf="@+id/tv_light_intensity_value_unit" />
+
+                    <TextView
+                        android:id="@+id/tv_light_intensity_value_unit_two"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:text="10"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@+id/light_intensity_seekbar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/light_intensity_seekbar" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

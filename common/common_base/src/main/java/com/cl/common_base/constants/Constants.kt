@@ -220,6 +220,9 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // pro_model 配置
+        const val KEY_GLOBAL_PRO_MODEL = "key_global_pro_model"
+
         // 是否是第一次注册登录、并且是从未绑定过设备
         const val KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE =
             "key_global_plant_first_login_and_no_device"

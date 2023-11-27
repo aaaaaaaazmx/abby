@@ -920,6 +920,37 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            tvSave.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                val bean = PresetData(
+                    fanIntake = "${mViewMode.getFanIntake.value}",
+                    fanExhaust = "${mViewMode.getFanExhaust.value}",
+                    lightIntensity = "${mViewMode.getGrowLight.value}",
+                    lightSchedule = "${mViewMode.getTimeText.value}"
+                )
+                context?.let {
+                    xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(true)
+                        autoFocusEditText(false)
+                        autoOpenSoftInput(false)
+                        asCustom(PresetPop(it, bean)).show()
+                    }
+                }
+            }
+
+            tvLoad.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                // load
+                context?.let {
+                    xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        autoFocusEditText(false)
+                        autoOpenSoftInput(false)
+                        dismissOnTouchOutside(true)
+                        asCustom(PresetLoadPop(it)).show()
+                    }
+                }
+            }
+
             tvDripPumpDesc.setOnClickListener {
                 InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_DRIP)
             }

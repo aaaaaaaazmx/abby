@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="MissingConstraints"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:background="@drawable/bg_round_tl_tr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="13dp"
+            android:background="@mipmap/iv_close" />
+
+        <TextView
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:text="Load Preset"
+            android:textColor="@color/mainColor"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="24dp"
+            android:id="@+id/cl_email_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_desc_two"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/background_gray_r5">
+
+            <TextView
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:text="Select a Preset"
+                android:paddingStart="12dp"
+                android:textColorHint="#D0C7C7"
+                android:textColor="@color/black"
+                android:textSize="21sp"
+                app:layout_constraintEnd_toStartOf="@+id/iv_clear_email"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+
+            <ImageView
+                android:id="@+id/iv_clear_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="19dp"
+                android:background="@mipmap/iv_right"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:background="@drawable/background_gray_r5"
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
+            <TextView
+                android:layout_marginTop="9dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_marginStart="10dp"
+                android:text="Notes"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+            <EditText
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:id="@+id/et_note"
+                android:gravity="start"
+                android:padding="5dp"
+                android:hint="input your notes here"
+                android:textColorHint="#979797"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:background="@null"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </LinearLayout>
+
+
+        <com.cl.common_base.widget.SvTextView
+            android:id="@+id/btn_delete"
+            app:svRadius="100dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            app:svSolidColor="#F72E47"
+            app:svSolidType="solid"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/iv_add"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="Delete"
+            android:layout_marginTop="50dp"
+            tools:text="Delete" />
+
+        <Button
+            android:layout_marginTop="19dp"
+            android:layout_marginBottom="69dp"
+            android:id="@+id/btn_success"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/iv_add"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_state_button"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="Load"
+            tools:text="Save" />
+
+    </LinearLayout>
+</layout>
