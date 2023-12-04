@@ -220,6 +220,13 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 配对设备Abby
+        const val KEY_GLOBAL_PAIR_DEVICE_ABBY = "key_global_pair_device_abby"
+        // 配对设备Camera
+        const val KEY_GLOBAL_PAIR_DEVICE_CAMERA = "key_global_pair_device_camera"
+        // 配对设备排插
+        const val KEY_GLOBAL_PAIR_DEVICE_OUTLETS = "key_global_pair_device_outlets"
+
         // pro_model 配置
         const val KEY_GLOBAL_PRO_MODEL = "key_global_pro_model"
 

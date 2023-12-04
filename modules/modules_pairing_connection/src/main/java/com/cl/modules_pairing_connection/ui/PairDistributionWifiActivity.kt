@@ -74,8 +74,9 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
     }
 
     // 区分是链接camera还是链接abby的flag
-    private val isCameraConnect by lazy {
-        intent.getBooleanExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS, false)
+    // abby、camera、outlets
+    private val pairingEquipment by lazy {
+        intent.getStringExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS) ?: Constants.Global.KEY_GLOBAL_PAIR_DEVICE_ABBY
     }
 
     @Inject
@@ -87,12 +88,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         /**
          * 摄像头界面需要改变这些文案
          */
-        if (isCameraConnect){
+        ViewUtils.setVisible(pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_ABBY, binding.tvBleNane)
+        if (pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA){
             //1.abby only supports 2.4GHz Wi-Fi.
             //Wi-Fi only supports alphanumeric character
             //
             //2.Your phone must be connected to the same 2.4G wifi as abby
-            ViewUtils.setVisible(false, binding.tvBleNane)
             binding.titleBar.setTitle("")
             binding.btnSuccess.text = "Next"
             binding.tvDescThree.text = buildSpannedString {
@@ -280,7 +281,20 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     override fun onResult(result: Boolean) {
                         if (!result) return
                         // 权限都同意之后，那么直接开始配网
-                        if (isCameraConnect) startNetWorkForCamera() else startNetWorkForAbby()
+                        when(pairingEquipment) {
+                            Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA -> startNetWorkForCamera()
+                            Constants.Global.KEY_GLOBAL_PAIR_DEVICE_ABBY -> startNetWorkForAbby()
+                            Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS -> {
+                                // 跳转到排插配对界面
+                                ARouter.getInstance().build(RouterPath.My.WIFI_PAIR)
+                                    .withString("accessoryId", intent.getStringExtra("accessoryId"))
+                                    .withString("deviceId", intent.getStringExtra("deviceId"))
+                                    .withString("wifiName", binding.tvWifiName.text.toString())
+                                    .withString("wifiPassWord", binding.etWifiPwd.text.toString())
+                                    .navigation()
+                            }
+                            else -> {}
+                        }
                     }
                 })
         }

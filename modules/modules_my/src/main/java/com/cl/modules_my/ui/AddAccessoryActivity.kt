@@ -125,6 +125,30 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                 putExtra(Constants.Ble.KEY_BLE_TYPE, Constants.Ble.TYPE_PH)
                             })
                         }
+                        // 排插
+                        AccessoryListBean.KEY_OUTLETS -> {
+                            // todo 需要判断是否是共享插件，不是共享的则需要判断是否添加过，添加过就需要先解绑。
+                            //  判断排插是否已经添加过了。
+                            if (accessoryList.none { it.accessoryId == itemData.accessoryId }) {
+                                // 没有找到就跳转到配对界面去
+                                // 跳转到收入wifi密码界面
+                                ARouter.getInstance()
+                                    .build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                                    .withString(
+                                        Constants.Global.KEY_WIFI_PAIRING_PARAMS,
+                                        Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS
+                                    )
+                                    .withString("deviceId", deviceId)
+                                    .withString(
+                                        "accessoryId",
+                                        "${itemData.accessoryId}"
+                                    )
+                                    .navigation(this@AddAccessoryActivity)
+                                return@setOnItemChildClickListener
+                            } else {
+                                // 跳转到排插界面去
+                            }
+                        }
                         // 添加其他USB配件
                         else -> {
                             addAccess(itemData)
@@ -162,9 +186,9 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                                 // 跳转到摄像头配对页面
                                 ARouter.getInstance()
                                     .build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
-                                    .withBoolean(
+                                    .withString(
                                         Constants.Global.KEY_WIFI_PAIRING_PARAMS,
-                                        true
+                                        Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA
                                     )
                                     .withString("deviceId", deviceId)
                                     .withString(
@@ -182,7 +206,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
             } else {
                 // 跳转到摄像头配对页面
                 ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
-                    .withBoolean(Constants.Global.KEY_WIFI_PAIRING_PARAMS, true)
+                    .withString(Constants.Global.KEY_WIFI_PAIRING_PARAMS, Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA)
                     .withString("deviceId", deviceId)
                     .withString("accessoryId", "${itemData.accessoryId}")
                     .navigation(

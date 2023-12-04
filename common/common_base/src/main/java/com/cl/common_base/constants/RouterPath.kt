@@ -115,6 +115,8 @@ class RouterPath {
         const val PAGE_DIGITAL = "/digital/$MY"
         // PAGE_MY_JOURNEY
         const val PAGE_MY_JOURNEY = "/journey/$MY"
+        // WIFI_PAIR
+        const val WIFI_PAIR = "/wifiPair/$MY"
     }
 
     /**

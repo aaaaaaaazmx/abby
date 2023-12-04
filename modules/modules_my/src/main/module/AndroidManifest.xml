@@ -162,6 +162,13 @@
             android:name=".ui.AchievementActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.WifiPairActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.WifiPairTwoActivity"
+            android:screenOrientation="portrait" />
+
 
     </application>
 

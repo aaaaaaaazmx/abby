@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:id="@+id/ll_wifi_pair_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+
+                <com.cl.common_base.widget.FeatureTitleBar
+                    app:title=""
+                    android:id="@+id/ftb_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginEnd="21dp"
+                    android:text="Connect Your Mobile Phone to the Device's Hotspot"
+                    android:textColor="#161B19"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="21dp"
+                    android:text="1.Connect your phone to the hotspot shown below:"
+                    android:textColor="#161B19"
+                    android:textSize="15sp" />
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="31dp"
+                    android:background="@mipmap/my_wifi_pair_two_bg" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="51dp"
+                    android:layout_marginEnd="21dp"
+                    android:text="2.Go back and add devices."
+                    android:textColor="#161B19"
+                    android:textSize="15sp" />
+
+                <com.cl.common_base.widget.SvTextView
+                    android:id="@+id/tv_next_three"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="110dp"
+                    android:layout_marginEnd="21dp"
+                    android:gravity="center"
+                    android:text="Go To Connect"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    app:svRadius="100dp"
+                    app:svSolidColor="@color/mainColor"
+                    app:svSolidType="solid" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/ll_wifi_pair_three"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="133dp"
+                    android:text="Reset The Device"
+                    android:textColor="#161B19"
+                    android:textSize="21sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="21dp"
+                    android:text="reset the devicereset the devicereset the devicereset the device"
+                    android:textColor="#161B19"
+                    android:textSize="15sp" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_gravity="center"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="120dp"
+                    tools:ignore="MissingConstraints">
+
+                    <ImageView
+                        android:id="@+id/iv_leida"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@mipmap/my_leida_bg" />
+                    <com.cl.common_base.widget.SvTextView
+                        app:svRadius="180dp"
+                        app:svSolidColor="@color/mainColor"
+                        app:layout_constraintStart_toStartOf="@+id/iv_leida"
+                        app:layout_constraintTop_toTopOf="@+id/iv_leida"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_leida"
+                        app:layout_constraintEnd_toEndOf="@+id/iv_leida"
+                        android:id="@+id/iv_yuan"
+                        android:layout_width="86dp"
+                        android:layout_height="86dp"/>
+
+                    <ImageView
+                        app:layout_constraintStart_toStartOf="@+id/iv_yuan"
+                        app:layout_constraintTop_toTopOf="@+id/iv_yuan"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_yuan"
+                        app:layout_constraintEnd_toEndOf="@+id/iv_yuan"
+                        android:background="@mipmap/my_search_bg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <TextView
+                    android:layout_marginTop="40dp"
+                    android:layout_gravity="center"
+                    android:id="@+id/tv_search"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>
