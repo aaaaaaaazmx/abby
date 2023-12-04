@@ -315,6 +315,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/cl_value_show">
 
                 <TextView
+                    android:textStyle="bold"
                     android:layout_marginStart="11dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_load"

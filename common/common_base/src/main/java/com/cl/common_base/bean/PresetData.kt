@@ -10,4 +10,6 @@ data class PresetData(
     var fanExhaust: String? = null,
     var lightSchedule: String? = null,
     var lightIntensity: String? = null,
+    var muteOn: String? = null,
+    var muteOff: String? = null,
 ): BaseBean()

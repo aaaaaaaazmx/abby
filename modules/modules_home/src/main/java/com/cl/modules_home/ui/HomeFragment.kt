@@ -925,7 +925,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     fanIntake = "${mViewMode.getFanIntake.value}",
                     fanExhaust = "${mViewMode.getFanExhaust.value}",
                     lightIntensity = "${mViewMode.getGrowLight.value}",
-                    lightSchedule = "${mViewMode.getTimeText.value}"
+                    lightSchedule = ftTimer.itemValue,
+                    muteOn = "${mViewMode.muteOn}",
+                    muteOff = "${mViewMode.muteOff}"
                 )
                 context?.let {
                     xpopup(it) {
@@ -946,7 +948,92 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         autoFocusEditText(false)
                         autoOpenSoftInput(false)
                         dismissOnTouchOutside(true)
-                        asCustom(PresetLoadPop(it)).show()
+                        asCustom(PresetLoadPop(it, onNextAction = { data ->
+                            // 发送dp点
+                            if (null == data) return@PresetLoadPop
+                            val fanIntake = data.fanIntake
+                            val fanExhaust = data.fanExhaust
+                            val lightIntensity = data.lightIntensity
+                            val lightSchedule = data.lightSchedule
+                            val muteOn = data.muteOn
+                            val muteOff = data.muteOff
+
+                            fanIntake?.let { fantake ->
+                                DeviceControl.get().success {
+                                        mViewMode.setFanIntake(fantake)
+                                    }.error { code, error ->
+                                        ToastUtil.shortShow(
+                                            """
+                              fanIntake: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                                        )
+                                        mViewMode.setFanIntake("${mViewMode.getFanIntake.value}")
+                                    }.fanIntake(fantake.safeToInt())
+                            }
+                            fanExhaust?.let { fanExhaust ->
+                                DeviceControl.get().success {
+                                        mViewMode.setFanExhaust(fanExhaust)
+                                    }.error { code, error ->
+                                        ToastUtil.shortShow(
+                                            """
+                              fanExhaust: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                                        )
+                                        mViewMode.setFanExhaust("${mViewMode.getFanExhaust.value}")
+                                    }.fanExhaust(fanExhaust.safeToInt())
+                            }
+                            lightIntensity?.let { lightIntensity ->
+                                DeviceControl.get().success {
+                                        mViewMode.setGrowLight(lightIntensity)
+                                    }.error { code, error ->
+                                        ToastUtil.shortShow(
+                                            """
+                                                  lightIntensity: 
+                                                  code-> $code
+                                                  errorMsg-> $error
+                                                    """.trimIndent()
+                                        )
+                                        mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
+                                    }.lightIntensity(lightIntensity.safeToInt())
+                            }
+
+                            ftTimer.itemValue = "$lightSchedule"
+                            mViewMode.setmuteOn(muteOff)
+                            mViewMode.setmuteOn(muteOn)
+                            // 开灯时间
+                            when (muteOn.safeToInt()) {
+                                12 -> 0
+                                24 -> 12
+                                else -> muteOn.safeToInt()
+                            }.let { it2 ->
+                                DeviceControl.get()
+                                    .success {
+                                    }
+                                    .error { code, error ->
+                                        logI("开灯时间!: $code $error")
+                                    }
+                                    .lightTime(it2)
+                            }
+
+                            // 关灯时间
+                            when (muteOff.safeToInt()) {
+                                12 -> 0
+                                24 -> 12
+                                else -> muteOff.safeToInt()
+                            }.let { it2 ->
+                                DeviceControl.get()
+                                    .success {
+                                    }
+                                    .error { code, error ->
+                                        logI("关灯时间!: $code $error")
+                                    }
+                                    .closeLightTime(it2)
+                            }
+                        })).show()
                     }
                 }
             }

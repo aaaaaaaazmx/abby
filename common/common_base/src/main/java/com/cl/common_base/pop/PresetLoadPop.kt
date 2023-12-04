@@ -39,23 +39,42 @@ class PresetLoadPop(
             executePendingBindings()
 
             btnSuccess.setSafeOnClickListener(lifecycleScope) {
-                // todo 这个让数据保持一直，还没做好。需要和发送dp点给涂鸦设备。
+                // load 是调用dp接口
+                // 这个让数据保持一直，还没做好。需要和发送dp点给涂鸦设备。
+                if (index == -1) {
+                    ToastUtil.shortShow("Please select the preset")
+                    return@setSafeOnClickListener
+                }
+                onNextAction?.invoke(listPreset()[index])
+                dismiss()
             }
 
             btnDelete.setSafeOnClickListener(lifecycleScope) {
                 runCatching {
-                    if (index == -1) return@setSafeOnClickListener
-                    Prefs.removeObject(listPreset()[index])
-                    ToastUtil.shortShow("Delete successful")
-                    etEmail.text = "Select Preset"
-                    etNote.setText("")
-                    index = -1
+                    xpopup(context) {
+                        dismissOnTouchOutside(false)
+                        isDestroyOnDismiss(false)
+                        asCustom(
+                            BaseCenterPop(context, content = "Are you sure you want to delete this preset?", onConfirmAction = {
+                                if (index == -1) return@BaseCenterPop
+                                Prefs.removeObject(listPreset()[index])
+                                ToastUtil.shortShow("Delete successful")
+                                etEmail.text = "Select Preset"
+                                etNote.setText("")
+                                index = -1
+                            })
+                        ).show()
+                    }
                 }
             }
 
             runCatching {
                 clEmailInput.setSafeOnClickListener(lifecycleScope) {
                     val stringList = listPreset().map { it.name }.toMutableList()
+                    if (stringList.isEmpty()) {
+                        ToastUtil.shortShow("No preset")
+                        return@setSafeOnClickListener
+                    }
                     // 显示已经save的配置
                     xpopup(context) {
                         isDestroyOnDismiss(false)
