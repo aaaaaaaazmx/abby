@@ -8,6 +8,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
@@ -306,5 +307,9 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
 
     fun following(): Flow<HttpResult<MutableList<FolowerData>>> {
         return remoteRepository.following()
+    }
+
+    fun accessorySubport(accessoryId: String, accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>> {
+        return remoteRepository.accessorySubport(accessoryId, accessoryDeviceId)
     }
 }

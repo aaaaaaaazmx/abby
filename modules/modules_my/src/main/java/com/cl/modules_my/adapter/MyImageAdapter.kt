@@ -14,20 +14,20 @@ import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.youth.banner.adapter.BannerAdapter
 import com.youth.banner.util.BannerUtils
 
-class MyImageAdapter(val imageUrls: List<String>, val context: Context) : BannerAdapter<String, MyImageAdapter.ImageHolder>(imageUrls) {
+class MyImageAdapter(val imageUrls: List<Int>, val context: Context) : BannerAdapter<Int, MyImageAdapter.ImageHolder>(imageUrls) {
 
 
     override fun onCreateHolder(parent: ViewGroup?, viewType: Int): ImageHolder {
         val imageView = ImageView(parent!!.context)
         val params = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         imageView.layoutParams = params
-        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+        imageView.scaleType = ImageView.ScaleType.CENTER_CROP
         //通过裁剪实现圆角
         BannerUtils.setBannerRound(imageView, 20f)
         return ImageHolder(imageView)
     }
 
-    override fun onBindView(holder: ImageHolder, data: String, position: Int, size: Int) {
+    override fun onBindView(holder: ImageHolder, data: Int, position: Int, size: Int) {
         Glide.with(holder.itemView)
             .load(data)
             .apply(RequestOptions()).placeholder(R.mipmap.placeholder).error(R.mipmap.placeholder)

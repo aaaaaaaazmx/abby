@@ -308,6 +308,15 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             })
                         return@setOnItemChildClickListener
                     }
+                    // 排插
+                    if (deviceBean?.accessoryList?.get(0)?.accessoryType == AccessoryListBean.KEY_OUTLETS) {
+                        startActivity(Intent(this@DeviceListActivity, OutletsSettingActivity::class.java).apply {
+                            putExtra("accessoryId", deviceBean.accessoryList?.get(0)?.accessoryId)
+                            putExtra("accessoryDeviceId", deviceBean.accessoryList?.get(0)?.accessoryDeviceId)
+                            putExtra("deviceId", deviceBean.deviceId)
+                        })
+                        return@setOnItemChildClickListener
+                    }
                     val intent =
                         Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
                     intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceBean?.deviceId)

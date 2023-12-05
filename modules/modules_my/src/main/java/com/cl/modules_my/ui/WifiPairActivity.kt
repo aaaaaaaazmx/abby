@@ -6,10 +6,13 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.util.ViewUtils
+import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyImageAdapter
 import com.cl.modules_my.databinding.MyWifiPairActivityBinding
+import com.cl.modules_my.widget.CircleIndicatorTwo
 import com.youth.banner.Banner
 import com.youth.banner.indicator.CircleIndicator
+import com.youth.banner.util.BannerUtils
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -17,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
  */
 @AndroidEntryPoint
 @Route(path = RouterPath.My.WIFI_PAIR)
-class WifiPairActivity: BaseActivity<MyWifiPairActivityBinding>() {
+class WifiPairActivity : BaseActivity<MyWifiPairActivityBinding>() {
 
     private val wifiName by lazy {
         intent.getStringExtra("wifiName")
@@ -40,14 +43,17 @@ class WifiPairActivity: BaseActivity<MyWifiPairActivityBinding>() {
         binding.banner.apply {
             addBannerLifecycleObserver(context as? LifecycleOwner)
             isAutoLoop(false)
-            setBannerRound(10f)
             setUserInputEnabled(false)
-            indicator = CircleIndicator(context)
-            val urlList = mutableListOf<String>()
+            setIndicator(CircleIndicatorTwo(context),  true)
+            val urlList = mutableListOf<Int>()
             /*item.imageUrls?.let {
                 // 手动添加图片集合
                 it.forEach { data -> data.imageUrl?.let { it1 -> urlList.add(it1) } }
             }*/
+            urlList.add(R.mipmap.my_outlets_one)
+            urlList.add(R.mipmap.my_outlets_two)
+            urlList.add(R.mipmap.my_outlets_three)
+
             setAdapter(MyImageAdapter(urlList, context))
         }
 
@@ -55,6 +61,7 @@ class WifiPairActivity: BaseActivity<MyWifiPairActivityBinding>() {
             // 显示第二张图。
             ViewUtils.setGone(binding.tvNext)
             ViewUtils.setVisible(binding.llTwo)
+            binding.banner.setCurrentItem(2, true)
             binding.tvContent.text = "Press and hold the RESET button for 5s."
         }
 
@@ -64,6 +71,7 @@ class WifiPairActivity: BaseActivity<MyWifiPairActivityBinding>() {
             ViewUtils.setGone(binding.tvNextThree)
             ViewUtils.setVisible(binding.tvNext)
             binding.tvNext.text = "Next"
+            binding.banner.setCurrentItem(1, true)
             binding.tvContent.text = "Power on the device after it has been powered off for 10s."
         }
 
@@ -72,7 +80,8 @@ class WifiPairActivity: BaseActivity<MyWifiPairActivityBinding>() {
             ViewUtils.setGone(binding.llTwo)
             ViewUtils.setGone(binding.tvNext)
             ViewUtils.setVisible(binding.tvNextThree)
-            binding.tvContent.text = "Confirm the indicator is blinking"
+            binding.banner.setCurrentItem(3, true)
+            binding.tvContent.text = "Confirm the indicator is slowly blinking"
         }
 
         binding.tvNextThree.setOnClickListener {

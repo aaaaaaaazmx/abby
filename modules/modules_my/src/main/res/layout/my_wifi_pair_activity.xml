@@ -16,10 +16,10 @@
             android:orientation="vertical">
 
             <com.cl.common_base.widget.FeatureTitleBar
-                app:title=""
                 android:id="@+id/ftb_title"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:title="" />
 
 
             <TextView
@@ -34,7 +34,9 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
+
             <com.youth.banner.Banner
+                app:banner_radius="10dp"
                 android:id="@+id/banner"
                 android:layout_width="match_parent"
                 android:layout_height="232dp"

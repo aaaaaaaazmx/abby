@@ -2,10 +2,13 @@ package com.cl.modules_my.ui
 
 import android.app.Activity
 import android.content.Intent
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.ListDeviceBean
@@ -21,9 +24,11 @@ import com.cl.modules_my.adapter.AddTenAccessoryAdapter
 import com.cl.modules_my.databinding.MyAddAccessoryBinding
 import com.cl.common_base.bean.AccessoryListBean
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.util.ViewUtils
 import com.cl.modules_my.viewmodel.AddAccessoryViewModel
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.Bidi
 import javax.inject.Inject
 
 /**
@@ -41,6 +46,10 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
     // 帐篷设备页面
     private val tenAdapter by lazy {
+        AddTenAccessoryAdapter(mutableListOf())
+    }
+
+    private val tenNoShareAdapter by lazy {
         AddTenAccessoryAdapter(mutableListOf())
     }
 
@@ -71,6 +80,9 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
         binding.rvList.layoutManager = LinearLayoutManager(this)
         binding.rvList.adapter = tenAdapter
+
+        binding.rvListDevice.layoutManager = LinearLayoutManager(this)
+        binding.rvListDevice.adapter = tenNoShareAdapter
     }
 
     override fun observe() {
@@ -83,7 +95,16 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    tenAdapter.setList(data)
+
+                    data?.filter { it.isShared == true }?.apply {
+                        ViewUtils.setVisible(this.isNotEmpty(), binding.tvTitles, binding.tvDesc)
+                        tenAdapter.setList(this)
+                    }
+                    data?.filter { it.isShared == false }?.apply {
+                        ViewUtils.setVisible(this.isNotEmpty(), binding.tvTitleDedicated, binding.tvDescDedicated)
+                        tenNoShareAdapter.setList(this)
+                    }
+                    // tenAdapter.setList(data)
                 }
             })
         }
@@ -107,61 +128,70 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
 
         //  帐篷条目点击
         tenAdapter.addChildClickViewIds(R.id.tv_add, R.id.tv_buy)
-        tenAdapter.setOnItemChildClickListener { adapter, view, position ->
-            val itemData = adapter.data[position] as? AccessoryListBean
-            when (view.id) {
-                R.id.tv_add -> {
+        tenAdapter.setOnItemChildClickListener(itemChildListener)
 
-                    when (itemData?.accessoryType) {
-                        // 蓝牙相关的配件
-                        AccessoryListBean.KEY_PHB -> {
-                            if (deviceList.any {it.spaceType == ListDeviceBean.KEY_SPACE_TYPE_PH}) {
-                                ToastUtil.shortShow("You have already added it.")
-                                return@setOnItemChildClickListener
-                            }
-                            startActivity(Intent(this@AddAccessoryActivity, PhPairActivity::class.java).apply {
-                                putExtra("accessoryId", "${itemData.accessoryId}")
+        tenNoShareAdapter.addChildClickViewIds(R.id.tv_add, R.id.tv_buy)
+        tenNoShareAdapter.setOnItemChildClickListener(itemChildListener)
+    }
+
+    private val itemChildListener = OnItemChildClickListener { adapter, view, position ->
+        val itemData = adapter.data[position] as? AccessoryListBean
+        when (view.id) {
+            R.id.tv_add -> {
+
+                when (itemData?.accessoryType) {
+                    // 蓝牙相关的配件
+                    AccessoryListBean.KEY_PHB -> {
+                        if (deviceList.any { it.spaceType == ListDeviceBean.KEY_SPACE_TYPE_PH }) {
+                            ToastUtil.shortShow("You have already added it.")
+                            return@OnItemChildClickListener
+                        }
+                        startActivity(Intent(this@AddAccessoryActivity, PhPairActivity::class.java).apply {
+                            putExtra("accessoryId", "${itemData.accessoryId}")
+                            putExtra("deviceId", deviceId)
+                            putExtra(Constants.Ble.KEY_BLE_TYPE, Constants.Ble.TYPE_PH)
+                        })
+                    }
+                    // 排插
+                    AccessoryListBean.KEY_OUTLETS -> {
+                        //  判断排插是否已经添加过了。
+                        if (accessoryList.none { it.accessoryId == itemData.accessoryId }) {
+                            // 没有找到就跳转到配对界面去
+                            // 跳转到收入wifi密码界面
+                            ARouter.getInstance()
+                                .build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                                .withString(
+                                    Constants.Global.KEY_WIFI_PAIRING_PARAMS,
+                                    Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS
+                                )
+                                .withString("deviceId", deviceId)
+                                .withString(
+                                    "accessoryId",
+                                    "${itemData.accessoryId}"
+                                )
+                                .navigation(this@AddAccessoryActivity)
+                        } else {
+                            // 跳转到排插界面去
+                            startActivity(Intent(this@AddAccessoryActivity, OutletsSettingActivity::class.java).apply {
+                                putExtra("accessoryId", itemData.accessoryId)
                                 putExtra("deviceId", deviceId)
-                                putExtra(Constants.Ble.KEY_BLE_TYPE, Constants.Ble.TYPE_PH)
+                                putExtra("accessoryDeviceId", accessoryList.firstOrNull { it.accessoryId == itemData.accessoryId }?.accessoryDeviceId)
                             })
                         }
-                        // 排插
-                        AccessoryListBean.KEY_OUTLETS -> {
-                            // todo 需要判断是否是共享插件，不是共享的则需要判断是否添加过，添加过就需要先解绑。
-                            //  判断排插是否已经添加过了。
-                            if (accessoryList.none { it.accessoryId == itemData.accessoryId }) {
-                                // 没有找到就跳转到配对界面去
-                                // 跳转到收入wifi密码界面
-                                ARouter.getInstance()
-                                    .build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
-                                    .withString(
-                                        Constants.Global.KEY_WIFI_PAIRING_PARAMS,
-                                        Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS
-                                    )
-                                    .withString("deviceId", deviceId)
-                                    .withString(
-                                        "accessoryId",
-                                        "${itemData.accessoryId}"
-                                    )
-                                    .navigation(this@AddAccessoryActivity)
-                                return@setOnItemChildClickListener
-                            } else {
-                                // 跳转到排插界面去
-                            }
-                        }
-                        // 添加其他USB配件
-                        else -> {
-                            addAccess(itemData)
-                        }
+                        return@OnItemChildClickListener
+                    }
+                    // 添加其他USB配件
+                    else -> {
+                        addAccess(itemData)
                     }
                 }
+            }
 
-                R.id.tv_buy -> {
-                    // 跳转到网页
-                    val intent = Intent(this@AddAccessoryActivity, WebActivity::class.java)
-                    intent.putExtra(WebActivity.KEY_WEB_URL, itemData?.buyLink)
-                    startActivity(intent)
-                }
+            R.id.tv_buy -> {
+                // 跳转到网页
+                val intent = Intent(this@AddAccessoryActivity, WebActivity::class.java)
+                intent.putExtra(WebActivity.KEY_WEB_URL, itemData?.buyLink)
+                startActivity(intent)
             }
         }
     }

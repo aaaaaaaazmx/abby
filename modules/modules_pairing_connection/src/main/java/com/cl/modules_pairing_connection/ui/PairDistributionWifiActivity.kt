@@ -104,6 +104,9 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                 appendLine("2. Your phone must be connected to the same 2.4G wifi as smart camera")
             }
         } else {
+            if (pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS) {
+                binding.titleBar.setTitle("")
+            }
             // 设置设备名字
             binding.tvBleNane.text = "Device: ${bleData?.subName}"
 

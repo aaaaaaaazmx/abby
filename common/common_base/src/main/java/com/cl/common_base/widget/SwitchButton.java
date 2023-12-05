@@ -29,6 +29,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.CompoundButton;
 
 import androidx.core.content.ContextCompat;
+import androidx.databinding.BindingAdapter;
 
 import com.cl.common_base.R;
 import com.cl.common_base.ext.DensityKt;
@@ -1191,5 +1192,10 @@ public class SwitchButton extends CompoundButton {
                 return new SavedState[size];
             }
         };
+    }
+
+    @BindingAdapter("isItemCheck")
+    public static void setIsItemCheck(SwitchButton view, boolean isOffline) {
+        view.setChecked(isOffline);
     }
 }

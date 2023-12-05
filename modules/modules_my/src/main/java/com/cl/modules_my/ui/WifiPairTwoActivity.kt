@@ -15,6 +15,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
@@ -78,7 +79,15 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
                 }
                 success {
                     ToastUtil.shortShow("Activate success")
-                    // todo 跳转到排插设置界面
+                    val accessId = data?.accessoryId.safeToInt()
+                    val accessDeviceId = data?.accessoryDeviceId
+                    //  跳转到排插设置界面
+                    startActivity(Intent(this@WifiPairTwoActivity, OutletsSettingActivity::class.java).apply {
+                        putExtra("accessoryId", accessId)
+                        putExtra("accessoryDeviceId", accessDeviceId)
+                        putExtra("deviceId", deviceId)
+                    })
+                    finish()
                 }
             })
         }
@@ -148,7 +157,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
                     Log.i(TAG, "Activate success")
 
                     // 调用接口添加配件、以及设备ID
-                    letMultiple(deviceId, accessoryId) {a, b ->
+                    letMultiple(accessoryId, deviceId) {a, b ->
                         mViewMode.accessoryAdd(a, b)
                     }
                 }

@@ -14,6 +14,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
@@ -429,4 +430,12 @@ interface HttpMyApiService {
     // 关注列表 abby/user/following
     @POST("abby/user/following")
     fun following(): Flow<HttpResult<MutableList<FolowerData>>>
+
+    /**
+     * 获取配件参数
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/subport")
+    fun accessorySubport(@Field("accessoryId") accessoryId: String, @Field("accessoryDeviceId")accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>>
+
 }

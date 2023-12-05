@@ -169,6 +169,10 @@
             android:name=".ui.WifiPairTwoActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.OutletsSettingActivity"
+            android:screenOrientation="portrait" />
+
 
     </application>
 
