@@ -46,10 +46,43 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     private val adapter by lazy {
-        DeviceListAdapter(mutableListOf()) { accessoryId, deviceId, isChooser ->
+        DeviceListAdapter(mutableListOf(), switchListener = { accessoryId, deviceId, isChooser ->
             // 选择设备开关
             mViewModel.setDeviceStatus(accessoryId, deviceId, if (isChooser) "1" else "0")
-        }
+        }, luoSiListener = { accessoryData, accessListBean ->
+            // 这是配件点击设置逻辑
+            // camera跳转到专属页面
+            if (accessoryData.accessoryType == AccessoryListBean.KEY_CAMERA) {
+                val accessoryDeviceId = accessoryData.accessoryDeviceId
+                startActivityLauncher.launch(
+                    Intent(
+                        this@DeviceListActivity,
+                        CameraSettingActivity::class.java
+                    ).apply {
+                        // 配件Id 就是cameraId
+                        putExtra("accessoryDeviceId", accessoryDeviceId)
+                        putExtra("deviceId", accessListBean.deviceId)
+                    })
+                return@DeviceListAdapter
+            }
+            // 排插
+            if (accessoryData.accessoryType == AccessoryListBean.KEY_OUTLETS) {
+                startActivity(Intent(this@DeviceListActivity, OutletsSettingActivity::class.java).apply {
+                    putExtra("accessoryId", accessoryData.accessoryId)
+                    putExtra("accessoryDeviceId", accessoryData.accessoryDeviceId)
+                    putExtra("deviceId", accessListBean.deviceId)
+                })
+                return@DeviceListAdapter
+            }
+            val intent =
+                Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
+            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
+            intent.putExtra(
+                BasePopActivity.KEY_PART_ID,
+                "${accessoryData.accessoryId}"
+            )
+            startActivityLauncher.launch(intent)
+        })
     }
 
     @Inject
@@ -296,7 +329,6 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             R.id.btn_add_accessory,
             R.id.btn_jump_to_device,
             R.id.cl_root,
-            R.id.iv_luosi,
             R.id.iv_pair_luosi,
         )
         adapter.setOnItemChildClickListener { adapter, view, position ->
@@ -310,40 +342,6 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     ).apply {
                         putExtra("deviceId", deviceBean?.deviceId)
                     })
-                }
-
-                R.id.iv_luosi -> {
-                    // camera跳转到专属页面
-                    if (deviceBean?.accessoryList?.get(0)?.accessoryType == AccessoryListBean.KEY_CAMERA) {
-                        val accessoryDeviceId = deviceBean.accessoryList?.get(0)?.accessoryDeviceId
-                        startActivityLauncher.launch(
-                            Intent(
-                                this@DeviceListActivity,
-                                CameraSettingActivity::class.java
-                            ).apply {
-                                // 配件Id 就是cameraId
-                                putExtra("accessoryDeviceId", accessoryDeviceId)
-                                putExtra("deviceId", deviceBean.deviceId)
-                            })
-                        return@setOnItemChildClickListener
-                    }
-                    // 排插
-                    if (deviceBean?.accessoryList?.get(0)?.accessoryType == AccessoryListBean.KEY_OUTLETS) {
-                        startActivity(Intent(this@DeviceListActivity, OutletsSettingActivity::class.java).apply {
-                            putExtra("accessoryId", deviceBean.accessoryList?.get(0)?.accessoryId)
-                            putExtra("accessoryDeviceId", deviceBean.accessoryList?.get(0)?.accessoryDeviceId)
-                            putExtra("deviceId", deviceBean.deviceId)
-                        })
-                        return@setOnItemChildClickListener
-                    }
-                    val intent =
-                        Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
-                    intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceBean?.deviceId)
-                    intent.putExtra(
-                        BasePopActivity.KEY_PART_ID,
-                        "${deviceBean?.accessoryList?.get(0)?.accessoryId}"
-                    )
-                    startActivityLauncher.launch(intent)
                 }
 
                 R.id.btn_chang -> {

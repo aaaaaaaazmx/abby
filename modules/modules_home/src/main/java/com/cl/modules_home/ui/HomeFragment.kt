@@ -192,6 +192,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         mViewMode.listDevice()
                         // 刷新是否获取勋章
                         mViewMode.getMedal()
+                        // 获取环境消息
+                        mViewMode.getEnvData()
                     }
                 } catch (e: Exception) {
                     // Handle exception here
@@ -3097,6 +3099,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                           .withString(Constants.Global.KEY_PLANT_ID, data)
                           .withBoolean(Constants.Global.KEY_IS_SHOW_CHOOSER_TIPS, true)
                           .navigation(activity, KEY_FOR_CLONE_RESULT)*/
+                }
+            })
+
+            // 循环获取植物基本信息
+            plantInfoLoop.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    if (null == data) return@success
+                    // 植物的休息照片
+                    // 植物的健康程度
+                    binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
                 }
             })
 

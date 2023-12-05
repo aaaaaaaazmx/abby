@@ -2,12 +2,17 @@ package com.cl.modules_my.adapter
 
 import android.provider.ContactsContract.CommonDataKinds.Relation
 import android.text.TextUtils
+import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bhm.ble.BleManager
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDeviceListItemBinding
@@ -19,13 +24,17 @@ import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.databinding.MyDeviceListTextItemBinding
 import com.cl.modules_my.databinding.MyPairListItemBinding
 
-class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchListener: ((accessoryId: String, deviceId: String, isCheck: Boolean) -> Unit)? = null) :
+class DeviceListAdapter(
+    data: MutableList<ListDeviceBean>?,
+    private val switchListener: ((accessoryId: String, deviceId: String, isCheck: Boolean) -> Unit)? = null,
+    private val luoSiListener: ((accessoryData: ListDeviceBean.AccessoryList, bean: ListDeviceBean) -> Unit)? = null,
+) :
     BaseMultiItemQuickAdapter<ListDeviceBean, BaseViewHolder>(data) {
 
 
     init {
         addItemType(ListDeviceBean.KEY_TYPE_TEXT, R.layout.my_device_list_text_item)// 文字描述
-        addItemType(ListDeviceBean.KEY_TYPE_BOX, R.layout.my_device_list_item)  // 舍诶
+        addItemType(ListDeviceBean.KEY_TYPE_BOX, R.layout.my_device_list_item)  // 设备
         addItemType(ListDeviceBean.KEY_TYPE_PH, R.layout.my_pair_list_item)  // 配件
     }
 
@@ -41,6 +50,7 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
                     binding.executePendingBindings()
                 }
             }
+
             ListDeviceBean.KEY_TYPE_BOX -> {
                 val binding = DataBindingUtil.bind<MyDeviceListItemBinding>(holder.itemView)
                 if (binding != null) {
@@ -67,27 +77,20 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
                 val accList = item.accessoryList ?: mutableListOf()
                 runCatching {
                     if (accList.isNotEmpty()) {
-                        val pairData = accList[0]
-                        val checkView = holder.getView<FeatureItemSwitch>(R.id.ft_check)
-                        val textView = holder.getView<TextView>(R.id.tv_auto_desc)
-                        // 配件的相关事件
-                        checkView.apply {
-                            setSwitchCheckedChangeListener { _, isChecked ->
-                                if ((item.accessoryList?.size ?: 0) > 0) {
-                                    switchListener?.invoke(pairData.accessoryId.toString(), item.deviceId ?: "", isChecked)
-                                }
+                        //  底部的配件、会有多个、改为Recyclview了。
+                        holder.getView<RecyclerView>(R.id.rv_accessory).apply {
+                            layoutManager = LinearLayoutManager(context)
+                            val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck ->
+                                switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck)
+                            })
+                            adapter = accessAdapters
+                            accessAdapters.addChildClickViewIds(R.id.iv_luosi, R.id.cl_pair)
+                            accessAdapters.setOnItemChildClickListener { adapter, view, position ->
+                                luoSiListener?.invoke(adapter.data[position] as ListDeviceBean.AccessoryList, item)
                             }
                         }
-                        // 显示checkView & textView
-                        val openSize  = pairData.isAuto
-                        val status = pairData.status
-                        ViewUtils.setVisible(openSize == 0, checkView)
-                        ViewUtils.setVisible(openSize != 0, textView)
-                        checkView.setItemChecked(status == 1)
-                        textView.text =  if (status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
                     }
                 }
-
                 holder.setText(R.id.tv_title, showName(item.deviceName, item.plantName, item.strainName))
             }
 

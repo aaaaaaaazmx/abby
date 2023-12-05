@@ -1,26 +1,23 @@
 package com.cl.modules_my.ui
 
+import android.Manifest
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.provider.Settings
 import android.util.Log
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.lifecycle.LifecycleOwner
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.network.NetWorkUtil
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.adapter.MyImageAdapter
-import com.cl.modules_my.databinding.MyWifiPairActivityBinding
 import com.cl.modules_my.databinding.MyWifiPairTwoActivityBinding
 import com.cl.modules_my.viewmodel.BlePairViewModel
 import com.thingclips.smart.home.sdk.ThingHomeSdk
@@ -30,8 +27,6 @@ import com.thingclips.smart.sdk.api.IThingActivatorGetToken
 import com.thingclips.smart.sdk.api.IThingSmartActivatorListener
 import com.thingclips.smart.sdk.bean.DeviceBean
 import com.thingclips.smart.sdk.enums.ActivatorModelEnum
-import com.youth.banner.Banner
-import com.youth.banner.indicator.CircleIndicator
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -130,8 +125,39 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
     }
 
     private var mTuyaActivator: IThingActivator? = null
+    private var currentWifiName: String = ""
+    private fun getWifiName() {
+        if (NetWorkUtil.isWifi(this@WifiPairTwoActivity)) {
+            PermissionHelp().applyPermissionHelp(
+                this@WifiPairTwoActivity,
+                "Granting Hey abby access to your phone's location will be used to generate a Wi-Fi network list.",
+                object : PermissionHelp.OnCheckResultListener {
+                    override fun onResult(result: Boolean) {
+                        if (!result) return
+                        // 直接获取wifi名字
+                        val wifiName = NetWorkUtil.getConnectWifiSsid(this@WifiPairTwoActivity)
+                        currentWifiName = wifiName
+
+                        if (currentWifiName.startsWith("Smart") || currentWifiName.startsWith("SL")) {
+                            goSearch()
+                        } else {
+                            ToastUtil.shortShow("Please switch to the device's Wi-Fi")
+                        }
+                    }
+                },
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+            )
+        }
+    }
     override fun onRestart() {
         super.onRestart()
+        // 获取Wi-Fi名字。
+        getWifiName()
+    }
+
+    private fun goSearch() {
+        binding.tvSearch.text = "Connecting.."
         ViewUtils.setGone(binding.llWifiPairTwo)
         ViewUtils.setVisible(binding.llWifiPairThree)
         // showProgressLoading()
@@ -157,7 +183,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
                     Log.i(TAG, "Activate success")
 
                     // 调用接口添加配件、以及设备ID
-                    letMultiple(accessoryId, deviceId) {a, b ->
+                    letMultiple(accessoryId, deviceId) { a, b ->
                         mViewMode.accessoryAdd(a, b)
                     }
                 }
@@ -177,7 +203,6 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
             ThingHomeSdk.getActivatorInstance().newActivator(builder)
         //Start configuration
         mTuyaActivator?.start()
-
     }
 
     /**
