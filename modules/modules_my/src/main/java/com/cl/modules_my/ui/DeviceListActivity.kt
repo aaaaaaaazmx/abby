@@ -135,18 +135,36 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             }
             success {
                 // 检查data是否非空和非空列表
-                val dataInfo = data
+                var dataInfo = data
                 if (null == dataInfo) {
                     adapter.setList(dataInfo)
                     return@success
                 }
-                if (dataInfo.isNotEmpty()) {
-                    val indexChooser = dataInfo.indexOfFirst { it.currentDevice == 1 }
+
+                //  根据isShared 来分为2组，并且在每组的第一个添加新类型类型
+                // 1. 先找到isShared为true的设备
+                val sharedList = dataInfo.filter { it.isShared == true }.toMutableList()
+                // 2. 找到isShared为false的设备
+                val unSharedList = dataInfo.filter { it.isShared == false }.toMutableList()
+                // 3. 判断是否有isChooser为true的设备，如果有就新增一个元素spaceType = KEY_SPACE_TYPE_TEXT
+                if (sharedList.isNotEmpty()) {
+                    sharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = "Shared Add-ons"))
+                }
+                // 4. 判断是否有isChooser为false的设备，如果有就新增一个元素spaceType = KEY_SPACE_TYPE_TEXT
+                if (unSharedList.isNotEmpty()) {
+                    unSharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = "Grow Space"))
+                }
+
+                // 5. 将isShared为true的设备放在前面
+                val newList = sharedList + unSharedList
+
+                if (newList.isNotEmpty()) {
+                    val indexChooser = newList.indexOfFirst { it.currentDevice == 1 }
 
                     // 检查是否找到匹配项
                     if (indexChooser != -1) {
-                        dataInfo[indexChooser].isChooser = true  // 设置isChooser标志
-                        adapter.setList(data)
+                        newList[indexChooser].isChooser = true  // 设置isChooser标志
+                        adapter.setList(newList)
 
                         // 设置RecyclerView的位置
                         binding.rvList.postDelayed({
@@ -155,8 +173,8 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
                     } else {
                         // 处理没有找到匹配项的情况，例如选择默认项
-                        dataInfo[0].isChooser = true
-                        adapter.setList(data)
+                        newList[0].isChooser = true
+                        adapter.setList(newList)
 
                         // 设置RecyclerView的位置
                         binding.rvList.postDelayed({
@@ -293,6 +311,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         putExtra("deviceId", deviceBean?.deviceId)
                     })
                 }
+
                 R.id.iv_luosi -> {
                     // camera跳转到专属页面
                     if (deviceBean?.accessoryList?.get(0)?.accessoryType == AccessoryListBean.KEY_CAMERA) {

@@ -16,6 +16,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.FeatureItemSwitch
+import com.cl.modules_my.databinding.MyDeviceListTextItemBinding
 import com.cl.modules_my.databinding.MyPairListItemBinding
 
 class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchListener: ((accessoryId: String, deviceId: String, isCheck: Boolean) -> Unit)? = null) :
@@ -23,6 +24,7 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
 
 
     init {
+        addItemType(ListDeviceBean.KEY_TYPE_TEXT, R.layout.my_device_list_text_item)// 文字描述
         addItemType(ListDeviceBean.KEY_TYPE_BOX, R.layout.my_device_list_item)  // 舍诶
         addItemType(ListDeviceBean.KEY_TYPE_PH, R.layout.my_pair_list_item)  // 配件
     }
@@ -31,6 +33,14 @@ class DeviceListAdapter(data: MutableList<ListDeviceBean>?, private val switchLi
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         when (holder.itemViewType) {
+            ListDeviceBean.KEY_TYPE_TEXT -> {
+                val binding = DataBindingUtil.bind<MyDeviceListTextItemBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
             ListDeviceBean.KEY_TYPE_BOX -> {
                 val binding = DataBindingUtil.bind<MyDeviceListItemBinding>(holder.itemView)
                 if (binding != null) {
