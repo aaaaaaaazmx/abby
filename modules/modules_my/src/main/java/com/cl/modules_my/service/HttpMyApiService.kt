@@ -16,6 +16,7 @@ import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
 import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
+import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
@@ -438,4 +439,10 @@ interface HttpMyApiService {
     @POST("abby/accessory/subport")
     fun accessorySubport(@Field("accessoryId") accessoryId: String, @Field("accessoryDeviceId")accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>>
 
+    /**
+     * 获取自动化类型列表
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/automationType")
+    fun automationType(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<AutomationTypeBean>>>
 }

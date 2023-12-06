@@ -11,6 +11,7 @@ import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
 import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
+import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
@@ -269,6 +270,10 @@ class MyRemoteRepository @Inject constructor() {
 
     fun accessorySubport(accessoryId: String, accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>> {
         return service.accessorySubport(accessoryId, accessoryDeviceId)
+    }
+
+    fun automationType(deviceId: String): Flow<HttpResult<MutableList<AutomationTypeBean>>> {
+        return service.automationType(deviceId)
     }
 
 }

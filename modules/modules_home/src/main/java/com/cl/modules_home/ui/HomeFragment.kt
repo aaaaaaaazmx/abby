@@ -184,8 +184,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         job = mViewMode.countDownCoroutines(10 * 6 * 500000, viewLifecycleOwner.lifecycleScope, onTick = {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    if (it % 30 == 0) {
-                        // 表示过了30秒
+                    if (it % 15 == 0) {
+                        // 表示过了15秒
                         mViewMode.getUnread()
                         // 查询植物信息Look
                         mViewMode.plantInfoLoop()

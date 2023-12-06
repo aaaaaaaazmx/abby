@@ -184,7 +184,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
 
                     // 调用接口添加配件、以及设备ID
                     letMultiple(accessoryId, deviceId) { a, b ->
-                        mViewMode.accessoryAdd(a, b)
+                        mViewMode.accessoryAdd(a, b, accessoryDeviceId = devResp?.devId)
                     }
                 }
 
