@@ -1139,6 +1139,18 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 保存开关门的状态
+     */
+    private val _doorStatus = MutableLiveData(
+        thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR }
+            ?.get(TuYaDeviceConstants.KEY_DEVICE_DOOR).toString()
+    )
+    val doorStatus: LiveData<String> = _doorStatus
+    fun setDoorStatus(status: String) {
+        _doorStatus.value = status
+    }
+
+    /**
      * 查询固件升级信息
      */
     fun checkFirmwareUpdateInfo(

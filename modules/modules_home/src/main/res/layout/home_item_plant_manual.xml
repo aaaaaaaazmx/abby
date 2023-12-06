@@ -170,6 +170,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    tools:text="Temperature (℉)"
                     android:id="@+id/tv_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -199,7 +200,7 @@
                     android:id="@+id/tv_humidity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="141dp"
+                    android:layout_marginStart="111dp"
                     android:layout_marginTop="5dp"
                     android:text="Humidity (%)"
                     android:textColor="#999999"
@@ -208,9 +209,10 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_grow" />
 
                 <TextView
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:text='@{String.valueOf(viewModel.getHumidity)}'
                     android:id="@+id/tv_humidity_value"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:textColor="@color/black"
@@ -247,6 +249,7 @@
 
 
                 <TextView
+                    tools:text="Temperature (℉)"
                     android:id="@+id/tv_water_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -276,7 +279,7 @@
                     android:id="@+id/tv_level"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="141dp"
+                    android:layout_marginStart="111dp"
                     android:layout_marginTop="5dp"
                     android:text="Level"
                     android:textColor="#999999"
@@ -287,9 +290,11 @@
                 <TextView
                     android:text="@{String.valueOf(viewModel.getWaterLevel)}"
                     android:id="@+id/tv_level_value"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
+                    android:gravity="start"
                     android:layout_marginBottom="13dp"
                     android:textColor="@color/black"
                     android:textSize="15sp"
@@ -301,6 +306,47 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_light"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cl_value_show"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/background_white_r6"
+                android:layout_width="match_parent"
+                android:layout_height="54dp">
+
+                <TextView
+                    android:id="@+id/tv_light"
+                    android:textStyle="bold"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="Light"
+                    android:textColor="@color/mainColor"
+                    android:textSize="12sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!--ON/OFF/DIM(Door Open)，开门就是DIM、 关门就判断灯光强度是否等于0 -->
+                <TextView
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text='@{viewModel.doorStatus == "true" ? "DIM(Door Open)" : viewModel.getGrowLight == 0 ? "OFF" : "ON" }'
+                    tools:text="DIM(Door Open)"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_light"
+                    app:layout_constraintTop_toTopOf="@+id/tv_light"
+                    app:layout_constraintStart_toEndOf="@+id/tv_light"
+                    android:layout_marginStart="157dp"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_manipulation"
@@ -312,7 +358,7 @@
                 android:background="@drawable/background_white_r6"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cl_value_show">
+                app:layout_constraintTop_toBottomOf="@+id/cl_light">
 
                 <TextView
                     android:textStyle="bold"

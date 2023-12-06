@@ -4657,6 +4657,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }"
                         )
                     }
+
+                    // 是否关闭门
+                    mViewMode.setDoorStatus(value.toString())
                 }
 
                 // ----- 开始， 下面的都是需要传给后台的环境信息
