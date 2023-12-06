@@ -153,6 +153,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         })
                     }
                     // 排插
+                    // 这个是不共享的，但是不占用usb，目前重复添加时也只需要判断是否已经拥有，跳转各自的详情就好了。
                     AccessoryListBean.KEY_OUTLETS -> {
                         //  判断排插是否已经添加过了。
                         if (accessoryList.none { it.accessoryId == itemData.accessoryId }) {
@@ -180,8 +181,11 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         }
                         return@OnItemChildClickListener
                     }
-                    // 添加其他USB配件
+                    // 温度传感器，这个是共享的，每次添加只需要判断是否已经添加过了，跳转对应的详情就好了。
+                    // todo
                     else -> {
+                        // 添加其他USB配件
+                        // 只有占用usb的才需要判断是否已经添加过了。才需要进行在添加过程中判断是否需要解绑。
                         addAccess(itemData)
                     }
                 }

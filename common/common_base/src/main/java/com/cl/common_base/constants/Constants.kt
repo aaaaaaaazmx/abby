@@ -105,6 +105,15 @@ object Constants {
     object Pair {
         const val KEY_PAIR_WIFI_NAME = "key_pair_wifi_name"
         const val KEY_PAIR_WIFI_PASSWORD = "key_pair_wifi_password"
+
+        // 不同的wifi设备类型
+        const val KEY_PAIR_WIFI_DEVICE = "key_pair_wifi_device"
+
+        // 大型温度传感器
+        const val KEY_PAIR_WIFI_DEVICE_BIG_TEMP = "key_pair_wifi_device_big_temp"
+        // 小型温度传感器
+        const val KEY_PAIR_WIFI_DEVICE_SMALL_TEMP = "key_pair_wifi_device_small_temp"
+
     }
 
     // 涂鸦相关
