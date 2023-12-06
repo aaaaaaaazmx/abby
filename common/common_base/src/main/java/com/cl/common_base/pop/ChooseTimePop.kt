@@ -1,6 +1,7 @@
 package com.cl.common_base.pop
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
@@ -10,12 +11,17 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.MyChooseTimePopBinding
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
+import com.warkiz.widget.IndicatorSeekBar
+import com.warkiz.widget.OnSeekChangeListener
+import com.warkiz.widget.SeekParams
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -33,6 +39,9 @@ class ChooseTimePop(
     var turnOnHour: Int? = null,
     var turnOffHour: Int? = null,
     var isTheSpacingHours: Boolean = true, // 是否需要间隔12小时
+    private var lightIntensity: Int? = null, // 当前灯光数值。
+    private var isProMode: Boolean? = false, // 是否是proMode模式。
+    private val proModeAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?,lightIntensity: Int? ) -> Unit)? = null, // proMode下的选择
     private val onConfirmAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?) -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
@@ -56,6 +65,12 @@ class ChooseTimePop(
         super.onCreate()
         binding = DataBindingUtil.bind<MyChooseTimePopBinding>(popupImplView)?.apply {
             ivClose.setOnClickListener { dismiss() }
+
+            // 展示Seekbar
+            ViewUtils.setVisible(isProMode == true, clLight)
+            tvLightIntensityValue.text = lightIntensity.toString()
+            lightIntensity?.toFloat()?.let { lightIntensitySeekbar.setProgress(it) }
+            seekBarChang(lightIntensitySeekbar)
 
             ftTurnOn.setItemTitle(turnOnText ?: "turn on Night mode")
             ftTurnOff.setItemTitle(turnOffText ?: "turn off Night mode")
@@ -230,6 +245,7 @@ class ChooseTimePop(
                                 }
                             }
                             onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
+                            proModeAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour, lightIntensity)
                             dismiss()
                         } else {
                             ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
@@ -251,8 +267,84 @@ class ChooseTimePop(
                             }
                         }
                         onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
+                        proModeAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour, lightIntensity)
                         dismiss()
                     }
+                }
+            }
+        }
+    }
+
+    private val pop by lazy {
+        XPopup.Builder(context)
+    }
+
+    private fun seekBarChang(lightIntensitySeekbar: IndicatorSeekBar) {
+        lightIntensitySeekbar.customSectionTrackColor { colorIntArr ->
+            //the length of colorIntArray equals section count
+            //                colorIntArr[0] = Color.parseColor("#008961");
+            //                colorIntArr[1] = Color.parseColor("#008961");
+            // 当刻度为最后4段时才显示红色
+            colorIntArr[6] = Color.parseColor("#F72E47")
+            colorIntArr[7] = Color.parseColor("#F72E47")
+            colorIntArr[8] = Color.parseColor("#F72E47")
+            true //true if apply color , otherwise no change
+        }
+        lightIntensitySeekbar.onSeekChangeListener = object : OnSeekChangeListener {
+            override fun onSeeking(p0: SeekParams?) {
+            }
+
+            override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                val progress = seekbar?.progress ?: 0
+                val growLightValue = lightIntensity ?: 0
+                // 应该只提示一次
+                if (growLightValue <= 7 && progress > 7) {
+                    pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
+                        .asCustom(context?.let {
+                            BaseCenterPop(
+                                it,
+                                content = "Caution! Increasing the light intensity level above 7 may cause damage to the flowers. Are you sure you want to continue?",
+                                cancelText = "No",
+                                confirmText = "Yes",
+                                onCancelAction = {
+                                    // 需要恢复到之前到档位
+                                    // mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
+                                    lightIntensitySeekbar.setProgress(growLightValue.toFloat())
+                                },
+                                onConfirmAction = {
+                                    DeviceControl.get()
+                                        .success {
+                                            // mViewMode.setGrowLight(seekbar?.progress.toString())
+                                            lightIntensity = seekbar?.progress
+                                            binding?.tvLightIntensityValue?.text = seekbar?.progress.toString()
+                                        }
+                                        .error { code, error ->
+                                            ToastUtil.shortShow(
+                                                """
+                                                  lightIntensity: 
+                                                  code-> $code
+                                                  errorMsg-> $error
+                                                    """.trimIndent()
+                                            )
+                                        }
+                                        .lightIntensity(seekbar?.progress ?: 0)
+                                }
+                            )
+                        }).show()
+                } else {
+                    DeviceControl.get()
+                        .success {
+                            // mViewMode.setGrowLight(seekbar?.progress.toString())
+                            lightIntensity = seekbar?.progress
+                            binding?.tvLightIntensityValue?.text = seekbar?.progress.toString()
+                        }
+                        .error { code, error ->
+                            ToastUtil.shortShow(error)
+                        }
+                        .lightIntensity(seekbar?.progress ?: 0)
                 }
             }
         }

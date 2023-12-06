@@ -38,6 +38,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeBinding
+import com.bbgo.module_home.databinding.HomeItemPlantManualBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.base.KnowMoreActivity
@@ -927,7 +928,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     fanIntake = "${mViewMode.getFanIntake.value}",
                     fanExhaust = "${mViewMode.getFanExhaust.value}",
                     lightIntensity = "${mViewMode.getGrowLight.value}",
-                    lightSchedule = ftTimer.itemValue,
+                    lightSchedule = ftTimer.text.toString(),
                     muteOn = "${mViewMode.muteOn}",
                     muteOff = "${mViewMode.muteOff}"
                 )
@@ -1003,7 +1004,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     }.lightIntensity(lightIntensity.safeToInt())
                             }
 
-                            ftTimer.itemValue = "$lightSchedule"
+                            ftTimer.text = "$lightSchedule"
                             mViewMode.setmuteOn(muteOff)
                             mViewMode.setmuteOn(muteOn)
                             // 开灯时间
@@ -1115,46 +1116,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             // 时间模式
-            ftTimer.setOnClickListener {
-                pop.asCustom(context?.let { it1 ->
-                    ChooseTimePop(
-                        it1,
-                        turnOnText = "Turn on Light",
-                        turnOffText = "Turn off Light",
-                        isShowNightMode = false,
-                        isTheSpacingHours = false,
-                        turnOnHour = mViewMode.muteOn?.safeToInt(),
-                        turnOffHour = mViewMode.muteOff?.safeToInt(),
-                        onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
-                            ftTimer.itemValue = "$onTime-$offMinute"
-                            mViewMode.setmuteOn("$timeOn")
-                            mViewMode.setmuteOff("$timeOff")
-
-                            // 开灯时间
-                            when (timeOn) {
-                                12 -> 0
-                                24 -> 12
-                                else -> timeOn
-                            }?.let { it2 ->
-                                DeviceControl.get()
-                                    .success { }
-                                    .error { code, error -> }
-                                    .lightTime(it2)
-                            }
-
-                            // 关灯时间
-                            when (timeOff) {
-                                12 -> 0
-                                24 -> 12
-                                else -> timeOff
-                            }?.let { it2 ->
-                                DeviceControl.get()
-                                    .success { }
-                                    .error { code, error -> }
-                                    .closeLightTime(it2)
-                            }
-                        })
-                }).show()
+            tvLightIntensityTitle.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                chooserTime()
+            }
+            ftTimer.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                chooserTime()
             }
 
             fanIntakeSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
@@ -1207,70 +1173,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             mViewMode.setFanExhaust("${mViewMode.getFanExhaust.value}")
                         }
                         .fanExhaust(seekbar?.progress ?: 0)
-                }
-            }
-            lightIntensitySeekbar.customSectionTrackColor { colorIntArr ->
-                //the length of colorIntArray equals section count
-                //                colorIntArr[0] = Color.parseColor("#008961");
-                //                colorIntArr[1] = Color.parseColor("#008961");
-                // 当刻度为最后4段时才显示红色
-                colorIntArr[6] = Color.parseColor("#F72E47")
-                colorIntArr[7] = Color.parseColor("#F72E47")
-                colorIntArr[8] = Color.parseColor("#F72E47")
-                true //true if apply color , otherwise no change
-            }
-            lightIntensitySeekbar.onSeekChangeListener = object : OnSeekChangeListener {
-                override fun onSeeking(p0: SeekParams?) {
-                }
-
-                override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
-                    val progress = seekbar?.progress ?: 0
-                    val growLightValue = mViewMode.getGrowLight.value ?: 0
-                    // 应该只提示一次
-                    if (growLightValue <= 7 && progress > 7) {
-                        pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
-                            .asCustom(context?.let {
-                                BaseCenterPop(
-                                    it,
-                                    content = "Caution! Increasing the light intensity level above 7 may cause damage to the flowers. Are you sure you want to continue?",
-                                    cancelText = "No",
-                                    confirmText = "Yes",
-                                    onCancelAction = {
-                                        // 需要恢复到之前到档位
-                                        mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                                    },
-                                    onConfirmAction = {
-                                        DeviceControl.get()
-                                            .success {
-                                                mViewMode.setGrowLight(seekbar?.progress.toString())
-                                            }
-                                            .error { code, error ->
-                                                ToastUtil.shortShow(
-                                                    """
-                                                  lightIntensity: 
-                                                  code-> $code
-                                                  errorMsg-> $error
-                                                    """.trimIndent()
-                                                )
-                                                mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                                            }
-                                            .lightIntensity(seekbar?.progress ?: 0)
-                                    }
-                                )
-                            }).show()
-                    } else {
-                        DeviceControl.get()
-                            .success {
-                                mViewMode.setGrowLight(seekbar?.progress.toString())
-                            }
-                            .error { code, error ->
-                                mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                            }
-                            .lightIntensity(seekbar?.progress ?: 0)
-                    }
                 }
             }
 
@@ -1451,6 +1353,52 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 checkPer()
             }
         }
+    }
+
+    private fun HomeItemPlantManualBinding.chooserTime() {
+        pop.asCustom(context?.let { it1 ->
+            ChooseTimePop(
+                it1,
+                turnOnText = "Turn on Light",
+                turnOffText = "Turn off Light",
+                isShowNightMode = false,
+                isTheSpacingHours = false,
+                turnOnHour = mViewMode.muteOn?.safeToInt(),
+                turnOffHour = mViewMode.muteOff?.safeToInt(),
+                isProMode = true,
+                lightIntensity = mViewMode.getGrowLight.value.safeToInt(),
+                proModeAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour, lightIntensity ->
+                    mViewMode.setGrowLight(lightIntensity.toString())
+
+                    ftTimer.text = "$onTime-$offMinute"
+                    mViewMode.setmuteOn("$timeOn")
+                    mViewMode.setmuteOff("$timeOff")
+
+                    // 开灯时间
+                    when (timeOn) {
+                        12 -> 0
+                        24 -> 12
+                        else -> timeOn
+                    }?.let { it2 ->
+                        DeviceControl.get()
+                            .success { }
+                            .error { code, error -> }
+                            .lightTime(it2)
+                    }
+
+                    // 关灯时间
+                    when (timeOff) {
+                        12 -> 0
+                        24 -> 12
+                        else -> timeOff
+                    }?.let { it2 ->
+                        DeviceControl.get()
+                            .success { }
+                            .error { code, error -> }
+                            .closeLightTime(it2)
+                    }
+                })
+        }).show()
     }
 
     /**
@@ -2203,7 +2151,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 binding.plantManual.fanExhaustSeekbar.setProgress(it.toFloat())
             }
             getGrowLight.observe(viewLifecycleOwner) {
-                binding.plantManual.lightIntensitySeekbar.setProgress(it.toFloat())
+                // binding.plantManual.lightIntensitySeekbar.setProgress(it.toFloat())
             }
 
             // transPlant周期自行处理逻辑

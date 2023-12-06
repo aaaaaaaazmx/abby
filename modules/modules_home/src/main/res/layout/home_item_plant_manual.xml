@@ -440,7 +440,7 @@
                         android:id="@+id/tv_fan_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
+                        android:layout_marginStart="35dp"
                         android:textColor="@color/mainColor"
                         android:textSize="15sp"
                         android:textStyle="bold"
@@ -518,7 +518,7 @@
                         android:id="@+id/tv_fan_exhaust_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="25dp"
                         android:textColor="@color/mainColor"
                         android:textSize="15sp"
                         android:textStyle="bold"
@@ -591,11 +591,13 @@
 
 
                     <TextView
+                        android:layout_marginBottom="16dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         android:id="@+id/tv_light_schedule"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
-                        android:layout_marginTop="13dp"
+                        android:layout_marginTop="16dp"
                         android:text="Light Schedule"
                         android:textColor="@color/mainColor"
                         android:textSize="12sp"
@@ -604,95 +606,50 @@
                         app:layout_constraintTop_toBottomOf="@+id/vv_view_vv" />
 
 
-                    <com.cl.common_base.widget.FeatureItemView
+                    <TextView
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="11sp"
+                        tools:text="10:00 AM-7:00 PM"
+                        android:layout_marginStart="10dp"
                         android:id="@+id/ft_timer"
                         android:layout_width="wrap_content"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         app:hideArrow="false"
                         app:itemTitle="@string/my_time"
-                        itemValues="@{viewModel.getTimeText}"
+                        text="@{viewModel.getTimeText}"
                         app:itemValueSize="4sp"
+                        app:layout_constraintStart_toEndOf="@+id/tv_light_schedule"
                         app:layout_constraintBottom_toBottomOf="@id/tv_light_schedule"
-                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@id/tv_light_schedule" />
 
-
                     <TextView
-                        android:id="@+id/tv_light_intensity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="17dp"
-                        android:layout_marginBottom="22dp"
-                        android:text="Light Intensity"
-                        android:textColor="@color/mainColor"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/ft_timer" />
-
-                    <TextView
-                        android:text="@{String.valueOf(viewModel.getGrowLight)}"
-                        android:id="@+id/tv_light_intensity_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:textColor="@color/mainColor"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toEndOf="@+id/tv_light_intensity"
-                        app:layout_constraintTop_toTopOf="@+id/tv_light_intensity"
-                        tools:text="20" />
-
-                    <TextView
-                        android:id="@+id/tv_light_intensity_value_unit"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:text="0"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_light_intensity_value"
-                        app:layout_constraintStart_toEndOf="@+id/tv_light_intensity_value"
-                        app:layout_constraintTop_toTopOf="@+id/tv_light_intensity_value" />
-
-                    <com.warkiz.widget.IndicatorSeekBar
-                        app:isb_show_indicator="rounded_rectangle"
-                        app:isb_indicator_color="@color/mainColor"
-                        android:id="@+id/light_intensity_seekbar"
+                        android:id="@+id/tv_light_intensity_title"
+                        android:text='@{"Intensity L" + String.valueOf(viewModel.getGrowLight)}'
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        app:isb_progress="0"
-                        app:isb_max="10"
-                        app:isb_thumb_adjust_auto="true"
-                        app:isb_thumb_drawable="@mipmap/bbbbb"
-                        app:isb_thumb_size="27dp"
-                        app:isb_ticks_count="10"
-                        app:isb_track_background_color="#99006241"
-                        app:isb_track_background_size="5dp"
-                        app:isb_track_progress_color="#008961"
-                        app:isb_track_progress_size="5dp"
-                        app:isb_track_rounded_corners="true"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_light_intensity_value_unit"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_light_intensity_value_unit_two"
-                        app:layout_constraintStart_toEndOf="@+id/tv_light_intensity_value_unit_two"
-                        app:layout_constraintStart_toStartOf="@+id/tv_light_intensity_value_unit"
-                        app:layout_constraintTop_toTopOf="@+id/tv_light_intensity_value_unit" />
+                        android:layout_marginStart="18dp"
+                        android:textColor="@color/mainColor"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@+id/iv_right"
+                        app:layout_constraintStart_toEndOf="@+id/ft_timer"
+                        app:layout_constraintTop_toTopOf="@+id/tv_light_schedule"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_light_schedule"
+                        tools:text="Intensity L2" />
 
-                    <TextView
-                        android:id="@+id/tv_light_intensity_value_unit_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"
-                        android:text="10"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/light_intensity_seekbar"
+                    <ImageView
+                        android:id="@+id/iv_right"
+                        android:layout_marginEnd="15dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_light_schedule"
+                        app:layout_constraintTop_toTopOf="@+id/tv_light_schedule"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/light_intensity_seekbar" />
+                        android:background="@mipmap/iv_right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
