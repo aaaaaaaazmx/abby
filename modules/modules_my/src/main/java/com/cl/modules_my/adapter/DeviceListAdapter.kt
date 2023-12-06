@@ -76,18 +76,16 @@ class DeviceListAdapter(
             ListDeviceBean.KEY_TYPE_BOX -> {
                 val accList = item.accessoryList ?: mutableListOf()
                 runCatching {
-                    if (accList.isNotEmpty()) {
-                        //  底部的配件、会有多个、改为Recyclview了。
-                        holder.getView<RecyclerView>(R.id.rv_accessory).apply {
-                            layoutManager = LinearLayoutManager(context)
-                            val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck ->
-                                switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck)
-                            })
-                            adapter = accessAdapters
-                            accessAdapters.addChildClickViewIds(R.id.iv_luosi, R.id.cl_pair)
-                            accessAdapters.setOnItemChildClickListener { adapter, view, position ->
-                                luoSiListener?.invoke(adapter.data[position] as ListDeviceBean.AccessoryList, item)
-                            }
+                    //  底部的配件、会有多个、改为Recyclview了。
+                    holder.getView<RecyclerView>(R.id.rv_accessory).apply {
+                        layoutManager = LinearLayoutManager(context)
+                        val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck ->
+                            switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck)
+                        })
+                        adapter = accessAdapters
+                        accessAdapters.addChildClickViewIds(R.id.iv_luosi, R.id.cl_pair)
+                        accessAdapters.setOnItemChildClickListener { adapter, view, position ->
+                            luoSiListener?.invoke(adapter.data[position] as ListDeviceBean.AccessoryList, item)
                         }
                     }
                 }

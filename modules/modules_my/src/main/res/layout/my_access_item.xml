@@ -13,6 +13,7 @@
             name="isChooser"
             type="java.lang.Boolean" />
 
+        <import type="com.cl.common_base.bean.AccessoryListBean"/>
         <import type="android.view.View"/>
 
     </data>
@@ -63,7 +64,9 @@
 
 
 
+            <!--排插配件不显示按钮和文字-->
             <RelativeLayout
+                android:id="@+id/rl_check"
                 app:layout_constraintEnd_toStartOf="@+id/iv_luosi"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

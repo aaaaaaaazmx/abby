@@ -3,7 +3,9 @@ package com.cl.modules_my.adapter
 import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
+import com.cl.common_base.bean.AccessoryListBean
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.ext.logI
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.R
@@ -20,6 +22,7 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
         }
 
         val pairData = item
+        holder.setVisible(R.id.rl_check, item.accessoryType != AccessoryListBean.KEY_OUTLETS)
         val checkView = holder.getView<FeatureItemSwitch>(R.id.ft_check)
         val textView = holder.getView<TextView>(R.id.tv_auto_desc)
         // 配件的相关事件
