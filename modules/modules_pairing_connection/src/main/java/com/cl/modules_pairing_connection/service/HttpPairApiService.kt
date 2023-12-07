@@ -1,6 +1,7 @@
 package com.cl.modules_pairing_connection.service
 
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AccessoryAddData
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.SyncDeviceInfoReq
@@ -21,6 +22,17 @@ interface HttpPairApiService {
         @Field("deviceId") deviceId: String,
         @Field("deviceUuid") deviceUuid: String
     ): Flow<HttpResult<String>>
+
+    /**
+     * 新增配件接口
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/add")
+    fun accessoryAdd(
+        @Field("accessoryId") accessoryId: String,
+        @Field("deviceId") deviceId: String,
+        @Field("accessoryDeviceId") accessoryDeviceId: String? = null,
+    ): Flow<HttpResult<AccessoryAddData>>
 
     /**
      * 是否种植

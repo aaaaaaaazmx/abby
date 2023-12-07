@@ -12,16 +12,20 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
@@ -36,6 +40,7 @@ import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairConnectNetworkBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
+import com.google.android.material.tooltip.TooltipDrawable
 import com.google.zxing.WriterException
 import com.lxj.xpopup.XPopup
 import com.thingclips.smart.android.ble.api.ConfigErrorBean
@@ -79,6 +84,23 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         intent.getStringExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS) ?: Constants.Global.KEY_GLOBAL_PAIR_DEVICE_ABBY
     }
 
+
+    /**
+     * 用于添加配件
+     * deviceId
+     */
+    private val deviceId by lazy {
+        intent.getStringExtra("deviceId")
+    }
+
+    /**
+     * 用于添加配件
+     * accessoryId
+     */
+    private val accessoryId by lazy {
+        intent.getStringExtra("accessoryId")
+    }
+
     @Inject
     lateinit var mViewModel: PairDistributionWifiViewModel
 
@@ -89,7 +111,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
          * 摄像头界面需要改变这些文案
          */
         ViewUtils.setVisible(pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_ABBY, binding.tvBleNane)
-        if (pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA){
+        if (pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA) {
             //1.abby only supports 2.4GHz Wi-Fi.
             //Wi-Fi only supports alphanumeric character
             //
@@ -122,6 +144,11 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                 appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
             }
         }
+
+        binding.tvRouter.setSafeOnClickListener(lifecycleScope) {
+            // todo 没写。
+            ToastUtil.shortShow("Router setting")
+        }
     }
 
     private val tuYaUser by lazy {
@@ -140,6 +167,24 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 配件添加成功回调
+            accessoryAdd.observe(this@PairDistributionWifiActivity, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    // 添加成功跳转
+                    when (pairingEquipment) {
+                        Constants.Global.KEY_GLOBAL_PAIR_DEVICE_BOX -> {
+                            ToastUtil.shortShow("Activate success KEY_GLOBAL_PAIR_DEVICE_BOX")
+                            // todo 帐篷内部温湿度传感器， 不带显示器的温度传感器
+                        }
+                        Constants.Global.KEY_GLOBAL_PAIR_DEVICE_VIEW -> {
+                            ToastUtil.shortShow("Activate success KEY_GLOBAL_PAIR_DEVICE_VIEW")
+                            // todo 帐篷内部温湿度传感器, 带显示器的温度传感器
+                        }
+                    }
+                }
+            })
+
             // 同步设备信息
             syncDeviceInfo.observe(this@PairDistributionWifiActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -284,7 +329,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     override fun onResult(result: Boolean) {
                         if (!result) return
                         // 权限都同意之后，那么直接开始配网
-                        when(pairingEquipment) {
+                        when (pairingEquipment) {
                             Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA -> startNetWorkForCamera()
                             Constants.Global.KEY_GLOBAL_PAIR_DEVICE_ABBY -> startNetWorkForAbby()
                             Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS -> {
@@ -296,6 +341,18 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                     .withString("wifiPassWord", binding.etWifiPwd.text.toString())
                                     .navigation()
                             }
+
+                            // 不带显示器的温湿度传感器
+                            Constants.Global.KEY_GLOBAL_PAIR_DEVICE_BOX -> {
+                                // 温湿度传感器 添加配件
+                                startNetWorkFoTemperatureSensor()
+                            }
+                            // 带显示器的温度传感器
+                            Constants.Global.KEY_GLOBAL_PAIR_DEVICE_VIEW -> {
+                                // 温湿度传感器 添加配件
+                                startNetWorkFoTemperatureSensor()
+                            }
+
                             else -> {}
                         }
                     }
@@ -378,7 +435,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         val psd = binding.etWifiPwd.text.toString()
         showProgressLoading()
         // 首先获取配网token
-        ThingHomeSdk.getActivatorInstance().getActivatorToken(homeId, object : IThingActivatorGetToken{
+        ThingHomeSdk.getActivatorInstance().getActivatorToken(homeId, object : IThingActivatorGetToken {
             override fun onSuccess(token: String?) {
                 val builder = ThingCameraActivatorBuilder()
                     .setToken(token)
@@ -417,6 +474,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                             hideProgressLoading()
                             ToastUtil.shortShow("errorCode: $errorCode errorMsg: $errorMsg")
                         }
+
                         override fun onActiveSuccess(devResp: DeviceBean?) {
                             // Toast.makeText(this@WifiToQrCodeActivity, "config success!", Toast.LENGTH_LONG).show()
                             // todo 绑定成功、 跳转到视频界面
@@ -439,7 +497,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
     }
 
     /**
-     * 开始配网
+     * 开始配网 for Abby
      *
      * 这部分可以抽到ViewModel当中，但是我不想抽！
      */
@@ -488,29 +546,29 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                         // 取数据
                                         bean?.let { homeBean ->
                                             kotlin.runCatching {
-                                                    // todo 需要看下是否调用了bindDevice方法。有可能是没调用
-                                                    // logI("DeviceListSize: ${homeBean.deviceList?.size}")
-                                                    // homeBean.deviceList.forEach { logI("devId: ${it.devId}, $it") }
-                                                    // 重新绑定时、只取最后一个，表示这是新添加的。
-                                                    // 缓存用户第一个设备数据
-                                                    // 只取第一个
-                                                    GSON.toJson(deviceBean)?.let {
-                                                        Prefs.putStringAsync(
-                                                            Constants.Tuya.KEY_DEVICE_DATA,
-                                                            it
-                                                        )
-                                                    }
-                                                    // 开始存储账号和密码
+                                                // todo 需要看下是否调用了bindDevice方法。有可能是没调用
+                                                // logI("DeviceListSize: ${homeBean.deviceList?.size}")
+                                                // homeBean.deviceList.forEach { logI("devId: ${it.devId}, $it") }
+                                                // 重新绑定时、只取最后一个，表示这是新添加的。
+                                                // 缓存用户第一个设备数据
+                                                // 只取第一个
+                                                GSON.toJson(deviceBean)?.let {
                                                     Prefs.putStringAsync(
-                                                        Constants.Pair.KEY_PAIR_WIFI_NAME,
-                                                        binding.tvWifiName.text.toString()
+                                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                                        it
                                                     )
-                                                    Prefs.putStringAsync(
-                                                        Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
-                                                        binding.etWifiPwd.text.toString()
-                                                    )
-                                                    // 先进行数据同步、后绑定
-                                                    mViewModel.getDps(deviceBean)
+                                                }
+                                                // 开始存储账号和密码
+                                                Prefs.putStringAsync(
+                                                    Constants.Pair.KEY_PAIR_WIFI_NAME,
+                                                    binding.tvWifiName.text.toString()
+                                                )
+                                                Prefs.putStringAsync(
+                                                    Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
+                                                    binding.etWifiPwd.text.toString()
+                                                )
+                                                // 先进行数据同步、后绑定
+                                                mViewModel.getDps(deviceBean)
 
                                             }.onFailure { hideProgressLoading() }
                                         }
@@ -541,12 +599,17 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                     hideProgressLoading()
                                     when (code) {
                                         3 -> {  // wifi 密码错误
-                                            binding.error.visibility = View.VISIBLE}
+                                            binding.error.visibility = View.VISIBLE
+                                        }
+
                                         4 -> {  // wifi 密码错误
-                                            binding.error.visibility = View.VISIBLE}
+                                            binding.error.visibility = View.VISIBLE
+                                        }
+
                                         207006 -> {
                                             // msg = Doing 不用处理
                                         }
+
                                         else -> {
                                             // 配网失败跳转失败界面
                                             startActivity(
@@ -571,7 +634,98 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             })
     }
 
-   private fun isAppInForeground(context: Context): Boolean {
+    /**
+     * 温湿度传感器
+     */
+    private fun startNetWorkFoTemperatureSensor() {
+        val wifiName = binding.tvWifiName.text.toString()
+        val psd = binding.etWifiPwd.text.toString()
+
+        // 首先获取配网token
+        showProgressLoading(cancelable = false)
+        ThingHomeSdk.getActivatorInstance().getActivatorToken(homeId,
+            object : IThingActivatorGetToken {
+                override fun onSuccess(token: String) {
+                    // Start configuration -- Dual Ble Device
+                    logI("getActivatorToken: $token")
+                    /**
+                     * deviceType	Integer	设备类型，通过扫描可以查询
+                    uuid	String	设备 UUID，通过扫描可以查询
+                    address	String	设备地址，通过扫描可以查询
+                    mac	String	设备 Mac，通过扫描可以查询
+                    ssid	String	Wi-Fi SSID
+                    pwd	String	Wi-Fi 密码
+                    token	String	配网 Token，获取 Token 的方式与 Wi-Fi 设备配网一致，请参考 获取 Token
+                    homeId	long	当前家庭的 ID
+                    timeout	long	配网总超时，配网超时失败以该参数为准，单位为毫秒
+                     */
+                    val netWorkBean = MultiModeActivatorBean()
+                    netWorkBean.deviceType = bleData?.bleData?.deviceType ?: -1
+                    netWorkBean.uuid = bleData?.bleData?.uuid
+                    netWorkBean.address = bleData?.bleData?.address
+                    netWorkBean.mac = bleData?.bleData?.mac
+                    netWorkBean.ssid = wifiName
+                    netWorkBean.pwd = psd
+                    netWorkBean.token = token
+                    netWorkBean.homeId = homeId
+                    netWorkBean.timeout = 120000
+                    logI("MultiModeActivatorBean: $netWorkBean")
+                    // 开始配网
+                    ThingHomeSdk.getActivator().newMultiModeActivator()
+                        .startActivator(netWorkBean, object : IMultiModeActivatorListener {
+                            override fun onSuccess(deviceBean: DeviceBean?) {
+                                logI("startActivator DeviceBean : ${deviceBean.toString()}")
+                                // 添加设备
+                                letMultiple(accessoryId, deviceId) { a, b ->
+                                    mViewModel.accessoryAdd(a, b, deviceBean?.devId)
+                                }
+                            }
+
+                            override fun onFailure(code: Int, msg: String?, handle: Any?) {
+                                logE(
+                                    """
+                                startActivator error:
+                                code: $code
+                                msg: $msg
+                                handle: ${(handle as? ConfigErrorBean).toString()}
+                            """.trimIndent()
+                                )
+                                ToastUtil.shortShow(msg)
+                                Reporter.reportTuYaError("getActivator", msg, code.toString())
+                                // 3 密码错误 4 路由器连接失败（大概率是密码错误）
+                                runOnUiThread {
+                                    hideProgressLoading()
+                                    when (code) {
+                                        3 -> {  // wifi 密码错误
+                                            binding.error.visibility = View.VISIBLE
+                                        }
+
+                                        4 -> {  // wifi 密码错误
+                                            binding.error.visibility = View.VISIBLE
+                                        }
+
+                                        207006 -> {
+                                            // msg = Doing 不用处理
+                                        }
+
+                                        else -> {
+                                        }
+                                    }
+                                }
+                            }
+                        })
+                }
+
+                override fun onFailure(errorCode: String?, errorMsg: String?) {
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                    logE("getActivatorToken: errorCode->${errorCode}, Error->$errorMsg")
+                    Reporter.reportTuYaError("getActivatorInstance", errorMsg, errorCode)
+                }
+            })
+    }
+
+    private fun isAppInForeground(context: Context): Boolean {
         val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val appProcesses = activityManager.runningAppProcesses ?: return false
 

@@ -108,12 +108,6 @@ object Constants {
 
         // 不同的wifi设备类型
         const val KEY_PAIR_WIFI_DEVICE = "key_pair_wifi_device"
-
-        // 大型温度传感器
-        const val KEY_PAIR_WIFI_DEVICE_BIG_TEMP = "key_pair_wifi_device_big_temp"
-        // 小型温度传感器
-        const val KEY_PAIR_WIFI_DEVICE_SMALL_TEMP = "key_pair_wifi_device_small_temp"
-
     }
 
     // 涂鸦相关
@@ -235,6 +229,10 @@ object Constants {
         const val KEY_GLOBAL_PAIR_DEVICE_CAMERA = "key_global_pair_device_camera"
         // 配对设备排插
         const val KEY_GLOBAL_PAIR_DEVICE_OUTLETS = "key_global_pair_device_outlets"
+        // 不带显示器的温湿度传感器
+        const val KEY_GLOBAL_PAIR_DEVICE_BOX = "key_global_pair_device_box"
+        // 带显示器的温湿度传感器
+        const val KEY_GLOBAL_PAIR_DEVICE_VIEW = "key_global_pair_device_view"
 
         // pro_model 配置
         const val KEY_GLOBAL_PRO_MODEL = "key_global_pro_model"

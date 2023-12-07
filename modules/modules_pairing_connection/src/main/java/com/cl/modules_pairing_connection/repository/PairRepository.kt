@@ -1,6 +1,7 @@
 package com.cl.modules_pairing_connection.repository
 
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AccessoryAddData
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.SyncDeviceInfoReq
@@ -17,6 +18,10 @@ class PairRepository @Inject constructor(private var remoteRepository: PairRemot
      */
     fun bindDevice(deviceId: String, deviceUuid: String): Flow<HttpResult<String>> {
         return remoteRepository.bindDevice(deviceId, deviceUuid)
+    }
+
+    fun accessoryAdd(automationId: String, deviceId: String, accessoryDeviceId: String? = null): Flow<HttpResult<AccessoryAddData>> {
+        return remoteRepository.accessoryAdd(automationId, deviceId, accessoryDeviceId)
     }
 
     /**

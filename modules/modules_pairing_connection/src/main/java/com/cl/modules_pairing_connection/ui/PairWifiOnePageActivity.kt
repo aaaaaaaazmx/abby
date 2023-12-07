@@ -63,6 +63,20 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         intent.getStringExtra(Constants.Pair.KEY_PAIR_WIFI_DEVICE)
     }
 
+    /**
+     * deviceId
+     */
+    private val deviceId by lazy {
+        intent.getStringExtra("deviceId")
+    }
+
+    /**
+     * accessoryId
+     */
+    private val accessoryId by lazy {
+        intent.getStringExtra("accessoryId")
+    }
+
     @Inject
     lateinit var mViewModel: PairDistributionWifiViewModel
 
@@ -75,7 +89,6 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
             .asCustom(GuideBlePop(this))
     }
 
-    var job: Job? = null
 
     override fun initView() {
         // 标题设置
@@ -99,19 +112,20 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
             }
         }
 
-        binding.tvDesc.text = when(tuYaWifiDevice) {
-            Constants.Pair.KEY_PAIR_WIFI_DEVICE_BIG_TEMP -> "Searching for the device...\n" +
+        binding.tvDesc.text = when (tuYaWifiDevice) {
+            KEY_INNER, KEY_OUTER, KEY_BOX, KEY_VIEW -> "Searching for the device...\n" +
                     "Please press the on/off button for 3-5 seconds till you see the Bluetooth icon."
-            Constants.Pair.KEY_PAIR_WIFI_DEVICE_SMALL_TEMP -> "Searching for the device...\n" +
-                    "Please press the on/off button for 3-5 seconds till you see the Bluetooth icon."
+
             else -> ""
         }
 
-        binding.ivOne.setBackgroundResource(when(tuYaWifiDevice) {
-            Constants.Pair.KEY_PAIR_WIFI_DEVICE_BIG_TEMP -> R.mipmap.pair_wifi_device_one
-            Constants.Pair.KEY_PAIR_WIFI_DEVICE_SMALL_TEMP -> R.mipmap.pair_wifi_device_two
-            else -> R.mipmap.pair_wifi_device_one
-        })
+        binding.ivOne.setBackgroundResource(
+            when (tuYaWifiDevice) {
+                KEY_VIEW -> R.mipmap.pair_wifi_device_one
+                KEY_INNER, KEY_OUTER, KEY_BOX -> R.mipmap.pair_wifi_device_two
+                else -> R.mipmap.pair_wifi_device_one
+            }
+        )
 
         binding.tvTwo.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击
         binding.tvTwo.highlightColor = ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色
@@ -125,27 +139,6 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         binding.rvList.layoutManager = LinearLayoutManager(this)
         binding.rvList.adapter = adapter
         binding.rvList.isNestedScrollingEnabled = false
-
-        // 延时任务
-        //  这个延时任务5分钟
-        job = mViewModel.countDownCoroutines(
-            10 * 6 * 5,
-            lifecycleScope,
-            onTick = {
-                if (it != 0) return@countDownCoroutines
-                startActivity(
-                    Intent(
-                        this@PairWifiOnePageActivity,
-                        PairBleScanTimeOutActivity::class.java
-                    )
-                )
-                job?.cancel()
-            },
-            onStart = {},
-            onFinish = {
-                // todo 这个finish也指的是当前页面被关闭, 定时任务不能放在这个地方.
-                job?.cancel()
-            })
     }
 
     override fun observe() {
@@ -156,6 +149,18 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
             // 跳转配网界面,  附带设备名字
             val intent = Intent(this@PairWifiOnePageActivity, PairDistributionWifiActivity::class.java)
             intent.putExtra(KEY_DEVICE_DATA, adapter.data[position])
+            when (tuYaWifiDevice) {
+                // 内部和外部的都是属于同一类型、不带显示器的温湿度传感器
+                KEY_BOX, KEY_INNER, KEY_OUTER -> {
+                    intent.putExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS, Constants.Global.KEY_GLOBAL_PAIR_DEVICE_BOX)
+                }
+                // 但显示器的温湿度传感器
+                KEY_VIEW -> {
+                    intent.putExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS, Constants.Global.KEY_GLOBAL_PAIR_DEVICE_VIEW)
+                }
+            }
+            intent.putExtra("deviceId", deviceId)
+            intent.putExtra("accessoryId", accessoryId)
             logI("KEY_DEVICE_DATA: ${adapter.data[position]}")
             startActivity(intent)
         }
@@ -168,6 +173,7 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
                 checkPermissionAndStartScan()
                 logI("KEY_BLE_ON")
             }
+
             Constants.Ble.KEY_BLE_OFF -> {
                 ToastUtil.shortShow("Bluetooth is turned off")
                 logI("KEY_BLE_OFF")
@@ -288,14 +294,21 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job?.cancel()
-    }
-
     companion object {
         // 设备数据
         const val KEY_DEVICE_DATA = "key_device_data"
+
+        //- monitor_inner  内部温湿度器（tent）
+        const val KEY_INNER = "monitor_inner"
+
+        //- monitor_outer  外部温湿度器（tent）
+        const val KEY_OUTER = "monitor_outer"
+
+        //- monitor_view   温湿度器（带显示屏）
+        const val KEY_VIEW = "monitor_view"
+
+        //- monitor_box     温湿度器（box）
+        const val KEY_BOX = "monitor_box"
     }
 
 }

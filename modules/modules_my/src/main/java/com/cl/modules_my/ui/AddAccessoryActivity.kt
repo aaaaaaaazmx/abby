@@ -152,6 +152,20 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                             putExtra(Constants.Ble.KEY_BLE_TYPE, Constants.Ble.TYPE_PH)
                         })
                     }
+                    // 温湿度传感器
+                    AccessoryListBean.KEY_INNER, AccessoryListBean.KEY_OUTER, AccessoryListBean.KEY_BOX, AccessoryListBean.KEY_VIEW -> {
+                        if (deviceList.any { it.spaceType == itemData.accessoryType }) {
+                            ToastUtil.shortShow("You have already added it.")
+                            return@OnItemChildClickListener
+                        }
+                        // 跳转到添加tent内部温湿度传感器界面
+                        ARouter.getInstance().build(RouterPath.PairConnect.PAGE_WIFI_DEVICE_SCAN)
+                            .withString(Constants.Pair.KEY_PAIR_WIFI_DEVICE, itemData.accessoryType)
+                            .withString("deviceId", deviceId)
+                            .withString("accessoryId", "${itemData.accessoryId}")
+                            .navigation()
+                        return@OnItemChildClickListener
+                    }
                     // 排插
                     // 这个是不共享的，但是不占用usb，目前重复添加时也只需要判断是否已经拥有，跳转各自的详情就好了。
                     AccessoryListBean.KEY_OUTLETS -> {

@@ -23,6 +23,7 @@ import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.databinding.MyDeviceListTextItemBinding
 import com.cl.modules_my.databinding.MyPairListItemBinding
+import com.cl.modules_my.databinding.MyPairTentInnerItemBinding
 
 class DeviceListAdapter(
     data: MutableList<ListDeviceBean>?,
@@ -35,7 +36,11 @@ class DeviceListAdapter(
     init {
         addItemType(ListDeviceBean.KEY_TYPE_TEXT, R.layout.my_device_list_text_item)// 文字描述
         addItemType(ListDeviceBean.KEY_TYPE_BOX, R.layout.my_device_list_item)  // 设备
-        addItemType(ListDeviceBean.KEY_TYPE_PH, R.layout.my_pair_list_item)  // 配件
+        addItemType(ListDeviceBean.KEY_TYPE_PH, R.layout.my_pair_list_item)  // ph配件
+        addItemType(ListDeviceBean.KEY_TYPE_TENT_INNER, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
+        addItemType(ListDeviceBean.KEY_TYPE_TENT_OUTER, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
+        addItemType(ListDeviceBean.KEY_TYPE_ABBY_INNER, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
+        addItemType(ListDeviceBean.KEY_TYPE_VIEW, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
     }
 
 
@@ -44,6 +49,42 @@ class DeviceListAdapter(
         when (holder.itemViewType) {
             ListDeviceBean.KEY_TYPE_TEXT -> {
                 val binding = DataBindingUtil.bind<MyDeviceListTextItemBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
+            ListDeviceBean.KEY_TYPE_TENT_INNER -> {
+                val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
+            ListDeviceBean.KEY_TYPE_TENT_OUTER -> {
+                val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
+            ListDeviceBean.KEY_TYPE_ABBY_INNER -> {
+                val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
+            ListDeviceBean.KEY_TYPE_VIEW -> {
+                val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
                     binding.data = data[position]

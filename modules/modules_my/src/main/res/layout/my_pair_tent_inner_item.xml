@@ -30,7 +30,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:background="@drawable/background_white_r6"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="65dp">
 
             <ImageView
                 url="@{data.picture}"
@@ -46,10 +46,10 @@
                 android:layout_height="35dp"/>
 
             <TextView
+                android:layout_marginTop="15dp"
                 android:text="@{String.valueOf(data.deviceName)}"
                 android:textStyle="bold"
                 android:layout_marginStart="17.8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_icon"
                 app:layout_constraintTop_toTopOf="parent"
                 android:textColor="@color/mainColor"
@@ -59,31 +59,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-
-
-            <RelativeLayout
-                android:id="@+id/rl_ble_status"
-                android:layout_marginEnd="5dp"
-                app:layout_constraintEnd_toStartOf="@+id/iv_pair_luosi"
+            <TextView
+                android:text="----"
+                android:id="@+id/tv_device_status"
+                android:layout_marginBottom="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_width="75dp"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:padding="2dp"
-                    android:id="@+id/tv_ble_status"
-                    android:gravity="center_horizontal"
-                    android:textColor="@color/white"
-                    android:textSize="11sp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </RelativeLayout>
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                tools:text="79 F  50% RH"
+                app:layout_constraintStart_toStartOf="@+id/tv_device_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints" />
+
+
 
             <ImageView
                 android:layout_marginEnd="18dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:id="@+id/iv_pair_luosi"
+                android:id="@+id/iv_pair_temp_luosi"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@mipmap/my_luosi"
                 android:layout_width="wrap_content"
