@@ -13,6 +13,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.OutletsAdapter
@@ -47,7 +48,10 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
     }
 
     private val adapter by lazy {
-        OutletsAdapter(mutableListOf())
+        OutletsAdapter(mutableListOf(), switchListener = { portId, isCheck ->
+            // todo 修改插排的开关
+            // mViewMode.cameraSetting(UpdateInfoReq(portId = portId, binding = isCheck))
+        })
     }
 
     override fun MyOutletsSettingActivityBinding.initBinding() {
@@ -134,11 +138,12 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
             when(view.id) {
                 R.id.iv_outlet_edit -> {
                     // 跳转到自动化界面
-                    startActivity(Intent(this@OutletsSettingActivity, OutletsAutoActivity::class.java).apply {
+                    startActivity(Intent(this@OutletsSettingActivity, DeviceAutomationActivity::class.java).apply {
                         putExtra("accessoryDeviceId", accessoryDeviceId)
-                        putExtra("deviceId", deviceId)
-                        putExtra("accessoryId", accessoryId)
+                        putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
+                        putExtra(BasePopActivity.KEY_PART_ID, accessoryId.toString())
                         putExtra("portId", ben?.portId)
+                        putExtra("portName", ben?.subName)
                     })
                 }
             }

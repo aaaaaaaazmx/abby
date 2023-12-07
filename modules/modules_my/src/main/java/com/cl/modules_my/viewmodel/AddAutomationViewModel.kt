@@ -493,6 +493,24 @@ class AddAutomationViewModel @Inject constructor(private val repository: MyRepos
     }
 
     /**
+     * 设置选中的或者是后台返回的ROOM温度
+     */
+    private val _setRoomTemperature = MutableLiveData<String>("70")
+    val setRoomTemperature: LiveData<String> = _setRoomTemperature
+    fun setRoomTemperature(temperature: String) {
+        _setRoomTemperature.value = temperature
+    }
+
+    /**
+     * 设置选中的或者是后台返回的ROOM_RH温度
+     */
+    private val _setRoomRhTemperature = MutableLiveData<String>("70")
+    val setRoomRhTemperature: LiveData<String> = _setRoomRhTemperature
+    fun setRoomRhTemperature(temperature: String) {
+        _setRoomRhTemperature.value = temperature
+    }
+
+    /**
      * 设置选中的或者是后台返回的湿度
      */
     private val _setHumidity = MutableLiveData<String>("40")

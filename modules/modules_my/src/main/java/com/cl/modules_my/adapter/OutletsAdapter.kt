@@ -6,13 +6,17 @@ import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyOutletsListItemBinding
 import com.cl.modules_my.request.AccessData
 
-class OutletsAdapter(data: MutableList<AccessData>?) :
+class OutletsAdapter(data: MutableList<AccessData>?, private val switchListener: ((portId: String, isCheck: Boolean) -> Unit)? = null) :
     BaseQuickAdapter<AccessData, BaseDataBindingHolder<MyOutletsListItemBinding>>(R.layout.my_outlets_list_item, data) {
 
     override fun convert(holder: BaseDataBindingHolder<MyOutletsListItemBinding>, item: AccessData) {
         holder.dataBinding?.apply {
             datas = item
             executePendingBindings()
+
+            fisItemSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                switchListener?.invoke(item.portId, isChecked)
+            }
         }
     }
 }

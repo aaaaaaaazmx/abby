@@ -16,7 +16,9 @@ import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.BaseInputPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
@@ -28,6 +30,7 @@ import com.cl.modules_my.widget.AutomationEditPop
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
+import com.thingclips.smart.camera.middleware.p2p.ThingSmartCameraP2P
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -54,6 +57,20 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
         intent.getStringExtra(BasePopActivity.KEY_PART_ID)
     }
 
+    /**
+     * 排插的端口ID
+     */
+    private val portId by lazy {
+        intent.getStringExtra("portId")
+    }
+
+    /**
+     * 排插名字
+     */
+    private val portName by lazy {
+        intent.getStringExtra("portName")
+    }
+
     private val adapter by lazy {
         DeviceAutomationAdapter(mutableListOf()) { automationId, isCheck ->
             letMultiple(accessoryId, deviceId) { a, b ->
@@ -74,21 +91,51 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        letMultiple(accessoryId, deviceId) { a, b ->
-            mViewModel.getRuleList(a, b)
+        letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+            if (portId.isNullOrEmpty()) {
+                mViewModel.getRuleList(a, b)
+            } else {
+                mViewModel.getRuleList(a, b, c)
+            }
         }
     }
 
     override fun initView() {
         binding.rvDeivceAutoInfo.layoutManager = LinearLayoutManager(this)
         binding.rvDeivceAutoInfo.adapter = adapter
-        letMultiple(accessoryId, deviceId) { a, b ->
-            mViewModel.getRuleList(a, b)
+        letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+            if (portId.isNullOrEmpty()) {
+                mViewModel.getRuleList(a, b)
+            } else {
+                mViewModel.getRuleList(a, b, c)
+            }
         }
         binding.ftbTitle.setLeftClickListener {
             setResult(RESULT_OK)
             finish()
         }
+
+        // 清除名字
+        binding.etEmail.setOnClickListener {
+            xpopup(this@DeviceAutomationActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(
+                    BaseInputPop(this@DeviceAutomationActivity, title = "Outlet Name", hintText = binding.etEmail.text.toString(), onConfirmAction = {
+                        // 上传名字
+                        // todo 保存名字
+                    })
+                ).show()
+            }
+        }
+    }
+
+
+    override fun MyDeviceAutomationBinding.initBinding() {
+        portId = this@DeviceAutomationActivity.portId
+        portName = this@DeviceAutomationActivity.portName
+        lifecycleOwner = this@DeviceAutomationActivity
+        executePendingBindings()
     }
 
     override fun onBackPressed() {
@@ -127,8 +174,12 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    letMultiple(accessoryId, deviceId) { a, b ->
-                        mViewModel.getRuleList(a, b)
+                    letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                        if (portId.isNullOrEmpty()) {
+                            mViewModel.getRuleList(a, b)
+                        } else {
+                            mViewModel.getRuleList(a, b, c)
+                        }
                     }
                 }
             })
@@ -138,8 +189,12 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    letMultiple(accessoryId, deviceId) { a, b ->
-                        mViewModel.getRuleList(a, b)
+                    letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                        if (portId.isNullOrEmpty()) {
+                            mViewModel.getRuleList(a, b)
+                        } else {
+                            mViewModel.getRuleList(a, b, c)
+                        }
                     }
                 }
             })
@@ -191,8 +246,12 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    letMultiple(accessoryId, deviceId) { a, b ->
-                        mViewModel.getRuleList(a, b)
+                    letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                        if (portId.isNullOrEmpty()) {
+                            mViewModel.getRuleList(a, b)
+                        } else {
+                            mViewModel.getRuleList(a, b, c)
+                        }
                     }
                 }
             })
@@ -209,22 +268,22 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
         binding.unbindCamera.setOnClickListener {
             XPopup.Builder(this@DeviceAutomationActivity).isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(false).asCustom(
-                BaseCenterPop(this@DeviceAutomationActivity,
-                    content = "Are you certain you wish to delete the BudCam?",
-                    cancelText = "No",
-                    confirmText = "Yes",
-                    onCancelAction = {},
-                    onConfirmAction = { // 解绑设备
-                        // 上传解绑状态
-                        mViewModel.setUnbind(true)
-                        mViewModel.cameraSetting(
-                            UpdateInfoReq(
-                                binding = false,
-                                deviceId = deviceId
+                    BaseCenterPop(this@DeviceAutomationActivity,
+                        content = "Are you certain you wish to delete the BudCam?",
+                        cancelText = "No",
+                        confirmText = "Yes",
+                        onCancelAction = {},
+                        onConfirmAction = { // 解绑设备
+                            // 上传解绑状态
+                            mViewModel.setUnbind(true)
+                            mViewModel.cameraSetting(
+                                UpdateInfoReq(
+                                    binding = false,
+                                    deviceId = deviceId
+                                )
                             )
-                        )
-                    })
-            ).show()
+                        })
+                ).show()
             /* xpopup {
                  title("解绑摄像头")
                  content("确定要解绑摄像头吗？")
@@ -270,8 +329,12 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                 )
                                 mViewModel.automationSwitch(req)
                                 // 重新获取一次
-                                letMultiple(accessoryId, deviceId) { a, b ->
-                                    mViewModel.getRuleList(a, b)
+                                letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                                    if (portId.isNullOrEmpty()) {
+                                        mViewModel.getRuleList(a, b)
+                                    } else {
+                                        mViewModel.getRuleList(a, b, c)
+                                    }
                                 }
 
                                 //  跳转到添加自定义规则界面
@@ -279,6 +342,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                     this@DeviceAutomationActivity,
                                     AddAutomationActivity::class.java
                                 )
+                                intent.putExtra("portId", portId)
                                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                 intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
                                 startActivity(intent)
@@ -288,6 +352,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 //  跳转到添加自定义规则界面
                 val intent =
                     Intent(this@DeviceAutomationActivity, AddAutomationActivity::class.java)
+                intent.putExtra("portId", portId)
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                 intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
                 startActivity(intent)
@@ -300,6 +365,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 /* R.id.cl_root -> {
                      //  跳转到自定义规则详情界面
                      val intent = Intent(this@DeviceAutomationActivity, AddAutomationActivity::class.java)
+                     intent.putExtra("portId", portId)
                      intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                      intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
                      startActivity(intent)
@@ -324,6 +390,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                         this@DeviceAutomationActivity,
                                         AddAutomationActivity::class.java
                                     )
+                                    intent.putExtra("portId", portId)
                                     intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                     intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
                                     intent.putExtra(

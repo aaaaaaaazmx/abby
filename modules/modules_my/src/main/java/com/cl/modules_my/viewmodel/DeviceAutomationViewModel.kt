@@ -196,9 +196,9 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
      */
     private val _ruleList = MutableLiveData<Resource<AutomationListBean>>()
     val ruleList: LiveData<Resource<AutomationListBean>> = _ruleList
-    fun getRuleList(accessoryId: String, deviceId: String) {
+    fun getRuleList(accessoryId: String, deviceId: String, portId: String? = null) {
         viewModelScope.launch {
-            repository.automationList(accessoryId, deviceId)
+            repository.automationList(accessoryId, deviceId, portId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

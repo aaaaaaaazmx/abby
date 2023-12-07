@@ -938,6 +938,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(true)
                         autoFocusEditText(false)
+                        moveUpToKeyboard(false)
                         autoOpenSoftInput(false)
                         asCustom(PresetPop(it, bean)).show()
                     }
@@ -951,6 +952,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         isDestroyOnDismiss(false)
                         autoFocusEditText(false)
                         autoOpenSoftInput(false)
+                        moveUpToKeyboard(false)
                         dismissOnTouchOutside(true)
                         asCustom(PresetLoadPop(it, onNextAction = { data ->
                             // 发送dp点
