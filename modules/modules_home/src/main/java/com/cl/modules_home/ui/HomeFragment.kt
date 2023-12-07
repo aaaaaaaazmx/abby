@@ -378,6 +378,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             mViewMode.getFanIntake()
             mViewMode.getFanExhaust()
             mViewMode.getGrowLight()
+            mViewMode.getCurrentGrowLight()
             mViewMode.getAirPump()
             mViewMode.getLightTime()
             mViewMode.getCloseLightTime()
@@ -1036,6 +1037,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     }
                                     .closeLightTime(it2)
                             }
+
+                            // 点击Load之后就保存。
+                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, data.name.toString())
                         })).show()
                     }
                 }
@@ -1135,6 +1139,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     DeviceControl.get()
                         .success {
                             mViewMode.setFanIntake(seekbar?.progress.toString())
+                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
                         }
                         .error { code, error ->
                             ToastUtil.shortShow(
@@ -1161,6 +1166,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     DeviceControl.get()
                         .success {
                             mViewMode.setFanExhaust(seekbar?.progress.toString())
+                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
                         }
                         .error { code, error ->
                             ToastUtil.shortShow(
@@ -1369,6 +1375,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 lightIntensity = mViewMode.getGrowLight.value.safeToInt(),
                 proModeAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour, lightIntensity ->
                     mViewMode.setGrowLight(lightIntensity.toString())
+                    Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, lightIntensity.toString())
 
                     ftTimer.text = "$onTime-$offMinute"
                     mViewMode.setmuteOn("$timeOn")
@@ -4587,6 +4594,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 是否关闭门
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
                     logI("12312312312 KEY_DEVICE_DOOR: $value")
+                    // 是否关闭门
+                    mViewMode.setDoorStatus(value.toString())
+
                     // 摄像头相关
                     // 主要用户删除当前的door的气泡消息
                     // true 开门、 fasle 关门
@@ -4605,9 +4615,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }"
                         )
                     }
-
-                    // 是否关闭门
-                    mViewMode.setDoorStatus(value.toString())
                 }
 
                 // ----- 开始， 下面的都是需要传给后台的环境信息
@@ -4616,7 +4623,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
                         value.toString()
                     )
-                    mViewMode.setGrowLight(value.toString())
+                    mViewMode.setCurrentGrowLight(value.toString())
                 }
 
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {

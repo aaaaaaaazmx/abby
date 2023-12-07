@@ -1830,20 +1830,39 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _getFanExhaust.value = gear.toDouble().safeToInt()
     }
 
-    // 植物灯光
-    private val _getGrowLight = MutableLiveData<Int>()
+    // 植物预设灯光
+    private val _getGrowLight = MutableLiveData<Int>(-1)
     val getGrowLight: LiveData<Int> = _getGrowLight
 
     fun getGrowLight() {
-        kotlin.runCatching {
-            _getGrowLight.value =
-                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
+        val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED )
+        Prefs.getObjects().firstOrNull { it.name == name }.apply {
+            if (null == this) {
+                _getGrowLight.value = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE).safeToInt()
+            } else {
+                _getGrowLight.value = lightIntensity.safeToInt()
+            }
         }
     }
 
     fun setGrowLight(gear: String) {
         _getGrowLight.value = gear.toDouble().safeToInt()
+    }
+
+    // 植物当前灯光
+    private val _getCurrentGrowLight = MutableLiveData<Int>()
+    val getCurrentGrowLight: LiveData<Int> = _getCurrentGrowLight
+
+    fun getCurrentGrowLight() {
+        kotlin.runCatching {
+            _getCurrentGrowLight.value =
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
+        }
+    }
+
+    fun setCurrentGrowLight(gear: String) {
+        _getCurrentGrowLight.value = gear.toDouble().safeToInt()
     }
 
     // 气泵

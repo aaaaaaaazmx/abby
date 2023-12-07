@@ -238,6 +238,10 @@ object Constants {
 
         // pro_model 配置
         const val KEY_GLOBAL_PRO_MODEL = "key_global_pro_model"
+        // 是否Load了配置
+        const val KEY_LOAD_CONFIGURED = "key_load_configured"
+        // 灯光的预设值
+        const val KEY_LIGHT_PRESET_VALUE = "key_light_preset_value"
 
         // 是否是第一次注册登录、并且是从未绑定过设备
         const val KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE =

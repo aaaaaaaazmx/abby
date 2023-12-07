@@ -41,7 +41,7 @@ class ChooseTimePop(
     var isTheSpacingHours: Boolean = true, // 是否需要间隔12小时
     private var lightIntensity: Int? = null, // 当前灯光数值。
     private var isProMode: Boolean? = false, // 是否是proMode模式。
-    private val proModeAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?,lightIntensity: Int? ) -> Unit)? = null, // proMode下的选择
+    private val proModeAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?, lightIntensity: Int?) -> Unit)? = null, // proMode下的选择
     private val onConfirmAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?) -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
@@ -54,6 +54,7 @@ class ChooseTimePop(
     }
 
     private var binding: MyChooseTimePopBinding? = null
+    private var isChanged: Boolean = false
 
     //   24小时制
     //    private var turnHour = turnOnHour
@@ -148,6 +149,9 @@ class ChooseTimePop(
                             ftTurnOn.itemValue = "12:00 AM"
                         }
                         btnSuccess.isEnabled = true
+                        if (turnOnHour != hour && isProMode == true) {
+                            isChanged = true
+                        }
                         // 赋值给他
                         turnOnHour = hour
                     }, chooseTime = turnOnHour ?: 12))
@@ -191,8 +195,13 @@ class ChooseTimePop(
                             ftTurnOff.itemValue = "12:00 PM"
                         }
                         btnSuccess.isEnabled = true
+
                         // 赋值给他
-                        turnOffHour =  if (time.safeToInt() == 0) 12 else time.safeToInt()
+                        val hours = if (time.safeToInt() == 0) 12 else time.safeToInt()
+                        if (turnOffHour != hours && isProMode == true) {
+                            isChanged = true
+                        }
+                        turnOffHour = if (time.safeToInt() == 0) 12 else time.safeToInt()
                     }, chooseTime = turnOffHour ?: 12))
                     .show()
             }
@@ -246,6 +255,10 @@ class ChooseTimePop(
                             }
                             onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
                             proModeAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour, lightIntensity)
+                            if (isChanged && isProMode == true) {
+                                // 表示不是默认的配置了。 已经改过了。
+                                Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
+                            }
                             dismiss()
                         } else {
                             ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
@@ -268,6 +281,10 @@ class ChooseTimePop(
                         }
                         onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
                         proModeAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour, lightIntensity)
+                        if (isChanged && isProMode == true) {
+                            // 表示不是默认的配置了。 已经改过了。
+                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
+                        }
                         dismiss()
                     }
                 }
@@ -298,6 +315,7 @@ class ChooseTimePop(
             }
 
             override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                isChanged = true
                 val progress = seekbar?.progress ?: 0
                 val growLightValue = lightIntensity ?: 0
                 // 应该只提示一次

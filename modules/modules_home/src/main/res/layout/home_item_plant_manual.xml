@@ -334,7 +334,7 @@
                 <!--ON/OFF/DIM(Door Open)，开门就是DIM、 关门就判断灯光强度是否等于0 -->
                 <TextView
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:text='@{viewModel.doorStatus == "true" ? "DIM(Door Open)" : viewModel.getGrowLight == 0 ? "OFF" : "ON" }'
+                    android:text='@{viewModel.doorStatus == "true" ? "DIM(Door Open)" : viewModel.getCurrentGrowLight == 0 ? "OFF" : "ON" }'
                     tools:text="DIM(Door Open)"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_light"
                     app:layout_constraintTop_toTopOf="@+id/tv_light"
@@ -624,6 +624,7 @@
                         app:layout_constraintTop_toTopOf="@id/tv_light_schedule" />
 
                     <TextView
+                        android:visibility="@{viewModel.getGrowLight == -1 ? View.INVISIBLE : View.VISIBLE}"
                         android:id="@+id/tv_light_intensity_title"
                         android:text='@{"Intensity L" + String.valueOf(viewModel.getGrowLight)}'
                         android:layout_width="0dp"

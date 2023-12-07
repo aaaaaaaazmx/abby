@@ -272,7 +272,8 @@ interface HttpMyApiService {
     @POST("abby/accessory/automationList")
     fun automationList(
         @Field("accessoryId") accessoryId: String,
-        @Field("deviceId") deviceId: String
+        @Field("deviceId") deviceId: String,
+        @Field("portId") portId: String? = null,
     ): Flow<HttpResult<AutomationListBean>>
 
     /**
@@ -437,7 +438,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/subport")
-    fun accessorySubport(@Field("accessoryId") accessoryId: String, @Field("accessoryDeviceId")accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>>
+    fun accessorySubport(@Field("accessoryId") accessoryId: String, @Field("accessoryDeviceId") accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>>
 
     /**
      * 获取自动化类型列表

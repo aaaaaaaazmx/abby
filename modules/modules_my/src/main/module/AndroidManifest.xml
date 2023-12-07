@@ -173,6 +173,10 @@
             android:name=".ui.OutletsSettingActivity"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".ui.OutletsAutoActivity"
+            android:screenOrientation="portrait" />
+
 
     </application>
 

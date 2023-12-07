@@ -1,8 +1,11 @@
 package com.cl.modules_my.ui
 
 import android.content.Intent
+import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.ext.logI
@@ -11,8 +14,10 @@ import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.adapter.OutletsAdapter
 import com.cl.modules_my.databinding.MyOutletsSettingActivityBinding
+import com.cl.modules_my.request.AccessData
 import com.cl.modules_my.viewmodel.MyOutletsViewModel
 import com.thingclips.smart.camera.middleware.p2p.ThingSmartCameraP2P
 import com.thingclips.smart.home.sdk.ThingHomeSdk
@@ -120,6 +125,22 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
                             })
                         })
                 ).show()
+            }
+        }
+
+        adapter.addChildClickViewIds(R.id.iv_outlet_edit)
+        adapter.setOnItemChildClickListener { adapter, view, position ->
+            val ben = adapter.data[position] as? AccessData
+            when(view.id) {
+                R.id.iv_outlet_edit -> {
+                    // 跳转到自动化界面
+                    startActivity(Intent(this@OutletsSettingActivity, OutletsAutoActivity::class.java).apply {
+                        putExtra("accessoryDeviceId", accessoryDeviceId)
+                        putExtra("deviceId", deviceId)
+                        putExtra("accessoryId", accessoryId)
+                        putExtra("portId", ben?.portId)
+                    })
+                }
             }
         }
     }

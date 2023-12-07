@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AutomationListBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
@@ -177,5 +178,40 @@ class MyOutletsViewModel @Inject constructor(private val repository: MyRepositor
     }
 
 
+    /**
+     * 规则列表
+     */
+    private val _ruleList = MutableLiveData<Resource<AutomationListBean>>()
+    val ruleList: LiveData<Resource<AutomationListBean>> = _ruleList
+    fun getRuleList(accessoryId: String, deviceId: String, portId: String) {
+        viewModelScope.launch {
+            repository.automationList(accessoryId, deviceId, portId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _ruleList.value = it
+                }
+        }
+    }
 
 }
