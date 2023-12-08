@@ -8,104 +8,126 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/lineBg">
+        android:fillViewport="true">
 
-        <com.cl.common_base.widget.FeatureTitleBar
-            android:id="@+id/title"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            app:title="Profile" />
+            android:layout_height="match_parent"
+            android:background="@color/lineBg">
 
-        <LinearLayout
-            android:id="@+id/ll_root"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@color/white"
-            android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@+id/title">
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:title="Profile" />
 
-            <com.cl.common_base.widget.FeatureItemView
-                android:id="@+id/ft_wall"
+            <LinearLayout
+                android:id="@+id/ll_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@color/white"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/title">
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_wall"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_head"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_nick_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    app:hideArrow="true" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="5dp"
+                    android:background="@color/lineBg" />
+
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/ft_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp" />
+            </LinearLayout>
+
+
+            <FrameLayout
+                android:id="@+id/fl_login_out"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@color/lineBg" />
+                android:layout_marginTop="20dp"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/ll_root">
 
-            <com.cl.common_base.widget.FeatureItemView
-                android:id="@+id/ft_head"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                 />
+                <TextView
+                    android:id="@+id/tv_login_out"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/profile_sign_out"
+                    android:textColor="#D61744"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@color/lineBg" />
 
-            <com.cl.common_base.widget.FeatureItemView
-                android:id="@+id/ft_nick_name"
+            <FrameLayout
+                android:id="@+id/fl_delete_account"
+                android:layout_marginBottom="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                />
+                android:layout_marginTop="20dp"
+                >
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:background="@color/lineBg" />
-
-            <com.cl.common_base.widget.FeatureItemView
-                app:hideArrow="true"
-                android:id="@+id/ft_email"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:background="@color/lineBg" />
-
-            <com.cl.common_base.widget.FeatureItemView
-                android:id="@+id/ft_id"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                />
-        </LinearLayout>
-
-
-        <FrameLayout
-            android:id="@+id/fl_login_out"
-            android:layout_marginTop="20dp"
-            android:background="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/ll_root"
-            android:layout_width="match_parent"
-            android:layout_height="60dp">
-
-            <TextView
-                android:textStyle="bold"
-                android:id="@+id/tv_login_out"
-                android:layout_gravity="center"
-                android:text="@string/profile_sign_out"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="#D61744"
-                android:textSize="15sp" />
-        </FrameLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Delete my account"
+                    android:textColor="#D61744"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+            </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>
