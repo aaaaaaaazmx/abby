@@ -21,13 +21,16 @@ data class AccessoryListBean(
 
         // - smart_outlets  智能插座
         const val KEY_OUTLETS = "smart_outlets"
-        //- monitor_inner  内部温湿度器（tent）
-        const val KEY_INNER = "monitor_inner"
-        //- monitor_outer  外部温湿度器（tent）
-        const val KEY_OUTER = "monitor_outer"
-        //- monitor_view   温湿度器（带显示屏）
-        const val KEY_VIEW = "monitor_view"
-        //- monitor_box     温湿度器（box）
-        const val KEY_BOX = "monitor_box"
+
+        // - monitor_view_out  带屏外部
+        const val KEY_MONITOR_VIEW_OUT = "monitor_view_out"
+        //- monitor_out 不带屏外部
+        const val KEY_MONITOR_OUT = "monitor_out"
+
+        //- monitor_view_in 带屏内部,tent用
+        const val KEY_MONITOR_VIEW_IN = "monitor_view_in"
+        //- monitor_in 不带屏内部，tent用
+        const val KEY_MONITOR_IN = "monitor_in"
+
     }
 }

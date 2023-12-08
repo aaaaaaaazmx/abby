@@ -46,10 +46,8 @@ data class ListDeviceBean(
             KEY_SPACE_TYPE_BOX -> KEY_TYPE_BOX
             KEY_SPACE_TYPE_TENT -> KEY_TYPE_BOX
             KEY_SPACE_TYPE_PH -> KEY_TYPE_PH
-            KEY_SPACE_TYPE_TENT_INNER -> KEY_TYPE_TENT_INNER
-            KEY_SPACE_TYPE_TENT_OUTER -> KEY_TYPE_TENT_OUTER
-            KEY_SPACE_TYPE_ABBY_INNER -> KEY_TYPE_ABBY_INNER
-            KEY_SPACE_TYPE_VIEW -> KEY_TYPE_VIEW
+            AccessoryListBean.KEY_MONITOR_VIEW_OUT -> MONITOR_VIEW_OUT
+            AccessoryListBean.KEY_MONITOR_OUT -> KEY_MONITOR_OUT
             KEY_SPACE_TYPE_TEXT -> KEY_TYPE_TEXT
             else -> KEY_TYPE_PH
         }
@@ -58,14 +56,7 @@ data class ListDeviceBean(
         const val KEY_SPACE_TYPE_BOX = "box"
         const val KEY_SPACE_TYPE_TENT = "tent"
         const val KEY_SPACE_TYPE_PH = "phb"
-        // 帐篷内部使用的的温湿度传感器
-        const val KEY_SPACE_TYPE_TENT_INNER = "monitor_inner"
-        // 帐篷外部使用的温湿度传感器
-        const val KEY_SPACE_TYPE_TENT_OUTER = "monitor_outer"
-        // Abby室内使用的温湿度传感器
-        const val KEY_SPACE_TYPE_ABBY_INNER = "monitor_box"
-        // 带显示器的温湿度传感器
-        const val KEY_SPACE_TYPE_VIEW = "monitor_view"
+
         // 文字描述类型，自己新增
         const val KEY_SPACE_TYPE_TEXT = "text"
 
@@ -73,15 +64,9 @@ data class ListDeviceBean(
         const val KEY_TYPE_PH = 2
         // 新增的1个类型。文字描述
         const val KEY_TYPE_TEXT = 3
-        // 内部温湿度传感器
-        const val KEY_TYPE_TENT_INNER = 4
-        // 外部温湿度传感器
-        const val KEY_TYPE_TENT_OUTER = 5
-        // Abby室内使用的温湿度传感器
-        const val KEY_TYPE_ABBY_INNER = 6
-        // 带显示器的温湿度传感器
-        const val KEY_TYPE_VIEW = 7
-
-
+        // monitor_view_out  带屏外部温湿度传感器
+        const val MONITOR_VIEW_OUT = 4
+        //- monitor_out 不带屏外部温湿度传感器
+        const val KEY_MONITOR_OUT = 5
     }
 }

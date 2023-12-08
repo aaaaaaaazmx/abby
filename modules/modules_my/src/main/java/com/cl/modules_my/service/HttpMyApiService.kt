@@ -263,7 +263,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/list")
-    fun accessoryList(@Field("spaceType") spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
+    fun accessoryList(@Field("spaceType") spaceType: String, @Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
 
     /**
      * 配件规则列表
@@ -360,6 +360,7 @@ interface HttpMyApiService {
 
     /**
      * 保存camera的信息
+     * 修改配件，绑定是否没绑定
      */
     @POST("abby/accessory/updateInfo")
     fun updateInfo(@Body body: UpdateInfoReq): Flow<HttpResult<BaseBean>>

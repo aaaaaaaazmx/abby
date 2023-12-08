@@ -37,10 +37,8 @@ class DeviceListAdapter(
         addItemType(ListDeviceBean.KEY_TYPE_TEXT, R.layout.my_device_list_text_item)// 文字描述
         addItemType(ListDeviceBean.KEY_TYPE_BOX, R.layout.my_device_list_item)  // 设备
         addItemType(ListDeviceBean.KEY_TYPE_PH, R.layout.my_pair_list_item)  // ph配件
-        addItemType(ListDeviceBean.KEY_TYPE_TENT_INNER, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
-        addItemType(ListDeviceBean.KEY_TYPE_TENT_OUTER, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
-        addItemType(ListDeviceBean.KEY_TYPE_ABBY_INNER, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
-        addItemType(ListDeviceBean.KEY_TYPE_VIEW, R.layout.my_pair_tent_inner_item) // 帐篷内部的温湿度传感器
+        addItemType(ListDeviceBean.MONITOR_VIEW_OUT, R.layout.my_pair_tent_inner_item) // 带屏外部温湿度传感器
+        addItemType(ListDeviceBean.KEY_MONITOR_OUT, R.layout.my_pair_tent_inner_item) // 不带屏外部温湿度传感器
     }
 
 
@@ -56,7 +54,7 @@ class DeviceListAdapter(
                 }
             }
 
-            ListDeviceBean.KEY_TYPE_TENT_INNER -> {
+            ListDeviceBean.MONITOR_VIEW_OUT -> {
                 val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
@@ -65,25 +63,7 @@ class DeviceListAdapter(
                 }
             }
 
-            ListDeviceBean.KEY_TYPE_TENT_OUTER -> {
-                val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
-                if (binding != null) {
-                    // 设置数据
-                    binding.data = data[position]
-                    binding.executePendingBindings()
-                }
-            }
-
-            ListDeviceBean.KEY_TYPE_ABBY_INNER -> {
-                val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
-                if (binding != null) {
-                    // 设置数据
-                    binding.data = data[position]
-                    binding.executePendingBindings()
-                }
-            }
-
-            ListDeviceBean.KEY_TYPE_VIEW -> {
+            ListDeviceBean.KEY_MONITOR_OUT -> {
                 val binding = DataBindingUtil.bind<MyPairTentInnerItemBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据

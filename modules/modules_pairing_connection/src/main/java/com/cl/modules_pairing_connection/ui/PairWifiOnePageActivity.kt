@@ -113,7 +113,7 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         }
 
         binding.tvDesc.text = when (tuYaWifiDevice) {
-            KEY_INNER, KEY_OUTER, KEY_BOX, KEY_VIEW -> "Searching for the device...\n" +
+            KEY_MONITOR_VIEW_OUT, KEY_MONITOR_OUT, KEY_MONITOR_VIEW_IN, KEY_MONITOR_IN -> "Searching for the device...\n" +
                     "Please press the on/off button for 3-5 seconds till you see the Bluetooth icon."
 
             else -> ""
@@ -121,8 +121,8 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
 
         binding.ivOne.setBackgroundResource(
             when (tuYaWifiDevice) {
-                KEY_VIEW -> R.mipmap.pair_wifi_device_one
-                KEY_INNER, KEY_OUTER, KEY_BOX -> R.mipmap.pair_wifi_device_two
+                KEY_MONITOR_VIEW_OUT, KEY_MONITOR_VIEW_IN -> R.mipmap.pair_wifi_device_one
+                KEY_MONITOR_OUT, KEY_MONITOR_IN -> R.mipmap.pair_wifi_device_two
                 else -> R.mipmap.pair_wifi_device_one
             }
         )
@@ -151,11 +151,11 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
             intent.putExtra(KEY_DEVICE_DATA, adapter.data[position])
             when (tuYaWifiDevice) {
                 // 内部和外部的都是属于同一类型、不带显示器的温湿度传感器
-                KEY_BOX, KEY_INNER, KEY_OUTER -> {
+                KEY_MONITOR_OUT, KEY_MONITOR_IN -> {
                     intent.putExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS, Constants.Global.KEY_GLOBAL_PAIR_DEVICE_BOX)
                 }
                 // 但显示器的温湿度传感器
-                KEY_VIEW -> {
+                KEY_MONITOR_VIEW_OUT, KEY_MONITOR_VIEW_IN -> {
                     intent.putExtra(Constants.Global.KEY_WIFI_PAIRING_PARAMS, Constants.Global.KEY_GLOBAL_PAIR_DEVICE_VIEW)
                 }
             }
@@ -298,7 +298,7 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         // 设备数据
         const val KEY_DEVICE_DATA = "key_device_data"
 
-        //- monitor_inner  内部温湿度器（tent）
+       /* //- monitor_inner  内部温湿度器（tent）
         const val KEY_INNER = "monitor_inner"
 
         //- monitor_outer  外部温湿度器（tent）
@@ -308,7 +308,18 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         const val KEY_VIEW = "monitor_view"
 
         //- monitor_box     温湿度器（box）
-        const val KEY_BOX = "monitor_box"
+        const val KEY_BOX = "monitor_box"*/
+
+
+        // - monitor_view_out  带屏外部
+        const val KEY_MONITOR_VIEW_OUT = "monitor_view_out"
+        //- monitor_out 不带屏外部
+        const val KEY_MONITOR_OUT = "monitor_out"
+
+        //- monitor_view_in 带屏内部,tent用
+        const val KEY_MONITOR_VIEW_IN = "monitor_view_in"
+        //- monitor_in 不带屏内部，tent用
+        const val KEY_MONITOR_IN = "monitor_in"
     }
 
 }

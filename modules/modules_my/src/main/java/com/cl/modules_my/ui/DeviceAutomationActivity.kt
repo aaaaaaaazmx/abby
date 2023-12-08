@@ -91,11 +91,11 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+        letMultiple(accessoryId, deviceId) { a, b ->
             if (portId.isNullOrEmpty()) {
                 mViewModel.getRuleList(a, b)
             } else {
-                mViewModel.getRuleList(a, b, c)
+                mViewModel.getRuleList(a, b, portId)
             }
         }
     }
@@ -103,11 +103,11 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     override fun initView() {
         binding.rvDeivceAutoInfo.layoutManager = LinearLayoutManager(this)
         binding.rvDeivceAutoInfo.adapter = adapter
-        letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+        letMultiple(accessoryId, deviceId) { a, b ->
             if (portId.isNullOrEmpty()) {
                 mViewModel.getRuleList(a, b)
             } else {
-                mViewModel.getRuleList(a, b, c)
+                mViewModel.getRuleList(a, b, portId)
             }
         }
         binding.ftbTitle.setLeftClickListener {
@@ -174,11 +174,11 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                    letMultiple(accessoryId, deviceId) { a, b ->
                         if (portId.isNullOrEmpty()) {
                             mViewModel.getRuleList(a, b)
                         } else {
-                            mViewModel.getRuleList(a, b, c)
+                            mViewModel.getRuleList(a, b, portId)
                         }
                     }
                 }
@@ -189,11 +189,11 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                    letMultiple(accessoryId, deviceId) { a, b ->
                         if (portId.isNullOrEmpty()) {
                             mViewModel.getRuleList(a, b)
                         } else {
-                            mViewModel.getRuleList(a, b, c)
+                            mViewModel.getRuleList(a, b, portId)
                         }
                     }
                 }
@@ -246,11 +246,11 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                    letMultiple(accessoryId, deviceId) { a, b ->
                         if (portId.isNullOrEmpty()) {
                             mViewModel.getRuleList(a, b)
                         } else {
-                            mViewModel.getRuleList(a, b, c)
+                            mViewModel.getRuleList(a, b, portId)
                         }
                     }
                 }
@@ -329,11 +329,11 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                 )
                                 mViewModel.automationSwitch(req)
                                 // 重新获取一次
-                                letMultiple(accessoryId, deviceId, portId) { a, b, c ->
+                                letMultiple(accessoryId, deviceId) { a, b ->
                                     if (portId.isNullOrEmpty()) {
                                         mViewModel.getRuleList(a, b)
                                     } else {
-                                        mViewModel.getRuleList(a, b, c)
+                                        mViewModel.getRuleList(a, b, portId)
                                     }
                                 }
 

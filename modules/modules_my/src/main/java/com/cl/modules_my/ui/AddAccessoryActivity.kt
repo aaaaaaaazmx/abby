@@ -153,7 +153,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         })
                     }
                     // 温湿度传感器
-                    AccessoryListBean.KEY_INNER, AccessoryListBean.KEY_OUTER, AccessoryListBean.KEY_BOX, AccessoryListBean.KEY_VIEW -> {
+                    AccessoryListBean.KEY_MONITOR_VIEW_OUT, AccessoryListBean.KEY_MONITOR_OUT, AccessoryListBean.KEY_MONITOR_VIEW_IN, AccessoryListBean.KEY_MONITOR_IN -> {
                         if (deviceList.any { it.spaceType == itemData.accessoryType }) {
                             ToastUtil.shortShow("You have already added it.")
                             return@OnItemChildClickListener
