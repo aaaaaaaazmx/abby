@@ -76,7 +76,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
     }
 
     override fun initView() {
-        mViewModel.getAccessoryList(if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) "tent" else "box")
+        mViewModel.getAccessoryList(if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) "tent" else "box", deviceId.toString())
 
         binding.rvList.layoutManager = LinearLayoutManager(this)
         binding.rvList.adapter = tenAdapter

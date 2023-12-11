@@ -16,6 +16,7 @@ import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.ShowAchievementReq
+import com.cl.modules_my.request.UpdateSubportReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
@@ -316,5 +317,9 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
 
     fun automationType(deviceId: String): Flow<HttpResult<MutableList<AutomationTypeBean>>> {
         return remoteRepository.automationType(deviceId)
+    }
+
+    fun updateSubport(deviceId: UpdateSubportReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateSubport(deviceId)
     }
 }

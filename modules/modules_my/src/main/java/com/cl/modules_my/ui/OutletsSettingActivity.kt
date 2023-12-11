@@ -144,6 +144,7 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
                         putExtra(BasePopActivity.KEY_PART_ID, accessoryId.toString())
                         putExtra("portId", ben?.portId)
                         putExtra("portName", ben?.subName)
+                        putExtra("status", ben?.status)
                     })
                 }
             }

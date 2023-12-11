@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -16,6 +17,7 @@ import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseInputPop
@@ -25,6 +27,7 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.adapter.DeviceAutomationAdapter
 import com.cl.modules_my.databinding.MyDeviceAutomationBinding
 import com.cl.modules_my.request.OpenAutomationReq
+import com.cl.modules_my.request.UpdateSubportReq
 import com.cl.modules_my.viewmodel.DeviceAutomationViewModel
 import com.cl.modules_my.widget.AutomationEditPop
 import com.lxj.xpopup.XPopup
@@ -48,6 +51,20 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
      */
     private val deviceId by lazy {
         intent.getStringExtra(BasePopActivity.KEY_DEVICE_ID)
+    }
+
+    /**
+     * 配件的设备ID
+     */
+    private val accessoryDeviceId by lazy {
+        intent.getStringExtra("accessoryDeviceId")
+    }
+
+    /**
+     * 当前端口的开关状态
+     */
+    private val status by lazy {
+        intent.getBooleanExtra("status", false)
     }
 
     /**
@@ -116,14 +133,25 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
         }
 
         // 清除名字
-        binding.etEmail.setOnClickListener {
+        binding.etEmail.setSafeOnClickListener(lifecycleScope) {
             xpopup(this@DeviceAutomationActivity) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(
                     BaseInputPop(this@DeviceAutomationActivity, title = "Outlet Name", hintText = binding.etEmail.text.toString(), onConfirmAction = {
                         // 上传名字
-                        // todo 保存名字
+                        binding.etEmail.text = it
+                        // 保存名字\修改配件信息
+                        val req = UpdateSubportReq(
+                            accessoryId = accessoryId,
+                            subportParam = UpdateSubportReq.Req(
+                                accessoryDeviceId = accessoryDeviceId,
+                                portId = portId,
+                                status = status,
+                                subName = it
+                            )
+                        )
+                        mViewModel.updateAccessory(req)
                     })
                 ).show()
             }
@@ -146,6 +174,17 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     @SuppressLint("CheckResult")
     override fun observe() {
         mViewModel.apply {
+            /**
+             * 修改配件信息
+             */
+            updateAccessory.observe(this@DeviceAutomationActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    ToastUtil.shortShow("Update successfully")
+                }
+            })
             saveCameraSetting.observe(this@DeviceAutomationActivity, resourceObserver {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
@@ -229,6 +268,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     val openSize = data?.list?.filter { it.status == 1 }?.size ?: 0
                     ViewUtils.setVisible(openSize == 0, binding.ftCheck)
                     ViewUtils.setVisible(openSize != 0, binding.tvAutoDesc)
+                    binding.etEmail.text = data?.subName
                     data?.status?.let {
                         binding.ftCheck.setItemChecked(it == 1)
                     }

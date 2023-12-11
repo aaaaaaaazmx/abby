@@ -14,6 +14,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
+import com.cl.modules_my.request.UpdateSubportReq
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -223,6 +224,49 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
                     )
                 }.collectLatest {
                     _ruleList.value = it
+                }
+        }
+    }
+
+    /**
+     * 修改配件信息
+     */
+    private val _updateAccessory = MutableLiveData<Resource<BaseBean>>()
+    val updateAccessory: LiveData<Resource<BaseBean>> = _updateAccessory
+    fun updateAccessory(body: UpdateSubportReq) {
+        viewModelScope.launch {
+            repository.updateSubport(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        if (it.data == null) {
+                            Resource.DataError(
+                                -1,
+                                "data is null"
+                            )
+                        } else {
+                            Resource.Success(it.data)
+                        }
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }
+                .collectLatest {
+                    _updateAccessory.value = it
                 }
         }
     }

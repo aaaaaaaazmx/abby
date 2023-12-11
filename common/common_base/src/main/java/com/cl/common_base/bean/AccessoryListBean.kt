@@ -10,6 +10,7 @@ data class AccessoryListBean(
     val textId: String? = null,
     val buyLink: String? = null,
     val isShared: Boolean? = null,
+    val desString: String? = null,
     val isAdd: Boolean? = null, // 是否允许被添加
 ): BaseBean() {
     // fan、humidifier、camera、phb

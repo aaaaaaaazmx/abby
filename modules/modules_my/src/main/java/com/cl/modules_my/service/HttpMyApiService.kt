@@ -22,6 +22,7 @@ import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.ShowAchievementReq
+import com.cl.modules_my.request.UpdateSubportReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -447,4 +448,11 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/accessory/automationType")
     fun automationType(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<AutomationTypeBean>>>
+
+
+    /**
+     * 修改配件端口信息
+     */
+    @POST("abby/accessory/updateSubport")
+    fun updateSubport(@Body req: UpdateSubportReq): Flow<HttpResult<BaseBean>>
 }

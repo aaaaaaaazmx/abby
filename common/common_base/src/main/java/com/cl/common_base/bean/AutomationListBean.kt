@@ -7,6 +7,7 @@ data class AutomationListBean(
     var image: String? = null,
     var isDefault: Int? = null,
     var status: Int? = null,
+    var subName: String? = null,
     var list: MutableList<AutoBean>? = null,
 ) : com.cl.common_base.BaseBean() {
     data class AutoBean(

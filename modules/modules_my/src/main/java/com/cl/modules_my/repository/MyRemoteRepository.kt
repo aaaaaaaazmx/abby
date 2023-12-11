@@ -17,6 +17,7 @@ import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.ShowAchievementReq
+import com.cl.modules_my.request.UpdateSubportReq
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -275,6 +276,10 @@ class MyRemoteRepository @Inject constructor() {
 
     fun automationType(deviceId: String): Flow<HttpResult<MutableList<AutomationTypeBean>>> {
         return service.automationType(deviceId)
+    }
+
+    fun updateSubport(deviceId: UpdateSubportReq): Flow<HttpResult<BaseBean>> {
+        return service.updateSubport(deviceId)
     }
 
 }
