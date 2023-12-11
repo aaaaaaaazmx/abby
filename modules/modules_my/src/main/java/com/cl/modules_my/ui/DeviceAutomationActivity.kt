@@ -150,13 +150,10 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                         binding.etEmail.text = it
                         // 保存名字\修改配件信息
                         val req = UpdateSubportReq(
-                            accessoryId = accessoryId,
-                            subportParam = UpdateSubportReq.Req(
-                                accessoryDeviceId = accessoryDeviceId,
-                                portId = portId,
-                                status = status,
-                                subName = it
-                            )
+                            accessoryDeviceId = accessoryDeviceId,
+                            portId = portId,
+                            status = status,
+                            subName = it
                         )
                         mViewModel.updateAccessory(req)
                     })

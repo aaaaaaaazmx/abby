@@ -17,6 +17,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.repository.MyTroubleData
 import com.cl.modules_my.request.AccessorySubportData
+import com.cl.modules_my.request.UpdateSubportReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -73,6 +74,7 @@ class MyOutletsViewModel @Inject constructor(private val repository: MyRepositor
     private val _getDetailByLearnMoreId = MutableLiveData<Resource<DetailByLearnMoreIdData>>()
     val getDetailByLearnMoreId: LiveData<Resource<DetailByLearnMoreIdData>> =
         _getDetailByLearnMoreId
+
     fun getDetailByLearnMoreId(type: String) {
         viewModelScope.launch {
             repository.getDetailByLearnMoreId(type)
@@ -110,6 +112,7 @@ class MyOutletsViewModel @Inject constructor(private val repository: MyRepositor
     private val _accessorySubport = MutableLiveData<Resource<AccessorySubportData>>()
     val accessorySubport: LiveData<Resource<AccessorySubportData>> =
         _accessorySubport
+
     fun getSupport(accessoryId: String, accessoryDeviceId: String?) {
         viewModelScope.launch {
             repository.accessorySubport(accessoryId, accessoryDeviceId)
@@ -210,6 +213,42 @@ class MyOutletsViewModel @Inject constructor(private val repository: MyRepositor
                     )
                 }.collectLatest {
                     _ruleList.value = it
+                }
+        }
+    }
+
+    /**
+     * 修改配件信息
+     */
+    private val _updateAccessory = MutableLiveData<Resource<BaseBean>>()
+    val updateAccessory: LiveData<Resource<BaseBean>> = _updateAccessory
+    fun updateAccessory(body: UpdateSubportReq) {
+        viewModelScope.launch {
+            repository.updateSubport(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }
+                .collectLatest {
+                    _updateAccessory.value = it
                 }
         }
     }

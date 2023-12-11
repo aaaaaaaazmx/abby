@@ -4,10 +4,12 @@ import android.content.Intent
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alibaba.android.arouter.launcher.ARouter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpdateInfoReq
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.setSafeOnClickListener
@@ -19,6 +21,7 @@ import com.cl.modules_my.R
 import com.cl.modules_my.adapter.OutletsAdapter
 import com.cl.modules_my.databinding.MyOutletsSettingActivityBinding
 import com.cl.modules_my.request.AccessData
+import com.cl.modules_my.request.UpdateSubportReq
 import com.cl.modules_my.viewmodel.MyOutletsViewModel
 import com.thingclips.smart.camera.middleware.p2p.ThingSmartCameraP2P
 import com.thingclips.smart.home.sdk.ThingHomeSdk
@@ -56,8 +59,10 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
 
     private val adapter by lazy {
         OutletsAdapter(mutableListOf(), switchListener = { portId, isCheck ->
-            // todo 修改插排的开关
+            // 修改插排的开关
             // mViewMode.cameraSetting(UpdateInfoReq(portId = portId, binding = isCheck))
+            val req = UpdateSubportReq(accessoryDeviceId, portId, isCheck)
+            mViewMode.updateAccessory(req)
         })
     }
 
@@ -67,9 +72,12 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
         executePendingBindings()
     }
 
-    override fun initView() {
+    override fun onResume() {
+        super.onResume()
         mViewMode.getSupport(accessoryId.toString(), accessoryDeviceId)
+    }
 
+    override fun initView() {
         binding.rvDevice.layoutManager = LinearLayoutManager(this@OutletsSettingActivity)
         binding.rvDevice.adapter = adapter
 
@@ -99,7 +107,8 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
                 }
                 success {
                     ToastUtil.shortShow("Unbound successfully")
-                    finish()
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                        .navigation()
                 }
             })
         }

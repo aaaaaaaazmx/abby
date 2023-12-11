@@ -243,14 +243,7 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
                             it.msg
                         )
                     } else {
-                        if (it.data == null) {
-                            Resource.DataError(
-                                -1,
-                                "data is null"
-                            )
-                        } else {
-                            Resource.Success(it.data)
-                        }
+                        Resource.Success(it.data)
                     }
                 }
                 .flowOn(Dispatchers.IO)
@@ -511,6 +504,7 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
                 }
         }
     }
+
     /**
      * 获取图文广告
      */

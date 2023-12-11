@@ -196,11 +196,20 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
             // 这个是不共享的，但是不占用usb，目前重复添加时也只需要判断是否已经拥有，跳转各自的详情就好了。
             AccessoryListBean.KEY_OUTLETS -> {
                 // 跳转到排插界面去
-                startActivity(Intent(this@AddAccessoryActivity, OutletsSettingActivity::class.java).apply {
-                    putExtra("accessoryId", itemData.accessoryId)
-                    putExtra("deviceId", deviceId)
-                    putExtra("accessoryDeviceId", accessoryList.firstOrNull { it.accessoryId == itemData.accessoryId }?.accessoryDeviceId)
-                })
+                // 没有找到就跳转到配对界面去
+                // 跳转到收入wifi密码界面
+                ARouter.getInstance()
+                    .build(RouterPath.PairConnect.PAGE_WIFI_CONNECT)
+                    .withString(
+                        Constants.Global.KEY_WIFI_PAIRING_PARAMS,
+                        Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS
+                    )
+                    .withString("deviceId", deviceId)
+                    .withString(
+                        "accessoryId",
+                        "${itemData.accessoryId}"
+                    )
+                    .navigation(this@AddAccessoryActivity)
                 return
             }
             // 摄像头
