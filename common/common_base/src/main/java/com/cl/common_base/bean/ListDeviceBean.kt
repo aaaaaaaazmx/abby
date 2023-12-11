@@ -31,6 +31,7 @@ data class ListDeviceBean(
     var accessoryList: MutableList<AccessoryList>? = null,
 ) : BaseBean(), MultiItemEntity {
     data class AccessoryList(
+        var relationId: String? = null,
         val isAuto: Int? = null,
         val accessoryId: Int? = null,
         val accessoryName: String? = null,

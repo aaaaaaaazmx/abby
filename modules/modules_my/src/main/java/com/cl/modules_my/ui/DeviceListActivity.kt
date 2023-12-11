@@ -62,6 +62,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         // 配件Id 就是cameraId
                         putExtra("accessoryDeviceId", accessoryDeviceId)
                         putExtra("deviceId", accessListBean.deviceId)
+                        intent.putExtra("relationId", accessoryData.relationId)
                     })
                 return@DeviceListAdapter
             }
@@ -71,11 +72,13 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     putExtra("accessoryId", accessoryData.accessoryId)
                     putExtra("accessoryDeviceId", accessoryData.accessoryDeviceId)
                     putExtra("deviceId", accessListBean.deviceId)
+                    intent.putExtra("relationId", accessoryData.relationId)
                 })
                 return@DeviceListAdapter
             }
             val intent =
                 Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
+            intent.putExtra("relationId", accessoryData.relationId)
             intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
             intent.putExtra(
                 BasePopActivity.KEY_PART_ID,

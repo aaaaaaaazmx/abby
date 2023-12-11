@@ -82,6 +82,13 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     }
 
     /**
+     * relationId、用于删除和修改配件 必须的
+     */
+    private val relationId by lazy {
+        intent.getStringExtra("relationId")
+    }
+
+    /**
      * 排插名字
      */
     private val portName by lazy {
@@ -319,7 +326,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                             mViewModel.cameraSetting(
                                 UpdateInfoReq(
                                     binding = false,
-                                    deviceId = deviceId
+                                    deviceId = deviceId,
+                                    relationId = relationId.toString()
                                 )
                             )
                         })

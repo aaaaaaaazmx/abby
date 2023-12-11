@@ -47,6 +47,13 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
         intent.getStringExtra("deviceId")
     }
 
+    /**
+     * relationId、用于删除和修改配件 必须的
+     */
+    private val relationId by lazy {
+        intent.getStringExtra("relationId")
+    }
+
     private val adapter by lazy {
         OutletsAdapter(mutableListOf(), switchListener = { portId, isCheck ->
             // todo 修改插排的开关
@@ -116,7 +123,7 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
                                     logI("123123: $code --> $error")
                                     if (code == "11002") {
                                         // 解除绑定
-                                        mViewMode.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId))
+                                        mViewMode.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId, relationId = relationId))
                                         return
                                     }
                                     ToastUtil.shortShow(error)
@@ -124,7 +131,7 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
 
                                 override fun onSuccess() {
                                     // 解除绑定
-                                    mViewMode.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId))
+                                    mViewMode.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId, relationId = relationId))
                                 }
                             })
                         })

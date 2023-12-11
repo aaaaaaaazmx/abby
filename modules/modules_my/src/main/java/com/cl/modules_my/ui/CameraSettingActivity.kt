@@ -39,6 +39,14 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
         intent.getStringExtra("deviceId")
     }
 
+
+    /**
+     * relationId、用于删除和修改配件 必须的
+     */
+    private val relationId by lazy {
+        intent.getStringExtra("relationId")
+    }
+
     override fun initView() {
         //  需要先获取当前的存储模式，然后设置选中状态，请求接口才能知道
         deviceId?.let { mViewModel.getAccessoryInfo(it) }
@@ -80,13 +88,13 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
 
     override fun onBackPressed() {
         showProgressLoading()
-        mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = if (binding.curingBox.isChecked) 0 else 1, privateModel = binding.ftPrivacyMode.isItemChecked))
+        mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = if (binding.curingBox.isChecked) 0 else 1, privateModel = binding.ftPrivacyMode.isItemChecked, relationId = relationId))
     }
 
     override fun initData() {
         binding.title.setLeftClickListener {
             showProgressLoading()
-            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = if (binding.curingBox.isChecked) 0 else 1, privateModel = binding.ftPrivacyMode.isItemChecked))
+            mViewModel.cameraSetting(UpdateInfoReq(binding = true, deviceId = deviceId, storageModel = if (binding.curingBox.isChecked) 0 else 1, privateModel = binding.ftPrivacyMode.isItemChecked, relationId = relationId))
         }
 
         binding.curingBox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -118,7 +126,7 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
                                 // 上传解绑状态
                                 showProgressLoading()
                                 mViewModel.setUnbind(true)
-                                mViewModel.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId))
+                                mViewModel.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId, relationId = relationId))
                             }
                         }
                     })
