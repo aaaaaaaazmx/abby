@@ -775,5 +775,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 植物Id
         const val KEY_PLANT_ID = "key_plant_id"
+
+        // 共享设备类型
+        const val KEY_SHARE_TYPE = "key_share_type"
+
+        // 共享设备ID KEY_RELATION_ID
+        const val KEY_RELATION_ID = "key_relation_id"
     }
 }

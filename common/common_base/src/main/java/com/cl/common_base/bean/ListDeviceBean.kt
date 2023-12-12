@@ -5,6 +5,8 @@ import com.cl.common_base.BaseBean
 
 data class ListDeviceBean(
     var deviceId: String? = null,
+    var temperature: String? = null,
+    var humidity: String? = null,
     var deviceName: String? = null,
     var strainName: String? = null,
     var plantName: String? = null,
@@ -22,6 +24,7 @@ data class ListDeviceBean(
     var currentDevice: Int? = null,
     var proMode: String? = null, // 是否是手动、自动模式
     var fanAuto: Int? = null,
+    var textId: String? = null,
     val burnOutProof: Int? = null, // 是否开启防烧模式
     val isBurnOutProof: Int? = null, // 是否显示防烧模式
     var deviceType: String? = null, // 判断设备是OG还是O1

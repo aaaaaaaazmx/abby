@@ -19,6 +19,10 @@ import com.cl.modules_my.databinding.MyDeviceListItemBinding
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToFloat
+import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.temperatureConversion
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.databinding.MyDeviceListTextItemBinding
@@ -32,6 +36,8 @@ class DeviceListAdapter(
 ) :
     BaseMultiItemQuickAdapter<ListDeviceBean, BaseViewHolder>(data) {
 
+    // 是否是公制
+    val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
 
     init {
         addItemType(ListDeviceBean.KEY_TYPE_TEXT, R.layout.my_device_list_text_item)// 文字描述
@@ -120,6 +126,27 @@ class DeviceListAdapter(
                 } else {
                     holder.setText(R.id.tv_ble_status, "Disconnected")
                     holder.setBackgroundColor(R.id.rl_ble_status, ContextCompat.getColor(context, com.cl.common_base.R.color.textError))
+                }
+            }
+
+            ListDeviceBean.MONITOR_VIEW_OUT, ListDeviceBean.KEY_MONITOR_OUT -> {
+                // 需要根据单位来进行转变
+                val temp = temperatureConversion(item.temperature.safeToFloat(), isMetric)
+                val tempUnit = if (isMetric) " ℃" else " ℉"
+                val humidity = item.humidity ?: ""
+                val humidityUnit = " %"
+                val endUnit = "RH"
+                logI("123123, : -> $temp, $humidity, $isMetric")
+                ViewUtils.setVisible(temp.isNotEmpty() || humidity.isNotEmpty(), holder.getView(R.id.tv_device_status))
+                // 分别判断temp和humidity是否为空
+                if (temp.isNotEmpty() && humidity.isNotEmpty()) {
+                    holder.setText(R.id.tv_device_status, "$temp$tempUnit $humidity$humidityUnit $endUnit")
+                } else if (temp.isNotEmpty() && humidity.isEmpty()) {
+                    holder.setText(R.id.tv_device_status, "$temp$tempUnit $endUnit")
+                } else if (temp.isEmpty() && humidity.isNotEmpty()) {
+                    holder.setText(R.id.tv_device_status, "$humidity$humidityUnit $endUnit")
+                } else {
+                    holder.setText(R.id.tv_device_status, "")
                 }
             }
         }

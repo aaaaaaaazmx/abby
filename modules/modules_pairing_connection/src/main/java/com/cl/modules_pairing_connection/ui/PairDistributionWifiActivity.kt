@@ -171,15 +171,19 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             accessoryAdd.observe(this@PairDistributionWifiActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
+                    ToastUtil.shortShow("Added successfully")
                     // 添加成功跳转
                     when (pairingEquipment) {
                         Constants.Global.KEY_GLOBAL_PAIR_DEVICE_BOX -> {
-                            ToastUtil.shortShow("Activate success KEY_GLOBAL_PAIR_DEVICE_BOX")
-                            // todo 帐篷内部温湿度传感器， 不带显示器的温度传感器
+                            //  帐篷内部温湿度传感器， 不带显示器的温度传感器
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                .navigation(this@PairDistributionWifiActivity)
                         }
+
                         Constants.Global.KEY_GLOBAL_PAIR_DEVICE_VIEW -> {
-                            ToastUtil.shortShow("Activate success KEY_GLOBAL_PAIR_DEVICE_VIEW")
-                            // todo 帐篷内部温湿度传感器, 带显示器的温度传感器
+                            //  帐篷内部温湿度传感器, 带显示器的温度传感器
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                .navigation(this@PairDistributionWifiActivity)
                         }
                     }
                 }
@@ -456,6 +460,16 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 })
                                 finish()*/
 
+                                // 开始存储账号和密码
+                                Prefs.putStringAsync(
+                                    Constants.Pair.KEY_PAIR_WIFI_NAME,
+                                    binding.tvWifiName.text.toString()
+                                )
+                                Prefs.putStringAsync(
+                                    Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
+                                    binding.etWifiPwd.text.toString()
+                                )
+
                                 // 说明绑定成功，跳转到二维码生成界面
                                 ARouter.getInstance().build(RouterPath.My.PAGE_CAMERA_QR_CODE)
                                     .withString("qrcodeUrl", qrcodeUrl)
@@ -675,6 +689,17 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                         .startActivator(netWorkBean, object : IMultiModeActivatorListener {
                             override fun onSuccess(deviceBean: DeviceBean?) {
                                 logI("startActivator DeviceBean : ${deviceBean.toString()}")
+
+                                // 开始存储账号和密码
+                                Prefs.putStringAsync(
+                                    Constants.Pair.KEY_PAIR_WIFI_NAME,
+                                    binding.tvWifiName.text.toString()
+                                )
+                                Prefs.putStringAsync(
+                                    Constants.Pair.KEY_PAIR_WIFI_PASSWORD,
+                                    binding.etWifiPwd.text.toString()
+                                )
+
                                 // 添加设备
                                 letMultiple(accessoryId, deviceId) { a, b ->
                                     mViewModel.accessoryAdd(a, b, deviceBean?.devId)

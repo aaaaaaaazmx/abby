@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cn.mtjsoft.barcodescanning.extentions.dp2px
@@ -25,6 +26,7 @@ import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.bean.UpDeviceInfoReq
+import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.databinding.HomeKnowMoreLayoutBinding
@@ -32,9 +34,13 @@ import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.sp2px
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.TuyaCameraUtils
@@ -123,6 +129,16 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private val isPreview by lazy { intent.getBooleanExtra(BasePopActivity.KEY_PREVIEW, false) }
 
+    /**
+     * 共享设备类型
+     */
+    private val spaceType by lazy { intent.getStringExtra(BasePopActivity.KEY_SHARE_TYPE) }
+
+    /**
+     * 删除配件时，关联IdrelationId
+     */
+    private val relationId by lazy { intent.getStringExtra(BasePopActivity.KEY_RELATION_ID) }
+
     @Inject
     lateinit var mViewMode: KnowMoreViewModel
 
@@ -156,6 +172,31 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
             finish()
         }
 
+        binding.unbindCamera.setSafeOnClickListener(lifecycleScope) {
+            // 解绑设备
+            xpopup(this@KnowMoreActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(
+                    BaseCenterPop(
+                        this@KnowMoreActivity,
+                        content = "Are you sure you want to delete it?",
+                        isShowCancelButton = true,
+                        cancelText = "No",
+                        confirmText = "Yes",
+                        onConfirmAction = {
+                            if (!relationId.isNullOrEmpty()) {
+                                // 删除当前设备的配件
+                                mViewMode.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId, relationId = relationId))
+                            } else {
+                                // 删除共享设备
+                                mViewMode.deleteDevice(deviceId.toString())
+                            }
+                        })
+                ).show()
+            }
+        }
+
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
         logI("txtId = $txtId, type = $txtType")
@@ -170,6 +211,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         // 是否展示固定按钮、是否展示滑动解锁
         ViewUtils.setVisible(isShowButton && !isPreview, binding.btnNext)
         ViewUtils.setVisible(isShowUnlockButton && !isPreview, binding.slideToConfirm)
+        // 是否显示删除按钮
+        ViewUtils.setVisible(!spaceType.isNullOrEmpty(), binding.unbindCamera)
         binding.btnNext.text = showButtonText ?: "Next"
         binding.btnNext.setOnClickListener {
             fixedProcessingLogic()
@@ -422,6 +465,32 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 删除当前设备下的配件
+            saveCameraSetting.observe(this@KnowMoreActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                        .navigation(this@KnowMoreActivity)
+                }
+                loading { showProgressLoading() }
+            })
+            // 删除配件设备
+            deleteDevice.observe(this@KnowMoreActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                loading { showProgressLoading() }
+                success {
+                    hideProgressLoading()
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                        .navigation(this@KnowMoreActivity)
+                }
+            })
             unLockNow.observe(this@KnowMoreActivity, resourceObserver {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)

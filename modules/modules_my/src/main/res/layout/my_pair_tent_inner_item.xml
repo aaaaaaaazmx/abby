@@ -46,13 +46,13 @@
                 android:layout_height="35dp"/>
 
             <TextView
-                android:layout_marginTop="15dp"
                 android:text="@{String.valueOf(data.deviceName)}"
                 android:textStyle="bold"
                 android:layout_marginStart="17.8dp"
                 app:layout_constraintStart_toEndOf="@+id/iv_icon"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_icon"
                 android:textColor="@color/mainColor"
+                app:layout_constraintBottom_toTopOf="@+id/tv_device_status"
                 android:textSize="11sp"
                 tools:text="Smart humidifier"
                 android:id="@+id/tv_device_name"
@@ -62,8 +62,7 @@
             <TextView
                 android:text="----"
                 android:id="@+id/tv_device_status"
-                android:layout_marginBottom="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 tools:text="79 F  50% RH"
@@ -79,7 +78,7 @@
                 android:layout_marginEnd="18dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:id="@+id/iv_pair_temp_luosi"
+                android:id="@+id/iv_pair_luosi"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@mipmap/my_luosi"
                 android:layout_width="wrap_content"

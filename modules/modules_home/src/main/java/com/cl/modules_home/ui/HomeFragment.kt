@@ -76,6 +76,7 @@ import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
+import com.thingclips.smart.android.common.task.ThreadPoolMonitor.ThreadPoolExecutorMonitor
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.AbsP2pCameraListener
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.OperationDelegateCallBack
 import com.thingclips.smart.camera.ipccamerasdk.p2p.ICameraP2P
@@ -3066,6 +3067,30 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 植物的休息照片
                     // 植物的健康程度
                     binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
+
+                    // 只有帐篷才显示温度。
+                    data?.apply {
+                        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+                        val roomTemp = temperatureConversion(envirVO?.roomTemp.safeToFloat(), isMetric)
+                        val roomHumidity = envirVO?.roomHumiture
+                        val temp = temperatureConversion(envirVO?.temp.safeToFloat(), isMetric)
+                        val humidity = envirVO?.humiture
+                        val tempUnit = if (isMetric) "℃" else "℉"
+                        val humidityUnit = "%"
+                        ViewUtils.setGone(binding.pplantNinth.ivZpAdd, !roomTemp.isEmpty() || !roomHumidity.isNullOrEmpty() || !temp.isEmpty() || !humidity.isNullOrEmpty())
+                        binding.pplantNinth.tentHealthStatus.text = buildSpannedString {
+                            if (!temp.isEmpty() && !humidity.isNullOrEmpty()) {
+                                append("$temp$tempUnit $humidity$humidityUnit")
+                            }
+                        }
+
+                        binding.pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
+                            // Check if room temperature is not empty and should be displayed
+                            if (!roomTemp.isEmpty() && !roomHumidity.isNullOrEmpty()) {
+                                append("room $roomTemp$tempUnit $roomHumidity$humidityUnit")
+                            }
+                        }
+                    }
                 }
             })
 

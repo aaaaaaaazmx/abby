@@ -28,6 +28,7 @@ data class PlantInfoData(
     var plantStatus: Int? = null,
     var week: Int? = null,
     var totalDay: Int? = null,
+    var envirVO: envirVOData? = null,
     var lightingStatus: Int? = 1, // 0 关灯、1 开灯
     var list: MutableList<InfoList>? = null,
     var cupType: Int? = null, // 塑料杯、纸杯
@@ -36,6 +37,12 @@ data class PlantInfoData(
     var germinationTime: String? = null, // 剩余发芽时间
 ) : BaseBean() {
 
+    data class envirVOData(
+        var roomTemp: String? = null,
+        var roomHumiture: String? = null,
+        var temp: String? = null,
+        var humiture: String? = null,
+    )
     data class InfoList(
         var day: String? = null,
         var journeyName: String? = null,

@@ -47,3 +47,10 @@ fun gallonConversion(value: Float, isMetric: Boolean, isUpload: Boolean): String
     }
     return if (result == 0f) "" else String.format("%.1f", result)
 }
+
+// 后台默认返回的是英制
+// 温度转换，英制to华氏度
+fun temperatureConversion(value: Float, isMetric: Boolean): String {
+    val result = if (isMetric) value.times(9f).div(5f).plus(32) else value
+    return if (result == 0f) "" else result.safeToInt().toString()
+}

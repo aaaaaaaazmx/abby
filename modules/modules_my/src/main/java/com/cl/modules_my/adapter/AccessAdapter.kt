@@ -22,7 +22,8 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
         }
 
         val pairData = item
-        holder.setVisible(R.id.rl_check, item.accessoryType != AccessoryListBean.KEY_OUTLETS)
+        val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN)
+        holder.setVisible(R.id.rl_check, isDisplay)
         val checkView = holder.getView<FeatureItemSwitch>(R.id.ft_check)
         val textView = holder.getView<TextView>(R.id.tv_auto_desc)
         // 配件的相关事件
