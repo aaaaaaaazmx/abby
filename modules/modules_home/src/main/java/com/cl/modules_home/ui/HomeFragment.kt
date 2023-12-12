@@ -519,21 +519,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             this.root.setOnTouchListener { _, _ -> true }
 
             ivZpCamera.setOnClickListener {
-                // 跳转到配件
-                mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
-                    ?.let {
-                        ARouter
-                            .getInstance()
-                            .build(RouterPath.My.PAGE_ADD_ACCESSORY)
-                            .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
-                            .withSerializable(
-                                "accessoryList",
-                                it.accessoryList as Serializable?
-                            )
-                            .withString("spaceType", it.spaceType)
-                            .navigation(context)
-                    }
-                return@setOnClickListener
+                val data = mViewMode.plantInfoLoop.value?.data?.envirVO
+                if (data?.temp.isNullOrEmpty() && data?.roomTemp.isNullOrEmpty() && data?.humiture.isNullOrEmpty() && data?.roomHumiture.isNullOrEmpty()) {
+                    // 跳转到配件
+                    mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
+                        ?.let {
+                            ARouter
+                                .getInstance()
+                                .build(RouterPath.My.PAGE_ADD_ACCESSORY)
+                                .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                                .withSerializable(
+                                    "accessoryList",
+                                    it.accessoryList as Serializable?
+                                )
+                                .withString("spaceType", it.spaceType)
+                                .navigation(context)
+                        }
+                    return@setOnClickListener
+                }
             }
 
             // 未读消息气泡点击事件
@@ -967,45 +970,45 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             fanIntake?.let { fantake ->
                                 DeviceControl.get().success {
-                                        mViewMode.setFanIntake(fantake)
-                                    }.error { code, error ->
-                                        ToastUtil.shortShow(
-                                            """
+                                    mViewMode.setFanIntake(fantake)
+                                }.error { code, error ->
+                                    ToastUtil.shortShow(
+                                        """
                               fanIntake: 
                               code-> $code
                               errorMsg-> $error
                                 """.trimIndent()
-                                        )
-                                        mViewMode.setFanIntake("${mViewMode.getFanIntake.value}")
-                                    }.fanIntake(fantake.safeToInt())
+                                    )
+                                    mViewMode.setFanIntake("${mViewMode.getFanIntake.value}")
+                                }.fanIntake(fantake.safeToInt())
                             }
                             fanExhaust?.let { fanExhaust ->
                                 DeviceControl.get().success {
-                                        mViewMode.setFanExhaust(fanExhaust)
-                                    }.error { code, error ->
-                                        ToastUtil.shortShow(
-                                            """
+                                    mViewMode.setFanExhaust(fanExhaust)
+                                }.error { code, error ->
+                                    ToastUtil.shortShow(
+                                        """
                               fanExhaust: 
                               code-> $code
                               errorMsg-> $error
                                 """.trimIndent()
-                                        )
-                                        mViewMode.setFanExhaust("${mViewMode.getFanExhaust.value}")
-                                    }.fanExhaust(fanExhaust.safeToInt())
+                                    )
+                                    mViewMode.setFanExhaust("${mViewMode.getFanExhaust.value}")
+                                }.fanExhaust(fanExhaust.safeToInt())
                             }
                             lightIntensity?.let { lightIntensity ->
                                 DeviceControl.get().success {
-                                        mViewMode.setGrowLight(lightIntensity)
-                                    }.error { code, error ->
-                                        ToastUtil.shortShow(
-                                            """
+                                    mViewMode.setGrowLight(lightIntensity)
+                                }.error { code, error ->
+                                    ToastUtil.shortShow(
+                                        """
                                                   lightIntensity: 
                                                   code-> $code
                                                   errorMsg-> $error
                                                     """.trimIndent()
-                                        )
-                                        mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                                    }.lightIntensity(lightIntensity.safeToInt())
+                                    )
+                                    mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
+                                }.lightIntensity(lightIntensity.safeToInt())
                             }
 
                             ftTimer.text = "$lightSchedule"
