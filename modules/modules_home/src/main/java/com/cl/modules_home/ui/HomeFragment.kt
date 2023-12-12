@@ -519,24 +519,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             this.root.setOnTouchListener { _, _ -> true }
 
             ivZpCamera.setOnClickListener {
-                val data = mViewMode.plantInfoLoop.value?.data?.envirVO
-                if (data?.temp.isNullOrEmpty() && data?.roomTemp.isNullOrEmpty() && data?.humiture.isNullOrEmpty() && data?.roomHumiture.isNullOrEmpty()) {
-                    // 跳转到配件
-                    mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
-                        ?.let {
-                            ARouter
-                                .getInstance()
-                                .build(RouterPath.My.PAGE_ADD_ACCESSORY)
-                                .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
-                                .withSerializable(
-                                    "accessoryList",
-                                    it.accessoryList as Serializable?
-                                )
-                                .withString("spaceType", it.spaceType)
-                                .navigation(context)
-                        }
-                    return@setOnClickListener
-                }
+                // 跳转到配件
+                mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
+                    ?.let {
+                        ARouter
+                            .getInstance()
+                            .build(RouterPath.My.PAGE_ADD_ACCESSORY)
+                            .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                            .withSerializable(
+                                "accessoryList",
+                                it.accessoryList as Serializable?
+                            )
+                            .withString("spaceType", it.spaceType)
+                            .navigation(context)
+                    }
+                return@setOnClickListener
             }
 
             // 未读消息气泡点击事件
@@ -892,20 +889,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 点击环境弹窗
             clEnvir.setOnClickListener {
                 if (mViewMode.isZp.value == true) {
-                    // 跳转到配件
-                    mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
-                        ?.let {
-                            ARouter
-                                .getInstance()
-                                .build(RouterPath.My.PAGE_ADD_ACCESSORY)
-                                .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
-                                .withSerializable(
-                                    "accessoryList",
-                                    it.accessoryList as Serializable?
-                                )
-                                .withString("spaceType", it.spaceType)
-                                .navigation(context)
-                        }
+                    val data = mViewMode.plantInfoLoop.value?.data?.envirVO
+                    if (data?.temp.isNullOrEmpty() && data?.roomTemp.isNullOrEmpty() && data?.humiture.isNullOrEmpty() && data?.roomHumiture.isNullOrEmpty()) {
+                        // 跳转到配件
+                        mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
+                            ?.let {
+                                ARouter
+                                    .getInstance()
+                                    .build(RouterPath.My.PAGE_ADD_ACCESSORY)
+                                    .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                                    .withSerializable(
+                                        "accessoryList",
+                                        it.accessoryList as Serializable?
+                                    )
+                                    .withString("spaceType", it.spaceType)
+                                    .navigation(context)
+                            }
+                    }
                     return@setOnClickListener
                 }
                 // 刷新植物信息以及环境信息
