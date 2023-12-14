@@ -36,10 +36,10 @@
             >
 
             <ImageView
-                url='@{datas.image}'
+                url="@{datas.image}"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="18dp"
+                android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -49,18 +49,33 @@
                 android:layout_height="35dp"/>
 
             <TextView
+                android:text="@{String.valueOf(datas.accessoryName)}"
                 android:textStyle="bold"
-                android:text='@{datas.accessoryName}'
-                android:layout_marginStart="17.8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginStart="10dp"
                 app:layout_constraintStart_toEndOf="@+id/iv_icon"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_icon"
                 android:textColor="@color/mainColor"
+                app:layout_constraintBottom_toTopOf="@+id/tv_device_status"
                 android:textSize="11sp"
                 tools:text="Smart humidifier"
                 android:id="@+id/tv_device_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
+
+            <TextView
+                tools:visibility="visible"
+                android:visibility="gone"
+                android:text="----"
+                android:id="@+id/tv_device_status"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                tools:text="79 F  50% RH"
+                app:layout_constraintStart_toStartOf="@+id/tv_device_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:ignore="MissingConstraints" />
 
 
 

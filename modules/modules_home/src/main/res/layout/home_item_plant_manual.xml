@@ -183,7 +183,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_grow" />
 
                 <TextView
-                    android:text='@{String.valueOf(viewModel.temperatureConversion(viewModel.getWenDu))}'
+                    android:text='@{String.valueOf(viewModel.temperatureConversionForTemp(viewModel.getWenDu))}'
                     android:id="@+id/tv_temperature_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -210,7 +210,7 @@
 
                 <TextView
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:text='@{String.valueOf(viewModel.getHumidity)}'
+                    android:text='@{String.valueOf(viewModel.getRoomHumidity(viewModel.getHumidity))}'
                     android:id="@+id/tv_humidity_value"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

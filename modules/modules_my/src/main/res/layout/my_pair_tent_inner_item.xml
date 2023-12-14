@@ -30,13 +30,13 @@
             app:layout_constraintStart_toStartOf="parent"
             android:background="@drawable/background_white_r6"
             android:layout_width="match_parent"
-            android:layout_height="65dp">
+            android:layout_height="50dp">
 
             <ImageView
                 url="@{data.picture}"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginStart="18dp"
+                android:layout_marginStart="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -48,7 +48,7 @@
             <TextView
                 android:text="@{String.valueOf(data.deviceName)}"
                 android:textStyle="bold"
-                android:layout_marginStart="17.8dp"
+                android:layout_marginStart="10dp"
                 app:layout_constraintStart_toEndOf="@+id/iv_icon"
                 app:layout_constraintTop_toTopOf="@+id/iv_icon"
                 android:textColor="@color/mainColor"

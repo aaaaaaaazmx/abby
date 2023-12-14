@@ -154,7 +154,7 @@ class AchievementViewModel  @Inject constructor(private val repository: MyReposi
                 }
                 if (listDRData.isEmpty()) {
                     logI("BLe -> msg: 没有扫描到设备")
-                    ToastUtil.shortShow("The device was not detected.")
+                    // ToastUtil.shortShow("The device was not detected.")
                     _scanLiveData.value = true
                 }
             }

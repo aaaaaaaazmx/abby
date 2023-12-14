@@ -11,6 +11,7 @@ import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
@@ -88,7 +89,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun setDeviceInfo(deviceId: LiveDataDeviceInfoBean) {
         _deviceInfo.value = deviceId
     }
-
 
 
     // 童锁的开闭状态
@@ -1447,6 +1447,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         is Resource.Success -> {
                             _listDevice.value = it
                         }
+
                         else -> {}
                     }
                 }
@@ -1489,7 +1490,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     // 这个周期目前自行处理、不走guideInfo接口
                     // 回调出去。自行处理
                     taskId?.let { ids ->
-                    _transplantPeriodicity.value = ids
+                        _transplantPeriodicity.value = ids
                     }
                 }
 
@@ -1685,8 +1686,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
 
-    private var _shouldRunJob =  MutableLiveData<Boolean>()
-    val shouldRunJob:LiveData<Boolean> = _shouldRunJob
+    private var _shouldRunJob = MutableLiveData<Boolean>()
+    val shouldRunJob: LiveData<Boolean> = _shouldRunJob
     fun setShouldRunJob(shouldRunJob: Boolean) {
         _shouldRunJob.value = shouldRunJob
     }
@@ -1835,7 +1836,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getGrowLight: LiveData<Int> = _getGrowLight
 
     fun getGrowLight() {
-        val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED )
+        val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
         Prefs.getObjects().firstOrNull { it.name == name }.apply {
             if (null == this) {
                 _getGrowLight.value = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE).safeToInt()
@@ -1983,6 +1984,34 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         return text
     }
 
+    /**
+     * 获取温度，如果有购买温湿度传感器的话。
+     */
+    fun temperatureConversionForTemp(text: Int?): String {
+        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
+        val roomTemp = com.cl.common_base.ext.temperatureConversion(data?.envirVO?.roomTemp.safeToFloat(), isMetric)
+        // 默认为false
+        if (isMetric) {
+            kotlin.runCatching {
+                // (1°F − 32) × 5/9
+                // String result1 = String.format("%.2f", d);
+                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble()
+                    .safeToInt()} ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+            }.getOrElse {
+                return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+            }
+        }
+        return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+    }
+
+    // 获取室内的湿度，在有数据的情况下
+    fun getRoomHumidity(humidity: Int?): String {
+        val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
+        val roomHumidity = data?.envirVO?.roomHumiture
+        return if (roomHumidity.isNullOrEmpty()) "$humidity" else "$humidity (Room $roomHumidity)"
+    }
+
     fun textCovert(): String {
         val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
         return if (isMetric) "Temperature (°C)" else "Temperature (°F)"
@@ -2113,7 +2142,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 }
         }
     }
-
 
 
     /**

@@ -98,6 +98,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             "spaceTemp" to FieldAttributes("Space Temp(ST)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
             "waterTemp" to FieldAttributes("Water Temp (WT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
             "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "roomTemp" to FieldAttributes("Room Temp(RT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
+            "roomRH" to FieldAttributes("Room RH (RRH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, isShowRefreshIcon = true),
             "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             "ec" to FieldAttributes("EC", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
@@ -119,7 +121,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
         CustomViewGroupAdapter(
             context = this@PlantingLogActivity,
             fields = listOf(
-                "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc", "ec",
+                "logTime", "spaceTemp", "waterTemp", "humidity", "roomTemp", "roomRH", "ph", "tdsEc", "ec",
                 "plantHeight", "lightingOn", "lightingOff", "co2Concentration"
             ),
             noKeyboardFields = listOf(

@@ -890,7 +890,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             clEnvir.setOnClickListener {
                 if (mViewMode.isZp.value == true) {
                     val data = mViewMode.plantInfoLoop.value?.data?.envirVO
-                    if (data?.temp.isNullOrEmpty() && data?.roomTemp.isNullOrEmpty() && data?.humiture.isNullOrEmpty() && data?.roomHumiture.isNullOrEmpty()) {
+                    if (null == data || (data.temp.isNullOrEmpty() && data.roomTemp.isNullOrEmpty() && data.humiture.isNullOrEmpty() && data.roomHumiture.isNullOrEmpty())) {
                         // 跳转到配件
                         mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
                             ?.let {
@@ -3071,8 +3071,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 植物的健康程度
                     binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
 
-                    // 只有帐篷才显示温度。
+                    // 显示温湿度
                     data?.apply {
+                        if (null == envirVO) {
+                            ViewUtils.setVisible(null == data?.envirVO, binding.pplantNinth.ivZpAdd)
+                            return@success
+                        }
                         val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
                         val roomTemp = temperatureConversion(envirVO?.roomTemp.safeToFloat(), isMetric)
                         val roomHumidity = envirVO?.roomHumiture
@@ -3080,16 +3084,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         val humidity = envirVO?.humiture
                         val tempUnit = if (isMetric) "℃" else "℉"
                         val humidityUnit = "%"
-                        ViewUtils.setGone(binding.pplantNinth.ivZpAdd, !roomTemp.isEmpty() || !roomHumidity.isNullOrEmpty() || !temp.isEmpty() || !humidity.isNullOrEmpty())
+                        if (roomTemp.isEmpty() || roomHumidity.isNullOrEmpty() || temp.isEmpty() || humidity.isNullOrEmpty()) {
+                            ViewUtils.setVisible(roomTemp.isEmpty() || roomHumidity.isNullOrEmpty() || temp.isEmpty() || humidity.isNullOrEmpty(), binding.pplantNinth.ivZpAdd)
+                            return@success
+                        }
+                        // proMode下面的温湿度
+                        binding.plantManual.tvTemperatureValue.text =
+                            temperatureConversionForTemp(getWenDu.value)
+                        // proMode下面的温湿度
+                        binding.plantManual.tvHumidityValue.text = getRoomHumidity(getHumidity.value)
+
+                        // 帐篷下的环境温湿度展示逻辑。
+                        ViewUtils.setGone(binding.pplantNinth.ivZpAdd, roomTemp.isNotEmpty() || roomHumidity.isNotEmpty() || temp.isNotEmpty() || humidity.isNotEmpty())
                         binding.pplantNinth.tentHealthStatus.text = buildSpannedString {
-                            if (!temp.isEmpty() && !humidity.isNullOrEmpty()) {
+                            if (temp.isNotEmpty() && humidity.isNotEmpty()) {
                                 append("$temp$tempUnit $humidity$humidityUnit")
                             }
                         }
 
                         binding.pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
                             // Check if room temperature is not empty and should be displayed
-                            if (!roomTemp.isEmpty() && !roomHumidity.isNullOrEmpty()) {
+                            if (roomTemp.isNotEmpty() && roomHumidity.isNotEmpty()) {
                                 append("room $roomTemp$tempUnit $roomHumidity$humidityUnit")
                             }
                         }
@@ -4817,7 +4832,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     binding.plantManual.tvWaterTemperature.text = textCovert()
                     binding.plantManual.tvPlantHeight.text = formatIncPlant(plantHeights.value)
                     binding.plantManual.tvTemperatureValue.text =
-                        temperatureConversion(getWenDu.value).toString()
+                        temperatureConversionForTemp(getWenDu.value).toString()
                     binding.plantManual.tvWaterTemperatureValue.text =
                         temperatureConversion(getWaterWenDu.value).toString()
                 }

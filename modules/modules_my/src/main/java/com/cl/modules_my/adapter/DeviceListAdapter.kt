@@ -134,7 +134,7 @@ class DeviceListAdapter(
                 val temp = temperatureConversion(item.temperature.safeToFloat(), isMetric)
                 val tempUnit = if (isMetric) " ℃" else " ℉"
                 val humidity = item.humidity ?: ""
-                val humidityUnit = " %"
+                val humidityUnit = "%"
                 val endUnit = "RH"
                 logI("123123, : -> $temp, $humidity, $isMetric")
                 ViewUtils.setVisible(temp.isNotEmpty() || humidity.isNotEmpty(), holder.getView(R.id.tv_device_status))
