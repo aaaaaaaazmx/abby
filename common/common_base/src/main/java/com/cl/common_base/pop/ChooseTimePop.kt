@@ -333,36 +333,16 @@ class ChooseTimePop(
                                     lightIntensitySeekbar.setProgress(growLightValue.toFloat())
                                 },
                                 onConfirmAction = {
-                                    DeviceControl.get()
-                                        .success {
-                                            // mViewMode.setGrowLight(seekbar?.progress.toString())
-                                            lightIntensity = seekbar?.progress
-                                            binding?.tvLightIntensityValue?.text = seekbar?.progress.toString()
-                                        }
-                                        .error { code, error ->
-                                            ToastUtil.shortShow(
-                                                """
-                                                  lightIntensity: 
-                                                  code-> $code
-                                                  errorMsg-> $error
-                                                    """.trimIndent()
-                                            )
-                                        }
-                                        .lightIntensity(seekbar?.progress ?: 0)
+                                    // mViewMode.setGrowLight(seekbar?.progress.toString())
+                                    lightIntensity = seekbar?.progress
+                                    binding?.tvLightIntensityValue?.text = seekbar?.progress.toString()
                                 }
                             )
                         }).show()
                 } else {
-                    DeviceControl.get()
-                        .success {
-                            // mViewMode.setGrowLight(seekbar?.progress.toString())
-                            lightIntensity = seekbar?.progress
-                            binding?.tvLightIntensityValue?.text = seekbar?.progress.toString()
-                        }
-                        .error { code, error ->
-                            ToastUtil.shortShow(error)
-                        }
-                        .lightIntensity(seekbar?.progress ?: 0)
+                    // mViewMode.setGrowLight(seekbar?.progress.toString())
+                    lightIntensity = seekbar?.progress
+                    binding?.tvLightIntensityValue?.text = seekbar?.progress.toString()
                 }
             }
         }

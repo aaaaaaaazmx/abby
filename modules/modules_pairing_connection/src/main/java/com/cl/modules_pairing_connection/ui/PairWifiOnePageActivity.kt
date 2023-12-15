@@ -113,9 +113,11 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         }
 
         binding.tvDesc.text = when (tuYaWifiDevice) {
-            KEY_MONITOR_VIEW_OUT, KEY_MONITOR_OUT, KEY_MONITOR_VIEW_IN, KEY_MONITOR_IN -> "Searching for the device...\n" +
-                    "Please press the on/off button for 3-5 seconds till you see the Bluetooth icon."
+            KEY_MONITOR_OUT, KEY_MONITOR_IN -> "Searching for the device...\n" +
+                    "Press and hold the reset button for 3-5 seconds using a tool until the blue indicator begins flashing. "
 
+            KEY_MONITOR_VIEW_OUT, KEY_MONITOR_VIEW_IN -> "Searching for the device...\n" +
+                    "Press and hold the \"+\" button on the device for 3-5 seconds until the Wi-Fi icon starts flashing."
             else -> ""
         }
 

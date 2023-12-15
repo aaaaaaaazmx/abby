@@ -28,9 +28,9 @@
                 app:title="Smart Outlets Settings" />
 
             <ImageView
+                android:background="@mipmap/outlets_bg"
                 android:scaleType="centerCrop"
                 android:id="@+id/iv_icon"
-                url="@{viewModel.accessorySubport.data.picture}"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
                 android:layout_marginStart="19dp"

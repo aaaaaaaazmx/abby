@@ -42,6 +42,7 @@ data class RichTextData(
                 "option" -> KEY_TYPE_CHECK_BOX
                 "inputBox" -> KEY_TYPE_INPUT_BOX
                 "snooze" -> KEY_TYPE_DELAY_TASK
+                "intercom" -> KEY_TYPE_TXT
                 else -> KEY_TYPE_BAR
             }
     }
@@ -75,6 +76,7 @@ data class RichTextData(
         var left: String? = null,   // 左边距
         var bold: Boolean? = false, // 字体是否加粗
         var bolds: MutableList<String>? = null,
+        var articleId: String? = null, // 文章ID
     ) : BaseBean()
 
 

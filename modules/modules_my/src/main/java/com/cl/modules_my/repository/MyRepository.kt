@@ -267,8 +267,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.updateInfo(body)
     }
 
-    fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
-        return remoteRepository.getAccessoryInfo(deviceId)
+    fun getAccessoryInfo(deviceId: String, accessoryDeviceId: String): Flow<HttpResult<UpdateInfoReq>> {
+        return remoteRepository.getAccessoryInfo(deviceId, accessoryDeviceId)
     }
 
     fun getDeviceDetails(deviceId: String): Flow<HttpResult<DeviceDetailsBean>> {

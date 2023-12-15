@@ -85,6 +85,13 @@ interface DeviceControl {
      */
     fun repairSN(isRepair: String): DeviceControlImpl
 
+
+    /**
+     * 一次性发送多个dp点
+     * https://cz84t38aha.feishu.cn/docx/UnYBd35TJoXMcrxrD5ncNgPqnmc
+     */
+    fun sendDps(dpsJson: String): DeviceControlImpl
+
     companion object {
         fun get() = DeviceControlImpl()
     }

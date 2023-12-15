@@ -257,8 +257,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
         return remoteRepository.updateInfo(body)
     }
 
-    fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
-        return remoteRepository.getAccessoryInfo(deviceId)
+    fun getAccessoryInfo(deviceId: String, accessoryDeviceId: String): Flow<HttpResult<UpdateInfoReq>> {
+        return remoteRepository.getAccessoryInfo(deviceId, accessoryDeviceId)
     }
 
     fun oxygenCoinList(): Flow<HttpResult<MutableList<OxygenCoinListBean>>> {

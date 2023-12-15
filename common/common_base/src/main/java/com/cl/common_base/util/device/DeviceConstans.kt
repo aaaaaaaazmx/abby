@@ -105,6 +105,9 @@ class TuYaDeviceConstants {
 
         // 关灯时间	数值范围: 0-23, 间距: 1, 倍数: 0, 单位:
         const val KEY_DEVICE_LIGHT_OFF_TIME = "117"
+
+        // 一次性发送多个DP点
+        const val KEY_DEVICE_MULTIPLE_DP = "140"
     }
 
     /**

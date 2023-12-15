@@ -60,7 +60,7 @@ class PresetLoadPop(
                                 Prefs.removeObject(listPreset()[index])
                                 ToastUtil.shortShow("Delete successful")
                                 etEmail.text = "Select Preset"
-                                etNote.setText("")
+                                etNote.text = ""
                                 index = -1
                             })
                         ).show()
@@ -86,7 +86,7 @@ class PresetLoadPop(
                                 confirmAction = {
                                     index = it
                                     etEmail.text = stringList.getOrNull(it)
-                                    etNote.setText(listPreset()[index].note)
+                                    etNote.text = listPreset()[index].note
                                 })
                         ).show()
                     }

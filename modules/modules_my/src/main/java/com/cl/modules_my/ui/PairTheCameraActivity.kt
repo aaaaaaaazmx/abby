@@ -85,10 +85,12 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
             addAccessory.observe(this@PairTheCameraActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
+                    val relationId = data?.relationId
                     /*CameraUtils.ipcProcess(this@PairTheCameraActivity, cameraId)*/
                     startActivity(Intent(this@PairTheCameraActivity, StoraceOptioneActivity::class.java).apply {
                         putExtra("accessoryDeviceId", cameraId)
                         putExtra("deviceId", deviceId)
+                        putExtra("relationId", relationId)
                     })
                 }
             })

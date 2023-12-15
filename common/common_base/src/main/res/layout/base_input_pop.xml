@@ -39,13 +39,15 @@
             android:background="@drawable/background_gray_r5">
 
             <EditText
+                android:maxLength="12"
+                android:maxEms="12"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:ellipsize="end"
                 android:maxLines="5"
-                tools:text="12123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123121231212312123"
+                tools:text="1111111111111111111111111111111"
                 android:padding="10dp"
                 android:gravity="start|top"
                 android:id="@+id/et_email"

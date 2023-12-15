@@ -76,7 +76,6 @@ import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
-import com.thingclips.smart.android.common.task.ThreadPoolMonitor.ThreadPoolExecutorMonitor
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.AbsP2pCameraListener
 import com.thingclips.smart.camera.camerasdk.thingplayer.callback.OperationDelegateCallBack
 import com.thingclips.smart.camera.ipccamerasdk.p2p.ICameraP2P
@@ -942,7 +941,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(true)
                         autoFocusEditText(false)
-                        moveUpToKeyboard(false)
+                        moveUpToKeyboard(true)
                         autoOpenSoftInput(false)
                         asCustom(PresetPop(it, bean)).show()
                     }
@@ -967,66 +966,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             val lightSchedule = data.lightSchedule
                             val muteOn = data.muteOn
                             val muteOff = data.muteOff
+                            logI("toDP: $fanIntake, $fanExhaust, $lightIntensity, $lightSchedule, $muteOn, $muteOff")
 
-                            fanIntake?.let { fantake ->
-                                DeviceControl.get().success {
-                                    mViewMode.setFanIntake(fantake)
-                                }.error { code, error ->
-                                    ToastUtil.shortShow(
-                                        """
-                              fanIntake: 
-                              code-> $code
-                              errorMsg-> $error
-                                """.trimIndent()
-                                    )
-                                    mViewMode.setFanIntake("${mViewMode.getFanIntake.value}")
-                                }.fanIntake(fantake.safeToInt())
-                            }
-                            fanExhaust?.let { fanExhaust ->
-                                DeviceControl.get().success {
-                                    mViewMode.setFanExhaust(fanExhaust)
-                                }.error { code, error ->
-                                    ToastUtil.shortShow(
-                                        """
-                              fanExhaust: 
-                              code-> $code
-                              errorMsg-> $error
-                                """.trimIndent()
-                                    )
-                                    mViewMode.setFanExhaust("${mViewMode.getFanExhaust.value}")
-                                }.fanExhaust(fanExhaust.safeToInt())
-                            }
-                            lightIntensity?.let { lightIntensity ->
-                                DeviceControl.get().success {
-                                    mViewMode.setGrowLight(lightIntensity)
-                                }.error { code, error ->
-                                    ToastUtil.shortShow(
-                                        """
-                                                  lightIntensity: 
-                                                  code-> $code
-                                                  errorMsg-> $error
-                                                    """.trimIndent()
-                                    )
-                                    mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                                }.lightIntensity(lightIntensity.safeToInt())
-                            }
-
+                            fanIntake?.let { it1 -> mViewMode.setFanIntake(it1) }
+                            fanExhaust?.let { it1 -> mViewMode.setFanExhaust(it1) }
+                            lightIntensity?.let { it1 -> mViewMode.setGrowLight(it1) }
                             ftTimer.text = "$lightSchedule"
                             mViewMode.setmuteOn(muteOff)
                             mViewMode.setmuteOn(muteOn)
+
+                            val dpBean = AllDpBean(cmd = "6", gl = lightIntensity, gls = muteOn, gle= muteOff, ex = fanExhaust, `in` = fanIntake)
+
                             // 开灯时间
                             when (muteOn.safeToInt()) {
                                 12 -> 0
                                 24 -> 12
                                 else -> muteOn.safeToInt()
                             }.let { it2 ->
-                                DeviceControl.get()
-                                    .success {
-                                    }
-                                    .error { code, error ->
-                                        logI("开灯时间!: $code $error")
-                                    }
-                                    .lightTime(it2)
+                                dpBean.gls = it2.toString()
                             }
 
                             // 关灯时间
@@ -1035,15 +992,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 24 -> 12
                                 else -> muteOff.safeToInt()
                             }.let { it2 ->
-                                DeviceControl.get()
-                                    .success {
-                                    }
-                                    .error { code, error ->
-                                        logI("关灯时间!: $code $error")
-                                    }
-                                    .closeLightTime(it2)
+                                dpBean.gle = it2.toString()
                             }
-
+                            // 发送多个DP点
+                            GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
                             // 点击Load之后就保存。
                             Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, data.name.toString())
                         })).show()
@@ -1410,6 +1362,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             .error { code, error -> }
                             .closeLightTime(it2)
                     }
+
+                    // 调节灯光事件
+                    DeviceControl.get()
+                        .success {}
+                        .error { code, error -> }
+                        .lightIntensity(lightIntensity ?: 0)
                 })
         }).show()
     }
@@ -2293,7 +2251,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 ViewUtils.setInvisible(binding.pplantNinth.ivSwitchCamera, !isHave)
 
                                 // 获取摄像头配件信息
-                                mViewMode.getAccessoryInfo(devId)
+                                mViewMode.getAccessoryInfo(devId, cameraId)
 
                                 // 不加载摄像头
                                 if (!isHave || cameraId.isBlank() || !isLoadCamera || isPlay) return@getCameraFlag
@@ -2374,82 +2332,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    // 获取InterCome信息
-                    getInterComeData()
-                }
-            })
-            // InterCome信息
-            getInterComeData.observe(viewLifecycleOwner, resourceObserver {
-                error { errorMsg, code ->
-                    // 更新InterCome用户信息
-                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
-                        map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
-                    )
-
-                    // 这是从切换设备中带过来设备信息
-                    deviceInfo.value?.spaceType?.let {
-                        if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
-                            // 删除未读消息
-                            // mViewMode.removeFirstUnreadMessage()
-                            // 清空气泡状态
-                            // mViewMode.clearPopPeriodStatus()
-                            //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
-                            //  因为在listDevice中隐藏了abby的植物展示图片，只需要添加个判断，是否隐藏就好了。
-                            //  还是有就是帐篷界面展示摄像头和abby机器展示摄像头多了张图片。
-                            //  如果是帐篷，如果没有摄像头、那么就显示帐篷的图片。
-                            // mViewMode.userDetail()
-                            mViewMode.checkPlant()
-                            return@error
-                        }
-                    }
-
-                    // 更新涂鸦Bean
-                    ThingHomeSdk.newHomeInstance(mViewMode.homeId)
-                        .getHomeDetail(object : IThingHomeResultCallback {
-                            override fun onSuccess(bean: HomeBean?) {
-                                bean?.let { it ->
-                                    val arrayList = it.deviceList as ArrayList<DeviceBean>
-                                    logI("123123123: ${arrayList.size}")
-                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
-                                        .apply {
-                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
-                                            if (null == this) {
-                                                val aa = mViewMode.thingDeviceBean
-                                                aa()?.devId = mViewMode.deviceId.value
-                                                GSON.toJson(aa)?.let {
-                                                    Prefs.putStringAsync(
-                                                        Constants.Tuya.KEY_DEVICE_DATA,
-                                                        it
-                                                    )
-                                                }
-                                                return@apply
-                                            }
-                                            GSON.toJson(this)?.let {
-                                                Prefs.putStringAsync(
-                                                    Constants.Tuya.KEY_DEVICE_DATA,
-                                                    it
-                                                )
-                                            }
-
-                                            // 重新注册服务
-                                            // 开启服务
-                                            val intent = Intent(
-                                                context,
-                                                TuYaDeviceUpdateReceiver::class.java
-                                            )
-                                            context?.startService(intent)
-                                            // 切换之后需要重新刷新所有的东西
-                                            mViewMode.checkPlant()
-                                        }
-                                }
-                            }
-
-                            override fun onError(errorCode: String?, errorMsg: String?) {
-
-                            }
-                        })
-                }
-                success {
                     // 更新InterCome用户信息
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
                         map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
@@ -3072,43 +2954,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
 
                     // 显示温湿度
-                    data?.apply {
-                        if (null == envirVO) {
-                            ViewUtils.setVisible(null == data?.envirVO, binding.pplantNinth.ivZpAdd)
-                            return@success
-                        }
-                        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-                        val roomTemp = temperatureConversion(envirVO?.roomTemp.safeToFloat(), isMetric)
-                        val roomHumidity = envirVO?.roomHumiture
-                        val temp = temperatureConversion(envirVO?.temp.safeToFloat(), isMetric)
-                        val humidity = envirVO?.humiture
-                        val tempUnit = if (isMetric) "℃" else "℉"
-                        val humidityUnit = "%"
-                        if (roomTemp.isEmpty() || roomHumidity.isNullOrEmpty() || temp.isEmpty() || humidity.isNullOrEmpty()) {
-                            ViewUtils.setVisible(roomTemp.isEmpty() || roomHumidity.isNullOrEmpty() || temp.isEmpty() || humidity.isNullOrEmpty(), binding.pplantNinth.ivZpAdd)
-                            return@success
-                        }
-                        // proMode下面的温湿度
-                        binding.plantManual.tvTemperatureValue.text =
-                            temperatureConversionForTemp(getWenDu.value)
-                        // proMode下面的温湿度
-                        binding.plantManual.tvHumidityValue.text = getRoomHumidity(getHumidity.value)
-
-                        // 帐篷下的环境温湿度展示逻辑。
-                        ViewUtils.setGone(binding.pplantNinth.ivZpAdd, roomTemp.isNotEmpty() || roomHumidity.isNotEmpty() || temp.isNotEmpty() || humidity.isNotEmpty())
-                        binding.pplantNinth.tentHealthStatus.text = buildSpannedString {
-                            if (temp.isNotEmpty() && humidity.isNotEmpty()) {
-                                append("$temp$tempUnit $humidity$humidityUnit")
-                            }
-                        }
-
-                        binding.pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
-                            // Check if room temperature is not empty and should be displayed
-                            if (roomTemp.isNotEmpty() && roomHumidity.isNotEmpty()) {
-                                append("room $roomTemp$tempUnit $roomHumidity$humidityUnit")
-                            }
-                        }
-                    }
+                    showTemp()
                 }
             })
 
@@ -3171,6 +3017,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         }
                         return@success
                     }
+
+                    // 显示温湿度
+                    showTemp()
 
                     // 2. 【获取植物基本信息】接口新增字段 [发芽剩余时间]，类型为时间戳，0为倒计时结束，该字段只在发芽阶段返回，点了Next后返回为NULL。
                     ViewUtils.setVisible(
@@ -4028,6 +3877,58 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
     }
 
+    private fun Resource.Success<PlantInfoData>.showTemp() {
+        data?.apply {
+            // Ensure envirVO is not null before proceeding.
+            val environment = if (null == envirVO) {
+                ViewUtils.setVisible(null == data?.envirVO && mViewMode.isZp.value == true, binding.pplantNinth.ivZpAdd)
+                return
+            } else {
+                envirVO
+            }
+
+            // Get the user preference for the unit system once.
+            val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+            val tempUnit = if (isMetric) "℃" else "℉"
+            val humidityUnit = "%"
+
+            // Perform temperature and humidity conversions.
+            val roomTemp = environment?.roomTemp?.let { temperatureConversion(it.safeToFloat(), isMetric) } ?: ""
+            val roomHumidity = environment?.roomHumiture ?: ""
+            val temp = environment?.temp?.let { temperatureConversion(it.safeToFloat(), isMetric) } ?: ""
+            val humidity = environment?.humiture ?: ""
+
+            // Update the UI elements.
+            with(binding) {
+                // Set visibility based on the availability of temperature or humidity data.
+                val isDataAvailable = (temp.isNotEmpty() || humidity.isNotEmpty() || roomTemp.isNotEmpty() || roomHumidity.isNotEmpty())  && mViewMode.isZp.value == true
+                ViewUtils.setGone(pplantNinth.ivZpAdd, isDataAvailable)
+
+                // 获取温度传感器值
+                plantManual.tvTemperatureValue.text =  mViewMode.temperatureConversionForTemp(mViewMode.getWenDu.value)
+                plantManual.tvHumidityValue.text = mViewMode.getRoomHumidity(mViewMode.getHumidity.value)
+
+                // Update the temperature and humidity values.
+                pplantNinth.tentHealthStatus.text = buildSpannedString {
+                    if (temp.isNotEmpty() && humidity.isNotEmpty()) {
+                        append("$temp$tempUnit $humidity$humidityUnit")
+                    }
+                }
+
+                pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
+                    if (roomTemp.isNotEmpty() && roomHumidity.isNotEmpty()) {
+                        append("Room $roomTemp$tempUnit $roomHumidity$humidityUnit")
+                    }
+                }
+
+                // Adjust the text size if the tent health status is empty.
+                if (pplantNinth.tentHealthStatus.text.isEmpty()) {
+                    pplantNinth.tentHealthStatusSmall.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                }
+            }
+        }
+    }
+
     /**
      * 初始化摄像头的尺寸大小
      */
@@ -4443,8 +4344,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
         // 是否显示取消按钮
-        binding.pplantNinth.ivClose.visibility =
-            if (UnReadConstants.noCancel.contains(unRead?.type)) View.GONE else View.VISIBLE
+        /*binding.pplantNinth.ivClose.visibility =
+            if (UnReadConstants.noCancel.contains(unRead?.type)) View.GONE else View.VISIBLE*/
     }
 
     /**

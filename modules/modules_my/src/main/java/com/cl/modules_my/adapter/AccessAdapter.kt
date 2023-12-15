@@ -48,12 +48,12 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
 
         // 需要根据单位来进行转变
         val temp = temperatureConversion(item.temperature.safeToFloat(), isMetric)
-        val tempUnit = if (isMetric) " ℃" else " ℉"
+        val tempUnit = if (isMetric) "℃" else "℉"
         val humidity = item.humidity ?: ""
         val humidityUnit = "%"
         val endUnit = "RH"
         logI("123123, : -> $temp, $humidity, $isMetric")
-        ViewUtils.setVisible(temp.isNotEmpty() || humidity.isNotEmpty(), holder.getView(R.id.tv_device_status))
+        ViewUtils.setVisible(!item.temperature.isNullOrEmpty() || !item.humidity.isNullOrEmpty(), holder.getView(R.id.tv_device_status))
         // 分别判断temp和humidity是否为空
         if (temp.isNotEmpty() && humidity.isNotEmpty()) {
             holder.setText(R.id.tv_device_status, "$temp$tempUnit $humidity$humidityUnit $endUnit")

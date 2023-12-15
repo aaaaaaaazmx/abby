@@ -1529,44 +1529,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
     fun getEaseUINumber() {
         // 只有当设备绑定且在线的时候、才去添加
-        if (userDetail.value?.data?.deviceStatus == "1" && userDetail.value?.data?.deviceOnlineStatus == "1") {
+        if (userDetail.value?.data?.deviceStatus == "1" && userDetail.value?.data?.deviceOnlineStatus == "1" && _isZP.value == false) {
             _unReadMessageNumber.postValue(InterComeHelp.INSTANCE.getUnreadConversationCount())
         }
-    }
-
-
-    /**
-     * 获取InterCome同步数据
-     */
-    private val _getInterComeData = MutableLiveData<Resource<Map<String, Any>>>()
-    val getInterComeData: LiveData<Resource<Map<String, Any>>> = _getInterComeData
-    fun getInterComeData() = viewModelScope.launch {
-        repository.intercomDataAttributeSync()
-            .map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code,
-                        it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
-                emit(Resource.Loading())
-            }
-            .catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1,
-                        "${it.message}"
-                    )
-                )
-            }.collectLatest {
-                _getInterComeData.value = it
-            }
     }
 
 
@@ -1575,9 +1540,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
     val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
-    fun getAccessoryInfo(deviceId: String) {
+    fun getAccessoryInfo(deviceId: String, accessoryDeviceId: String) {
         viewModelScope.launch {
-            repository.getAccessoryInfo(deviceId)
+            repository.getAccessoryInfo(deviceId, accessoryDeviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

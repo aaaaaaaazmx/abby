@@ -110,7 +110,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         /**
          * 摄像头界面需要改变这些文案
          */
-        ViewUtils.setVisible(pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_ABBY, binding.tvBleNane)
+        ViewUtils.setGone(binding.tvBleNane, pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA || pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS)
         if (pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_CAMERA) {
             //1.abby only supports 2.4GHz Wi-Fi.
             //Wi-Fi only supports alphanumeric character
@@ -146,8 +146,13 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         }
 
         binding.tvRouter.setSafeOnClickListener(lifecycleScope) {
-            // todo 没写。
-            ToastUtil.shortShow("Router setting")
+            //  没写。
+            val intent = Intent(this@PairDistributionWifiActivity, KnowMoreActivity::class.java)
+            intent.putExtra(
+                Constants.Global.KEY_TXT_ID,
+                Constants.Fixed.KEY_FIXED_ID_ROUTER_SETTINGS
+            )
+            startActivity(intent)
         }
     }
 
@@ -169,7 +174,10 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         mViewModel.apply {
             // 配件添加成功回调
             accessoryAdd.observe(this@PairDistributionWifiActivity, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
                 success {
                     ToastUtil.shortShow("Added successfully")
                     // 添加成功跳转
@@ -192,6 +200,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             // 同步设备信息
             syncDeviceInfo.observe(this@PairDistributionWifiActivity, resourceObserver {
                 error { errorMsg, code ->
+                    hideProgressLoading()
                     ToastUtil.show(errorMsg)
                 }
             })
@@ -606,6 +615,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 handle: ${(handle as? ConfigErrorBean).toString()}
                             """.trimIndent()
                                 )
+                                hideProgressLoading()
                                 ToastUtil.shortShow(msg)
                                 Reporter.reportTuYaError("getActivator", msg, code.toString())
                                 // 3 密码错误 4 路由器连接失败（大概率是密码错误）
@@ -715,6 +725,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 handle: ${(handle as? ConfigErrorBean).toString()}
                             """.trimIndent()
                                 )
+                                hideProgressLoading()
                                 ToastUtil.shortShow(msg)
                                 Reporter.reportTuYaError("getActivator", msg, code.toString())
                                 // 3 密码错误 4 路由器连接失败（大概率是密码错误）

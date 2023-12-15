@@ -50,9 +50,9 @@ class CameraSettingViewModel @Inject constructor(private val repository: MyRepos
      */
     private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
     val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
-    fun getAccessoryInfo(deviceId: String) {
+    fun getAccessoryInfo(deviceId: String, accessoryDeviceId: String) {
         viewModelScope.launch {
-            repository.getAccessoryInfo(deviceId)
+            repository.getAccessoryInfo(deviceId, accessoryDeviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

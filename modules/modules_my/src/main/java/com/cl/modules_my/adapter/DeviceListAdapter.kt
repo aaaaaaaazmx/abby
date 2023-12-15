@@ -132,7 +132,7 @@ class DeviceListAdapter(
             ListDeviceBean.MONITOR_VIEW_OUT, ListDeviceBean.KEY_MONITOR_OUT -> {
                 // 需要根据单位来进行转变
                 val temp = temperatureConversion(item.temperature.safeToFloat(), isMetric)
-                val tempUnit = if (isMetric) " ℃" else " ℉"
+                val tempUnit = if (isMetric) "℃" else "℉"
                 val humidity = item.humidity ?: ""
                 val humidityUnit = "%"
                 val endUnit = "RH"

@@ -44,8 +44,10 @@
                 android:textSize="15sp"
                 tools:text="hey abby#1 | OG Kushhey " />
             <LinearLayout
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_jiqi"
                 android:id="@+id/ll_time"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal"

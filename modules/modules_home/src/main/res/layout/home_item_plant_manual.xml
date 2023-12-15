@@ -333,6 +333,7 @@
 
                 <!--ON/OFF/DIM(Door Open)，开门就是DIM、 关门就判断灯光强度是否等于0 -->
                 <TextView
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:text='@{viewModel.doorStatus == "true" ? "DIM(Door Open)" : viewModel.getCurrentGrowLight == 0 ? "OFF" : "ON" }'
                     tools:text="DIM(Door Open)"

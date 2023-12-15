@@ -69,8 +69,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
     override fun initView() {
         // 获取自动化信息。
         mViewModel.getAutomationInfo(automationId ?: "", accessoryId)
-        // 获取自动化列表类型
-        deviceId?.let { mViewModel.getAutoType(it) }
+
     }
 
     @SuppressLint("CheckResult", "SetTextI18n")
@@ -86,6 +85,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     if ((list?.size ?: 0) > 0) {
                         val bean = list?.get(0)
                         binding.tvIfType.text = data?.firstOrNull { it.type == bean?.type }?.name
+                        logI("12312312: ${data?.firstOrNull { it.type == bean?.type }?.name}")
                         when (bean?.operator) {
                             ">=" -> {
                                 binding.tvIfText.text = "≤ ${bean.value}"
@@ -97,34 +97,14 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                         }
                         when (bean?.type) {
                             KEY_ROOM_RH -> {
-                                //  需要做单位转换
                                 list.firstOrNull { it.type == KEY_ROOM_RH }.apply {
-                                    mViewModel.setRoomRhTemperature(if (this == null) "70" else value.toString())
-
-                                    kotlin.runCatching {
-                                        if (this == null) {
-                                            binding.tvIfText.text = if (mViewModel.isMetricSystem) {
-                                                // 摄氏度
-                                                "≥ ${
-                                                    ((70.minus(32)).times(5f).div(9f)).roundToInt()
-                                                }°C"
-                                            } else {
-                                                // 华氏度
-                                                "≥  70F"
-                                            }
-                                            return@apply
-                                        }
-                                        binding.tvIfText.text = if (mViewModel.isMetricSystem) {
-                                            // 摄氏度
-                                            "${if (operator == ">=") "≥" else "≤"} ${
-                                                ((value?.minus(32))?.times(5f)?.div(9f))?.roundToInt()
-                                            }°C"
-                                        } else {
-                                            // 华氏度
-                                            "${if (operator == ">=") "≥" else "≤"} ${value}F"
-                                        }
+                                    mViewModel.setRoomRhTemperature(if (this == null) "40" else value.toString())
+                                    if (this == null) {
+                                        binding.tvIfText.text = "≤ 40%"
+                                        return@apply
                                     }
-
+                                    binding.tvIfText.text =
+                                        "${if (operator == ">=") "≥" else "≤"} $value%"
                                     return@apply
                                 }
                             }
@@ -259,6 +239,9 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                 }
                 binding.etEmail.setText(data?.accessoryName)
                 binding.tvThenType.text = if (data?.status == 0) "Turn Off" else "Turn On"
+
+                // 获取自动化列表类型
+                deviceId?.let { mViewModel.getAutoType(it) }
             }
         })
     }
@@ -277,36 +260,22 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     val name = mViewModel.autoTypeList.value?.data?.get(position)?.name
                     when (type) {
                         KEY_ROOM_RH -> {
-                            binding.tvIfType.text = name
-                            // 需要做单位转换
                             // 切换之后需要展示默认值。
+                            binding.tvIfType.text = name
                             mViewModel.automationInfo.value?.data?.list?.firstOrNull { it.type == type }
                                 .apply {
-                                    logI("12124124: ${mViewModel.setRoomRhTemperature.value}")
-                                    kotlin.runCatching {
-                                        if (this == null) {
-                                            binding.tvIfText.text =
-                                                if (mViewModel.isMetricSystem) "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} ${
-                                                    ((mViewModel.setRoomRhTemperature.value?.safeToInt()
-                                                        ?.minus(32))?.times(5f)
-                                                        ?.div(9f))?.roundToInt()
-                                                }°C" else "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} ${mViewModel.setRoomRhTemperature.value}F"
-                                        } else {
-                                            binding.tvIfText.text = if (mViewModel.isMetricSystem) {
-                                                // 摄氏度
-                                                "${if (operator == ">=") "≥" else "≤"} ${
-                                                    ((value?.minus(32))?.times(5f)
-                                                        ?.div(9f))?.roundToInt()
-                                                }°C"
-                                            } else {
-                                                // 华氏度
-                                                "${if (operator == ">=") "≥" else "≤"} ${value}F"
-                                            }
-                                            mViewModel.setRoomRhTemperature("$value")
-                                            mViewModel.setTemperatureType(if (operator == ">=") 0 else 1)
-                                        }
-                                        valueCLickPop(type)
+                                    if (this == null) {
+                                        binding.tvIfText.text =
+                                            "${if (mViewModel.setHumidityType.value == 0) "≥" else "≤"} ${mViewModel.setRoomRhTemperature.value}%"
+
+                                    } else {
+                                        binding.tvIfText.text =
+                                            "${if (operator == ">=") "≥" else "≤"} $value%"
+
+                                        mViewModel.setRoomRhTemperature("$value")
+                                        mViewModel.setHumidityType(if (operator == ">=") 0 else 1)
                                     }
+                                    valueCLickPop(type)
                                 }
                         }
 
@@ -457,7 +426,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     list =
                     mutableListOf(
                         GetAutomationRuleBean.AutomationRuleListBean(
-                            operator = if (type == KEY_TEMPERATURE || type == KEY_ROOM_RH || type == KEY_ROOM_TEMP) if (mViewModel.setTemperatureType.value == 0) ">=" else "<=" else if (mViewModel.setHumidityType.value == 0) ">=" else "<=",
+                            operator = if (type == KEY_TEMPERATURE || type == KEY_ROOM_TEMP) if (mViewModel.setTemperatureType.value == 0) ">=" else "<=" else if (mViewModel.setHumidityType.value == 0) ">=" else "<=",
                             type = type,
                             value = when (type) {
                                 KEY_TEMPERATURE -> mViewModel.setTemperature.value?.safeToInt()
@@ -533,43 +502,20 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     .isDestroyOnDismiss(false)
                     .dismissOnTouchOutside(false)
                     .asCustom(
-                        ChooseTemperaturePop(
+                        ChooseHumidityPop(
                             this@AddAutomationActivity,
-                            scope = mViewModel.setTemperatureType.value ?: 0,
-                            value = mViewModel.setRoomRhTemperature.value ?: "70",
+                            scope = mViewModel.setHumidityType.value ?: 0,
+                            value = mViewModel.setRoomRhTemperature.value ?: "40",
                             onConfirmAction = { scope, value ->
-                                logI("1231231231: $scope, $value")
-                                mViewModel.setTemperatureType(scope)
+                                mViewModel.setHumidityType(scope)
                                 mViewModel.setRoomRhTemperature(value)
-                                kotlin.runCatching {
-                                    when (scope) {
-                                        0 -> {
-                                            binding.tvIfText.text =
-                                                if (mViewModel.isMetricSystem) {
-                                                    // 摄氏度
-                                                    "≥ ${
-                                                        ((value.safeToInt().minus(32)).times(5f)
-                                                            .div(9f)).roundToInt()
-                                                    }°C"
-                                                } else {
-                                                    // 华氏度
-                                                    "≥ ${value}F"
-                                                }
-                                        }
+                                when (scope) {
+                                    0 -> {
+                                        binding.tvIfText.text = "≥ $value%"
+                                    }
 
-                                        1 -> {
-                                            binding.tvIfText.text =
-                                                if (mViewModel.isMetricSystem) {
-                                                    // 摄氏度
-                                                    "≤ ${
-                                                        ((value.safeToInt().minus(32)).times(5f)
-                                                            .div(9f)).roundToInt()
-                                                    }°C"
-                                                } else {
-                                                    // 华氏度
-                                                    "≤ ${value}F"
-                                                }
-                                        }
+                                    1 -> {
+                                        binding.tvIfText.text = "≤ $value%"
                                     }
                                 }
                             },

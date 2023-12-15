@@ -37,6 +37,9 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToFloat
+import com.cl.common_base.ext.temperatureConversion
+import com.cl.common_base.ext.temperatureConversionOne
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
@@ -233,6 +236,16 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
         logSaveOrUpdateReq.logTime =
             if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        // 这个是默认返回摄氏度的。
+        // isUpload就需要转换成华氏度上传。
+        if (isUpload) {
+            logSaveOrUpdateReq.roomTemp
+        } else {
+            if (logId.isNullOrEmpty()) {
+                // 因为编辑返回的又是华氏度，新增的是摄氏度。
+                logSaveOrUpdateReq.roomTemp = temperatureConversionOne(logSaveOrUpdateReq.roomTemp.safeToFloat(), isMetric)
+            }
+        }
         /*logSaveOrUpdateReq.spaceTemp = temperatureConversion(logSaveOrUpdateReq.spaceTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.waterTemp = temperatureConversion(logSaveOrUpdateReq.waterTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.plantHeight = unitsConversion(logSaveOrUpdateReq.plantHeight?.toFloatOrNull() ?: 0f, isMetric, isUpload)

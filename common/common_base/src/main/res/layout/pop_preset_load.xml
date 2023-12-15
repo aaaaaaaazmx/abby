@@ -90,14 +90,13 @@
                 android:textSize="14sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
-            <EditText
+            <TextView
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
                 android:id="@+id/et_note"
                 android:gravity="start"
                 android:padding="5dp"
-                android:hint="input your notes here"
                 android:textColorHint="#979797"
                 android:textColor="@color/black"
                 android:textSize="12sp"

@@ -122,7 +122,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     /**
      * 摄像头Id
      */
-    private val cameraId by lazy { intent.getStringExtra(BasePopActivity.KEY_CAMERA_ID) }
+    // private val cameraId by lazy { intent.getStringExtra(BasePopActivity.KEY_CAMERA_ID) }
 
     /**
      * 是否是预览
@@ -521,14 +521,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    cameraId?.let {
-                        TuyaCameraUtils().unBindCamera(it, onErrorAction = { msg ->
-                            ToastUtil.shortShow(msg)
-                        }, onSuccessAction = {
-                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
-                                .navigation()
-                        })
-                    } ?: ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                    ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                         .navigation()
                 }
             })
@@ -717,7 +710,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 R.id.cl_check,
                 R.id.tv_page_txt,
                 R.id.tv_txt,
-                R.id.tv_delay_task
+                R.id.tv_delay_task,
             )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
@@ -792,11 +785,18 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     }
 
                     R.id.tv_txt -> {
-                        if (bean.value?.url.isNullOrEmpty()) return@setOnItemChildClickListener
-                        // 跳转到HTML
-                        val intent = Intent(context, WebActivity::class.java)
-                        intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
-                        context.startActivity(intent)
+                        if (!bean.value?.articleId.isNullOrEmpty()) {
+                            InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = bean.value?.articleId)
+                            return@setOnItemChildClickListener
+                        }
+                        if (!bean.value?.url.isNullOrEmpty()) {
+                            // 跳转到HTML
+                            val intent = Intent(context, WebActivity::class.java)
+                            intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
+                            context.startActivity(intent)
+                            return@setOnItemChildClickListener
+                        }
+
                     }
                     // 延迟任务
                     R.id.tv_delay_task -> {

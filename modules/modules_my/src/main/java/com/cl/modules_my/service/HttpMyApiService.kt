@@ -371,7 +371,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/getAccessoryInfo")
-    fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
+    fun getAccessoryInfo(@Field("deviceId") deviceId: String, @Field("accessoryDeviceId") accessoryDeviceId: String): Flow<HttpResult<UpdateInfoReq>>
 
     /**
      * 帐篷设备的设备详情

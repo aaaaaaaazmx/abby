@@ -88,7 +88,7 @@ interface BaseApiService {
         @Field("accessoryId") accessoryId: String,
         @Field("deviceId") deviceId: String,
         @Field("accessoryDeviceId")accessoryDeviceId: String? = null,
-    ): Flow<HttpResult<BaseBean>>
+    ): Flow<HttpResult<AccessoryAddData>>
 
     /**
      * 获取广告图文

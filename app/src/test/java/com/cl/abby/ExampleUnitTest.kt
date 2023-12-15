@@ -20,12 +20,18 @@ class ExampleUnitTest {
             }
         }*/
 
-        val url = "https://heyabbytest.s3.us-west-1.amazonaws.com/user/trend/1f705984a8f64.jpg?X-Amz-Algorit"
+        /*val url = "https://heyabbytest.s3.us-west-1.amazonaws.com/user/trend/1f705984a8f64.jpg?X-Amz-Algorit"
         val prefix = "https://heyabbytest.s3.us-west-1.amazonaws.com/"
         val startIndex = prefix.length
         val endIndex = url.indexOf('?', startIndex) // 找到问号的位置，如果没有问号可以使用url.length
         val result = url.substring(startIndex, if (endIndex == -1) url.length else endIndex)
-        println("12312312312: $result")
+        println("12312312312: $result")*/
+
+        val result =  25.7.times(9f).div(5f).plus(32)
+        val result2 =  257.times(9f).div(5f).plus(32).div(10)
+        val result3 = ((257 * 9f / 5f) + 32) / 10
+        val result4 = ((25.7 * 9f / 5f) + 32)
+        println("12312312312: $result,,,$result2,,,$result3,,,$result4")
     }
 
     private fun convertTime(createTime: String? = null): String {

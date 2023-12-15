@@ -164,8 +164,8 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
     /**
      * 新增配件
      */
-    private val _addAccessory = MutableLiveData<Resource<BaseBean>>()
-    val addAccessory: LiveData<Resource<BaseBean>> = _addAccessory
+    private val _addAccessory = MutableLiveData<Resource<AccessoryAddData>>()
+    val addAccessory: LiveData<Resource<AccessoryAddData>> = _addAccessory
     fun addAccessory(accessoryId: String, deviceId: String, accessoryDeviceId: String? = null) {
         viewModelScope.launch {
             service.accessoryAdd(accessoryId, deviceId, accessoryDeviceId)

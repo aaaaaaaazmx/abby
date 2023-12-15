@@ -141,11 +141,11 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
             R.id.tv_add -> {
                 // 不能添加
                 if (itemData?.canAdd == false) {
-                    if (itemData.isShared == true) {
+                    /*if (itemData.isShared == true) {
                         // 不能添加
                         ToastUtil.shortShow(itemData.cannotMsg)
                         return@OnItemChildClickListener
-                    }
+                    }*/
                     xpopup(this@AddAccessoryActivity) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(true)
@@ -229,6 +229,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 // 添加其他USB配件
                 // 判断是否包含了camera\因为camera需要自己手动解绑
                 // 跳转到富文本界面
+                // 目前只有1个USB口，所以每次添加后台执行的是覆盖上一个USB口配件的操作，由于Camera是需要手动本地解绑的。所以这里需要判断是否包含了CameraId
                 val intent = Intent(this, KnowMoreActivity::class.java)
                 intent.putExtra(Constants.Global.KEY_TXT_ID, itemData?.textId)
                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES)
@@ -237,14 +238,18 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                 intent.putExtra(BasePopActivity.KEY_PART_ID, "${itemData?.accessoryId}")
-                accessoryList.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }
+                /*accessoryList.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }
                     ?.apply {
                         // 添加Camera的Id、 用于手动解绑。
                         intent.putExtra(
                             BasePopActivity.KEY_CAMERA_ID,
                             accessoryDeviceId
                         )
-                    }
+                        intent.putExtra(
+                            BasePopActivity.KEY_RELATION_ID,
+                            relationId
+                        )
+                    }*/
                 startActivity(intent)
             }
         }

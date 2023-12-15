@@ -7,6 +7,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.device.TuyaCameraUtils
@@ -49,7 +50,9 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
 
     override fun initView() {
         //  需要先获取当前的存储模式，然后设置选中状态，请求接口才能知道
-        deviceId?.let { mViewModel.getAccessoryInfo(it) }
+        letMultiple(deviceId, accessoryDeviceId) { a,b ->
+            mViewModel.getAccessoryInfo(a, b)
+        }
     }
 
     override fun observe() {

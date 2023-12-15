@@ -386,6 +386,9 @@ object Constants {
         // 新增配件
         const val KEY_FIXED_ID_NEW_ACCESSORIES = "xxxxx"
 
+        //router_settings
+        const val KEY_FIXED_ID_ROUTER_SETTINGS = "router_settings"
+
         // 手动模式自动模式
         const val KEY_FIXED_ID_MANUAL_MODE = "6f5c5f54f3515fe9c744980e39583e95"
     }
