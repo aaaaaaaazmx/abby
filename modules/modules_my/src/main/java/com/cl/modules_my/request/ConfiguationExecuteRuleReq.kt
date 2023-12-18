@@ -10,6 +10,7 @@ data class ConfiguationExecuteRuleReq(
     val deviceId: String? = null,
     val iocn: String? = null,
     val status: Int? = null,
+    val portId: String? = null,
     val thenDescribe: String? = null,
     val list: MutableList<GetAutomationRuleBean.AutomationRuleListBean>? = null,
 ): BaseBean()

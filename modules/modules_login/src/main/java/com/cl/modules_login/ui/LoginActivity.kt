@@ -320,6 +320,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     login()
                     return
                 }
+                "22" -> {
+                    binding.accountEditText.setText("m17680319466@163.com")
+                    binding.passwordEditText.setText("zxl123456")
+                    login()
+                    return
+                }
+
                 "2" -> {
                     binding.accountEditText.setText("448477235@qq.com")
                     binding.passwordEditText.setText("zxl123456")

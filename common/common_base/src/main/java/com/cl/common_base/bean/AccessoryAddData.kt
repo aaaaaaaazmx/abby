@@ -7,4 +7,5 @@ class AccessoryAddData(
     var status: String,
     var isAuto: String,
     var accessoryDeviceId: String,
+    var relationId: String,
 ): BaseBean()

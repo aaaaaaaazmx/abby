@@ -275,7 +275,7 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/getAccessoryInfo")
-    fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
+    fun getAccessoryInfo(@Field("deviceId") deviceId: String, @Field("accessoryDeviceId") accessoryDeviceId: String): Flow<HttpResult<UpdateInfoReq>>
 
     /**
      * 获取氧气币列表

@@ -14,6 +14,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
+import com.cl.modules_my.request.UpdateSubportReq
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -196,9 +197,9 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
      */
     private val _ruleList = MutableLiveData<Resource<AutomationListBean>>()
     val ruleList: LiveData<Resource<AutomationListBean>> = _ruleList
-    fun getRuleList(accessoryId: String, deviceId: String) {
+    fun getRuleList(accessoryId: String, deviceId: String, portId: String? = null) {
         viewModelScope.launch {
-            repository.automationList(accessoryId, deviceId)
+            repository.automationList(accessoryId, deviceId, portId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -223,6 +224,42 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
                     )
                 }.collectLatest {
                     _ruleList.value = it
+                }
+        }
+    }
+
+    /**
+     * 修改配件信息
+     */
+    private val _updateAccessory = MutableLiveData<Resource<BaseBean>>()
+    val updateAccessory: LiveData<Resource<BaseBean>> = _updateAccessory
+    fun updateAccessory(body: UpdateSubportReq) {
+        viewModelScope.launch {
+            repository.updateSubport(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }
+                .collectLatest {
+                    _updateAccessory.value = it
                 }
         }
     }
@@ -467,6 +504,7 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
                 }
         }
     }
+
     /**
      * 获取图文广告
      */

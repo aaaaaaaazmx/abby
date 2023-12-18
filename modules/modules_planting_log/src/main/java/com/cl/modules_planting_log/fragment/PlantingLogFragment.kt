@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.size
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
@@ -16,6 +17,7 @@ import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.R
@@ -138,15 +140,15 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
             viewModel.getPlantIdByDeviceId(viewModel.userinfoBean()?.deviceId ?: "")
         }
 
-        binding.ivAddLog.setOnClickListener {
+        binding.ivAddDevice.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope){
             if (null == viewModel.getPlantInfoByPlantId.value?.data) {
                 ToastUtil.shortShow("no plants")
-                return@setOnClickListener
+                return@setSafeOnClickListener
             }
-            XPopup.Builder(context).popupPosition(PopupPosition.Bottom).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
+            XPopup.Builder(context).popupPosition(PopupPosition.Top).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
                 .hasShadowBg(true) // 去掉半透明背景
                 //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
-                .atView(binding.ivAddLog).isCenterHorizontal(false).asCustom(context?.let {
+                .atView(binding.ivAddDevice).isCenterHorizontal(false).asCustom(context?.let {
                     PlantChooseLogTypePop(it,
                         list = mutableListOf(
                             PlantLogTypeBean("Log", false),

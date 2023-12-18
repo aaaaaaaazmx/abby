@@ -50,6 +50,7 @@
 
 
                 <ImageView
+                    android:visibility="invisible"
                     android:contentDescription="Add log"
                     android:id="@+id/iv_add_log"
                     android:layout_width="40dp"
@@ -173,6 +174,18 @@
             android:layout_height="match_parent"
              />
         </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+        <ImageView
+            android:id="@+id/iv_add_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@mipmap/plant_add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

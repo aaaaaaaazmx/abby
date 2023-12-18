@@ -19,6 +19,8 @@ data class LogSaveOrUpdateReq(
     var showType: String? = null,
     var spaceTemp: String? = null,
     var tdsEc: String? = null,
+    var roomTemp: String? = null,
+    var roomRH: String? = null,
     var ec: String? = null,
     var trainingAfterPhoto: String? = null,
     var trainingBeforePhoto: String? = null,

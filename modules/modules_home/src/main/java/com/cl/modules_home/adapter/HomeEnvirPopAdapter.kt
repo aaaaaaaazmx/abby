@@ -12,12 +12,14 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.EnvironmentInfoData
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.widget.SwitchButton
 import com.cl.common_base.widget.toast.ToastUtil
+import com.google.android.material.transition.Hold
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
@@ -35,6 +37,8 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
         addItemType(EnvironmentInfoData.KEY_TYPE_FAN, R.layout.home_envir_item_fan_pop)
         addItemType(EnvironmentInfoData.KEY_TYPE_LIGHT, R.layout.home_grow_light_item_pop)
     }
+
+    val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
@@ -162,6 +166,15 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                         setImageResource(com.cl.common_base.R.mipmap.base_gt)
                     } else {
                         setImageResource(com.cl.common_base.R.mipmap.base_error_gt)
+                    }
+                }
+                if (!item.roomData.isNullOrEmpty()) {
+                    if (item.value?.contains("%") == true) {
+                        helper.setText(R.id.tv_going_unit, "Room ${item.roomData}%")
+                    } else if (item.value?.contains("℉") == true) {
+                        val temp = com.cl.common_base.ext.temperatureConversion(item.roomData.safeToFloat(), isMetric)
+                        val tempUnit = if (isMetric) "℃" else "℉"
+                        helper.setText(R.id.tv_going_unit, "Room $temp$tempUnit")
                     }
                 }
             }

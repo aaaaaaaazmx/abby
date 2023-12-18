@@ -105,6 +105,9 @@ object Constants {
     object Pair {
         const val KEY_PAIR_WIFI_NAME = "key_pair_wifi_name"
         const val KEY_PAIR_WIFI_PASSWORD = "key_pair_wifi_password"
+
+        // 不同的wifi设备类型
+        const val KEY_PAIR_WIFI_DEVICE = "key_pair_wifi_device"
     }
 
     // 涂鸦相关
@@ -220,6 +223,24 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 配对设备Abby
+        const val KEY_GLOBAL_PAIR_DEVICE_ABBY = "key_global_pair_device_abby"
+        // 配对设备Camera
+        const val KEY_GLOBAL_PAIR_DEVICE_CAMERA = "key_global_pair_device_camera"
+        // 配对设备排插
+        const val KEY_GLOBAL_PAIR_DEVICE_OUTLETS = "key_global_pair_device_outlets"
+        // 不带显示器的温湿度传感器
+        const val KEY_GLOBAL_PAIR_DEVICE_BOX = "key_global_pair_device_box"
+        // 带显示器的温湿度传感器
+        const val KEY_GLOBAL_PAIR_DEVICE_VIEW = "key_global_pair_device_view"
+
+        // pro_model 配置
+        const val KEY_GLOBAL_PRO_MODEL = "key_global_pro_model"
+        // 是否Load了配置
+        const val KEY_LOAD_CONFIGURED = "key_load_configured"
+        // 灯光的预设值
+        const val KEY_LIGHT_PRESET_VALUE = "key_light_preset_value"
+
         // 是否是第一次注册登录、并且是从未绑定过设备
         const val KEY_GLOBAL_PLANT_FIRST_LOGIN_AND_NO_DEVICE =
             "key_global_plant_first_login_and_no_device"
@@ -364,6 +385,9 @@ object Constants {
 
         // 新增配件
         const val KEY_FIXED_ID_NEW_ACCESSORIES = "xxxxx"
+
+        //router_settings
+        const val KEY_FIXED_ID_ROUTER_SETTINGS = "router_settings"
 
         // 手动模式自动模式
         const val KEY_FIXED_ID_MANUAL_MODE = "6f5c5f54f3515fe9c744980e39583e95"

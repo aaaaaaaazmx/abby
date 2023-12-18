@@ -37,6 +37,9 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToFloat
+import com.cl.common_base.ext.temperatureConversion
+import com.cl.common_base.ext.temperatureConversionOne
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
@@ -98,6 +101,8 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             "spaceTemp" to FieldAttributes("Space Temp(ST)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
             "waterTemp" to FieldAttributes("Water Temp (WT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
             "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "roomTemp" to FieldAttributes("Room Temp(RT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
+            "roomRH" to FieldAttributes("Room RH (RRH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, isShowRefreshIcon = true),
             "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
             "ec" to FieldAttributes("EC", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
@@ -119,7 +124,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
         CustomViewGroupAdapter(
             context = this@PlantingLogActivity,
             fields = listOf(
-                "logTime", "spaceTemp", "waterTemp", "humidity", "ph", "tdsEc", "ec",
+                "logTime", "spaceTemp", "waterTemp", "humidity", "roomTemp", "roomRH", "ph", "tdsEc", "ec",
                 "plantHeight", "lightingOn", "lightingOff", "co2Concentration"
             ),
             noKeyboardFields = listOf(
@@ -231,6 +236,16 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
     private fun updateUnit(logSaveOrUpdateReq: LogSaveOrUpdateReq, isMetric: Boolean, isUpload: Boolean) {
         logSaveOrUpdateReq.logTime =
             if (isUpload) logSaveOrUpdateReq.logTime else DateHelper.formatTime(logSaveOrUpdateReq.logTime?.toLongOrNull() ?: System.currentTimeMillis(), CustomViewGroupAdapter.KEY_FORMAT_TIME)
+        // 这个是默认返回摄氏度的。
+        // isUpload就需要转换成华氏度上传。
+        if (isUpload) {
+            logSaveOrUpdateReq.roomTemp
+        } else {
+            if (logId.isNullOrEmpty()) {
+                // 因为编辑返回的又是华氏度，新增的是摄氏度。
+                logSaveOrUpdateReq.roomTemp = temperatureConversionOne(logSaveOrUpdateReq.roomTemp.safeToFloat(), isMetric)
+            }
+        }
         /*logSaveOrUpdateReq.spaceTemp = temperatureConversion(logSaveOrUpdateReq.spaceTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.waterTemp = temperatureConversion(logSaveOrUpdateReq.waterTemp?.toFloatOrNull() ?: 0f, isMetric, isUpload)
         logSaveOrUpdateReq.plantHeight = unitsConversion(logSaveOrUpdateReq.plantHeight?.toFloatOrNull() ?: 0f, isMetric, isUpload)

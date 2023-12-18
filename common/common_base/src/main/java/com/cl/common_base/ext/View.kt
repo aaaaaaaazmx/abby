@@ -292,20 +292,19 @@ private class HideAndExecOnEndListener(private val view: View, execOnEnd: Runnab
     }
 }
 
-fun View.setSafeOnClickListener(lifecycleScope: LifecycleCoroutineScope, onSafeClick: (View) -> Unit) {
-    // 定义一个Job变量，用于在新的点击事件发生时取消旧的协程任务
-    var job: Job? = null
+fun View.setSafeOnClickListener(lifecycleScope: LifecycleCoroutineScope ? = null, minClickInterval: Long = 500, onSafeClick: (View) -> Unit) {
+    // The last time the view was clicked.
+    var lastClickTime = 0L
+
     setOnClickListener {
-        // 取消旧的协程任务
-        job?.cancel()
-        // 启动一个新的协程任务
-        job = lifecycleScope.launch {
-            // 延迟一段时间后执行点击事件处理函数
-            delay(500)  // 500毫秒内的点击都会被认为是连续点击，只有最后一次点击会生效
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime >= minClickInterval) {
+            lastClickTime = currentTime
             onSafeClick(it)
         }
     }
 }
+
 
 enum class AnimationType {
     ALPHA, SCALE_AND_ALPHA, LIGHT_SCALE_AND_ALPHA, SLIDE_AND_ALPHA, LIGHT_SLIDE_AND_ALPHA

@@ -471,7 +471,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
                 }
                 if (listDRData.isEmpty()) {
                     logI("BLe -> msg: 没有扫描到设备")
-                    ToastUtil.shortShow("The device was not detected.")
+                    // ToastUtil.shortShow("The device was not detected.")
                     scanStopMutableStateFlow.value = true
                 }
             }

@@ -89,6 +89,41 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
         }
     }
 
+    /**
+     * 删除设备接口、用于删除通用配件
+     */
+    private val _deleteDevice = MutableLiveData<Resource<BaseBean>>()
+    val deleteDevice: LiveData<Resource<BaseBean>> = _deleteDevice
+    fun deleteDevice(deviceId: String) {
+        viewModelScope.launch {
+            service.deleteDevice(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _deleteDevice.value = it
+                }
+        }
+    }
 
     /**
      * 任务完成
@@ -129,8 +164,8 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
     /**
      * 新增配件
      */
-    private val _addAccessory = MutableLiveData<Resource<BaseBean>>()
-    val addAccessory: LiveData<Resource<BaseBean>> = _addAccessory
+    private val _addAccessory = MutableLiveData<Resource<AccessoryAddData>>()
+    val addAccessory: LiveData<Resource<AccessoryAddData>> = _addAccessory
     fun addAccessory(accessoryId: String, deviceId: String, accessoryDeviceId: String? = null) {
         viewModelScope.launch {
             service.accessoryAdd(accessoryId, deviceId, accessoryDeviceId)
@@ -282,6 +317,42 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
             )
         }.collectLatest {
             _updateDeviceInfo.value = it
+        }
+    }
+
+    /**
+     * 删除配件
+     */
+    private val _saveCameraSetting = MutableLiveData<Resource<BaseBean>>()
+    val saveCameraSetting: LiveData<Resource<BaseBean>> = _saveCameraSetting
+    fun cameraSetting(body: UpdateInfoReq) {
+        viewModelScope.launch {
+            service.updateInfo(body)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _saveCameraSetting.value = it
+                }
         }
     }
 

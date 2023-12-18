@@ -64,6 +64,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                     binding.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_DELAY_TASK -> {
                 val binding = DataBindingUtil.bind<HomeItemDelayTaskBinding>(holder.itemView)
                 if (binding != null) {
@@ -81,6 +82,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                     binding.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_PICTURE -> {
                 DataBindingUtil.bind<HomePictureItemBinding>(holder.itemView)?.let {
                     it.data = data[position]
@@ -123,54 +125,63 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_CUSTOMER_SERVICE -> {
                 DataBindingUtil.bind<HomeServiceItemBinding>(holder.itemView)?.let {
                     it.data = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_IMAGE_TEXT_JUMP -> {
                 DataBindingUtil.bind<HomeImageTextJumpItemBinding>(holder.itemView)?.let {
                     it.data = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_DISCORD -> {
                 DataBindingUtil.bind<HomeDiscordItemBinding>(holder.itemView)?.let {
                     it.data = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_FINISH_TASK -> {
                 DataBindingUtil.bind<HomeFinisTaskItemBinding>(holder.itemView)?.let {
                     it.data = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_FLUSHING_WEIGH -> {
                 DataBindingUtil.bind<HomeItemPopBinding>(holder.itemView)?.let {
                     it.datas = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_DRYING_WEIGH -> {
                 DataBindingUtil.bind<HomeItemCuringPopBinding>(holder.itemView)?.let {
                     it.datas = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_BUTTON_JUMP -> {
                 DataBindingUtil.bind<HomeItmeButtonJumpBinding>(holder.itemView)?.let {
                     it.data = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_CHECK_BOX -> {
                 DataBindingUtil.bind<HomeItemChexkBoxBinding>(holder.itemView)?.let {
                     it.data = data[position]
                     it.executePendingBindings()
                 }
             }
+
             RichTextData.KEY_TYPE_INPUT_BOX -> {
                 DataBindingUtil.bind<HomeItemInputBoxBinding>(holder.itemView)?.let {
                     it.datas = data[position]
@@ -289,7 +300,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
     }
 
     fun parseText(txt: String?, bolds: MutableList<String>?): Spanned? {
-        return  txt?.let {
+        return txt?.let {
             val realText = getRealText(it, isF)
             var str = realText
             val targets = bolds

@@ -14,12 +14,15 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
+import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.ShowAchievementReq
+import com.cl.modules_my.request.UpdateSubportReq
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -261,7 +264,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/list")
-    fun accessoryList(@Field("spaceType") spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
+    fun accessoryList(@Field("spaceType") spaceType: String, @Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<AccessoryListBean>>>
 
     /**
      * 配件规则列表
@@ -270,7 +273,8 @@ interface HttpMyApiService {
     @POST("abby/accessory/automationList")
     fun automationList(
         @Field("accessoryId") accessoryId: String,
-        @Field("deviceId") deviceId: String
+        @Field("deviceId") deviceId: String,
+        @Field("portId") portId: String? = null,
     ): Flow<HttpResult<AutomationListBean>>
 
     /**
@@ -357,6 +361,7 @@ interface HttpMyApiService {
 
     /**
      * 保存camera的信息
+     * 修改配件，绑定是否没绑定
      */
     @POST("abby/accessory/updateInfo")
     fun updateInfo(@Body body: UpdateInfoReq): Flow<HttpResult<BaseBean>>
@@ -366,7 +371,7 @@ interface HttpMyApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/getAccessoryInfo")
-    fun getAccessoryInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<UpdateInfoReq>>
+    fun getAccessoryInfo(@Field("deviceId") deviceId: String, @Field("accessoryDeviceId") accessoryDeviceId: String): Flow<HttpResult<UpdateInfoReq>>
 
     /**
      * 帐篷设备的设备详情
@@ -429,4 +434,25 @@ interface HttpMyApiService {
     // 关注列表 abby/user/following
     @POST("abby/user/following")
     fun following(): Flow<HttpResult<MutableList<FolowerData>>>
+
+    /**
+     * 获取配件参数
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/subport")
+    fun accessorySubport(@Field("accessoryId") accessoryId: String, @Field("accessoryDeviceId") accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>>
+
+    /**
+     * 获取自动化类型列表
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/automationType")
+    fun automationType(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<AutomationTypeBean>>>
+
+
+    /**
+     * 修改配件端口信息
+     */
+    @POST("abby/accessory/updateSubport")
+    fun updateSubport(@Body req: UpdateSubportReq): Flow<HttpResult<BaseBean>>
 }

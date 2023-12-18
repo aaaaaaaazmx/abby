@@ -11,6 +11,7 @@ import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
@@ -88,7 +89,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     fun setDeviceInfo(deviceId: LiveDataDeviceInfoBean) {
         _deviceInfo.value = deviceId
     }
-
 
 
     // 童锁的开闭状态
@@ -1139,6 +1139,18 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     /**
+     * 保存开关门的状态
+     */
+    private val _doorStatus = MutableLiveData(
+        thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_DOOR }
+            ?.get(TuYaDeviceConstants.KEY_DEVICE_DOOR).toString()
+    )
+    val doorStatus: LiveData<String> = _doorStatus
+    fun setDoorStatus(status: String) {
+        _doorStatus.value = status
+    }
+
+    /**
      * 查询固件升级信息
      */
     fun checkFirmwareUpdateInfo(
@@ -1435,6 +1447,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         is Resource.Success -> {
                             _listDevice.value = it
                         }
+
                         else -> {}
                     }
                 }
@@ -1477,7 +1490,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                     // 这个周期目前自行处理、不走guideInfo接口
                     // 回调出去。自行处理
                     taskId?.let { ids ->
-                    _transplantPeriodicity.value = ids
+                        _transplantPeriodicity.value = ids
                     }
                 }
 
@@ -1516,44 +1529,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val unReadMessageNumber: LiveData<Int?> = _unReadMessageNumber
     fun getEaseUINumber() {
         // 只有当设备绑定且在线的时候、才去添加
-        if (userDetail.value?.data?.deviceStatus == "1" && userDetail.value?.data?.deviceOnlineStatus == "1") {
+        if (userDetail.value?.data?.deviceStatus == "1" && userDetail.value?.data?.deviceOnlineStatus == "1" && _isZP.value == false) {
             _unReadMessageNumber.postValue(InterComeHelp.INSTANCE.getUnreadConversationCount())
         }
-    }
-
-
-    /**
-     * 获取InterCome同步数据
-     */
-    private val _getInterComeData = MutableLiveData<Resource<Map<String, Any>>>()
-    val getInterComeData: LiveData<Resource<Map<String, Any>>> = _getInterComeData
-    fun getInterComeData() = viewModelScope.launch {
-        repository.intercomDataAttributeSync()
-            .map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code,
-                        it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
-                emit(Resource.Loading())
-            }
-            .catch {
-                logD("catch $it")
-                emit(
-                    Resource.DataError(
-                        -1,
-                        "${it.message}"
-                    )
-                )
-            }.collectLatest {
-                _getInterComeData.value = it
-            }
     }
 
 
@@ -1562,9 +1540,9 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
      */
     private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
     val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
-    fun getAccessoryInfo(deviceId: String) {
+    fun getAccessoryInfo(deviceId: String, accessoryDeviceId: String) {
         viewModelScope.launch {
-            repository.getAccessoryInfo(deviceId)
+            repository.getAccessoryInfo(deviceId, accessoryDeviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -1673,8 +1651,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
 
-    private var _shouldRunJob =  MutableLiveData<Boolean>()
-    val shouldRunJob:LiveData<Boolean> = _shouldRunJob
+    private var _shouldRunJob = MutableLiveData<Boolean>()
+    val shouldRunJob: LiveData<Boolean> = _shouldRunJob
     fun setShouldRunJob(shouldRunJob: Boolean) {
         _shouldRunJob.value = shouldRunJob
     }
@@ -1818,20 +1796,39 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         _getFanExhaust.value = gear.toDouble().safeToInt()
     }
 
-    // 植物灯光
-    private val _getGrowLight = MutableLiveData<Int>()
+    // 植物预设灯光
+    private val _getGrowLight = MutableLiveData<Int>(-1)
     val getGrowLight: LiveData<Int> = _getGrowLight
 
     fun getGrowLight() {
-        kotlin.runCatching {
-            _getGrowLight.value =
-                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
+        val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
+        Prefs.getObjects().firstOrNull { it.name == name }.apply {
+            if (null == this) {
+                _getGrowLight.value = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE).safeToInt()
+            } else {
+                _getGrowLight.value = lightIntensity.safeToInt()
+            }
         }
     }
 
     fun setGrowLight(gear: String) {
         _getGrowLight.value = gear.toDouble().safeToInt()
+    }
+
+    // 植物当前灯光
+    private val _getCurrentGrowLight = MutableLiveData<Int>()
+    val getCurrentGrowLight: LiveData<Int> = _getCurrentGrowLight
+
+    fun getCurrentGrowLight() {
+        kotlin.runCatching {
+            _getCurrentGrowLight.value =
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
+        }
+    }
+
+    fun setCurrentGrowLight(gear: String) {
+        _getCurrentGrowLight.value = gear.toDouble().safeToInt()
     }
 
     // 气泵
@@ -1950,6 +1947,34 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             }
         }
         return text
+    }
+
+    /**
+     * 获取温度，如果有购买温湿度传感器的话。
+     */
+    fun temperatureConversionForTemp(text: Int?): String {
+        val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+        val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
+        val roomTemp = com.cl.common_base.ext.temperatureConversion(data?.envirVO?.roomTemp.safeToFloat(), isMetric)
+        // 默认为false
+        if (isMetric) {
+            kotlin.runCatching {
+                // (1°F − 32) × 5/9
+                // String result1 = String.format("%.2f", d);
+                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble()
+                    .safeToInt()} ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+            }.getOrElse {
+                return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+            }
+        }
+        return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+    }
+
+    // 获取室内的湿度，在有数据的情况下
+    fun getRoomHumidity(humidity: Int?): String {
+        val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
+        val roomHumidity = data?.envirVO?.roomHumiture
+        return if (roomHumidity.isNullOrEmpty()) "$humidity" else "$humidity (Room $roomHumidity)"
     }
 
     fun textCovert(): String {
@@ -2082,7 +2107,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                 }
         }
     }
-
 
 
     /**

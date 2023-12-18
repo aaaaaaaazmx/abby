@@ -47,3 +47,20 @@ fun gallonConversion(value: Float, isMetric: Boolean, isUpload: Boolean): String
     }
     return if (result == 0f) "" else String.format("%.1f", result)
 }
+
+// 后台默认返回的是英制
+// 温度转换，英制to华氏度
+// 返回的默认是10倍摄氏度，需要转换。
+fun temperatureConversion(value: Float, isMetric: Boolean): String {
+    // 默认是摄氏度 true是摄氏度、false是华氏度
+    if (value == 0f) return ""
+    val result = if (isMetric) value.div(10) else (value.div(10)).times(9f).div(5f).plus(32)
+    return if (result == 0f) "" else result.safeToInt().toString()
+}
+
+fun temperatureConversionOne(value: Float, isMetric: Boolean): String {
+    if (value == 0f) return ""
+    // 默认是摄氏度 true是摄氏度、false是华氏度
+    val result = if (isMetric) value.div(10) else (value.div(10)).times(9f).div(5f).plus(32)
+    return if (result == 0f) "" else String.format("%.1f", result)
+}

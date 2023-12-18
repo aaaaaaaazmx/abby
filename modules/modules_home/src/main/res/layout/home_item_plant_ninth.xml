@@ -11,6 +11,7 @@
             type="com.cl.modules_home.viewmodel.HomeViewModel" />
 
         <import type="android.view.View" />
+        <import type="android.text.TextUtils"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -343,8 +344,8 @@
                 android:singleLine="true"
                 android:text="@{String.valueOf(viewModel.unReadMessageNumber)}"
                 android:textColor="@color/white"
+                android:visibility='@{viewModel.isZp ? View.GONE : viewModel.userDetail.data.isVip == 1 &amp;&amp; viewModel.unReadMessageNumber != 0? View.VISIBLE : View.GONE}'
                 android:textSize="11sp"
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 ? viewModel.unReadMessageNumber == 0 ? View.GONE : viewModel.userDetail.data.isVip == 1 ? View.VISIBLE : View.GONE : View.GONE}'
                 app:layout_constraintCircle="@id/iv_support"
                 app:layout_constraintCircleAngle="50"
                 app:layout_constraintCircleRadius="20dp" />
@@ -396,7 +397,7 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="12dp"
                         android:background="@mipmap/iv_close"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                     <TextView
                         android:id="@+id/tv_pop_title"
@@ -837,11 +838,53 @@ Day1" />
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/vv_temperature_bg"
-                    tools:text="Week24
-Day1" />
+                    tools:text="Week24Day1"
+                    />
+
+                <LinearLayout
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/vv_temperature_bg"
+                    android:layout_marginTop="22dp"
+                    android:gravity="center"
+                    android:layout_marginBottom="22dp"
+                    android:visibility='@{viewModel.userDetail.data.spaceType.equals("box")? View.GONE : View.VISIBLE}'
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:visibility='@{!TextUtils.isEmpty(viewModel.plantInfo.data.envirVO.temp) &amp;&amp; !TextUtils.isEmpty(viewModel.plantInfo.data.envirVO.humiture) ? View.VISIBLE : View.GONE}'
+                        android:textStyle="bold"
+                        android:id="@+id/tent_healthStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="#161B19"
+                        android:textSize="14sp"
+                        tools:text="Week24Day1" />
+
+                    <TextView
+                        android:visibility='@{!TextUtils.isEmpty(viewModel.plantInfo.data.envirVO.roomTemp) &amp;&amp; !TextUtils.isEmpty(viewModel.plantInfo.data.envirVO.roomHumiture) ? View.VISIBLE : View.GONE}'
+                        android:textStyle="bold"
+                        android:id="@+id/tent_healthStatus_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textColor="#161B19"
+                        android:textSize="10sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tent_healthStatus"
+                        tools:text="Week241
+Day111" />
+                </LinearLayout>
+
+
 
                 <ImageView
-                    android:visibility='@{viewModel.userDetail.data.spaceType.equals("box")? View.GONE : View.VISIBLE}'
+                    android:visibility="gone"
                     android:id="@+id/iv_zp_add"
                     android:background="@mipmap/home_zp_add"
                     android:textStyle="bold"

@@ -29,6 +29,18 @@ fun Any?.safeToInt(): Int {
     } ?: 0
 }
 
+// toFloat
+fun Any?.safeToFloat(): Float {
+    return this?.let {
+        if (this is String) {
+            this.safeToBigDecimal().toFloat()
+        } else {
+            this.toString().safeToBigDecimal().toFloat()
+        }
+    } ?: 0f
+}
+
+
 /**
  * 将对象转化为String, 若对象转化失败则返回空字符串, 若对象为小数, 则去除小数末位的0.
  */

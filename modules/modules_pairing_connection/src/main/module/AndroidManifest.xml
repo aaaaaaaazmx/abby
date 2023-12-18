@@ -76,5 +76,9 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".ui.PairFrontScanCodeActivity" />
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".ui.PairWifiOnePageActivity" />
     </application>
 </manifest>

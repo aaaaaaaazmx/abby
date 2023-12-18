@@ -334,6 +334,10 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
     }
 
     override fun initData() {
+        // 删除账号
+        binding.flDeleteAccount.setOnClickListener {
+            startActivity(Intent(this@ProfileActivity, DeleteAccountActivity::class.java))
+        }
         // 退出
         binding.tvLoginOut.setOnClickListener {
             confirm.show()

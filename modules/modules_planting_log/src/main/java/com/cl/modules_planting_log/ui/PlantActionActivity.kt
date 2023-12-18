@@ -11,7 +11,6 @@ import com.cl.common_base.ext.gallonConversion
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.ext.temperatureConversion
 import com.cl.common_base.ext.unitsConversion
 import com.cl.common_base.ext.weightConversion
 import com.cl.common_base.util.ViewUtils

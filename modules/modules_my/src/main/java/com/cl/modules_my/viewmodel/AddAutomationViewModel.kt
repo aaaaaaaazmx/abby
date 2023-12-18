@@ -13,6 +13,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.GetAutomationRuleBean
 import com.cl.modules_my.repository.MyRepository
+import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
@@ -492,6 +493,24 @@ class AddAutomationViewModel @Inject constructor(private val repository: MyRepos
     }
 
     /**
+     * 设置选中的或者是后台返回的ROOM温度
+     */
+    private val _setRoomTemperature = MutableLiveData<String>("70")
+    val setRoomTemperature: LiveData<String> = _setRoomTemperature
+    fun setRoomTemperature(temperature: String) {
+        _setRoomTemperature.value = temperature
+    }
+
+    /**
+     * 设置选中的或者是后台返回的ROOM_RH温度
+     */
+    private val _setRoomRhTemperature = MutableLiveData<String>("70")
+    val setRoomRhTemperature: LiveData<String> = _setRoomRhTemperature
+    fun setRoomRhTemperature(temperature: String) {
+        _setRoomRhTemperature.value = temperature
+    }
+
+    /**
      * 设置选中的或者是后台返回的湿度
      */
     private val _setHumidity = MutableLiveData<String>("40")
@@ -526,6 +545,44 @@ class AddAutomationViewModel @Inject constructor(private val repository: MyRepos
     val isOffLine: LiveData<Boolean> = _isOffLine
     fun setOffLine(offline: Boolean) {
         _isOffLine.value = offline
+    }
+
+
+    /**
+     * 获取自动化类型列表
+     */
+    private val _autoTypeList = MutableLiveData<Resource<MutableList<AutomationTypeBean>>>()
+    val autoTypeList: LiveData<Resource<MutableList<AutomationTypeBean>>> = _autoTypeList
+    fun getAutoType(deviceId: String) {
+        viewModelScope.launch {
+            repository.automationType(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _autoTypeList.value = it
+                }
+        }
+
     }
 
 }

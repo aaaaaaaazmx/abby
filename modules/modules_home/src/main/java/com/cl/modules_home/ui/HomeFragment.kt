@@ -38,6 +38,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeBinding
+import com.bbgo.module_home.databinding.HomeItemPlantManualBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.base.KnowMoreActivity
@@ -183,8 +184,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         job = mViewMode.countDownCoroutines(10 * 6 * 500000, viewLifecycleOwner.lifecycleScope, onTick = {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    if (it % 30 == 0) {
-                        // 表示过了30秒
+                    if (it % 15 == 0) {
+                        // 表示过了15秒
                         mViewMode.getUnread()
                         // 查询植物信息Look
                         mViewMode.plantInfoLoop()
@@ -192,6 +193,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         mViewMode.listDevice()
                         // 刷新是否获取勋章
                         mViewMode.getMedal()
+                        // 获取环境消息
+                        mViewMode.getEnvData()
                     }
                 } catch (e: Exception) {
                     // Handle exception here
@@ -375,6 +378,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             mViewMode.getFanIntake()
             mViewMode.getFanExhaust()
             mViewMode.getGrowLight()
+            mViewMode.getCurrentGrowLight()
             mViewMode.getAirPump()
             mViewMode.getLightTime()
             mViewMode.getCloseLightTime()
@@ -884,20 +888,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 点击环境弹窗
             clEnvir.setOnClickListener {
                 if (mViewMode.isZp.value == true) {
-                    // 跳转到配件
-                    mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
-                        ?.let {
-                            ARouter
-                                .getInstance()
-                                .build(RouterPath.My.PAGE_ADD_ACCESSORY)
-                                .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
-                                .withSerializable(
-                                    "accessoryList",
-                                    it.accessoryList as Serializable?
-                                )
-                                .withString("spaceType", it.spaceType)
-                                .navigation(context)
-                        }
+                    val data = mViewMode.plantInfoLoop.value?.data?.envirVO
+                    if (null == data || (data.temp.isNullOrEmpty() && data.roomTemp.isNullOrEmpty() && data.humiture.isNullOrEmpty() && data.roomHumiture.isNullOrEmpty())) {
+                        // 跳转到配件
+                        mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
+                            ?.let {
+                                ARouter
+                                    .getInstance()
+                                    .build(RouterPath.My.PAGE_ADD_ACCESSORY)
+                                    .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                                    .withSerializable(
+                                        "accessoryList",
+                                        it.accessoryList as Serializable?
+                                    )
+                                    .withString("spaceType", it.spaceType)
+                                    .navigation(context)
+                            }
+                    }
                     return@setOnClickListener
                 }
                 // 刷新植物信息以及环境信息
@@ -920,6 +927,82 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            tvSave.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                val bean = PresetData(
+                    fanIntake = "${mViewMode.getFanIntake.value}",
+                    fanExhaust = "${mViewMode.getFanExhaust.value}",
+                    lightIntensity = "${mViewMode.getGrowLight.value}",
+                    lightSchedule = ftTimer.text.toString(),
+                    muteOn = "${mViewMode.muteOn}",
+                    muteOff = "${mViewMode.muteOff}"
+                )
+                context?.let {
+                    xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(true)
+                        autoFocusEditText(false)
+                        moveUpToKeyboard(true)
+                        autoOpenSoftInput(false)
+                        asCustom(PresetPop(it, bean)).show()
+                    }
+                }
+            }
+
+            tvLoad.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                // load
+                context?.let {
+                    xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        autoFocusEditText(false)
+                        autoOpenSoftInput(false)
+                        moveUpToKeyboard(false)
+                        dismissOnTouchOutside(true)
+                        asCustom(PresetLoadPop(it, onNextAction = { data ->
+                            // 发送dp点
+                            if (null == data) return@PresetLoadPop
+                            val fanIntake = data.fanIntake
+                            val fanExhaust = data.fanExhaust
+                            val lightIntensity = data.lightIntensity
+                            val lightSchedule = data.lightSchedule
+                            val muteOn = data.muteOn
+                            val muteOff = data.muteOff
+                            logI("toDP: $fanIntake, $fanExhaust, $lightIntensity, $lightSchedule, $muteOn, $muteOff")
+
+                            fanIntake?.let { it1 -> mViewMode.setFanIntake(it1) }
+                            fanExhaust?.let { it1 -> mViewMode.setFanExhaust(it1) }
+                            lightIntensity?.let { it1 -> mViewMode.setGrowLight(it1) }
+                            ftTimer.text = "$lightSchedule"
+                            mViewMode.setmuteOn(muteOff)
+                            mViewMode.setmuteOn(muteOn)
+
+                            val dpBean = AllDpBean(cmd = "6", gl = lightIntensity, gls = muteOn, gle= muteOff, ex = fanExhaust, `in` = fanIntake)
+
+                            // 开灯时间
+                            when (muteOn.safeToInt()) {
+                                12 -> 0
+                                24 -> 12
+                                else -> muteOn.safeToInt()
+                            }.let { it2 ->
+                                dpBean.gls = it2.toString()
+                            }
+
+                            // 关灯时间
+                            when (muteOff.safeToInt()) {
+                                12 -> 0
+                                24 -> 12
+                                else -> muteOff.safeToInt()
+                            }.let { it2 ->
+                                dpBean.gle = it2.toString()
+                            }
+                            // 发送多个DP点
+                            GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
+                            // 点击Load之后就保存。
+                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, data.name.toString())
+                        })).show()
+                    }
+                }
+            }
+
             tvDripPumpDesc.setOnClickListener {
                 InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_DRIP)
             }
@@ -995,46 +1078,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
             // 时间模式
-            ftTimer.setOnClickListener {
-                pop.asCustom(context?.let { it1 ->
-                    ChooseTimePop(
-                        it1,
-                        turnOnText = "Turn on Light",
-                        turnOffText = "Turn off Light",
-                        isShowNightMode = false,
-                        isTheSpacingHours = false,
-                        turnOnHour = mViewMode.muteOn?.safeToInt(),
-                        turnOffHour = mViewMode.muteOff?.safeToInt(),
-                        onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
-                            ftTimer.itemValue = "$onTime-$offMinute"
-                            mViewMode.setmuteOn("$timeOn")
-                            mViewMode.setmuteOff("$timeOff")
-
-                            // 开灯时间
-                            when (timeOn) {
-                                12 -> 0
-                                24 -> 12
-                                else -> timeOn
-                            }?.let { it2 ->
-                                DeviceControl.get()
-                                    .success { }
-                                    .error { code, error -> }
-                                    .lightTime(it2)
-                            }
-
-                            // 关灯时间
-                            when (timeOff) {
-                                12 -> 0
-                                24 -> 12
-                                else -> timeOff
-                            }?.let { it2 ->
-                                DeviceControl.get()
-                                    .success { }
-                                    .error { code, error -> }
-                                    .closeLightTime(it2)
-                            }
-                        })
-                }).show()
+            tvLightIntensityTitle.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                chooserTime()
+            }
+            ftTimer.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
+                chooserTime()
             }
 
             fanIntakeSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
@@ -1049,6 +1097,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     DeviceControl.get()
                         .success {
                             mViewMode.setFanIntake(seekbar?.progress.toString())
+                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
                         }
                         .error { code, error ->
                             ToastUtil.shortShow(
@@ -1075,6 +1124,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     DeviceControl.get()
                         .success {
                             mViewMode.setFanExhaust(seekbar?.progress.toString())
+                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
                         }
                         .error { code, error ->
                             ToastUtil.shortShow(
@@ -1087,70 +1137,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             mViewMode.setFanExhaust("${mViewMode.getFanExhaust.value}")
                         }
                         .fanExhaust(seekbar?.progress ?: 0)
-                }
-            }
-            lightIntensitySeekbar.customSectionTrackColor { colorIntArr ->
-                //the length of colorIntArray equals section count
-                //                colorIntArr[0] = Color.parseColor("#008961");
-                //                colorIntArr[1] = Color.parseColor("#008961");
-                // 当刻度为最后4段时才显示红色
-                colorIntArr[6] = Color.parseColor("#F72E47")
-                colorIntArr[7] = Color.parseColor("#F72E47")
-                colorIntArr[8] = Color.parseColor("#F72E47")
-                true //true if apply color , otherwise no change
-            }
-            lightIntensitySeekbar.onSeekChangeListener = object : OnSeekChangeListener {
-                override fun onSeeking(p0: SeekParams?) {
-                }
-
-                override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
-                    val progress = seekbar?.progress ?: 0
-                    val growLightValue = mViewMode.getGrowLight.value ?: 0
-                    // 应该只提示一次
-                    if (growLightValue <= 7 && progress > 7) {
-                        pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
-                            .asCustom(context?.let {
-                                BaseCenterPop(
-                                    it,
-                                    content = "Caution! Increasing the light intensity level above 7 may cause damage to the flowers. Are you sure you want to continue?",
-                                    cancelText = "No",
-                                    confirmText = "Yes",
-                                    onCancelAction = {
-                                        // 需要恢复到之前到档位
-                                        mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                                    },
-                                    onConfirmAction = {
-                                        DeviceControl.get()
-                                            .success {
-                                                mViewMode.setGrowLight(seekbar?.progress.toString())
-                                            }
-                                            .error { code, error ->
-                                                ToastUtil.shortShow(
-                                                    """
-                                                  lightIntensity: 
-                                                  code-> $code
-                                                  errorMsg-> $error
-                                                    """.trimIndent()
-                                                )
-                                                mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                                            }
-                                            .lightIntensity(seekbar?.progress ?: 0)
-                                    }
-                                )
-                            }).show()
-                    } else {
-                        DeviceControl.get()
-                            .success {
-                                mViewMode.setGrowLight(seekbar?.progress.toString())
-                            }
-                            .error { code, error ->
-                                mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")
-                            }
-                            .lightIntensity(seekbar?.progress ?: 0)
-                    }
                 }
             }
 
@@ -1331,6 +1317,59 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 checkPer()
             }
         }
+    }
+
+    private fun HomeItemPlantManualBinding.chooserTime() {
+        pop.asCustom(context?.let { it1 ->
+            ChooseTimePop(
+                it1,
+                turnOnText = "Turn on Light",
+                turnOffText = "Turn off Light",
+                isShowNightMode = false,
+                isTheSpacingHours = false,
+                turnOnHour = mViewMode.muteOn?.safeToInt(),
+                turnOffHour = mViewMode.muteOff?.safeToInt(),
+                isProMode = true,
+                lightIntensity = mViewMode.getGrowLight.value.safeToInt(),
+                proModeAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour, lightIntensity ->
+                    mViewMode.setGrowLight(lightIntensity.toString())
+                    Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, lightIntensity.toString())
+
+                    ftTimer.text = "$onTime-$offMinute"
+                    mViewMode.setmuteOn("$timeOn")
+                    mViewMode.setmuteOff("$timeOff")
+
+                    // 开灯时间
+                    when (timeOn) {
+                        12 -> 0
+                        24 -> 12
+                        else -> timeOn
+                    }?.let { it2 ->
+                        DeviceControl.get()
+                            .success { }
+                            .error { code, error -> }
+                            .lightTime(it2)
+                    }
+
+                    // 关灯时间
+                    when (timeOff) {
+                        12 -> 0
+                        24 -> 12
+                        else -> timeOff
+                    }?.let { it2 ->
+                        DeviceControl.get()
+                            .success { }
+                            .error { code, error -> }
+                            .closeLightTime(it2)
+                    }
+
+                    // 调节灯光事件
+                    DeviceControl.get()
+                        .success {}
+                        .error { code, error -> }
+                        .lightIntensity(lightIntensity ?: 0)
+                })
+        }).show()
     }
 
     /**
@@ -2083,7 +2122,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 binding.plantManual.fanExhaustSeekbar.setProgress(it.toFloat())
             }
             getGrowLight.observe(viewLifecycleOwner) {
-                binding.plantManual.lightIntensitySeekbar.setProgress(it.toFloat())
+                // binding.plantManual.lightIntensitySeekbar.setProgress(it.toFloat())
             }
 
             // transPlant周期自行处理逻辑
@@ -2212,7 +2251,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 ViewUtils.setInvisible(binding.pplantNinth.ivSwitchCamera, !isHave)
 
                                 // 获取摄像头配件信息
-                                mViewMode.getAccessoryInfo(devId)
+                                mViewMode.getAccessoryInfo(devId, cameraId)
 
                                 // 不加载摄像头
                                 if (!isHave || cameraId.isBlank() || !isLoadCamera || isPlay) return@getCameraFlag
@@ -2293,82 +2332,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    // 获取InterCome信息
-                    getInterComeData()
-                }
-            })
-            // InterCome信息
-            getInterComeData.observe(viewLifecycleOwner, resourceObserver {
-                error { errorMsg, code ->
-                    // 更新InterCome用户信息
-                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
-                        map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
-                    )
-
-                    // 这是从切换设备中带过来设备信息
-                    deviceInfo.value?.spaceType?.let {
-                        if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
-                            // 删除未读消息
-                            // mViewMode.removeFirstUnreadMessage()
-                            // 清空气泡状态
-                            // mViewMode.clearPopPeriodStatus()
-                            //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
-                            //  因为在listDevice中隐藏了abby的植物展示图片，只需要添加个判断，是否隐藏就好了。
-                            //  还是有就是帐篷界面展示摄像头和abby机器展示摄像头多了张图片。
-                            //  如果是帐篷，如果没有摄像头、那么就显示帐篷的图片。
-                            // mViewMode.userDetail()
-                            mViewMode.checkPlant()
-                            return@error
-                        }
-                    }
-
-                    // 更新涂鸦Bean
-                    ThingHomeSdk.newHomeInstance(mViewMode.homeId)
-                        .getHomeDetail(object : IThingHomeResultCallback {
-                            override fun onSuccess(bean: HomeBean?) {
-                                bean?.let { it ->
-                                    val arrayList = it.deviceList as ArrayList<DeviceBean>
-                                    logI("123123123: ${arrayList.size}")
-                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
-                                        .apply {
-                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
-                                            if (null == this) {
-                                                val aa = mViewMode.thingDeviceBean
-                                                aa()?.devId = mViewMode.deviceId.value
-                                                GSON.toJson(aa)?.let {
-                                                    Prefs.putStringAsync(
-                                                        Constants.Tuya.KEY_DEVICE_DATA,
-                                                        it
-                                                    )
-                                                }
-                                                return@apply
-                                            }
-                                            GSON.toJson(this)?.let {
-                                                Prefs.putStringAsync(
-                                                    Constants.Tuya.KEY_DEVICE_DATA,
-                                                    it
-                                                )
-                                            }
-
-                                            // 重新注册服务
-                                            // 开启服务
-                                            val intent = Intent(
-                                                context,
-                                                TuYaDeviceUpdateReceiver::class.java
-                                            )
-                                            context?.startService(intent)
-                                            // 切换之后需要重新刷新所有的东西
-                                            mViewMode.checkPlant()
-                                        }
-                                }
-                            }
-
-                            override fun onError(errorCode: String?, errorMsg: String?) {
-
-                            }
-                        })
-                }
-                success {
                     // 更新InterCome用户信息
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
                         map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
@@ -2395,10 +2358,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 bean?.let { it ->
                                     val arrayList = it.deviceList as ArrayList<DeviceBean>
                                     logI("123123123: ${arrayList.size}")
-                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
+                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceInfo.value?.deviceId.toString() }
                                         .apply {
-                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
-                                            if (null == this) {
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value?.toString()}")
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceInfo.value?.deviceId.toString()}")
+                                            /*if (null == this) {
                                                 val aa = mViewMode.thingDeviceBean
                                                 aa()?.devId = mViewMode.deviceId.value
                                                 GSON.toJson(aa)?.let {
@@ -2407,8 +2371,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                         it
                                                     )
                                                 }
-                                                return@apply
-                                            }
+                                                return@applyh
+                                            }*/
                                             GSON.toJson(this)?.let {
                                                 Prefs.putStringAsync(
                                                     Constants.Tuya.KEY_DEVICE_DATA,
@@ -2982,6 +2946,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
+            // 循环获取植物基本信息
+            plantInfoLoop.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    if (null == data) return@success
+                    // 植物的休息照片
+                    // 植物的健康程度
+                    binding.pplantNinth.tvHealthStatus.text = data?.healthStatus ?: "----"
+
+                    // 显示温湿度
+                    showTemp()
+                }
+            })
+
             // 获取植物基本信息
             plantInfo.observe(viewLifecycleOwner, resourceObserver {
                 loading { showProgressLoading() }
@@ -3041,6 +3018,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         }
                         return@success
                     }
+
+                    // 显示温湿度
+                    showTemp()
 
                     // 2. 【获取植物基本信息】接口新增字段 [发芽剩余时间]，类型为时间戳，0为倒计时结束，该字段只在发芽阶段返回，点了Next后返回为NULL。
                     ViewUtils.setVisible(
@@ -3898,6 +3878,66 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
     }
 
+    private fun Resource.Success<PlantInfoData>.showTemp() {
+        data?.apply {
+            // Ensure envirVO is not null before proceeding.
+            val environment = if (null == envirVO) {
+                ViewUtils.setVisible(null == data?.envirVO && mViewMode.isZp.value == true, binding.pplantNinth.ivZpAdd)
+                return
+            } else {
+                envirVO
+            }
+
+            // Get the user preference for the unit system once.
+            val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
+            val tempUnit = if (isMetric) "℃" else "℉"
+            val humidityUnit = "%"
+
+            // Perform temperature and humidity conversions.
+            val roomTemp = environment?.roomTemp?.let { temperatureConversion(it.safeToFloat(), isMetric) } ?: ""
+            val roomHumidity = environment?.roomHumiture ?: ""
+            val temp = environment?.temp?.let { temperatureConversion(it.safeToFloat(), isMetric) } ?: ""
+            val humidity = environment?.humiture ?: ""
+
+            // Update the UI elements.
+            with(binding) {
+                // Set visibility based on the availability of temperature or humidity data.
+                val isDataAvailable = (temp.isNotEmpty() || humidity.isNotEmpty() || roomTemp.isNotEmpty() || roomHumidity.isNotEmpty())
+                if (mViewMode.isZp.value == true) {
+                    if (isDataAvailable) {
+                        pplantNinth.ivZpAdd.visibility = View.GONE
+                    } else {
+                        pplantNinth.ivZpAdd.visibility = View.VISIBLE
+                    }
+                } else {
+                    pplantNinth.ivZpAdd.visibility = View.GONE
+                }
+
+                // 获取温度传感器值 ProMode
+                plantManual.tvTemperatureValue.text =  mViewMode.temperatureConversionForTemp(mViewMode.getWenDu.value)
+                plantManual.tvHumidityValue.text = mViewMode.getRoomHumidity(mViewMode.getHumidity.value)
+
+                // Update the temperature and humidity values.
+                pplantNinth.tentHealthStatus.text = buildSpannedString {
+                    if (temp.isNotEmpty() && humidity.isNotEmpty()) {
+                        append("$temp$tempUnit $humidity$humidityUnit")
+                    }
+                }
+
+                pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
+                    if (roomTemp.isNotEmpty() && roomHumidity.isNotEmpty()) {
+                        append("Room $roomTemp$tempUnit $roomHumidity$humidityUnit")
+                    }
+                }
+
+                // Adjust the text size if the tent health status is empty.
+                if (pplantNinth.tentHealthStatus.text.isEmpty()) {
+                    pplantNinth.tentHealthStatusSmall.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                }
+            }
+        }
+    }
+
     /**
      * 初始化摄像头的尺寸大小
      */
@@ -4313,8 +4353,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
 
         // 是否显示取消按钮
-        binding.pplantNinth.ivClose.visibility =
-            if (UnReadConstants.noCancel.contains(unRead?.type)) View.GONE else View.VISIBLE
+        /*binding.pplantNinth.ivClose.visibility =
+            if (UnReadConstants.noCancel.contains(unRead?.type)) View.GONE else View.VISIBLE*/
     }
 
     /**
@@ -4509,6 +4549,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 是否关闭门
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
                     logI("12312312312 KEY_DEVICE_DOOR: $value")
+                    // 是否关闭门
+                    mViewMode.setDoorStatus(value.toString())
+
                     // 摄像头相关
                     // 主要用户删除当前的door的气泡消息
                     // true 开门、 fasle 关门
@@ -4535,7 +4578,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
                         value.toString()
                     )
-                    mViewMode.setGrowLight(value.toString())
+                    mViewMode.setCurrentGrowLight(value.toString())
                 }
 
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
@@ -4699,7 +4742,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     binding.plantManual.tvWaterTemperature.text = textCovert()
                     binding.plantManual.tvPlantHeight.text = formatIncPlant(plantHeights.value)
                     binding.plantManual.tvTemperatureValue.text =
-                        temperatureConversion(getWenDu.value).toString()
+                        temperatureConversionForTemp(getWenDu.value).toString()
                     binding.plantManual.tvWaterTemperatureValue.text =
                         temperatureConversion(getWaterWenDu.value).toString()
                 }

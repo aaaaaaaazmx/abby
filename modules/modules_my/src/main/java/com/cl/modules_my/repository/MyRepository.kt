@@ -8,12 +8,15 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
+import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.ShowAchievementReq
+import com.cl.modules_my.request.UpdateSubportReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import okhttp3.MultipartBody
@@ -201,8 +204,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.listDevice()
     }
 
-    fun automationList(accessoryId: String, deviceId: String): Flow<HttpResult<AutomationListBean>> {
-        return remoteRepository.automationList(accessoryId, deviceId)
+    fun automationList(accessoryId: String, deviceId: String, portId: String? = null): Flow<HttpResult<AutomationListBean>> {
+        return remoteRepository.automationList(accessoryId, deviceId, portId)
     }
 
     fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
@@ -237,8 +240,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.verifyCode(code, email)
     }
 
-    fun accessoryList(spaceType: String): Flow<HttpResult<MutableList<AccessoryListBean>>> {
-        return remoteRepository.accessoryList(spaceType)
+    fun accessoryList(spaceType: String, deviceId: String): Flow<HttpResult<MutableList<AccessoryListBean>>> {
+        return remoteRepository.accessoryList(spaceType, deviceId)
     }
 
     fun intercomDataAttributeSync(): Flow<HttpResult<Map<String, Any>>> {
@@ -264,8 +267,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.updateInfo(body)
     }
 
-    fun getAccessoryInfo(deviceId: String): Flow<HttpResult<UpdateInfoReq>> {
-        return remoteRepository.getAccessoryInfo(deviceId)
+    fun getAccessoryInfo(deviceId: String, accessoryDeviceId: String): Flow<HttpResult<UpdateInfoReq>> {
+        return remoteRepository.getAccessoryInfo(deviceId, accessoryDeviceId)
     }
 
     fun getDeviceDetails(deviceId: String): Flow<HttpResult<DeviceDetailsBean>> {
@@ -306,5 +309,17 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
 
     fun following(): Flow<HttpResult<MutableList<FolowerData>>> {
         return remoteRepository.following()
+    }
+
+    fun accessorySubport(accessoryId: String, accessoryDeviceId: String?): Flow<HttpResult<AccessorySubportData>> {
+        return remoteRepository.accessorySubport(accessoryId, accessoryDeviceId)
+    }
+
+    fun automationType(deviceId: String): Flow<HttpResult<MutableList<AutomationTypeBean>>> {
+        return remoteRepository.automationType(deviceId)
+    }
+
+    fun updateSubport(deviceId: UpdateSubportReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateSubport(deviceId)
     }
 }

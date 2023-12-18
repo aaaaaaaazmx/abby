@@ -114,51 +114,15 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
         }
     }
 
-    /**
-     * 获取配件信息
-     */
-    private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
-    val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
-    fun getAccessoryInfo(deviceId: String) {
-        viewModelScope.launch {
-            repository.getAccessoryInfo(deviceId)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "${it.message}"
-                        )
-                    )
-                }.collectLatest {
-                    _getAccessoryInfo.value = it
-                }
-        }
-    }
-
 
     /**
      * 获取配件信息
      */
     private val _getPartsInfo = MutableLiveData<Resource<UpdateInfoReq>>()
     val getPartsInfo: LiveData<Resource<UpdateInfoReq>> = _getPartsInfo
-    fun getPartsInfo(deviceId: String = userInfo?.deviceId ?: "") {
+    fun getPartsInfo(deviceId: String, accessoryDeviceId: String) {
         viewModelScope.launch {
-            repository.getAccessoryInfo(deviceId)
+            repository.getAccessoryInfo(deviceId, accessoryDeviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -188,13 +152,13 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
     }
 
     /**
-     * 获取学院列表
+     * 获取配件信息
      */
-    private val _getAcademyList = MutableLiveData<Resource<UpdateInfoReq>>()
-    val getAcademyList: LiveData<Resource<UpdateInfoReq>> = _getAcademyList
-    fun getAcademyList(deviceId: String) {
+    private val _getAccessoryInfo = MutableLiveData<Resource<UpdateInfoReq>>()
+    val getAccessoryInfo: LiveData<Resource<UpdateInfoReq>> = _getAccessoryInfo
+    fun getAccessoryInfo(deviceId: String, accessoryDeviceId: String) {
         viewModelScope.launch {
-            repository.getAccessoryInfo(deviceId)
+            repository.getAccessoryInfo(deviceId, accessoryDeviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -214,11 +178,11 @@ class HomeCameraViewModel @Inject constructor(private val repository: HomeReposi
                     emit(
                         Resource.DataError(
                             -1,
-                            "$it"
+                            "${it.message}"
                         )
                     )
                 }.collectLatest {
-                    _getAcademyList.value = it
+                    _getAccessoryInfo.value = it
                 }
         }
     }

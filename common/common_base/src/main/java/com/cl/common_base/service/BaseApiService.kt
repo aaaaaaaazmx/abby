@@ -40,6 +40,21 @@ interface BaseApiService {
         @Body body: FinishTaskReq
     ): Flow<HttpResult<String>>
 
+
+    /**
+     * 保存camera的信息
+     * 修改配件，绑定是否没绑定
+     */
+    @POST("abby/accessory/updateInfo")
+    fun updateInfo(@Body body: UpdateInfoReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 删除设备
+     */
+    @FormUrlEncoded
+    @POST("abby/userDevice/delete")
+    fun deleteDevice(@Field("deviceId") deviceId: String): Flow<HttpResult<BaseBean>>
+
     /**
      * 开始种植
      */
@@ -73,7 +88,7 @@ interface BaseApiService {
         @Field("accessoryId") accessoryId: String,
         @Field("deviceId") deviceId: String,
         @Field("accessoryDeviceId")accessoryDeviceId: String? = null,
-    ): Flow<HttpResult<BaseBean>>
+    ): Flow<HttpResult<AccessoryAddData>>
 
     /**
      * 获取广告图文

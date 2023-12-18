@@ -25,6 +25,7 @@ class EnvironmentInfoData(
         val currentSwitch: String? = null,
         val explain: String? = null,
         val articleId: String? = null,
+        val roomData: String? = null,
         val alert: Int? = null,
         val articleDetails: String? = null,
         var automation: Int? = null, // 是否是自动模式

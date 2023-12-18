@@ -186,6 +186,13 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         return this@DeviceControlImpl
     }
 
+    override fun sendDps(dpsJson: String): DeviceControlImpl {
+        map[TuYaDeviceConstants.KEY_DEVICE_MULTIPLE_DP] = dpsJson
+        logI("sendDPs: $dpsJson,,,\n --> ${GSON.toJson(map)}")
+        getCurrentDevice()?.publishDps(GSON.toJson(map), this)
+        return this@DeviceControlImpl
+    }
+
     override fun onError(code: String?, error: String?) {
         onErrorAction?.invoke(this@DeviceControlImpl, code, error)
         kotlin.runCatching {

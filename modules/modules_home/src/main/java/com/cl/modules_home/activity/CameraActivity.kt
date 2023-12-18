@@ -41,6 +41,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.DateHelper
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
@@ -439,7 +440,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         }
 
         // 获取配件信息
-        mViewModel.userInfo?.deviceId?.let { mViewModel.getAccessoryInfo(it) }
+        letMultiple(mViewModel.userInfo?.deviceId, devId) {a,b ->
+            mViewModel.getAccessoryInfo(a, b)
+        }
 
         // Check if the device version >= 23 because
         // from Android 6.0 (Marshmallow) you can set the status bar color.
@@ -615,7 +618,9 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     override fun initData() {
         // 获取配件信息
-        mViewModel.getPartsInfo()
+        letMultiple(mViewModel.userInfo?.deviceId, devId) {a,b ->
+            mViewModel.getAccessoryInfo(a, b)
+        }
 
         ThingIPCSdk.getCameraInstance()?.let {
             mCameraP2P = it.createCameraP2P(devId)

@@ -43,6 +43,10 @@ class RouterPath {
         const val PAGE_SCAN_CODE = "/pairScanCode/$PAIR_CONNECT"
         // wifi链接界面
         const val PAGE_WIFI_CONNECT = "/pairWifiConnect/$PAIR_CONNECT"
+
+        // 涂鸦设备wifi配对界面
+        // 设备列表界面
+        const val PAGE_WIFI_DEVICE_SCAN = "/plantWifiScan/$PAIR_CONNECT"
     }
 
     /**
@@ -115,6 +119,8 @@ class RouterPath {
         const val PAGE_DIGITAL = "/digital/$MY"
         // PAGE_MY_JOURNEY
         const val PAGE_MY_JOURNEY = "/journey/$MY"
+        // WIFI_PAIR
+        const val WIFI_PAIR = "/wifiPair/$MY"
     }
 
     /**

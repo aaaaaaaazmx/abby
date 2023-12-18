@@ -5,6 +5,17 @@
 
     <data>
 
+        <variable
+            name="portId"
+            type="java.lang.String" />
+
+        <variable
+            name="portName"
+            type="java.lang.String" />
+
+        <import type="android.text.TextUtils"/>
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,78 +30,139 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_device"
+        <TextView
+            android:layout_marginStart="13dp"
+            android:visibility="@{TextUtils.isEmpty(portId) ? View.GONE : View.VISIBLE}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ftb_title"
+            android:textStyle="bold"
+            android:id="@+id/ddd"
+            android:layout_marginTop="19dp"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:text="Outlet Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <RelativeLayout
             android:layout_marginStart="13dp"
             android:layout_marginEnd="13dp"
             android:layout_marginTop="25dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ftb_title"
-            android:background="@drawable/background_white_r6"
+            app:layout_constraintTop_toBottomOf="@+id/ddd"
+            android:id="@+id/rl_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="18dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:background="@mipmap/my_night_model"
-                android:id="@+id/iv_icon"
-                android:layout_width="58dp"
-                android:layout_height="62dp"/>
-
-            <TextView
-                android:textStyle="bold"
-                android:layout_marginStart="17.8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/iv_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                android:textColor="@color/mainColor"
-                android:textSize="15sp"
-                tools:text="Smart Fan"
-                android:id="@+id/tv_device_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-
-            <RelativeLayout
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.cl.common_base.widget.FeatureItemSwitch
-                    android:id="@+id/ft_check"
-                    android:layout_width="wrap_content"
-                    app:hideArrow="true"
-                    android:layout_height="40dp"
-                 />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_centerVertical="true"
+                android:visibility="@{TextUtils.isEmpty(portId) ? View.GONE : View.VISIBLE}"
+                android:id="@+id/rl_device"
+                android:background="@drawable/background_white_r6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
 
                 <TextView
-                    android:id="@+id/tv_auto_desc"
-                    android:layout_marginEnd="20dp"
-                    tools:text="Auto\non"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textColor="@color/black"
+                    tools:text="12312312312312312312312312312313123123123123123123123123123123123"
+                    android:text="@{portName}"
+                    android:id="@+id/et_email"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:background="@null"
+                    android:hint="Optional "
+                    android:paddingStart="12dp"
+                    android:textColorHint="#80000000"
+                    android:textSize="16sp"
+                    android:gravity="center_vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_clear_email"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/iv_clear_email"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginEnd="19dp"
+                    android:background="@mipmap/iv_close"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="@{TextUtils.isEmpty(portId) ? View.VISIBLE : View.GONE}"
+                android:id="@+id/cl_device"
+                android:background="@drawable/background_white_r6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="18dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@mipmap/my_night_model"
+                    android:id="@+id/iv_icon"
+                    android:layout_width="58dp"
+                    android:layout_height="62dp"/>
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_marginStart="17.8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iv_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    tools:text="Smart Fan"
+                    android:id="@+id/tv_device_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-            </RelativeLayout>
+
+
+                <RelativeLayout
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <com.cl.common_base.widget.FeatureItemSwitch
+                        android:id="@+id/ft_check"
+                        android:layout_width="wrap_content"
+                        app:hideArrow="true"
+                        android:layout_height="40dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_auto_desc"
+                        android:layout_marginEnd="20dp"
+                        tools:text="Auto\non"
+                        android:textColor="@color/black"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
 
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
+
 
 
         <TextView
             android:textStyle="bold"
             android:id="@+id/tv_auto_title"
             android:layout_marginTop="19dp"
-            app:layout_constraintStart_toStartOf="@+id/cl_device"
-            app:layout_constraintTop_toBottomOf="@+id/cl_device"
+            app:layout_constraintStart_toStartOf="@+id/rl_root"
+            app:layout_constraintTop_toBottomOf="@+id/rl_root"
             android:textColor="@color/black"
             android:textSize="17sp"
             android:text="Automations"
@@ -121,6 +193,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="@{TextUtils.isEmpty(portId) ? View.VISIBLE : View.GONE}"
             android:id="@+id/unbind_camera"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginEnd="20dp"

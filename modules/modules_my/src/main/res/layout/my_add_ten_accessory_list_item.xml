@@ -12,6 +12,9 @@
         <variable
             name="data"
             type="com.cl.common_base.bean.AccessoryListBean" />
+
+        <import type="android.text.TextUtils"/>
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,17 +40,33 @@
         <TextView
             android:textStyle="bold"
             android:layout_marginStart="14dp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory"
             app:layout_constraintTop_toTopOf="@+id/iv_add_accessory"
             android:text="@{data.accessoryName}"
             android:textSize="15sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_desc"
             android:textColor="@color/mainColor"
-            android:gravity="center"
             app:layout_constraintStart_toEndOf="@+id/iv_add_accessory"
             android:id="@+id/tv_add_accessory"
+            android:gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             tools:text="Smart Fan" />
+
+        <TextView
+            android:visibility="@{TextUtils.isEmpty(data.desString) ? View.GONE : View.VISIBLE}"
+            android:textStyle="bold"
+            android:id="@+id/tv_desc"
+            android:text="@{data.desString}"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory"
+            android:layout_marginStart="14dp"
+            app:layout_constraintStart_toEndOf="@+id/iv_add_accessory"
+            app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory"
+            tools:text="Room Temperature"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
 
         <TextView
             android:clickable="@{data.isAdd ? true : false}"

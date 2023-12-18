@@ -10,6 +10,7 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bhm.ble.BleManager
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
@@ -33,6 +34,7 @@ import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
+import com.thingclips.bouncycastle.asn1.x509.KeyUsage
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import java.util.ArrayList
@@ -46,10 +48,59 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     private val adapter by lazy {
-        DeviceListAdapter(mutableListOf()) { accessoryId, deviceId, isChooser ->
+        DeviceListAdapter(mutableListOf(), switchListener = { accessoryId, deviceId, isChooser ->
             // 选择设备开关
             mViewModel.setDeviceStatus(accessoryId, deviceId, if (isChooser) "1" else "0")
-        }
+        }, luoSiListener = { accessoryData, accessListBean ->
+            // 这是配件点击设置逻辑
+            // camera跳转到专属页面
+            if (accessoryData.accessoryType == AccessoryListBean.KEY_CAMERA) {
+                val accessoryDeviceId = accessoryData.accessoryDeviceId
+                startActivityLauncher.launch(
+                    Intent(
+                        this@DeviceListActivity,
+                        CameraSettingActivity::class.java
+                    ).apply {
+                        // 配件Id 就是cameraId
+                        putExtra("accessoryDeviceId", accessoryDeviceId)
+                        putExtra("deviceId", accessListBean.deviceId)
+                        putExtra("relationId", accessoryData.relationId)
+                    })
+                return@DeviceListAdapter
+            }
+            // 排插
+            if (accessoryData.accessoryType == AccessoryListBean.KEY_OUTLETS) {
+                startActivity(Intent(this@DeviceListActivity, OutletsSettingActivity::class.java).apply {
+                    putExtra("accessoryId", accessoryData.accessoryId)
+                    putExtra("accessoryDeviceId", accessoryData.accessoryDeviceId)
+                    putExtra("deviceId", accessListBean.deviceId)
+                    putExtra("relationId", accessoryData.relationId)
+                })
+                return@DeviceListAdapter
+            }
+            // 内部的温湿度传感器，只有帐篷才会有。Abby内部内置了温湿度传感器
+            if (accessoryData.accessoryType == AccessoryListBean.KEY_MONITOR_IN || accessListBean.spaceType == AccessoryListBean.KEY_MONITOR_VIEW_IN) {
+                // 跳转到KnowMoreActivity
+                val id = accessoryData.textId
+                val intent = Intent(this@DeviceListActivity, KnowMoreActivity::class.java)
+                intent.putExtra(Constants.Global.KEY_TXT_ID, id)
+                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, id)
+                intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
+                intent.putExtra(BasePopActivity.KEY_SHARE_TYPE, accessoryData.accessoryType)
+                intent.putExtra(BasePopActivity.KEY_RELATION_ID, accessoryData.relationId)
+                startActivityLauncher.launch(intent)
+                return@DeviceListAdapter
+            }
+            val intent =
+                Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
+            intent.putExtra("relationId", accessoryData.relationId)
+            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
+            intent.putExtra(
+                BasePopActivity.KEY_PART_ID,
+                "${accessoryData.accessoryId}"
+            )
+            startActivityLauncher.launch(intent)
+        })
     }
 
     @Inject
@@ -135,18 +186,36 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             }
             success {
                 // 检查data是否非空和非空列表
-                val dataInfo = data
+                var dataInfo = data
                 if (null == dataInfo) {
                     adapter.setList(dataInfo)
                     return@success
                 }
-                if (dataInfo.isNotEmpty()) {
-                    val indexChooser = dataInfo.indexOfFirst { it.currentDevice == 1 }
+
+                //  根据isShared 来分为2组，并且在每组的第一个添加新类型类型
+                // 1. 先找到isShared为true的设备
+                val sharedList = dataInfo.filter { it.isShared == true }.toMutableList()
+                // 2. 找到isShared为false的设备
+                val unSharedList = dataInfo.filter { it.isShared == false }.toMutableList()
+                // 3. 判断是否有isChooser为true的设备，如果有就新增一个元素spaceType = KEY_SPACE_TYPE_TEXT
+                if (sharedList.isNotEmpty()) {
+                    sharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = "Shared Add-ons"))
+                }
+                // 4. 判断是否有isChooser为false的设备，如果有就新增一个元素spaceType = KEY_SPACE_TYPE_TEXT
+                if (unSharedList.isNotEmpty()) {
+                    unSharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = "Grow Space"))
+                }
+
+                // 5. 将isShared为true的设备放在前面
+                val newList = sharedList + unSharedList
+
+                if (newList.isNotEmpty()) {
+                    val indexChooser = newList.indexOfFirst { it.currentDevice == 1 }
 
                     // 检查是否找到匹配项
                     if (indexChooser != -1) {
-                        dataInfo[indexChooser].isChooser = true  // 设置isChooser标志
-                        adapter.setList(data)
+                        newList[indexChooser].isChooser = true  // 设置isChooser标志
+                        adapter.setList(newList)
 
                         // 设置RecyclerView的位置
                         binding.rvList.postDelayed({
@@ -155,8 +224,8 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
                     } else {
                         // 处理没有找到匹配项的情况，例如选择默认项
-                        dataInfo[0].isChooser = true
-                        adapter.setList(data)
+                        newList[0].isChooser = true
+                        adapter.setList(newList)
 
                         // 设置RecyclerView的位置
                         binding.rvList.postDelayed({
@@ -278,44 +347,37 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             R.id.btn_add_accessory,
             R.id.btn_jump_to_device,
             R.id.cl_root,
-            R.id.iv_luosi,
             R.id.iv_pair_luosi,
         )
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val deviceBean = (adapter.data[position] as? ListDeviceBean)
+            val type = adapter.getItemViewType(position)
             logI("123131231: ${deviceBean?.deviceId},,,,${deviceBean?.nightTimer}")
             when (view.id) {
                 R.id.iv_pair_luosi -> {
-                    startActivityLauncher.launch(Intent(
-                        this@DeviceListActivity,
-                        PHSettingActivity::class.java
-                    ).apply {
-                        putExtra("deviceId", deviceBean?.deviceId)
-                    })
-                }
-                R.id.iv_luosi -> {
-                    // camera跳转到专属页面
-                    if (deviceBean?.accessoryList?.get(0)?.accessoryType == AccessoryListBean.KEY_CAMERA) {
-                        val accessoryDeviceId = deviceBean.accessoryList?.get(0)?.accessoryDeviceId
-                        startActivityLauncher.launch(
-                            Intent(
+                    when(type) {
+                        // PH笔
+                        ListDeviceBean.KEY_TYPE_PH -> {
+                            startActivityLauncher.launch(Intent(
                                 this@DeviceListActivity,
-                                CameraSettingActivity::class.java
+                                PHSettingActivity::class.java
                             ).apply {
-                                // 配件Id 就是cameraId
-                                putExtra("accessoryDeviceId", accessoryDeviceId)
-                                putExtra("deviceId", deviceBean.deviceId)
+                                putExtra("deviceId", deviceBean?.deviceId)
                             })
-                        return@setOnItemChildClickListener
+                        }
+                        // 温湿度传感器
+                        ListDeviceBean.KEY_MONITOR_OUT, ListDeviceBean.MONITOR_VIEW_OUT -> {
+                            // 跳转到KnowMoreActivity
+                            val id = deviceBean?.textId
+                            val intent = Intent(this@DeviceListActivity, KnowMoreActivity::class.java)
+                            intent.putExtra(Constants.Global.KEY_TXT_ID, id)
+                            intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, id)
+                            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceBean?.deviceId)
+                            intent.putExtra(BasePopActivity.KEY_SHARE_TYPE, type.toString())
+                            startActivityLauncher.launch(intent)
+                        }
                     }
-                    val intent =
-                        Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
-                    intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceBean?.deviceId)
-                    intent.putExtra(
-                        BasePopActivity.KEY_PART_ID,
-                        "${deviceBean?.accessoryList?.get(0)?.accessoryId}"
-                    )
-                    startActivityLauncher.launch(intent)
+
                 }
 
                 R.id.btn_chang -> {
@@ -427,7 +489,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                  * 跳转到首页
                  */
                 R.id.btn_jump_to_device -> {
-                    // todo 跳转到首页
+                    // 跳转到首页
                     // (data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE
                     this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
                         if (onlineStatus.equals("Offline")) {
@@ -440,13 +502,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
                         // 改用Eventbus吧。
                         // 切换了设备，需要重新刷新主页。
+                        logI("123123123: $deviceId,,$spaceType")
                         ARouter.getInstance()
                             .build(RouterPath.Main.PAGE_MAIN).navigation()
                         LiveEventBus.get()
-                            .with(
-                                Constants.Global.KEY_IS_SWITCH_DEVICE,
-                                LiveDataDeviceInfoBean::class.java
-                            )
+                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
                             .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
                         finish()
                     }

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round"
+        android:orientation="vertical"
+        android:paddingTop="16dp">
+
+
+        <TextView
+            tools:text="123"
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/mainColor"
+            android:textSize="21sp"
+            android:textStyle="bold" />
+
+
+        <ImageView
+            android:id="@+id/iv_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:paddingStart="14dp"
+            android:paddingTop="15dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="5dp"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/et_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/_xpopup_content_color"
+            android:textColorHint="#999999"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <com.cl.common_base.widget.wheel.time.StringPicker
+            android:layout_marginEnd="26dp"
+            android:layout_marginStart="26dp"
+            android:id="@+id/scope_layout_time"
+            app:fontTypeface="fonts/Gilroy-Medium.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            app:wheelCurtainBorder="true"
+            app:itemHeightSpace="5dp"
+            app:selectedTextSize="17dp"
+            app:itemTextSize="15sp"
+            app:itemTextColor="#979797"
+            app:wheelCurtainBorderColor="@color/mainColor"
+            app:halfVisibleItemCount="2"
+            app:wheelCyclic="false" />
+
+        <View
+            android:id="@+id/xpopup_divider1"
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/_xpopup_list_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="Cancel"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+
+            <View
+                android:id="@+id/xpopup_divider2"
+                android:layout_width=".5dp"
+                android:layout_height="match_parent"
+                android:background="@color/_xpopup_list_divider" />
+
+            <TextView
+                android:id="@+id/tv_confirm"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackground"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:text="@string/base_ok"
+                android:textColor="@color/mainColor"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

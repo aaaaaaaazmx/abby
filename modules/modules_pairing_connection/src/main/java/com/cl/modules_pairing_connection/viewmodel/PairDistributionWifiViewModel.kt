@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.AccessoryAddData
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.EnvironmentInfoReq
 import com.cl.common_base.bean.SyncDeviceInfoReq
@@ -275,6 +276,44 @@ class PairDistributionWifiViewModel @Inject constructor(private val repository: 
             }
             // 请求环境信息
             syncDeviceInfo(envReq)
+        }
+    }
+
+
+
+    /**
+     * 添加蓝牙配件接口
+     */
+    private val _accessoryAdd = MutableLiveData<Resource<AccessoryAddData>>()
+    val accessoryAdd: LiveData<Resource<AccessoryAddData>> = _accessoryAdd
+    fun accessoryAdd(automationId: String, deviceId: String, accessoryDeviceId: String? = null) {
+        viewModelScope.launch {
+            repository.accessoryAdd(automationId, deviceId, accessoryDeviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _accessoryAdd.value = it
+                }
         }
     }
 }
