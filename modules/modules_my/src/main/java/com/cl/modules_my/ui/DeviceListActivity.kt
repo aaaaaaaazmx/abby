@@ -489,7 +489,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                  * 跳转到首页
                  */
                 R.id.btn_jump_to_device -> {
-                    // todo 跳转到首页
+                    // 跳转到首页
                     // (data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE
                     this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
                         if (onlineStatus.equals("Offline")) {
@@ -502,13 +502,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
                         // 改用Eventbus吧。
                         // 切换了设备，需要重新刷新主页。
+                        logI("123123123: $deviceId,,$spaceType")
                         ARouter.getInstance()
                             .build(RouterPath.Main.PAGE_MAIN).navigation()
                         LiveEventBus.get()
-                            .with(
-                                Constants.Global.KEY_IS_SWITCH_DEVICE,
-                                LiveDataDeviceInfoBean::class.java
-                            )
+                            .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
                             .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
                         finish()
                     }

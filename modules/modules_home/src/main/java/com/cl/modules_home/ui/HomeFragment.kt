@@ -2358,10 +2358,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 bean?.let { it ->
                                     val arrayList = it.deviceList as ArrayList<DeviceBean>
                                     logI("123123123: ${arrayList.size}")
-                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceId.value.toString() }
+                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceInfo.value?.deviceId.toString() }
                                         .apply {
-                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value.toString()}")
-                                            if (null == this) {
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value?.toString()}")
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceInfo.value?.deviceId.toString()}")
+                                            /*if (null == this) {
                                                 val aa = mViewMode.thingDeviceBean
                                                 aa()?.devId = mViewMode.deviceId.value
                                                 GSON.toJson(aa)?.let {
@@ -2370,8 +2371,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                         it
                                                     )
                                                 }
-                                                return@apply
-                                            }
+                                                return@applyh
+                                            }*/
                                             GSON.toJson(this)?.let {
                                                 Prefs.putStringAsync(
                                                     Constants.Tuya.KEY_DEVICE_DATA,
@@ -3901,10 +3902,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // Update the UI elements.
             with(binding) {
                 // Set visibility based on the availability of temperature or humidity data.
-                val isDataAvailable = (temp.isNotEmpty() || humidity.isNotEmpty() || roomTemp.isNotEmpty() || roomHumidity.isNotEmpty())  && mViewMode.isZp.value == true
-                ViewUtils.setGone(pplantNinth.ivZpAdd, isDataAvailable)
+                val isDataAvailable = (temp.isNotEmpty() || humidity.isNotEmpty() || roomTemp.isNotEmpty() || roomHumidity.isNotEmpty())
+                if (mViewMode.isZp.value == true) {
+                    if (isDataAvailable) {
+                        pplantNinth.ivZpAdd.visibility = View.GONE
+                    } else {
+                        pplantNinth.ivZpAdd.visibility = View.VISIBLE
+                    }
+                } else {
+                    pplantNinth.ivZpAdd.visibility = View.GONE
+                }
 
-                // 获取温度传感器值
+                // 获取温度传感器值 ProMode
                 plantManual.tvTemperatureValue.text =  mViewMode.temperatureConversionForTemp(mViewMode.getWenDu.value)
                 plantManual.tvHumidityValue.text = mViewMode.getRoomHumidity(mViewMode.getHumidity.value)
 

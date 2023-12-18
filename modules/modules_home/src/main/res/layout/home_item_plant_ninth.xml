@@ -344,7 +344,7 @@
                 android:singleLine="true"
                 android:text="@{String.valueOf(viewModel.unReadMessageNumber)}"
                 android:textColor="@color/white"
-                android:visibility='@{viewModel.userDetail.data.isVip == 1 &amp;&amp; viewModel.unReadMessageNumber != 0? View.VISIBLE : View.GONE}'
+                android:visibility='@{viewModel.isZp ? View.GONE : viewModel.userDetail.data.isVip == 1 &amp;&amp; viewModel.unReadMessageNumber != 0? View.VISIBLE : View.GONE}'
                 android:textSize="11sp"
                 app:layout_constraintCircle="@id/iv_support"
                 app:layout_constraintCircleAngle="50"
