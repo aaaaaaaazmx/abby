@@ -32,11 +32,12 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
+                    android:scaleType="centerCrop"
                     android:id="@+id/rvLinkageTop"
                     android:layout_width="match_parent"
                     android:layout_height="342dp"
                     android:background="@mipmap/my_bg"
-                    android:paddingTop="10dp" />
+                    />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     app:layout_constraintTop_toTopOf="parent"

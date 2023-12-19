@@ -49,39 +49,6 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
     }
 
     /**
-     * 获取壁纸列表
-     */
-    private val _wallpaperList = MutableLiveData<Resource<MutableList<WallpaperListBean>>>()
-    val wallpaperList: LiveData<Resource<MutableList<WallpaperListBean>>> = _wallpaperList
-    fun wallpaperList() = viewModelScope.launch {
-        repository.wallpaperList()
-            .map {
-                if (it.code != Constants.APP_SUCCESS) {
-                    Resource.DataError(
-                        it.code,
-                        it.msg
-                    )
-                } else {
-                    Resource.Success(it.data)
-                }
-            }
-            .flowOn(Dispatchers.IO)
-            .onStart {
-            }
-            .catch {
-                logD("catch ${it.message}")
-                emit(
-                    Resource.DataError(
-                        -1,
-                        "${it.message}"
-                    )
-                )
-            }.collectLatest {
-                _wallpaperList.value = it
-            }
-    }
-
-    /**
      * 获取用户信息
      */
     private val _userDetail = MutableLiveData<Resource<UserinfoBean.BasicUserBean>>()

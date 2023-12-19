@@ -5,6 +5,7 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.strikeThrough
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.cl.common_base.bean.WallpaperListBean
@@ -38,6 +39,7 @@ class WallAdapter(
 
             else -> {
                 Glide.with(context).load(item.address)
+                    .apply(RequestOptions().override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL))
                     .into(holder.getView(R.id.iv_wall))
             }
         }

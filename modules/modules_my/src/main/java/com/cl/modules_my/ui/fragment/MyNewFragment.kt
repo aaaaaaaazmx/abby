@@ -1,6 +1,10 @@
 package com.cl.modules_my.ui.fragment
 
+import android.R
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -8,6 +12,8 @@ import cn.mtjsoft.barcodescanning.extentions.dp
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
@@ -20,7 +26,6 @@ import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.scroll.behavior.BehavioralScrollListener
@@ -37,6 +42,7 @@ import com.cl.modules_my.ui.SettingActivity
 import com.cl.modules_my.viewmodel.MyViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @Route(path = RouterPath.My.PAGE_MY)
 @AndroidEntryPoint
@@ -179,22 +185,6 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
     override fun observe() {
         mViewModel.apply {
-            wallpaperList.observe(viewLifecycleOwner, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
-                success {
-                    if (data.isNullOrEmpty()) return@success
-
-                    // 替换背景
-                    val wallId = userDetail.value?.data?.wallId
-                    data?.firstOrNull { it.id == wallId }?.let { bean ->
-                        context?.let {
-                            Glide.with(it).load(bean.address)
-                                .placeholder(com.cl.common_base.R.mipmap.my_bg)
-                                .into(binding.rvLinkageTop)
-                        }
-                    }
-                }
-            })
             userDetail.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
@@ -247,7 +237,20 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                                 }
                             }
 
-                            else -> mViewModel.wallpaperList()
+                            else -> {
+                                context?.let { cc ->
+                                    Glide.with(cc).asDrawable().load(data?.wallAddress)
+                                        .apply(RequestOptions().override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL))
+                                        .into(object : CustomTarget<Drawable>() {
+                                            override fun onResourceReady(resource: Drawable, transition: com.bumptech.glide.request.transition.Transition<in Drawable>?) {
+                                                binding.rvLinkageTop.background = resource
+                                            }
+
+                                            override fun onLoadCleared(placeholder: Drawable?) {
+                                            }
+                                        })
+                                }
+                            }
                         }
                     }
                 }

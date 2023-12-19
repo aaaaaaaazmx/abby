@@ -1,6 +1,7 @@
 package com.cl.modules_my.ui
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,6 +13,8 @@ import cn.mtjsoft.barcodescanning.extentions.dp
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
@@ -76,21 +79,6 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
 
     override fun observe() {
         mViewModel.apply {
-            wallpaperList.observe(this@DigitalActivity, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
-                success {
-                    if (data.isNullOrEmpty()) return@success
-
-                    // 替换背景
-                    val wallId = userDetail.value?.data?.wallId
-                    data?.firstOrNull { it.id == wallId }?.let { bean ->
-                        Glide.with(this@DigitalActivity).load(bean.address)
-                            .placeholder(R.mipmap.my_bg)
-                            .into(binding.rvLinkageTop)
-                    }
-                }
-            })
-
             userDetail.observe(this@DigitalActivity, resourceObserver {
                 error { errorMsg, code ->
                     ToastUtil.shortShow(errorMsg)
@@ -128,7 +116,18 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
                                     )
                             }
 
-                            else -> mViewModel.wallpaperList()
+                            else -> {
+                                Glide.with(this@DigitalActivity).asDrawable().load(data?.wallAddress)
+                                    .apply(RequestOptions().override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL))
+                                    .into(object : CustomTarget<Drawable>() {
+                                        override fun onResourceReady(resource: Drawable, transition: com.bumptech.glide.request.transition.Transition<in Drawable>?) {
+                                            binding.rvLinkageTop.background = resource
+                                        }
+
+                                        override fun onLoadCleared(placeholder: Drawable?) {
+                                        }
+                                    })
+                            }
                         }
                     }
                 }
@@ -164,11 +163,9 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
                                 "banner01" -> R.mipmap.banner01
                                 "banner02" -> R.mipmap.banner02
                                 "banner03" -> R.mipmap.banner03
-                                else -> null
+                                else -> wallpaper.picture
                             }
-                            drawableRes?.let {
-                                imageViews[index].background = ContextCompat.getDrawable(this@DigitalActivity, it)
-                            }
+                            Glide.with(this@DigitalActivity).load(drawableRes).into(imageViews[index])
                         }
                     }
                 }
