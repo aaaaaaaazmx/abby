@@ -22,6 +22,8 @@ import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.MedalPop
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.widget.toast.ToastUtil
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 import com.thingclips.smart.android.user.bean.User
@@ -1802,11 +1804,23 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     fun getGrowLight() {
         val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
-        Prefs.getObjects().firstOrNull { it.name == name }.apply {
-            if (null == this) {
-                _getGrowLight.value = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE).safeToInt()
+        // val gear = name.isEmpty() || name == "-1"
+        userDetail.value?.data?.deviceId?.let {
+            logI("12312312: map.size:,,,${it}")
+            val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+            if (lightValue.isEmpty()) {
+                _getGrowLight.value =  thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
+                return
+            }
+            val mapType = object : TypeToken<Map<String, Any>>() {}.type
+            val map: Map<String, String> = Gson().fromJson(lightValue, mapType)
+            logI("1231231111111111111: $it ,,, ${_getGrowLight.value},,,${_getCurrentGrowLight.value},,, lightValue: $lightValue ,,, ${map[it].toString()}")
+            if (map[it].isNullOrEmpty() || map[it].toString() == "-1") {
+                _getGrowLight.value = thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
             } else {
-                _getGrowLight.value = lightIntensity.safeToInt()
+                _getGrowLight.value = map[it].toString().safeToInt()
             }
         }
     }
@@ -1961,8 +1975,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             kotlin.runCatching {
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
-                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble()
-                    .safeToInt()} ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
             }.getOrElse {
                 return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
             }

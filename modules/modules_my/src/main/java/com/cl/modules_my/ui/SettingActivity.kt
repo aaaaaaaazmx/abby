@@ -719,6 +719,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     BasePopActivity.KEY_FIXED_TASK_ID,
                     Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
                 )
+                intent.putExtra(BasePopActivity.KEY_DEVICE_ID, mViewModel.userDetail.value?.data?.deviceId)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")

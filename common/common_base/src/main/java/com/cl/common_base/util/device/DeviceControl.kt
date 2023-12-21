@@ -87,7 +87,7 @@ interface DeviceControl {
 
 
     /**
-     * 一次性发送多个dp点
+     * 一次性发送多个dp点 140dp点
      * https://cz84t38aha.feishu.cn/docx/UnYBd35TJoXMcrxrD5ncNgPqnmc
      */
     fun sendDps(dpsJson: String): DeviceControlImpl

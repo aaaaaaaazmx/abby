@@ -302,9 +302,10 @@ class ChooseTimePop(
             //                colorIntArr[0] = Color.parseColor("#008961");
             //                colorIntArr[1] = Color.parseColor("#008961");
             // 当刻度为最后4段时才显示红色
-            colorIntArr[6] = Color.parseColor("#F72E47")
-            colorIntArr[7] = Color.parseColor("#F72E47")
+            // colorIntArr[6] = Color.parseColor("#F72E47")
+            // colorIntArr[7] = Color.parseColor("#F72E47")
             colorIntArr[8] = Color.parseColor("#F72E47")
+            colorIntArr[9] = Color.parseColor("#F72E47")
             true //true if apply color , otherwise no change
         }
         lightIntensitySeekbar.onSeekChangeListener = object : OnSeekChangeListener {

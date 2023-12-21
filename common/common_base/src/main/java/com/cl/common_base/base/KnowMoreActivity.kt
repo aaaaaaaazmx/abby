@@ -3,6 +3,7 @@ package com.cl.common_base.base
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -11,6 +12,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
@@ -40,10 +42,13 @@ import com.cl.common_base.ext.sp2px
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.TuyaCameraUtils
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
@@ -503,7 +508,51 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
             updateDeviceInfo.observe(this@KnowMoreActivity, resourceObserver {
                 success {
                     if (fixedId == Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE) {
-                        mViewMode.checkPlant()
+                        // 更新涂鸦Bean
+                        ThingHomeSdk.newHomeInstance(mViewMode.homeId)
+                            .getHomeDetail(object : IThingHomeResultCallback {
+                                @RequiresApi(Build.VERSION_CODES.GINGERBREAD)
+                                override fun onSuccess(bean: HomeBean?) {
+                                    bean?.let { it ->
+                                        val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                        logI("123123123: ${arrayList.size}")
+                                        arrayList.firstOrNull { dev -> dev.devId == deviceId }
+                                            .apply {
+                                                /*if (null == this) {
+                                                    val aa = mViewMode.thingDeviceBean
+                                                    aa()?.devId = mViewMode.deviceId.value
+                                                    GSON.toJson(aa)?.let {
+                                                        Prefs.putStringAsync(
+                                                            Constants.Tuya.KEY_DEVICE_DATA,
+                                                            it
+                                                        )
+                                                    }
+                                                    return@applyh
+                                                }*/
+                                                GSON.toJson(this)?.let {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                                        it
+                                                    )
+                                                }
+
+                                                // 重新注册服务
+                                                // 开启服务
+                                                val intent = Intent(
+                                                    this@KnowMoreActivity,
+                                                    TuYaDeviceUpdateReceiver::class.java
+                                                )
+                                                startService(intent)
+                                                // 切换之后需要重新刷新所有的东西
+                                                mViewMode.checkPlant()
+                                            }
+                                    }
+                                }
+
+                                override fun onError(errorCode: String?, errorMsg: String?) {
+
+                                }
+                            })
                     }
                 }
             })

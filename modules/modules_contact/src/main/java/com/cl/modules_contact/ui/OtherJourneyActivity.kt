@@ -308,7 +308,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         }
 
                         else -> {
-                            Glide.with(this@OtherJourneyActivity).asDrawable().load(data?.wallAddress)
+                            Glide.with(this@OtherJourneyActivity).asDrawable().load(data?.wallAddress ?: com.cl.common_base.R.mipmap.my_bg)
                                 .apply(RequestOptions().override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL))
                                 .into(object : CustomTarget<Drawable>() {
                                     override fun onResourceReady(resource: Drawable, transition: com.bumptech.glide.request.transition.Transition<in Drawable>?) {
