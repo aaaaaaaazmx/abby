@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View
 import android.view.animation.LinearInterpolator
@@ -18,6 +19,8 @@ import cn.mtjsoft.barcodescanning.extentions.dp
 import cn.mtjsoft.barcodescanning.utils.SoundPoolUtil
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomTarget
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.cl.common_base.adapter.MedialAdapter
 import com.cl.common_base.base.BaseActivity
@@ -281,21 +284,6 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 }
             })
 
-            wallpaperList.observe(this@OtherJourneyActivity, resourceObserver {
-                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
-                success {
-                    if (data.isNullOrEmpty()) return@success
-
-                    // 替换背景
-                    val wallId = userDetail.value?.data?.wallId
-                    data?.firstOrNull { it.id == wallId }?.let { bean ->
-                        Glide.with(this@OtherJourneyActivity).load(bean.address)
-                            .placeholder(com.cl.common_base.R.mipmap.my_bg)
-                            .into(binding.rvLinkageTop)
-                    }
-                }
-            })
-
             userDetail.observe(this@OtherJourneyActivity, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
                 success { // 数据相关
@@ -319,7 +307,18 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                             )
                         }
 
-                        else -> viewModel.wallpaperList()
+                        else -> {
+                            Glide.with(this@OtherJourneyActivity).asDrawable().load(data?.wallAddress ?: com.cl.common_base.R.mipmap.my_bg)
+                                .apply(RequestOptions().override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL, com.bumptech.glide.request.target.Target.SIZE_ORIGINAL))
+                                .into(object : CustomTarget<Drawable>() {
+                                    override fun onResourceReady(resource: Drawable, transition: com.bumptech.glide.request.transition.Transition<in Drawable>?) {
+                                        binding.rvLinkageTop.background = resource
+                                    }
+
+                                    override fun onLoadCleared(placeholder: Drawable?) {
+                                    }
+                                })
+                        }
                     }
                 }
             })

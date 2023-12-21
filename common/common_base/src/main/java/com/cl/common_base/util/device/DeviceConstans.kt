@@ -135,6 +135,9 @@ class TuYaDeviceConstants {
         const val KEY_DEVICE_AIR_PUMP_INSTRUCTION = "air_pump" // 气泵
         const val KEY_DEVICE_LIGHT_TIME_INSTRUCTION = "turn_on_the_light" // 开灯时间
         const val KEY_DEVICE_LIGHT_OFF_TIME_INSTRUCTION = "turn_off_light" // 关灯时间
+
+        // time_stamp 140返回的字段
+        const val KEY_DEVICE_TIME_STAMP = "time_stamp"
         /**
          * brightValue	灯光强度		false
         integer

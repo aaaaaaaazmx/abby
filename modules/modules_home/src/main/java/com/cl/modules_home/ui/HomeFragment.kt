@@ -71,6 +71,8 @@ import com.cl.modules_home.activity.HomeNewPlantNameActivity
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.*
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BasePopupView
 import com.lxj.xpopup.enums.PopupPosition
@@ -260,6 +262,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     cameraStopOnpause()
                     mViewMode.setDeviceInfo(devieInfo)
                     devieInfo.deviceId?.let {
+                        // 保存灯光预设值,保存上一个设备的灯光预设值
+                        val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+                        var map = mutableMapOf<String, String>()
+                        if (lightValue.isEmpty()) {
+                            map[mViewMode.userDetail.value?.data?.deviceId.toString()] = mViewMode.getGrowLight.value.toString()
+                        } else {
+                            val mapType = object : TypeToken<MutableMap<String, Any>>() {}.type
+                            map = Gson().fromJson(lightValue, mapType)
+                            map[mViewMode.userDetail.value?.data?.deviceId.toString()] = mViewMode.getGrowLight.value.toString()
+                        }
+                        Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, GSON.toJson(map).toString())
+
+                        // 转换设备
                         mViewMode.setDeviceId(it)
                         mViewMode.switchDevice(it)
                     }
@@ -968,11 +983,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             val muteOff = data.muteOff
                             logI("toDP: $fanIntake, $fanExhaust, $lightIntensity, $lightSchedule, $muteOn, $muteOff")
 
+                            // 保存灯光预设值
+                            val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+                            var map = mutableMapOf<String, String>()
+                            if (lightValue.isEmpty()) {
+                                map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
+                            } else {
+                                val mapType = object : TypeToken<MutableMap<String, Any>>() {}.type
+                                map = Gson().fromJson(lightValue, mapType)
+                                map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
+                            }
+                            Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, GSON.toJson(map).toString())
+
                             fanIntake?.let { it1 -> mViewMode.setFanIntake(it1) }
                             fanExhaust?.let { it1 -> mViewMode.setFanExhaust(it1) }
                             lightIntensity?.let { it1 -> mViewMode.setGrowLight(it1) }
                             ftTimer.text = "$lightSchedule"
-                            mViewMode.setmuteOn(muteOff)
+                            mViewMode.setmuteOff(muteOff)
                             mViewMode.setmuteOn(muteOn)
 
                             val dpBean = AllDpBean(cmd = "6", gl = lightIntensity, gls = muteOn, gle= muteOff, ex = fanExhaust, `in` = fanIntake)
@@ -1333,41 +1360,34 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 lightIntensity = mViewMode.getGrowLight.value.safeToInt(),
                 proModeAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour, lightIntensity ->
                     mViewMode.setGrowLight(lightIntensity.toString())
-                    Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, lightIntensity.toString())
+                    val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+                    var map = mutableMapOf<String, String>()
+                    if (lightValue.isEmpty()) {
+                        map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
+                    } else {
+                        val mapType = object : TypeToken<MutableMap<String, Any>>() {}.type
+                        map = Gson().fromJson(lightValue, mapType)
+                        map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
+                    }
+                    logI("12312312: map.size: ${map.size},,,${mViewMode.userDetail.value?.data?.deviceId}")
+                    Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, GSON.toJson(map).toString())
 
                     ftTimer.text = "$onTime-$offMinute"
                     mViewMode.setmuteOn("$timeOn")
                     mViewMode.setmuteOff("$timeOff")
 
                     // 开灯时间
-                    when (timeOn) {
-                        12 -> 0
-                        24 -> 12
-                        else -> timeOn
-                    }?.let { it2 ->
-                        DeviceControl.get()
-                            .success { }
-                            .error { code, error -> }
-                            .lightTime(it2)
-                    }
-
-                    // 关灯时间
-                    when (timeOff) {
+                    // 调节灯光事件, 需要用到140字段
+                    val dpBean = AllDpBean(cmd = "6", gl = lightIntensity.toString(), gle =  when (timeOff) {
                         12 -> 0
                         24 -> 12
                         else -> timeOff
-                    }?.let { it2 ->
-                        DeviceControl.get()
-                            .success { }
-                            .error { code, error -> }
-                            .closeLightTime(it2)
-                    }
-
-                    // 调节灯光事件
-                    DeviceControl.get()
-                        .success {}
-                        .error { code, error -> }
-                        .lightIntensity(lightIntensity ?: 0)
+                    }.toString(), gls = when (timeOn) {
+                        12 -> 0
+                        24 -> 12
+                        else -> timeOn
+                    }.toString(), ex = mViewMode.getFanExhaust.value.toString(), `in` = mViewMode.getFanIntake.value.toString())
+                    GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
                 })
         }).show()
     }
@@ -4573,12 +4593,26 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 // ----- 开始， 下面的都是需要传给后台的环境信息
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
+                /*TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
                     mViewMode.tuYaDps?.put(
                         TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
                         value.toString()
                     )
                     mViewMode.setCurrentGrowLight(value.toString())
+                }*/
+
+                // 140 dp点
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TIME_STAMP -> {
+                    val allDpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
+                    // cmd == 3 返回实际灯光配置参数
+                    // cmd == 1 返回实际全部配置参数
+                    if (allDpBean?.cmd == "3") {
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
+                            allDpBean.gl.toString()
+                        )
+                        mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
+                    }
                 }
 
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {

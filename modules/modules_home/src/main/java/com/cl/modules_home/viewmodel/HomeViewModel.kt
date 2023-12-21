@@ -11,6 +11,7 @@ import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToDouble
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
@@ -22,6 +23,8 @@ import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.MedalPop
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.widget.toast.ToastUtil
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.thingclips.smart.android.camera.sdk.ThingIPCSdk
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 import com.thingclips.smart.android.user.bean.User
@@ -1724,12 +1727,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getWenDu.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WENDU }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().toDouble().safeToInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WENDU).toString().safeToDouble().safeToInt()
         }
     }
 
     fun setWenDu(wendu: String?) {
-        _getWenDu.value = wendu?.toDouble()?.safeToInt()
+        _getWenDu.value = wendu?.safeToDouble()?.safeToInt()
     }
 
 
@@ -1741,12 +1744,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getHumidity.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_HUMIDITY }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().toDouble().safeToInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_HUMIDITY).toString().safeToDouble().safeToInt()
         }
     }
 
     fun setHumidity(humidity: String?) {
-        _getHumidity.value = humidity?.toDouble()?.safeToInt()
+        _getHumidity.value = humidity?.safeToDouble()?.safeToInt()
     }
 
     private val _getWaterWenDu = MutableLiveData<Int>()
@@ -1757,12 +1760,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getWaterWenDu.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().toDouble().safeToInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_WATER_WENDU).toString().safeToDouble().safeToInt()
         }
     }
 
     fun setWaterWenDu(waterWenDu: String?) {
-        _getWaterWenDu.value = waterWenDu?.toDouble()?.safeToInt()
+        _getWaterWenDu.value = waterWenDu?.safeToDouble()?.safeToInt()
     }
 
     private val _getFanIntake = MutableLiveData<Int>()
@@ -1773,12 +1776,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getFanIntake.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_INTAKE }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().toDouble().safeToInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_INTAKE).toString().safeToDouble().safeToInt()
         }
     }
 
     fun setFanIntake(gear: String) {
-        _getFanIntake.value = gear.toDouble().safeToInt()
+        _getFanIntake.value = gear.safeToDouble().safeToInt()
     }
 
     private val _getFanExhaust = MutableLiveData<Int>()
@@ -1788,12 +1791,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getFanExhaust.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_EXHAUST }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().toDouble().safeToInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_EXHAUST).toString().safeToDouble().safeToInt()
         }
     }
 
     fun setFanExhaust(gear: String) {
-        _getFanExhaust.value = gear.toDouble().safeToInt()
+        _getFanExhaust.value = gear.safeToDouble().safeToInt()
     }
 
     // 植物预设灯光
@@ -1802,17 +1805,29 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     fun getGrowLight() {
         val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
-        Prefs.getObjects().firstOrNull { it.name == name }.apply {
-            if (null == this) {
-                _getGrowLight.value = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE).safeToInt()
+        // val gear = name.isEmpty() || name == "-1"
+        userDetail.value?.data?.deviceId?.let {
+            logI("12312312: map.size:,,,${it}")
+            val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+            if (lightValue.isEmpty()) {
+                _getGrowLight.value =  thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
+                return
+            }
+            val mapType = object : TypeToken<Map<String, Any>>() {}.type
+            val map: Map<String, String> = Gson().fromJson(lightValue, mapType)
+            logI("1231231111111111111: $it ,,, ${_getGrowLight.value},,,${_getCurrentGrowLight.value},,, lightValue: $lightValue ,,, ${map[it].toString()}")
+            if (map[it].isNullOrEmpty() || map[it].toString() == "-1") {
+                _getGrowLight.value = thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
             } else {
-                _getGrowLight.value = lightIntensity.safeToInt()
+                _getGrowLight.value = map[it].toString().safeToInt()
             }
         }
     }
 
     fun setGrowLight(gear: String) {
-        _getGrowLight.value = gear.toDouble().safeToInt()
+        _getGrowLight.value = gear.safeToDouble().safeToInt()
     }
 
     // 植物当前灯光
@@ -1823,12 +1838,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         kotlin.runCatching {
             _getCurrentGrowLight.value =
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().toDouble().safeToInt()
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
         }
     }
 
     fun setCurrentGrowLight(gear: String) {
-        _getCurrentGrowLight.value = gear.toDouble().safeToInt()
+        _getCurrentGrowLight.value = gear.safeToDouble().safeToInt()
     }
 
     // 气泵
@@ -1878,8 +1893,8 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     private fun getTimeText(): String {
         kotlin.runCatching {
-            val lightTime = _getLightTime.value?.toDouble()?.safeToInt() ?: 0
-            val closeLightTime = _getCloseLightTime.value?.toDouble()?.safeToInt() ?: 0
+            val lightTime = _getLightTime.value?.safeToDouble()?.safeToInt() ?: 0
+            val closeLightTime = _getCloseLightTime.value?.safeToDouble()?.safeToInt() ?: 0
 
             muteOn = lightTime.toString()
             muteOff = closeLightTime.toString()
@@ -1940,7 +1955,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             kotlin.runCatching {
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
-                return String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble()
+                return String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble()
                     .safeToInt()
             }.getOrElse {
                 return text
@@ -1961,8 +1976,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
             kotlin.runCatching {
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
-                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).toDouble()
-                    .safeToInt()} ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
             }.getOrElse {
                 return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
             }

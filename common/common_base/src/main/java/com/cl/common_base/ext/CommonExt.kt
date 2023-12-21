@@ -29,6 +29,16 @@ fun Any?.safeToInt(): Int {
     } ?: 0
 }
 
+fun Any?.safeToDouble(): Double {
+    return this?.let {
+        if (this is String) {
+            this.safeToBigDecimal().toDouble()
+        } else {
+            this.toString().safeToBigDecimal().toDouble()
+        }
+    } ?: 0.0
+}
+
 // toFloat
 fun Any?.safeToFloat(): Float {
     return this?.let {
