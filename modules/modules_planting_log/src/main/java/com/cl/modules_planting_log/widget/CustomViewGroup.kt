@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cl.common_base.ext.safeToDouble
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.SoftInputUtils
 import com.cl.modules_planting_log.R
@@ -206,7 +207,7 @@ class CustomViewGroup : LinearLayout {
                     val floatValue = value.toDoubleOrNull()
                     // 检查是否整数，如果是，则添加".0"
                     if (floatValue != null && !value.contains(".") && floatValue == floatValue.safeToInt()
-                            .toDouble()
+                            .safeToDouble()
                     ) {
                         val formattedValue = "$value.0"
                         editText1?.setText(formattedValue)
