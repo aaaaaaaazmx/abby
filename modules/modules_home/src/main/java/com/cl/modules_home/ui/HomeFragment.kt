@@ -1002,7 +1002,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             mViewMode.setmuteOff(muteOff)
                             mViewMode.setmuteOn(muteOn)
 
-                            val dpBean = AllDpBean(cmd = "6", gl = lightIntensity, gls = muteOn, gle= muteOff, ex = fanExhaust, `in` = fanIntake)
+                            val dpBean = AllDpBean(cmd = "6", gl = lightIntensity, gls = muteOn, gle = muteOff, ex = fanExhaust, `in` = fanIntake)
 
                             // 开灯时间
                             when (muteOn.safeToInt()) {
@@ -1378,15 +1378,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 开灯时间
                     // 调节灯光事件, 需要用到140字段
-                    val dpBean = AllDpBean(cmd = "6", gl = lightIntensity.toString(), gle =  when (timeOff) {
-                        12 -> 0
-                        24 -> 12
-                        else -> timeOff
-                    }.toString(), gls = when (timeOn) {
-                        12 -> 0
-                        24 -> 12
-                        else -> timeOn
-                    }.toString(), ex = mViewMode.getFanExhaust.value.toString(), `in` = mViewMode.getFanIntake.value.toString())
+                    val dpBean = AllDpBean(
+                        cmd = "6", gl = lightIntensity.toString(), gle = when (timeOff) {
+                            12 -> 0
+                            24 -> 12
+                            else -> timeOff
+                        }.toString(), gls = when (timeOn) {
+                            12 -> 0
+                            24 -> 12
+                            else -> timeOn
+                        }.toString(), ex = mViewMode.getFanExhaust.value.toString(), `in` = mViewMode.getFanIntake.value.toString()
+                    )
                     GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
                 })
         }).show()
@@ -3695,7 +3697,47 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             environmentInfo.observe(viewLifecycleOwner, resourceObserver {
                 success {
                     // 弹出环境框
-                    data?.let { it.environments?.let { it1 -> envirPop?.setData(it1) } }
+                    // 需要经过解析，才能给到data
+                    data?.let { dataItem ->
+                        val originalSize = dataItem.environments?.size ?: 0
+                        val filteredList = mutableListOf<EnvironmentInfoData.Environment>()
+                        val list = listOf(EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE, EnvironmentInfoData.KEY_TYPE_WATER_LEVEL_TYPE, EnvironmentInfoData.KEY_TYPE_HUMIDITY_TYPE, EnvironmentInfoData.KEY_TYPE_TEMPERATURE_TYPE)
+                        // Add new data and modify original data
+                        for (j in 0 until originalSize) {
+                            val insertIndex = j * 2
+                            val newTextDesc = dataItem.environments?.get(insertIndex)?.detectionValue  // Use j to get the original item
+
+                            // Insert new data
+                            dataItem.environments?.add(insertIndex, EnvironmentInfoData.Environment(environmentType = EnvironmentInfoData.KEY_SPACE_TYPE_TEXT, textDesc = newTextDesc, type = dataItem.environments?.get(insertIndex)?.environmentType))
+
+                            // Modify original data
+                            dataItem.environments?.get(insertIndex + 1)?.apply {
+                                /*when (environmentType) {
+                                    EnvironmentInfoData.KEY_TYPE_FAN_TYPE -> type = EnvironmentInfoData.KEY_TYPE_FAN_TYPE
+                                    EnvironmentInfoData.KEY_TYPE_LIGHT_TYPE -> type = EnvironmentInfoData.KEY_TYPE_LIGHT_TYPE
+                                }*/
+
+                                // Check for specific detectionValue and add to filteredList
+                                if (environmentType in list) {
+                                    filteredList.add(this)
+                                }
+                            }
+                        }
+
+                        // Insert filteredList at the beginning
+                        dataItem.environments?.add(0, EnvironmentInfoData.Environment(environmentType = EnvironmentInfoData.KEY_SPACE_TYPE_GRID, additionalData = filteredList))
+
+                        // Remove elements with specific environmentType\type
+                        dataItem.environments?.removeIf { env ->
+                            env.environmentType in list || env.type in list
+                        }
+
+                        // Update UI or data display
+                        dataItem.environments?.let {
+                            envirPop?.setData(it)
+                        }
+                    }
+
                     envirPop?.setStrainName(mViewMode.plantInfo.value?.data?.plantName)
                 }
                 error { errorMsg, _ ->
@@ -3934,7 +3976,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 // 获取温度传感器值 ProMode
-                plantManual.tvTemperatureValue.text =  mViewMode.temperatureConversionForTemp(mViewMode.getWenDu.value)
+                plantManual.tvTemperatureValue.text = mViewMode.temperatureConversionForTemp(mViewMode.getWenDu.value)
                 plantManual.tvHumidityValue.text = mViewMode.getRoomHumidity(mViewMode.getHumidity.value)
 
                 // Update the temperature and humidity values.

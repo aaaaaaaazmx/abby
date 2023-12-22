@@ -23,21 +23,32 @@
         android:id="@+id/cl_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="17dp"
-        android:background="@mipmap/home_period_green"
+        android:layout_marginBottom="17dp"
+        android:background="@drawable/background_gray_r10"
         >
+        
+        <ImageView
+            android:id="@+id/iv_sun"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="13dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@mipmap/home_sun_bg"
+            android:layout_width="21dp"
+            android:layout_height="21dp"/>
 
         <TextView
+            android:visibility="gone"
+            android:layout_marginStart="5dp"
+            app:layout_constraintStart_toEndOf="@+id/iv_sun"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_sun"
+            app:layout_constraintTop_toTopOf="@+id/iv_sun"
             android:id="@+id/period"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="13dp"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             tools:text="Vegetation" />
 
         <TextView
@@ -48,7 +59,7 @@
             android:id="@+id/period_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="13dp"
             android:textSize="13sp"
