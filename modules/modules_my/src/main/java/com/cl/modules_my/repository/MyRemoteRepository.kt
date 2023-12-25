@@ -6,7 +6,7 @@ import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.bean.AccountFlowingReq
 import com.cl.modules_my.request.ConfiguationExecuteRuleReq
 import com.cl.modules_my.request.MergeAccountReq
-import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
 import com.cl.modules_my.request.AccessorySubportData
@@ -16,7 +16,6 @@ import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ResetPwdReq
-import com.cl.modules_my.request.ShowAchievementReq
 import com.cl.modules_my.request.UpdateSubportReq
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped

@@ -1,4 +1,4 @@
-package com.cl.modules_my.request
+package com.cl.common_base.bean
 
 import androidx.annotation.Keep
 import com.cl.common_base.bean.BaseBean

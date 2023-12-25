@@ -2059,7 +2059,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 环境弹窗
      */
     private val envirPopDelete by lazy {
-        XPopup.Builder(context).isDestroyOnDismiss(false).enableDrag(true)
+        XPopup.Builder(context).isDestroyOnDismiss(false).enableDrag(false)
+            .maxHeight(dp2px(600f))
             .dismissOnTouchOutside(true).asCustom(envirPop)
     }
     private val envirPop by lazy {
@@ -2069,6 +2070,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 disMissAction = {
                     // 消失之后，刷新数据
                     mViewMode.getEnvData()
+                    mViewMode.listDevice()
+                    mViewMode.userDetail()
                 }
             )
         }
@@ -3734,7 +3737,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // Update UI or data display
                         dataItem.environments?.let {
-                            envirPop?.setData(it)
+                            envirPop?.setData(it, mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }, mViewMode.userDetail.value?.data)
                         }
                     }
 

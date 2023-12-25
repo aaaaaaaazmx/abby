@@ -43,6 +43,7 @@ class ChooseTimePop(
     private var isProMode: Boolean? = false, // 是否是proMode模式。
     private val proModeAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?, lightIntensity: Int?) -> Unit)? = null, // proMode下的选择
     private val onConfirmAction: ((onTime: String?, onMinute: String?, timeOn: Int?, timeOff: Int?, timeOpenHour: String?, timeCloseHour: String?) -> Unit)? = null,
+    private val onCancelAction: (() -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.my_choose_time_pop
@@ -65,7 +66,10 @@ class ChooseTimePop(
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<MyChooseTimePopBinding>(popupImplView)?.apply {
-            ivClose.setOnClickListener { dismiss() }
+            ivClose.setOnClickListener {
+                onCancelAction?.invoke()
+                dismiss()
+            }
 
             // 展示Seekbar
             ViewUtils.setVisible(isProMode == true, clLight)

@@ -9,7 +9,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.modules_my.repository.MyRepository
-import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.common_base.bean.ModifyUserDetailReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*

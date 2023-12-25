@@ -5,9 +5,8 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyEditNickNameBinding
-import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

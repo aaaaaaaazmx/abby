@@ -15,7 +15,7 @@ import com.cl.modules_my.repository.GetAutomationRuleBean
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.ConfiguationExecuteRuleReq
-import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers

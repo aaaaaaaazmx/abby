@@ -39,6 +39,12 @@ interface HttpHomeApiService {
     fun getGuideInfo(@Field("type") type: String): Flow<HttpResult<GuideInfoData>>
 
     /**
+     * 更新用户信息
+     */
+    @POST("abby/user/modifyUserDetail")
+    fun modifyUserDetail(@Body body: ModifyUserDetailReq): Flow<HttpResult<Boolean>>
+
+    /**
      * 上报引导标记
      */
     @FormUrlEncoded

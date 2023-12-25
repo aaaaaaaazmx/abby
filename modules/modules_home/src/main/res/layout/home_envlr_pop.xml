@@ -15,12 +15,10 @@
         android:orientation="vertical">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginStart="24dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
-                app:layout_constraintTop_toTopOf="parent"
                 android:id="@+id/iv_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -29,57 +27,107 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="13dp"
                 android:background="@mipmap/iv_close"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                app:layout_constraintTop_toBottomOf="@+id/iv_close"
                 android:id="@+id/cl_avatar"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent">
+                android:layout_marginTop="17dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_close">
 
-                <ImageView
-                    circleUrl="@{}"
-                    android:id="@+id/ivAvatar"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    tools:src="@mipmap/ic_launcher" />
+                <CheckBox
+                    android:id="@+id/cb_notify"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/planting_checkbox_notiy_selector"
+                    android:button="@null"
+                    app:layout_constraintEnd_toStartOf="@+id/cb_night"
+                    app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:id="@+id/nohead_show"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/head_bg"
-                    android:gravity="center"
+                    android:id="@+id/tv_notify"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:text="Notifiction"
                     android:textColor="@color/mainColor"
-                    android:textColorHint="@color/mainColor"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/cb_notify"
+                    app:layout_constraintStart_toStartOf="@+id/cb_notify"
+                    app:layout_constraintTop_toBottomOf="@+id/cb_notify" />
+
+                <CheckBox
+                    android:id="@+id/cb_night"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/planting_checkbox_night_selector"
+                    android:button="@null"
+                    app:layout_constraintEnd_toStartOf="@+id/cb_drain"
+                    app:layout_constraintStart_toEndOf="@+id/cb_notify" />
+
+                <TextView
+                    android:id="@+id/tv_night"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:text="Night Mode"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/cb_night"
+                    app:layout_constraintStart_toStartOf="@+id/cb_night"
+                    app:layout_constraintTop_toBottomOf="@+id/cb_night" />
+
+                <CheckBox
+                    android:id="@+id/cb_drain"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/planting_checkbox_drain_selector"
+                    android:button="@null"
+                    app:layout_constraintEnd_toStartOf="@+id/cb_lock"
+                    app:layout_constraintStart_toEndOf="@+id/cb_night" />
+
+                <TextView
+                    android:id="@+id/tv_drain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:text="Drain"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/cb_drain"
+                    app:layout_constraintStart_toStartOf="@+id/cb_drain"
+                    app:layout_constraintTop_toBottomOf="@+id/cb_drain" />
+
+                <CheckBox
+                    android:id="@+id/cb_lock"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:background="@drawable/planting_checkbox_lock_selector"
+                    android:button="@null"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cb_drain" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:text="Child Lock"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="@+id/cb_lock"
+                    app:layout_constraintStart_toStartOf="@+id/cb_lock"
+                    app:layout_constraintTop_toBottomOf="@+id/cb_lock" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-            <TextView
-                tools:text="123123"
-                android:textColor="@color/black"
-                android:textSize="17sp"
-                android:layout_marginStart="10dp"
-                app:layout_constraintStart_toEndOf="@+id/cl_avatar"
-                app:layout_constraintTop_toTopOf="@+id/cl_avatar"
-                android:id="@+id/tv_nickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-            <TextView
-                android:id="@+id/tv_plant_name"
-                tools:text="321321"
-                android:layout_marginStart="10dp"
-                app:layout_constraintStart_toEndOf="@+id/cl_avatar"
-                app:layout_constraintBottom_toBottomOf="@+id/cl_avatar"
-                android:textSize="15sp"
-                android:textColor="@color/mainColor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -116,8 +164,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="50dp" />
+            android:layout_marginEnd="24dp" />
 
     </LinearLayout>
 </layout>
