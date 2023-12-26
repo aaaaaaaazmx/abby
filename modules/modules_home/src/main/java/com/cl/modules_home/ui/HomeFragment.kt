@@ -1398,7 +1398,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 添加化肥弹窗
      */
     private val plantFeed by lazy {
-        XPopup.Builder(context).isDestroyOnDismiss(false).enableDrag(false).maxHeight(dp2px(600f))
+        XPopup.Builder(context).isDestroyOnDismiss(false).enableDrag(false).maxHeight(dp2px(650f))
             .dismissOnTouchOutside(false).asCustom(context?.let {
                 HomePlantFeedPop(context = it, onNextAction = {
                     // 如果是在换水的三步当中的最后一步，加肥
@@ -3059,7 +3059,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         val backTime = data?.germinationTime?.toLong() ?: 0L
                         binding.pplantNinth.tVHtml.text = buildSpannedString {
                             /*Check for a tap root in 1 day(s) 23 hrs... Lights should be off at this stage*/
-                            bold { append("Check for a tap root in") }
+                            /*Check the seed status in 24 hours (倒计时).Thr grow light is off during this stage.*/
+                            bold { append("Check the seed status in 24 hours") }
                             appendLine()
                             context?.let {
                                 ContextCompat.getColor(
@@ -3084,7 +3085,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 }
                             }
                             appendLine()
-                            bold { append("Lights should be off at this stage") }
+                            bold { append("Thr grow light is off during this stage.") }
                         }
 
                         // 按钮的背景颜色
@@ -3099,7 +3100,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
                                     .asCustom(
                                         BaseCenterPop(it,
-                                            content = "You're about to skip the waiting period. Please confirm that your tap root has already emerged.",
+                                            content = "Do you want to skip the germination wait?",
                                             isShowCancelButton = true,
                                             confirmText = "Confirm",
                                             onConfirmAction = {
@@ -3764,7 +3765,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    ViewUtils.setVisible((data?.size ?: 0) == 0 && mViewMode.isZp.value == false, binding.pplantNinth.waterView)
+                    ViewUtils.setVisible(getOxygenCoinList.value?.data?.size != 0 && isZp.value == false, binding.pplantNinth.waterView)
                     // 气泡会消失掉，需要防止当前点了之后，这是状态之后，气泡消失掉了，但是数据还保存着, 查找当前任务不在了，那么直接消失掉
                     if (data?.firstOrNull {
                             it.taskId == mViewMode.popPeriodStatus.value?.get(
