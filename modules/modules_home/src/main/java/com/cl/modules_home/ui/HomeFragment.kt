@@ -716,7 +716,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 // 夜间模式下的植物, 不是帐篷的情况下才显示abby的夜间模式
                 ViewUtils.setVisible(
-                    (!isSHowCamera && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0) && mViewMode.isZp.value == false,
+                    (!isSHowCamera && mViewMode.getCurrentGrowLight.value == 0) && mViewMode.isZp.value == false,
                     binding.pplantNinth.ivThree,
                     binding.pplantNinth.ivTwo
                 )
@@ -2269,7 +2269,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
 
                                 ViewUtils.setVisible(
-                                    !isHave && mViewMode.plantInfoLoop.value?.data?.lightingStatus == 0 && mViewMode.isZp.value == false,
+                                    !isHave && mViewMode.getCurrentGrowLight.value == 0 && mViewMode.isZp.value == false,
                                     binding.pplantNinth.ivThree,
                                     binding.pplantNinth.ivTwo
                                 )
