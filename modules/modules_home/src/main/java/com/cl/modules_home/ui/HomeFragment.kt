@@ -2471,6 +2471,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
+            shouldRunJob.observe(viewLifecycleOwner) {
+                if (it) GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it) }
+            }
+
             // 首页循环刷新消息
             userDetail.observe(viewLifecycleOwner, resourceObserver {
                 error { msg, code ->
@@ -4652,12 +4656,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     val allDpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
                     // cmd == 3 返回实际灯光配置参数
                     // cmd == 1 返回实际全部配置参数
-                    if (allDpBean?.cmd == "3") {
+                    if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
                         mViewMode.tuYaDps?.put(
                             TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
                             allDpBean.gl.toString()
                         )
                         mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
+
+                        // 显示是否展示摄像头
+                        val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
+                        ViewUtils.setVisible(
+                            (!isSHowCamera && allDpBean.gl.toString() == "0") && mViewMode.isZp.value == false,
+                            binding.pplantNinth.ivThree,
+                            binding.pplantNinth.ivTwo
+                        )
                     }
                 }
 
