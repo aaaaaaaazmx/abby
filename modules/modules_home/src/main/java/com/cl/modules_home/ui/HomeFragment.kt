@@ -2466,6 +2466,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
+            shouldRunJob.observe(viewLifecycleOwner) {
+                if (it) GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it) }
+            }
+
             // 首页循环刷新消息
             userDetail.observe(viewLifecycleOwner, resourceObserver {
                 error { msg, code ->
@@ -4039,7 +4043,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
             binding.pplantNinth.cameraVideoView.createVideoView(cameraId)
             if (mCameraP2P == null) {
-                ToastUtil.shortShow("Camera initialization failed")
+                // ToastUtil.shortShow("Camera initialization failed")
+                return
             }
         }
 
@@ -4606,12 +4611,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     val allDpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
                     // cmd == 3 返回实际灯光配置参数
                     // cmd == 1 返回实际全部配置参数
-                    if (allDpBean?.cmd == "3") {
+                    if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
                         mViewMode.tuYaDps?.put(
                             TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
                             allDpBean.gl.toString()
                         )
                         mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
+
+                        // 判断是否是手动模式
+                        if (isManual == true) {
+                            // 获取灯光值。
+                           mViewMode.getGrowLight(allDpBean.gl)
+                        }
                     }
                 }
 
