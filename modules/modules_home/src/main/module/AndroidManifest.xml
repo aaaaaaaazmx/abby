@@ -83,5 +83,11 @@
             android:name="com.cl.modules_home.activity.CameraChooserActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait" />
+
+        <activity android:name="com.cl.modules_home.ui.SeedCheckActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name="com.cl.modules_home.ui.ChangTheSeedActivity"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>

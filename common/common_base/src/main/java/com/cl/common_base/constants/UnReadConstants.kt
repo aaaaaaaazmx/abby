@@ -147,6 +147,9 @@ object UnReadConstants {
         const val KEY_GUIDE = "guide"
         const val KEY_LEARN_MORE = "learn_more"
         const val KEY_TREND = "trend"
+
+        // prevent_dry_burning
+        const val KEY_PREVENT_DRY_BURNING = "prevent_dry_burning"
     }
 
     /**

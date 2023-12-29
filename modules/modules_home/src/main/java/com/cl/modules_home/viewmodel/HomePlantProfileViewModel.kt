@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.Constants
@@ -99,6 +100,73 @@ class HomePlantProfileViewModel  @Inject constructor(private val repository: Hom
         }
     }
 
+    /**
+     * 删除植物
+     */
+    private val _plantDelete = MutableLiveData<Resource<Boolean>>()
+    val plantDelete: LiveData<Resource<Boolean>> = _plantDelete
+    fun plantDelete(uuid: String) = viewModelScope.launch {
+        repository.plantDelete(uuid)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _plantDelete.value = it
+            }
+    }
+
+
+    /**
+     * 检查是否种植过植物
+     */
+    private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
+    val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
+    fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant()
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _checkPlant.value = it
+            }
+    }
 
     // 是否移除了自己
     var isDeleteSelf = false

@@ -578,7 +578,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 return@setOnClickListener
                             }
 
-                            UnReadConstants.JumpType.KEY_GUIDE -> {
+                            UnReadConstants.JumpType.KEY_GUIDE,
+                            UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING -> {
                                 mViewMode.getRead("$messageId")
                                 return@setOnClickListener
                             }
@@ -2387,7 +2388,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         .apply {
                                             logI("thingDeviceBean ID: ${mViewMode.deviceId.value?.toString()}")
                                             logI("thingDeviceBean ID: ${mViewMode.deviceInfo.value?.deviceId.toString()}")
-                                            if (null == this) {
+                                            // 在线的、数据为空、并且是abby机器
+                                            if (null == this && mViewMode.deviceInfo.value?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && mViewMode.deviceInfo.value?.onlineStatus != "Offline") {
                                                 /*val aa = mViewMode.thingDeviceBean
                                                 aa()?.devId = mViewMode.deviceId.value
                                                 GSON.toJson(aa)?.let {
@@ -3065,7 +3067,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         binding.pplantNinth.tVHtml.text = buildSpannedString {
                             /*Check for a tap root in 1 day(s) 23 hrs... Lights should be off at this stage*/
                             /*Check the seed status in 24 hours (倒计时).Thr grow light is off during this stage.*/
-                            bold { append("Check the seed status in 24 hours") }
+                            bold { append("Check the seed status in") }
                             appendLine()
                             context?.let {
                                 ContextCompat.getColor(
@@ -3109,30 +3111,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             isShowCancelButton = true,
                                             confirmText = "Confirm",
                                             onConfirmAction = {
-                                                // 跳准到富文本页面
-                                                val intent =
-                                                    Intent(context, KnowMoreActivity::class.java)
-                                                intent.putExtra(
-                                                    BasePopActivity.KEY_IS_SHOW_BUTTON,
-                                                    true
-                                                )
-                                                intent.putExtra(
-                                                    BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
-                                                    "Next"
-                                                )
-                                                intent.putExtra(
-                                                    BasePopActivity.KEY_INTENT_JUMP_PAGE,
-                                                    true
-                                                )
-                                                intent.putExtra(
-                                                    Constants.Global.KEY_TXT_ID,
-                                                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED
-                                                )
-                                                intent.putExtra(
-                                                    BasePopActivity.KEY_FIXED_TASK_ID,
-                                                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED
-                                                )
-                                                startActivityLauncherCheck.launch(intent)
+                                                it.startActivity(Intent(it, SeedCheckActivity::class.java))
                                             })
                                     ).show()
                             }
@@ -3144,6 +3123,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 return@setOnClickListener
                             }
                             context?.let {
+                                it.startActivity(Intent(it, SeedCheckActivity::class.java))
+                            }
+                            /*context?.let {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
                                     .asCustom(
                                         BaseCenterPop(it,
@@ -3187,7 +3169,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                     })).show()
                                             })
                                     ).show()
-                            }
+                            }*/
                         }
                         // 发芽倒计时
                         /*pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
@@ -4400,6 +4382,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             } else if (unRead?.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
                 "Continue"
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_GUIDE) {
+                "Done"
+            } else if (unRead?.type == UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING) {
                 "Done"
             } else {
                 ""
