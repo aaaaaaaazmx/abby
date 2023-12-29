@@ -392,7 +392,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             mViewMode.getWaterWenDu()
             mViewMode.getFanIntake()
             mViewMode.getFanExhaust()
-            mViewMode.getGrowLight()
+            // mViewMode.getGrowLight() 获取预先配置的灯光强度，放在了获取140Dp点上。
             mViewMode.getCurrentGrowLight()
             mViewMode.getAirPump()
             mViewMode.getLightTime()
@@ -2387,8 +2387,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         .apply {
                                             logI("thingDeviceBean ID: ${mViewMode.deviceId.value?.toString()}")
                                             logI("thingDeviceBean ID: ${mViewMode.deviceInfo.value?.deviceId.toString()}")
-                                            /*if (null == this) {
-                                                val aa = mViewMode.thingDeviceBean
+                                            if (null == this) {
+                                                /*val aa = mViewMode.thingDeviceBean
                                                 aa()?.devId = mViewMode.deviceId.value
                                                 GSON.toJson(aa)?.let {
                                                     Prefs.putStringAsync(
@@ -2396,8 +2396,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                         it
                                                     )
                                                 }
-                                                return@applyh
-                                            }*/
+                                                return@applyh*/
+                                                ToastUtil.shortShow("Device error, please re-pair with the device")
+                                            }
                                             GSON.toJson(this)?.let {
                                                 Prefs.putStringAsync(
                                                     Constants.Tuya.KEY_DEVICE_DATA,

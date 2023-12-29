@@ -518,8 +518,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                         logI("123123123: ${arrayList.size}")
                                         arrayList.firstOrNull { dev -> dev.devId == deviceId }
                                             .apply {
-                                                /*if (null == this) {
-                                                    val aa = mViewMode.thingDeviceBean
+                                                if (null == this) {
+                                                    /*val aa = mViewMode.thingDeviceBean
                                                     aa()?.devId = mViewMode.deviceId.value
                                                     GSON.toJson(aa)?.let {
                                                         Prefs.putStringAsync(
@@ -527,8 +527,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                                             it
                                                         )
                                                     }
-                                                    return@applyh
-                                                }*/
+                                                    return@applyh*/
+                                                    ToastUtil.shortShow("Device error, please re-pair with the device")
+                                                }
                                                 GSON.toJson(this)?.let {
                                                     Prefs.putStringAsync(
                                                         Constants.Tuya.KEY_DEVICE_DATA,
