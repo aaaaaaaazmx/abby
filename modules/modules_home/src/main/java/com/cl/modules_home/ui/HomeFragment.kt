@@ -4089,7 +4089,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             })
             binding.pplantNinth.cameraVideoView.createVideoView(cameraId)
             if (mCameraP2P == null) {
-                ToastUtil.shortShow("Camera initialization failed")
+                // ToastUtil.shortShow("Camera initialization failed")
+                 return
             }
         }
 
@@ -4663,13 +4664,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         )
                         mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
 
-                        // 显示是否展示摄像头
-                        val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
-                        ViewUtils.setVisible(
-                            (!isSHowCamera && allDpBean.gl.toString() == "0") && mViewMode.isZp.value == false,
-                            binding.pplantNinth.ivThree,
-                            binding.pplantNinth.ivTwo
-                        )
+                        // 显示是否展示摄像头 不是手动模式
+                        if (isManual == false) {
+                            val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
+                            ViewUtils.setVisible(
+                                (!isSHowCamera && allDpBean.gl.toString() == "0") && mViewMode.isZp.value == false,
+                                binding.pplantNinth.ivThree,
+                                binding.pplantNinth.ivTwo
+                            )
+                        }
                     }
                 }
 

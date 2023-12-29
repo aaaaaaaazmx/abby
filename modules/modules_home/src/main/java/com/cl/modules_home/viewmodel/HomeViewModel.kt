@@ -1804,24 +1804,26 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     val getGrowLight: LiveData<Int> = _getGrowLight
 
     fun getGrowLight() {
-        val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
-        // val gear = name.isEmpty() || name == "-1"
-        userDetail.value?.data?.deviceId?.let {
-            logI("12312312: map.size:,,,${it}")
-            val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
-            if (lightValue.isEmpty()) {
-                _getGrowLight.value =  thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
-                return
-            }
-            val mapType = object : TypeToken<Map<String, Any>>() {}.type
-            val map: Map<String, String> = Gson().fromJson(lightValue, mapType)
-            logI("1231231111111111111: $it ,,, ${_getGrowLight.value},,,${_getCurrentGrowLight.value},,, lightValue: $lightValue ,,, ${map[it].toString()}")
-            if (map[it].isNullOrEmpty() || map[it].toString() == "-1") {
-                _getGrowLight.value = thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
-            } else {
-                _getGrowLight.value = map[it].toString().safeToInt()
+        runCatching {
+            val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
+            // val gear = name.isEmpty() || name == "-1"
+            userDetail.value?.data?.deviceId?.let {
+                logI("12312312: map.size:,,,${it}")
+                val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+                if (lightValue.isEmpty()) {
+                    _getGrowLight.value =  thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                        ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
+                    return
+                }
+                val mapType = object : TypeToken<Map<String, Any>>() {}.type
+                val map: Map<String, String> = Gson().fromJson(lightValue, mapType)
+                logI("1231231111111111111: $it ,,, ${_getGrowLight.value},,,${_getCurrentGrowLight.value},,, lightValue: $lightValue ,,, ${map[it].toString()}")
+                if (map[it].isNullOrEmpty() || map[it].toString() == "-1") {
+                    _getGrowLight.value = thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                        ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
+                } else {
+                    _getGrowLight.value = map[it].toString().safeToInt()
+                }
             }
         }
     }
