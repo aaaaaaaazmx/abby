@@ -4672,6 +4672,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 binding.pplantNinth.ivThree,
                                 binding.pplantNinth.ivTwo
                             )
+                        } else {
+                            mViewMode.getGrowLight(allDpBean.gl)
                         }
                     }
                 }

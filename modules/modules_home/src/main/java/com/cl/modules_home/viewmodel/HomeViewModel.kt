@@ -1803,24 +1803,22 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getGrowLight = MutableLiveData<Int>(-1)
     val getGrowLight: LiveData<Int> = _getGrowLight
 
-    fun getGrowLight() {
+    fun getGrowLight(gl: String? = null) {
         runCatching {
-            val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
+            // val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
             // val gear = name.isEmpty() || name == "-1"
             userDetail.value?.data?.deviceId?.let {
                 logI("12312312: map.size:,,,${it}")
                 val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
                 if (lightValue.isEmpty()) {
-                    _getGrowLight.value =  thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                        ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
+                    _getGrowLight.value = gl.safeToInt()
                     return
                 }
                 val mapType = object : TypeToken<Map<String, Any>>() {}.type
                 val map: Map<String, String> = Gson().fromJson(lightValue, mapType)
                 logI("1231231111111111111: $it ,,, ${_getGrowLight.value},,,${_getCurrentGrowLight.value},,, lightValue: $lightValue ,,, ${map[it].toString()}")
                 if (map[it].isNullOrEmpty() || map[it].toString() == "-1") {
-                    _getGrowLight.value = thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                        ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
+                    _getGrowLight.value = gl.safeToInt()
                 } else {
                     _getGrowLight.value = map[it].toString().safeToInt()
                 }
@@ -1869,9 +1867,11 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getLightTime = MutableLiveData<String>()
     val getLightTime: LiveData<String> = _getLightTime
     fun getLightTime() {
-        _getLightTime.value =
-            thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME }
-                ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME).toString()
+        runCatching {
+            _getLightTime.value =
+                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME }
+                    ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME).toString()
+        }
     }
 
     // 关灯时间
