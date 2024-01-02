@@ -462,18 +462,17 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                         mCurrentDate,
                         Calendar.SUNDAY
                     )
-                    // 处理日期前面没有相差的天数
-                    if (startMonth == i) {
-                        // 一行7个，没有相差，那么在12月的最后一行会自动添加1-7，那么在1月时，不需要添加1-7
-                        if (data[0].day == 1) {
-                            data.filter { it.day > 7 }.let {
-                                list += it
-                            }
-                        } else {
-                            list += data
-                        }
-                    } else {
+                    logI("currentYear: $currentYear ,,,, data: $data")
+                    // 在不等于最后一个年份时，要去掉后面的天数
+                    if ((currentYear == 0 && startMonth == i) || (currentYear == yearNumber + 1 && endMonth == i)) {
+                        // 最开始的年份 和 最后一个年份都补齐空缺。
                         list += data
+                    } else {
+                        // 其他的就添加当前年份的，去掉空缺
+                        val filteredMonthData = data.filter {
+                            it.month == i && it.year == (2022 + currentYear)
+                        }
+                        list += filteredMonthData
                     }
                 }
             }

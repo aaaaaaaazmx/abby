@@ -472,7 +472,6 @@
                     tools:text="12332123123" />
 
                 <ImageView
-                    android:visibility="invisible"
                     android:id="@+id/iv_seed"
                     android:layout_width="45dp"
                     android:layout_height="45dp"

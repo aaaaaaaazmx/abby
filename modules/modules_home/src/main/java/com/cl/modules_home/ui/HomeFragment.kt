@@ -578,13 +578,23 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 return@setOnClickListener
                             }
 
-                            UnReadConstants.JumpType.KEY_GUIDE,
-                            UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING -> {
+                            UnReadConstants.JumpType.KEY_GUIDE -> {
                                 mViewMode.getRead("$messageId")
                                 return@setOnClickListener
                             }
 
                             else -> {}
+                        }
+                    }
+
+                    mViewMode.getUnreadMessageList().firstOrNull()?.type?.let { type ->
+                        val messageId = mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                        when (type) {
+                            UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING -> {
+                                mViewMode.getRead("$messageId")
+                                return@setOnClickListener
+                            }
+                             else -> {}
                         }
                     }
 
@@ -4396,9 +4406,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         )*/
 
         // 如果jumpType == none 就不显示按钮
-        ViewUtils.setVisible(
+        /*ViewUtils.setVisible(
             unRead?.jumpType != UnReadConstants.JumpType.KEY_NONE, binding.pplantNinth.tvBtnDesc
-        )
+        )*/
+        if (unRead?.jumpType == UnReadConstants.JumpType.KEY_NONE) {
+            if (unRead?.type == UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING) {
+                ViewUtils.setVisible(binding.pplantNinth.tvBtnDesc)
+            } else {
+                ViewUtils.setGone(binding.pplantNinth.tvBtnDesc)
+            }
+        }  else {
+            ViewUtils.setVisible(binding.pplantNinth.tvBtnDesc)
+        }
 
         // 内容
         binding.pplantNinth.tvPopTitle.text =
@@ -4649,7 +4668,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         )
                         mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
 
-                        // 显示是否展示摄像头 不是手动模式
+                        // 显示是否展示夜间模式 不是手动模式
                         if (isManual == false) {
                             val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
                             ViewUtils.setVisible(
