@@ -708,6 +708,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             // 切换摄像头
             ivSwitchCamera.setOnClickListener {
                 // 获取, 并且取反
+                // 因为点击之后，就是切换摄像头，所以需要取反。
+                // 这里取反下面就不能取反了，不然就是双重否定。
                 val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
 
                 // 显示隐藏的布局 、显示摄像头或者是帐篷的情况下
@@ -720,14 +722,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     isSHowCamera && mViewMode.isZp.value == true,
                     binding.pplantNinth.ivSwitchZpBg
                 )
+                // 没有显示摄像头，注意注意，不能取反
                 ViewUtils.setVisible(
-                    !isSHowCamera && mViewMode.isZp.value == true,
+                    (!isSHowCamera && mViewMode.isZp.value == true),
                     binding.pplantNinth.ivZpBg
                 )
 
+                // 没有显示摄像头，注意注意，不能取反
                 // 夜间模式下的植物, 不是帐篷的情况下才显示abby的夜间模式
                 ViewUtils.setVisible(
-                    (!isSHowCamera && mViewMode.getCurrentGrowLight.value == 0) && mViewMode.isZp.value == false,
+                    (!isSHowCamera && mViewMode.getCurrentGrowLight.value == 0 && mViewMode.isZp.value == false) ,
                     binding.pplantNinth.ivThree,
                     binding.pplantNinth.ivTwo
                 )
@@ -2280,7 +2284,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
 
                                 ViewUtils.setVisible(
-                                    !isHave && mViewMode.getCurrentGrowLight.value == 0 && mViewMode.isZp.value == false,
+                                    (!isHave && mViewMode.getCurrentGrowLight.value == 0 && mViewMode.isZp.value == false),
                                     binding.pplantNinth.ivThree,
                                     binding.pplantNinth.ivTwo
                                 )
@@ -4670,9 +4674,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // 显示是否展示夜间模式 不是手动模式
                         if (isManual == false) {
-                            val isSHowCamera = !Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
+                            val isSHowCamera = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
+                            // 不是手动模式、灯光为0，不是帐篷，并且不显示camera
                             ViewUtils.setVisible(
-                                (!isSHowCamera && allDpBean.gl.toString() == "0") && mViewMode.isZp.value == false,
+                                (!isSHowCamera && allDpBean.gl.toString() == "0" && mViewMode.isZp.value == false),
                                 binding.pplantNinth.ivThree,
                                 binding.pplantNinth.ivTwo
                             )
