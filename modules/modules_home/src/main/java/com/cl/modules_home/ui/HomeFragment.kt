@@ -103,6 +103,7 @@ import java.nio.ByteBuffer
 import java.util.Calendar
 import javax.inject.Inject
 import kotlin.random.Random
+import kotlin.time.days
 
 
 /**
@@ -392,7 +393,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             mViewMode.getWaterWenDu()
             mViewMode.getFanIntake()
             mViewMode.getFanExhaust()
-            // mViewMode.getGrowLight() 获取预先配置的灯光强度，放在了获取140Dp点上。
+            mViewMode.getGrowLight() // 获取预先配置的灯光强度，放在了获取140Dp点上。
             mViewMode.getCurrentGrowLight()
             mViewMode.getAirPump()
             mViewMode.getLightTime()
@@ -2282,12 +2283,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 }
 
 
-
-                                ViewUtils.setVisible(
-                                    (!isHave && mViewMode.getCurrentGrowLight.value == 0 && mViewMode.isZp.value == false),
-                                    binding.pplantNinth.ivThree,
-                                    binding.pplantNinth.ivTwo
-                                )
                                 ViewUtils.setInvisible(binding.pplantNinth.ivSwitchCamera, !isHave)
 
                                 // 获取摄像头配件信息
@@ -4666,24 +4661,32 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // cmd == 3 返回实际灯光配置参数
                     // cmd == 1 返回实际全部配置参数
                     if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
+                        // 显示是否展示夜间模式 不是手动模式
+                        if (isManual == false) {
+                            mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+                                val isShowIvTwo = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == false && allDpBean.gl == "0"
+                                ViewUtils.setVisible(
+                                    isShowIvTwo,
+                                    binding.pplantNinth.ivThree,
+                                    binding.pplantNinth.ivTwo
+                                )
+                            }
+
+                            // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
+                            if (mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
+                                mViewMode.getEnvData()
+                                mViewMode.listDevice()
+                                mViewMode.userDetail()
+                            }
+                        } else {
+                            mViewMode.getGrowLight(allDpBean.gl)
+                        }
+
                         mViewMode.tuYaDps?.put(
                             TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
                             allDpBean.gl.toString()
                         )
                         mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
-
-                        // 显示是否展示夜间模式 不是手动模式
-                        if (isManual == false) {
-                            val isSHowCamera = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_CAMERA, true)
-                            // 不是手动模式、灯光为0，不是帐篷，并且不显示camera
-                            ViewUtils.setVisible(
-                                (!isSHowCamera && allDpBean.gl.toString() == "0" && mViewMode.isZp.value == false),
-                                binding.pplantNinth.ivThree,
-                                binding.pplantNinth.ivTwo
-                            )
-                        } else {
-                            mViewMode.getGrowLight(allDpBean.gl)
-                        }
                     }
                 }
 
