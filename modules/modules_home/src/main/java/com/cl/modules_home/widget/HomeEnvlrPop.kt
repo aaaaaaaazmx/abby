@@ -149,7 +149,7 @@ class HomeEnvlrPop(
                         lifecycleScope.launch {
                             upDeviceInfo(
                                 UpDeviceInfoReq(
-                                    childLock = if (isChecked) 1 else 0, deviceId = currentDeviceInfo?.deviceId ?: userInfo?.deviceId
+                                    childLock = if (isChecked) 1 else 0, deviceId = currentDeviceInfo?.deviceId ?: userInfo()?.deviceId
                                 ), LOCK, isChecked
                             )
                         }

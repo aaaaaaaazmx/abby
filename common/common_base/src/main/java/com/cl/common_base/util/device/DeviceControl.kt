@@ -21,7 +21,7 @@ interface DeviceControl {
     /**
      * 获取当前设备
      */
-    fun getCurrentDevice(): IThingDevice?
+    fun getCurrentDevice(devId: String? = null): IThingDevice?
 
     /**
      * 排水
@@ -90,7 +90,7 @@ interface DeviceControl {
      * 一次性发送多个dp点 140dp点
      * https://cz84t38aha.feishu.cn/docx/UnYBd35TJoXMcrxrD5ncNgPqnmc
      */
-    fun sendDps(dpsJson: String): DeviceControlImpl
+    fun sendDps(dpsJson: String, devId: String? = null): DeviceControlImpl
 
     companion object {
         fun get() = DeviceControlImpl()

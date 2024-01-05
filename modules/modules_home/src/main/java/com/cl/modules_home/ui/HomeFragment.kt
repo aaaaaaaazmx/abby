@@ -2483,9 +2483,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
             })
 
-            shouldRunJob.observe(viewLifecycleOwner) {
-                if (it) GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it) }
-            }
+            /*shouldRunJob.observe(viewLifecycleOwner) {
+                if (it)
+            }*/
 
             // 首页循环刷新消息
             userDetail.observe(viewLifecycleOwner, resourceObserver {
@@ -4290,6 +4290,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             }
             return@setOnApplyWindowInsetsListener insets
         }
+        queryAllDp()
+    }
+
+    private fun queryAllDp() {
+        GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
     }
 
     override fun onPause() {
@@ -4647,13 +4652,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 // ----- 开始， 下面的都是需要传给后台的环境信息
-                /*TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(
+                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
+                    /*mViewMode.tuYaDps?.put(
                         TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
                         value.toString()
                     )
-                    mViewMode.setCurrentGrowLight(value.toString())
-                }*/
+                    mViewMode.setCurrentGrowLight(value.toString())*/
+                    // 查询灯光信息
+                    queryAllDp()
+                }
 
                 // 140 dp点
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TIME_STAMP -> {
@@ -4661,8 +4668,25 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // cmd == 3 返回实际灯光配置参数
                     // cmd == 1 返回实际全部配置参数
                     if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
+                        // 这段代码必须在首位。
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
+                            allDpBean.gl.toString()
+                        )
+                        // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
+                        // 不等于说明灯光刷新， 更新当前环境信息的数据
+                        if (isManual == false && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
+                            mViewMode.getEnvData()
+                            mViewMode.listDevice()
+                            mViewMode.userDetail()
+                        }
+
+                        // 设置灯光
+                        mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
+
                         // 显示是否展示夜间模式 不是手动模式
                         if (isManual == false) {
+                            // 根据灯光来显示植物是否在睡觉，是否需要显示zzz
                             mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
                                 val isShowIvTwo = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == false && allDpBean.gl == "0"
                                 ViewUtils.setVisible(
@@ -4671,22 +4695,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     binding.pplantNinth.ivTwo
                                 )
                             }
-
-                            // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
-                            if (mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
-                                mViewMode.getEnvData()
-                                mViewMode.listDevice()
-                                mViewMode.userDetail()
-                            }
                         } else {
+                            // 手动模式，设置当前灯光值或者是预设值。
                             mViewMode.getGrowLight(allDpBean.gl)
                         }
-
-                        mViewMode.tuYaDps?.put(
-                            TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
-                            allDpBean.gl.toString()
-                        )
-                        mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
                     }
                 }
 
@@ -4822,6 +4834,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
+            queryAllDp()
             mViewMode.setShouldRunJob(true)
             startCountDownJob()
             // 如果是帐篷，那么就请求这个就好了
