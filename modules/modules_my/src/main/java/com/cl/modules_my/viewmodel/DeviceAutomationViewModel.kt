@@ -12,7 +12,7 @@ import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
-import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.modules_my.request.UpdateSubportReq
 import com.thingclips.smart.android.device.bean.UpgradeInfoBean

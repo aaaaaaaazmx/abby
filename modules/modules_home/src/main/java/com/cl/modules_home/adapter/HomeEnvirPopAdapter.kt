@@ -4,13 +4,18 @@ import android.graphics.Color
 import android.widget.CompoundButton
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bbgo.module_home.R
+import com.bbgo.module_home.databinding.HomeEnvirGridBinding
 import com.bbgo.module_home.databinding.HomeEnvirItemFanPopBinding
 import com.bbgo.module_home.databinding.HomeEnvirItemPopBinding
 import com.bbgo.module_home.databinding.HomeGrowLightItemPopBinding
+import com.bbgo.module_home.databinding.HomeTextItemBinding
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.EnvironmentInfoData
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
@@ -18,8 +23,11 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.widget.SwitchButton
+import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
+import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
 import com.google.android.material.transition.Hold
+import com.luck.picture.lib.utils.DensityUtil
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
@@ -33,6 +41,8 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
     BaseMultiItemQuickAdapter<EnvironmentInfoData.Environment, BaseViewHolder>(data) {
 
     init {
+        addItemType(EnvironmentInfoData.KEY_TYPE_GRID, R.layout.home_envir_grid)// recyclview
+        addItemType(EnvironmentInfoData.KEY_TYPE_TEXT, R.layout.home_text_item)// 文字描述
         addItemType(EnvironmentInfoData.KEY_TYPE_NORMAL, R.layout.home_envir_item_pop)
         addItemType(EnvironmentInfoData.KEY_TYPE_FAN, R.layout.home_envir_item_fan_pop)
         addItemType(EnvironmentInfoData.KEY_TYPE_LIGHT, R.layout.home_grow_light_item_pop)
@@ -43,6 +53,20 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         when (holder.itemViewType) {
+            EnvironmentInfoData.KEY_TYPE_GRID -> {
+                val binding = DataBindingUtil.bind<HomeEnvirGridBinding>(holder.itemView)
+                binding?.executePendingBindings()
+            }
+
+            EnvironmentInfoData.KEY_TYPE_TEXT -> {
+                val binding = DataBindingUtil.bind<HomeTextItemBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
             EnvironmentInfoData.KEY_TYPE_FAN -> {
                 val binding = DataBindingUtil.bind<HomeEnvirItemFanPopBinding>(holder.itemView)
                 if (binding != null) {
@@ -74,6 +98,19 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
 
     override fun convert(helper: BaseViewHolder, item: EnvironmentInfoData.Environment) {
         when (helper.itemViewType) {
+            EnvironmentInfoData.KEY_TYPE_GRID -> {
+                helper.getView<RecyclerView>(R.id.rv_envir).apply {
+                    layoutManager = GridLayoutManager(context, 2)
+                    /*addItemDecoration(
+                        GridSpaceItemDecoration(
+                            2,
+                            DensityUtil.dip2px(context, 0f), DensityUtil.dip2px(context, 18f)
+                        )
+                    )*/
+                    adapter = EnvAdapter(item.additionalData)
+                }
+            }
+
             EnvironmentInfoData.KEY_TYPE_FAN -> {
                 helper.getView<SwitchButton>(R.id.fis_item_switch).apply {
                     isChecked = item.automation == 1
@@ -160,7 +197,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                 helper.setText(R.id.period_title, item.detectionValue)
                 helper.setText(R.id.period_time, item.healthStatus)
                 helper.setText(R.id.tv_going, temperatureConversion(item.value))
-                helper.setTextColor(R.id.period_time, getColor(item.detectionValue, item.healthStatus))
+                helper.setTextColor(R.id.period_time, getColor(item.environmentType, item.detectionValue, item.healthStatus))
                 helper.getView<ImageView>(R.id.iv_gt).apply {
                     if (item.alert == 0) {
                         setImageResource(com.cl.common_base.R.mipmap.base_gt)
@@ -206,17 +243,17 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
      * @param detectionValue 检测项
      * @param text 检测具体值
      */
-   private fun getColor(detectionValue: String?, text: String?): Int {
+    private fun getColor(type: String?, detectionValue: String?, text: String?): Int {
         return when (text) {
             "Too High" -> Color.parseColor("#D61744")
             "High" -> {
-                if (detectionValue == "Water Tank Temperture") Color.parseColor("#006241") else Color.parseColor(
+                if (type == EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE) Color.parseColor("#006241") else Color.parseColor(
                     "#E3A00D"
                 )
             }
             "Ideal" -> Color.parseColor("#006241")
             "Low" -> {
-                if (detectionValue == "Water Tank Temperture") Color.parseColor("#006241") else Color.parseColor(
+                if (type == EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE) Color.parseColor("#006241") else Color.parseColor(
                     "#E3A00D"
                 )
             }

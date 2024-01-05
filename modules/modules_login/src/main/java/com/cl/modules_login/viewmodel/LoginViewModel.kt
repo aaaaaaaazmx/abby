@@ -328,8 +328,10 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                         }
                                                         kotlin.runCatching {
                                                             // 根据返回deviceId来判断 目前会有多台设备选择
-                                                            homeBean.deviceList.firstOrNull { it.devId == deviceId }
-                                                                ?.apply {
+                                                            homeBean.deviceList.firstOrNull { it.devId == deviceId }.apply {
+                                                                if (this == null && userInfo?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && userInfo?.deviceOnlineStatus == "1") {
+                                                                    ToastUtil.shortShow("Device error, please re-pair with the device")
+                                                                } else {
                                                                     val deviceBean = this
                                                                     // 缓存用户第一个设备数据
                                                                     // 只取第一个
@@ -342,19 +344,20 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                                     }
                                                                     // 注册广播
                                                                     onRegisterReceiver?.invoke(
-                                                                        deviceBean.devId
+                                                                        deviceBean?.devId
                                                                     )
                                                                     logI(
                                                                         """
                                                                         login:
                                                                         DEVICE_BEAN_DPS: ${
                                                                             GSON.toJson(
-                                                                                deviceBean.dps
+                                                                                deviceBean?.dps
                                                                             )
                                                                         }
                                                                     """.trimIndent()
                                                                     )
                                                                 }
+                                                            }
 
                                                             /**
                                                              * 从IOS-Android时本地缓存不一致的问题

@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alibaba.android.arouter.launcher.ARouter
@@ -23,7 +22,6 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.DateHelper
-import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
@@ -33,11 +31,9 @@ import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyPhSettingActivityBinding
-import com.cl.modules_my.request.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.BlePairViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

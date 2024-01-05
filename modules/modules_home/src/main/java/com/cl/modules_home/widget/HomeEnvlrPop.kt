@@ -1,7 +1,8 @@
 package com.cl.modules_home.widget
 
 import android.content.Context
-import android.text.TextUtils
+import android.content.Intent
+import android.os.Handler
 import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -10,31 +11,38 @@ import com.cl.common_base.bean.EnvironmentInfoData
 import com.cl.modules_home.adapter.HomeEnvirPopAdapter
 import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomeEnvlrPopBinding
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
+import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logD
+import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
-import com.cl.common_base.service.BaseApiService
+import com.cl.common_base.pop.ChooseTimePop
+import com.cl.common_base.pop.HomePlantDrainPop
+import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ViewUtils
-import com.cl.common_base.util.json.GSON
+import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.service.HttpHomeApiService
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
-import com.thingclips.smart.sdk.bean.DeviceBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.net.ConnectException
+import java.io.Serializable
 import java.util.Calendar
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 /**
  * 干燥程度
@@ -46,14 +54,9 @@ class HomeEnvlrPop(
     private var disMissAction: (() -> Unit)? = null,
     private var data: MutableList<EnvironmentInfoData.Environment>? = null,
     private var strainName: String? = null,
-) : BottomPopupView(context) {
-
-    // 用户信息
-    val userInfo by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
-        parseObject
-    }
+    private var currentDeviceInfo: ListDeviceBean? = null,
+    private var userInfo: UserinfoBean.BasicUserBean? = null,
+) : BottomPopupView(context){
 
     override fun getImplLayoutId(): Int {
         return R.layout.home_envlr_pop
@@ -65,8 +68,10 @@ class HomeEnvlrPop(
         HomeEnvirPopAdapter(mutableListOf())
     }
 
-    fun setData(data: MutableList<EnvironmentInfoData.Environment>) {
+    fun setData(data: MutableList<EnvironmentInfoData.Environment>, currentDeviceInfo: ListDeviceBean?, userInfo: UserinfoBean.BasicUserBean?) {
         this.data = data
+        this.currentDeviceInfo = currentDeviceInfo
+        this.userInfo = userInfo
     }
 
     fun setStrainName(strainName: String?) {
@@ -80,7 +85,14 @@ class HomeEnvlrPop(
     override fun beforeShow() {
         super.beforeShow()
         adapter.setList(data)
-        binding?.tvPlantName?.text = strainName
+        // binding?.tvPlantName?.text = strainName
+        currentDeviceInfo?.let {
+            binding?.apply {
+                cbNotify.isChecked = userInfo?.openNotify == 1
+                cbNight.isChecked = it.nightMode == 1
+                cbLock.isChecked = it.childLock == 1
+            }
+        }
     }
 
     override fun doAfterDismiss() {
@@ -94,7 +106,7 @@ class HomeEnvlrPop(
         super.onCreate()
 
         binding = DataBindingUtil.bind<HomeEnvlrPopBinding>(popupImplView)?.apply {
-            userInfo?.apply {
+            /*userInfo?.apply {
                 ViewUtils.setGone(noheadShow, TextUtils.isEmpty(avatarPicture))
                 ViewUtils.setGone(ivAvatar, !TextUtils.isEmpty(avatarPicture))
                 Glide.with(ivAvatar.context).load(avatarPicture)
@@ -104,11 +116,57 @@ class HomeEnvlrPop(
 
                 tvNickname.text = nickName
                 tvPlantName.text = strainName
+            }*/
+
+            cbNotify.setSafeOnClickListener {
+                val isChecked = cbNotify.isChecked
+                notifySetting(isChecked)
+            }
+            cbNight.setSafeOnClickListener {
+                val isChecked = cbNight.isChecked
+                nightSetting(isChecked)
+            }
+            cbDrain.setSafeOnClickListener {
+                cbDrain.isChecked = false
+                // 跳转到换水页面
+                xpopup(context) {
+                    maxHeight(dp2px(600f))
+                    isDestroyOnDismiss(false)
+                    dismissOnTouchOutside(false)
+                    enableDrag(false)
+                    asCustom(
+                        HomePlantDrainPop(context, onNextAction = {
+                            lifecycleScope.launch { adv() }
+                        })
+                    ).show()
+                }
+            }
+            cbLock.setSafeOnClickListener {
+                val isChecked = cbLock.isChecked
+                logI("123123: ischecked: $isChecked")
+                // 是否打开童锁
+                DeviceControl.get().success {
+                        lifecycleScope.launch {
+                            upDeviceInfo(
+                                UpDeviceInfoReq(
+                                    childLock = if (isChecked) 1 else 0, deviceId = currentDeviceInfo?.deviceId ?: userInfo()?.deviceId
+                                ), LOCK, isChecked
+                            )
+                        }
+                    }.error { code, error ->
+                        ToastUtil.shortShow(
+                            """
+                              childLock: 
+                              code-> $code
+                              errorMsg-> $error
+                             """.trimIndent()
+                        )
+                    }.childLock(isChecked)
             }
 
             rvList.layoutManager = LinearLayoutManager(context)
             rvList.adapter = adapter
-            ivClose.setOnClickListener { dismiss() }
+            ivClose.setSafeOnClickListener { dismiss() }
             // 开关监听
             adapter.setOnCheckedChangeListener(object :
                 HomeEnvirPopAdapter.OnCheckedChangeListener {
@@ -117,7 +175,7 @@ class HomeEnvlrPop(
                         upDeviceInfo(
                             UpDeviceInfoReq(
                                 fanAuto = if (isChecked) 1 else 0,
-                                deviceId = userInfo?.deviceId
+                                deviceId = currentDeviceInfo?.deviceId ?: userInfo?.deviceId
                             )
                         )
                     }
@@ -182,7 +240,7 @@ class HomeEnvlrPop(
                                         onConfirmAction = {
                                             // 刷新回调、并且记录当前时间。
                                             lifecycleScope.launch {
-                                                syncLightParam(userInfo?.deviceId.toString())
+                                                syncLightParam(currentDeviceInfo?.deviceId ?: userInfo?.deviceId.toString())
                                             }
                                             // 如果今天还没刷新，
                                             Prefs.putLong(Constants.Login.KEY_REFRESH_TIME, time)
@@ -208,10 +266,166 @@ class HomeEnvlrPop(
         }
     }
 
+    private fun notifySetting(isChecked: Boolean) {
+        if (!isChecked) {
+            xpopup(context) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                asCustom(BaseCenterPop(context, content = "Whether to disable notifiction", cancelText = "No", confirmText = "Yes", isShowCancelButton = true, onConfirmAction = {
+                    lifecycleScope.launch {
+                        modifyUserInfo(ModifyUserDetailReq(openNotify = if (isChecked) "1" else "0"), isChecked)
+                    }
+                }, onCancelAction = {
+                    binding?.cbNotify?.isChecked = !isChecked
+                })).show()
+            }
+            return
+        }
+        lifecycleScope.launch {
+            modifyUserInfo(ModifyUserDetailReq(openNotify = if (isChecked) "1" else "0"), isChecked)
+        }
+    }
+
+    private fun nightSetting(isChecked: Boolean) {
+        if (!isChecked) {
+            xpopup(context) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(true)
+                asCustom(BaseCenterPop(context, content = "Whether to disable night mode", cancelText = "No", confirmText = "Yes", isShowCancelButton = true, onConfirmAction = {
+                    lifecycleScope.launch {
+                        // 调用接口更新后台夜间模式
+                        upDeviceInfo(
+                            UpDeviceInfoReq(
+                                nightMode = if (isChecked) 1 else 0,
+                                deviceId = currentDeviceInfo?.deviceId ?: userInfo?.deviceId,
+                            ), NIGHT, isChecked
+                        )
+
+                        // 调用关闭点dp点。
+                        DeviceControl.get().success {
+                            // "141":"muteOn:10,muteOff:22"
+                        }.error { code, error ->
+                            ToastUtil.shortShow(
+                                """
+                                                  nightMode: 
+                                                  code-> $code
+                                                  errorMsg-> $error
+                                                    """.trimIndent()
+                            )
+                        }.nightMode("lightOn:00,lightOff:00")
+                    }
+                }, onCancelAction = {binding?.cbNight?.isChecked = !isChecked})).show()
+            }
+            return
+        }
+        // 设置夜间模式的时间。
+        val timerString = parseTime()
+        lifecycleScope.launch {
+            // 弹出时间调整框
+            xpopup(context) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(
+                    ChooseTimePop(context,
+                        turnOnHour = muteOn?.safeToInt(),
+                        turnOffHour = muteOff?.safeToInt(),
+                        onCancelAction = {
+                            // 这个时间和上面解析时间有问题，需要传递24小时制度
+                            lifecycleScope.launch {
+                                this@HomeEnvlrPop.upDeviceInfo(
+                                    req = UpDeviceInfoReq(
+                                        nightMode = if (isChecked) 1 else 0,
+                                        nightTimer = timerString,
+                                        deviceId = currentDeviceInfo?.deviceId ?: userInfo?.deviceId
+                                    ), tag = NIGHT, isChecked = isChecked
+                                )
+                            }
+                        },
+                        onConfirmAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour ->
+                            muteOn = timeOn.toString().padStart(2, '0')
+                            muteOff = timeOff.toString().padStart(2, '0')
+                            // 这个时间和上面解析时间有问题，需要传递24小时制度
+                            lifecycleScope.launch {
+                                this@HomeEnvlrPop.upDeviceInfo(
+                                    req = UpDeviceInfoReq(
+                                        nightMode = if (isChecked) 1 else 0,
+                                        nightTimer = "$onTime-$offMinute", deviceId = currentDeviceInfo?.deviceId ?: userInfo?.deviceId
+                                    ), tag = NIGHT, isChecked = isChecked
+                                )
+                            }
+
+                            // 发送dp点
+                            DeviceControl.get().success {
+                                // "141":"muteOn:10,muteOff:22"
+                                logI(
+                                    "123312313: lightOn:${
+                                        timeOn.toString().padStart(2, '0')
+                                    },lightOff:${timeOff.toString().padStart(2, '0')}"
+                                )
+                            }.error { code, error ->
+                                ToastUtil.shortShow(
+                                    """
+                                                      nightMode: 
+                                                      code-> $code
+                                                      errorMsg-> $error
+                                                        """.trimIndent()
+                                )
+                            }.nightMode(
+                                "lightOn:${
+                                    if (timeOn == 12) 24 else timeOn.toString().padStart(2, '0')
+                                },lightOff:${
+                                    if (timeOff == 24) 12 else timeOff.toString().padStart(2, '0')
+                                }"
+                            )
+                        })
+                ).show()
+            }
+        }
+    }
+
+    //advertising
+    private suspend fun adv(type: String? = "0") {
+        service.advertising(type ?: "0").map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            logI(it.toString())
+            when (it) {
+                is Resource.Success -> {
+                    // ToastUtil.shortShow("success")
+                    Handler().postDelayed({
+                        // 传递的数据为空
+                        val intent = Intent(context, BasePumpActivity::class.java)
+                        intent.putExtra(BasePumpActivity.KEY_DATA, it.data as? Serializable)
+                        context.startActivity(intent)
+                    }, 50)
+                }
+                is Resource.DataError -> {
+                    ToastUtil.shortShow(it.errorMsg)
+                }
+                else -> {}
+            }
+        }
+    }
+
     /**
      * 更新设备信息
      */
-    private suspend fun upDeviceInfo(req: UpDeviceInfoReq) {
+    private suspend fun upDeviceInfo(req: UpDeviceInfoReq, tag: Int? = null, isChecked: Boolean? = null) {
         service.updateDeviceInfo(req).map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
@@ -231,6 +445,23 @@ class HomeEnvlrPop(
             )
         }.collectLatest {
             logI(it.toString())
+            when (it) {
+                is Resource.Success -> {
+                    // ToastUtil.shortShow("success")
+                    when(tag) {
+                        NIGHT -> {
+                            binding?.cbNight?.isChecked = isChecked!!
+                        }
+                        LOCK -> {
+                            binding?.cbLock?.isChecked = isChecked!!
+                        }
+                    }
+                }
+                is Resource.DataError -> {
+                    ToastUtil.shortShow(it.errorMsg)
+                }
+                else -> {}
+            }
         }
     }
 
@@ -270,5 +501,103 @@ class HomeEnvlrPop(
                 else -> {}
             }
         }
+    }
+
+    // modifyUserDetail
+    private suspend fun modifyUserInfo(req: ModifyUserDetailReq, isChecked: Boolean) {
+        service.modifyUserDetail(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            logI(it.toString())
+            when (it) {
+                is Resource.Success -> {
+                    binding?.cbNotify?.isChecked = isChecked
+                }
+                else -> {}
+            }
+        }
+    }
+
+    // 解析时间
+    private fun parseTime(): String {
+        val str = currentDeviceInfo?.nightTimer.toString()
+        val pattern = "(\\d{1,2}):\\d{2} [AP]M-(\\d{1,2}):\\d{2} [AP]M"
+
+        val p: Pattern = Pattern.compile(pattern)
+        val m: Matcher = p.matcher(str)
+        var openTime: String? = null
+        var closeTime: String? = null
+        if (m.find()) {
+            muteOn = m.group(1)
+            muteOff = m.group(2)
+            var onHour = muteOn?.safeToInt() ?: 0
+            var offHour = muteOff?.safeToInt() ?: 0
+
+            // 判断前缀是AM还是PM
+            val pattern = Pattern.compile("(PM|AM)")
+            val matcher = pattern.matcher(str)
+            var i = 0
+            var openTimeIsAmOrPm: String? = null
+            var closeTimeIsAmOrPm: String? = null
+            while (matcher.find()) {
+                val group = matcher.group()
+                if (i == 0) {
+                    if (group == "PM") {
+                        muteOn = "${(m.group(1)?.safeToInt() ?: 0) + 12}"
+                    }
+                    openTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
+                    i++
+                    continue
+                }
+
+                if (i > 0) {
+                    if (group == "PM") {
+                        muteOff = "${(m.group(2)?.safeToInt() ?: 0) + 12}"
+                    }
+                    closeTimeIsAmOrPm = if (group == "PM") "PM" else "AM"
+                    i = 0
+                }
+            }
+            openTime = "$onHour:00 $openTimeIsAmOrPm"
+            closeTime = "$offHour:00 $closeTimeIsAmOrPm"
+        } else {
+            logE("No match found.")
+            muteOn = "22"
+            muteOff = "7"
+
+            openTime = "10:00 PM"
+            closeTime = "7:00 AM"
+        }
+        return "$openTime-$closeTime"
+    }
+
+    private var muteOn: String? = null
+    private var muteOff: String? = null
+
+    companion object {
+        // 1. 通知
+        const val NOTIFY = 1
+        // 2. 夜间模式
+        const val NIGHT = 2
+        // 3. 换水
+        const val DRAIN = 3
+        // 4. 童锁
+        const val LOCK = 4
+
     }
 }

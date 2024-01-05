@@ -26,14 +26,20 @@ class EnvironmentInfoData(
         val explain: String? = null,
         val articleId: String? = null,
         val roomData: String? = null,
+        val environmentType: String? = null, // 根据这个来判断是否是其他itemType
+        val type: String? = null, // 根据这个来判断是否是其他itemType
         val alert: Int? = null,
         val articleDetails: String? = null,
+        var additionalData:MutableList<Environment>? = null,
+        var textDesc: String? = null, // 文字描述
         var automation: Int? = null, // 是否是自动模式
     ) : BaseBean(), MultiItemEntity {
         override val itemType: Int
-            get() = when (detectionValue) {
-                "Fan" -> KEY_TYPE_FAN
-                "Grow Light" -> KEY_TYPE_LIGHT
+            get() = when (environmentType) {
+                KEY_TYPE_FAN_TYPE -> KEY_TYPE_FAN
+                KEY_TYPE_LIGHT_TYPE -> KEY_TYPE_LIGHT
+                KEY_SPACE_TYPE_TEXT -> KEY_TYPE_TEXT
+                KEY_SPACE_TYPE_GRID -> KEY_TYPE_GRID
                 else -> KEY_TYPE_NORMAL
             }
     }
@@ -47,5 +53,30 @@ class EnvironmentInfoData(
 
         // 这是开关灯状态的Item
         const val KEY_TYPE_LIGHT = 2
+
+        // 文字描述类型，自己新增
+        const val KEY_SPACE_TYPE_TEXT = "text"
+        // type grid
+        const val KEY_SPACE_TYPE_GRID = "grid"
+
+         // type fan
+        const val KEY_TYPE_FAN_TYPE = "fan"
+        // type light
+        const val KEY_TYPE_LIGHT_TYPE = "light"
+        // type humidity
+        const val KEY_TYPE_HUMIDITY_TYPE = "humidity"
+        // type water_level
+        const val KEY_TYPE_WATER_LEVEL_TYPE = "water_level"
+        // type water_temperature
+        const val KEY_TYPE_WATER_TEMPERATURE_TYPE = "water_temperature"
+        // type temperature
+        const val KEY_TYPE_TEMPERATURE_TYPE = "temperature"
+
+
+        // 新增的1个类型。文字描述
+        const val KEY_TYPE_TEXT = 3
+
+        // KEY_TYPE_GRID
+        const val KEY_TYPE_GRID = 4
     }
 }

@@ -65,7 +65,7 @@ class AddHeadInterceptor : Interceptor {
             .addHeader("version", AppUtil.appVersionName)
             .addHeader("timestamp", timestamp.toString())
             .header("token", ServiceCreators.TokenCache.token ?: Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN))
-            .addHeader("Connection", "close")
+            //.addHeader("Connection", "close")
             .method(originalRequest.method, originalRequest.body)
             .build()
 

@@ -26,6 +26,7 @@ import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.bean.UpdateInfoReq
@@ -518,8 +519,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                         logI("123123123: ${arrayList.size}")
                                         arrayList.firstOrNull { dev -> dev.devId == deviceId }
                                             .apply {
-                                                /*if (null == this) {
-                                                    val aa = mViewMode.thingDeviceBean
+                                                // 在线的、数据为空、是盒子的
+                                                if (null == this && mViewMode.userInfo?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && mViewMode.userInfo?.deviceOnlineStatus == "1") {
+                                                    /*val aa = mViewMode.thingDeviceBean
                                                     aa()?.devId = mViewMode.deviceId.value
                                                     GSON.toJson(aa)?.let {
                                                         Prefs.putStringAsync(
@@ -527,8 +529,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                                             it
                                                         )
                                                     }
-                                                    return@applyh
-                                                }*/
+                                                    return@applyh*/
+                                                    ToastUtil.shortShow("Device error, please re-pair with the device")
+                                                }
                                                 GSON.toJson(this)?.let {
                                                     Prefs.putStringAsync(
                                                         Constants.Tuya.KEY_DEVICE_DATA,
@@ -597,6 +600,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    ARouter.getInstance().build(RouterPath.Main.PAGE_MAIN).navigation()
                     acFinish()
                 }
             })

@@ -30,7 +30,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyProfileActivityBinding
-import com.cl.modules_my.request.ModifyUserDetailReq
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.ProfileViewModel
 import com.cl.common_base.pop.ChooserOptionPop
 import com.cl.modules_my.widget.LoginOutPop

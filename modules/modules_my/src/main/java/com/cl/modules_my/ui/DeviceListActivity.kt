@@ -136,7 +136,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 .build(RouterPath.Main.PAGE_MAIN).navigation()
             LiveEventBus.get()
                 .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
-                .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
+                .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType, onlineStatus))
         }
         finish()
     }
@@ -507,7 +507,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             .build(RouterPath.Main.PAGE_MAIN).navigation()
                         LiveEventBus.get()
                             .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
-                            .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType))
+                            .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType, onlineStatus))
                         finish()
                     }
                 }

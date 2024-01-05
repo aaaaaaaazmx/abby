@@ -20,7 +20,7 @@ import kotlin.math.log
  */
 class DeviceControlImpl : DeviceControl, IResultCallback {
     // 用户信息
-    val userInfo by lazy {
+    val userInfo = {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
         val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
         parseObject
@@ -47,9 +47,9 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     /**
      * 获取当前设备
      */
-    override fun getCurrentDevice(): IThingDevice? {
+    override fun getCurrentDevice(devId: String?): IThingDevice? {
         logI("12312313123L:${Prefs.getString(Constants.Login.KEY_LOGIN_DATA)}")
-        return ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)
+        return ThingHomeSdk.newDeviceInstance(devId?: userInfo()?.deviceId)
     }
 
     /**
@@ -186,10 +186,10 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         return this@DeviceControlImpl
     }
 
-    override fun sendDps(dpsJson: String): DeviceControlImpl {
+    override fun sendDps(dpsJson: String, devId: String?): DeviceControlImpl {
         map[TuYaDeviceConstants.KEY_DEVICE_MULTIPLE_DP] = dpsJson
         logI("sendDPs: $dpsJson,,,\n --> ${GSON.toJson(map)}")
-        getCurrentDevice()?.publishDps(GSON.toJson(map), this)
+        getCurrentDevice(devId)?.publishDps(GSON.toJson(map), this)
         return this@DeviceControlImpl
     }
 

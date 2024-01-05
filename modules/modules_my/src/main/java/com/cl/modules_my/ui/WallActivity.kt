@@ -7,8 +7,7 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.WallAdapter
 import com.cl.modules_my.databinding.MyWallListActivityBinding
-import com.cl.modules_my.request.ModifyUserDetailReq
-import com.cl.modules_my.viewmodel.MyViewModel
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.modules_my.viewmodel.WallViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
