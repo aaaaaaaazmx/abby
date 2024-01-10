@@ -2,6 +2,8 @@ package com.cl.modules_login.widget
 
 import android.content.Context
 import android.content.Intent
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import androidx.databinding.DataBindingUtil
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BuildConfig
@@ -9,6 +11,8 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.device.TuyaCameraUtils
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginSelectEnvBinding
 import com.lxj.xpopup.core.BottomPopupView
@@ -62,6 +66,13 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                     ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
                         .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         .navigation()
+                }
+                // 移除任何配件设备，输入配件ID即可
+                tvUnbind.setOnEditorActionListener { v, actionId, event ->
+                    if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER) {
+                        TuyaCameraUtils().unBindCamera(v.text.toString(), {ToastUtil.shortShow(it)}, {ToastUtil.shortShow("success")})
+                    }
+                    false
                 }
             }
         }

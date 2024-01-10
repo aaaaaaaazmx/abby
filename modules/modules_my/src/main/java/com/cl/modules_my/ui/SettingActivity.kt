@@ -1111,6 +1111,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         value: ${value.toString()}
                     """.trimIndent()
                     )
+                    // 修改:mcu:Abby-1.1.01-230313-T-B#abbyAAYA2234130142#1.8.1#flash:Abby-1.1.01-230313-T-B#1.8.1#OG#A0001#B0001#C0001#D0001
                     //mcu:Abby-1.1.01-220519-T-B#abbyAAYA2021730021#1.4.0#flash:Abby-1.1.01-220519-T-B#1.4.0
                     // 截取, 并且需要置灰
                     kotlin.runCatching {
