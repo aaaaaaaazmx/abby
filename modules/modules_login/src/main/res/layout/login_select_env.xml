@@ -62,5 +62,20 @@
             app:svRadius="16dp"
             app:svSolidType="solid" />
 
+
+        <EditText
+            android:singleLine="true"
+            android:maxLines="1"
+            android:gravity="center"
+            android:layout_gravity="center"
+            app:svSolidType="solid"
+            app:svRadius="16dp"
+            android:background="@color/lineBg"
+            android:layout_margin="10dp"
+            android:id="@+id/tv_unbind"
+            android:hint="解绑任何配件，输入配件ID"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+
     </LinearLayout>
 </layout>
