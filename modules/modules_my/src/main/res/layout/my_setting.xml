@@ -496,6 +496,14 @@
                     app:itemTitle="@string/profile_sign_out"
                     app:itemTitleColor="#D61744" />
 
+                <com.cl.common_base.widget.FeatureItemView
+                    android:id="@+id/test"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@color/white"
+                    android:textStyle="bold"
+                    app:itemTitle="机器测试"
+                    app:itemTitleColor="#D61744" />
             </LinearLayout>
 
         </LinearLayout>

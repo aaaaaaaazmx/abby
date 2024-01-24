@@ -14,6 +14,7 @@ import com.cl.modules_my.request.MergeAccountReq
 import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.modules_my.request.OpenAutomationReq
 import com.cl.common_base.bean.OxygenCoinListBean
+import com.cl.modules_my.repository.UsbSwitchReq
 import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.AutomationTypeBean
@@ -454,4 +455,17 @@ interface HttpMyApiService {
      */
     @POST("abby/accessory/updateSubport")
     fun updateSubport(@Body req: UpdateSubportReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 测试USB功能
+     */
+    @POST("abby/test/dpTest")
+    fun usbSwitch(@Body req: UsbSwitchReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取所有dp点 test
+     */
+    @FormUrlEncoded
+    @POST("abby/test/getDpCache")
+    fun getDpCache(@Field("deviceId") deviceId: String): Flow<HttpResult<UsbSwitchReq>>
 }
