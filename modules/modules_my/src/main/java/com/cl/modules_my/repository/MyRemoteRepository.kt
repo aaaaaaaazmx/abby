@@ -281,4 +281,11 @@ class MyRemoteRepository @Inject constructor() {
         return service.updateSubport(deviceId)
     }
 
+    fun usbSwitch(req: UsbSwitchReq): Flow<HttpResult<BaseBean>> {
+        return service.usbSwitch(req)
+    }
+    fun getDpCache(req: String): Flow<HttpResult<UsbSwitchReq>> {
+        return service.getDpCache(req)
+    }
+
 }

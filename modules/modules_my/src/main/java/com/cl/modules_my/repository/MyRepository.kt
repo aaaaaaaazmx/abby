@@ -321,4 +321,11 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun updateSubport(deviceId: UpdateSubportReq): Flow<HttpResult<BaseBean>> {
         return remoteRepository.updateSubport(deviceId)
     }
+
+    fun usbSwitch(req: UsbSwitchReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.usbSwitch(req)
+    }
+    fun getDpCache(req: String): Flow<HttpResult<UsbSwitchReq>> {
+        return remoteRepository.getDpCache(req)
+    }
 }

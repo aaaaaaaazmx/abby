@@ -12,6 +12,7 @@ import android.view.animation.LinearInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.BuildConfig
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.UpDeviceInfoReq
@@ -186,6 +187,12 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
     override fun initView() {
         // 当前版本号
         binding.ftVision.itemValue = AppUtil.appVersionName
+
+        ViewUtils.setVisible(BuildConfig.DEBUG, binding.test)
+        binding.test.setOnClickListener {
+            startActivity(Intent(this@SettingActivity, TestActivity::class.java))
+        }
+
         binding.ftSub.setPointClickListener {
             /*pop.asCustom(
                 BaseCenterPop(
