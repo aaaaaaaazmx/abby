@@ -19,6 +19,7 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
@@ -26,6 +27,7 @@ import com.cl.common_base.widget.SwitchButton
 import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.widget.HomeFanBottonPop
 import com.google.android.material.transition.Hold
 import com.luck.picture.lib.utils.DensityUtil
 import com.warkiz.widget.IndicatorSeekBar
@@ -117,8 +119,19 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                     ViewUtils.setVisible(item.automation != 1, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
                     setOnCheckedChangeListener { button, isChecked ->
                         /*helper.setText(R.id.tv_desc, if (isChecked) "Auto" else "Manual")*/
-                        ViewUtils.setVisible(isChecked == false, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
-                        listener?.onCheckedChanged(button, isChecked)
+                        if (!isChecked) {
+                            // 如果是关闭，那么就弹窗。
+                            xpopup(context) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(false)
+                                asCustom(HomeFanBottonPop(context, remindMeAction = {
+                                    listener?.onCheckedChanged(button, isChecked)
+                                }, benOKAction = {})).show()
+                            }
+                        } else {
+                            listener?.onCheckedChanged(button, isChecked)
+                        }
+                        ViewUtils.setVisible(!isChecked, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
                     }
                 }
                 helper.setText(R.id.tv_fan_value, item.fanIntake.toString())

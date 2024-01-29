@@ -266,6 +266,9 @@ object Constants {
         // 是否展示肥料掉落弹窗
         const val KEY_IS_SHOW_FEET_POP = "key_is_show_feet_pop"
 
+        // 是否在fan关闭时提示用户，
+        const val KEY_IS_SHOW_FAN_CLOSE_TIP = "key_is_show_fan_close_tip"
+
         // 是否展示植物种植完成界面
         const val KEY_IS_SHOW_COMPLETE = "key_is_show_complete"
 
