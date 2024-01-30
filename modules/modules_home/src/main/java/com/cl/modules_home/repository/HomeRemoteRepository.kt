@@ -198,4 +198,23 @@ class HomeRemoteRepository @Inject constructor() {
     fun popupList(): Flow<HttpResult<MutableList<MedalPopData>>> {
         return service.popupList()
     }
+
+    fun addProModeRecord(req: ProModeInfoBean): Flow<HttpResult<BaseBean>> {
+        return service.addProModeRecord(req)
+    }
+    fun updateProModeRecord(req: ProModeInfoBean): Flow<HttpResult<BaseBean>> {
+        return service.updateProModeRecord(req)
+    }
+
+    fun getProModeByDeviceId(req: String): Flow<HttpResult<MutableList<ProModeInfoBean>>> {
+        return service.getProModeByDeviceId(req)
+    }
+
+    fun addProModeInfo(req: ProModeInfoBean): Flow<HttpResult<BaseBean>> {
+        return service.addProModeInfo(req)
+    }
+
+    fun getProModeInfo(req: String): Flow<HttpResult<ProModeInfoBean>> {
+        return service.getProModeInfo(req)
+    }
 }

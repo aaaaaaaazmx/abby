@@ -89,7 +89,7 @@ object Prefs {
     fun removeKey(key: String) {
         mmkv.removeValueForKey(key)
     }
-    fun addObject(newObj: PresetData) {
+   /* fun addObject(newObj: PresetData) {
         val objects = getObjects().toMutableList()
         if (objects.size >= 5) {
             objects.removeAt(0) // 移除最旧的对象
@@ -113,5 +113,5 @@ object Prefs {
         val json = mmkv.getString(Constants.Global.KEY_GLOBAL_PRO_MODEL, null) ?: return emptyList()
         val type = object : TypeToken<List<PresetData>>() {}.type
         return GSON.parseObject(json, type)
-    }
+    }*/
 }

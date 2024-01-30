@@ -42,6 +42,11 @@ import com.warkiz.widget.SeekParams
 class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
     BaseMultiItemQuickAdapter<EnvironmentInfoData.Environment, BaseViewHolder>(data) {
 
+    // fan auto 关闭时 是否在弹出pop
+    private val isSHowRemindMe by lazy {
+        // false表示展示，true表示不展示。
+        Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FAN_CLOSE_TIP, false)
+    }
     init {
         addItemType(EnvironmentInfoData.KEY_TYPE_GRID, R.layout.home_envir_grid)// recyclview
         addItemType(EnvironmentInfoData.KEY_TYPE_TEXT, R.layout.home_text_item)// 文字描述
@@ -119,6 +124,12 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                     ViewUtils.setVisible(item.automation != 1, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
                     setOnCheckedChangeListener { button, isChecked ->
                         /*helper.setText(R.id.tv_desc, if (isChecked) "Auto" else "Manual")*/
+                        if (isSHowRemindMe) {
+                            // 已经展示过了，并且勾选了不再提示。
+                            listener?.onCheckedChanged(button, isChecked)
+                            ViewUtils.setVisible(!isChecked, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
+                            return@setOnCheckedChangeListener
+                        }
                         if (!isChecked) {
                             // 如果是关闭，那么就弹窗。
                             xpopup(context) {

@@ -103,7 +103,6 @@ import java.nio.ByteBuffer
 import java.util.Calendar
 import javax.inject.Inject
 import kotlin.random.Random
-import kotlin.time.days
 
 
 /**
@@ -264,17 +263,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.setDeviceInfo(devieInfo)
                     devieInfo.deviceId?.let {
                         // 保存灯光预设值,保存上一个设备的灯光预设值
-                        val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
-                        var map = mutableMapOf<String, String>()
-                        if (lightValue.isEmpty()) {
-                            map[mViewMode.userDetail.value?.data?.deviceId.toString()] = mViewMode.getGrowLight.value.toString()
-                        } else {
-                            val mapType = object : TypeToken<MutableMap<String, Any>>() {}.type
-                            map = Gson().fromJson(lightValue, mapType)
-                            map[mViewMode.userDetail.value?.data?.deviceId.toString()] = mViewMode.getGrowLight.value.toString()
-                        }
-                        Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, GSON.toJson(map).toString())
-
                         // 转换设备
                         mViewMode.setDeviceId(it)
                         mViewMode.switchDevice(it)
@@ -393,7 +381,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             mViewMode.getWaterWenDu()
             mViewMode.getFanIntake()
             mViewMode.getFanExhaust()
-            mViewMode.getGrowLight() // 获取预先配置的灯光强度，放在了获取140Dp点上。
+            mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString()) // 获取预先配置的灯光强度，放在了获取140Dp点上。
             mViewMode.getCurrentGrowLight()
             mViewMode.getAirPump()
             mViewMode.getLightTime()
@@ -974,7 +962,24 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         autoFocusEditText(false)
                         moveUpToKeyboard(true)
                         autoOpenSoftInput(false)
-                        asCustom(PresetPop(it, bean)).show()
+                        asCustom(PresetPop(it, bean, mViewMode.getPreset.value?.data) {  presetData ->
+                            // 调用保存预设模版接口
+                            mViewMode.addProModeRecord(
+                                ProModeInfoBean(
+                                    lightSchedule = ftTimer.text.toString(),
+                                    bright = mViewMode.getGrowLight.value,
+                                    fanIn = presetData?.fanIntake.safeToInt(),
+                                    fanOut = presetData?.fanExhaust.safeToInt(),
+                                    deviceId = mViewMode.userDetail.value?.data?.deviceId,
+                                    id = mViewMode.getNextUniqueId(), // 这个ID不能重复
+                                    lightOff = presetData?.muteOff.safeToInt(),
+                                    lightOn = presetData?.muteOn.safeToInt(),
+                                    name = presetData?.name,
+                                    notes = presetData?.note,
+                                    //updateTime = "${System.currentTimeMillis()}",
+                                )
+                            )
+                        }).show()
                     }
                 }
             }
@@ -988,59 +993,72 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         autoOpenSoftInput(false)
                         moveUpToKeyboard(false)
                         dismissOnTouchOutside(true)
-                        asCustom(PresetLoadPop(it, onNextAction = { data ->
+                        asCustom(PresetLoadPop(it, mViewMode.getPreset.value?.data, onNextAction = { data ->
+                            // 0- 12, 12-24
+                            val startTime = when (data?.lightOn) {
+                                0 -> 12
+                                12 -> 24
+                                else -> data?.lightOn ?: 12
+                            }
+
+                            val endTime = when (data?.lightOff) {
+                                0 -> 12
+                                12 -> 24
+                                else -> data?.lightOff ?: 12
+                            }
+
+                            val ftTurnOn = startTime.let {
+                                if (it > 12) {
+                                    "${it - 12}:00 PM"
+                                } else if (it < 12) {
+                                    "${it}:00 AM"
+                                } else if (it == 12) {
+                                    "12:00 AM"
+                                } else {
+                                    "12:00 AM"
+                                }
+                            } ?: "12:00 AM"
+
+                            val ftTurnOff = endTime.let {
+                                if (it > 12) {
+                                    "${it - 12}:00 PM"
+                                } else if (it < 12) {
+                                    "${it}:00 AM"
+                                } else if (it == 12) {
+                                    "12:00 AM"
+                                } else {
+                                    "12:00 AM"
+                                }
+                            } ?: "12:00 PM"
+
                             // 发送dp点
                             if (null == data) return@PresetLoadPop
-                            val fanIntake = data.fanIntake
-                            val fanExhaust = data.fanExhaust
-                            val lightIntensity = data.lightIntensity
-                            val lightSchedule = data.lightSchedule
-                            val muteOn = data.muteOn
-                            val muteOff = data.muteOff
+                            val fanIntake = data.fanIn
+                            val fanExhaust = data.fanOut
+                            val lightIntensity = data.bright
+                            val lightSchedule = "$ftTurnOn-$ftTurnOff"
+                            val muteOn = startTime
+                            val muteOff = endTime
                             logI("toDP: $fanIntake, $fanExhaust, $lightIntensity, $lightSchedule, $muteOn, $muteOff")
 
-                            // 保存灯光预设值
-                            val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
-                            var map = mutableMapOf<String, String>()
-                            if (lightValue.isEmpty()) {
-                                map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
-                            } else {
-                                val mapType = object : TypeToken<MutableMap<String, Any>>() {}.type
-                                map = Gson().fromJson(lightValue, mapType)
-                                map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
-                            }
-                            Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, GSON.toJson(map).toString())
-
-                            fanIntake?.let { it1 -> mViewMode.setFanIntake(it1) }
-                            fanExhaust?.let { it1 -> mViewMode.setFanExhaust(it1) }
-                            lightIntensity?.let { it1 -> mViewMode.setGrowLight(it1) }
+                            fanIntake?.let { it1 -> mViewMode.setFanIntake(it1.toString()) }
+                            fanExhaust?.let { it1 -> mViewMode.setFanExhaust(it1.toString()) }
+                            lightIntensity?.let { it1 -> mViewMode.setGrowLight(it1.toString()) }
                             ftTimer.text = "$lightSchedule"
-                            mViewMode.setmuteOff(muteOff)
-                            mViewMode.setmuteOn(muteOn)
+                            mViewMode.setmuteOff(muteOff.toString())
+                            mViewMode.setmuteOn(muteOn.toString())
 
-                            val dpBean = AllDpBean(cmd = "6", gl = lightIntensity, gls = muteOn, gle = muteOff, ex = fanExhaust, `in` = fanIntake)
+                            val dpBean = AllDpBean(cmd = "6", gl = lightIntensity.toString(), gls = muteOn.toString(), gle = muteOff.toString(), ex = fanExhaust.toString(), `in` = fanIntake.toString())
 
                             // 开灯时间
-                            when (muteOn.safeToInt()) {
-                                12 -> 0
-                                24 -> 12
-                                else -> muteOn.safeToInt()
-                            }.let { it2 ->
-                                dpBean.gls = it2.toString()
-                            }
+                            dpBean.gls = muteOn.toString()
+                            dpBean.gle = muteOff.toString()
 
-                            // 关灯时间
-                            when (muteOff.safeToInt()) {
-                                12 -> 0
-                                24 -> 12
-                                else -> muteOff.safeToInt()
-                            }.let { it2 ->
-                                dpBean.gle = it2.toString()
-                            }
                             // 发送多个DP点
                             GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
-                            // 点击Load之后就保存。
-                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, data.name.toString())
+
+                            // 保存到后台
+                            mViewMode.addCurrentProMode(data)
                         })).show()
                     }
                 }
@@ -1140,7 +1158,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     DeviceControl.get()
                         .success {
                             mViewMode.setFanIntake(seekbar?.progress.toString())
-                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
                         }
                         .error { code, error ->
                             ToastUtil.shortShow(
@@ -1167,7 +1184,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     DeviceControl.get()
                         .success {
                             mViewMode.setFanExhaust(seekbar?.progress.toString())
-                            Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
                         }
                         .error { code, error ->
                             ToastUtil.shortShow(
@@ -1376,17 +1392,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 lightIntensity = mViewMode.getGrowLight.value.safeToInt(),
                 proModeAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour, lightIntensity ->
                     mViewMode.setGrowLight(lightIntensity.toString())
-                    val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
-                    var map = mutableMapOf<String, String>()
-                    if (lightValue.isEmpty()) {
-                        map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
-                    } else {
-                        val mapType = object : TypeToken<MutableMap<String, Any>>() {}.type
-                        map = Gson().fromJson(lightValue, mapType)
-                        map[mViewMode.userDetail.value?.data?.deviceId.toString()] = lightIntensity.toString()
-                    }
-                    logI("12312312: map.size: ${map.size},,,${mViewMode.userDetail.value?.data?.deviceId}")
-                    Prefs.putStringAsync(Constants.Global.KEY_LIGHT_PRESET_VALUE, GSON.toJson(map).toString())
 
                     ftTimer.text = "$onTime-$offMinute"
                     mViewMode.setmuteOn("$timeOn")
@@ -1406,6 +1411,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         }.toString(), ex = mViewMode.getFanExhaust.value.toString(), `in` = mViewMode.getFanIntake.value.toString()
                     )
                     GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
+
+                    // 保存到后台
+                    mViewMode.addCurrentProMode(ProModeInfoBean(deviceId = mViewMode.userDetail.value?.data?.deviceId, bright = lightIntensity, lightOn = timeOn, lightOff = timeOff))
                 })
         }).show()
     }
@@ -2140,6 +2148,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
+            // 获取当前设备的proMode下的预设灯光。
+            getCurrentProMode.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    if (null == data) {
+                        kotlin.runCatching {
+                            // 获取当前灯光
+                            val currentGrowLight =
+                                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
+                                    ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
+                            setGrowLight(currentGrowLight.toString())
+                        }
+                        return@success
+                    }
+                    setGrowLight(data?.bright.toString())
+                }
+            })
+
+            addPreset.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                success {
+                    hideProgressLoading()
+                    mViewMode.userDetail.value?.data?.deviceId?.let { mViewMode.getProModeRecord(it) }
+                }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+            })
+
             getMedal.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code -> ToastUtil.show(errorMsg) }
                 success {
@@ -2499,6 +2537,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
                 success {
                     hideProgressLoading()
+
+                    // 查看当前是否有拥有proMode预设模版
+                    if (isManual == true) {
+                        mViewMode.getProModeRecord(data?.deviceId.toString())
+                    }
 
                     // 登录InterCome
                     InterComeHelp.INSTANCE.successfulLogin(
@@ -4123,7 +4166,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     override fun onFailure(i: Int, i1: Int, i2: Int) {
                         activity?.runOnUiThread {
-                            ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+                            //ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
                             mViewMode.tuYaUtils.queryValueByDPID("", DPConstants.PRIVATE_MODE)
                         }
                     }
@@ -4161,7 +4204,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             override fun onFailure(i: Int, i1: Int, i2: Int) {
                                 activity?.runOnUiThread {
-                                    ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+                                    //ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
                                 }
                             }
                         })
@@ -4697,7 +4740,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             }
                         } else {
                             // 手动模式，设置当前灯光值或者是预设值。
-                            mViewMode.getGrowLight(allDpBean.gl)
+                            mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString())
                         }
                     }
                 }

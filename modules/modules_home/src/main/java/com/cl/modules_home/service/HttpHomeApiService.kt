@@ -336,4 +336,32 @@ interface HttpHomeApiService {
      */
     @POST("abby/digitalAsset/popupList")
     fun popupList(): Flow<HttpResult<MutableList<MedalPopData>>>
+
+    /**
+     * 新增Pormode预设模板
+     */
+    @POST("abby/plant/addProModeRecord")
+    fun addProModeRecord(@Body req: ProModeInfoBean): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 修改Pormode预设模板
+     */
+    @POST("abby/plant/updateProModeRecord")
+    fun updateProModeRecord(@Body req: ProModeInfoBean): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 根据设备ID获取Pormode预设模板
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/getProModeByDeviceId")
+    fun getProModeByDeviceId(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<ProModeInfoBean>>>
+
+    // 新增proMode信息
+    @POST("abby/plant/addProModeInfo")
+    fun addProModeInfo(@Body req: ProModeInfoBean): Flow<HttpResult<BaseBean>>
+
+    // 获取当前proMode信息
+    @FormUrlEncoded
+    @POST("abby/plant/getProModeInfo")
+    fun getProModeInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<ProModeInfoBean>>
 }
