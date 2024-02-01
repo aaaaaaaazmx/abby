@@ -10,7 +10,7 @@ import com.cl.common_base.util.ViewUtils
 import com.google.gson.annotations.Until
 import com.lxj.xpopup.core.BottomPopupView
 
-class HomeFanBottonPop(context: Context, val remindMeAction: (()->Unit)? = null, val benOKAction: (()->Unit) ?= null): BottomPopupView(context) {
+class HomeFanBottonPop(context: Context, val title: String? = null, val tag: String? = FAN_AUTO_TAG, val remindMeAction: (()->Unit)? = null, val benOKAction: (()->Unit) ?= null): BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_fan_bottom_pop
     }
@@ -26,17 +26,35 @@ class HomeFanBottonPop(context: Context, val remindMeAction: (()->Unit)? = null,
             lifecycleOwner = this@HomeFanBottonPop
             executePendingBindings()
 
-            // 是否展示不再提醒
-            ViewUtils.setVisible(!isSHowRemindMe, tvNotRemind)
+            tvTitle.text = title
 
             btnOk.setOnClickListener {
-                if (tvNotRemind.isChecked) {
-                    // 不再提醒
-                    Prefs.putBooleanAsync(Constants.Global.KEY_IS_SHOW_FAN_CLOSE_TIP, true)
+                when(tag) {
+                    FAN_AUTO_TAG -> {
+                        if (tvNotRemind.isChecked) {
+                            // 不再提醒
+                            Prefs.putBooleanAsync(Constants.Global.KEY_IS_SHOW_FAN_CLOSE_TIP, true)
+                        }
+                    }
+
+                    FAN_TAG -> {
+                        if (tvNotRemind.isChecked) {
+                            // 不再提醒
+                            Prefs.putBooleanAsync(Constants.Global.KEY_IS_SHOW_FAN_SEVEN_TIP, true)
+                        }
+                    }
                 }
+
                 benOKAction?.invoke()
                 dismiss()
             }
         }
+    }
+
+    companion object {
+        // fanAuto tag
+        const val FAN_AUTO_TAG = "fanAutoTag"
+        // fan
+        const val FAN_TAG = "fanTag"
     }
 }

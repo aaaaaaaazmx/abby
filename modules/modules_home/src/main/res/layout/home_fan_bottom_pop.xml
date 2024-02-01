@@ -47,7 +47,6 @@
             android:layout_height="wrap_content"/>
 
         <CheckBox
-            android:visibility="gone"
             android:id="@+id/tv_not_remind"
             android:layout_marginTop="10dp"
             android:text="Do not remind me again"

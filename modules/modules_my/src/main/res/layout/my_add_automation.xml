@@ -20,7 +20,9 @@
             app:title="Add Automation" />
 
         <androidx.core.widget.NestedScrollView
+            android:fillViewport="true"
             android:id="@+id/nes"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="0dp">
@@ -253,7 +255,7 @@
                     android:layout_height="60dp"
                     android:layout_below="@+id/ll_night"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="245dp"
+                    android:layout_marginTop="145dp"
                     android:layout_marginBottom="24dp"
                     android:layout_marginEnd="24dp"
                     android:background="@drawable/create_state_button"

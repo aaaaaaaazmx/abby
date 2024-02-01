@@ -1146,6 +1146,17 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 chooserTime()
             }
 
+            fanIntakeSeekbar.customSectionTrackColor { colorIntArr ->
+                //the length of colorIntArray equals section count
+                //                colorIntArr[0] = Color.parseColor("#008961");
+                //                colorIntArr[1] = Color.parseColor("#008961");
+                // 当刻度为最后4段时才显示红色
+                // colorIntArr[6] = Color.parseColor("#F72E47")
+                colorIntArr[7] = Color.parseColor("#F72E47")
+                colorIntArr[8] = Color.parseColor("#F72E47")
+                colorIntArr[9] = Color.parseColor("#F72E47")
+                true //true if apply color , otherwise no change
+            }
             fanIntakeSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
                 override fun onSeeking(p0: SeekParams?) {
 
@@ -1155,6 +1166,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                    val progress = seekbar?.progress ?: 0
+                    if (progress >= 7) {
+                        val boolean = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FAN_SEVEN_TIP, false)
+                        if (!boolean) {
+                            context?.let {
+                                xpopup(it) {
+                                    isDestroyOnDismiss(false)
+                                    dismissOnTouchOutside(false)
+                                    asCustom(HomeFanBottonPop(it, title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.", tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
+                                    }, benOKAction = {})).show()
+                                }
+                            }
+                        }
+                    }
                     DeviceControl.get()
                         .success {
                             mViewMode.setFanIntake(seekbar?.progress.toString())

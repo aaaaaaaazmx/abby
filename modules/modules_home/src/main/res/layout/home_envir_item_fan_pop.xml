@@ -167,6 +167,7 @@
                 app:isb_track_progress_color="#008961"
                 app:isb_track_progress_size="5dp"
                 app:isb_track_rounded_corners="true"
+                app:layout_constraintBottom_toBottomOf="@id/tv_fan_value_unit_one"
                 app:layout_constraintEnd_toEndOf="@+id/tv_fan_value_unit_two"
                 app:layout_constraintStart_toEndOf="@+id/tv_fan_value_unit_one"
                 app:layout_constraintStart_toStartOf="@+id/tv_fan_value_unit_one"
@@ -241,15 +242,15 @@
                 app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value" />
 
             <com.warkiz.widget.IndicatorSeekBar
-                app:isb_show_indicator="rounded_rectangle"
-                app:isb_indicator_color="@color/mainColor"
                 android:id="@+id/fan_exhaust_seekbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                app:isb_progress="0"
+                app:isb_indicator_color="@color/mainColor"
                 app:isb_max="10"
+                app:isb_progress="0"
+                app:isb_show_indicator="rounded_rectangle"
                 app:isb_thumb_adjust_auto="true"
                 app:isb_thumb_drawable="@mipmap/bbbbb"
                 app:isb_thumb_size="27dp"
@@ -261,9 +262,11 @@
                 app:isb_track_rounded_corners="true"
                 app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust_value_unit_one"
                 app:layout_constraintEnd_toEndOf="@+id/tv_fan_exhaust_value_unit_two"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value_unit_one"
                 app:layout_constraintStart_toStartOf="@+id/tv_fan_exhaust_value_unit_one"
-                app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one" />
+                app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one"
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
 
