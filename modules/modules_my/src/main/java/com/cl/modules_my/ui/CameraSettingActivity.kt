@@ -116,7 +116,7 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
         binding.unbindCamera.setOnClickListener {
             XPopup.Builder(this@CameraSettingActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(
                 BaseCenterPop(this@CameraSettingActivity,
-                    titleText = "Are you certain you wish to delete the BudCam?",
+                    titleText = "Are you certain you wish to delete",
                     content = "*The photos you've taken will remain saved in the app, and any videos can be accessed through the micro SD card inside the budcam.",
                     cancelText = "No",
                     confirmText = "Yes",

@@ -305,6 +305,23 @@ fun View.setSafeOnClickListener(lifecycleScope: LifecycleCoroutineScope ? = null
     }
 }
 
+fun View.setQuickClickListener(
+    maxIntervalMillis: Long = 500L, // 定义快速点击的最大间隔时间
+    onQuickClick: (View) -> Unit
+) {
+    // 上一次点击的时间
+    var lastClickTime = 0L
+
+    setOnClickListener {
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - lastClickTime < maxIntervalMillis) {
+            onQuickClick(it)
+        }
+        lastClickTime = currentTime
+    }
+}
+
+
 
 enum class AnimationType {
     ALPHA, SCALE_AND_ALPHA, LIGHT_SCALE_AND_ALPHA, SLIDE_AND_ALPHA, LIGHT_SLIDE_AND_ALPHA

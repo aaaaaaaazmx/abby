@@ -20,6 +20,8 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +32,7 @@ import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -1058,6 +1061,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
 
                             // 保存到后台
+                            data.deviceId = mViewMode.userDetail.value?.data?.deviceId
                             mViewMode.addCurrentProMode(data)
                         })).show()
                     }
@@ -2471,7 +2475,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                     )
                                                 }
                                                 return@applyh*/
-                                                ToastUtil.shortShow("Device error, please re-pair with the device")
+                                                ToastUtil.shortShow("Connection error, try to delete device and pair again")
                                             }
                                             GSON.toJson(this)?.let {
                                                 Prefs.putStringAsync(
@@ -2549,6 +2553,29 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             /*shouldRunJob.observe(viewLifecycleOwner) {
                 if (it)
             }*/
+
+            getPreset.observe(viewLifecycleOwner, resourceObserver {
+                success {
+                    // 同步本地模版
+                    asyncProMode()
+                    // 同步本地当前预设灯光值。
+                    val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+                    if (lightValue.isNotEmpty()) {
+                        userDetail.value?.data?.deviceId?.let {
+                            val mapType = object : TypeToken<Map<String, Any>>() {}.type
+                            val map: Map<String, String> = Gson().fromJson(lightValue, mapType)
+                            if (map[it].isNullOrEmpty() || map[it].toString() == "-1") {
+                                // _getGrowLight.value = currentGrowLight.safeToInt()
+                            } else {
+                                setGrowLight(map[it].toString())
+                                addCurrentProMode(ProModeInfoBean(bright = map[it].toString().safeToInt(), deviceId = mViewMode.userDetail.value?.data?.deviceId))
+                                // 添加之后就删除
+                                Prefs.removeKey(Constants.Global.KEY_LIGHT_PRESET_VALUE)
+                            }
+                        }
+                    }
+                }
+            })
 
             // 首页循环刷新消息
             userDetail.observe(viewLifecycleOwner, resourceObserver {
@@ -3663,7 +3690,35 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 $number """
                                 )
                             }
+
+                            // 获取植物高度
+                            mViewMode.getPlantHeight()
+                            // 植物的点击弹出植物高度。
+                            binding.pplantNinth.ivBowl.setQuickClickListener {
+                                // 在种子阶段，是不能点击的。
+                                if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
+                                if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
+                                if (listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.deviceType != "OG") return@setQuickClickListener
+
+                                // 隐藏氧气币，和气泡
+                                ViewUtils.setGone(binding.pplantNinth.clContinue, binding.pplantNinth.waterView)
+
+                                // 植物高度。
+                                binding.pplantNinth.tvPlantHeight.text = formatIncPlant(mViewMode.plantHeights.value)
+
+                                // 开始若隐若现动画
+                                startFadeInOutAnimation(binding.pplantNinth.clPlantHeight, 5000) // 500ms为动画周期，可根据需求调整
+
+                                // 设置5秒后执行的操作
+                                binding.pplantNinth.clPlantHeight.postDelayed({
+                                    // 停止动画并隐藏View
+                                    stopFadeInOutAnimation(binding.pplantNinth.clPlantHeight)
+                                    ViewUtils.setVisible((unreadMessageList.value?.size ?: 0) > 0, binding.pplantNinth.clContinue)
+                                    ViewUtils.setVisible((getOxygenCoinList.value?.data?.size ?: 0) > 0, binding.pplantNinth.waterView)
+                                }, 5000) // 5秒后执行
+                            }
                         }
+
 
                     // 植物的氧气
                     binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
@@ -5305,4 +5360,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 跳转继承界面为了老用户输入属性或者名字
         const val KEY_FOR_USER_NAME = 77
     }
+
+    fun startFadeInOutAnimation(view: View, duration: Long) {
+        view.visibility = View.VISIBLE
+        val fadeInOut = AlphaAnimation(0.0f, 1.0f).apply {
+            repeatCount = Animation.INFINITE
+            repeatMode = Animation.REVERSE
+            this.duration = duration
+        }
+        view.startAnimation(fadeInOut)
+    }
+
+    fun stopFadeInOutAnimation(view: View) {
+        view.clearAnimation()
+        view.visibility = View.GONE
+    }
 }
+

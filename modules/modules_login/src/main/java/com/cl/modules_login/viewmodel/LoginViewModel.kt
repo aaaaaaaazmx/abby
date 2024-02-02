@@ -330,7 +330,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                             // 根据返回deviceId来判断 目前会有多台设备选择
                                                             homeBean.deviceList.firstOrNull { it.devId == deviceId }.apply {
                                                                 if (this == null && userInfo?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && userInfo?.deviceOnlineStatus == "1") {
-                                                                    ToastUtil.shortShow("Device error, please re-pair with the device")
+                                                                    ToastUtil.shortShow("Connection error, try to delete device and pair again")
                                                                 } else {
                                                                     val deviceBean = this
                                                                     // 缓存用户第一个设备数据

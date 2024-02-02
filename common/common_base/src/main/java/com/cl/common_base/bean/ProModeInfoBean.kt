@@ -4,7 +4,7 @@ data class ProModeInfoBean(
     val bright: Int? = null,
     val createTime: String? = null,
     val deleted: Int? = null,
-    val deviceId: String? = null,
+    var deviceId: String? = null,
     val fanIn: Int? = null,
     val fanOut: Int? = null,
     val id: Int? = null,

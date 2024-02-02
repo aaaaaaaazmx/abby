@@ -40,6 +40,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.LinkedList
 import java.util.Queue
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.system.exitProcess
 
@@ -2296,6 +2297,33 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
 
+    // 同步到后台到promMode预设模版中
+    val isSyncing = AtomicBoolean(false)
+    fun asyncProMode() {
+        if (isSyncing.getAndSet(true)) {
+            logI("Synchronization is already in progress.")
+            return
+        }
+        try {
+            // 你现有的代码
+            val pres = Prefs.getObjects()
+            logI("12312312#: ${pres.size}")
+            if (pres.isNotEmpty()) {
+                // 如果不是空的，那么就遍历然后上传到后台模版。
+                pres.forEachIndexed { index, it ->
+                    val asdasd = ProModeInfoBean(bright = it.lightIntensity.safeToInt(), deviceId = userDetail.value?.data?.deviceId,
+                        fanIn = it.fanIntake.safeToInt(), fanOut = it.fanExhaust.safeToInt(), id = it.id?.plus(index), lightOn = it.muteOn.safeToInt(), lightOff = it.muteOff.safeToInt(), name = it.name,
+                        notes = it.note
+                    )
+                    logI("1231231231#: $asdasd")
+                    addProModeRecord(asdasd)
+                }
+            }
+        } finally {
+            isSyncing.set(false)
+            Prefs.removeKey(Constants.Global.KEY_GLOBAL_PRO_MODEL)
+        }
+    }
 
     /**
      * 保存摄像头Id

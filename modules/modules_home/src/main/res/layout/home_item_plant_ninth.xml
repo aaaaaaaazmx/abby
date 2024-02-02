@@ -581,8 +581,48 @@
                 android:layout_height="wrap_content"/>
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <!--植物高度-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="gone"
+                android:id="@+id/cl_plant_height"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:textStyle="bold"
+                    android:textColor="#25FA5E"
+                    android:textSize="15sp"
+                    tools:text="3 inch"
+                    android:layout_marginStart="12dp"
+                    app:layout_constraintStart_toEndOf="@+id/iv_plant_height"
+                    app:layout_constraintTop_toTopOf="@+id/iv_plant_height"
+                    android:id="@+id/tv_plant_height"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
 
+                <ImageView
+                    android:id="@+id/iv_plant_height"
+                    android:background="@mipmap/home_plant_height_left"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <ImageView
+                    android:id="@+id/iv_plant_height_right"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginBottom="11dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_plant_height"
+                    app:layout_constraintStart_toEndOf="@+id/iv_plant_height"
+                    android:background="@mipmap/home_plant_height_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+asdasd
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

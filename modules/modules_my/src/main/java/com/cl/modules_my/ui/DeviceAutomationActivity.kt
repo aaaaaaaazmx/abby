@@ -313,7 +313,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
             XPopup.Builder(this@DeviceAutomationActivity).isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(false).asCustom(
                     BaseCenterPop(this@DeviceAutomationActivity,
-                        content = "Are you certain you wish to delete the BudCam?",
+                        content = "Are you certain you wish to delete",
                         cancelText = "No",
                         confirmText = "Yes",
                         onCancelAction = {},

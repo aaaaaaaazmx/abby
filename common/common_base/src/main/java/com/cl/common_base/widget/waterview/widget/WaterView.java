@@ -12,10 +12,12 @@ import android.graphics.Point;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.test.services.storage.internal.TestStorageUtil;
 
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -257,6 +259,10 @@ public class WaterView extends FrameLayout {
                             for (String s1 : s) {
                                 ss = s1 + "\n";
                                 tvTip.append(ss);
+                            }
+                        } else {
+                            if (!TextUtils.isEmpty(name)) {
+                                tvTip.append(name);
                             }
                         }
                         break;
