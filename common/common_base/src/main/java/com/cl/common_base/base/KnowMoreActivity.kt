@@ -530,7 +530,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                                         )
                                                     }
                                                     return@applyh*/
-                                                    ToastUtil.shortShow("Device error, please re-pair with the device")
+                                                    ToastUtil.shortShow("Connection error, try to delete device and pair again")
                                                 }
                                                 GSON.toJson(this)?.let {
                                                     Prefs.putStringAsync(

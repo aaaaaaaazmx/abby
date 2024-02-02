@@ -19,6 +19,7 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
@@ -26,6 +27,7 @@ import com.cl.common_base.widget.SwitchButton
 import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.widget.HomeFanBottonPop
 import com.google.android.material.transition.Hold
 import com.luck.picture.lib.utils.DensityUtil
 import com.warkiz.widget.IndicatorSeekBar
@@ -40,6 +42,11 @@ import com.warkiz.widget.SeekParams
 class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
     BaseMultiItemQuickAdapter<EnvironmentInfoData.Environment, BaseViewHolder>(data) {
 
+    // fan auto 关闭时 是否在弹出pop
+    private val isSHowRemindMe = {
+        // false表示展示，true表示不展示。
+        Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FAN_CLOSE_TIP, false)
+    }
     init {
         addItemType(EnvironmentInfoData.KEY_TYPE_GRID, R.layout.home_envir_grid)// recyclview
         addItemType(EnvironmentInfoData.KEY_TYPE_TEXT, R.layout.home_text_item)// 文字描述
@@ -117,14 +124,43 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                     ViewUtils.setVisible(item.automation != 1, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
                     setOnCheckedChangeListener { button, isChecked ->
                         /*helper.setText(R.id.tv_desc, if (isChecked) "Auto" else "Manual")*/
-                        ViewUtils.setVisible(isChecked == false, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
-                        listener?.onCheckedChanged(button, isChecked)
+                        if (isSHowRemindMe()) {
+                            // 已经展示过了，并且勾选了不再提示。
+                            listener?.onCheckedChanged(button, isChecked)
+                            ViewUtils.setVisible(!isChecked, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
+                            return@setOnCheckedChangeListener
+                        }
+                        if (!isChecked) {
+                            // 如果是关闭，那么就弹窗。
+                            xpopup(context) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(false)
+                                asCustom(HomeFanBottonPop(context, title = "To ensure your safety, the fan will stop and the light will be dimmed when the grow box door is opening.I Therefore, we kindly ask that you do not change the fan settings while the door is open.", tag = HomeFanBottonPop.FAN_AUTO_TAG,
+                                    benOKAction = {
+                                        listener?.onCheckedChanged(button, isChecked)
+                                    })).show()
+                            }
+                        } else {
+                            listener?.onCheckedChanged(button, isChecked)
+                        }
+                        ViewUtils.setVisible(!isChecked, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
                     }
                 }
                 helper.setText(R.id.tv_fan_value, item.fanIntake.toString())
                 helper.setText(R.id.tv_fan_exhaust_value, item.fanExhaust.toString())
 
                 helper.getView<IndicatorSeekBar>(R.id.fan_intake_seekbar).apply {
+                    customSectionTrackColor { colorIntArr ->
+                        //the length of colorIntArray equals section count
+                        //                colorIntArr[0] = Color.parseColor("#008961");
+                        //                colorIntArr[1] = Color.parseColor("#008961");
+                        // 当刻度为最后4段时才显示红色
+                        // colorIntArr[6] = Color.parseColor("#F72E47")
+                        colorIntArr[7] = Color.parseColor("#F72E47")
+                        colorIntArr[8] = Color.parseColor("#F72E47")
+                        colorIntArr[9] = Color.parseColor("#F72E47")
+                        true //true if apply color , otherwise no change
+                    }
                     setProgress(item.fanIntake?.toFloat() ?: 0f)
                     onSeekChangeListener = object : OnSeekChangeListener {
                         override fun onSeeking(p0: SeekParams?) {
@@ -135,6 +171,20 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                         }
 
                         override fun onStopTrackingTouch(seekBar: IndicatorSeekBar?) {
+                            val progress = seekBar?.progress ?: 0
+                            if (progress >= 7) {
+                                val boolean = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FAN_SEVEN_TIP, false)
+                                if (!boolean) {
+                                    context?.let {
+                                        xpopup(it) {
+                                            isDestroyOnDismiss(false)
+                                            dismissOnTouchOutside(false)
+                                            asCustom(HomeFanBottonPop(it, title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.", tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
+                                            }, benOKAction = {})).show()
+                                        }
+                                    }
+                                }
+                            }
                             DeviceControl.get()
                                 .success {
                                     helper.setText(R.id.tv_fan_value, seekBar?.progress.toString())

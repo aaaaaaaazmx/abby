@@ -10,6 +10,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToDouble
 import com.cl.common_base.ext.safeToFloat
@@ -39,7 +40,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.LinkedList
 import java.util.Queue
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 
 @ActivityRetainedScoped
@@ -1803,38 +1806,6 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     private val _getGrowLight = MutableLiveData<Int>(-1)
     val getGrowLight: LiveData<Int> = _getGrowLight
 
-    fun getGrowLight(gl: String? = null) {
-        runCatching {
-            // val name = Prefs.getString(Constants.Global.KEY_LOAD_CONFIGURED)
-            // val gear = name.isEmpty() || name == "-1"
-            userDetail.value?.data?.deviceId?.let {
-                var currentGrowLight = gl.safeToInt()
-                if (gl.isNullOrEmpty()) {
-                    kotlin.runCatching {
-                        // 获取当前灯光
-                        currentGrowLight =
-                            thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT }
-                                ?.get(TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT).toString().safeToDouble().safeToInt()
-                    }
-                }
-                logI("12312312: map.size:,,,${it}")
-                val lightValue = Prefs.getString(Constants.Global.KEY_LIGHT_PRESET_VALUE)
-                if (lightValue.isEmpty()) {
-                    _getGrowLight.value = currentGrowLight.safeToInt()
-                    return
-                }
-                val mapType = object : TypeToken<Map<String, Any>>() {}.type
-                val map: Map<String, String> = Gson().fromJson(lightValue, mapType)
-                logI("1231231111111111111: $it ,,, ${_getGrowLight.value},,,${_getCurrentGrowLight.value},,, lightValue: $lightValue ,,, ${map[it].toString()}")
-                if (map[it].isNullOrEmpty() || map[it].toString() == "-1") {
-                    _getGrowLight.value = currentGrowLight.safeToInt()
-                } else {
-                    _getGrowLight.value = map[it].toString().safeToInt()
-                }
-            }
-        }
-    }
-
     fun setGrowLight(gear: String) {
         _getGrowLight.value = gear.safeToDouble().safeToInt()
     }
@@ -2133,6 +2104,226 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         }
     }
 
+    // 添加预设模版
+    private val _addPreset = MutableLiveData<Resource<BaseBean>>()
+    val addPreset: LiveData<Resource<BaseBean>> = _addPreset
+    fun addProModeRecord(req: ProModeInfoBean) {
+        viewModelScope.launch {
+            repository.addProModeRecord(req)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _addPreset.value = it
+                }
+        }
+    }
+
+    fun getNextUniqueId(): Int {
+        // If the list is empty, start from 1 (or any other starting point you prefer)
+        val existingIds = getPreset.value?.data
+        if (existingIds?.isEmpty() == true) {
+            return 1
+        }
+        // Find the maximum ID in the array directly, avoiding the creation of an intermediate list
+        val maxId = existingIds?.maxOfOrNull { (it.id ?: 0) } ?: 0
+        return maxId + 1
+    }
+
+    // 查询所有预设模版
+    private val _getPreset = MutableLiveData<Resource<MutableList<ProModeInfoBean>>>()
+    val getPreset: LiveData<Resource<MutableList<ProModeInfoBean>>> = _getPreset
+    fun getProModeRecord(device:String) {
+        viewModelScope.launch {
+            repository.getProModeByDeviceId(device)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _getPreset.value = it
+                }
+        }
+    }
+
+    // 修改单个预设模版
+    private val _updatePreset = MutableLiveData<Resource<BaseBean>>()
+    val updatePreset: LiveData<Resource<BaseBean>> = _updatePreset
+    fun updateProModeRecord(req: ProModeInfoBean) {
+        viewModelScope.launch {
+            repository.updateProModeRecord(req)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _updatePreset.value = it
+                }
+        }
+    }
+
+    /**
+     * 添加当前proMode信息
+     */
+    private val _addCurrentProMode = MutableLiveData<Resource<BaseBean>>()
+    val addCurrentProMode: LiveData<Resource<BaseBean>> = _addCurrentProMode
+    fun addCurrentProMode(req: ProModeInfoBean) {
+        viewModelScope.launch {
+            repository.addProModeInfo(req)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _addCurrentProMode.value = it
+                }
+        }
+    }
+
+    /**
+     * 获取当前proMode信息
+     */
+    private val _getCurrentProMode = MutableLiveData<Resource<ProModeInfoBean>>()
+    val getCurrentProMode: LiveData<Resource<ProModeInfoBean>> = _getCurrentProMode
+    fun getCurrentProMode(deviceId: String) {
+        viewModelScope.launch {
+            repository.getProModeInfo(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        if (it.data == null) {
+                            Resource.DataError(
+                                -1,
+                                "data is null"
+                            )
+                        } else {
+                            Resource.Success(it.data)
+                        }
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "${it.message}"
+                        )
+                    )
+                }.collectLatest {
+                    _getCurrentProMode.value = it
+                }
+        }
+    }
+
+
+    // 同步到后台到promMode预设模版中
+    val isSyncing = AtomicBoolean(false)
+    fun asyncProMode() {
+        if (isSyncing.getAndSet(true)) {
+            logI("Synchronization is already in progress.")
+            return
+        }
+        try {
+            // 你现有的代码
+            val pres = Prefs.getObjects()
+            logI("12312312#: ${pres.size}")
+            if (pres.isNotEmpty()) {
+                // 如果不是空的，那么就遍历然后上传到后台模版。
+                pres.forEachIndexed { index, it ->
+                    val asdasd = ProModeInfoBean(bright = it.lightIntensity.safeToInt(), deviceId = userDetail.value?.data?.deviceId,
+                        fanIn = it.fanIntake.safeToInt(), fanOut = it.fanExhaust.safeToInt(), id = it.id?.plus(index), lightOn = it.muteOn.safeToInt(), lightOff = it.muteOff.safeToInt(), name = it.name,
+                        notes = it.note
+                    )
+                    logI("1231231231#: $asdasd")
+                    addProModeRecord(asdasd)
+                }
+            }
+        } finally {
+            isSyncing.set(false)
+            Prefs.removeKey(Constants.Global.KEY_GLOBAL_PRO_MODEL)
+        }
+    }
 
     /**
      * 保存摄像头Id

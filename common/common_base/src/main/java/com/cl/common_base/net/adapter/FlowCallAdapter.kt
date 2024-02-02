@@ -71,7 +71,7 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                                 /* logE("${response}")
                                  logE("${response.body()}")*/
                                 if (response.body() == null && response.code() == Constants.APP_SERVER) {
-                                    continuation.resumeWithException(Exception("Internal Server Error"))
+                                    continuation.resumeWithException(Exception("Server error, please contact support@heyabby.com"))
                                     return
                                 }
                                 response.body()?.let {

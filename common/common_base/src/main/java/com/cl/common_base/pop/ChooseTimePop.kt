@@ -259,10 +259,10 @@ class ChooseTimePop(
                             }
                             onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
                             proModeAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour, lightIntensity)
-                            if (isChanged && isProMode == true) {
+                            /*if (isChanged && isProMode == true) {
                                 // 表示不是默认的配置了。 已经改过了。
                                 Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
-                            }
+                            }*/
                             dismiss()
                         } else {
                             ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
@@ -285,10 +285,10 @@ class ChooseTimePop(
                         }
                         onConfirmAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour)
                         proModeAction?.invoke(ftTurnOn.itemValue.toString(), ftTurnOff.itemValue.toString(), turnOnHour, turnOffHour, timeOpenHour, timeCloseHour, lightIntensity)
-                        if (isChanged && isProMode == true) {
+                        /*if (isChanged && isProMode == true) {
                             // 表示不是默认的配置了。 已经改过了。
                             Prefs.putStringAsync(Constants.Global.KEY_LOAD_CONFIGURED, "-1")
-                        }
+                        }*/
                         dismiss()
                     }
                 }

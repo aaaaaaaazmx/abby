@@ -166,4 +166,10 @@ interface BaseApiService {
     @FormUrlEncoded
     @POST("abby/digitalAsset/showAchievement")
     fun showAchievement(@Field("achievementId") achievementId: Int): Flow<HttpResult<BaseBean>>
+
+    // 删除proMode预设模版
+    @FormUrlEncoded
+    @POST("abby/plant/deleteProModeRecord")
+    fun deleteProModeRecord(@Field("id") id: String): Flow<HttpResult<BaseBean>>
+
 }

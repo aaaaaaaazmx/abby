@@ -20,7 +20,9 @@
             app:title="Add Automation" />
 
         <androidx.core.widget.NestedScrollView
+            android:fillViewport="true"
             android:id="@+id/nes"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="0dp">
@@ -235,13 +237,25 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
+                <TextView
+                    android:lineSpacingExtra="5dp"
+                    android:textStyle="bold"
+                    android:layout_marginEnd="24dp"
+                    android:text="*To avoid frequent on and off cycles, the automation will trigger only when the criteria have been met for a few minutes. Please note that it's normal to experience a slight time delay."
+                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="24dp"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
                 <Button
                     android:id="@+id/btn_success"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_below="@+id/ll_night"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="245dp"
+                    android:layout_marginTop="145dp"
                     android:layout_marginBottom="24dp"
                     android:layout_marginEnd="24dp"
                     android:background="@drawable/create_state_button"

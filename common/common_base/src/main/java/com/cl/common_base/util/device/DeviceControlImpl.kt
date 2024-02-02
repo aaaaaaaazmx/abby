@@ -49,7 +49,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun getCurrentDevice(devId: String?): IThingDevice? {
         logI("12312313123L:${Prefs.getString(Constants.Login.KEY_LOGIN_DATA)}")
-        return ThingHomeSdk.newDeviceInstance(devId?: userInfo()?.deviceId)
+        return ThingHomeSdk.newDeviceInstance(devId ?: userInfo()?.deviceId)
     }
 
     /**
@@ -120,7 +120,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
                 ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
                 this
             )
-        }else {
+        } else {
             getCurrentDevice()?.publishDps(
                 GSON.toJson(map),
                 ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
@@ -193,13 +193,27 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
         return this@DeviceControlImpl
     }
 
+    // 统一判断code码
+    // Android:
+    // 11001, connection error, try to delete device and pair again
+    // 10203, The device is offline, please pair again
+    // 1508, The device has been removed, please pair again.
+    // 50408, Connection timeout, please check your network connection.
+    // 500, Server error, please contact support@heyabby.com
+    private val errorCodeMessages = mapOf(
+        "11001" to "Connection error, try to delete device and pair again",
+        "10203" to "The device is offline, please pair again",
+        "1508" to "The device has been removed, please pair again.",
+        "50408" to "Connection timeout, please check your network connection.",
+        "500" to "Server error, please contact support@heyabby.com"
+    )
+
     override fun onError(code: String?, error: String?) {
-        onErrorAction?.invoke(this@DeviceControlImpl, code, error)
+        val message = errorCodeMessages[code] ?: error  // Use the custom message if available, or the default error
+        onErrorAction?.invoke(this@DeviceControlImpl, code, message)
         kotlin.runCatching {
             Reporter.reportTuYaError(
-                map.keys.firstOrNull() ?: "DeviceControlImpl",
-                map.values.firstOrNull().toString(),
-                code
+                map.keys.firstOrNull() ?: "DeviceControlImpl", map.values.firstOrNull().toString(), code
             )
             map.clear()
         }
