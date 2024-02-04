@@ -663,7 +663,19 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         newCommentsList.add(comment)
                     } // 更新聊天数目集合
                     this@OtherJourneyActivity.adapter.data[position].comments = newCommentsList // 更新聊天数量
-                    this@OtherJourneyActivity.adapter.data[position].comment = commentListData?.size
+                    // 更新聊天数量
+                    // Initialize commentSize to 0
+                    var commentSize = 0
+
+                    // Add the size of commentListData to commentSize
+                    commentSize += commentListData?.size ?: 0
+
+                    // Add the sum of sizes of all replies lists to commentSize
+                    commentListData?.forEach { comment ->
+                        commentSize += comment.replys?.size ?: 0
+                    }
+                    // Set the calculated total comment size to the adapter
+                    this@OtherJourneyActivity.adapter.data[position].comment = commentSize
                     adapter.notifyItemChanged(position)
                 })
             ).show()

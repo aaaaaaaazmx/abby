@@ -50,7 +50,6 @@ include(":common:common_service")
 include(":common:common_base")
 include(":common:BarcodeScanning")
 include(":common:ble")
-/*include(":common:kefu-easeui")*/
 include(":common:ipc")
 include(":modules:modules_pairing_connection")
 include(":modules:modules_planting_log")
