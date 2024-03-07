@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:title="Service Extension" />
+                app:title="Renew Subscription" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,10 +33,22 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:text="If you would like to extend your growing service, please go to our official website to purchase the option most suitable for you.
-This service includes our one-on-one support and growing supply pack."
-                    android:id="@+id/tv_html"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
                     android:layout_marginTop="19dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:text="1. Purchase subscription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_marginTop="6dp"
+                    android:text="Please click the purchase button
+to go to our website to complete purchase
+of the subscription."
+                    android:id="@+id/tv_html"
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
                     android:textColor="@color/black"
@@ -68,10 +80,23 @@ This service includes our one-on-one support and growing supply pack."
                     android:textSize="18sp" />
 
                 <TextView
-                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
-                    android:text="After purchase, you’ll receive a verification code via email. Enter the code below to extend your service validity accordingly."
+                    android:layout_marginTop="19dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:text="2. Enter the activation code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    android:text="After purchase, you will receive a 8 digit code
+via email, please enter the code below to activate
+your subscription."
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:layout_width="wrap_content"
@@ -113,7 +138,7 @@ This service includes our one-on-one support and growing supply pack."
                     android:layout_marginEnd="24dp"
                     android:background="@drawable/create_state_button"
                     android:enabled="false"
-                    android:text="Extend"
+                    android:text="Renew"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="18sp" />

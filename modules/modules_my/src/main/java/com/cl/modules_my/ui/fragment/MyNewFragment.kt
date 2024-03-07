@@ -21,6 +21,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.BaseCenterPop
@@ -38,6 +39,7 @@ import com.cl.modules_my.ui.DigitalActivity
 import com.cl.modules_my.ui.FeedbackActivity
 import com.cl.modules_my.ui.OxygenListActivity
 import com.cl.modules_my.ui.ProfileActivity
+import com.cl.modules_my.ui.ReDeemActivity
 import com.cl.modules_my.ui.SettingActivity
 import com.cl.modules_my.viewmodel.MyViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -107,6 +109,13 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
             )
         }
 
+        // 跳转到vip续订洁面
+        binding.tvVipStill.setSafeOnClickListener {
+            context?.let {
+                startActivity(Intent(it, ReDeemActivity::class.java))
+            }
+        }
+
         // 跳准到反馈界面
         binding.ftFeedback.setOnClickListener {
             startActivity(Intent(context, FeedbackActivity::class.java))
@@ -119,9 +128,12 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
         binding.rlVip.setOnClickListener {
             // 跳准到购买链接网址
-            val intent = Intent(context, WebActivity::class.java)
+           /*val intent = Intent(context, WebActivity::class.java)
             intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/subscription")
-            startActivity(intent)
+            startActivity(intent)*/
+            context?.let {
+                startActivity(Intent(it, ReDeemActivity::class.java))
+            }
         }
 
         binding.ftMessage.setOnClickListener {

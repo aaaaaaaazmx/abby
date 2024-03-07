@@ -171,4 +171,17 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
             }
     }
 
+    fun isVipSHowText(): String {
+        return if (userDetail.value?.data?.isVip == 0) {
+            "Subscription Expired"
+        } else {
+            if (userDetail.value?.data?.continuousVip == 1) {
+                // 如果是连续包月
+                "Subscription Active"
+            } else {
+                "Subscription valid till " + parseTime(userDetail.value?.data?.subscriptionTime)
+            }
+        }
+    }
+
 }

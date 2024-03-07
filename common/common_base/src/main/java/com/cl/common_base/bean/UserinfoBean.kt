@@ -88,5 +88,6 @@ data class UserinfoBean(
         val basicInfo: BasicInfo? = null,
         val userFlags: List<UserFlag>? = null,
         val followStatus: Boolean? = false,
+        val continuousVip: Int? = 0, // 表示订阅状态是否是连续包月用户
     ) : BaseBean()
 }
