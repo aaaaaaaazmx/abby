@@ -91,6 +91,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var homeFragment: Fragment? = null
     private var plantingLogFragment: Fragment? = null
     private var contactFragment: Fragment? = null
+    private var shopFragment: Fragment? = null
     private var myFragment: Fragment? = null
 
     // 第一次也就是新用户进入的时候，显示的界面
@@ -461,12 +462,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     }
                 }
 
-            Constants.FragmentIndex.SHOP_INDEX -> contactFragment?.let { transaction.show(it) }
+            Constants.FragmentIndex.SHOP_INDEX -> shopFragment?.let { transaction.show(it) }
                 ?: kotlin.run {
                     ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()?.let {
-                        contactFragment = it as Fragment
-                        contactFragment?.let {
-                            contactFragment = it
+                        shopFragment = it as Fragment
+                        shopFragment?.let {
+                            shopFragment = it
                             transaction.add(R.id.container, it, null)
                         }
                     }
@@ -504,6 +505,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         firstJoinInFragment?.let { transaction.hide(it) }
         homeFragment?.let { transaction.hide(it) }
         contactFragment?.let { transaction.hide(it) }
+        shopFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
         plantingLogFragment?.let { transaction.hide(it) }
     }
@@ -518,6 +520,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 fragmentTransaction.remove(it)
             }
             contactFragment?.let {
+                fragmentTransaction.remove(it)
+            }
+            shopFragment?.let {
                 fragmentTransaction.remove(it)
             }
             myFragment?.let {
