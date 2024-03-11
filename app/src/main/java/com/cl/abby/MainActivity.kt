@@ -363,6 +363,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 //  这个到时需要放出来
                 R.id.action_contact -> switchFragment(Constants.FragmentIndex.CONTACT_INDEX)
 
+                R.id.action_shop -> switchFragment(Constants.FragmentIndex.SHOP_INDEX)
+
                 R.id.action_my -> {
                     switchFragment(Constants.FragmentIndex.MY_INDEX)
                 }
@@ -458,6 +460,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                         }
                     }
                 }
+
+            Constants.FragmentIndex.SHOP_INDEX -> contactFragment?.let { transaction.show(it) }
+                ?: kotlin.run {
+                    ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()?.let {
+                        contactFragment = it as Fragment
+                        contactFragment?.let {
+                            contactFragment = it
+                            transaction.add(R.id.container, it, null)
+                        }
+                    }
+                }
+
 
             Constants.FragmentIndex.MY_INDEX -> myFragment?.let { transaction.show(it) }
                 ?: kotlin.run {

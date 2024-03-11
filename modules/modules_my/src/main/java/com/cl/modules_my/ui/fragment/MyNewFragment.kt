@@ -264,6 +264,8 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                                 }
                             }
                         }
+                        // 设置vip显示日期。
+                        binding.tvVip.text = isVipSHowText()
                     }
                 }
             })

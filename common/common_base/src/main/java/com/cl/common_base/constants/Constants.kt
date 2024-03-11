@@ -403,7 +403,8 @@ object Constants {
         const val HOME_INDEX = 0
         const val PLANT_LOG = 1
         const val CONTACT_INDEX = 2
-        const val MY_INDEX = 3
+        const val SHOP_INDEX = 3
+        const val MY_INDEX = 4
     }
 
     // 视频后缀

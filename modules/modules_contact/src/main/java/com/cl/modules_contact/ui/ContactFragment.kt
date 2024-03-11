@@ -62,6 +62,7 @@ import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
 import com.cl.modules_contact.pop.ContactChooseTipPop
 import com.cl.modules_contact.pop.ContactDeletePop
+import com.cl.modules_contact.pop.ContactNewEnvPop
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.TagsBean
 import com.cl.modules_contact.viewmodel.ContactViewModel
@@ -311,7 +312,15 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     // 点击环境信息
                     val envInfoData = GSON.parseObjectList(item?.environment, ContactEnvData::class.java).toMutableList()
                     // 弹出环境信息
-                    XPopup.Builder(context).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(context?.let { ContactEnvPop(it, envInfoData, item?.nickName, item?.avatarPicture) }).show()
+                    //XPopup.Builder(context).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(context?.let { ContactEnvPop(it, envInfoData, item?.nickName, item?.avatarPicture) }).show()
+                    // 弹出修改后的环境信息
+                    context?.let {
+                        xpopup(it) {
+                            dismissOnTouchOutside(false)
+                            isDestroyOnDismiss(false)
+                            asCustom(ContactNewEnvPop(it, envInfoData, item)).show()
+                        }
+                    }
                 }
 
                 R.id.cl_love -> {
