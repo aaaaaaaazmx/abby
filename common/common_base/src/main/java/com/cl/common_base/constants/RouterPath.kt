@@ -87,6 +87,8 @@ class RouterPath {
      */
     object Contact {
         private const val CONTACT = "modules_contact"
+        // 商城首页
+        const val PAGE_SHOP = "/shop/$CONTACT"
         const val PAGE_CONTACT = "/contact/$CONTACT"
         // 发Trend页面
         const val PAGE_TREND = "/trend/$CONTACT"

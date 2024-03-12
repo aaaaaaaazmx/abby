@@ -1,7 +1,6 @@
 package com.cl.abby
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -15,8 +14,6 @@ import androidx.fragment.app.FragmentTransaction
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.bhm.ble.BleManager
-import com.bhm.ble.attribute.BleOptions
 import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.abby.viewmodel.MainViewModel
 import com.cl.common_base.base.BaseActivity
@@ -30,8 +27,10 @@ import com.cl.common_base.pop.CustomBubbleAttachPopup
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.common_base.web.AgentWebFragment
+import com.cl.common_base.web.FragmentKeyDown
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.ui.PhPairActivity
+import com.cl.modules_contact.ui.ShopFragment
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.lxj.xpopup.XPopup
@@ -379,11 +378,31 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var mExitTime: Long = 0
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (System.currentTimeMillis().minus(mExitTime) <= 2000) {
-                finish()
+            // todo asd
+            if (mIndex == Constants.FragmentIndex.SHOP_INDEX) {
+                (shopFragment as? ShopFragment)?.let {
+                    it.mAgentWebFragment?.let { ftagments ->
+                        val mFragmentKeyDown: FragmentKeyDown = ftagments
+                        return if (mFragmentKeyDown.onFragmentKeyDown(keyCode, event)) {
+                            true
+                        } else {
+                            if (System.currentTimeMillis().minus(mExitTime) <= 2000) {
+                                finish()
+                            } else {
+                                mExitTime = System.currentTimeMillis()
+                                showToast("Press to exit the program again")
+                            }
+                            true
+                        }
+                    }
+                }
             } else {
-                mExitTime = System.currentTimeMillis()
-                showToast("Press to exit the program again")
+                if (System.currentTimeMillis().minus(mExitTime) <= 2000) {
+                    finish()
+                } else {
+                    mExitTime = System.currentTimeMillis()
+                    showToast("Press to exit the program again")
+                }
             }
             return true
         }
@@ -464,7 +483,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
             Constants.FragmentIndex.SHOP_INDEX -> shopFragment?.let { transaction.show(it) }
                 ?: kotlin.run {
-                    ARouter.getInstance().build(RouterPath.Contact.PAGE_CONTACT).navigation()?.let {
+                    ARouter.getInstance().build(RouterPath.Contact.PAGE_SHOP).navigation()?.let {
                         shopFragment = it as Fragment
                         shopFragment?.let {
                             shopFragment = it
