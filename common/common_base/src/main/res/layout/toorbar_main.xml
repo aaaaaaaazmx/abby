@@ -48,13 +48,18 @@
                />
 
            <TextView
+               android:ellipsize="end"
+               android:maxLines="1"
+               android:maxEms="10"
+               android:textSize="17sp"
+               android:textStyle="bold"
                android:id="@+id/toolbar_title"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_centerInParent="true"
                android:singleLine="true"
-               android:textColor="@android:color/white"
-               android:textSize="14sp"/>
+               android:textColor="@android:color/black"
+               />
 
 
            <ImageView

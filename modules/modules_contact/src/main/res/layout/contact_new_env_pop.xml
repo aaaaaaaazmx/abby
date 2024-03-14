@@ -199,6 +199,9 @@
                         android:textColor="#006241"
                         android:textSize="12sp"
                         android:textStyle="bold"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:maxEms="5"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_grow_chamber_temperature_value"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_grow_chamber_temperature"
@@ -211,7 +214,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:textSize="10sp"
-                        android:text="Humidity (%)"
+                        android:text="Humidity   "
                         app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber_temperature_value" />
 
@@ -229,17 +232,21 @@
                         tools:text="80" />
 
                     <TextView
+                        android:maxEms="5"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:id="@+id/tv_grow_chamber_humidity_status"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="--"
                         android:textColor="#006241"
                         android:textSize="12sp"
                         android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber_temperature_status"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_grow_chamber_humidity_value"
                         app:layout_constraintTop_toTopOf="@+id/tv_grow_chamber_humidity_value"
-                        tools:text="Good" />
+                        tools:text="GooGoodGoodGoodd" />
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -350,15 +357,19 @@
                     <TextView
                         android:text="--"
                         android:id="@+id/tv_water_tank_tds_value"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold"
+                        android:maxEms="5"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank_tds"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank_tds"
-                        tools:text="50" />
+                        tools:text="505050505050" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
