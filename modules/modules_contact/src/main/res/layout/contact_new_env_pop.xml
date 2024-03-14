@@ -343,7 +343,6 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_water_tank_ph"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank_ph"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank_ph"
                         tools:text="50" />
@@ -357,7 +356,6 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_water_tank_tds"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank_tds"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank_tds"
                         tools:text="50" />

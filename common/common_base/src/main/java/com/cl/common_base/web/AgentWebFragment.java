@@ -43,6 +43,7 @@ import com.cl.common_base.web.client.CommonWebChromeClient;
 import com.cl.common_base.web.client.MiddlewareChromeClient;
 import com.cl.common_base.web.client.MiddlewareWebViewClient;
 import com.cl.common_base.web.client.UIController;
+import com.cl.common_base.widget.toast.ToastUtil;
 import com.ferfalk.simplesearchview.SimpleSearchView;
 import com.google.gson.Gson;
 import com.just.agentweb.AbsAgentWebSettings;
@@ -390,12 +391,14 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
             int id = v.getId();
             if (id == R.id.iv_back) {// true表示AgentWeb处理了该事件
                 if (!mAgentWeb.back()) {
-                    AgentWebFragment.this.getActivity().finish();
+                    // AgentWebFragment.this.getActivity().finish();
+                    ToastUtil.show("is over");
                 }
             } else if (id == R.id.iv_finish) {
                 AgentWebFragment.this.getActivity().finish();
             } else if (id == R.id.iv_more) {
-               // showPoPup(v);
+                // 跳转到购物车
+                mAgentWeb.getUrlLoader().loadUrl("https://heyabby.com/cart");
             } else if (id == R.id.iv_search) {
                 mSimpleSearchView.showSearch();
             }
@@ -525,6 +528,13 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Log.e(TAG, "MiddlewareWebClientBase#shouldOverrideUrlLoading request url:" + request.getUrl().toString());
+                }
+
+                // 是否显示显示返回按钮
+                if (!request.getUrl().toString().equals(URL_KEY)) {
+                    mBackImageView.setVisibility(View.VISIBLE);
+                } else {
+                    mBackImageView.setVisibility(View.GONE);
                 }
                 return super.shouldOverrideUrlLoading(view, request);
             }
