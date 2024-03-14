@@ -314,6 +314,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                     // 弹出环境信息
                     //XPopup.Builder(context).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(context?.let { ContactEnvPop(it, envInfoData, item?.nickName, item?.avatarPicture) }).show()
                     // 弹出修改后的环境信息
+                    if (item?.deviceModelName.isNullOrEmpty() || item?.deviceModelName == "Tent") {
+                        return@setOnItemChildClickListener
+                    }
                     context?.let {
                         xpopup(it) {
                             dismissOnTouchOutside(false)

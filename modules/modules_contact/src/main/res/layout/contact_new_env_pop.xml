@@ -68,6 +68,7 @@
 
                 <TextView
                     android:id="@+id/tv_strain_name"
+                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#006241"
@@ -98,6 +99,7 @@
 
 
                 <ImageView
+                    android:scaleType="centerCrop"
                     android:id="@+id/iv_og_edition"
                     android:layout_width="94dp"
                     android:layout_height="216dp"
@@ -110,6 +112,7 @@
                     tools:background="@mipmap/my_demo_bg" />
 
                 <TextView
+                    android:textSize="10sp"
                     android:id="@+id/tv_og_edition"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -172,7 +175,7 @@
                         android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber"
-                        tools:text="Temperature (℉)" />
+                        android:text="Temperature    " />
 
 
                     <TextView
@@ -198,7 +201,7 @@
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_grow_chamber_temperature_value"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_grow_chamber_temperature_value"
+                        app:layout_constraintStart_toEndOf="@+id/tv_grow_chamber_temperature"
                         app:layout_constraintTop_toTopOf="@+id/tv_grow_chamber_temperature_value"
                         tools:text="Good" />
 
@@ -207,6 +210,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:textSize="10sp"
                         android:text="Humidity (%)"
                         app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber_temperature_value" />
@@ -232,9 +236,8 @@
                         android:textColor="#006241"
                         android:textSize="12sp"
                         android:textStyle="bold"
+                        app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber_temperature_status"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_grow_chamber_humidity_value"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_grow_chamber_humidity_value"
                         app:layout_constraintTop_toTopOf="@+id/tv_grow_chamber_humidity_value"
                         tools:text="Good" />
 
@@ -277,7 +280,7 @@
                         android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank"
-                        tools:text="Temperature (℉)" />
+                        android:text="Temperature    " />
 
 
                     <TextView
@@ -303,7 +306,7 @@
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_water_tank_temperature_value"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_water_tank_temperature_value"
+                        app:layout_constraintStart_toEndOf="@+id/tv_water_tank_temperature"
                         app:layout_constraintTop_toTopOf="@+id/tv_water_tank_temperature_value"
                         tools:text="Good" />
 
@@ -332,6 +335,7 @@
 
 
                     <TextView
+                        android:text="--"
                         android:id="@+id/tv_water_tank_ph_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -339,11 +343,13 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_water_tank_ph"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank_ph"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank_ph"
                         tools:text="50" />
 
                     <TextView
+                        android:text="--"
                         android:id="@+id/tv_water_tank_tds_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -351,6 +357,7 @@
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_water_tank_tds"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank_tds"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank_tds"
                         tools:text="50" />
@@ -364,6 +371,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="50dp" />
+                android:layout_marginBottom="80dp" />
         </LinearLayout>
 </layout>

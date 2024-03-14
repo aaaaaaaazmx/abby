@@ -19,7 +19,7 @@ class ContactNewEnvAdapter (data: MutableList<NewPageData.Records.AccessorysList
             tvLearn.setSafeOnClickListener {
                 val intent = Intent(context, WebActivity::class.java)
                 intent.putExtra(WebActivity.KEY_WEB_URL, item.buyLink)
-                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "hey abby")
+                intent.putExtra(WebActivity.KEY_IS_SHOW_CAR, true)
                 context.startActivity(intent)
             }
         }
