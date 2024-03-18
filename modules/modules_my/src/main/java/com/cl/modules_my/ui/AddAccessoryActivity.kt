@@ -165,6 +165,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
             R.id.tv_buy -> {
                 // 跳转到网页
                 val intent = Intent(this@AddAccessoryActivity, WebActivity::class.java)
+                intent.putExtra(WebActivity.KEY_IS_SHOW_CAR, true)
                 intent.putExtra(WebActivity.KEY_WEB_URL, itemData?.buyLink)
                 startActivity(intent)
             }

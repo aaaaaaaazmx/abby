@@ -1,7 +1,6 @@
 package com.cl.abby
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -15,8 +14,6 @@ import androidx.fragment.app.FragmentTransaction
 import com.alibaba.android.arouter.facade.annotation.Autowired
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.bhm.ble.BleManager
-import com.bhm.ble.attribute.BleOptions
 import com.cl.abby.databinding.ActivityMainBinding
 import com.cl.abby.viewmodel.MainViewModel
 import com.cl.common_base.base.BaseActivity
@@ -30,8 +27,10 @@ import com.cl.common_base.pop.CustomBubbleAttachPopup
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.common_base.web.AgentWebFragment
+import com.cl.common_base.web.FragmentKeyDown
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.ui.PhPairActivity
+import com.cl.modules_contact.ui.ShopFragment
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 import com.lxj.xpopup.XPopup
@@ -91,6 +90,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var homeFragment: Fragment? = null
     private var plantingLogFragment: Fragment? = null
     private var contactFragment: Fragment? = null
+    private var shopFragment: Fragment? = null
     private var myFragment: Fragment? = null
 
     // 第一次也就是新用户进入的时候，显示的界面
@@ -363,6 +363,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 //  这个到时需要放出来
                 R.id.action_contact -> switchFragment(Constants.FragmentIndex.CONTACT_INDEX)
 
+                R.id.action_shop -> switchFragment(Constants.FragmentIndex.SHOP_INDEX)
+
                 R.id.action_my -> {
                     switchFragment(Constants.FragmentIndex.MY_INDEX)
                 }
@@ -376,11 +378,31 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     private var mExitTime: Long = 0
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (System.currentTimeMillis().minus(mExitTime) <= 2000) {
-                finish()
+            // todo asd
+            if (mIndex == Constants.FragmentIndex.SHOP_INDEX) {
+                (shopFragment as? ShopFragment)?.let {
+                    it.mAgentWebFragment?.let { ftagments ->
+                        val mFragmentKeyDown: FragmentKeyDown = ftagments
+                        return if (mFragmentKeyDown.onFragmentKeyDown(keyCode, event)) {
+                            true
+                        } else {
+                            if (System.currentTimeMillis().minus(mExitTime) <= 2000) {
+                                finish()
+                            } else {
+                                mExitTime = System.currentTimeMillis()
+                                showToast("Press to exit the program again")
+                            }
+                            true
+                        }
+                    }
+                }
             } else {
-                mExitTime = System.currentTimeMillis()
-                showToast("Press to exit the program again")
+                if (System.currentTimeMillis().minus(mExitTime) <= 2000) {
+                    finish()
+                } else {
+                    mExitTime = System.currentTimeMillis()
+                    showToast("Press to exit the program again")
+                }
             }
             return true
         }
@@ -459,6 +481,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     }
                 }
 
+            Constants.FragmentIndex.SHOP_INDEX -> shopFragment?.let { transaction.show(it) }
+                ?: kotlin.run {
+                    ARouter.getInstance().build(RouterPath.Contact.PAGE_SHOP).navigation()?.let {
+                        shopFragment = it as Fragment
+                        shopFragment?.let {
+                            shopFragment = it
+                            transaction.add(R.id.container, it, null)
+                        }
+                    }
+                }
+
+
             Constants.FragmentIndex.MY_INDEX -> myFragment?.let { transaction.show(it) }
                 ?: kotlin.run {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY).navigation()?.let {
@@ -490,6 +524,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         firstJoinInFragment?.let { transaction.hide(it) }
         homeFragment?.let { transaction.hide(it) }
         contactFragment?.let { transaction.hide(it) }
+        shopFragment?.let { transaction.hide(it) }
         myFragment?.let { transaction.hide(it) }
         plantingLogFragment?.let { transaction.hide(it) }
     }
@@ -504,6 +539,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 fragmentTransaction.remove(it)
             }
             contactFragment?.let {
+                fragmentTransaction.remove(it)
+            }
+            shopFragment?.let {
                 fragmentTransaction.remove(it)
             }
             myFragment?.let {

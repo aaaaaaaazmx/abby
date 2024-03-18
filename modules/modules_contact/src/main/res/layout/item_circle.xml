@@ -239,17 +239,29 @@
               >
 
                 <TextView
+                    android:id="@+id/tv_device_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{data.deviceModelName}"
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:visibility="@{TextUtils.isEmpty(data.deviceModelName)? View.GONE : View.VISIBLE}"
+                    tools:text="FFFFFF" />
+
+                <TextView
+                    app:layout_constraintTop_toBottomOf="@+id/tv_device_name"
                     android:id="@+id/tv_periodicity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{data.journeyName}"
+                    android:text='@{data.journeyName  +  " Week" + data.week + " Day" + data.day}'
                     android:textColor="#000000"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     android:visibility="@{TextUtils.isEmpty(data.journeyName)? View.GONE : View.VISIBLE}"
                     tools:text="FFFFFF" />
 
-                <TextView
+               <!-- <TextView
                     android:id="@+id/tv_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -259,7 +271,7 @@
                     android:textSize="11sp"
                     android:textStyle="bold"
                     app:layout_constraintTop_toBottomOf="@+id/tv_periodicity"
-                    tools:text="Week3 Day5" />
+                    tools:text="Week3 Day5" />-->
 
                 <TextView
                     android:id="@+id/tv_env"
@@ -271,7 +283,7 @@
                     android:text="ENVIR"
                     android:textColor="#008961"
                     android:textSize="11sp"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_day" />
+                    app:layout_constraintTop_toBottomOf="@+id/tv_periodicity" />
 
                 <TextView
                     android:id="@+id/tv_env_value"

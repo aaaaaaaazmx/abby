@@ -158,4 +158,6 @@ dependencies {
     api(Deps.choosePhotoComproress)
     // JWT解析
     implementation("com.auth0.android:jwtdecode:2.0.2")
+
+    api("com.github.Ferfalk:SimpleSearchView:0.2.1")
 }

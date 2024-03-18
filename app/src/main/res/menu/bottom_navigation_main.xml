@@ -19,6 +19,13 @@
         android:icon="@mipmap/conasdads"
         android:title=""
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_shop"
+        android:enabled="true"
+        android:icon="@mipmap/main_shop"
+        android:title=""
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_my"
         android:enabled="true"

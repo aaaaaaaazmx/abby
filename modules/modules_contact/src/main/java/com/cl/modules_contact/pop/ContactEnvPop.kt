@@ -14,7 +14,7 @@ import com.cl.modules_contact.request.ContactEnvData
 import com.lxj.xpopup.core.BottomPopupView
 
 /**
- * Trend 环境信息弹窗
+ * Trenad 环境信息弹窗
  */
 class ContactEnvPop(private val context: Context, private val envInfoData: MutableList<ContactEnvData>, val name: String? = null, val url: String?= null) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {

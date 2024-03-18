@@ -107,14 +107,38 @@
                                     app:layout_constraintTop_toTopOf="parent" />
                             </androidx.constraintlayout.widget.ConstraintLayout>
 
-                            <TextView
-                                android:text='@{viewModel.userDetail.data.isVip == 0 ? "membership expired." : "membership valid till " + viewModel.parseTime(viewModel.userDetail.data.subscriptionTime)}'
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_marginTop="3dp"
-                                android:textColor="@color/black"
-                                android:textSize="12sp"
-                                tools:text="membership valid till 4/20/2023 / membership expired." />
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:gravity="center"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    android:id="@+id/tv_vip"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/black"
+                                    android:textSize="12sp"
+                                    android:maxWidth="200dp"
+                                    tools:text="membership valid till 4/20/2023 " />
+
+                                <!--是Vip并且不是连续包月，就显示这个-->
+                                <TextView
+                                    android:visibility="@{viewModel.userDetail.data.isVip == 1 &amp;&amp; viewModel.userDetail.data.continuousVip == 0 ? View.VISIBLE: View.GONE}"
+                                    android:textColor="@color/white"
+                                    android:textSize="12sp"
+                                    android:gravity="center"
+                                    android:id="@+id/tv_vip_still"
+                                    android:layout_marginStart="4dp"
+                                    app:layout_constraintStart_toEndOf="@+id/tv_vip"
+                                    android:background="@mipmap/my_vip_still_bg"
+                                    android:layout_width="52dp"
+                                    android:text="Renew"
+                                    android:layout_height="wrap_content"/>
+
+                            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                             <androidx.constraintlayout.widget.ConstraintLayout
@@ -141,7 +165,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
-                                        android:text="Get your membership"
+                                        android:text="Renew Now"
                                         android:textColor="@color/white"
                                         android:textSize="22sp"
                                         android:textStyle="bold" />

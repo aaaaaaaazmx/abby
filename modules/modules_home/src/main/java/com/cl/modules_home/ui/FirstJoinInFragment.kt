@@ -137,7 +137,9 @@ class FirstJoinInFragment : BaseFragment<HomeFirstJoinFragmentBinding>() {
         binding.tvBuyNow.setOnClickListener {
             // abby的购买连接
             val intent = Intent(context, WebActivity::class.java)
-            intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/which-hey-abby-is-right-for-you")
+            //intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/app-og-edition-grow-box")
+            intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/app-store")
+            intent.putExtra(WebActivity.KEY_IS_SHOW_CAR, true)
             intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Hey abby")
             context?.startActivity(intent)
         }

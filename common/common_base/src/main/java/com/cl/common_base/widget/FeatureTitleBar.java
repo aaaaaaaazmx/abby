@@ -326,6 +326,13 @@ public class FeatureTitleBar extends LinearLayout implements View.OnClickListene
         return this;
     }
 
+    public  FeatureTitleBar setRightButtonImg(int resId, boolean isShow) {
+        tvRight.setVisibility(GONE);
+        ivRight.setImageResource(resId);
+        ivRight.setVisibility(isShow ? VISIBLE : GONE);
+        return this;
+    }
+
 
     /**
      * 设置返回键点击事件

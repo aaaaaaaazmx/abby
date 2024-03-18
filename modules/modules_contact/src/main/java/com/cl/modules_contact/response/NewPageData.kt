@@ -23,6 +23,11 @@ data class NewPageData(
 
     data class Records(
         val id: Int? = null,
+        val strainName: String? = null,
+        val deviceImage: String? = null,
+        val deviceModelName: String? = null,
+        val deviceBuyLink: String? = null,
+        val deviceName: String? = null,
         val deviceEdition: String? = null,
         val showAchievement: String? = null,
         val framesHeads: String? = null,
@@ -63,7 +68,14 @@ data class NewPageData(
         val imageUrls: MutableList<ImageUrls>? = null,
         var comments: MutableList<Comments>? = null,
         val mentions: MutableList<Mentions>? = null,
+        val accessorys: MutableList<AccessorysList>? = null,
     ) : BaseBean() {
+
+        data class AccessorysList(
+            val image: String? = null,
+            val buyLink: String? = null,
+            val accessoryName: String? = null,
+        ): BaseBean()
 
         data class Mentions(
             val abbyId: String? = null,

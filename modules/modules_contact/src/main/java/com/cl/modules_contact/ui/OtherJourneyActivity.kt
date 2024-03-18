@@ -55,6 +55,7 @@ import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.FollowAndFolloerPop
+import com.cl.modules_contact.pop.ContactNewEnvPop
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.viewmodel.MyJourneyViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -524,8 +525,17 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
                 R.id.cl_env -> { // 点击环境信息
                     val envInfoData = GSON.parseObjectList(item?.environment, ContactEnvData::class.java).toMutableList() // 弹出环境信息
-                    XPopup.Builder(this@OtherJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false)
-                        .asCustom(ContactEnvPop(this@OtherJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()
+                    /*XPopup.Builder(this@OtherJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false)
+                        .asCustom(ContactEnvPop(this@OtherJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()*/
+
+                    if (item?.deviceModelName.isNullOrEmpty() || item?.deviceModelName == "Tent") {
+                        return@setOnItemChildClickListener
+                    }
+                    xpopup(this@OtherJourneyActivity) {
+                        dismissOnTouchOutside(false)
+                        isDestroyOnDismiss(false)
+                        asCustom(ContactNewEnvPop(this@OtherJourneyActivity, envInfoData, item)).show()
+                    }
                 }
 
                 R.id.cl_love -> { // 点赞

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.modules_contact.response.NewPageData.Records.AccessorysList" />
+
+    </data>
+
+    <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:l_radius="6dp"
+        app:l_shadowAlpha="1"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        app:l_shadowElevation="2dp"
+        android:id="@+id/cl_peroid"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/background_white_r6">
+
+        <ImageView
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            url="@{data.image}"
+            android:id="@+id/iv_img"
+            android:layout_width="32dp"
+            tools:background="@mipmap/ic_launcher"
+            android:layout_height="35dp"/>
+
+        <TextView
+            app:layout_constraintEnd_toStartOf="@+id/tv_learn"
+            android:id="@+id/tv_desc"
+            android:text="@{String.valueOf(data.accessoryName)}"
+            android:textStyle="bold"
+            android:layout_marginStart="18dp"
+            app:layout_constraintStart_toEndOf="@+id/iv_img"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_img"
+            app:layout_constraintTop_toTopOf="@+id/iv_img"
+            tools:text="Smart fan"
+            android:textSize="15sp"
+            android:textColor="@color/mainColor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:textStyle="bold"
+            android:id="@+id/tv_learn"
+            android:layout_marginEnd="16dp"
+            android:text="Learn More"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_img"
+            app:layout_constraintTop_toTopOf="@id/iv_img"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:background="@drawable/background_button_main_color_r100"
+            android:layout_width="98dp"
+            android:layout_height="28dp"/>
+
+    </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
+</layout>
