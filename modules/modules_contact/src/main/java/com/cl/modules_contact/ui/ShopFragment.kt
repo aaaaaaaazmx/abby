@@ -49,6 +49,18 @@ class ShopFragment : BaseFragment<FragmentShopBinding>() {
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            childFragmentManager.beginTransaction().apply {
+                mAgentWebFragment =  AgentWebFragment.getInstance(Bundle().also { it.putString(AgentWebFragment.URL_KEY, "https://heyabby.com/pages/app-store"); })
+                mAgentWebFragment?.let {
+                    replace(R.id.container_framelayout, it, AgentWebFragment::class.java.getName())
+                    commit()
+                }
+            }
+        }
+    }
 
     override fun lazyLoad() {
     }

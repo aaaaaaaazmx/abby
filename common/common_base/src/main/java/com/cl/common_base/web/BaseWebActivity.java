@@ -1,14 +1,17 @@
 package com.cl.common_base.web;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.widget.LinearLayout;
@@ -18,12 +21,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cl.common_base.R;
+import com.cl.common_base.ext.XpopUpsKt;
+import com.cl.common_base.pop.BaseCenterPop;
 import com.cl.common_base.util.StatusBarUtil;
 import com.cl.common_base.widget.FeatureTitleBar;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.DefaultWebClient;
 import com.just.agentweb.WebChromeClient;
 import com.just.agentweb.WebViewClient;
+import com.lxj.xpopup.XPopup;
+
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * 加载网页Activity
@@ -94,6 +104,16 @@ public class BaseWebActivity extends AppCompatActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             //do you  work
             Log.i("Info", "BaseWebActivity onPageStarted");
+        }
+
+        @SuppressLint("WebViewClientOnReceivedSslError")
+        @Override
+        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+           new AlertDialog.Builder(BaseWebActivity.this)
+                    .setMessage("SSL Certificate Validation Failure")
+                    .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
+                    .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
+                    .show();
         }
     };
     private com.just.agentweb.WebChromeClient mWebChromeClient = new WebChromeClient() {

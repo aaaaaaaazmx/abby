@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
@@ -215,8 +216,8 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
         public void onReceivedTitle(WebView view, String title) {
             super.onReceivedTitle(view, title);
             if (mTitleTextView != null && !TextUtils.isEmpty(title)) {
-                if (title.length() > 10) {
-                    title = title.substring(0, 10).concat("...");
+                if (title.length() > 14) {
+                    title = title.substring(0, 14).concat("...");
                 }
             }
             mTitleTextView.setText(title);
@@ -302,8 +303,11 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            handler.proceed();
-            super.onReceivedSslError(view, handler, error);
+            new AlertDialog.Builder(getContext())
+                    .setMessage("SSL Certificate Validation Failure")
+                    .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
+                    .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
+                    .show();
         }
 
         @Override
@@ -548,6 +552,15 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
                         }
                     }
                 }
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                new AlertDialog.Builder(getContext())
+                        .setMessage("SSL Certificate Validation Failure")
+                        .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
+                        .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
+                        .show();
             }
         };
     }
