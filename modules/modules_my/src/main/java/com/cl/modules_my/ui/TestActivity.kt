@@ -51,7 +51,6 @@ class TestActivity : BaseActivity<MyTestActivityBinding>() {
                         binding.fitsLight.isItemChecked = tapeLights
                         binding.fitsTemp.isItemChecked = 0 == corF
                     }
-
                 }
             })
         }

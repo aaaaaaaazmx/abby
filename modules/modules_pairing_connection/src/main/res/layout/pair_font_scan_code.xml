@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="22dp"
                 android:layout_marginTop="34dp"
-                android:text="Activate the subscription"
+                android:text="Activate your grow box."
                 android:textColor="@color/black"
                 android:textSize="21sp" />
 
@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="177dp"
+                android:layout_marginTop="77dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="67dp"
                 android:background="@drawable/create_state_button"
