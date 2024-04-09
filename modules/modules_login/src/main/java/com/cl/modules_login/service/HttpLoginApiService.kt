@@ -51,14 +51,14 @@ interface HttpLoginApiService {
      * 发送验证码
      */
     @GET("abby/user/verify/email")
-    fun verifyEmail(@Query("email") email: String, @Query("type") type: String): Flow<HttpResult<Boolean>>
+    fun verifyEmail(@Query("email") email: String? = null, @Query("type") type: String, @Query("userName") userName: String? = null, @Query("countryCode") countryCode: String? = null): Flow<HttpResult<Boolean>>
 
 
     /**
      * 邮箱验证码
      */
     @GET("abby/user/verify/code")
-    fun verifyCode(@Query("code") code: String, @Query("email") email: String): Flow<HttpResult<Boolean>>
+    fun verifyCode(@Query("code") code: String, @Query("email") email: String? = null, @Query("userName") userName: String? = null, @Query("countryCode") countryCode: String? = null): Flow<HttpResult<Boolean>>
 
     /**
      * 用户注册

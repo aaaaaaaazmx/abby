@@ -51,8 +51,17 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                 // 初始化SDK
                 InitSdk.init()
                 if (thirdSource?.isNotEmpty() == true) {
-                    // 发送验证码
-                    mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "5")
+                    when(thirdSource){
+                        "google" -> {
+                            // 谷歌登录
+                            // 发送验证码
+                            mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "5")
+                        }
+                        "sms" -> {
+                            // sms登录或者注册发送验证码
+                            mViewModel.verifyEmail(userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
+                        }
+                    }
                     return@PrivacyPop
                 }
                 // 发送验证码
@@ -96,7 +105,15 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
 
         // 第三方登录，直接显示绑定邮箱
         if (!thirdSource.isNullOrEmpty()) {
-            binding.tvCreateLog.text = "Bind Email"
+            when(thirdSource){
+                "google" -> {
+                    binding.tvCreateLog.text = "Bind Email"
+                }
+                "sms" -> {
+                    binding.etEmail.hint = "Enter phone number to login!"
+                    binding.tvCreateLog.text = "Login"
+                }
+            }
         }
 
     }

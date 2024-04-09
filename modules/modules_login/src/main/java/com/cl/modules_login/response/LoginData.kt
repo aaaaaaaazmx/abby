@@ -23,6 +23,7 @@ data class LoginData(
     val subscriptionTime: String? = null,
     val token: String? = null,
     val tuyaCountryCode: String? = null,
+    val phoneNumber: String? = null,
     val tuyaPassword: String? = null,
     val tuyaUserId: String? = null,
     val tuyaUserType: String? = null,

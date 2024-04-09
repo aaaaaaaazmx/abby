@@ -42,15 +42,15 @@ class RegisterLoginRepository @Inject constructor(private var remoteRepository: 
     /**
      * 发送验证邮箱邮件
      */
-    fun verifyEmail(email: String, type: String): Flow<HttpResult<Boolean>> {
-        return remoteRepository.verifyEmail(email, type)
+    fun verifyEmail(email: String? = null, type: String, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
+        return remoteRepository.verifyEmail(email, type, userName, countryCode)
     }
 
     /**
      * 发送验证邮箱邮件
      */
-    fun verifyCode(code: String, email: String): Flow<HttpResult<Boolean>> {
-        return remoteRepository.verifyCode(code, email)
+    fun verifyCode(code: String, email: String? = null, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
+        return remoteRepository.verifyCode(code, email, userName, countryCode)
     }
 
     /**
