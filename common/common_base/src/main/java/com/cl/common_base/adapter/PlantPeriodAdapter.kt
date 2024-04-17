@@ -1,11 +1,11 @@
-package com.cl.modules_planting_log.adapter
+package com.cl.common_base.adapter
 
 import android.widget.CheckBox
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
-import com.cl.modules_planting_log.R
-import com.cl.modules_planting_log.databinding.PlantingItemPeriodBinding
-import com.cl.modules_planting_log.request.PlantIdByDeviceIdData
+import com.cl.common_base.R
+import com.cl.common_base.bean.PlantIdByDeviceIdData
+import com.cl.common_base.databinding.PlantingItemPeriodBinding
 
 class PlantPeriodAdapter(data: MutableList<PlantIdByDeviceIdData>?) :
     BaseQuickAdapter<PlantIdByDeviceIdData, BaseDataBindingHolder<PlantingItemPeriodBinding>>(R.layout.planting_item_period, data) {

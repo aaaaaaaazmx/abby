@@ -43,9 +43,9 @@
     <string name="terms_us">Terms of Use</string>
     <string name="policy">Privacy Policy</string>
     <string name="send_email">We sent an email to </string>
-    <string name="send_phone">We sent an sms to </string>
+    <string name="send_phone">We sent an OTP to </string>
     <string name="send_email_register"> Enter the verification code sent to your email address.</string>
-    <string name="send_email_for_sms_register"> Enter the verification code sent to your phone.</string>
+    <string name="send_email_for_sms_register"> Enter the verification code sent to your telephone.</string>
     <string name="register_email_tips"> Enter the verification code sent to your email address. Then reset your password. </string>
     <string name="register_email_dont_tips">Didn‘t receive email?</string>
     <string name="login_account_empty">Please enter username</string>

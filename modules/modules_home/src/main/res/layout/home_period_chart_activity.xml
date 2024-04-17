@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingConstraints">
+
+    <data>
+
+    </data>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/ftb_chart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="Chart" />
+
+            <FrameLayout
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="17dp"
+                app:layout_constraintTop_toBottomOf="@+id/ftb_chart"
+                android:id="@+id/fl_get_plant_list"
+                app:layout_constraintStart_toStartOf="parent"
+                android:padding="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iv_get_plant_list"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@mipmap/home_chart"
+                    />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/tv_plant_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="@+id/fl_get_plant_list"
+                app:layout_constraintBottom_toBottomOf="@+id/fl_get_plant_list"
+                app:layout_constraintStart_toEndOf="@+id/fl_get_plant_list"
+                tools:text="Hey abby 01" />
+
+
+            <TextView
+                android:id="@+id/tv_period_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="17dp"
+                android:layout_marginEnd="17dp"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_plant_name"
+                app:layout_constraintTop_toTopOf="@+id/tv_plant_name"
+                tools:text="Hey abby 01" />
+
+
+            <CheckBox
+                android:checked="true"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="10sp"
+                android:background="@drawable/home_checkbox_temp_chart_selector"
+                android:id="@+id/cb_humidity"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="17dp"
+                android:layout_marginTop="20dp"
+                android:button="@null"
+                android:text="Grow Chamber Humidity"
+                app:layout_constraintEnd_toStartOf="@+id/cb_temperature"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_plant_name" />
+
+
+            <CheckBox
+                android:checked="false"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:textColor="@color/mainColor"
+                android:textSize="10sp"
+                android:background="@drawable/home_checkbox_temp_chart_selector"
+                android:id="@+id/cb_temperature"
+                android:layout_width="0dp"
+                android:layout_height="25dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="17dp"
+                android:button="@null"
+                android:text="Grow Chamber Temperture"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cb_humidity"
+                app:layout_constraintTop_toTopOf="@+id/cb_humidity" />
+
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_ph"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cb_temperature"
+                android:id="@+id/chart1"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                />
+
+
+            <TextView
+                android:id="@+id/tv_ph"
+                android:textStyle="bold"
+                android:text="PH"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="17dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chart1"
+                android:textSize="14sp"
+                android:textColor="@color/mainColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.github.mikephil.charting.charts.LineChart
+                app:layout_constraintBottom_toBottomOf="@+id/adasd"
+                android:layout_marginBottom="32dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_ph"
+                android:id="@+id/chart2"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                />
+
+            <TextView
+                android:id="@+id/adasd"
+                android:textStyle="bold"
+                android:text=""
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="17dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="14sp"
+                android:textColor="@color/mainColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

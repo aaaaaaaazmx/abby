@@ -364,4 +364,19 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/plant/getProModeInfo")
     fun getProModeInfo(@Field("deviceId") deviceId: String): Flow<HttpResult<ProModeInfoBean>>
+
+
+    /**
+     * 获取种植数据
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/getPlantData")
+    fun getPlantData(@Field("plantId") plantId: String): Flow<HttpResult<PlantData>>
+
+    /**
+     * 根据设备ID获取所有植物ID
+     */
+    @FormUrlEncoded
+    @POST("abby/log/getPlantIdByDeviceId")
+    fun getPlantIdByDeviceId(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<PlantIdByDeviceIdData>>>
 }

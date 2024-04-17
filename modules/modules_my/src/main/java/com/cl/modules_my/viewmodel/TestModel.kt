@@ -121,6 +121,41 @@ class TestModel @Inject constructor(private val repository: MyRepository) :
 
 
     /**
+     * 删除植物
+     */
+    private val _getPlantData = MutableLiveData<Resource<PlantData>>()
+    val getPlantData: LiveData<Resource<PlantData>> = _getPlantData
+    fun getPlantData(uuid: String) = viewModelScope.launch {
+        repository.getPlantData(uuid)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _getPlantData.value = it
+            }
+    }
+
+
+    /**
      * 检查是否种植过植物
      */
     private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()

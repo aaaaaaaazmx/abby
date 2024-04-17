@@ -14,9 +14,8 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_planting_log.repository.PlantRepository
 import com.cl.modules_planting_log.request.LogListDataItem
 import com.cl.modules_planting_log.request.LogListReq
-import com.cl.modules_planting_log.request.PlantIdByDeviceIdData
+import com.cl.common_base.bean.PlantIdByDeviceIdData
 import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
-import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch

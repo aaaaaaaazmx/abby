@@ -291,4 +291,12 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     fun getProModeInfo(req: String): Flow<HttpResult<ProModeInfoBean>> {
         return remoteRepository.getProModeInfo(req)
     }
+
+    fun getPlantData(req: String): Flow<HttpResult<PlantData>> {
+        return remoteRepository.getPlantData(req)
+    }
+
+    fun getPlantIdByDeviceId(deviceId: String): Flow<HttpResult<MutableList<PlantIdByDeviceIdData>>> {
+        return remoteRepository.getPlantIdByDeviceId(deviceId)
+    }
 }

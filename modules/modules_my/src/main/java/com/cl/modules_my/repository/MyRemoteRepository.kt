@@ -288,4 +288,8 @@ class MyRemoteRepository @Inject constructor() {
         return service.getDpCache(req)
     }
 
+    fun getPlantData(req: String): Flow<HttpResult<PlantData>> {
+        return service.getPlantData(req)
+    }
+
 }

@@ -6,12 +6,11 @@ import com.cl.common_base.bean.HttpResult
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.bean.SyncDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean
-import com.cl.modules_planting_log.request.LogByIdData
 import com.cl.modules_planting_log.request.LogListDataItem
 import com.cl.modules_planting_log.request.LogListReq
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
 import com.cl.modules_planting_log.request.LogTypeListDataItem
-import com.cl.modules_planting_log.request.PlantIdByDeviceIdData
+import com.cl.common_base.bean.PlantIdByDeviceIdData
 import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody

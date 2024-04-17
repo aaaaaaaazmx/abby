@@ -89,5 +89,6 @@
 
         <activity android:name="com.cl.modules_home.ui.ChangTheSeedActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name="com.cl.modules_home.ui.PeriodActivity" />
     </application>
 </manifest>

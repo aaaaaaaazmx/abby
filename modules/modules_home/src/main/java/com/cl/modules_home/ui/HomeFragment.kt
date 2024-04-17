@@ -949,6 +949,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            ivChart.setSafeOnClickListener {
+                context?.let {
+                    it.startActivity(Intent(it, PeriodActivity::class.java))
+                }
+            }
+
             tvSave.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
                 val bean = PresetData(
                     fanIntake = "${mViewMode.getFanIntake.value}",

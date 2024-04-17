@@ -1,14 +1,17 @@
 package com.cl.modules_login.ui
 
 import android.content.Intent
+import android.view.View
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.ext.visible
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.util.EmailUtil
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.databinding.ActivityCreateAccountBinding
@@ -110,8 +113,10 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                     binding.tvCreateLog.text = "Bind Email"
                 }
                 "sms" -> {
-                    binding.etEmail.hint = "Enter phone number to login!"
-                    binding.tvCreateLog.text = "Login"
+                    binding.btnContinue.text = "Next"
+                    binding.etEmail.hint = "Enter telephone number"
+                    binding.tvCreateLog.text = "OTP Verification"
+                    binding.tvCreateLogSub.visibility = View.VISIBLE
                 }
             }
         }

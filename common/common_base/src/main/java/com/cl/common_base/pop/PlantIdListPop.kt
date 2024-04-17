@@ -1,12 +1,12 @@
-package com.cl.modules_planting_log.widget
+package com.cl.common_base.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cl.modules_planting_log.R
-import com.cl.modules_planting_log.adapter.PlantPeriodAdapter
-import com.cl.modules_planting_log.databinding.PlantingPeriodPopBinding
-import com.cl.modules_planting_log.request.PlantIdByDeviceIdData
+import com.cl.common_base.R
+import com.cl.common_base.adapter.PlantPeriodAdapter
+import com.cl.common_base.bean.PlantIdByDeviceIdData
+import com.cl.common_base.databinding.PlantingPeriodPopBinding
 import com.lxj.xpopup.core.BubbleAttachPopupView
 
 class PlantIdListPop (

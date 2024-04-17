@@ -2,6 +2,7 @@ package com.cl.modules_login.ui
 
 import android.content.Intent
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.alibaba.android.arouter.launcher.ARouter
@@ -141,16 +142,18 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                         }
                         else -> append(getString(com.cl.common_base.R.string.send_email))
                     }
-                    color(
-                        ResourcesCompat.getColor(
-                            resources,
-                            com.cl.common_base.R.color.mainColor,
-                            theme
-                        )
-                    ) {
-                        append(
-                            " $emailName "
-                        )
+                    bold {
+                        color(
+                            ResourcesCompat.getColor(
+                                resources,
+                                com.cl.common_base.R.color.mainColor,
+                                theme
+                            )
+                        ) {
+                            append(
+                                " $emailName "
+                            )
+                        }
                     }
                     when (thirdSource) {
                         "sms" -> {
@@ -185,9 +188,9 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
         when(thirdSource) {
             "sms" -> {
-                binding.tvSend.text = "Resend sms"
+                binding.tvSend.text = "Didn't receive OTP ?"
                 binding.btnSuccess.text = "Login"
-                binding.vmLog.text = "Verify phone"
+                binding.vmLog.text = "Enter the OTP"
             }
         }
     }

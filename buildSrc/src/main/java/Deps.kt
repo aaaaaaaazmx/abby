@@ -96,6 +96,8 @@ object Version {
     const val videoPlayer = "v8.3.4"
 
     const val interCome = "15.2.0"
+
+    const val chart = "v3.1.0"
 }
 
 object Deps {
@@ -246,4 +248,7 @@ object Deps {
 
     // interCome
     const val interCome = "io.intercom.android:intercom-sdk:${Version.interCome}"
+
+    // mpachart
+    const val chat = "com.github.PhilJay:MPAndroidChart:${Version.chart}"
 }

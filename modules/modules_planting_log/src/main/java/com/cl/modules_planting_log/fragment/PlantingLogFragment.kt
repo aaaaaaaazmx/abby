@@ -5,12 +5,10 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
-import androidx.core.view.size
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logE
@@ -22,7 +20,6 @@ import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_planting_log.R
 import com.cl.modules_planting_log.adapter.PlantChooserPeriodAdapter
-import com.cl.modules_planting_log.adapter.PlantLogAdapter
 import com.cl.modules_planting_log.adapter.PlantLogListAdapter
 import com.cl.modules_planting_log.databinding.PlantingMainFragmentBinding
 import com.cl.modules_planting_log.request.CardInfo
@@ -34,7 +31,7 @@ import com.cl.modules_planting_log.ui.PlantingLogActivity
 import com.cl.modules_planting_log.ui.PlantingTrainActivity
 import com.cl.modules_planting_log.viewmodel.PlantingLogViewModel
 import com.cl.modules_planting_log.widget.PlantChooseLogTypePop
-import com.cl.modules_planting_log.widget.PlantIdListPop
+import com.cl.common_base.pop.PlantIdListPop
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils

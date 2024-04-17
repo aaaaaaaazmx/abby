@@ -160,4 +160,6 @@ dependencies {
     implementation("com.auth0.android:jwtdecode:2.0.2")
 
     api("com.github.Ferfalk:SimpleSearchView:0.2.1")
+
+    api(Deps.chat)
 }
