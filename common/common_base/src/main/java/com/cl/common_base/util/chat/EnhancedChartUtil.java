@@ -1,5 +1,8 @@
 package com.cl.common_base.util.chat;
 
+import static com.cl.common_base.ext.Metric2InchConversionKt.temperatureConversionTwo;
+
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 
@@ -7,7 +10,9 @@ import com.cl.common_base.R;
 import com.cl.common_base.bean.PlantData;
 import com.cl.common_base.constants.Constants;
 import com.cl.common_base.ext.CommonExtKt;
+import com.cl.common_base.ext.LogKt;
 import com.cl.common_base.util.Prefs;
+import com.cl.common_base.widget.toast.ToastUtil;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
@@ -16,15 +21,52 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 
 public class EnhancedChartUtil {
+    private long originalValue;
+
+    private long findMax(List<PlantData.DataPoint> numbers) {
+        if (numbers == null || numbers.isEmpty()) {
+            throw new IllegalArgumentException("Array is empty or null");
+        }
+
+        long max = CommonExtKt.safeToLong(numbers.get(0).getDateTime()); // 假设第一个元素是最大的
+
+        for (int i = 1; i < numbers.size(); i++) {
+            if (CommonExtKt.safeToLong(numbers.get(i).getDateTime()) > max) {
+                max = CommonExtKt.safeToLong(numbers.get(i).getDateTime()); // 找到更大的数，更新max
+            }
+        }
+        return max;
+    }
+
+    public static void bubbleSort(List<PlantData.DataPoint> dataPoints) {
+        boolean swapped;
+        int n = dataPoints.size();
+        do {
+            swapped = false;
+            for (int i = 1; i < n; i++) {
+                if (CommonExtKt.safeToLong(dataPoints.get(i - 1).getDateTime()) > CommonExtKt.safeToLong(dataPoints.get(i).getDateTime())) {
+                    // 交换元素
+                    PlantData.DataPoint temp = dataPoints.get(i - 1);
+                    dataPoints.set(i - 1, dataPoints.get(i));
+                    dataPoints.set(i, temp);
+                    swapped = true;
+                }
+            }
+            n = n - 1; // 减少下次循环的次数
+        } while (swapped);
+    }
+
     public void setupEnhancedLineChart(LineChart lineChart, List<PlantData.DataPoint> dataPoints, String type, String lableName) {
         boolean aBoolean = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false);
 
@@ -35,6 +77,7 @@ public class EnhancedChartUtil {
 
             // 设置无数据文本的颜色（可选）
             lineChart.setNoDataTextColor(Color.GRAY);
+            lineChart.setData(null);
             lineChart.invalidate();
             return;
         }
@@ -43,9 +86,27 @@ public class EnhancedChartUtil {
         final SimpleDateFormat sdf = new SimpleDateFormat("MM/dd", Locale.US);
         final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
 
+        // 后台返回的数据，不正确，需要排序一番
+        bubbleSort(dataPoints);
+        originalValue = CommonExtKt.safeToLong(dataPoints.get(0).getDateTime());  // 从后台获取的原始值
+        BigDecimal originalBD = new BigDecimal(originalValue);
+
         for (PlantData.DataPoint dataPoint : dataPoints) {
-            entries.add(new Entry(CommonExtKt.safeToFloat(dataPoint.getDateTime()), CommonExtKt.safeToFloat(dataPoint.getCodeValue())));
+            BigDecimal dateTimeBD = new BigDecimal(dataPoint.getDateTime());
+            BigDecimal result = originalBD.subtract(dateTimeBD);
+            float adjustedValue = result.abs().floatValue();
+
+            LogKt.logI("Values: Original=" + originalValue + ", DateTime=" + dataPoint.getDateTime() + ", Adjusted=" + adjustedValue);
+
+            float codeValue = CommonExtKt.safeToFloat(dataPoint.getCodeValue());
+            if (type.equals("temp")) {
+                codeValue = CommonExtKt.safeToFloat(temperatureConversionTwo(codeValue, aBoolean));
+            }
+
+            // entries.add(new Entry(CommonExtKt.safeToFloat(dataPoint.getDateTime()), codeValue));
+            entries.add(new Entry(adjustedValue, codeValue));
         }
+
 
         LineDataSet dataSet = new LineDataSet(entries, lableName);
         // 设置为曲线模式
@@ -70,11 +131,11 @@ public class EnhancedChartUtil {
             dataSet.setColor(Color.parseColor("#4CD964"));
             dataSet.setCircleColor(Color.parseColor("#4CD964"));
             // 创建渐变Drawable
-            GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.parseColor("#4CD964"), Color.TRANSPARENT}); // 定义渐变颜色
+            /*GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.parseColor("#4CD964"), Color.TRANSPARENT}); // 定义渐变颜色
 
             // 将渐变设置为填充
             dataSet.setFillDrawable(gradientDrawable);
-            dataSet.setDrawFilled(true);        }
+            dataSet.setDrawFilled(true);*/        }
 
         //dataSet.setValueTextColor(...); // 设置数据点文本颜色
         dataSet.setHighLightColor(Color.rgb(244, 117, 117)); // 设置高亮颜色
@@ -92,6 +153,7 @@ public class EnhancedChartUtil {
         MyMarkerView mv = new MyMarkerView(lineChart.getContext(), R.layout.custom_marker_view, lineChart);
         mv.setType(type);
         mv.setEntries(entries, dataPoints);
+        mv.setOriginalValue(originalValue);
         mv.setChartView(lineChart); // For bounds control
         lineChart.setMarker(mv); // Set the marker to the chart
 
@@ -100,19 +162,29 @@ public class EnhancedChartUtil {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false); // 不显示网格线
-        // xAxis.setLabelCount(2, true); // 设置标签数量
+        // xAxis.setLabelCount(entries.size(), true); // 设置标签数量
         xAxis.setLabelRotationAngle(-45f); // 将标签旋转45度
-        xAxis.setAxisMinimum(lineData.getXMin() - 100f); // 主要目的就是设置间隔，让其与Y轴有一些距离。更加美观。
-        /*xAxis.setValueFormatter(new IndexAxisValueFormatter() {
+        /*if (entries.size() == 1) {
+            xAxis.setAxisMinimum(lineData.getXMin() - 100f); // 主要目的就是设置间隔，让其与Y轴有一些距离。更加美观。
+            // 3600  * 12
+            xAxis.setAxisMaximum(lineData.getXMin() + 100f);
+        }*/
+        xAxis.setValueFormatter(new IndexAxisValueFormatter() {
+            @SuppressLint("DefaultLocale")
             @Override
             public String getFormattedValue(float value) {
-                if (value == (lineData.getXMin()) - 100f) {
-                    return "";
+                // 查找entry的x是否和value一致
+                String format = String.format("%.0f", value);
+                long adjustedValue = (CommonExtKt.safeToLong(format) + originalValue) * 1000L;
+                long millis = (long) (adjustedValue);
+                Date date = new Date(millis);
+                if (type.equals("ph")) {
+                    return sdf.format(date);
                 }
-                return sdf.format(new Date((long) value * 1000));
+                LogKt.logE("123123123: " + adjustedValue + ",,, " + sdf.format(date) + " \n " + timeFormat.format(date));
+                return sdf.format(date) + " \n " + timeFormat.format(date);  // Combine two formats with line break
             }
-        });*/
-        xAxis.setValueFormatter(new MyXAxisFormatter(type, entries));
+        });
 
         // Y轴设置
         YAxis leftAxis = lineChart.getAxisLeft();
@@ -181,31 +253,6 @@ public class EnhancedChartUtil {
                     .getAxisDependency(), 500);
         }*/
 
-    }
-
-    public class MyXAxisFormatter extends ValueFormatter {
-        private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd", Locale.US);
-        private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
-
-        private String type;
-        private List<Entry> entries = new ArrayList<>();
-
-        public MyXAxisFormatter(String type, List<Entry> entries) {
-            this.type = type;
-            this.entries = entries;
-        }
-
-        @Override
-        public String getFormattedValue(float value) {
-            // todo float 精度缺失
-            // Assuming value is in milliseconds
-            long millis = (long) value * 1000;
-            Date date = new Date(millis);
-            if (type.equals("ph")) {
-                return dateFormat.format(date);
-            }
-            return dateFormat.format(date) + " \n " + timeFormat.format(date);  // Combine two formats with line break
-        }
     }
 }
 

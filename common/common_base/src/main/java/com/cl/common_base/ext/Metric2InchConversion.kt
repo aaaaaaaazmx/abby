@@ -66,7 +66,9 @@ fun temperatureConversionOne(value: Float, isMetric: Boolean): String {
 }
 
 /**
- * 默认false为华氏度转换，false为华氏度
+ * value 华氏度
+ * isMetric true是摄氏度、false是华氏度
+ * 华氏度转摄氏度
  */
 fun temperatureConversionTwo(value: Float, isMetric: Boolean): String {
     if (value == 0f) return "0"

@@ -35,12 +35,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
         binding.chart1.setOnChartValueSelectedListener(MyChartValueSelectedListener(binding.chart1))
         binding.chart2.setOnChartValueSelectedListener(MyChartValueSelectedListener(binding.chart2))
 
-        binding.flGetPlantList.setSafeOnClickListener {
-            // 获取到所有的植物ID
-            mviewmodel.getPlantIdByDeviceId(mviewmodel.userInfo?.deviceId ?: "")
-        }
-
-        binding.tvPlantName.setSafeOnClickListener {
+        binding.cs.setSafeOnClickListener {
             // 获取到所有的植物ID
             mviewmodel.getPlantIdByDeviceId(mviewmodel.userInfo?.deviceId ?: "")
         }
@@ -61,8 +56,11 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
             getPlantData.observe(this@PeriodActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {
+                    binding.chart1.clear()
+                    binding.chart2.clear()
+
                     // 默认显示湿度
-                     EnhancedChartUtil().setupEnhancedLineChart(binding.chart1, data?.phList, "humidity", "Grow Chamber Humidity")
+                    EnhancedChartUtil().setupEnhancedLineChart(binding.chart1, data?.humidityList, "humidity", "Grow Chamber Humidity")
                     // ph
                     EnhancedChartUtil().setupEnhancedLineChart(binding.chart2, data?.phList, "ph", "PH")
 
@@ -81,7 +79,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
                         .hasShadowBg(true) // 去掉半透明背景
                         .offsetX(XPopupUtils.dp2px(this@PeriodActivity, -5f))
                         .offsetY(XPopupUtils.dp2px(this@PeriodActivity, 10f))
-                        .atView(binding.ivGetPlantList).asCustom(this@PeriodActivity?.let {
+                        .atView(binding.tvPlantName).asCustom(this@PeriodActivity.let {
                             PlantIdListPop(it, plantId.value?.safeToInt(), data, onConfirmAction = { plantId ->
                                 // 设置植物ID
                                 setPlantIds(plantId)
@@ -109,7 +107,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
             val isChecked = binding.cbHumidity.isChecked
             binding.cbHumidity.isChecked = isChecked
             binding.cbTemperature.isChecked = !isChecked
-
+            binding.chart1.clear()
             if (isChecked) {
                 binding.cbHumidity.setTextColor(Color.WHITE)
                 binding.cbTemperature.setTextColor(Color.parseColor("#006241"))
@@ -124,7 +122,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
             val isChecked = binding.cbTemperature.isChecked
             binding.cbTemperature.isChecked = isChecked
             binding.cbHumidity.isChecked = !isChecked
-
+            binding.chart1.clear()
             if (isChecked) {
                 binding.cbTemperature.setTextColor(Color.WHITE)
                 binding.cbHumidity.setTextColor(Color.parseColor("#006241"))
@@ -144,6 +142,8 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
         super.onDestroy()
         binding.chart1.setOnChartValueSelectedListener(null)
         binding.chart2.setOnChartValueSelectedListener(null)
+        binding.chart1.clear()
+        binding.chart2.clear()
     }
 
     class MyChartValueSelectedListener(private val chart: LineChart) : OnChartValueSelectedListener {

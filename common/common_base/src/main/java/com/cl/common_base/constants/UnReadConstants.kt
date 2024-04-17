@@ -150,6 +150,7 @@ object UnReadConstants {
 
         // prevent_dry_burning
         const val KEY_PREVENT_DRY_BURNING = "prevent_dry_burning"
+        const val KEY_CLOSE_DOOR = "close_door"
     }
 
     /**

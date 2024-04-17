@@ -6,12 +6,14 @@ import static com.cl.common_base.ext.Metric2InchConversionKt.temperatureConversi
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cl.common_base.R;
 import com.cl.common_base.bean.PlantData;
 import com.cl.common_base.constants.Constants;
 import com.cl.common_base.ext.CommonExtKt;
 import com.cl.common_base.util.Prefs;
+import com.cl.common_base.widget.toast.ToastUtil;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.Entry;
@@ -65,7 +67,7 @@ public class MyMarkerView extends MarkerView {
 
     // runs every time the MarkerView is redrawn, can be used to update the
     // content (user-interface)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     public void refreshContent(Entry e, Highlight highlight) {
         if (entries.isEmpty()) return;
@@ -93,17 +95,36 @@ public class MyMarkerView extends MarkerView {
             legendName = dataSet.getLabel();
         }
 
-        String value = Utils.formatNumber(e.getY(), 0, true);
+        String value = Utils.formatNumber(e.getY(), 1, true);
 
-        float l = CommonExtKt.safeToLong(String.format("%.0f", e.getX())) / 1000f;
+        String format = String.format("%.0f", e.getX());
+        long l = (CommonExtKt.safeToLong(format) + originalValue) * 1000L;
+        String time = sdf.format(new Date(l));
+        String times = timeFormat.format(new Date(l));
+        boolean aBoolean = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false);
+        switch (type) {
+            case "ph":
+                tvContent.setText(times + "\n" + legendName + ": " + value);
+                break;
+            case "temp":
+                // false 摄氏度， true 华氏度
+                String unit = aBoolean ? "°C" : "°F";
+                tvContent.setText(time + "\n" + legendName + ": " + value + unit);
+                break;
+            case "humidity":
+                tvContent.setText(time + "\n" + legendName + ": " + value + "%");
+                break;
+        }
+
+        /*float l = CommonExtKt.safeToLong(String.format("%.0f", e.getX())) / 1000f;
         final float EPSILON = 0.1f;  // 定义一个合适的容差
-       /* for (Entry point : entries) {
+       *//* for (Entry point : entries) {
             if (Math.abs(point.getX() / 1000.0f - l) < EPSILON) {  // 将每个数据点的 x 值除以 1000 并比较
                 tvContent.setText(point.getInfo());  // 显示匹配数据点的信息
                 super.refreshContent(e, highlight);
                 return;
             }
-        }*/
+        }*//*
 
         for (PlantData.DataPoint dataPoint : dataPoints) {
             if (Math.abs(CommonExtKt.safeToFloat(dataPoint.getDateTime()) / 1000.0f - l) < EPSILON) {  // 将每个数据点的 x 值除以 1000 并比较
@@ -120,7 +141,7 @@ public class MyMarkerView extends MarkerView {
                     tvContent.setText(time + "\n" + legendName + ": " +  value + "%");
                 }
             }
-        }
+        }*/
         super.refreshContent(e, highlight);
     }
 
@@ -133,5 +154,10 @@ public class MyMarkerView extends MarkerView {
         // 四舍五入到最接近的整数
         long roundedTimestamp = Math.round(timestamp);
         return roundedTimestamp;
+    }
+
+    private long originalValue;
+    public void setOriginalValue(long originalValue) {
+        this.originalValue = originalValue;
     }
 }
