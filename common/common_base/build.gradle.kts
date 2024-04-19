@@ -161,5 +161,6 @@ dependencies {
 
     api("com.github.Ferfalk:SimpleSearchView:0.2.1")
 
-    api(Deps.chat)
+    // api(Deps.chat)
+    api("com.github.AAChartModel:AAChartCore-Kotlin:7.1.0")
 }

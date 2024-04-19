@@ -13,26 +13,19 @@ import com.cl.common_base.ext.CommonExtKt;
 import com.cl.common_base.ext.LogKt;
 import com.cl.common_base.util.Prefs;
 import com.cl.common_base.widget.toast.ToastUtil;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
+
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.formatter.ValueFormatter;
 
 public class EnhancedChartUtil {
-    private long originalValue;
+    /*private long originalValue;
 
     private long findMax(List<PlantData.DataPoint> numbers) {
         if (numbers == null || numbers.isEmpty()) {
@@ -131,11 +124,11 @@ public class EnhancedChartUtil {
             dataSet.setColor(Color.parseColor("#4CD964"));
             dataSet.setCircleColor(Color.parseColor("#4CD964"));
             // 创建渐变Drawable
-            /*GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.parseColor("#4CD964"), Color.TRANSPARENT}); // 定义渐变颜色
+            *//*GradientDrawable gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.parseColor("#4CD964"), Color.TRANSPARENT}); // 定义渐变颜色
 
             // 将渐变设置为填充
             dataSet.setFillDrawable(gradientDrawable);
-            dataSet.setDrawFilled(true);*/        }
+            dataSet.setDrawFilled(true);*//*        }
 
         //dataSet.setValueTextColor(...); // 设置数据点文本颜色
         dataSet.setHighLightColor(Color.rgb(244, 117, 117)); // 设置高亮颜色
@@ -162,27 +155,63 @@ public class EnhancedChartUtil {
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawGridLines(false); // 不显示网格线
-        // xAxis.setLabelCount(entries.size(), true); // 设置标签数量
+        xAxis.setLabelCount(Math.min(entries.size(), 14), true); // 设置标签数量
+        xAxis.setGranularity(3600f);
+        xAxis.setGranularityEnabled(true);
         xAxis.setLabelRotationAngle(-45f); // 将标签旋转45度
-        /*if (entries.size() == 1) {
+        *//*if (entries.size() == 1) {
             xAxis.setAxisMinimum(lineData.getXMin() - 100f); // 主要目的就是设置间隔，让其与Y轴有一些距离。更加美观。
             // 3600  * 12
             xAxis.setAxisMaximum(lineData.getXMin() + 100f);
-        }*/
+        }*//*
         xAxis.setValueFormatter(new IndexAxisValueFormatter() {
             @SuppressLint("DefaultLocale")
             @Override
             public String getFormattedValue(float value) {
                 // 查找entry的x是否和value一致
-                String format = String.format("%.0f", value);
-                long adjustedValue = (CommonExtKt.safeToLong(format) + originalValue) * 1000L;
-                long millis = (long) (adjustedValue);
-                Date date = new Date(millis);
+                // 恢复时间戳
+                *//*long originalTimeStamp = (long) (originalValue + value);
+                long adjustedTimeStamp = originalTimeStamp * 1000L; // 转换为毫秒
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(adjustedTimeStamp);
+
+                // 如果分钟不是0，将时间向上舍入到下一个整点
+                if (calendar.get(Calendar.MINUTE) != 0) {
+                    calendar.add(Calendar.HOUR_OF_DAY, 1);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                }
+
+                Date date = calendar.getTime();
+                SimpleDateFormat sdfbig = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
                 if (type.equals("ph")) {
                     return sdf.format(date);
+                } else {
+                    return sdfbig.format(date);
+                }*//*
+
+               *//* long millis = (long) value * 3600 * 1000; // 将小时转换为毫秒
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(millis);
+                int scale = (int) lineChart.getViewPortHandler().getScaleX();
+                if (scale > 5) {  // 根据缩放级别选择不同的格式
+                    return new SimpleDateFormat("MMM dd HH:mm", Locale.US).format(calendar.getTime());
+                } else {
+                    return new SimpleDateFormat("MMM dd", Locale.US).format(calendar.getTime());
+                }*//*
+
+                long millis = (long) value * 3600 * 1000; // 转换为毫秒
+                Date date = new Date(millis);
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(millis);
+                float visibleRange = lineChart.getVisibleXRange();
+                if (visibleRange > 48 * 3600) { // 超过两天的数据显示简化的日期
+                    return new SimpleDateFormat("MMM dd HH:mm", Locale.US).format(calendar.getTime());
+                } else {
+                    return new SimpleDateFormat("MMM dd", Locale.US).format(calendar.getTime());
                 }
-                LogKt.logE("123123123: " + adjustedValue + ",,, " + sdf.format(date) + " \n " + timeFormat.format(date));
-                return sdf.format(date) + " \n " + timeFormat.format(date);  // Combine two formats with line break
             }
         });
 
@@ -195,7 +224,7 @@ public class EnhancedChartUtil {
         YAxis rightAxis = lineChart.getAxisRight();
         rightAxis.setEnabled(false); // 不显示右侧Y轴
 
-
+        // lineChart.setVisibleXRangeMaximum(Math.min(entries.size(), 14)); // 设置一次最多可见15个点
         lineChart.setScaleEnabled(true); // 启用图表的缩放功能
         lineChart.setPinchZoom(false); // 启用双指缩放
         lineChart.setDragEnabled(true); // 启用拖动
@@ -206,7 +235,9 @@ public class EnhancedChartUtil {
         lineChart.setScaleXEnabled(true);
         lineChart.setScaleYEnabled(false);  // 禁用 Y 轴的缩放
         lineChart.setExtraOffsets(0, 0, 0, 10f); // 在图表的底部增加10dp的额外偏移
-
+        lineChart.getViewPortHandler().setMinimumScaleX(5f); // 设置一个较大的最小缩放值
+        lineChart.notifyDataSetChanged();
+        lineChart.setVisibleXRangeMaximum(30 * 3600f); // 设置最大可见范围
         // 图例设置
         Legend legend = lineChart.getLegend();
         // legend.setXEntrySpace(45f); // 设置图例水平间距
@@ -226,7 +257,7 @@ public class EnhancedChartUtil {
         legend.setForm(Legend.LegendForm.CIRCLE);
 
 
-        /*if (!entries.isEmpty()) {
+        *//*if (!entries.isEmpty()) {
             // 获取最后一个数据点的x值
             float lastXValue = entries.get(entries.size() - 1).getX();
 
@@ -241,18 +272,18 @@ public class EnhancedChartUtil {
 
             // 刷新图表以应用更改
             // lineChart.invalidate();
-        }*/
+        }*//*
         lineChart.setData(lineData);
         lineChart.invalidate(); // 刷新图表
 
         // 移动到最后一个点
-        /*if (!entries.isEmpty()) {
+        *//*if (!entries.isEmpty()) {
             float x = entries.get(entries.size() - 1).getX();
             float y = entries.get(entries.size() -1).getY();
             lineChart.centerViewToAnimated(x, y, lineChart.getData().getDataSetByIndex(0)
                     .getAxisDependency(), 500);
-        }*/
+        }*//*
 
-    }
+    }*/
 }
 

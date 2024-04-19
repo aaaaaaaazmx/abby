@@ -8,7 +8,6 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyTestActivityBinding
 import com.cl.modules_my.repository.UsbSwitchReq
 import com.cl.modules_my.viewmodel.TestModel
-import com.github.mikephil.charting.charts.LineChart
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -41,7 +40,7 @@ class TestActivity : BaseActivity<MyTestActivityBinding>() {
 
             getPlantData.observe(this@TestActivity, resourceObserver {
                 success {
-                    EnhancedChartUtil().setupEnhancedLineChart(binding.chart1, data?.termpertureList, "humidity" , "Grow Chamber Humidity")
+                    // EnhancedChartUtil().setupEnhancedLineChart(binding.chart1, data?.termpertureList, "humidity" , "Grow Chamber Humidity")
                 }
 
             })

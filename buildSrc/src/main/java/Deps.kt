@@ -16,8 +16,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 33
-    val versionCode = 60
-    const val versionName = "3.6.0"
+    val versionCode = 61
+    const val versionName = "3.7.0"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"
@@ -250,5 +250,5 @@ object Deps {
     const val interCome = "io.intercom.android:intercom-sdk:${Version.interCome}"
 
     // mpachart
-    const val chat = "com.github.PhilJay:MPAndroidChart:${Version.chart}"
+    const val chat = "com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT"
 }
