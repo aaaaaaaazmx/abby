@@ -468,4 +468,12 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/test/getDpCache")
     fun getDpCache(@Field("deviceId") deviceId: String): Flow<HttpResult<UsbSwitchReq>>
+
+    /**
+     * 获取种植数据
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/getPlantData")
+    fun getPlantData(@Field("deviceId") deviceId: String): Flow<HttpResult<PlantData>>
+
 }

@@ -61,9 +61,9 @@ class CreateAccountViewModel @Inject constructor(private val repository: Registe
     /**
      * 发送验证码
      */
-    fun verifyEmail(email: String, type: String) =
+    fun verifyEmail(email: String? = null, type: String, userName: String? = null, countryCode: String? = null) =
         viewModelScope.launch {
-            repository.verifyEmail(email, type)
+            repository.verifyEmail(email, type, userName, countryCode)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

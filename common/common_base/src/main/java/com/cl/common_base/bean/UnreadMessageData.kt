@@ -25,5 +25,6 @@ data class UnreadMessageData(
     val messageId: Int? = null,
     val sort: Int? = null,
     val time: Int? = null,
+    val articleId: String? = null,
     val LocalReceiveTime: String? = null
 ) : BaseBean()

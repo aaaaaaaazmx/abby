@@ -1,4 +1,4 @@
-package com.cl.modules_planting_log.request
+package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
 

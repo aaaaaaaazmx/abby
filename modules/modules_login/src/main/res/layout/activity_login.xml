@@ -206,6 +206,13 @@
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:layout_marginEnd="12dp"
+                        android:id="@+id/iv_sms"
+                        android:background="@mipmap/login_sms"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"/>
+
+                    <ImageView
                         android:id="@+id/iv_google"
                         android:background="@mipmap/login_google"
                         android:layout_width="40dp"

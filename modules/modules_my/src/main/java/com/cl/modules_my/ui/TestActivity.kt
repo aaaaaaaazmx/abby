@@ -1,14 +1,16 @@
 package com.cl.modules_my.ui
 
-import android.content.Context
+import android.view.View
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.util.chat.EnhancedChartUtil
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyTestActivityBinding
 import com.cl.modules_my.repository.UsbSwitchReq
 import com.cl.modules_my.viewmodel.TestModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class TestActivity : BaseActivity<MyTestActivityBinding>() {
@@ -17,6 +19,8 @@ class TestActivity : BaseActivity<MyTestActivityBinding>() {
 
     override fun initView() {
         mViewModel.getDp()
+        // 获取植物种植数据
+        mViewModel.getPlantData("6cd6bbadef7c7cff23paxi")
     }
 
     override fun observe() {
@@ -32,6 +36,13 @@ class TestActivity : BaseActivity<MyTestActivityBinding>() {
                     hideProgressLoading()
 
                 }
+            })
+
+            getPlantData.observe(this@TestActivity, resourceObserver {
+                success {
+                    // EnhancedChartUtil().setupEnhancedLineChart(binding.chart1, data?.termpertureList, "humidity" , "Grow Chamber Humidity")
+                }
+
             })
 
             getDp.observe(this@TestActivity, resourceObserver {
@@ -51,7 +62,6 @@ class TestActivity : BaseActivity<MyTestActivityBinding>() {
                         binding.fitsLight.isItemChecked = tapeLights
                         binding.fitsTemp.isItemChecked = 0 == corF
                     }
-
                 }
             })
         }

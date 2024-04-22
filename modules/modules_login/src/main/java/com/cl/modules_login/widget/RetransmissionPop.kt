@@ -17,10 +17,20 @@ class RetransmissionPop(
         return R.layout.pop_retransmission
     }
 
+    private var thirdSource: String = ""
+
+    fun setThirdSource(thirdSource: String) {
+        this.thirdSource = thirdSource
+    }
+
     override fun onCreate() {
         super.onCreate()
         DataBindingUtil.bind<PopRetransmissionBinding>(popupImplView)?.apply {
             executePendingBindings()
+
+            when(thirdSource) {
+                "sms" -> tvSend.text = "Resend"
+            }
 
             tvSend.setOnClickListener {
                 onAgainAction?.invoke()

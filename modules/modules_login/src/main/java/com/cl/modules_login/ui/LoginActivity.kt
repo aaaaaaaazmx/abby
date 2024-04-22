@@ -273,7 +273,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         }
 
         binding.tvCreate.setOnClickListener { // 跳转到注册界面
-            startActivity(Intent(this, CreateAccountActivity::class.java))
+            val intent = Intent(this, CreateAccountActivity::class.java)
+            startActivity(intent)
         }
 
         binding.tvForget.setOnClickListener { // 跳转到忘记密码界面
@@ -296,6 +297,14 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         binding.ivGoogle.setOnClickListener {
             // 谷歌登录
             googleHelp.login()
+        }
+
+        binding.ivSms.setOnClickListener {
+            mViewModel.setThirdSource("sms")
+            // sms登录
+            val intent = Intent(this@LoginActivity, CreateAccountActivity::class.java)
+            intent.putExtra(KEY_SOURCE, mViewModel.thirdSource.value ?: "sms")
+            startActivity(intent)
         }
 
         binding.ivFacebook.setOnClickListener {

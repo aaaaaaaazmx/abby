@@ -1,14 +1,17 @@
 package com.cl.modules_login.ui
 
 import android.content.Intent
+import android.view.View
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
+import com.cl.common_base.ext.visible
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.util.EmailUtil
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.databinding.ActivityCreateAccountBinding
@@ -51,8 +54,17 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                 // 初始化SDK
                 InitSdk.init()
                 if (thirdSource?.isNotEmpty() == true) {
-                    // 发送验证码
-                    mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "5")
+                    when(thirdSource){
+                        "google" -> {
+                            // 谷歌登录
+                            // 发送验证码
+                            mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "5")
+                        }
+                        "sms" -> {
+                            // sms登录或者注册发送验证码
+                            mViewModel.verifyEmail(userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
+                        }
+                    }
                     return@PrivacyPop
                 }
                 // 发送验证码
@@ -96,7 +108,17 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
 
         // 第三方登录，直接显示绑定邮箱
         if (!thirdSource.isNullOrEmpty()) {
-            binding.tvCreateLog.text = "Bind Email"
+            when(thirdSource){
+                "google" -> {
+                    binding.tvCreateLog.text = "Bind Email"
+                }
+                "sms" -> {
+                    binding.btnContinue.text = "Next"
+                    binding.etEmail.hint = "Enter telephone number"
+                    binding.tvCreateLog.text = "OTP Verification"
+                    binding.tvCreateLogSub.visibility = View.VISIBLE
+                }
+            }
         }
 
     }

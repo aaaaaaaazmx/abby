@@ -328,4 +328,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     fun getDpCache(req: String): Flow<HttpResult<UsbSwitchReq>> {
         return remoteRepository.getDpCache(req)
     }
+
+    fun getPlantData(req: String): Flow<HttpResult<PlantData>> {
+        return remoteRepository.getPlantData(req)
+    }
 }

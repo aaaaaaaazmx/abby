@@ -2,6 +2,7 @@ package com.cl.modules_login.ui
 
 import android.content.Intent
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.alibaba.android.arouter.launcher.ARouter
@@ -90,7 +91,17 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
     private val sendPop by lazy {
         RetransmissionPop(context = this@VerifyEmailActivity, onAgainAction = {
             if (!thirdSource.isNullOrEmpty()) {
-                emailName?.let { mViewModel.verifyEmail(it, "5") }
+                when (thirdSource) {
+                    "google" -> {
+                        // 谷歌登录
+                        // 发送验证码
+                        emailName?.let { mViewModel.verifyEmail(it, "5") }
+                    }
+                    "sms" -> {
+                        // 重新发送验证码
+                        emailName?.let { mViewModel.verifyEmail(userName = it, countryCode = userRegisterBean?.countryCode, type = "6") }
+                    }
+                }
                 return@RetransmissionPop
             }
             // 邮箱验证码登录
@@ -125,19 +136,32 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
         binding.tvDesc.text =
             if (isRegister || isEmailLogin) {
                 buildSpannedString {
-                    append(getString(com.cl.common_base.R.string.send_email))
-                    color(
-                        ResourcesCompat.getColor(
-                            resources,
-                            com.cl.common_base.R.color.mainColor,
-                            theme
-                        )
-                    ) {
-                        append(
-                            " $emailName "
-                        )
+                    when (thirdSource) {
+                        "sms" -> {
+                            append(getString(com.cl.common_base.R.string.send_phone))
+                        }
+                        else -> append(getString(com.cl.common_base.R.string.send_email))
                     }
-                    append(getString(com.cl.common_base.R.string.send_email_register))
+                    bold {
+                        color(
+                            ResourcesCompat.getColor(
+                                resources,
+                                com.cl.common_base.R.color.mainColor,
+                                theme
+                            )
+                        ) {
+                            append(
+                                " $emailName "
+                            )
+                        }
+                    }
+                    when (thirdSource) {
+                        "sms" -> {
+                            append(getString(com.cl.common_base.R.string.send_email_for_sms_register))
+                        }
+
+                        else -> append(getString(com.cl.common_base.R.string.send_email_register))
+                    }
                 }
             } else {
                 buildSpannedString {
@@ -161,6 +185,14 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
         binding.vmLog.text = if (isEmailLogin) "Enter the OTP" else if (isRegister) "Verify email" else "Reset password"
         binding.btnSuccess.text = if (isEmailLogin) "Login" else "Continue"
         binding.codeView.setOnInputListener(this)
+
+        when(thirdSource) {
+            "sms" -> {
+                binding.tvSend.text = "Didn't receive OTP ?"
+                binding.btnSuccess.text = "Login"
+                binding.vmLog.text = "Enter the OTP"
+            }
+        }
     }
 
     private lateinit var userInfoBean: LoginData
@@ -218,22 +250,45 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                          * 登录涂鸦
                          */
                         val it = mViewModel.registerLoginLiveData.value
-                        mViewModel.tuYaLogin(
-                            map = mapOf(),
-                            interComeUserId = it?.data?.externalId,
-                            userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
-                            deviceId = it?.data?.deviceId,
-                            code = it?.data?.tuyaCountryCode,
-                            email = it?.data?.email,
-                            password = AESCipher.aesDecryptString(it?.data?.tuyaPassword, AESCipher.KEY),
-                            onRegisterReceiver = { devId ->
-                                val intent = Intent(this@VerifyEmailActivity, TuYaDeviceUpdateReceiver::class.java)
-                                startService(intent)
-                            },
-                            onError = { code, error ->
-                                hideProgressLoading()
-                                error?.let { ToastUtil.shortShow(it) }
-                            })
+                        when(thirdSource) {
+                            "sms" -> {
+                                mViewModel.tuYaLoginForPhone(
+                                    map = mapOf(),
+                                    interComeUserId = it?.data?.externalId,
+                                    userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
+                                    deviceId = it?.data?.deviceId,
+                                    code = it?.data?.tuyaCountryCode,
+                                    phoneNumber = it?.data?.phoneNumber,
+                                    password = AESCipher.aesDecryptString(it?.data?.tuyaPassword, AESCipher.KEY),
+                                    onRegisterReceiver = { devId ->
+                                        val intent = Intent(this@VerifyEmailActivity, TuYaDeviceUpdateReceiver::class.java)
+                                        startService(intent)
+                                    },
+                                    onError = { code, error ->
+                                        hideProgressLoading()
+                                        error?.let { ToastUtil.shortShow(it) }
+                                    })
+                            }
+                            else -> {
+                                mViewModel.tuYaLogin(
+                                    map = mapOf(),
+                                    interComeUserId = it?.data?.externalId,
+                                    userInfo = UserinfoBean.BasicUserBean(userId = it?.data?.userId, email = it?.data?.email, userName = it?.data?.nickName),
+                                    deviceId = it?.data?.deviceId,
+                                    code = it?.data?.tuyaCountryCode,
+                                    email = it?.data?.email,
+                                    password = AESCipher.aesDecryptString(it?.data?.tuyaPassword, AESCipher.KEY),
+                                    onRegisterReceiver = { devId ->
+                                        val intent = Intent(this@VerifyEmailActivity, TuYaDeviceUpdateReceiver::class.java)
+                                        startService(intent)
+                                    },
+                                    onError = { code, error ->
+                                        hideProgressLoading()
+                                        error?.let { ToastUtil.shortShow(it) }
+                                    })
+                            }
+                        }
+
                     }
 
                     is Resource.DataError -> {
@@ -351,8 +406,13 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
                         // 判断是否是第三方登录，用第三方来源是否为空来判断
                         if (!thirdSource.isNullOrEmpty()) {
-                            // 检查邮箱是否被绑定过
-                            emailName?.let { it1 -> mViewModel.isBindSourceEmail(it1) }
+                            when (thirdSource) {
+                                "google" -> {
+                                    // 谷歌邮箱登录
+                                    // 检查邮箱是否被绑定过
+                                    emailName?.let { it1 -> mViewModel.isBindSourceEmail(it1) }
+                                }
+                            }
                             return@observe
                         }
 
@@ -390,10 +450,12 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
             // 验证验证吗
             if (binding.codeView.code.isNullOrEmpty()) return@setOnClickListener
             // 邮箱登录
-            if (isEmailLogin) {
+            if (isEmailLogin || thirdSource == "sms") {
                 mViewModel.loginReq.value?.let {
                     it.userName = emailName
+                    it.countryCode = userRegisterBean?.countryCode
                     it.autoCode = binding.codeView.code
+                    it.country = if (thirdSource == "sms") userRegisterBean?.country else null
                     mViewModel.login()
                 }
                 return@setOnClickListener
@@ -403,6 +465,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
         // 重新发送验证
         binding.tvSend.setOnClickListener {
+            sendPop.setThirdSource("sms")
             xPopup.show()
         }
     }

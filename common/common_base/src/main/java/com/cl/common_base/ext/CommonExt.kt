@@ -50,6 +50,16 @@ fun Any?.safeToFloat(): Float {
     } ?: 0f
 }
 
+fun Any?.safeToLong(): Long {
+    return this?.let {
+        if (this is String) {
+            this.safeToBigDecimal().toLong()
+        } else {
+            this.toString().safeToBigDecimal().toLong()
+        }
+    } ?: 0L
+}
+
 
 /**
  * 将对象转化为String, 若对象转化失败则返回空字符串, 若对象为小数, 则去除小数末位的0.

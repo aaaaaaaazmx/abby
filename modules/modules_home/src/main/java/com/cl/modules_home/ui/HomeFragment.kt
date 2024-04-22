@@ -565,7 +565,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         when (jumpType) {
                             UnReadConstants.JumpType.KEY_LEARN_MORE -> {
                                 // 单独处理， 弹窗
-                                mViewMode.getMessageDetail("$messageId")
+                                // mViewMode.getMessageDetail("$messageId")
+                                mViewMode.getUnreadMessageList().firstOrNull()?.articleId?.let {articleId ->
+                                    InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, articleId)
+                                }
                                 mViewMode.getRead("$messageId")
                                 return@setOnClickListener
                             }
@@ -582,7 +585,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.getUnreadMessageList().firstOrNull()?.type?.let { type ->
                         val messageId = mViewMode.getUnreadMessageList().firstOrNull()?.messageId
                         when (type) {
-                            UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING -> {
+                            UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING, UnReadConstants.JumpType.KEY_CLOSE_DOOR
+                            -> {
                                 mViewMode.getRead("$messageId")
                                 return@setOnClickListener
                             }
@@ -949,6 +953,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            ivChart.setSafeOnClickListener {
+                context?.let {
+                    it.startActivity(Intent(it, PeriodActivity::class.java))
+                }
+            }
+
             tvSave.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope) {
                 val bean = PresetData(
                     fanIntake = "${mViewMode.getFanIntake.value}",
@@ -4520,7 +4530,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 "Continue"
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_GUIDE) {
                 "Done"
-            } else if (unRead?.type == UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING) {
+            } else if (unRead?.type == UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING || unRead?.type == UnReadConstants.JumpType.KEY_CLOSE_DOOR) {
                 "Done"
             } else {
                 ""
@@ -4537,7 +4547,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             unRead?.jumpType != UnReadConstants.JumpType.KEY_NONE, binding.pplantNinth.tvBtnDesc
         )*/
         if (unRead?.jumpType == UnReadConstants.JumpType.KEY_NONE) {
-            if (unRead?.type == UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING) {
+            if (unRead.type == UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING || unRead.type == UnReadConstants.JumpType.KEY_CLOSE_DOOR) {
                 ViewUtils.setVisible(binding.pplantNinth.tvBtnDesc)
             } else {
                 ViewUtils.setGone(binding.pplantNinth.tvBtnDesc)

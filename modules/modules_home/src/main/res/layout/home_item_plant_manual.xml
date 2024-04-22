@@ -42,6 +42,17 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                app:layout_constraintEnd_toStartOf="@+id/iv_camera"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_camera"
+                app:layout_constraintTop_toTopOf="@+id/iv_camera"
+                android:layout_marginEnd="24dp"
+                android:background="@mipmap/home_chart"
+                android:id="@+id/iv_chart"
+                android:layout_width="28dp"
+                android:layout_height="28dp"/>
+
+
+            <ImageView
                 android:layout_marginEnd="24dp"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_title"
                 app:layout_constraintTop_toTopOf="@+id/tv_title"

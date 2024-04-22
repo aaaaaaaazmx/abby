@@ -7,12 +7,11 @@ import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.bean.SyncDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.net.ServiceCreators
-import com.cl.modules_planting_log.request.LogByIdData
 import com.cl.modules_planting_log.request.LogListDataItem
 import com.cl.modules_planting_log.request.LogListReq
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
 import com.cl.modules_planting_log.request.LogTypeListDataItem
-import com.cl.modules_planting_log.request.PlantIdByDeviceIdData
+import com.cl.common_base.bean.PlantIdByDeviceIdData
 import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import com.cl.modules_planting_log.service.HttpPlantApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped

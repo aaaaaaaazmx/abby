@@ -35,12 +35,12 @@ class RegisterLoginRemoteRepository @Inject constructor() {
         return service.getCountList()
     }
 
-    fun verifyEmail(email: String, type: String): Flow<HttpResult<Boolean>> {
-        return service.verifyEmail(email, type)
+    fun verifyEmail(email: String? = null, type: String, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
+        return service.verifyEmail(email, type, userName, countryCode)
     }
 
-    fun verifyCode(code: String, email: String): Flow<HttpResult<Boolean>> {
-        return service.verifyCode(code, email)
+    fun verifyCode(code: String, email: String? = null, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
+        return service.verifyCode(code, email, userName, countryCode)
     }
 
     fun registerAccount(body: UserRegisterReq): Flow<HttpResult<Boolean>> {

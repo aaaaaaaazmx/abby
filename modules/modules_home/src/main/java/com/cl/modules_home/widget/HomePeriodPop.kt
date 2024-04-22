@@ -1,6 +1,7 @@
 package com.cl.modules_home.widget
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +18,7 @@ import com.bbgo.module_home.R
 import com.bbgo.module_home.databinding.HomePeriodPopBinding
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.ViewUtils
+import com.cl.modules_home.ui.PeriodActivity
 import com.google.api.Distribution.BucketOptions.Linear
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
@@ -85,6 +87,11 @@ class HomePeriodPop(
         binding = DataBindingUtil.bind<HomePeriodPopBinding>(popupImplView)?.apply {
             ivClose.setOnClickListener { dismiss() }
             showView(LayoutType.RIGHT)
+
+            ivChart.setOnClickListener {
+                // 跳转到图表洁面
+                context.startActivity(Intent(context, PeriodActivity::class.java))
+            }
         }
     }
 

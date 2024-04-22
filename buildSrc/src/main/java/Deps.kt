@@ -16,8 +16,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 33
-    val versionCode = 60
-    const val versionName = "3.6.0"
+    val versionCode = 61
+    const val versionName = "3.7.0"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"
@@ -96,6 +96,8 @@ object Version {
     const val videoPlayer = "v8.3.4"
 
     const val interCome = "15.2.0"
+
+    const val chart = "v3.1.0"
 }
 
 object Deps {
@@ -246,4 +248,7 @@ object Deps {
 
     // interCome
     const val interCome = "io.intercom.android:intercom-sdk:${Version.interCome}"
+
+    // mpachart
+    const val chat = "com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT"
 }

@@ -128,6 +128,7 @@ class InterComeHelp {
                 .withCustomAttributes(map ?: mapOf<String, Any>())
                 .withName(refreshUserInfo?.nickName)
                 .withEmail(refreshUserInfo?.email)
+                .withPhone(refreshUserInfo?.phoneNumber)
                 .withUserId(refreshUserInfo?.userId.toString())
                 // .withUserId(refreshUserInfo?.userId.toString())
                 .build()
@@ -136,6 +137,7 @@ class InterComeHelp {
                 .withCustomAttributes(map ?: mapOf<String, String>())
                 .withName(userInfo.nickName)
                 .withEmail(userInfo.email)
+                .withPhone(userInfo.phoneNumber)
                 .withUserId(userInfo.userId.toString())
                 .build()
         } else {

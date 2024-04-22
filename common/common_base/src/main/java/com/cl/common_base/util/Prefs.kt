@@ -75,6 +75,7 @@ object Prefs {
         mmkv.putBoolean(key, value).apply()
     }
 
+    @JvmStatic
     fun getBoolean(key: String, defaultValue: Boolean = false): Boolean {
         return mmkv.decodeBool(key, defaultValue)
     }
