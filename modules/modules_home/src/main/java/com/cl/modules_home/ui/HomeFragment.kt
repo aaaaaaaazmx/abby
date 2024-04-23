@@ -67,6 +67,8 @@ import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
+import com.cl.common_base.web.VideoPLayActivity
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.common_base.widget.waterview.bean.Water
 import com.cl.common_base.widget.waterview.widget.WaterView
@@ -524,6 +526,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
 
+            // 点击live直接打开直播
+            ivLive.setSafeOnClickListener {
+                startToVideoPlay()
+            }
+
             ivZpCamera.setOnClickListener {
                 // 跳转到配件
                 mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
@@ -953,6 +960,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            ivLive.setSafeOnClickListener {
+                startToVideoPlay()
+            }
+
             ivChart.setSafeOnClickListener {
                 context?.let {
                     it.startActivity(Intent(it, PeriodActivity::class.java))
@@ -5369,6 +5380,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 跳转继承界面为了老用户输入属性或者名字
         const val KEY_FOR_USER_NAME = 77
+    }
+
+    private fun startToVideoPlay() {
+        val intent = Intent(context, VideoPLayActivity::class.java)
+        intent.putExtra(WebActivity.KEY_WEB_URL, mViewMode.userDetail.value?.data?.liveLink)
+        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Live")
+        startActivity(intent)
     }
 
     fun startFadeInOutAnimation(view: View, duration: Long) {

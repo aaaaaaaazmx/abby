@@ -76,6 +76,8 @@ data class UserinfoBean(
         val harvestCount: String? = null,
         val inchMetricMode: String? = null,
         val deviceOnlineStatus: String? = null,
+        val live: Boolean? = null,
+        val liveLink: String? = null,
         val easemobId: String? = null,
         // val easemobPassword: String? = null,
         // val easemobUserName: String? = null,

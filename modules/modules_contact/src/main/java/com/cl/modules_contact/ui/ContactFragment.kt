@@ -59,6 +59,7 @@ import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.BaseThreeTextPop
+import com.cl.common_base.web.VideoPLayActivity
 import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
 import com.cl.modules_contact.pop.ContactChooseTipPop
 import com.cl.modules_contact.pop.ContactDeletePop
@@ -278,11 +279,19 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
      * 条目点击事件
      */
     private fun initAdapterClick() {
-        adapter.addChildClickViewIds(R.id.tv_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more)
+        adapter.addChildClickViewIds(R.id.tv_link, R.id.tv_live_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? NewPageData.Records
             mViewMode.updateCurrentPosition(position)
             when (view.id) {
+                // 跳转直播网页
+                R.id.tv_live_link -> {
+                    val intent = Intent(context, VideoPLayActivity::class.java)
+                    intent.putExtra(WebActivity.KEY_WEB_URL, item?.liveLink)
+                    intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Live")
+                    startActivity(intent)
+                }
+
                 R.id.tv_link -> {
                     // 跳转网页
                     val intent = Intent(context, WebActivity::class.java)

@@ -22,6 +22,8 @@ data class NewPageData(
     ) : BaseBean()
 
     data class Records(
+        val live: Boolean? = null,
+        val liveLink: String? = null,
         val id: Int? = null,
         val strainName: String? = null,
         val deviceImage: String? = null,

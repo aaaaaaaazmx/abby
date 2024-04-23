@@ -30,7 +30,10 @@ class ShopFragment : BaseFragment<FragmentShopBinding>() {
 
     override fun initView(view: View) {
         childFragmentManager.beginTransaction().apply {
-            mAgentWebFragment =  AgentWebFragment.getInstance(Bundle().also { it.putString(AgentWebFragment.URL_KEY, "https://heyabby.com/pages/app-store"); })
+            mAgentWebFragment =  AgentWebFragment.getInstance(Bundle().also {
+                it.putString(AgentWebFragment.URL_KEY, "https://heyabby.com/pages/app-store");
+                it.putBoolean(AgentWebFragment.IS_SHOW_SHOP_CAR, true)
+            })
             mAgentWebFragment?.let {
                 replace(R.id.container_framelayout, it, AgentWebFragment::class.java.getName())
                 commit()
@@ -53,7 +56,10 @@ class ShopFragment : BaseFragment<FragmentShopBinding>() {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             childFragmentManager.beginTransaction().apply {
-                mAgentWebFragment =  AgentWebFragment.getInstance(Bundle().also { it.putString(AgentWebFragment.URL_KEY, "https://heyabby.com/pages/app-store"); })
+                mAgentWebFragment =  AgentWebFragment.getInstance(Bundle().also {
+                    it.putString(AgentWebFragment.URL_KEY, "https://heyabby.com/pages/app-store");
+                    it.putBoolean(AgentWebFragment.IS_SHOW_SHOP_CAR, true)
+                })
                 mAgentWebFragment?.let {
                     replace(R.id.container_framelayout, it, AgentWebFragment::class.java.getName())
                     commit()
