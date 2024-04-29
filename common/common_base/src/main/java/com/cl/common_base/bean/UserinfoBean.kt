@@ -53,6 +53,7 @@ data class UserinfoBean(
         val deviceStatus: String? = null, // 1 绑定状态、其他是设备未绑定
         val deviceId: String? = null,
         val abbyId: String? = null,
+        val deviceType: String? = null,
         val avatarPicture: String? = null,
         val eventCount: Int? = null,
         val childLock: Int? = null,
