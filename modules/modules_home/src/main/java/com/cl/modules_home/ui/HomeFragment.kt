@@ -1634,39 +1634,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
     }
 
-    /**
-     *  继承弹窗
-     *  暂时不需要
-     */
-    //    private val plantExtendPop by lazy {
-    //        XPopup.Builder(context)
-    //            .isDestroyOnDismiss(false)
-    //            .enableDrag(false)
-    //            .maxHeight(dp2px(600f))
-    //            .dismissOnTouchOutside(false)
-    //            .asCustom(context?.let {
-    //                HomePlantExtendPop(
-    //                    context = it,
-    //                    onNextAction = { status ->
-    //                        when (status) {
-    //                            HomePlantExtendPop.KEY_NEW_PLANT -> {
-    //                                ViewUtils.setGone(binding.plantExtendBg.root)
-    //                                ViewUtils.setVisible(binding.plantFirst.root)
-    //                            }
-    //                            HomePlantExtendPop.KEY_EXTEND -> {
-    //                                // 直接跳转到种植界面
-    //                                ViewUtils.setGone(binding.plantExtendBg.root)
-    //                                ViewUtils.setGone(binding.plantFirst.root)
-    //                                ViewUtils.setVisible(binding.pplantNinth.root)
-    //                                ViewUtils.setGone(binding.pplantNinth.clContinue)
-    //                                // mViewMode.startRunning(null, true)
-    //                            }
-    //                        }
-    //                    }
-    //                )
-    //            })
-    //    }
-
 
     // 升级弹窗
     private val updatePop by lazy {
@@ -4944,35 +4911,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 发送支持邮件
      */
     private fun sendEmail() {
-        /*val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
-        val uri = Uri.parse(uriText)
-        val sendIntent = Intent(Intent.ACTION_SENDTO)
-        sendIntent.data = uri
-        val pm = context?.packageManager
-        // 根据意图查找包
-        val activityList = pm?.queryIntentActivities(sendIntent, 0)
-        if (activityList?.size == 0) {
-            // 弹出框框
-            val clipboard =
-                context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
-            // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
-            val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
-            // 把数据集设置（复制）到剪贴板
-            clipboard.setPrimaryClip(clipData)
-            XPopup.Builder(context)
-                .isDestroyOnDismiss(false)
-                .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(context!!)).show()
-            return
-        }
-        try {
-            startActivity(Intent.createChooser(sendIntent, "Send email"))
-        } catch (ex: ActivityNotFoundException) {
-            XPopup.Builder(context)
-                .isDestroyOnDismiss(false)
-                .dismissOnTouchOutside(true)
-                .asCustom(context?.let { SendEmailTipsPop(it) }).show()
-        }*/
         InterComeHelp.INSTANCE.openInterComeHome()
     }
 
