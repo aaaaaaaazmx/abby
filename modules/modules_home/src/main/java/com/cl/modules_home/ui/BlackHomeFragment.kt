@@ -73,6 +73,7 @@ import com.cl.common_base.web.VideoPLayActivity
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
+import com.cl.modules_home.viewmodel.BlackHomeViewModel
 import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.HomeDripPop
 import com.cl.modules_home.widget.HomeFanBottonPop
@@ -98,7 +99,7 @@ import kotlin.random.Random
 class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
 
     @Inject
-    lateinit var mViewMode: HomeViewModel
+    lateinit var mViewMode: BlackHomeViewModel
 
     // 是否是手动模式
     private val isManual by lazy {
@@ -560,9 +561,9 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                     }
 
                     // 植物信息数据显示
-                    binding.tvWeekDay.text = """
+                   /* binding.tvWeekDay.text = """
                                 Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
-                            """.trimIndent()
+                            """.trimIndent()*/
                 }
                 error { errorMsg, code ->
                     hideProgressLoading()

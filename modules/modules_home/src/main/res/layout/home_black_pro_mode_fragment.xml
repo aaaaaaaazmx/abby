@@ -8,7 +8,7 @@
 
         <variable
             name="viewModel"
-            type="com.cl.modules_home.viewmodel.HomeViewModel" />
+            type="com.cl.modules_home.viewmodel.BlackHomeViewModel" />
 
         <import type="android.view.View" />
     </data>
@@ -90,91 +90,354 @@
                     app:layout_constraintBottom_toBottomOf="@+id/iv_camera"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/iv_camera" />
+                
+                
+                
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                    android:id="@+id/cl_quan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/cl_grow"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="24dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:background="@mipmap/over"
+                        android:layout_width="180dp"
+                        android:layout_height="180dp">
+
+                        <TextView
+                            android:layout_marginTop="49dp"
+                            android:textStyle="bold"
+                            android:id="@+id/tv_grow_desc"
+                            android:textSize="10sp"
+                            android:textColor="#FED875"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Grow Chamber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_grow_unit"
+                            android:textColor="@color/white"
+                            android:text='@{viewModel.textCovert()}'
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_grow_desc"
+                            tools:text="Temperature (℉)"
+                            android:textSize="8sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_grow_value"
+                            tools:text="78"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_grow_unit"
+                            android:textColor="@color/white"
+                            android:textSize="35sp"
+                            android:text='@{String.valueOf(viewModel.temperatureConversionForTempForBlack(viewModel.getWenDu))}'
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_grow_value"
+                            android:textColor="@color/white"
+                            tools:text="（room 0）"
+                            android:text='@{String.valueOf(viewModel.temperatureConversionForRoomTempForBlack(viewModel.getWenDu))}'
+                            android:textSize="10sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginStart="17dp"
+                        android:id="@+id/cl_grow_chamber"
+                        app:layout_constraintTop_toBottomOf="@+id/cl_grow"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:background="@mipmap/over"
+                        android:layout_width="170dp"
+                        android:layout_height="170dp">
+
+                        <TextView
+                            android:layout_marginTop="49dp"
+                            android:textStyle="bold"
+                            android:id="@+id/tv_grow_chamber_desc"
+                            android:textSize="10sp"
+                            android:textColor="#FED875"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Grow Chamber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_grow_chamber_unit"
+                            android:textColor="@color/white"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber_desc"
+                            tools:text="Humidity (%)"
+                            android:text='Humidity (%)'
+                            android:textSize="8sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_grow_chamber_value"
+                            tools:text="78"
+                            android:text='@{String.valueOf(viewModel.getRoomHumidityForBlack(viewModel.getHumidity))}'
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber_unit"
+                            android:textColor="@color/white"
+                            android:textSize="25sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:text='@{String.valueOf(viewModel.getRoomHumidityForRoomBlack(viewModel.getHumidity))}'
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber_value"
+                            android:textColor="@color/white"
+                            tools:text="（room 0）"
+                            android:textSize="10sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginEnd="17dp"
+                        android:id="@+id/cl_water_chamber"
+                        app:layout_constraintTop_toBottomOf="@+id/cl_grow"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:background="@mipmap/over"
+                        android:layout_width="170dp"
+                        android:layout_height="170dp">
+
+                        <TextView
+                            android:layout_marginTop="49dp"
+                            android:textStyle="bold"
+                            android:id="@+id/tv_water_chamber_desc"
+                            android:textSize="10sp"
+                            android:textColor="#FED875"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:text="Water Tank"
+                            android:text="Water Tank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_water_chamber_unit"
+                            android:textColor="@color/white"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_water_chamber_desc"
+                            tools:text="Temperature (℉)"
+                            android:textSize="8sp"
+                            android:text='@{viewModel.textCovert()}'
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:id="@+id/tv_water_chamber_value"
+                            tools:text="78"
+                            android:text='@{String.valueOf(viewModel.temperatureConversion(viewModel.getWaterWenDu))}'
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_water_chamber_unit"
+                            android:textColor="@color/white"
+                            android:textSize="25sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                        <TextView
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_water_chamber_value"
+                            android:textColor="@color/white"
+                            tools:text="（room 0）"
+                            android:textSize="10sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                 <RelativeLayout
+                    android:layout_marginStart="17dp"
+                    android:layout_marginEnd="7dp"
                     android:id="@+id/rl_inch"
                     android:layout_width="0dp"
                     android:layout_height="64dp"
                     android:layout_marginTop="18dp"
-                    android:layout_marginEnd="40dp"
                     android:background="@drawable/background_black_r6"
-                    android:minWidth="144dp"
+                    android:minWidth="78dp"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/rl_period"
-                    app:layout_constraintRight_toLeftOf="@+id/rl_period"
-                    app:layout_constraintStart_toStartOf="@+id/tv_title"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_title">
+                    app:layout_constraintTop_toBottomOf="@+id/cl_quan">
 
                     <TextView
                         android:id="@+id/tv_inc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="13dp"
+                        android:gravity="center"
+                        android:layout_marginTop="5dp"
+                        tools:text="Plant Height "
+                        android:layout_centerHorizontal="true"
                         android:text='@{viewModel.incCovert()}'
                         android:textColor="#FDD875"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/iv_exclamation_mark"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
                         android:layout_alignParentRight="true"
-                        android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
-                        android:padding="5dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginStart="5dp"
                         android:src="@mipmap/home_exclamation_mark_black" />
 
                     <TextView
                         android:id="@+id/tv_plant_height"
+                        android:layout_centerHorizontal="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginBottom="15dp"
                         android:text='@{viewModel.formatIncPlant(viewModel.plantHeights)}'
                         android:textColor="@color/white"
-                        android:textSize="15sp"
+                        android:textSize="13sp"
                         tools:text="10.6" />
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:layout_marginEnd="7dp"
                     android:id="@+id/rl_period"
                     android:layout_width="0dp"
                     android:layout_height="64dp"
                     android:layout_marginTop="18dp"
-                    android:layout_marginEnd="16dp"
                     android:background="@drawable/background_black_r6"
-                    android:minWidth="144dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintLeft_toRightOf="@+id/rl_inch"
+                    android:minWidth="78dp"
+                    app:layout_constraintEnd_toStartOf="@id/rl_water_tank"
                     app:layout_constraintStart_toEndOf="@+id/rl_inch"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_title">
+                    app:layout_constraintTop_toBottomOf="@+id/cl_quan">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginTop="13dp"
+                        android:gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true"
                         android:text="Period"
                         android:textColor="#FDD875"
-                        android:textSize="12sp"
+                        android:textSize="10sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tv_week_day"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="15dp"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        tools:text="10.6" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_marginEnd="7dp"
+                    android:id="@+id/rl_water_tank"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/background_black_r6"
+                    android:minWidth="78dp"
+                    app:layout_constraintEnd_toStartOf="@+id/rl_light"
+                    app:layout_constraintStart_toEndOf="@+id/rl_period"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_quan">
+
+                    <TextView
+                        android:gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Water Tank
+Level"
+                        android:textColor="#FDD875"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:text="@{String.valueOf(viewModel.getWaterLevel)}"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="15dp"
+                        android:textColor="@color/white"
+                        android:textSize="13sp"
+                        tools:text="10.6" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_marginEnd="17dp"
+                    android:id="@+id/rl_light"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/background_black_r6"
+                    android:minWidth="78dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/rl_water_tank"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_quan">
+
+                    <TextView
+                        android:layout_marginTop="5dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Light"
+                        android:textColor="#FDD875"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:text='@{viewModel.doorStatus == "true" ? "DIM(Door Open)" : viewModel.getCurrentGrowLight == 0 ? "OFF" : "ON" }'
+                        android:layout_centerInParent="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_marginStart="10dp"
-                        android:layout_marginBottom="5dp"
+                        android:layout_marginBottom="15dp"
                         android:textColor="@color/white"
-                        android:textSize="15sp"
+                        android:textSize="13sp"
                         tools:text="10.6" />
                 </RelativeLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:visibility="gone"
                     android:id="@+id/cl_value_show"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -335,6 +598,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:visibility="gone"
                     android:id="@+id/cl_light"
                     android:layout_width="match_parent"
                     android:layout_height="54dp"
