@@ -118,7 +118,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             .maxHeight(dp2px(600f)).dismissOnTouchOutside(false)
             .asCustom(HomePlantDrainPop(context = this@SettingActivity, onNextAction = {
                 // 请求接口
-                mViewModel.advertising()
+                // 传递的数据为空
+                val intent = Intent(this@SettingActivity, BasePumpActivity::class.java)
+                myActivityLauncher.launch(intent)
             }))
     }
 
@@ -565,31 +567,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
                 loading {
                     hideProgressLoading()
-                }
-            })
-
-            // 换水获取图文
-            advertising.observe(this@SettingActivity, resourceObserver {
-                error { errorMsg, code ->
-                    hideProgressLoading()
-                    errorMsg?.let { ToastUtil.shortShow(it) }
-                }
-
-                loading { showProgressLoading() }
-
-                success {
-                    hideProgressLoading()
-                    // 跳转排水界面
-                    Handler().postDelayed({
-                        // 传递的数据为空
-                        val intent = Intent(this@SettingActivity, BasePumpActivity::class.java)
-                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
-                        myActivityLauncher.launch(intent)
-                    }, 50)
-
-                    /*data?.let { plantDrainNextCustomPop.setData(it) }
-                    pop.maxHeight(dp2px(700f))
-                        .asCustom(plantDrainNextCustomPop).show()*/
                 }
             })
         }

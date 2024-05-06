@@ -238,7 +238,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 换水任务
                     if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) { // 换水加载图文数据
-                        mViewModel.advertising()
+                        val intent = Intent(this@BasePopActivity, BasePumpActivity::class.java)
+                        intent.putExtra(KEY_TASK_ID, taskId)
+                        intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
+                        intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
+                        intent.putExtra(KEY_PACK_NO, packetNo)
+                        intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
+                        refreshActivityLauncher.launch(intent)
                         return
                     }
 
@@ -360,21 +366,6 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     override fun observe() {
         mViewModel.apply {
-            advertising.observe(this@BasePopActivity, resourceObserver {
-                success { // 跳转到换水页面
-                    android.os.Handler().postDelayed({ // 传递的数据为空
-                        val intent = Intent(this@BasePopActivity, BasePumpActivity::class.java)
-                        intent.putExtra(KEY_TASK_ID, taskId)
-                        intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
-                        intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
-                        intent.putExtra(KEY_PACK_NO, packetNo)
-                        intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
-                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
-                        refreshActivityLauncher.launch(intent)
-                    }, 50)
-                }
-            })
-
             // 延迟任务
             delayTask.observe(this@BasePopActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }

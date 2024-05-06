@@ -332,42 +332,6 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
     }
 
     /**
-     * 获取图文广告
-     */
-    private val _advertising = MutableLiveData<Resource<MutableList<AdvertisingData>>>()
-    val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
-    fun advertising(type: String? = "0") {
-        viewModelScope.launch {
-            repository.advertising(type ?: "0")
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _advertising.value = it
-                }
-        }
-    }
-
-    /**
      * 放弃种子检查
      */
     private val _giveUpCheck = MutableLiveData<Resource<GiveUpCheckData>>()

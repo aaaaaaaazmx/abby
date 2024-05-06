@@ -79,9 +79,9 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
     /**
      * 图文数据
      */
-    private val data by lazy {
+    /*private val data by lazy {
         intent?.extras?.getSerializable(KEY_DATA) as? MutableList<AdvertisingData>
-    }
+    }*/
 
     /**
      * 未读消息列表数据
@@ -235,7 +235,9 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
             override fun onOpen() {
             }
         })
-        initPumpWater()
+        mViewMode.advertising()
+        // 最长持有10分钟
+        mWakeLock?.acquire(10*60*1000L)
         initClick()
     }
 
@@ -353,17 +355,15 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
      */
     @SuppressLint("UseCompatLoadingForDrawables")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun initPumpWater() {
-        // 最长持有10分钟
-        mWakeLock?.acquire(10*60*1000L)
+    private fun initPumpWater(data: MutableList<AdvertisingData> ? = null) {
         if (data?.size != 0) {
             // 卡片布局需要展示3张，所以需要多添加几张
             if ((data?.size ?: 0) == 1) {
-                data?.get(0)?.let { data?.add(it) }
+                data?.get(0)?.let { data.add(it) }
             }
             if ((data?.size ?: 0) == 2) {
-                data?.get(0)?.let { data?.add(it) }
-                data?.get(1)?.let { data?.add(it) }
+                data?.get(0)?.let { data.add(it) }
+                data?.get(1)?.let { data.add(it) }
             }
             adapter.setList(data)
         }
@@ -698,6 +698,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         GSYVideoManager.onPause()
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun observe() {
         mViewMode.apply {
             // finishTask
@@ -759,11 +760,12 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                     data.let {
                         val current = mViewMode.updateCurrent.value
                         if (current == 1) {
+                            initPumpWater(it)
                             // 刷新数据
-                            adapter.setList(it)
+                            // adapter.setList(it)
                         } else {
                             // 追加数据
-                            it?.let { it1 -> adapter.addData(adapter.data.size, it1) }
+                            it.let { it1 -> adapter.addData(adapter.data.size, it1) }
                         }
                     }
                 }
