@@ -43,6 +43,8 @@ data class RichTextData(
                 "inputBox" -> KEY_TYPE_INPUT_BOX
                 "snooze" -> KEY_TYPE_DELAY_TASK
                 "intercom" -> KEY_TYPE_TXT
+                "usb_port_detail" -> KEY_TYPE_USB_PORT_DETAIL
+                "usb_port" -> KEY_TYPE_USB_PORT
                 else -> KEY_TYPE_BAR
             }
     }
@@ -77,6 +79,7 @@ data class RichTextData(
         var bold: Boolean? = false, // 字体是否加粗
         var bolds: MutableList<String>? = null,
         var articleId: String? = null, // 文章ID
+        var dynamicData: String? = null, // usb 按钮详情
     ) : BaseBean()
 
 
@@ -137,6 +140,12 @@ data class RichTextData(
 
         // 推迟延迟任务类型文案
         const val KEY_TYPE_DELAY_TASK = 19
+
+        // usb_port_detail
+        const val KEY_TYPE_USB_PORT_DETAIL = 20
+
+        // usb_port
+        const val KEY_TYPE_USB_PORT = 21
 
         // 自己创建的类型
         // 与商民的无关

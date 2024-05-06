@@ -1,7 +1,12 @@
 package com.cl.common_base.adapter
 
+import android.os.Build
 import android.text.Html
 import android.text.Spanned
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.text.toSpannable
 import androidx.databinding.DataBindingUtil
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
@@ -10,9 +15,12 @@ import com.cl.common_base.R
 import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.databinding.*
-import com.cl.common_base.video.videoUiHelp
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.video.SampleCoverVideo
+import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.widget.FeatureTitleBar
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -25,6 +33,8 @@ import java.util.regex.Pattern
 class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
     BaseMultiItemQuickAdapter<RichTextData.Page, BaseViewHolder>(data) {
 
+    // 选中的usbId
+    var selectedUsbId: String? = null
     init {
         addItemType(RichTextData.KEY_TYPE_BAR, R.layout.home_bar_item)  // activity、页面的标题
         addItemType(RichTextData.KEY_TYPE_TITLE, R.layout.home_title_item)
@@ -50,12 +60,32 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         addItemType(RichTextData.KEY_TYPE_CHECK_BOX, R.layout.home_item_chexk_box)
         addItemType(RichTextData.KEY_TYPE_INPUT_BOX, R.layout.home_item_input_box)
         addItemType(RichTextData.KEY_TYPE_DELAY_TASK, R.layout.home_item_delay_task)
+        addItemType(RichTextData.KEY_TYPE_USB_PORT, R.layout.home_item_usb_port)
+        addItemType(RichTextData.KEY_TYPE_USB_PORT_DETAIL, R.layout.home_item_usb_port_detail)
         /*addItemType(RichTextData.KEY_TYPE_PAGE_TXT, R.layout.home_itme_page_txt)*/
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         when (holder.itemViewType) {
+            RichTextData.KEY_TYPE_USB_PORT_DETAIL -> {
+                val binding = DataBindingUtil.bind<HomeItemUsbPortDetailBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
+            RichTextData.KEY_TYPE_USB_PORT -> {
+                val binding = DataBindingUtil.bind<HomeItemUsbPortBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
             RichTextData.KEY_TYPE_BAR -> {
                 val binding = DataBindingUtil.bind<HomeBarItemBinding>(holder.itemView)
                 if (binding != null) {
@@ -197,6 +227,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun convert(helper: BaseViewHolder, item: RichTextData.Page) {
         // 获取 Binding
         //        val binding: HomeFinishGuideItemBinding? = helper.getBinding()
@@ -206,6 +237,45 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         //        }
 
         when (helper.itemViewType) {
+            RichTextData.KEY_TYPE_USB_PORT -> {
+                val rlOne: RelativeLayout = helper.getView(R.id.rl_one)
+                val usbOneFrame: FrameLayout = helper.getView(R.id.usb_one_frame)
+
+                val rlTwo: RelativeLayout = helper.getView(R.id.rl_two)
+                val usbTwoFrame: FrameLayout = helper.getView(R.id.usb_two_frame)
+
+                val rlThree: RelativeLayout = helper.getView(R.id.rl_three)
+                val usbThreeFrame: FrameLayout = helper.getView(R.id.usb_th_frame)
+
+                item.value?.dynamicData?.let {
+                    val usbDataList = parseUsbData(it)
+
+                    // Apply background and click listeners based on conditions
+                    // Apply background and click listeners based on conditions
+                    for (data in usbDataList) {
+                        when (data.usbId) {
+                            "1" -> {
+                                applyBackground(data, rlOne, usbOneFrame)
+                                rlOne.setOnClickListener { view -> handleClick(usbDataList, data, rlOne, rlTwo, rlThree, usbOneFrame, usbTwoFrame, usbThreeFrame) }
+                            }
+
+                            "2" -> {
+                                applyBackground(data, rlTwo, usbTwoFrame)
+                                rlTwo.setOnClickListener { view -> handleClick(usbDataList, data, rlOne, rlTwo, rlThree, usbOneFrame, usbTwoFrame, usbThreeFrame) }
+                            }
+
+                            "3" -> {
+                                applyBackground(data, rlThree, usbThreeFrame)
+                                rlThree.setOnClickListener { view -> handleClick(usbDataList, data, rlOne, rlTwo, rlThree, usbOneFrame, usbTwoFrame, usbThreeFrame) }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
+
             RichTextData.KEY_TYPE_BAR -> {
                 val tvTitle =
                     helper.itemView.findViewById<FeatureTitleBar>(com.cl.common_base.R.id.title)
@@ -253,7 +323,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
             //                        val widthProportion = width.toInt().div(height.toInt())
             //                        val heightProportion = height.toInt().div(width.toInt())
             //
-            //                        val ivImg = helper.itemView.findViewById<ImageView>(com.cl.common_base.R.id.iv_pic)
+            //                        val ivImg = helper.itemView.helper.getView<ImageView>(com.cl.common_base.R.id.iv_pic)
             //                        val layoutParams = ivImg.layoutParams
             //                        layoutParams.height = heightProportion * AppUtil.getWindowHeight()
             //                        // layoutParams.width = -1
@@ -346,6 +416,90 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
             allSatisfyStr.add(matcher.group())
         }
         return allSatisfyStr
+    }
+
+    data class ButtonState(var bind: Boolean, val disable: Boolean, val usbId: String, var select: Boolean)
+    fun parseUsbData(jsonData: String): List<ButtonState> {
+        val jsonArray = org.json.JSONArray(jsonData)
+        val buttonStates = mutableListOf<ButtonState>()
+
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val bind = jsonObject.getBoolean("bind")
+            val disable = jsonObject.getBoolean("disable")
+            val usbId = jsonObject.getString("usbId")
+            buttonStates.add(ButtonState(bind, disable, usbId, false))
+        }
+
+        return buttonStates
+    }
+
+    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
+    private fun applyBackground(data: ButtonState, relativeLayout: RelativeLayout, frameLayout: FrameLayout) {
+        // 是否显示被禁用的。
+        ViewUtils.setInvisible(relativeLayout, data.disable)
+
+        // Set FrameLayout background based on bind and disable state
+        if (data.bind) {
+            relativeLayout.setBackgroundResource(R.drawable.background_usb_un_bind_bg_r5)
+            frameLayout.setBackgroundResource(R.drawable.background_button_usb_uncheck_r180)
+            frameLayout.alpha = 0.5f
+        } else {
+            relativeLayout.setBackgroundResource(R.drawable.background_usb_bg_r5)
+            if (data.select) {
+                frameLayout.setBackgroundResource(R.drawable.background_button_usb_check_r180)
+                frameLayout.alpha = 1.0f
+            } else {
+                frameLayout.setBackgroundResource(R.drawable.background_button_usb_uncheck_r180)
+                frameLayout.alpha = 1.0f
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
+    private fun handleClick(
+        usbDataList: List<ButtonState>,
+        clickedData: ButtonState,
+        rlOne: RelativeLayout,
+        rlTwo: RelativeLayout,
+        rlThree: RelativeLayout,
+        usbOneFrame: FrameLayout,
+        usbTwoFrame: FrameLayout,
+        usbThreeFrame: FrameLayout
+    ) {
+        if (clickedData.disable) {
+            // USB is disabled, show a toast message
+            Toast.makeText(context, "USB ${clickedData.usbId} is disabled", Toast.LENGTH_SHORT).show()
+        } else {
+            // Toggle the bind state
+            clickedData.select = !clickedData.select
+            selectedUsbId = if (clickedData.select) clickedData.usbId else null
+
+            // Update the UI for all USBs
+            usbDataList.forEach { data ->
+                when (data.usbId) {
+                    "1" -> applyBackground(data, rlOne, usbOneFrame)
+                    "2" -> applyBackground(data, rlTwo, usbTwoFrame)
+                    "3" -> applyBackground(data, rlThree, usbThreeFrame)
+                }
+            }
+
+            /*val toastMessage = if (clickedData.select) {
+                "USB ${clickedData.usbId} is now bound"
+            } else {
+                "USB ${clickedData.usbId} is now unbound"
+            }
+
+            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()*/
+
+            if (clickedData.bind) {
+                xpopup(context) {
+                    dismissOnTouchOutside(true)
+                    isDestroyOnDismiss(false)
+                    asCustom(BaseCenterPop(context, content = "The USB port #${clickedData.usbId} has been occupied. If you need to use it, please remove the smart add-on first from the settings.", isShowCancelButton = false, confirmText = "OK")).show()
+                }
+            }
+        }
     }
 
 

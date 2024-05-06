@@ -45,6 +45,7 @@ import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.UsbDetailPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -427,9 +428,37 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     }
                     // 新增配件
                     Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES -> {
-                        letMultiple(accessoryId, deviceId) { a, b ->
-                            // 新增配件接口
-                            mViewMode.addAccessory(a, b)
+                        // Retrieve the data for usb_port and check for available USB ports
+                        val usbData = mViewMode.richText.value?.data?.page
+                            ?.firstOrNull { it.type == "usb_port" }
+                            ?.value?.dynamicData
+
+                        if (!usbData.isNullOrEmpty()) {
+                            val usbDataList = adapter.parseUsbData(usbData)
+
+                            // Check if any USB port is bound (true) or unbound (false)
+                            if (usbDataList.any { usb -> !usb.select }) {
+                                // Check if `selectedUsbId` is not null (meaning a USB is selected)
+                                val selectedUsbId = adapter.selectedUsbId // Retrieve the selected USB ID (example: from SharedPreferences)
+
+                                if (selectedUsbId == null) {
+                                    ToastUtil.show("No usb selected")
+                                } else {
+                                    logI("1232132: $selectedUsbId")
+                                    // Perform accessory addition logic
+                                    letMultiple(accessoryId, deviceId) { a, b ->
+                                        // Add accessory API call
+                                        mViewMode.addAccessory(a, b, usbId = selectedUsbId)
+                                    }
+                                }
+                            } else {
+                                ToastUtil.shortShow("No available usb port")
+                            }
+                        } else {
+                            letMultiple(accessoryId, deviceId) { a, b ->
+                                // 新增配件接口
+                                mViewMode.addAccessory(a, b)
+                            }
                         }
                     }
 
@@ -764,6 +793,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 R.id.tv_page_txt,
                 R.id.tv_txt,
                 R.id.tv_delay_task,
+                R.id.tv_usb_detail,
             )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
@@ -855,6 +885,14 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     R.id.tv_delay_task -> {
                         // 应该是传过来的taskId
                         mViewMode.delayTask(SnoozeReq(taskId = taskId, taskNo = taskNo))
+                    }
+
+                    R.id.tv_usb_detail -> {
+                        xpopup(this@KnowMoreActivity) {
+                            isDestroyOnDismiss(false)
+                            dismissOnTouchOutside(true)
+                            asCustom(UsbDetailPop(this@KnowMoreActivity)).show()
+                        }
                     }
                 }
             }
