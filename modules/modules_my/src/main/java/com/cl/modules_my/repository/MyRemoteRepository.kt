@@ -164,9 +164,10 @@ class MyRemoteRepository @Inject constructor() {
     fun statusSwitch(
         accessoryId: String,
         deviceId: String,
-        status: String
+        status: String,
+        usbPort: String? = null,
     ): Flow<HttpResult<BaseBean>> {
-        return service.statusSwitch(accessoryId, deviceId, status)
+        return service.statusSwitch(accessoryId, deviceId, status, usbPort)
     }
 
     fun openAutomation(req: OpenAutomationReq): Flow<HttpResult<BaseBean>> {

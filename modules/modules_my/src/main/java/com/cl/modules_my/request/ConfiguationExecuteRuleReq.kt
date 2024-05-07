@@ -12,5 +12,6 @@ data class ConfiguationExecuteRuleReq(
     val status: Int? = null,
     val portId: String? = null,
     val thenDescribe: String? = null,
+    val usbPort: String? = null,
     val list: MutableList<GetAutomationRuleBean.AutomationRuleListBean>? = null,
 ): BaseBean()

@@ -102,7 +102,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     accessoryId = a,
                     automationId = automationId,
                     deviceId = b,
-                    status = if (isCheck) 1 else 0
+                    status = if (isCheck) 1 else 0,
+                    usbPort = mViewModel.setUsbPort.value
                 )
                 mViewModel.automationSwitch(req)
             }
@@ -247,6 +248,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
+                    // 设置usbPort
+                    setUsbPort(data?.usbPort)
                     data?.image?.let {
                         val requestOptions = RequestOptions()
                         requestOptions.placeholder(R.mipmap.placeholder)
@@ -305,7 +308,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     override fun initData() {
         binding.ftCheck.setSwitchCheckedChangeListener { _, isChecked ->
             letMultiple(accessoryId, deviceId) { a, b ->
-                mViewModel.getAccessoryStatus(a, b, if (isChecked) "1" else "0")
+                mViewModel.getAccessoryStatus(a, b, if (isChecked) "1" else "0", mViewModel.setUsbPort.value)
             }
         }
 
@@ -370,7 +373,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                     accessoryId = accessoryId,
                                     status = 0,
                                     automationId = "${isDefault.automationId}",
-                                    deviceId = deviceId
+                                    deviceId = deviceId,
+                                    usbPort = mViewModel.setUsbPort.value
                                 )
                                 mViewModel.automationSwitch(req)
                                 // 重新获取一次
@@ -390,6 +394,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                 intent.putExtra("portId", portId)
                                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                 intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
+                                intent.putExtra(BasePopActivity.KEY_USB_PORT, mViewModel.setUsbPort.value)
                                 startActivity(intent)
                             })
                     ).show()
@@ -400,6 +405,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 intent.putExtra("portId", portId)
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                 intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
+                intent.putExtra(BasePopActivity.KEY_USB_PORT, mViewModel.setUsbPort.value)
                 startActivity(intent)
             }
         }
@@ -407,15 +413,6 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
         adapter.addChildClickViewIds(com.cl.modules_my.R.id.iv_edit)
         adapter.setOnItemChildClickListener { _, view, position ->
             when (view.id) {
-                /* R.id.cl_root -> {
-                     //  跳转到自定义规则详情界面
-                     val intent = Intent(this@DeviceAutomationActivity, AddAutomationActivity::class.java)
-                     intent.putExtra("portId", portId)
-                     intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
-                     intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
-                     startActivity(intent)
-                 }*/
-
                 com.cl.modules_my.R.id.iv_edit -> {
                     // 居中显示
                     XPopup.Builder(this@DeviceAutomationActivity)
@@ -438,6 +435,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                     intent.putExtra("portId", portId)
                                     intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                     intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
+                                    intent.putExtra(BasePopActivity.KEY_USB_PORT, mViewModel.setUsbPort.value)
                                     intent.putExtra(
                                         BasePopActivity.KEY_AUTOMATION_ID,
                                         "${adapter.data[position].automationId}"

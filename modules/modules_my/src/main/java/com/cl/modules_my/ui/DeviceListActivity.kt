@@ -48,9 +48,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     private val adapter by lazy {
-        DeviceListAdapter(mutableListOf(), switchListener = { accessoryId, deviceId, isChooser ->
+        DeviceListAdapter(mutableListOf(), switchListener = { accessoryId, deviceId, isChooser, usbPort ->
             // 选择设备开关
-            mViewModel.setDeviceStatus(accessoryId, deviceId, if (isChooser) "1" else "0")
+            mViewModel.setDeviceStatus(accessoryId, deviceId, if (isChooser) "1" else "0", usbPort)
         }, luoSiListener = { accessoryData, accessListBean ->
             // 这是配件点击设置逻辑
             // camera跳转到专属页面

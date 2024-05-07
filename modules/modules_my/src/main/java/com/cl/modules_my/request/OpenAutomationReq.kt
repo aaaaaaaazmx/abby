@@ -7,4 +7,5 @@ data class OpenAutomationReq(
     val status: Int? = null,
     val automationId: String? = null,
     val deviceId: String? = null,
+    val usbPort: String? = null,
 ): BaseBean()

@@ -66,6 +66,13 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
         intent.getStringExtra(BasePopActivity.KEY_AUTOMATION_ID)
     }
 
+    /**
+     * usbPort
+     */
+    private val usbPort by lazy {
+        intent.getStringExtra(BasePopActivity.KEY_USB_PORT)
+    }
+
     override fun initView() {
         // 获取自动化信息。
         mViewModel.getAutomationInfo(automationId ?: "", accessoryId)
@@ -420,6 +427,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     accessoryId = accessoryId,
                     accessoryName = automationName,
                     automationId = automationId,
+                    usbPort = usbPort,
                     deviceId = deviceId,
                     portId = portId,
                     status = if (binding.tvThenType.text == "Turn On") 1 else 0,

@@ -740,6 +740,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         // 配件ID
         const val KEY_PART_ID = "key_part_id"
 
+        // usbPort
+        const val KEY_USB_PORT = "key_usb_port"
+
         // 自动化Id
         const val KEY_AUTOMATION_ID = "key_auto_id"
 

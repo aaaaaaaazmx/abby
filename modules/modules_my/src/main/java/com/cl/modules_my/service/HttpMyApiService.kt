@@ -285,7 +285,8 @@ interface HttpMyApiService {
     fun statusSwitch(
         @Field("accessoryId") accessoryId: String,
         @Field("deviceId") deviceId: String,
-        @Field("status") status: String
+        @Field("status") status: String,
+        @Field("usbPort") portId: String? = null,
     ): Flow<HttpResult<BaseBean>>
 
     /**

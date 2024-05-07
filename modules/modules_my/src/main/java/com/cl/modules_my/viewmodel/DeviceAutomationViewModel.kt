@@ -161,9 +161,9 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
      */
     private val _accessoryStatus = MutableLiveData<Resource<BaseBean>>()
     val accessoryStatus: LiveData<Resource<BaseBean>> = _accessoryStatus
-    fun getAccessoryStatus(accessoryId: String, deviceId: String, status: String) {
+    fun getAccessoryStatus(accessoryId: String, deviceId: String, status: String, usbPort: String? = null) {
         viewModelScope.launch {
-            repository.statusSwitch(accessoryId, deviceId, status)
+            repository.statusSwitch(accessoryId, deviceId, status, usbPort)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -190,6 +190,13 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
                     _accessoryStatus.value = it
                 }
         }
+    }
+
+    // 设置usbPort
+    private val _setUsbPort = MutableLiveData<String?>()
+    val setUsbPort: LiveData<String?> = _setUsbPort
+    fun setUsbPort(usbPort: String? = null) {
+        _setUsbPort.value = usbPort
     }
 
     /**
