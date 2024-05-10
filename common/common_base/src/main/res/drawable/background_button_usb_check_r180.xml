@@ -3,9 +3,9 @@
     android:shape="oval">
 
     <!-- Set the size of the circle -->
-    <size
+    <!--<size
         android:width="100dp"
-        android:height="100dp" />
+        android:height="100dp" />-->
 
     <!-- Set the color of the circle -->
     <solid android:color="#006241" />

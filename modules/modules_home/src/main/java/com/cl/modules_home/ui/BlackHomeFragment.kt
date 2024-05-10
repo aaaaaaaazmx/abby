@@ -561,9 +561,9 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                     }
 
                     // 植物信息数据显示
-                   /* binding.tvWeekDay.text = """
+                    binding.tvWeekDay.text = """
                                 Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
-                            """.trimIndent()*/
+                            """.trimIndent()
                 }
                 error { errorMsg, code ->
                     hideProgressLoading()

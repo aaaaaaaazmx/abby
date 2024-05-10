@@ -2008,13 +2008,13 @@ class BlackHomeViewModel @Inject constructor(private val repository: HomeReposit
     fun getRoomHumidityForBlack(humidity: Int?): String {
         val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
         val roomHumidity = data?.envirVO?.roomHumiture
-        return if (roomHumidity.isNullOrEmpty()) "$humidity" else "$humidity (Room $roomHumidity)"
+        return if (roomHumidity.isNullOrEmpty()) "$humidity" else "$humidity"
     }
 
     fun getRoomHumidityForRoomBlack(humidity: Int?): String {
         val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
         val roomHumidity = data?.envirVO?.roomHumiture
-        return "(Room $roomHumidity)"
+        return if (roomHumidity != "0") "(Room $roomHumidity)" else ""
     }
 
     fun textCovert(): String {

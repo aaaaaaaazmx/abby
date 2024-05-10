@@ -2311,7 +2311,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             // 是否显示rlInch
                             ViewUtils.setVisible(
-                                device.deviceType == "OG",
+                                device.deviceType == "OG" || device.deviceType == "OG_black",
                                 binding.plantManual.rlInch
                             )
                         }
@@ -3693,7 +3693,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 // 在种子阶段，是不能点击的。
                                 if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
                                 if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
-                                if (listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.deviceType != "OG") return@setQuickClickListener
+                                val currentDevice = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+                                if ((currentDevice?.deviceType != "OG") || (currentDevice?.deviceType != "OG_black")) return@setQuickClickListener
 
                                 // 隐藏氧气币，和气泡
                                 ViewUtils.setGone(binding.pplantNinth.clContinue, binding.pplantNinth.waterView)

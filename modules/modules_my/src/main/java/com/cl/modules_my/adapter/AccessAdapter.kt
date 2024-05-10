@@ -15,7 +15,7 @@ import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyAccessItemBinding
 
-class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChooser: Boolean, private val switchListener: ((accessoryId: String, isCheck: Boolean, usbPort: String?) -> Unit)? = null) :
+class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChooser: Boolean, private val switchListener: ((accessoryId: String, isCheck: Boolean, usbPort: String?) -> Unit)? = null, val deviceType: String? = null) :
     BaseQuickAdapter<ListDeviceBean.AccessoryList, BaseDataBindingHolder<MyAccessItemBinding>>(R.layout.my_access_item, data) {
     val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
 
@@ -23,6 +23,7 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
         holder.dataBinding?.apply {
             isChooser = this@AccessAdapter.isChooser
             datas = item
+            deviceType = deviceType
             executePendingBindings()
         }
 

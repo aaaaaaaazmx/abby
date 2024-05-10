@@ -118,7 +118,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Grow Chamber"
+                            android:text="Grow Chamber"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -160,13 +160,15 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        app:layout_constraintEnd_toStartOf="@+id/cl_water_chamber"
                         android:layout_marginStart="17dp"
                         android:id="@+id/cl_grow_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/cl_grow"
                         app:layout_constraintStart_toStartOf="parent"
                         android:background="@mipmap/over"
-                        android:layout_width="170dp"
-                        android:layout_height="170dp">
+                        android:layout_width="0dp"
+                        android:minHeight="150dp"
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:layout_marginTop="49dp"
@@ -177,7 +179,7 @@
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Grow Chamber"
+                            android:text="Grow Chamber"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
 
@@ -219,13 +221,16 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginStart="10dp"
                         android:layout_marginEnd="17dp"
+                        app:layout_constraintStart_toEndOf="@+id/cl_grow_chamber"
                         android:id="@+id/cl_water_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/cl_grow"
                         app:layout_constraintEnd_toEndOf="parent"
                         android:background="@mipmap/over"
-                        android:layout_width="170dp"
-                        android:layout_height="170dp">
+                        android:layout_width="0dp"
+                        android:minHeight="150dp"
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:layout_marginTop="49dp"
@@ -305,15 +310,15 @@
                         android:layout_centerHorizontal="true"
                         android:text='@{viewModel.incCovert()}'
                         android:textColor="#FDD875"
-                        android:textSize="10sp"
+                        android:textSize="8sp"
                         android:textStyle="bold" />
 
                     <ImageView
+                        android:layout_toRightOf="@+id/tv_inc"
                         android:id="@+id/iv_exclamation_mark"
                         android:layout_width="8dp"
                         android:layout_height="8dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginEnd="10dp"
+                        android:layout_marginEnd="5dp"
                         android:layout_marginTop="3dp"
                         android:layout_marginStart="5dp"
                         android:src="@mipmap/home_exclamation_mark_black" />
@@ -327,7 +332,7 @@
                         android:layout_marginBottom="15dp"
                         android:text='@{viewModel.formatIncPlant(viewModel.plantHeights)}'
                         android:textColor="@color/white"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
                         tools:text="10.6" />
                 </RelativeLayout>
 
@@ -351,17 +356,18 @@
                         android:layout_centerHorizontal="true"
                         android:text="Period"
                         android:textColor="#FDD875"
-                        android:textSize="10sp"
+                        android:textSize="8sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_week_day"
                         android:layout_centerHorizontal="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="15dp"
                         android:textColor="@color/white"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
                         tools:text="10.6" />
                 </RelativeLayout>
 
@@ -386,7 +392,7 @@
                         android:text="Water Tank
 Level"
                         android:textColor="#FDD875"
-                        android:textSize="10sp"
+                        android:textSize="8sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -397,7 +403,7 @@ Level"
                         android:layout_alignParentBottom="true"
                         android:layout_marginBottom="15dp"
                         android:textColor="@color/white"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
                         tools:text="10.6" />
                 </RelativeLayout>
 
@@ -420,7 +426,7 @@ Level"
                         android:layout_height="wrap_content"
                         android:text="Light"
                         android:textColor="#FDD875"
-                        android:textSize="10sp"
+                        android:textSize="8sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -432,7 +438,7 @@ Level"
                         android:layout_marginStart="10dp"
                         android:layout_marginBottom="15dp"
                         android:textColor="@color/white"
-                        android:textSize="13sp"
+                        android:textSize="11sp"
                         tools:text="10.6" />
                 </RelativeLayout>
 
