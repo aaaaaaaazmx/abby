@@ -539,6 +539,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             .getInstance()
                             .build(RouterPath.My.PAGE_ADD_ACCESSORY)
                             .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                            .withString("deviceType", mViewMode.userDetail.value?.data?.deviceType)
                             .withSerializable(
                                 "accessoryList",
                                 it.accessoryList as Serializable?
@@ -935,6 +936,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         it.accessoryList as Serializable?
                                     )
                                     .withString("spaceType", it.spaceType)
+                                    .withString("deviceType", mViewMode.userDetail.value?.data?.deviceType)
                                     .navigation(context)
                             }
                     }

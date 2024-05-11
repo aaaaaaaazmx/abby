@@ -468,6 +468,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     intent.putExtra("deviceId", deviceBean?.deviceId)
                     intent.putExtra("accessoryList", deviceBean?.accessoryList as? Serializable)
                     intent.putExtra("spaceType", deviceBean?.spaceType)
+                    intent.putExtra("deviceType", deviceBean?.deviceType)
                     startActivity(intent)
                 }
 
