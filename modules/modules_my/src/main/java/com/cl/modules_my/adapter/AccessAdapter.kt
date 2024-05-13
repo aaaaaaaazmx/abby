@@ -15,7 +15,7 @@ import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyAccessItemBinding
 
-class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChooser: Boolean, private val switchListener: ((accessoryId: String, isCheck: Boolean) -> Unit)? = null) :
+class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChooser: Boolean, private val switchListener: ((accessoryId: String, isCheck: Boolean, usbPort: String?) -> Unit)? = null, val deviceType: String? = null) :
     BaseQuickAdapter<ListDeviceBean.AccessoryList, BaseDataBindingHolder<MyAccessItemBinding>>(R.layout.my_access_item, data) {
     val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
 
@@ -23,8 +23,11 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
         holder.dataBinding?.apply {
             isChooser = this@AccessAdapter.isChooser
             datas = item
+            deviceType = deviceType
             executePendingBindings()
         }
+        // 是否显示和隐藏这个usb数字。
+        holder.setVisible(R.id.rl_one, deviceType == "OG_black")
 
         val pairData = item
         val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN)
@@ -34,7 +37,7 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
         // 配件的相关事件
         checkView.apply {
             setSwitchCheckedChangeListener { _, isChecked ->
-                switchListener?.invoke(pairData.accessoryId.toString(), isChecked)
+                switchListener?.invoke(pairData.accessoryId.toString(), isChecked, pairData.usbPort)
             }
         }
         // 显示checkView & textView

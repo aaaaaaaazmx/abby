@@ -35,6 +35,12 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".web.VideoPLayActivity"
+            android:configChanges="orientation|screenSize"
+            android:hardwareAccelerated="true"
+            android:launchMode="singleTop" />
+
         <service android:name=".listener.TuYaDeviceUpdateReceiver" />
 
     </application>

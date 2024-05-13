@@ -71,9 +71,9 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
      */
     private val _deviceStatus = MutableLiveData<Resource<BaseBean>>()
     val deviceStatus: LiveData<Resource<BaseBean>> = _deviceStatus
-    fun setDeviceStatus(accessoryId: String, deviceId: String, status: String) {
+    fun setDeviceStatus(accessoryId: String, deviceId: String, status: String, usbPort: String? = null) {
         viewModelScope.launch {
-            repository.statusSwitch(accessoryId, deviceId, status)
+            repository.statusSwitch(accessoryId, deviceId, status, usbPort)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

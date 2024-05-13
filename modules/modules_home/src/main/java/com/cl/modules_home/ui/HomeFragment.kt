@@ -67,6 +67,8 @@ import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.util.span.appendClickable
+import com.cl.common_base.web.VideoPLayActivity
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.common_base.widget.waterview.bean.Water
 import com.cl.common_base.widget.waterview.widget.WaterView
@@ -524,6 +526,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
 
+            // 点击live直接打开直播
+            ivLive.setSafeOnClickListener {
+                startToVideoPlay()
+            }
+
             ivZpCamera.setOnClickListener {
                 // 跳转到配件
                 mViewMode.listDevice.value?.data?.firstOrNull { it.deviceId == mViewMode.userDetail.value?.data?.deviceId }
@@ -532,6 +539,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             .getInstance()
                             .build(RouterPath.My.PAGE_ADD_ACCESSORY)
                             .withString("deviceId", mViewMode.userDetail.value?.data?.deviceId)
+                            .withString("deviceType", mViewMode.userDetail.value?.data?.deviceType)
                             .withSerializable(
                                 "accessoryList",
                                 it.accessoryList as Serializable?
@@ -928,6 +936,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         it.accessoryList as Serializable?
                                     )
                                     .withString("spaceType", it.spaceType)
+                                    .withString("deviceType", mViewMode.userDetail.value?.data?.deviceType)
                                     .navigation(context)
                             }
                     }
@@ -953,6 +962,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            ivLive.setSafeOnClickListener {
+                startToVideoPlay()
+            }
+
             ivChart.setSafeOnClickListener {
                 context?.let {
                     it.startActivity(Intent(it, PeriodActivity::class.java))
@@ -1623,39 +1636,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         }
     }
 
-    /**
-     *  继承弹窗
-     *  暂时不需要
-     */
-    //    private val plantExtendPop by lazy {
-    //        XPopup.Builder(context)
-    //            .isDestroyOnDismiss(false)
-    //            .enableDrag(false)
-    //            .maxHeight(dp2px(600f))
-    //            .dismissOnTouchOutside(false)
-    //            .asCustom(context?.let {
-    //                HomePlantExtendPop(
-    //                    context = it,
-    //                    onNextAction = { status ->
-    //                        when (status) {
-    //                            HomePlantExtendPop.KEY_NEW_PLANT -> {
-    //                                ViewUtils.setGone(binding.plantExtendBg.root)
-    //                                ViewUtils.setVisible(binding.plantFirst.root)
-    //                            }
-    //                            HomePlantExtendPop.KEY_EXTEND -> {
-    //                                // 直接跳转到种植界面
-    //                                ViewUtils.setGone(binding.plantExtendBg.root)
-    //                                ViewUtils.setGone(binding.plantFirst.root)
-    //                                ViewUtils.setVisible(binding.pplantNinth.root)
-    //                                ViewUtils.setGone(binding.pplantNinth.clContinue)
-    //                                // mViewMode.startRunning(null, true)
-    //                            }
-    //                        }
-    //                    }
-    //                )
-    //            })
-    //    }
-
 
     // 升级弹窗
     private val updatePop by lazy {
@@ -1746,7 +1726,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let {
             HomePlantDrainPop(context = it, onNextAction = {
                 // 请求接口
-                mViewMode.advertising()
+                // mViewMode.advertising()
+                // 传递的数据为空
+                val intent = Intent(it, BasePumpActivity::class.java)
+                intent.putExtra(
+                    BasePumpActivity.KEY_UNREAD_MESSAGE_DATA,
+                    mViewMode.getUnreadMessageList() as? Serializable
+                )
+                myActivityLauncher.launch(intent)
             }, onCancelAction = {
 
             }, onTvSkipAddWaterAction = {
@@ -2326,7 +2313,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             // 是否显示rlInch
                             ViewUtils.setVisible(
-                                device.deviceType == "OG",
+                                device.deviceType == "OG" || device.deviceType == "OG_black",
                                 binding.plantManual.rlInch
                             )
                         }
@@ -3706,27 +3693,30 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 植物的点击弹出植物高度。
                             binding.pplantNinth.ivBowl.setQuickClickListener {
                                 // 在种子阶段，是不能点击的。
-                                if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
+                                 if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
                                 if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
-                                if (listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.deviceType != "OG") return@setQuickClickListener
+                                val currentDevice = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
+                                if ((currentDevice?.deviceType == "OG") || (currentDevice?.deviceType == "OG_black")) {
+                                    // 隐藏氧气币，和气泡
+                                    ViewUtils.setGone(binding.pplantNinth.clContinue, binding.pplantNinth.waterView)
 
-                                // 隐藏氧气币，和气泡
-                                ViewUtils.setGone(binding.pplantNinth.clContinue, binding.pplantNinth.waterView)
+                                    // 植物高度。
+                                    binding.pplantNinth.tvPlantHeight.text = formatIncPlant(mViewMode.plantHeights.value)
 
-                                // 植物高度。
-                                binding.pplantNinth.tvPlantHeight.text = formatIncPlant(mViewMode.plantHeights.value)
+                                    // 开始若隐若现动画
+                                    startFadeInOutAnimation(binding.pplantNinth.clPlantHeight, 5000) // 500ms为动画周期，可根据需求调整
 
-                                // 开始若隐若现动画
-                                startFadeInOutAnimation(binding.pplantNinth.clPlantHeight, 5000) // 500ms为动画周期，可根据需求调整
-
-                                // 设置5秒后执行的操作
-                                binding.pplantNinth.clPlantHeight.postDelayed({
-                                    // 停止动画并隐藏View
-                                    stopFadeInOutAnimation(binding.pplantNinth.clPlantHeight)
-                                    ViewUtils.setVisible((unreadMessageList.value?.size ?: 0) > 0, binding.pplantNinth.clContinue)
-                                    ViewUtils.setVisible((getOxygenCoinList.value?.data?.size ?: 0) > 0, binding.pplantNinth.waterView)
-                                }, 5000) // 5秒后执行
+                                    // 设置5秒后执行的操作
+                                    binding.pplantNinth.clPlantHeight.postDelayed({
+                                        // 停止动画并隐藏View
+                                        stopFadeInOutAnimation(binding.pplantNinth.clPlantHeight)
+                                        ViewUtils.setVisible((unreadMessageList.value?.size ?: 0) > 0, binding.pplantNinth.clContinue)
+                                        ViewUtils.setVisible((getOxygenCoinList.value?.data?.size ?: 0) > 0, binding.pplantNinth.waterView)
+                                    }, 5000) // 5秒后执行
+                                }
                             }
+
+
                         }
 
 
@@ -3757,72 +3747,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         mViewMode.checkPlant()
                     }
                     /*errorMsg?.let { ToastUtil.shortShow(it) }*/
-                }
-            })
-
-            // 获取排水的图文广告
-            advertising.observe(viewLifecycleOwner, resourceObserver {
-                error { errorMsg, _ ->
-                    errorMsg?.let { ToastUtil.shortShow(it) }
-                }
-
-                success {
-                    context?.let {
-                        android.os.Handler().postDelayed({
-                            // 传递的数据为空
-                            val intent = Intent(it, BasePumpActivity::class.java)
-                            intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
-                            intent.putExtra(
-                                BasePumpActivity.KEY_UNREAD_MESSAGE_DATA,
-                                mViewMode.getUnreadMessageList() as? Serializable
-                            )
-                            myActivityLauncher.launch(intent)
-                        }, 50)
-                        /*XPopup.Builder(context)
-                            .enableDrag(false)
-                            .maxHeight(dp2px(700f))
-                            .dismissOnTouchOutside(false)
-                            .asCustom(
-                                BasePumpWaterPop(
-                                    it,
-                                    { status ->
-                                        // 涂鸦指令，添加排水功能
-                                        DeviceControl.get()
-                                            .success {
-                                                // 气泡任务和右边手动点击通用一个XPopup
-                                                // 气泡任务为：
-                                                // 主要是针对任务
-                                                if (mViewMode.getUnreadMessageList()
-                                                        .firstOrNull()?.type == UnReadConstants.Device.KEY_CHANGING_WATER
-                                                ) {
-                                                    mViewMode.deviceOperateStart(
-                                                        business = "${mViewMode.getUnreadMessageList().firstOrNull()?.messageId}",
-                                                        type = UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER
-                                                    )
-                                                    return@success
-                                                }
-                                            }
-                                            .error { code, error ->
-                                                ToastUtil.shortShow(
-                                                    """
-                                    pumpWater:
-                                    code-> $code
-                                    errorMsg-> $error
-                                """.trimIndent()
-                                                )
-                                            }
-                                            .pumpWater(status)
-                                    },
-                                    onWaterFinishedAction = {
-                                        // 排水结束，那么直接弹出
-                                        if (plantDrainFinished?.isShow == false) {
-                                            plantDrainFinished?.show()
-                                        }
-                                    },
-                                    data = this.data,
-                                )
-                            ).show()*/
-                    }
                 }
             })
 
@@ -4933,35 +4857,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      * 发送支持邮件
      */
     private fun sendEmail() {
-        /*val uriText = "mailto:growsupport@heyabby.com" + "?subject=" + Uri.encode("Support")
-        val uri = Uri.parse(uriText)
-        val sendIntent = Intent(Intent.ACTION_SENDTO)
-        sendIntent.data = uri
-        val pm = context?.packageManager
-        // 根据意图查找包
-        val activityList = pm?.queryIntentActivities(sendIntent, 0)
-        if (activityList?.size == 0) {
-            // 弹出框框
-            val clipboard =
-                context?.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
-            // 创建一个剪贴数据集，包含一个普通文本数据条目（需要复制的数据）
-            val clipData = ClipData.newPlainText(null, "growsupport@heyabby.com")
-            // 把数据集设置（复制）到剪贴板
-            clipboard.setPrimaryClip(clipData)
-            XPopup.Builder(context)
-                .isDestroyOnDismiss(false)
-                .dismissOnTouchOutside(true)
-                .asCustom(SendEmailTipsPop(context!!)).show()
-            return
-        }
-        try {
-            startActivity(Intent.createChooser(sendIntent, "Send email"))
-        } catch (ex: ActivityNotFoundException) {
-            XPopup.Builder(context)
-                .isDestroyOnDismiss(false)
-                .dismissOnTouchOutside(true)
-                .asCustom(context?.let { SendEmailTipsPop(it) }).show()
-        }*/
         InterComeHelp.INSTANCE.openInterComeHome()
     }
 
@@ -5369,6 +5264,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         // 跳转继承界面为了老用户输入属性或者名字
         const val KEY_FOR_USER_NAME = 77
+    }
+
+    private fun startToVideoPlay() {
+        val intent = Intent(context, VideoPLayActivity::class.java)
+        intent.putExtra(WebActivity.KEY_WEB_URL, mViewMode.userDetail.value?.data?.liveLink)
+        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Live")
+        startActivity(intent)
     }
 
     fun startFadeInOutAnimation(view: View, duration: Long) {

@@ -203,16 +203,16 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.listDevice()
     }
 
-    fun automationList(accessoryId: String, deviceId: String, portId: String? = null): Flow<HttpResult<AutomationListBean>> {
-        return remoteRepository.automationList(accessoryId, deviceId, portId)
+    fun automationList(accessoryId: String, deviceId: String, portId: String? = null, usbPort: String? = null): Flow<HttpResult<AutomationListBean>> {
+        return remoteRepository.automationList(accessoryId, deviceId, portId, usbPort)
     }
 
     fun switchDevice(deviceId: String): Flow<HttpResult<String>> {
         return remoteRepository.switchDevice(deviceId)
     }
 
-    fun statusSwitch(accessoryId: String, deviceId: String, status: String): Flow<HttpResult<BaseBean>> {
-        return remoteRepository.statusSwitch(accessoryId, deviceId, status)
+    fun statusSwitch(accessoryId: String, deviceId: String, status: String, usbPort: String? = null): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.statusSwitch(accessoryId, deviceId, status, usbPort)
     }
 
     fun openAutomation(req: OpenAutomationReq): Flow<HttpResult<BaseBean>> {

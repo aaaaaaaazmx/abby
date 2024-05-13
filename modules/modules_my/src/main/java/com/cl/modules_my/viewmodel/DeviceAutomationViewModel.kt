@@ -161,9 +161,9 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
      */
     private val _accessoryStatus = MutableLiveData<Resource<BaseBean>>()
     val accessoryStatus: LiveData<Resource<BaseBean>> = _accessoryStatus
-    fun getAccessoryStatus(accessoryId: String, deviceId: String, status: String) {
+    fun getAccessoryStatus(accessoryId: String, deviceId: String, status: String, usbPort: String? = null) {
         viewModelScope.launch {
-            repository.statusSwitch(accessoryId, deviceId, status)
+            repository.statusSwitch(accessoryId, deviceId, status, usbPort)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -197,9 +197,9 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
      */
     private val _ruleList = MutableLiveData<Resource<AutomationListBean>>()
     val ruleList: LiveData<Resource<AutomationListBean>> = _ruleList
-    fun getRuleList(accessoryId: String, deviceId: String, portId: String? = null) {
+    fun getRuleList(accessoryId: String, deviceId: String, portId: String? = null, usbPort: String? = null) {
         viewModelScope.launch {
-            repository.automationList(accessoryId, deviceId, portId)
+            repository.automationList(accessoryId, deviceId, portId, usbPort)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

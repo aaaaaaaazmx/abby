@@ -192,41 +192,6 @@ class BaseViewModel @Inject constructor(): ViewModel() {
         }
     }
 
-
-    private val _advertising = MutableLiveData<Resource<MutableList<AdvertisingData>>>()
-    val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
-    fun advertising(type: String? = "0") {
-        viewModelScope.launch {
-            service.advertising(type ?: "0", current = 1, size = 10)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _advertising.value = it
-                }
-        }
-    }
-
-
     /**
      * 检查是否种植过植物
      */

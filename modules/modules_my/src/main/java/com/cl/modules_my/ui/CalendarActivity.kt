@@ -243,67 +243,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     }
                 }
             })
-            // 获取换水的图文接口
-            advertising.observe(this@CalendarActivity, resourceObserver {
-                loading { showProgressLoading() }
-                error { errorMsg, code ->
-                    ToastUtil.shortShow(errorMsg)
-                    hideProgressLoading()
-                }
-                success {
-                    hideProgressLoading()
-                    android.os.Handler().postDelayed({
-                        // 传递的数据为空
-                        val intent = Intent(this@CalendarActivity, BasePumpActivity::class.java)
-                        intent.putExtra(BasePopActivity.KEY_TASK_ID, mViewMode.taskId.value)
-                        intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, mViewMode.saveUnlockTask.value as? Serializable)
-                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, mViewMode.taskId.value)
-                        intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
-                        intent.putExtra(BasePumpActivity.KEY_DATA, data as? Serializable)
-                        intent.putExtra(BasePopActivity.KEY_TASK_NO, mViewMode.taskNo.value)
-                        refreshActivityLauncher.launch(intent)
-                    }, 50)
-                    /*pop
-                        .enableDrag(false)
-                        .maxHeight(dp2px(700f))
-                        .dismissOnTouchOutside(false)
-                        .asCustom(
-                            BasePumpWaterPop(
-                                this@CalendarActivity,
-                                { status ->
-                                    // 涂鸦指令，添加排水功能
-                                    DeviceControl.get()
-                                        .success {
-                                            // todo 设备下发命令成功
-                                        }
-                                        .error { code, error ->
-                                            ToastUtil.shortShow(
-                                                """
-                                                pumpWater: 
-                                                code-> $code
-                                                errorMsg-> $error
-                                            """.trimIndent()
-                                            )
-                                        }
-                                        .pumpWater(status)
-                                },
-                                onWaterFinishedAction = {
-                                    // 排水结束，那么直接弹出
-                                    if (basePumpWaterFinishPop.isShow) return@BasePumpWaterPop
-                                    pop
-                                        .isDestroyOnDismiss(false)
-                                        .enableDrag(false)
-                                        .maxHeight(dp2px(600f))
-                                        .dismissOnTouchOutside(false)
-                                        .asCustom(
-                                            basePumpWaterFinishPop
-                                        ).show()
-                                },
-                                data = this.data,
-                            )
-                        ).show()*/
-                }
-            })
 
             // 排水结束上报 - deviceOperateFinish
             deviceOperateFinish.observe(this@CalendarActivity, resourceObserver {
@@ -1257,8 +1196,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         when (view.id) {
                             R.id.tv_task_name -> {
                                 if (taskData?.get(position)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
-                                    // 请求接口
-                                    mViewMode.advertising()
+                                    // 传递的数据为空
+                                    val intent = Intent(this@CalendarActivity, BasePumpActivity::class.java)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_ID, mViewMode.taskId.value)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, mViewMode.saveUnlockTask.value as? Serializable)
+                                    intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, mViewMode.taskId.value)
+                                    intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_NO, mViewMode.taskNo.value)
+                                    refreshActivityLauncher.launch(intent)
                                 } else {
                                     val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                                     intent.putExtra(Constants.Global.KEY_TXT_ID, taskData?.get(position)?.textId)
@@ -1865,7 +1810,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     context = this@CalendarActivity,
                     onNextAction = {
                         // 请求接口
-                        mViewMode.advertising()
+                        // 传递的数据为空
+                        val intent = Intent(this@CalendarActivity, BasePumpActivity::class.java)
+                        intent.putExtra(BasePopActivity.KEY_TASK_ID, mViewMode.taskId.value)
+                        intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, mViewMode.saveUnlockTask.value as? Serializable)
+                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, mViewMode.taskId.value)
+                        intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
+                        intent.putExtra(BasePopActivity.KEY_TASK_NO, mViewMode.taskNo.value)
+                        refreshActivityLauncher.launch(intent)
                     },
                     onCancelAction = {
 

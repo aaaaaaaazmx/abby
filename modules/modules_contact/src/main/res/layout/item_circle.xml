@@ -100,6 +100,22 @@
             app:layout_constraintTop_toTopOf="@id/cl_avatar"
             tools:text="妹纸" />
 
+        <TextView
+            android:layout_marginTop="2dp"
+            android:visibility="@{data.live ? View.VISIBLE : View.GONE}"
+            android:id="@+id/tv_live"
+            app:layout_constraintStart_toStartOf="@+id/tvNick"
+            app:layout_constraintTop_toBottomOf="@+id/tvNick"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:gravity="center"
+            android:text="Live"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:background="@drawable/background_red_r5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <!--用户标签-->
         <ImageView
             app:layout_constraintStart_toEndOf="@+id/tvNick"
@@ -148,8 +164,29 @@
             android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/tvNick"
-            app:layout_constraintTop_toBottomOf="@id/tvNick"
+            app:layout_constraintTop_toBottomOf="@id/tv_live"
             tools:text="这世界总有人在笨拙地爱着你，想把全部的温柔都给你。 希望下一次，能喜欢上一个也喜欢自己的人 ​​​​。" />
+
+
+        <TextView
+            android:textStyle="bold"
+            android:id="@+id/tv_live_link"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="3dp"
+            android:drawablePadding="3dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Watch Now"
+            android:textColor="@color/mainColor"
+            android:textSize="13sp"
+            android:visibility="@{TextUtils.isEmpty(data.liveLink)? View.GONE : View.VISIBLE}"
+            app:layout_constraintEnd_toEndOf="@id/tvDesc"
+            app:layout_constraintStart_toStartOf="@+id/tvDesc"
+            app:layout_constraintTop_toBottomOf="@+id/tvDesc"
+            tools:text="Watch Now" />
+
 
         <!--link-->
         <TextView
@@ -168,7 +205,7 @@
             android:visibility="@{TextUtils.isEmpty(data.link)? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="@id/tvDesc"
             app:layout_constraintStart_toStartOf="@+id/tvDesc"
-            app:layout_constraintTop_toBottomOf="@+id/tvDesc"
+            app:layout_constraintTop_toBottomOf="@+id/tv_live_link"
             tools:text="123123123" />
 
         <RelativeLayout

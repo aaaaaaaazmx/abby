@@ -86,6 +86,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     @JvmField
     var manualMode = false
 
+    // 设备类型
+    @Autowired(name = Constants.Global.KEY_DEVICE_TYPE)
+    @JvmField
+    var deviceType: String = ""
+
     // fragments
     private var homeFragment: Fragment? = null
     private var plantingLogFragment: Fragment? = null
@@ -95,6 +100,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     // 第一次也就是新用户进入的时候，显示的界面
     private var firstJoinInFragment: Fragment? = null
+
+    // 黑色机箱的frgament
+    private var blackHomeFragment: Fragment? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -301,28 +309,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         LiveEventBus.get().with(Constants.InterCome.KEY_INTER_COME_UNREAD_MESSAGE, Int::class.java)
             .observe(this) {
                 mViewModel.userDetail()
-                /*// 如果不是等于0、那么是不要展示的
-                // 如果是设备在线状态 && 并且是已经开始种植的。
-                if (mIndex == 0) {
-                    // 当选中第0个的时候
-                    // 主要是消除小红点
-                    val menuView =
-                        binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
-                    val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                    if (!itemView.contains(badgeView)) {
-                        itemView.addView(badgeView)
-                    }
-                    return@observe
-                }
-                // 不等于0
-                if (it) {
-                    // 只展示一次
-                    if (Constants.Global.KEY_IS_ONLY_ONE_SHOW) {
-                        //  表示有消息要来了，需要查询一遍
-                        //  查询接口
-                        mViewModel.userDetail()
-                    }
-                }*/
             }
     }
 
@@ -452,6 +438,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             }
                         }
                     }
+                } else if (deviceType == "OG_black" && manualMode) {
+                    //  跳转到黑色机箱界面，单单只是proMode
+                    blackHomeFragment?.let {
+                        it.arguments = bundle
+                        transaction.show(it)
+                    } ?: kotlin.run {
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_BLACK_HOME).navigation()?.let {
+                            blackHomeFragment = it as Fragment
+                            blackHomeFragment?.let { fragment ->
+                                fragment.arguments = bundle
+                                transaction.add(R.id.container, fragment, null)
+                            }
+                        }
+                    }
                 } else {
                     //  跳转到HomeFragment 种植引导页面，附带当前种植状态以及种植记录到第几步
                     //  RouterPath.Home.PAGE_HOME 种植引导页面
@@ -522,6 +522,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun hideFragment(transaction: FragmentTransaction) {
         firstJoinInFragment?.let { transaction.hide(it) }
+        blackHomeFragment?.let { transaction.hide(it) }
         homeFragment?.let { transaction.hide(it) }
         contactFragment?.let { transaction.hide(it) }
         shopFragment?.let { transaction.hide(it) }
@@ -536,6 +537,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 fragmentTransaction.remove(it)
             }
             homeFragment?.let {
+                fragmentTransaction.remove(it)
+            }
+            blackHomeFragment?.let {
                 fragmentTransaction.remove(it)
             }
             contactFragment?.let {
@@ -562,6 +566,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         homeFragment?.onActivityResult(requestCode, resultCode, data)
+        blackHomeFragment?.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onDestroy() {
@@ -575,21 +580,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val map = GSON.parseObject(status, Map::class.java)
         map?.forEach { (key, value) ->
             when (key) {
-                // 是否是Vip
-                /*Constants.APP.KEY_IN_APP_VIP -> {
-                    logI("KEY_IN_APP_VIP： $value")
-                    if (value != "1") {
-                        val menuView = binding.bottomNavigation.getChildAt(0) as BottomNavigationMenuView
-                        //获取第1个itemView
-                        val itemView = menuView.getChildAt(0) as BottomNavigationItemView
-                        if (itemView.contains(badgeView)) {
-                            itemView.removeView(badgeView)
-                        }
-                    } else {
-                        // 刷新小红点
-                        mViewModel.userDetail()
-                    }
-                }*/
                 // 开始种植
                 Constants.APP.KEY_IN_APP_START_RUNNING -> {
                     logI("KEY_IN_APP_START_RUNNING: $value")

@@ -182,42 +182,6 @@ class MyOutletsViewModel @Inject constructor(private val repository: MyRepositor
 
 
     /**
-     * 规则列表
-     */
-    private val _ruleList = MutableLiveData<Resource<AutomationListBean>>()
-    val ruleList: LiveData<Resource<AutomationListBean>> = _ruleList
-    fun getRuleList(accessoryId: String, deviceId: String, portId: String) {
-        viewModelScope.launch {
-            repository.automationList(accessoryId, deviceId, portId)
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "${it.message}"
-                        )
-                    )
-                }.collectLatest {
-                    _ruleList.value = it
-                }
-        }
-    }
-
-    /**
      * 修改配件信息
      */
     private val _updateAccessory = MutableLiveData<Resource<BaseBean>>()

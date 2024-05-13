@@ -40,6 +40,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 
 import com.cl.common_base.R;
+import com.cl.common_base.util.ViewUtils;
 import com.cl.common_base.web.client.CommonWebChromeClient;
 import com.cl.common_base.web.client.MiddlewareChromeClient;
 import com.cl.common_base.web.client.MiddlewareWebViewClient;
@@ -80,6 +81,8 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
     private TextView mTitleTextView;
     protected AgentWeb mAgentWeb;
     public static final String URL_KEY = "url_key";
+    public static final String IS_SHOW_SHOP_CAR = "show_car";
+    public static final String IS_ALWAYS_SHOW_BACK = "is_always_show_back";
     private ImageView mMoreImageView;
     /**
      * 用于方便打印测试
@@ -268,10 +271,15 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
             super.onPageStarted(view, url, favicon);
             Log.i(TAG, "mUrl:" + url + " onPageStarted  target:" + getUrl());
             timer.put(url, System.currentTimeMillis());
-            if (url.equals(getUrl())) {
-                pageNavigator(View.GONE);
-            } else {
-                pageNavigator(View.VISIBLE);
+            if (null != getArguments()) {
+                boolean aBoolean = getArguments().getBoolean(IS_ALWAYS_SHOW_BACK);
+                if (!aBoolean) {
+                    if (url.equals(getUrl())) {
+                        pageNavigator(View.GONE);
+                    } else {
+                        pageNavigator(View.VISIBLE);
+                    }
+                }
             }
         }
 
@@ -351,6 +359,12 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
             editText.setImeOptions(EditorInfo.IME_ACTION_GO);
         }
 //        mSimpleSearchView.setSearchBackground(new ColorDrawable(getColorPrimary()));
+
+        // 是否显示购物车图标
+        if (null != getArguments()) {
+            ViewUtils.setVisible(getArguments().getBoolean(IS_SHOW_SHOP_CAR), mMoreImageView);
+            ViewUtils.setVisible(getArguments().getBoolean(IS_ALWAYS_SHOW_BACK), mBackImageView);
+        }
         mSimpleSearchView.setOnQueryTextListener(new SimpleSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -394,9 +408,16 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
             int id = v.getId();
             if (id == R.id.iv_back) {// true表示AgentWeb处理了该事件
-                if (!mAgentWeb.back()) {
-                    // AgentWebFragment.this.getActivity().finish();
-                    ToastUtil.show("is over");
+                if (null != getArguments()) {
+                    boolean aBoolean = getArguments().getBoolean(IS_ALWAYS_SHOW_BACK);
+                    if (aBoolean) {
+                        getActivity().finish();
+                    } else {
+                        if (!mAgentWeb.back()) {
+                            // AgentWebFragment.this.getActivity().finish();
+                            ToastUtil.show("is over");
+                        }
+                    }
                 }
             } else if (id == R.id.iv_finish) {
                 AgentWebFragment.this.getActivity().finish();
@@ -535,11 +556,20 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
                 }
 
                 // 是否显示显示返回按钮
-                if (!request.getUrl().toString().equals(URL_KEY)) {
-                    mBackImageView.setVisibility(View.VISIBLE);
-                } else {
-                    mBackImageView.setVisibility(View.GONE);
+                if (null != getArguments()) {
+                    boolean aBoolean = getArguments().getBoolean(IS_ALWAYS_SHOW_BACK);
+                    // 只有当false的时候才这样判断
+                    if (!aBoolean) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            if (!request.getUrl().toString().equals(URL_KEY)) {
+                                mBackImageView.setVisibility(View.VISIBLE);
+                            } else {
+                                mBackImageView.setVisibility(View.GONE);
+                            }
+                        }
+                    }
                 }
+
                 return super.shouldOverrideUrlLoading(view, request);
             }
 

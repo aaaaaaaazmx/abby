@@ -35,6 +35,7 @@ public class ToastUtil {
     }
 
     public static void show(String msg) {
+        if (TextUtils.isEmpty(msg)) return;
         if (sToastUtil == null) {
             sToastUtil = new ToastUtil(BaseApplication.Companion.getContext());
         }
@@ -70,6 +71,7 @@ public class ToastUtil {
     }
 
     public static void shortShow(String msg) {
+        if (TextUtils.isEmpty(msg)) return;
         if (sToastUtil == null) {
             sToastUtil = new ToastUtil(BaseApplication.Companion.getContext());
         }

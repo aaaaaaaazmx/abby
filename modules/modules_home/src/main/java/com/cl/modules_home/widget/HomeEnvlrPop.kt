@@ -136,7 +136,9 @@ class HomeEnvlrPop(
                     enableDrag(false)
                     asCustom(
                         HomePlantDrainPop(context, onNextAction = {
-                            lifecycleScope.launch { adv() }
+                            // 传递的数据为空
+                            val intent = Intent(context, BasePumpActivity::class.java)
+                            context.startActivity(intent)
                         })
                     ).show()
                 }
@@ -379,45 +381,6 @@ class HomeEnvlrPop(
                             )
                         })
                 ).show()
-            }
-        }
-    }
-
-    //advertising
-    private suspend fun adv(type: String? = "0") {
-        service.advertising(type ?: "0").map {
-            if (it.code != Constants.APP_SUCCESS) {
-                Resource.DataError(
-                    it.code, it.msg
-                )
-            } else {
-                Resource.Success(it.data)
-            }
-        }.flowOn(Dispatchers.IO).onStart {
-            emit(Resource.Loading())
-        }.catch {
-            logD("catch $it")
-            emit(
-                Resource.DataError(
-                    -1, "$it"
-                )
-            )
-        }.collectLatest {
-            logI(it.toString())
-            when (it) {
-                is Resource.Success -> {
-                    // ToastUtil.shortShow("success")
-                    Handler().postDelayed({
-                        // 传递的数据为空
-                        val intent = Intent(context, BasePumpActivity::class.java)
-                        intent.putExtra(BasePumpActivity.KEY_DATA, it.data as? Serializable)
-                        context.startActivity(intent)
-                    }, 50)
-                }
-                is Resource.DataError -> {
-                    ToastUtil.shortShow(it.errorMsg)
-                }
-                else -> {}
             }
         }
     }

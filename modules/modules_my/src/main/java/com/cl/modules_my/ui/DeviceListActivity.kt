@@ -30,6 +30,7 @@ import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.pop.MyChooerTipPop
 import com.cl.common_base.bean.AccessoryListBean
+import com.cl.common_base.pop.activity.BasePopActivity.Companion.KEY_USB_PORT
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
@@ -48,9 +49,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     private val adapter by lazy {
-        DeviceListAdapter(mutableListOf(), switchListener = { accessoryId, deviceId, isChooser ->
+        DeviceListAdapter(mutableListOf(), switchListener = { accessoryId, deviceId, isChooser, usbPort ->
             // 选择设备开关
-            mViewModel.setDeviceStatus(accessoryId, deviceId, if (isChooser) "1" else "0")
+            mViewModel.setDeviceStatus(accessoryId, deviceId, if (isChooser) "1" else "0", usbPort)
         }, luoSiListener = { accessoryData, accessListBean ->
             // 这是配件点击设置逻辑
             // camera跳转到专属页面
@@ -95,6 +96,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
             intent.putExtra("relationId", accessoryData.relationId)
             intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
+            intent.putExtra(KEY_USB_PORT, accessoryData.usbPort)
             intent.putExtra(
                 BasePopActivity.KEY_PART_ID,
                 "${accessoryData.accessoryId}"
@@ -171,10 +173,13 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     override fun observe() {
         // 更改设备附件开光
         mViewModel.deviceStatus.observe(this@DeviceListActivity, resourceObserver {
+            loading { showProgressLoading() }
             error { errorMsg, code ->
+                hideProgressLoading()
                 ToastUtil.shortShow(errorMsg)
             }
             success {
+                hideProgressLoading()
                 // 刷新设备
                 mViewModel.listDevice()
             }
@@ -468,6 +473,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     intent.putExtra("deviceId", deviceBean?.deviceId)
                     intent.putExtra("accessoryList", deviceBean?.accessoryList as? Serializable)
                     intent.putExtra("spaceType", deviceBean?.spaceType)
+                    intent.putExtra("deviceType", deviceBean?.deviceType)
                     startActivity(intent)
                 }
 

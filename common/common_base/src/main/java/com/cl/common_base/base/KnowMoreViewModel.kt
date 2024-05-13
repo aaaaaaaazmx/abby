@@ -166,9 +166,9 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
      */
     private val _addAccessory = MutableLiveData<Resource<AccessoryAddData>>()
     val addAccessory: LiveData<Resource<AccessoryAddData>> = _addAccessory
-    fun addAccessory(accessoryId: String, deviceId: String, accessoryDeviceId: String? = null) {
+    fun addAccessory(accessoryId: String, deviceId: String, accessoryDeviceId: String? = null, usbId: String? = null) {
         viewModelScope.launch {
-            service.accessoryAdd(accessoryId, deviceId, accessoryDeviceId)
+            service.accessoryAdd(accessoryId, deviceId, accessoryDeviceId, usbId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

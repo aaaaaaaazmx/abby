@@ -262,40 +262,6 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         }
     }
 
-    private val _advertising = MutableLiveData<Resource<MutableList<AdvertisingData>>>()
-    val advertising: LiveData<Resource<MutableList<AdvertisingData>>> = _advertising
-    fun advertising(type: String? = "0") {
-        viewModelScope.launch {
-            repository.advertising(type ?: "0")
-                .map {
-                    if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
-                    } else {
-                        Resource.Success(it.data)
-                    }
-                }
-                .flowOn(Dispatchers.IO)
-                .onStart {
-                    emit(Resource.Loading())
-                }
-                .catch {
-                    logD("catch $it")
-                    emit(
-                        Resource.DataError(
-                            -1,
-                            "$it"
-                        )
-                    )
-                }.collectLatest {
-                    _advertising.value = it
-                }
-        }
-    }
-
-
     /**
      * 上报排水结束
      */

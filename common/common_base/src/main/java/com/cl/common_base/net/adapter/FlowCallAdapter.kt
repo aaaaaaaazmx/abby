@@ -3,6 +3,7 @@ package com.cl.common_base.net.adapter
 
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logE
+import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -49,8 +50,8 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                         override fun onFailure(call: Call<T>, t: Throwable) {
                             // 捕获异常
                             // 如果是HostName异常、连接超时异常，那么不需要上报，也不需要提示
-                            if (t.toString().contains("SocketTimeoutException") || t.toString().contains("UnknownHostException") || t.toString().contains("ConnectException")) {
-                                continuation.resumeWithException(t)
+                            if (t.toString().contains("SocketTimeoutException") || t.toString().contains("UnknownHostException") || t.toString().contains("ConnectException") || t.toString().contains("Throwable")) {
+                                continuation.resumeWithException(Throwable(""))
                                 kotlin.runCatching {
                                     Reporter.reportCatchError(
                                         t.message,
@@ -72,8 +73,10 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                                  logE("${response.body()}")*/
                                 if (response.body() == null && response.code() == Constants.APP_SERVER) {
                                     continuation.resumeWithException(Exception("Server error, please contact support@heyabby.com"))
+                                    call.cancel()
                                     return
                                 }
+                                logI("1323123: ${response.body()}")
                                 response.body()?.let {
                                     continuation.resume(it)
                                 }

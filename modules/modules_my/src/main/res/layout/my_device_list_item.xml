@@ -155,7 +155,7 @@
                 android:id="@+id/iv_jiqi"
                 android:layout_width="116dp"
                 android:layout_height="127dp"
-                android:background='@{data.spaceType.equals("box") ? data.deviceType.equals("OG") ? @drawable/my_jiqi_oi : @drawable/my_jiqi : @drawable/my_jiqi_zp}'
+                android:background='@{data.spaceType.equals("box") ? data.deviceType.equals("OG") ? @drawable/my_jiqi_oi : data.deviceType.equals("OG_black") ? @drawable/my_og_black : @drawable/my_jiqi : @drawable/my_jiqi_zp}'
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_title" />
         </androidx.constraintlayout.widget.ConstraintLayout>

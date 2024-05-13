@@ -11,6 +11,8 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
+import com.cl.common_base.base.KnowMoreActivity.Companion.KEY_FIXED_TASK_ID
+import com.cl.common_base.base.KnowMoreActivity.Companion.KEY_INTENT_JUMP_PAGE
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -74,6 +76,11 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
     // 当前设备类型
     private val spaceType by lazy {
         intent.getStringExtra("spaceType")
+    }
+
+    // 当前设备
+    private val deviceType by lazy {
+        intent.getStringExtra("deviceType")
     }
 
     override fun initView() {
@@ -150,9 +157,11 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(true)
                         asCustom(
-                            BaseCenterPop(this@AddAccessoryActivity, content = itemData.cannotMsg, isShowCancelButton = true, cancelText = "No", confirmText = "Yes", onConfirmAction = {
-                                // 这个后台逻辑是覆盖最早一个添加的配件。
-                                addAccess(itemData)
+                            BaseCenterPop(this@AddAccessoryActivity, content = itemData.cannotMsg, isShowCancelButton = deviceType != "OG_black", cancelText = "No", confirmText = if (deviceType == "OG_black") "OK" else "Yes", onConfirmAction = {
+                                if (deviceType != "OG_black") {
+                                    // 这个后台逻辑是覆盖最早一个添加的配件。
+                                    addAccess(itemData)
+                                }
                             })
                         ).show()
                     }
@@ -236,7 +245,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Done")
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                 intent.putExtra(BasePopActivity.KEY_PART_ID, "${itemData?.accessoryId}")
                 /*accessoryList.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }

@@ -45,6 +45,7 @@ data class ListDeviceBean(
         val status: Int? = null,
         val temperature: String? = null,
         val humidity: String? = null,
+        val usbPort: String? = null,
     ) : BaseBean()
 
     override val itemType: Int

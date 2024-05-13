@@ -31,7 +31,7 @@ import com.cl.modules_my.databinding.MyPairTentInnerItemBinding
 
 class DeviceListAdapter(
     data: MutableList<ListDeviceBean>?,
-    private val switchListener: ((accessoryId: String, deviceId: String, isCheck: Boolean) -> Unit)? = null,
+    private val switchListener: ((accessoryId: String, deviceId: String, isCheck: Boolean, usbPort: String?) -> Unit)? = null,
     private val luoSiListener: ((accessoryData: ListDeviceBean.AccessoryList, bean: ListDeviceBean) -> Unit)? = null,
 ) :
     BaseMultiItemQuickAdapter<ListDeviceBean, BaseViewHolder>(data) {
@@ -106,9 +106,9 @@ class DeviceListAdapter(
                     //  底部的配件、会有多个、改为Recyclview了。
                     holder.getView<RecyclerView>(R.id.rv_accessory).apply {
                         layoutManager = LinearLayoutManager(context)
-                        val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck ->
-                            switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck)
-                        })
+                        val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck, usbPort ->
+                            switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck, usbPort)
+                        }, item.deviceType)
                         adapter = accessAdapters
                         accessAdapters.addChildClickViewIds(R.id.iv_luosi, R.id.cl_pair)
                         accessAdapters.setOnItemChildClickListener { adapter, view, position ->

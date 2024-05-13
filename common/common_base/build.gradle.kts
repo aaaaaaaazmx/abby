@@ -122,8 +122,9 @@ dependencies {
     api(project(mapOf("path" to ":common:BarcodeScanning")))
     /*api(project(mapOf("path" to ":common:kefu-easeui")))*/
     api(project(mapOf("path" to ":common:ipc")))
-    api(project(mapOf("path" to ":common:mylibrary")))
+    // api(project(mapOf("path" to ":common:mylibrary")))
     api(project(mapOf("path" to ":common:ble")))
+    api(project(mapOf("path" to ":common:indicatorseekbar")))
     // lottie
     api(Deps.lottie)
     // viewPager指示器
@@ -163,4 +164,6 @@ dependencies {
 
     // api(Deps.chat)
     api("com.github.AAChartModel:AAChartCore-Kotlin:7.1.0")
+    // switchButton
+    api("com.github.iielse:switchbutton:1.0.4")
 }
