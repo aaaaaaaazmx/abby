@@ -286,7 +286,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     }
                     // 主开关需要开启，才显示
                     binding.tvAutoDesc.text =
-                        if (data?.status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
+                        if (data?.status == 1 && openSize >= 1) "Auto\nOn" else "Auto\nOff"
 
                     adapter.setList(data?.list)
                 }

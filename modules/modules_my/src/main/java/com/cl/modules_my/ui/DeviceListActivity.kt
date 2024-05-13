@@ -173,10 +173,13 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     override fun observe() {
         // 更改设备附件开光
         mViewModel.deviceStatus.observe(this@DeviceListActivity, resourceObserver {
+            loading { showProgressLoading() }
             error { errorMsg, code ->
+                hideProgressLoading()
                 ToastUtil.shortShow(errorMsg)
             }
             success {
+                hideProgressLoading()
                 // 刷新设备
                 mViewModel.listDevice()
             }
