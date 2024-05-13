@@ -118,7 +118,6 @@ class SettingViewModel @Inject constructor(private val repository: MyRepository)
             }
     }
 
-
     /**
      * 检查是否种植过植物
      */

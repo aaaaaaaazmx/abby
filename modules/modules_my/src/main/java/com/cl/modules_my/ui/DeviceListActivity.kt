@@ -30,6 +30,7 @@ import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.pop.MyChooerTipPop
 import com.cl.common_base.bean.AccessoryListBean
+import com.cl.common_base.pop.activity.BasePopActivity.Companion.KEY_USB_PORT
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
@@ -95,6 +96,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
             intent.putExtra("relationId", accessoryData.relationId)
             intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
+            intent.putExtra(KEY_USB_PORT, accessoryData.usbPort)
             intent.putExtra(
                 BasePopActivity.KEY_PART_ID,
                 "${accessoryData.accessoryId}"

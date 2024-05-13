@@ -86,6 +86,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     @JvmField
     var manualMode = false
 
+    // 设备类型
+    @Autowired(name = Constants.Global.KEY_DEVICE_TYPE)
+    @JvmField
+    var deviceType: String = ""
+
     // fragments
     private var homeFragment: Fragment? = null
     private var plantingLogFragment: Fragment? = null
@@ -433,7 +438,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                             }
                         }
                     }
-                } else if (mViewModel.userDetail.value?.data?.deviceType == "OG_black" && manualMode) {
+                } else if (deviceType == "OG_black" && manualMode) {
                     //  跳转到黑色机箱界面，单单只是proMode
                     blackHomeFragment?.let {
                         it.arguments = bundle

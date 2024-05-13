@@ -94,6 +94,10 @@ class PlantCheckHelp {
                     Constants.Global.KEY_MANUAL_MODE,
                     data.proMode == "On"
                 )
+                .withString(
+                    Constants.Global.KEY_DEVICE_TYPE,
+                    data.deviceType
+                )
                 .withTransition(intAnim, outAnim)
                 .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
                 .navigation(activity)

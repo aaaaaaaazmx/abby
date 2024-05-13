@@ -88,7 +88,7 @@ interface BaseApiService {
         @Field("accessoryId") accessoryId: String,
         @Field("deviceId") deviceId: String,
         @Field("accessoryDeviceId")accessoryDeviceId: String? = null,
-        @Field("usbId") usbId: String? = null,
+        @Field("usbPort") usbId: String? = null,
     ): Flow<HttpResult<AccessoryAddData>>
 
     /**

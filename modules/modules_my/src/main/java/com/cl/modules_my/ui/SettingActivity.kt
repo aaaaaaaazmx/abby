@@ -15,6 +15,8 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
+import com.cl.common_base.bean.AccessoryListBean
+import com.cl.common_base.bean.ListDeviceBean.AccessoryList
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.Constants
@@ -41,6 +43,7 @@ import com.cl.common_base.pop.ChooseTimePop
 import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ModifyUserDetailReq
+import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.cl.modules_my.widget.LoginOutPop
 import com.cl.modules_my.widget.MyDeleteDevicePop
@@ -331,15 +334,23 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         saveDeviceId(deviceInfo.deviceId)
                         mViewModel.updateDevicesInfo(deviceInfo)
 
-                        // 是否显示防烧模式
-                        ViewUtils.setVisible(
-                            deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode != "On",
-                            binding.ftBurner
-                        )
-                        ViewUtils.setVisible(
-                            deviceInfo.burnOutProof == 1 && deviceInfo.proMode != "On",
-                            binding.tvBurnerDesc
-                        )
+                        if (deviceInfo.deviceType == "OG_black") {
+                            // 显示防烧模式
+                            ViewUtils.setVisible(binding.ftBurner)
+                            // 隐藏usb模式
+                            ViewUtils.setGone(binding.ftUsb)
+                        } else {
+                            // 是否显示防烧模式
+                            ViewUtils.setVisible(
+                                deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode != "On",
+                                binding.ftBurner
+                            )
+                            ViewUtils.setVisible(
+                                deviceInfo.burnOutProof == 1 && deviceInfo.proMode != "On",
+                                binding.tvBurnerDesc
+                            )
+                        }
+
 
                         // 是否开启usb电源模式
                         binding.ftUsb.isItemChecked = deviceInfo.smartUsbPowder == 1
@@ -832,33 +843,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }*/
         // 删除设备
         binding.dtDeleteDevice.setOnClickListener {
-            // 删除设备、弹出提示框
-            XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
+            XPopup.Builder(this@SettingActivity)
+                .isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(true)
                 .asCustom(MyDeleteDevicePop(this) {
-                    ThingHomeSdk.newDeviceInstance(mViewModel.saveDeviceId.value)
-                        .removeDevice(object : IResultCallback {
-                            override fun onError(code: String?, error: String?) {
-                                logE(
-                                    """
-                                        removeDevice:
-                                        code: $code
-                                        error: $error
-                                    """.trimIndent()
-                                )
-                                ToastUtil.shortShow(error)
-                                Reporter.reportTuYaError("newDeviceInstance", error, code)
-                                //  调用接口请求删除设备
-                                mViewModel.deleteDevice(mViewModel.saveDeviceId.value.toString())
-                            }
-
-                            override fun onSuccess() {
-                                //  调用接口请求删除设备
-                                mViewModel.deleteDevice(mViewModel.saveDeviceId.value.toString())
-                            }
-                        })
+                    removeDevice()
                 }).show()
         }
+
         // 检查更新
         binding.ftVision.setOnClickListener {
             mViewModel.setClickUpdate(true)
@@ -1190,5 +1182,49 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 if (!plantDrainFinished.isShow) plantDrainFinished.show()
             }
         }
+
+    private fun removeDevice() {
+        val deviceId = mViewModel.saveDeviceId.value.toString()
+        val deviceInstance = ThingHomeSdk.newDeviceInstance(deviceId)
+
+        deviceInstance.removeDevice(object : IResultCallback {
+            override fun onError(code: String?, error: String?) {
+                logError(code, error)
+                handleDeviceRemoval(deviceId)
+            }
+
+            override fun onSuccess() {
+                handleDeviceRemoval(deviceId)
+            }
+        })
+    }
+
+    private fun handleDeviceRemoval(deviceId: String) {
+        val cameraAccessory = getCameraAccessory()
+        if (cameraAccessory != null) {
+            TuyaCameraUtils().unBindCamera(cameraAccessory.accessoryDeviceId.toString(), onErrorAction = {
+                ToastUtil.shortShow(it)
+            }) {
+                mViewModel.deleteDevice(deviceId)
+            }
+        } else {
+            mViewModel.deleteDevice(deviceId)
+        }
+    }
+
+    // 摄像头需要解绑。因为后台解绑不了。
+    private fun getCameraAccessory(): AccessoryList? =
+        mViewModel.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }
+
+    private fun logError(code: String?, error: String?) {
+        val logMessage = """
+        removeDevice:
+        code: $code
+        error: $error
+    """.trimIndent()
+        logE(logMessage)
+        ToastUtil.shortShow(error)
+        Reporter.reportTuYaError("newDeviceInstance", error, code)
+    }
 
 }

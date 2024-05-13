@@ -795,6 +795,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 R.id.tv_txt,
                 R.id.tv_delay_task,
                 R.id.tv_usb_detail,
+                R.id.iv_usb_what,
             )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
@@ -888,7 +889,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         mViewMode.delayTask(SnoozeReq(taskId = taskId, taskNo = taskNo))
                     }
 
-                    R.id.tv_usb_detail -> {
+                    R.id.tv_usb_detail, R.id.iv_usb_what -> {
                         xpopup(this@KnowMoreActivity) {
                             isDestroyOnDismiss(false)
                             dismissOnTouchOutside(true)

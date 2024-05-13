@@ -164,5 +164,6 @@ dependencies {
 
     // api(Deps.chat)
     api("com.github.AAChartModel:AAChartCore-Kotlin:7.1.0")
-    api("com.github.zcweng:switch-button:0.0.3@aar")
+    // switchButton
+    api("com.github.iielse:switchbutton:1.0.4")
 }

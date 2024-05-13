@@ -158,8 +158,10 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         dismissOnTouchOutside(true)
                         asCustom(
                             BaseCenterPop(this@AddAccessoryActivity, content = itemData.cannotMsg, isShowCancelButton = deviceType != "OG_black", cancelText = "No", confirmText = if (deviceType == "OG_black") "OK" else "Yes", onConfirmAction = {
-                                // 这个后台逻辑是覆盖最早一个添加的配件。
-                                addAccess(itemData)
+                                if (deviceType != "OG_black") {
+                                    // 这个后台逻辑是覆盖最早一个添加的配件。
+                                    addAccess(itemData)
+                                }
                             })
                         ).show()
                     }
@@ -243,7 +245,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Done")
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                 intent.putExtra(BasePopActivity.KEY_PART_ID, "${itemData?.accessoryId}")
                 /*accessoryList.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }

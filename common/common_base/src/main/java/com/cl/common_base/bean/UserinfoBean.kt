@@ -42,6 +42,7 @@ data class UserinfoBean(
     val wallAddress: String? = null,
     val wallId: Int? = null,
     val externalId: String? = null,
+    val deviceType: String? = null,
     val inchMetricMode: String? = null,
     val discordGlobalName: String? = null,
     // val easemobPassword: String? = null,

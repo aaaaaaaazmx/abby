@@ -3693,28 +3693,30 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 植物的点击弹出植物高度。
                             binding.pplantNinth.ivBowl.setQuickClickListener {
                                 // 在种子阶段，是不能点击的。
-                                if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
+                                 if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
                                 if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
                                 val currentDevice = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                                if ((currentDevice?.deviceType != "OG") || (currentDevice?.deviceType != "OG_black")) return@setQuickClickListener
+                                if ((currentDevice?.deviceType == "OG") || (currentDevice?.deviceType == "OG_black")) {
+                                    // 隐藏氧气币，和气泡
+                                    ViewUtils.setGone(binding.pplantNinth.clContinue, binding.pplantNinth.waterView)
 
-                                // 隐藏氧气币，和气泡
-                                ViewUtils.setGone(binding.pplantNinth.clContinue, binding.pplantNinth.waterView)
+                                    // 植物高度。
+                                    binding.pplantNinth.tvPlantHeight.text = formatIncPlant(mViewMode.plantHeights.value)
 
-                                // 植物高度。
-                                binding.pplantNinth.tvPlantHeight.text = formatIncPlant(mViewMode.plantHeights.value)
+                                    // 开始若隐若现动画
+                                    startFadeInOutAnimation(binding.pplantNinth.clPlantHeight, 5000) // 500ms为动画周期，可根据需求调整
 
-                                // 开始若隐若现动画
-                                startFadeInOutAnimation(binding.pplantNinth.clPlantHeight, 5000) // 500ms为动画周期，可根据需求调整
-
-                                // 设置5秒后执行的操作
-                                binding.pplantNinth.clPlantHeight.postDelayed({
-                                    // 停止动画并隐藏View
-                                    stopFadeInOutAnimation(binding.pplantNinth.clPlantHeight)
-                                    ViewUtils.setVisible((unreadMessageList.value?.size ?: 0) > 0, binding.pplantNinth.clContinue)
-                                    ViewUtils.setVisible((getOxygenCoinList.value?.data?.size ?: 0) > 0, binding.pplantNinth.waterView)
-                                }, 5000) // 5秒后执行
+                                    // 设置5秒后执行的操作
+                                    binding.pplantNinth.clPlantHeight.postDelayed({
+                                        // 停止动画并隐藏View
+                                        stopFadeInOutAnimation(binding.pplantNinth.clPlantHeight)
+                                        ViewUtils.setVisible((unreadMessageList.value?.size ?: 0) > 0, binding.pplantNinth.clContinue)
+                                        ViewUtils.setVisible((getOxygenCoinList.value?.data?.size ?: 0) > 0, binding.pplantNinth.waterView)
+                                    }, 5000) // 5秒后执行
+                                }
                             }
+
+
                         }
 
 

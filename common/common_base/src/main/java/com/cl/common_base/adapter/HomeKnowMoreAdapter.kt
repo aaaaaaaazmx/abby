@@ -469,8 +469,9 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
     ) {
         if (clickedData.disable) {
             // USB is disabled, show a toast message
-            Toast.makeText(context, "USB ${clickedData.usbId} is disabled", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(context, "USB ${clickedData.usbId} is disabled", Toast.LENGTH_SHORT).show()
         } else {
+            usbDataList.firstOrNull { it.select }?.select = false
             // Toggle the bind state
             clickedData.select = !clickedData.select
             selectedUsbId = if (clickedData.select) clickedData.usbId else null

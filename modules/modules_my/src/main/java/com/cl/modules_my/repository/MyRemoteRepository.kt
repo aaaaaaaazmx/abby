@@ -156,9 +156,10 @@ class MyRemoteRepository @Inject constructor() {
     fun automationList(
         accessoryId: String,
         deviceId: String,
-        portId: String? = null
+        portId: String? = null,
+        usbPort: String? = null,
     ): Flow<HttpResult<AutomationListBean>> {
-        return service.automationList(accessoryId, deviceId, portId)
+        return service.automationList(accessoryId, deviceId, portId, usbPort)
     }
 
     fun statusSwitch(

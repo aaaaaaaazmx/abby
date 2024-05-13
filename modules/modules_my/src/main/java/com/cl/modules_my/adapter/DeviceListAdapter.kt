@@ -108,7 +108,7 @@ class DeviceListAdapter(
                         layoutManager = LinearLayoutManager(context)
                         val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck, usbPort ->
                             switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck, usbPort)
-                        })
+                        }, item.deviceType)
                         adapter = accessAdapters
                         accessAdapters.addChildClickViewIds(R.id.iv_luosi, R.id.cl_pair)
                         accessAdapters.setOnItemChildClickListener { adapter, view, position ->

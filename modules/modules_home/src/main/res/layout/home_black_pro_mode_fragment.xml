@@ -44,7 +44,7 @@
                     android:textColor="#FDD875"
                     android:textSize="26sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@id/iv_camera"
+                    app:layout_constraintEnd_toStartOf="@id/iv_live"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,7 +52,7 @@
                     android:id="@+id/iv_chart"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@mipmap/home_chart_black"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_camera"
                     app:layout_constraintEnd_toStartOf="@+id/iv_camera"
@@ -63,7 +63,7 @@
                     android:id="@+id/iv_live"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@mipmap/base_live"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_chart"
                     app:layout_constraintEnd_toStartOf="@+id/iv_chart"
@@ -71,10 +71,12 @@
 
 
                 <ImageView
+                    tools:visibility="visible"
+                    android:visibility="gone"
                     android:id="@+id/iv_camera"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:layout_marginEnd="24dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@mipmap/home_camera_black_bg"
                     app:layout_constraintBottom_toBottomOf="@+id/tv_title"
                     app:layout_constraintEnd_toEndOf="@+id/iv_device_list"
@@ -316,8 +318,8 @@
                     <ImageView
                         android:layout_toRightOf="@+id/tv_inc"
                         android:id="@+id/iv_exclamation_mark"
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
                         android:layout_marginEnd="5dp"
                         android:layout_marginTop="3dp"
                         android:layout_marginStart="5dp"
@@ -1088,14 +1090,14 @@ Level"
                         app:layout_constraintCircleRadius="45dp"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.suke.widget.SwitchButton
+                    <com.github.iielse.switchbutton.SwitchView
+                        app:primaryColor="#FDD875"
+                        app:primaryColorDark="#FDD875"
                         android:id="@+id/ft_air_pump"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:sb_show_indicator="false"
                         android:layout_marginEnd="11dp"
-                        app:sb_checked_color="#FED875"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_air_pump"
                         app:layout_constraintTop_toTopOf="@+id/tv_air_pump"
                        />

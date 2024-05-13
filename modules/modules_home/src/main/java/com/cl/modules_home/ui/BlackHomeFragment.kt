@@ -4,17 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.text.method.LinkMovementMethod
-import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.view.ViewCompat
-import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +19,6 @@ import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bbgo.module_home.databinding.HomeBlackProModeFragmentBinding
-import com.bbgo.module_home.databinding.HomeItemPlantManualBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseFragment
@@ -39,7 +35,6 @@ import com.cl.common_base.bean.UnreadMessageData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
@@ -47,14 +42,13 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToDouble
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
-import com.cl.common_base.ext.setQuickClickListener
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.temperatureConversion
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.BaseCenterPop
-import com.cl.common_base.pop.BaseGuidePop
 import com.cl.common_base.pop.ChooseTimePop
 import com.cl.common_base.pop.FirmwareUpdatePop
 import com.cl.common_base.pop.MedalPop
@@ -74,12 +68,13 @@ import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.adapter.HomeFinishItemAdapter
 import com.cl.modules_home.viewmodel.BlackHomeViewModel
-import com.cl.modules_home.viewmodel.HomeViewModel
 import com.cl.modules_home.widget.HomeDripPop
 import com.cl.modules_home.widget.HomeFanBottonPop
-import com.cl.modules_home.widget.HomePeriodPop
 import com.lxj.xpopup.XPopup
-import com.lxj.xpopup.enums.PopupPosition
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
@@ -234,6 +229,110 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
     override fun observe() {
         super.observe()
         mViewMode.apply {
+            // 切换设备列表
+            switchDevice.observe(viewLifecycleOwner, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    // 更新InterCome用户信息
+                    InterComeHelp.INSTANCE.updateInterComeUserInfo(
+                        map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
+                    )
+
+                    // 这是从切换设备中带过来设备信息\如果是帐篷。
+                    deviceInfo.value?.spaceType?.let {
+                        if (it != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                            //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
+                            // mViewMode.userDetail()
+                            // 删除未读消息
+                            // mViewMode.removeFirstUnreadMessage()
+                            // 清空气泡状态
+                            // mViewMode.clearPopPeriodStatus()
+                            mViewMode.checkPlant()
+                            return@success
+                        }
+                    }
+
+                    // 更新涂鸦Bean
+                    ThingHomeSdk.newHomeInstance(mViewMode.homeId)
+                        .getHomeDetail(object : IThingHomeResultCallback {
+                            override fun onSuccess(bean: HomeBean?) {
+                                bean?.let { it ->
+                                    val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                    logI("123123123: ${arrayList.size}")
+                                    arrayList.firstOrNull { dev -> dev.devId == mViewMode.deviceInfo.value?.deviceId.toString() }
+                                        .apply {
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceId.value?.toString()}")
+                                            logI("thingDeviceBean ID: ${mViewMode.deviceInfo.value?.deviceId.toString()}")
+                                            // 在线的、数据为空、并且是abby机器
+                                            if (null == this && mViewMode.deviceInfo.value?.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && mViewMode.deviceInfo.value?.onlineStatus != "Offline") {
+                                                /*val aa = mViewMode.thingDeviceBean
+                                                aa()?.devId = mViewMode.deviceId.value
+                                                GSON.toJson(aa)?.let {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                                        it
+                                                    )
+                                                }
+                                                return@applyh*/
+                                                ToastUtil.shortShow("Connection error, try to delete device and pair again")
+                                            }
+                                            GSON.toJson(this)?.let {
+                                                Prefs.putStringAsync(
+                                                    Constants.Tuya.KEY_DEVICE_DATA,
+                                                    it
+                                                )
+                                            }
+
+                                            // 重新注册服务
+                                            // 开启服务
+                                            val intent = Intent(
+                                                context,
+                                                TuYaDeviceUpdateReceiver::class.java
+                                            )
+                                            context?.startService(intent)
+                                            // 切换之后需要重新刷新所有的东西
+                                            mViewMode.checkPlant()
+                                        }
+                                }
+                            }
+
+                            override fun onError(errorCode: String?, errorMsg: String?) {
+
+                            }
+                        })
+                }
+            })
+
+            listDevice.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code ->
+                    errorMsg?.let { ToastUtil.shortShow(it) }
+                }
+                success {
+                    hideProgressLoading()
+                    data?.let { dataList ->
+                        // 判断设备数量，设定左右滑动图片的显示
+                        // 寻找当前设备
+                        dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
+                            // 是否显示摄像头
+                            val isCameraVisible =
+                                device.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA } != null
+                            ViewUtils.setVisible(isCameraVisible, binding.ivCamera)
+                            ViewUtils.setVisible(isCameraVisible, binding.ivCamera)
+
+                            // 是否显示rlInch
+                            ViewUtils.setVisible(
+                                device.deviceType == "OG" || device.deviceType == "OG_black",
+                                binding.rlInch
+                            )
+                        }
+                    }
+                }
+            })
             // 水的容积
             getWaterVolume.observe(viewLifecycleOwner) {
                 if (isZp.value == true) return@observe
@@ -242,7 +341,15 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
             }
 
             getAirPump.observe(viewLifecycleOwner) {
-                binding.ftAirPump.isChecked = it
+                binding.ftAirPump.isOpened = it
+            }
+
+            getFanIntake.observe(viewLifecycleOwner) {
+                binding.fanIntakeSeekbar.setProgress(it.toFloat())
+            }
+
+            getFanExhaust.observe(viewLifecycleOwner) {
+                binding.fanExhaustSeekbar.setProgress(it.toFloat())
             }
 
             /**
@@ -280,19 +387,21 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                 error { msg, code ->
                     hideProgressLoading()
                     msg?.let { it1 -> ToastUtil.shortShow(it1) }
-                    // 容错处理、不管接口报错都显示
-                    mViewMode.getPlantHeight()
-                    mViewMode.getWenDu()
-                    mViewMode.getHumidity()
-                    mViewMode.getWaterWenDu()
-                    mViewMode.getFanIntake()
-                    mViewMode.getFanExhaust()
-                    mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString()) // 获取预先配置的灯光强度，放在了获取140Dp点上。
-                    mViewMode.getCurrentGrowLight()
-                    mViewMode.getAirPump()
-                    mViewMode.getLightTime()
-                    mViewMode.getCloseLightTime()
-                    mViewMode.setLoadFirst(true)
+                    if (mViewMode.loadFirst.value == false) {
+                        // 加载手动模式相关数据
+                        mViewMode.getPlantHeight()
+                        mViewMode.getWenDu()
+                        mViewMode.getHumidity()
+                        mViewMode.getWaterWenDu()
+                        mViewMode.getFanIntake()
+                        mViewMode.getFanExhaust()
+                        mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString()) // 获取预先配置的灯光强度，放在了获取140Dp点上。
+                        mViewMode.getCurrentGrowLight()
+                        mViewMode.getAirPump()
+                        mViewMode.getLightTime()
+                        mViewMode.getCloseLightTime()
+                        mViewMode.setLoadFirst(true)
+                    }
                     // 请求未读消息数据，只有在种植之后才会开始有数据返回
                     mViewMode.getUnread()
                 }
@@ -356,18 +465,20 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                                 }
 
                                 "1" -> {
-                                    mViewMode.getPlantHeight()
-                                    mViewMode.getWenDu()
-                                    mViewMode.getHumidity()
-                                    mViewMode.getWaterWenDu()
-                                    mViewMode.getFanIntake()
-                                    mViewMode.getFanExhaust()
-                                    mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString()) // 获取预先配置的灯光强度，放在了获取140Dp点上。
-                                    mViewMode.getCurrentGrowLight()
-                                    mViewMode.getAirPump()
-                                    mViewMode.getLightTime()
-                                    mViewMode.getCloseLightTime()
-                                    mViewMode.setLoadFirst(true)
+                                    if (mViewMode.loadFirst.value == false) {
+                                        mViewMode.getPlantHeight()
+                                        mViewMode.getWenDu()
+                                        mViewMode.getHumidity()
+                                        mViewMode.getWaterWenDu()
+                                        mViewMode.getFanIntake()
+                                        mViewMode.getFanExhaust()
+                                        mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString()) // 获取预先配置的灯光强度，放在了获取140Dp点上。
+                                        mViewMode.getCurrentGrowLight()
+                                        mViewMode.getAirPump()
+                                        mViewMode.getLightTime()
+                                        mViewMode.getCloseLightTime()
+                                        mViewMode.setLoadFirst(true)
+                                    }
                                     // 请求未读消息数据，只有在种植之后才会开始有数据返回
                                     mViewMode.getUnread()
                                     // 请求环境信息
@@ -1222,7 +1333,8 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                 }
             }
 
-            ftAirPump.setOnCheckedChangeListener { switchButton, isChecked ->
+            ftAirPump.setOnClickListener {
+                val isChecked: Boolean = binding.ftAirPump.isOpened
                 if (!isChecked) {
                     pop.isDestroyOnDismiss(false)
                         .dismissOnTouchOutside(false)
@@ -1246,7 +1358,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                                             .error { code, error ->
                                                 ToastUtil.shortShow(
                                                     """
-                                                      airPump: 
+                                                      airPump:
                                                       code-> $code
                                                       errorMsg-> $error
                                                 """.trimIndent()
@@ -1256,7 +1368,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                                     }
                                 })
                         }).show()
-                    return@setOnCheckedChangeListener
+                    return@setOnClickListener
                 }
                 if (mViewMode.getWaterLevel.value == "Low") {
                     pop.isDestroyOnDismiss(false)
@@ -1275,7 +1387,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                                         mViewMode.setAirPump("false")
                                     })
                             }).show()
-                    return@setOnCheckedChangeListener
+                    return@setOnClickListener
                 }
                 with(DeviceControl) {
                     get()
@@ -1285,7 +1397,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                         .error { code, error ->
                             ToastUtil.shortShow(
                                 """
-                                      airPump: 
+                                      airPump:
                                       code-> $code
                                       errorMsg-> $error
                                 """.trimIndent()
@@ -1293,6 +1405,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                         }
                         .airPump(isChecked)
                 }
+
             }
         }
     }

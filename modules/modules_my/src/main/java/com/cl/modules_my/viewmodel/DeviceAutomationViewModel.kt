@@ -192,21 +192,14 @@ class DeviceAutomationViewModel @Inject constructor(private val repository: MyRe
         }
     }
 
-    // 设置usbPort
-    private val _setUsbPort = MutableLiveData<String?>()
-    val setUsbPort: LiveData<String?> = _setUsbPort
-    fun setUsbPort(usbPort: String? = null) {
-        _setUsbPort.value = usbPort
-    }
-
     /**
      * 规则列表
      */
     private val _ruleList = MutableLiveData<Resource<AutomationListBean>>()
     val ruleList: LiveData<Resource<AutomationListBean>> = _ruleList
-    fun getRuleList(accessoryId: String, deviceId: String, portId: String? = null) {
+    fun getRuleList(accessoryId: String, deviceId: String, portId: String? = null, usbPort: String? = null) {
         viewModelScope.launch {
-            repository.automationList(accessoryId, deviceId, portId)
+            repository.automationList(accessoryId, deviceId, portId, usbPort)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

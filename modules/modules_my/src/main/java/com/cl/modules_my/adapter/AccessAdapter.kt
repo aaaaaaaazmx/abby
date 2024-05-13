@@ -26,6 +26,8 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
             deviceType = deviceType
             executePendingBindings()
         }
+        // 是否显示和隐藏这个usb数字。
+        holder.setVisible(R.id.rl_one, deviceType == "OG_black")
 
         val pairData = item
         val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN)

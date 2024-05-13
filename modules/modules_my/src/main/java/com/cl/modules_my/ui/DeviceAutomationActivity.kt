@@ -54,6 +54,13 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     }
 
     /**
+     * usbPort
+     */
+    private val usbPort by lazy {
+        intent.getStringExtra(BasePopActivity.KEY_USB_PORT)
+    }
+
+    /**
      * 配件的设备ID
      */
     private val accessoryDeviceId by lazy {
@@ -103,7 +110,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     automationId = automationId,
                     deviceId = b,
                     status = if (isCheck) 1 else 0,
-                    usbPort = mViewModel.setUsbPort.value
+                    usbPort = usbPort
                 )
                 mViewModel.automationSwitch(req)
             }
@@ -118,9 +125,9 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
         super.onNewIntent(intent)
         letMultiple(accessoryId, deviceId) { a, b ->
             if (portId.isNullOrEmpty()) {
-                mViewModel.getRuleList(a, b)
+                mViewModel.getRuleList(a, b, usbPort = usbPort)
             } else {
-                mViewModel.getRuleList(a, b, portId)
+                mViewModel.getRuleList(a, b, portId, usbPort = usbPort)
             }
         }
     }
@@ -130,9 +137,9 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
         binding.rvDeivceAutoInfo.adapter = adapter
         letMultiple(accessoryId, deviceId) { a, b ->
             if (portId.isNullOrEmpty()) {
-                mViewModel.getRuleList(a, b)
+                mViewModel.getRuleList(a, b, usbPort = usbPort)
             } else {
-                mViewModel.getRuleList(a, b, portId)
+                mViewModel.getRuleList(a, b, portId, usbPort = usbPort)
             }
         }
         binding.ftbTitle.setLeftClickListener {
@@ -220,9 +227,9 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 success {
                     letMultiple(accessoryId, deviceId) { a, b ->
                         if (portId.isNullOrEmpty()) {
-                            mViewModel.getRuleList(a, b)
+                            mViewModel.getRuleList(a, b, usbPort = usbPort)
                         } else {
-                            mViewModel.getRuleList(a, b, portId)
+                            mViewModel.getRuleList(a, b, portId, usbPort = usbPort)
                         }
                     }
                 }
@@ -235,9 +242,9 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 success {
                     letMultiple(accessoryId, deviceId) { a, b ->
                         if (portId.isNullOrEmpty()) {
-                            mViewModel.getRuleList(a, b)
+                            mViewModel.getRuleList(a, b, usbPort = usbPort)
                         } else {
-                            mViewModel.getRuleList(a, b, portId)
+                            mViewModel.getRuleList(a, b, portId, usbPort = usbPort)
                         }
                     }
                 }
@@ -248,8 +255,6 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    // 设置usbPort
-                    setUsbPort(data?.usbPort)
                     data?.image?.let {
                         val requestOptions = RequestOptions()
                         requestOptions.placeholder(R.mipmap.placeholder)
@@ -295,9 +300,9 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 success {
                     letMultiple(accessoryId, deviceId) { a, b ->
                         if (portId.isNullOrEmpty()) {
-                            mViewModel.getRuleList(a, b)
+                            mViewModel.getRuleList(a, b, usbPort = usbPort)
                         } else {
-                            mViewModel.getRuleList(a, b, portId)
+                            mViewModel.getRuleList(a, b, portId, usbPort = usbPort)
                         }
                     }
                 }
@@ -308,7 +313,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
     override fun initData() {
         binding.ftCheck.setSwitchCheckedChangeListener { _, isChecked ->
             letMultiple(accessoryId, deviceId) { a, b ->
-                mViewModel.getAccessoryStatus(a, b, if (isChecked) "1" else "0", mViewModel.setUsbPort.value)
+                mViewModel.getAccessoryStatus(a, b, if (isChecked) "1" else "0", usbPort = usbPort)
             }
         }
 
@@ -374,15 +379,15 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                     status = 0,
                                     automationId = "${isDefault.automationId}",
                                     deviceId = deviceId,
-                                    usbPort = mViewModel.setUsbPort.value
+                                    usbPort = usbPort
                                 )
                                 mViewModel.automationSwitch(req)
                                 // 重新获取一次
                                 letMultiple(accessoryId, deviceId) { a, b ->
                                     if (portId.isNullOrEmpty()) {
-                                        mViewModel.getRuleList(a, b)
+                                        mViewModel.getRuleList(a, b, usbPort = usbPort)
                                     } else {
-                                        mViewModel.getRuleList(a, b, portId)
+                                        mViewModel.getRuleList(a, b, portId, usbPort = usbPort)
                                     }
                                 }
 
@@ -394,7 +399,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                 intent.putExtra("portId", portId)
                                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                 intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
-                                intent.putExtra(BasePopActivity.KEY_USB_PORT, mViewModel.setUsbPort.value)
+                                intent.putExtra(BasePopActivity.KEY_USB_PORT, usbPort)
                                 startActivity(intent)
                             })
                     ).show()
@@ -405,7 +410,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 intent.putExtra("portId", portId)
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                 intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
-                intent.putExtra(BasePopActivity.KEY_USB_PORT, mViewModel.setUsbPort.value)
+                intent.putExtra(BasePopActivity.KEY_USB_PORT, usbPort)
                 startActivity(intent)
             }
         }
@@ -435,7 +440,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                     intent.putExtra("portId", portId)
                                     intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                                     intent.putExtra(BasePopActivity.KEY_PART_ID, accessoryId)
-                                    intent.putExtra(BasePopActivity.KEY_USB_PORT, mViewModel.setUsbPort.value)
+                                    intent.putExtra(BasePopActivity.KEY_USB_PORT, usbPort)
                                     intent.putExtra(
                                         BasePopActivity.KEY_AUTOMATION_ID,
                                         "${adapter.data[position].automationId}"

@@ -29,7 +29,7 @@
                 android:id="@+id/cl_bg"
                 android:layout_width="match_parent"
                 android:layout_height="109dp"
-                android:background='@{viewModel.userinfoBean.invoke().spaceType.equals("box") ? viewModel.userinfoBean.invoke().spaceType.equals("OG_black") ? @drawable/black_plant_bg : @drawable/plant_bg : @drawable/plant_zp_bg}'>
+                android:background='@{viewModel.userinfoBean.invoke().spaceType.equals("box") ? viewModel.userinfoBean.invoke().deviceType.equals("OG_black") ? @drawable/black_plant_bg : @drawable/plant_bg : @drawable/plant_zp_bg}'>
 
                 <FrameLayout
                     android:id="@+id/fl_get_plant_list"
