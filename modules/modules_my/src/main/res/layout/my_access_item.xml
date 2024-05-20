@@ -122,11 +122,10 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
-                <com.cl.common_base.widget.FeatureItemSwitch
+                <com.cl.common_base.widget.FeatureItemSwitchNoPadding
                     android:visibility="gone"
                     android:id="@+id/ft_check"
                     android:layout_width="wrap_content"
-                    app:hideArrow="true"
                     android:layout_height="40dp"
                     />
 

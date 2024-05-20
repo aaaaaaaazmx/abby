@@ -12,6 +12,7 @@ import com.cl.common_base.ext.temperatureConversion
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.FeatureItemSwitch
+import com.cl.common_base.widget.FeatureItemSwitchNoPadding
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyAccessItemBinding
 
@@ -32,7 +33,7 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
         val pairData = item
         val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN)
         holder.setVisible(R.id.rl_check, isDisplay)
-        val checkView = holder.getView<FeatureItemSwitch>(R.id.ft_check)
+        val checkView = holder.getView<FeatureItemSwitchNoPadding>(R.id.ft_check)
         val textView = holder.getView<TextView>(R.id.tv_auto_desc)
         // 配件的相关事件
         checkView.apply {
