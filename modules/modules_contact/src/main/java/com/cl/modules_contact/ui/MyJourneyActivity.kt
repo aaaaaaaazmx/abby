@@ -263,17 +263,20 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
 
                 R.id.cl_env -> {
                     // 点击环境信息
-                    val envInfoData = GSON.parseObjectList(item?.environment, ContactEnvData::class.java).toMutableList()
-                    // 弹出环境信息
-                    // XPopup.Builder(this@MyJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(ContactEnvPop(this@MyJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()
-                    if (item?.deviceModelName.isNullOrEmpty() || item?.deviceModelName == "Tent") {
-                        return@setOnItemChildClickListener
+                    GSON.parseObjectListInBackground(item?.environment, ContactEnvData::class.java) {
+                        infoList ->
+                        // 弹出环境信息
+                        // XPopup.Builder(this@MyJourneyActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(ContactEnvPop(this@MyJourneyActivity, envInfoData, item?.nickName, item?.avatarPicture)).show()
+                        if (item?.deviceModelName.isNullOrEmpty() || item?.deviceModelName == "Tent") {
+                            return@parseObjectListInBackground
+                        }
+                        xpopup(this@MyJourneyActivity) {
+                            dismissOnTouchOutside(false)
+                            isDestroyOnDismiss(false)
+                            asCustom(ContactNewEnvPop(this@MyJourneyActivity, infoList.toMutableList(), item)).show()
+                        }
                     }
-                    xpopup(this@MyJourneyActivity) {
-                        dismissOnTouchOutside(false)
-                        isDestroyOnDismiss(false)
-                        asCustom(ContactNewEnvPop(this@MyJourneyActivity, envInfoData, item)).show()
-                    }
+
                 }
 
                 R.id.cl_love -> {

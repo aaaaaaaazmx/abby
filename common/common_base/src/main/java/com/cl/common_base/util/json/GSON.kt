@@ -1,55 +1,82 @@
 package com.cl.common_base.util.json
 
-import android.text.TextUtils
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonParser
+import com.google.gson.JsonSyntaxException
 import java.lang.reflect.Type
+import android.os.Handler
+import android.os.Looper
 
 object GSON {
 
+    private val gson = Gson()
+    private val jsonParser = JsonParser()
+    private const val TAG = "GSON_UTIL"
+
     /**
      * json to javabean
      *
      * @param json
      */
-    @JvmStatic
-    fun <T> parseObject(json: String?, clazz: Class<T>?): T? {
-        return if (TextUtils.isEmpty(json)) {
+     fun <T> parseObject(json: String?, clazz: Class<T>?): T? {
+        if (json.isNullOrEmpty()) {
+            Log.e(TAG, "JSON string is null or empty")
+            return null
+        }
+        return try {
+            gson.fromJson(json, clazz)
+        } catch (e: JsonSyntaxException) {
+            Log.e(TAG, "Failed to parse JSON: ${e.message}")
             null
-        } else Gson().fromJson(json, clazz)
+        } catch (e: Exception) {
+            Log.e(TAG, "Unexpected error while parsing JSON: ${e.message}")
+            null
+        }
     }
 
-
-    /**
-     * json to javabean
-     *
-     * @param json
-     */
-    @JvmStatic
-    fun <T> parseObject(json: String?, type: Type?): T {
-        return Gson().fromJson(json, type)
+    fun <T> parseObjectType(json: String?, clazz: Type?): T? {
+        if (json.isNullOrEmpty()) {
+            Log.e(TAG, "JSON string is null or empty")
+            return null
+        }
+        return try {
+            gson.fromJson(json, clazz)
+        } catch (e: JsonSyntaxException) {
+            Log.e(TAG, "Failed to parse JSON: ${e.message}")
+            null
+        } catch (e: Exception) {
+            Log.e(TAG, "Unexpected error while parsing JSON: ${e.message}")
+            null
+        }
     }
 
     /**
      * json字符串转List集合
      */
-    fun <T> parseObjectList(json: String?, cls: Class<T>?): List<T> {
-        if (!TextUtils.isEmpty(json)) {
-            val list: MutableList<T> = ArrayList()
-            try {
-                val gson = Gson()
-                val jsonArray = JsonParser().parse(json).asJsonArray
-                for (jsonElement in jsonArray) {
-                    list.add(gson.fromJson(jsonElement, cls))
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-            return list
+     fun <T> parseObjectList(json: String?, cls: Class<T>?): List<T> {
+        if (json.isNullOrEmpty()) {
+            Log.e(TAG, "JSON string is null or empty")
+            return emptyList()
         }
-        return ArrayList()
+        return try {
+            val jsonArray = jsonParser.parse(json).asJsonArray
+            jsonArray.mapNotNull { jsonElement ->
+                try {
+                    gson.fromJson(jsonElement, cls)
+                } catch (e: JsonSyntaxException) {
+                    Log.e(TAG, "Failed to parse JSON element: ${e.message}")
+                    null
+                } catch (e: Exception) {
+                    Log.e(TAG, "Unexpected error while parsing JSON element: ${e.message}")
+                    null
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Unexpected error while parsing JSON array: ${e.message}")
+            emptyList()
+        }
     }
-
 
     /**
      * 转成json字符串
@@ -57,9 +84,64 @@ object GSON {
      * @param t
      * @return
      */
-    fun toJson(t: Any?): String? {
-        return if (t != null) {
-            Gson().toJson(t)
-        } else ""
+    fun toJson(t: Any?): String {
+        return if (t == null) {
+            Log.e(TAG, "Object to convert to JSON is null")
+            ""
+        } else {
+            try {
+                gson.toJson(t)
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error while converting object to JSON: ${e.message}")
+                ""
+            }
+        }
+    }
+
+    /**
+     * 使用后台线程将对象转换为JSON字符串
+     *
+     * @param t
+     * @param callback
+     */
+    fun toJsonInBackground(t: Any?, callback: (String) -> Unit) {
+        Thread {
+            val result = toJson(t)
+            Handler(Looper.getMainLooper()).post {
+                callback(result)
+            }
+        }.start()
+    }
+
+    /**
+     * 使用后台线程解析json
+     *
+     * @param json
+     * @param clazz
+     * @param callback
+     */
+    fun <T> parseObjectInBackground(json: String?, clazz: Class<T>?, callback: (T?) -> Unit) {
+        Thread {
+            val result = parseObject(json, clazz)
+            Handler(Looper.getMainLooper()).post {
+                callback(result)
+            }
+        }.start()
+    }
+
+    /**
+     * 使用后台线程解析json字符串转List集合
+     *
+     * @param json
+     * @param cls
+     * @param callback
+     */
+    fun <T> parseObjectListInBackground(json: String?, cls: Class<T>?, callback: (List<T>) -> Unit) {
+        Thread {
+            val result = parseObjectList(json, cls)
+            Handler(Looper.getMainLooper()).post {
+                callback(result)
+            }
+        }.start()
     }
 }

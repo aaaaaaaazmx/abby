@@ -1,26 +1,17 @@
 package com.cl.common_base.intercome
 
-import android.content.Context
-import android.util.DisplayMetrics
-import android.view.WindowManager
-import com.cl.common_base.BaseApplication
-import com.cl.common_base.BuildConfig
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.ext.dp2px
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.px2dp
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.screenHeight
-import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.util.livedatabus.LiveEventBus
-import com.luck.lib.camerax.utils.DensityUtil
 import io.intercom.android.sdk.*
 import io.intercom.android.sdk.identity.Registration
-import io.intercom.android.sdk.push.IntercomPushClient
 
 /**
  * InterCome 功能实现类
@@ -229,12 +220,14 @@ class InterComeHelp {
     fun openInterComeHome() {
         // 用户信息
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
-        if (parseObject?.isVip == 1) {
-            Intercom.client().present(space = IntercomSpace.Home)
-        } else {
-            Intercom.client().present(space = IntercomSpace.HelpCenter)
+        GSON.parseObjectInBackground(bean, UserinfoBean::class.java) {parseObject ->
+            if (parseObject?.isVip == 1) {
+                Intercom.client().present(space = IntercomSpace.Home)
+            } else {
+                Intercom.client().present(space = IntercomSpace.HelpCenter)
+            }
         }
+
     }
 
     /**

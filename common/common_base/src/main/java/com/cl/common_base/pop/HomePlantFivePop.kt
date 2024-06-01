@@ -94,11 +94,12 @@ class HomePlantFivePop(
 
         LiveEventBus.get().with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
             .observe(this) {
-                val map = GSON.parseObject(it, Map::class.java)
-                map?.forEach { (key, value) ->
-                    when (key) {
-                        TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
-                            setWaterVolume(value.toString())
+                GSON.parseObjectInBackground(it, Map::class.java) { map ->
+                    map?.forEach { (key, value) ->
+                        when (key) {
+                            TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
+                                setWaterVolume(value.toString())
+                            }
                         }
                     }
                 }

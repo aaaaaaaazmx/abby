@@ -319,20 +319,23 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
                 R.id.cl_env -> {
                     // 点击环境信息
-                    val envInfoData = GSON.parseObjectList(item?.environment, ContactEnvData::class.java).toMutableList()
-                    // 弹出环境信息
-                    //XPopup.Builder(context).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(context?.let { ContactEnvPop(it, envInfoData, item?.nickName, item?.avatarPicture) }).show()
-                    // 弹出修改后的环境信息
-                    if (item?.deviceModelName.isNullOrEmpty() || item?.deviceModelName == "Tent") {
-                        return@setOnItemChildClickListener
-                    }
-                    context?.let {
-                        xpopup(it) {
-                            dismissOnTouchOutside(false)
-                            isDestroyOnDismiss(false)
-                            asCustom(ContactNewEnvPop(it, envInfoData, item)).show()
+                    GSON.parseObjectListInBackground(item?.environment, ContactEnvData::class.java) {
+                        infoList ->
+                        // 弹出环境信息
+                        //XPopup.Builder(context).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(context?.let { ContactEnvPop(it, envInfoData, item?.nickName, item?.avatarPicture) }).show()
+                        // 弹出修改后的环境信息
+                        if (item?.deviceModelName.isNullOrEmpty() || item?.deviceModelName == "Tent") {
+                            return@parseObjectListInBackground
+                        }
+                        context?.let {
+                            xpopup(it) {
+                                dismissOnTouchOutside(false)
+                                isDestroyOnDismiss(false)
+                                asCustom(ContactNewEnvPop(it, infoList.toMutableList(), item)).show()
+                            }
                         }
                     }
+
                 }
 
                 R.id.cl_love -> {

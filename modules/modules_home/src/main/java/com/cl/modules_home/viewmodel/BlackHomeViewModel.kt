@@ -2351,8 +2351,8 @@ class BlackHomeViewModel @Inject constructor(private val repository: HomeReposit
         try {
             // 你现有的代码
             val pres = Prefs.getObjects()
-            logI("12312312#: ${pres.size}")
-            if (pres.isNotEmpty()) {
+            logI("12312312#: ${pres?.size}")
+            if (pres?.isNotEmpty() == true) {
                 // 如果不是空的，那么就遍历然后上传到后台模版。
                 pres.forEachIndexed { index, it ->
                     val asdasd = ProModeInfoBean(bright = it.lightIntensity.safeToInt(), deviceId = userDetail.value?.data?.deviceId,
