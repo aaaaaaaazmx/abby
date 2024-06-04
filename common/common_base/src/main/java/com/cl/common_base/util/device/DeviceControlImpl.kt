@@ -13,6 +13,7 @@ import com.thingclips.smart.sdk.api.IResultCallback
 import com.thingclips.smart.sdk.api.IThingDevice
 import com.thingclips.smart.sdk.enums.ThingDevicePublishModeEnum
 
+// 设备控制类
 class DeviceControlImpl : DeviceControl, IResultCallback {
     // 用户信息
     val userInfo = {
