@@ -1416,89 +1416,91 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     @SuppressLint("CheckResult", "FileEndsWithExt")
     override fun onTuYaToAppDataChange(status: String) {
         super.onTuYaToAppDataChange(status)
-        val map = GSON.parseObject(status, Map::class.java)
-        map?.forEach { (key, value) ->
-            when (key) {
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_REST_STATUS_INSTRUCTION -> {
-                    if (value.toString().isEmpty()) return@forEach
-                    logI(
-                        """
+        GSON.parseObjectInBackground(status, Map::class.java) { map ->
+            map?.forEach { (key, value) ->
+                when (key) {
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_REST_STATUS_INSTRUCTION -> {
+                        if (value.toString().isEmpty()) return@forEach
+                        logI(
+                            """
                         KEY_DEVICE_REPAIR_REST_STATUS: 
                         value: ${value.toString()}
                     """.trimIndent()
-                    )
-                    //mcu:Abby-1.1.01-220519-T-B#abbyAAYA2021730021#1.4.0#flash:Abby-1.1.01-220519-T-B#1.4.0
-                    // 截取, 并且需要置灰
-                    kotlin.runCatching {
-                        mViewModel.saveSn(value.toString().split("#")[1])
-                        val requestOptions = RequestOptions().apply {
-                            error(R.drawable.home_gray_place_holder)
-                            placeholder(R.drawable.home_gray_place_holder)
-                        }
-
-                        // 默认选中第一个,第一个就是time-lapse
-                        val isOpen = Prefs.getBoolean(mViewModel.sn.value.toString(), false)
-
-                        // 获取当前的模式
-                        val mode = adapters?.focusedPosition?.let { adapters?.getLetter(it) }
-
-                        when (mode) {
-                            "TIME-LAPSE" -> {
-                                binding.ivCameraButton.isChecked = isOpen
-                                ViewUtils.setVisible(binding.ivGetImage)
+                        )
+                        //mcu:Abby-1.1.01-220519-T-B#abbyAAYA2021730021#1.4.0#flash:Abby-1.1.01-220519-T-B#1.4.0
+                        // 截取, 并且需要置灰
+                        kotlin.runCatching {
+                            mViewModel.saveSn(value.toString().split("#")[1])
+                            val requestOptions = RequestOptions().apply {
+                                error(R.drawable.home_gray_place_holder)
+                                placeholder(R.drawable.home_gray_place_holder)
                             }
-                            "PLAYBACK" -> {
-                                ViewUtils.setVisible(binding.tvPlayBack)
+
+                            // 默认选中第一个,第一个就是time-lapse
+                            val isOpen = Prefs.getBoolean(mViewModel.sn.value.toString(), false)
+
+                            // 获取当前的模式
+                            val mode = adapters?.focusedPosition?.let { adapters?.getLetter(it) }
+
+                            when (mode) {
+                                "TIME-LAPSE" -> {
+                                    binding.ivCameraButton.isChecked = isOpen
+                                    ViewUtils.setVisible(binding.ivGetImage)
+                                }
+                                "PLAYBACK" -> {
+                                    ViewUtils.setVisible(binding.tvPlayBack)
+                                }
                             }
-                        }
 
-                        // 在其他情况下，将两个视图设置为隐藏
-                        if (mode != "TIME-LAPSE" && mode != "PLAYBACK") {
-                            ViewUtils.setGone(binding.ivGetImage, binding.tvPlayBack)
-                        }
-
-
-                        //  查找当前sd卡路径，是否展示图片还是灰色的颜色，不管相册还是sdcard的，都是和当前的sn相关的，但是相册里面的可能被删除。
-                        //  需要从相册里面读取图片，如果没有图片，就展示灰色的图片
-                        applyForAuthority {
-                            if (!it) {
-                                Glide.with(this@CameraActivity)
-                                    .load("")
-                                    .apply(requestOptions)
-                                    .into(binding.ivThumbnail)
-                                return@applyForAuthority
+                            // 在其他情况下，将两个视图设置为隐藏
+                            if (mode != "TIME-LAPSE" && mode != "PLAYBACK") {
+                                ViewUtils.setGone(binding.ivGetImage, binding.tvPlayBack)
                             }
-                            if (mViewModel.getPartsInfo.value?.data?.storageModel == 0) {
-                                // 表示是从内存卡里面读取的
-                                val picPath = findFirstImageInDir(createFileDir())
 
-                                Glide.with(this@CameraActivity)
-                                    .load(picPath)
-                                    .apply(requestOptions)
-                                    .into(binding.ivThumbnail)
-                            } else {
-                                val list = fetchImagesAndVideosFromSpecificFolder()
-                                list.lastOrNull { path -> path.absolutePath.endsWith(".jpg") || path.absolutePath.endsWith(".jpeg") || path.absolutePath.endsWith(".png") }?.let { path ->
+
+                            //  查找当前sd卡路径，是否展示图片还是灰色的颜色，不管相册还是sdcard的，都是和当前的sn相关的，但是相册里面的可能被删除。
+                            //  需要从相册里面读取图片，如果没有图片，就展示灰色的图片
+                            applyForAuthority {
+                                if (!it) {
                                     Glide.with(this@CameraActivity)
-                                        .load(path)
+                                        .load("")
                                         .apply(requestOptions)
                                         .into(binding.ivThumbnail)
-                                } ?: Glide.with(this@CameraActivity)
-                                    .load("")
-                                    .apply(requestOptions)
-                                    .into(binding.ivThumbnail)
+                                    return@applyForAuthority
+                                }
+                                if (mViewModel.getPartsInfo.value?.data?.storageModel == 0) {
+                                    // 表示是从内存卡里面读取的
+                                    val picPath = findFirstImageInDir(createFileDir())
+
+                                    Glide.with(this@CameraActivity)
+                                        .load(picPath)
+                                        .apply(requestOptions)
+                                        .into(binding.ivThumbnail)
+                                } else {
+                                    val list = fetchImagesAndVideosFromSpecificFolder()
+                                    list.lastOrNull { path -> path.absolutePath.endsWith(".jpg") || path.absolutePath.endsWith(".jpeg") || path.absolutePath.endsWith(".png") }?.let { path ->
+                                        Glide.with(this@CameraActivity)
+                                            .load(path)
+                                            .apply(requestOptions)
+                                            .into(binding.ivThumbnail)
+                                    } ?: Glide.with(this@CameraActivity)
+                                        .load("")
+                                        .apply(requestOptions)
+                                        .into(binding.ivThumbnail)
+                                }
                             }
+
                         }
-
                     }
-                }
 
-                // 是否关闭门
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
-                    isPrivateMode(value)
+                    // 是否关闭门
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
+                        isPrivateMode(value)
+                    }
                 }
             }
         }
+
     }
 
     private fun isPrivateMode(value: Any?) {

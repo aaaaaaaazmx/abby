@@ -334,7 +334,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                                     // 缓存用户第一个设备数据
                                                                     // 只取第一个
                                                                     // 缓存的目的是为了下一次接口报错做准备
-                                                                    GSON.toJson(deviceBean)?.let {
+                                                                    GSON.toJsonInBackground(deviceBean) {
                                                                         Prefs.putStringAsync(
                                                                             Constants.Tuya.KEY_DEVICE_DATA,
                                                                             it
@@ -344,16 +344,17 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                                                                     onRegisterReceiver?.invoke(
                                                                         deviceBean.devId
                                                                     )
-                                                                    logI(
-                                                                        """
-                                                                        login:
-                                                                        DEVICE_BEAN_DPS: ${
-                                                                            GSON.toJson(
-                                                                                deviceBean.dps
-                                                                            )
-                                                                        }
+                                                                    GSON.toJsonInBackground(
+                                                                        deviceBean.dps
+                                                                    ) {
+                                                                        logI(
+                                                                            """
+                                                                            login:
+                                                                            DEVICE_BEAN_DPS: $it
                                                                     """.trimIndent()
-                                                                    )
+                                                                        )
+                                                                    }
+
                                                                 }
 
                                                             /**

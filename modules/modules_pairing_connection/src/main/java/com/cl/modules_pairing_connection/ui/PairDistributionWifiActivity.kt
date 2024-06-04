@@ -227,7 +227,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                 success {
                     hideProgressLoading()
                     // 缓存信息
-                    GSON.toJson(data)?.let { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
+                    GSON.toJsonInBackground(data) { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 绑定设备JPUSH的别名
                     thread {
                         logI(
@@ -575,7 +575,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                 // 重新绑定时、只取最后一个，表示这是新添加的。
                                                 // 缓存用户第一个设备数据
                                                 // 只取第一个
-                                                GSON.toJson(deviceBean)?.let {
+                                                GSON.toJsonInBackground(deviceBean) {
                                                     Prefs.putStringAsync(
                                                         Constants.Tuya.KEY_DEVICE_DATA,
                                                         it

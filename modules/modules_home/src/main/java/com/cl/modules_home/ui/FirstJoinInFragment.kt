@@ -172,7 +172,7 @@ class FirstJoinInFragment : BaseFragment<HomeFirstJoinFragmentBinding>() {
                 success {
                     hideProgressLoading()
                     // 保存当前的信息.
-                    GSON.toJson(data)?.let {
+                    GSON.toJsonInBackground(data) {
                         logI("refreshToken: $it")
                         Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
                     }

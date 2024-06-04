@@ -140,11 +140,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                         tuyaUserId = userInfoBean.tuyaUserId,
                         tuyaUserType = userInfoBean.tuyaUserType
                     )
-                    GSON.toJson(tuYaInfo)?.let { tuyainfos ->
+                    GSON.toJsonInBackground(tuYaInfo) { tuyainfos ->
                         logI("tuYaInfoL: $tuyainfos")
                         Prefs.putStringAsync(Constants.Login.KEY_TU_YA_INFO, tuyainfos)
                     }
-                    GSON.toJson(it.data)?.let { data ->
+                    GSON.toJsonInBackground(it.data) { data ->
                         logI("LoginData: $data")
                         Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, data)
                     } // 保存Token

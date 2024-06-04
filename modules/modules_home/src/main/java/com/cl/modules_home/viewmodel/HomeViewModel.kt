@@ -1165,7 +1165,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
         thingDeviceBean()?.devId?.let {
             ThingHomeSdk.newOTAInstance(it)?.getOtaInfo(object : IGetOtaInfoCallback {
                 override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
-                    logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
+                    // logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
                     // 如果可以升级
                     if (hasHardwareUpdate(upgradeInfoBeans)) {
                         onOtaInfo?.invoke(upgradeInfoBeans, true)

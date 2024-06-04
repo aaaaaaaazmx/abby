@@ -551,8 +551,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 success {
                     hideProgressLoading()
                     // 缓存信息
-                    GSON.toJson(data)
-                        ?.let { it1 -> Prefs.putString(Constants.Login.KEY_LOGIN_DATA, it1) }
+                    GSON.toJsonInBackground(data) { it1 -> Prefs.putString(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 是否开启通知(1-开启、0-关闭)
                     binding.ftNotif.setItemSwitch(data?.openNotify == 1)
                     // 订阅时间
@@ -1076,48 +1075,50 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
     override fun onTuYaToAppDataChange(status: String) {
         super.onTuYaToAppDataChange(status)
-        val map = GSON.parseObject(status, Map::class.java)
-        map?.forEach { (key, value) ->
-            when (key) {
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_REST_STATUS_INSTRUCTION -> {
-                    if (value.toString().isEmpty()) return@forEach
-                    logI(
-                        """
+        GSON.parseObjectInBackground(status, Map::class.java) { map->
+            map?.forEach { (key, value) ->
+                when (key) {
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_REST_STATUS_INSTRUCTION -> {
+                        if (value.toString().isEmpty()) return@forEach
+                        logI(
+                            """
                         KEY_DEVICE_REPAIR_REST_STATUS: 
                         value: ${value.toString()}
                     """.trimIndent()
-                    )
-                    // 修改:mcu:Abby-1.1.01-230313-T-B#abbyAAYA2234130142#1.8.1#flash:Abby-1.1.01-230313-T-B#1.8.1#OG#A0001#B0001#C0001#D0001
-                    //mcu:Abby-1.1.01-220519-T-B#abbyAAYA2021730021#1.4.0#flash:Abby-1.1.01-220519-T-B#1.4.0
-                    // 截取, 并且需要置灰
-                    kotlin.runCatching {
-                        binding.ftSN.setItemValueWithColor(
-                            value.toString().split("#")[1], "#000000"
                         )
-                    }
-                }
-
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
-                    if (value.toString().isEmpty()) return@forEach
-                    if (value.toString() == "NG") {
-                        binding.ftSub.setSvText("Activate")
-                    } else {
-                        mViewModel.userDetail.value?.data?.subscriptionTime?.let {
-                            binding.ftSub.itemValue = it
+                        // 修改:mcu:Abby-1.1.01-230313-T-B#abbyAAYA2234130142#1.8.1#flash:Abby-1.1.01-230313-T-B#1.8.1#OG#A0001#B0001#C0001#D0001
+                        //mcu:Abby-1.1.01-220519-T-B#abbyAAYA2021730021#1.4.0#flash:Abby-1.1.01-220519-T-B#1.4.0
+                        // 截取, 并且需要置灰
+                        kotlin.runCatching {
+                            binding.ftSN.setItemValueWithColor(
+                                value.toString().split("#")[1], "#000000"
+                            )
                         }
                     }
-                }
 
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_CHILD_LOCK_INSTRUCT -> {
-                    // 童锁
-                    kotlin.runCatching {
-                        binding.ftChildLock.isItemChecked = value.toString().toBoolean()
-                    }.onFailure {
-                        binding.ftChildLock.isItemChecked = false
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
+                        if (value.toString().isEmpty()) return@forEach
+                        if (value.toString() == "NG") {
+                            binding.ftSub.setSvText("Activate")
+                        } else {
+                            mViewModel.userDetail.value?.data?.subscriptionTime?.let {
+                                binding.ftSub.itemValue = it
+                            }
+                        }
+                    }
+
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_CHILD_LOCK_INSTRUCT -> {
+                        // 童锁
+                        kotlin.runCatching {
+                            binding.ftChildLock.isItemChecked = value.toString().toBoolean()
+                        }.onFailure {
+                            binding.ftChildLock.isItemChecked = false
+                        }
                     }
                 }
             }
         }
+
     }
 
     /**

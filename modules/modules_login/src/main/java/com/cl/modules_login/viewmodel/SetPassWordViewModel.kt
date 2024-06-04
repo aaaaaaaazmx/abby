@@ -230,8 +230,7 @@ class SetPassWordViewModel @Inject constructor(private val repository: RegisterL
                     override fun onSuccess(user: User?) {
                         // 缓存涂鸦用户信息类
                         // 缓存的目的是为了下一次接口报错做准备
-                        GSON.toJson(user)
-                            ?.let { Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_USER, it) }
+                        GSON.toJsonInBackground(user) { Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_USER, it) }
 
 
                         // 加入当前家庭
