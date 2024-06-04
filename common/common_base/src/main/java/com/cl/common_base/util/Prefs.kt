@@ -5,10 +5,8 @@ import androidx.annotation.RequiresApi
 import com.cl.common_base.bean.PresetData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.util.json.GSON
-import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.tencent.mmkv.MMKV
-import java.util.Objects
 
 object Prefs {
 
@@ -91,28 +89,29 @@ object Prefs {
         mmkv.removeValueForKey(key)
     }
     fun addObject(newObj: PresetData) {
-        val objects = getObjects().toMutableList()
-        if (objects.size >= 5) {
-            objects.removeAt(0) // 移除最旧的对象
+        val objects = getObjects()?.toMutableList()
+        if ((objects?.size ?: 0) >= 5) {
+            objects?.removeAt(0) // 移除最旧的对象
         }
-        objects.add(newObj) // 添加新对象到末尾
+        objects?.add(newObj) // 添加新对象到末尾
         saveObjects(objects)
     }
 
     fun removeObject(obj: PresetData) {
-        val objects = getObjects().toMutableList()
-        objects.remove(obj) // 删除指定对象
+        val objects = getObjects()?.toMutableList()
+        objects?.remove(obj) // 删除指定对象
         saveObjects(objects)
     }
 
-    private fun saveObjects(objects: List<PresetData>) {
-        val json = GSON.toJson(objects)
-        mmkv.putString(Constants.Global.KEY_GLOBAL_PRO_MODEL, json)
+    private fun saveObjects(objects: List<PresetData>?) {
+      GSON.toJsonInBackground(objects) {
+            mmkv.putString(Constants.Global.KEY_GLOBAL_PRO_MODEL, it)
+        }
     }
 
-    fun getObjects(): List<PresetData> {
+    fun getObjects(): List<PresetData>? {
         val json = mmkv.getString(Constants.Global.KEY_GLOBAL_PRO_MODEL, null) ?: return emptyList()
         val type = object : TypeToken<List<PresetData>>() {}.type
-        return GSON.parseObject(json, type)
+        return GSON.parseObjectType(json, type)
     }
 }

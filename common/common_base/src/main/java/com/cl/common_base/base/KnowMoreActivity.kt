@@ -562,7 +562,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                                     return@applyh*/
                                                     ToastUtil.shortShow("Connection error, try to delete device and pair again")
                                                 }
-                                                GSON.toJson(this)?.let {
+                                                GSON.toJsonInBackground(this) {
                                                     Prefs.putStringAsync(
                                                         Constants.Tuya.KEY_DEVICE_DATA,
                                                         it

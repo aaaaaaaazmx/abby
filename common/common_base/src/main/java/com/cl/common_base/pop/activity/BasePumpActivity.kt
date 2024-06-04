@@ -57,7 +57,6 @@ import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IResultCallback
-import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -449,95 +448,96 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         // 蓝牙状态监听变化
         LiveEventBus.get().with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
             .observe(this) {
-                val map = GSON.parseObject(it, Map::class.java)
-                map?.forEach { (key, value) ->
-                    when (key) {
-                        // 排水成功，取消监听。
-                        /*TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
-                            // 涂鸦指令，添加排水功能
-                            //                            isOpenOrStop(false)
-                            // 排水成功
-                            if ((value as? Boolean == false)) return@observe
-                            job?.cancel()
-                            // 判断当前播放器是否全屏
-                            if (GSYVideoManager.isFullState(this@BasePumpActivity)) {
-                                finishVideoAndPump = true
-                                ToastUtil.shortShow(getString(R.string.draining_complete))
-                                return@observe
-                            }
-                            setResult(Activity.RESULT_OK)
-                            finish()
-                        }*/
-                        //
-                        TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
-                            // 涂鸦指令，添加排水功能
-                            // isOpenOrStop(value)
-                            synchronized(this) {
-                                // 加锁的目的是为了
-                                // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
-                                // false 是暂停排水、 true是开始排水
-                                if (value == false) {
-                                    job?.cancel()
-                                    count++
-                                } else {
-                                    // 计时器减去时间
-                                    if (count >= 3) timing = 120
-                                    downTime()
+                val map = GSON.parseObjectInBackground(it, Map::class.java) {map ->
+                    map?.forEach { (key, value) ->
+                        when (key) {
+                            // 排水成功，取消监听。
+                            /*TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
+                                // 涂鸦指令，添加排水功能
+                                //                            isOpenOrStop(false)
+                                // 排水成功
+                                if ((value as? Boolean == false)) return@observe
+                                job?.cancel()
+                                // 判断当前播放器是否全屏
+                                if (GSYVideoManager.isFullState(this@BasePumpActivity)) {
+                                    finishVideoAndPump = true
+                                    ToastUtil.shortShow(getString(R.string.draining_complete))
+                                    return@observe
                                 }
-                                binding.waterPop.btnSuccess.background =
-                                    if ((value as? Boolean != true)) {
-                                        //  ViewUtils.setGone(binding.waterPop.cbBg)
-                                        animation.cancel()
-                                        resources.getDrawable(
-                                            R.mipmap.base_start_bg,
-                                            theme
-                                        )
-                                    } else {
-                                        showAlphaAnimation()
-                                        resources.getDrawable(
-                                            R.mipmap.base_suspend_bg,
-                                            theme
-                                        )
-                                    }
-                                if (binding.waterPop.btnSuccess.isChecked) {
-                                    // 暂停
+                                setResult(Activity.RESULT_OK)
+                                finish()
+                            }*/
+                            //
+                            TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
+                                // 涂鸦指令，添加排水功能
+                                // isOpenOrStop(value)
+                                synchronized(this) {
+                                    // 加锁的目的是为了
+                                    // 当用户在点击时,又突然接收到设备的指令,导致显示不正确的问题
+                                    // false 是暂停排水、 true是开始排水
                                     if (value == false) {
-                                        binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_auto_start_desc)
+                                        job?.cancel()
+                                        count++
                                     } else {
-                                        binding.waterPop.tvAddClockTime.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                                        // 计时器减去时间
+                                        if (count >= 3) timing = 120
+                                        downTime()
                                     }
-                                } else {
-                                    // 暂停
-                                    if (value == false) {
-                                        binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_stop_dec)
+                                    binding.waterPop.btnSuccess.background =
+                                        if ((value as? Boolean != true)) {
+                                            //  ViewUtils.setGone(binding.waterPop.cbBg)
+                                            animation.cancel()
+                                            resources.getDrawable(
+                                                R.mipmap.base_start_bg,
+                                                theme
+                                            )
+                                        } else {
+                                            showAlphaAnimation()
+                                            resources.getDrawable(
+                                                R.mipmap.base_suspend_bg,
+                                                theme
+                                            )
+                                        }
+                                    if (binding.waterPop.btnSuccess.isChecked) {
+                                        // 暂停
+                                        if (value == false) {
+                                            binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_auto_start_desc)
+                                        } else {
+                                            binding.waterPop.tvAddClockTime.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                                        }
                                     } else {
-                                        binding.waterPop.tvAddClockTime.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                                        // 暂停
+                                        if (value == false) {
+                                            binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_stop_dec)
+                                        } else {
+                                            binding.waterPop.tvAddClockTime.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                                        }
                                     }
+                                    binding.waterPop.btnSuccess.isChecked = value as Boolean
                                 }
-                                binding.waterPop.btnSuccess.isChecked = value as Boolean
-                            }
 
-                            if ((value as? Boolean == false)) return@observe
-                            // 查询是否排水结束
-                            ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
-                                it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
-                                    IResultCallback {
-                                    override fun onError(code: String?, error: String?) {
-                                        logI(
-                                            """
+                                if ((value as? Boolean == false)) return@forEach
+                                // 查询是否排水结束
+                                ThingHomeSdk.newDeviceInstance(userInfo?.deviceId)?.let {
+                                    it.getDp(TuYaDeviceConstants.KAY_PUMP_WATER_FINISHED, object :
+                                        IResultCallback {
+                                        override fun onError(code: String?, error: String?) {
+                                            logI(
+                                                """
                                             KAY_PUMP_WATER_FINISHED: error
                                             code: $code
                                             error: $error
                                         """.trimIndent()
-                                        )
-                                        ToastUtil.shortShow(error)
-                                        Reporter.reportTuYaError("newDeviceInstance", error, code)
-                                    }
+                                            )
+                                            ToastUtil.shortShow(error)
+                                            Reporter.reportTuYaError("newDeviceInstance", error, code)
+                                        }
 
-                                    override fun onSuccess() {
-                                        logI("onSuccess")
-                                    }
-                                })
+                                        override fun onSuccess() {
+                                            logI("onSuccess")
+                                        }
+                                    })
+                                }
                             }
                         }
                     }

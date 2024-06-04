@@ -49,11 +49,6 @@ class ChooseTimePop(
         return R.layout.my_choose_time_pop
     }
 
-    private val userInfoBean by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        GSON.parseObject(bean, UserinfoBean::class.java)
-    }
-
     private var binding: MyChooseTimePopBinding? = null
     private var isChanged: Boolean = false
 

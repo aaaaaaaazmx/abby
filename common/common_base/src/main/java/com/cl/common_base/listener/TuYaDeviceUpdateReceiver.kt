@@ -45,17 +45,20 @@ class TuYaDeviceUpdateReceiver : Service() {
             override fun onDpUpdate(devId: String?, dpStr: MutableMap<String, Any>?) {
 
 
-                val json = GSON.toJson(dpStr)
-                logI(
-                    """
+                GSON.toJsonInBackground(dpStr) { json->
+                    logI(
+                        """
                     tuYaOnDpUpdate: 
                     json: $json
                 """.trimIndent()
-                )
-                // 直接下发状态
-                LiveEventBus.get()
-                    .with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
-                    .postEvent(json)
+                    )
+                    // 直接下发状态
+                    LiveEventBus.get()
+                        .with(Constants.Tuya.KEY_THING_DEVICE_TO_APP, String::class.java)
+                        .postEvent(json)
+                }
+
+
             }
 
             /**

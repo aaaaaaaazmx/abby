@@ -1,5 +1,7 @@
 package com.cl.common_base.util.device
 
+import android.os.Handler
+import android.os.Looper
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
@@ -9,15 +11,9 @@ import com.cl.common_base.util.json.GSON
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IResultCallback
 import com.thingclips.smart.sdk.api.IThingDevice
-import com.thingclips.smart.sdk.bean.DeviceBean
 import com.thingclips.smart.sdk.enums.ThingDevicePublishModeEnum
-import kotlin.math.log
 
-/**
- * 设备控制中心
- *
- * @author 李志军 2022-08-09 11:16
- */
+// 设备控制类
 class DeviceControlImpl : DeviceControl, IResultCallback {
     // 用户信息
     val userInfo = {
@@ -29,6 +25,8 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     private val map by lazy {
         hashMapOf<String, Any>()
     }
+
+    private val handler = Handler(Looper.getMainLooper())
 
     // 成功和失败回调
     private var onSuccessAction: (DeviceControlImpl.() -> Unit)? = null
@@ -57,47 +55,27 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun pumpWater(startOrStop: Boolean) {
         map[TuYaDeviceConstants.KAY_PUMP_WATER] = startOrStop
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     override fun airPump(startOrStop: Boolean) {
         map[TuYaDeviceConstants.KEY_DEVICE_AIR_PUMP] = startOrStop
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     override fun fanIntake(gear: Int) {
         map[TuYaDeviceConstants.KEY_DEVICE_INTAKE] = gear
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     override fun fanExhaust(gear: Int) {
         map[TuYaDeviceConstants.KEY_DEVICE_EXHAUST] = gear
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     override fun lightIntensity(gear: Int) {
         map[TuYaDeviceConstants.KEY_DEVICE_GROW_LIGHT] = gear
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     /**
@@ -105,28 +83,12 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun doorLock(openOrClose: Boolean) {
         map[TuYaDeviceConstants.KEY_DEVICE_DOOR_LOOK] = openOrClose
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     override fun childLock(startOrStop: Boolean, devId: String?) {
         map[TuYaDeviceConstants.KEY_DEVICE_CHILD_LOCK] = startOrStop
-        if (!devId.isNullOrEmpty()) {
-            ThingHomeSdk.newDeviceInstance(devId)?.publishDps(
-                GSON.toJson(map),
-                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-                this
-            )
-        } else {
-            getCurrentDevice()?.publishDps(
-                GSON.toJson(map),
-                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-                this
-            )
-        }
+        publishDpsAsync(map, devId)
     }
 
     /**
@@ -134,38 +96,17 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun nightMode(startOrStop: String, devId: String?) {
         map[TuYaDeviceConstants.KEY_DEVICE_NIGHT_MODE] = startOrStop
-        if (!devId.isNullOrEmpty()) {
-            ThingHomeSdk.newDeviceInstance(devId)?.publishDps(
-                GSON.toJson(map),
-                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-                this
-            )
-        } else {
-            getCurrentDevice()?.publishDps(
-                GSON.toJson(map),
-                ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-                this
-            )
-        }
-
+        publishDpsAsync(map, devId)
     }
 
     override fun lightTime(time: Int) {
         map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_TIME] = time
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     override fun closeLightTime(time: Int) {
         map[TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME] = time
-        getCurrentDevice()?.publishDps(
-            GSON.toJson(map),
-            ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
-            this
-        )
+        publishDpsAsync(map)
     }
 
     /**
@@ -173,7 +114,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun feedAbby(startOrStop: Boolean): DeviceControlImpl {
         map[TuYaDeviceConstants.KAY_FEED_ABBY] = startOrStop
-        getCurrentDevice()?.publishDps(GSON.toJson(map), this)
+        publishDpsAsync(map)
         return this@DeviceControlImpl
     }
 
@@ -182,16 +123,53 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun repairSN(isRepair: String): DeviceControlImpl {
         map[TuYaDeviceConstants.KEY_DEVICE_REPAIR_SN] = isRepair
-        getCurrentDevice()?.publishDps(GSON.toJson(map), this)
+        publishDpsAsync(map)
         return this@DeviceControlImpl
     }
 
     override fun sendDps(dpsJson: String, devId: String?): DeviceControlImpl {
         map[TuYaDeviceConstants.KEY_DEVICE_MULTIPLE_DP] = dpsJson
-        logI("sendDPs: $dpsJson,,,\n --> ${GSON.toJson(map)}")
-        getCurrentDevice(devId)?.publishDps(GSON.toJson(map), this)
+        // logI("sendDPs: $dpsJson,,,\n --> ${GSON.toJson(map)}")
+        Thread {
+            publishDpsSync(map, devId)
+        }.start()
         return this@DeviceControlImpl
     }
+
+    private fun publishDpsAsync(dataMap: HashMap<String, Any>, devId: String? = null) {
+        Thread {
+            publishDpsSync(dataMap, devId)
+        }.start()
+    }
+
+    private fun publishDpsSync(dataMap: HashMap<String, Any>, devId: String? = null) {
+        try {
+            val device = getCurrentDevice(devId)
+            if (device != null) {
+                GSON.toJsonInBackground(dataMap) { info ->
+                    device.publishDps(
+                        info,
+                        ThingDevicePublishModeEnum.ThingDevicePublishModeAuto,
+                        object : IResultCallback {
+                            override fun onSuccess() {
+                                handler.post { this@DeviceControlImpl.onSuccess() }
+                            }
+
+                            override fun onError(code: String?, error: String?) {
+                                handler.post { this@DeviceControlImpl.onError(code, error) }
+                            }
+                        }
+                    )
+                }
+
+            } else {
+                handler.post { onError("500", "Device not found") }
+            }
+        } catch (e: Exception) {
+            handler.post { onError("500", e.localizedMessage) }
+        }
+    }
+
 
     // 统一判断code码
     // Android:
@@ -209,7 +187,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     )
 
     override fun onError(code: String?, error: String?) {
-        val message = errorCodeMessages[code] ?: error  // Use the custom message if available, or the default error
+        val message = errorCodeMessages[code] ?: error
         onErrorAction?.invoke(this@DeviceControlImpl, code, message)
         kotlin.runCatching {
             Reporter.reportTuYaError(

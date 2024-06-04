@@ -478,9 +478,12 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                      */
                     binding.clEnv.setOnClickListener {
                         // 点击环境信息
-                        val envInfoData = GSON.parseObjectList(data?.environment, ContactEnvData::class.java).toMutableList()
-                        // 弹出环境信息
-                        XPopup.Builder(this@ContactCommentActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(this@ContactCommentActivity.let { ContactEnvPop(it, envInfoData, data?.nickName, data?.avatarPicture) }).show()
+                        GSON.parseObjectListInBackground(data?.environment, ContactEnvData::class.java) { infoList ->
+                            // 弹出环境信息
+                            XPopup.Builder(this@ContactCommentActivity).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(
+                                ContactEnvPop(this@ContactCommentActivity, infoList.toMutableList(), data?.nickName, data?.avatarPicture)
+                            ).show()
+                        }
                     }
 
 
