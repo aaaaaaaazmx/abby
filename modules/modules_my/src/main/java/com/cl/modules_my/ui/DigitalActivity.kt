@@ -28,6 +28,7 @@ import com.cl.common_base.widget.scroll.behavior.BottomSheetLayout
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.common_base.adapter.MedialAdapter
 import com.cl.common_base.ext.dp2px
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.FollowAndFolloerPop
 import com.cl.common_base.util.ViewUtils
@@ -198,6 +199,11 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
             })
         }
 
+        binding.clWallet.setSafeOnClickListener {
+            // 跳转到兑换界面
+            startActivity(Intent(this@DigitalActivity, ExchangeActivity::class.java))
+        }
+
         binding.tvPots.setOnClickListener {
             // 跳转到
             ARouter.getInstance().build(RouterPath.My.PAGE_MY_JOURNEY).navigation()
@@ -249,10 +255,15 @@ class DigitalActivity : BaseActivity<MyDigitalActivityBinding>() {
             startActivity(Intent(this@DigitalActivity, WallActivity::class.java))
         }
 
+        binding.clRedeem.setSafeOnClickListener {
+            // 跳转到兑换界面
+            startActivity(Intent(this@DigitalActivity, ExchangeActivity::class.java))
+        }
+
         // wallet
         binding.llDigitalWallet.setOnClickListener {
             // 跳转到氧气币种
-            startActivity(Intent(this@DigitalActivity, OxygenListActivity::class.java))
+            startActivity(Intent(this@DigitalActivity, NewWalletActivity::class.java))
         }
     }
 

@@ -21,8 +21,10 @@ import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
+import com.cl.modules_my.request.ExchangeInfoBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
+import com.cl.modules_my.request.VoucherBean
 import kotlinx.coroutines.flow.Flow
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -477,5 +479,25 @@ interface HttpMyApiService {
     @FormUrlEncoded
     @POST("abby/plant/getPlantData")
     fun getPlantData(@Field("deviceId") deviceId: String): Flow<HttpResult<PlantData>>
+
+    /**
+     * 获取优惠券列表
+     */
+    @POST("abby/voucher/getList")
+    fun getVoucherList(@Body baseBean: BaseBean) : Flow<HttpResult<MutableList<VoucherBean>>>
+
+    /**
+     * 获取兑换界面的信息
+     */
+    @POST("abby/voucher/exchange/info")
+    fun exchangeInfo() : Flow<HttpResult<ExchangeInfoBean>>
+
+
+    /**
+     * 兑换礼品卷
+     */
+    @FormUrlEncoded
+    @POST("abby/voucher/exchangeGiftVoucher")
+    fun exchangeGiftVoucher(@Field("exchangeAmount") discountCode: String) : Flow<HttpResult<BaseBean>>
 
 }
