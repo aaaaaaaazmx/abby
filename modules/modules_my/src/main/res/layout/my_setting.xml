@@ -37,7 +37,7 @@
                 android:background="@color/lineBg"
                 android:orientation="vertical">
 
-                <com.cl.common_base.widget.FeatureItemSwitch
+                <com.cl.common_base.widget.FeatureItemView
                     android:layout_marginTop="4dp"
                     android:id="@+id/ft_notif"
                     android:layout_width="match_parent"

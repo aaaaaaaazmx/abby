@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_round_tl_tr"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Notification Preferences"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <ImageView
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="20dp"
+                android:background="@mipmap/iv_close" />
+        </RelativeLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_gray_r10">
+
+            <ImageView
+                android:background="@mipmap/my_calendar_bg"
+                android:id="@+id/iv_notify"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_notify"
+                android:layout_marginStart="13dp"
+                app:layout_constraintStart_toEndOf="@+id/iv_notify"
+                app:layout_constraintTop_toTopOf="@id/iv_notify"
+                android:text="Calendar"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                app:layout_constraintBottom_toBottomOf="@+id/iv_notify"
+                app:layout_constraintStart_toStartOf="@+id/tv_notify"
+                app:layout_constraintTop_toBottomOf="@+id/tv_notify"
+                android:text="Recommended"
+                android:textColor="#979797"
+                android:textSize="10sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.cl.common_base.widget.SwitchButton
+                app:layout_constraintBottom_toBottomOf="@+id/iv_notify"
+                app:layout_constraintTop_toTopOf="@+id/iv_notify"
+                android:id="@+id/switch_notify"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_gray_r10">
+
+            <ImageView
+                android:background="@mipmap/my_ware_bg"
+                android:id="@+id/iv_ware"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/tv_ware"
+                android:layout_marginStart="13dp"
+                app:layout_constraintStart_toEndOf="@+id/iv_ware"
+                app:layout_constraintTop_toTopOf="@id/iv_ware"
+                android:text="Alert"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                app:layout_constraintBottom_toBottomOf="@+id/iv_ware"
+                app:layout_constraintStart_toStartOf="@+id/tv_ware"
+                app:layout_constraintTop_toBottomOf="@+id/tv_ware"
+                android:text="Recommended"
+                android:textColor="#979797"
+                android:textSize="10sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.cl.common_base.widget.SwitchButton
+                app:layout_constraintBottom_toBottomOf="@+id/tv_ware"
+                app:layout_constraintTop_toTopOf="@+id/tv_ware"
+                android:id="@+id/switch_ware"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_gray_r10">
+
+            <ImageView
+                android:background="@mipmap/my_comm_bg"
+                android:id="@+id/iv_comm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                app:layout_constraintBottom_toBottomOf="@+id/iv_comm"
+                android:id="@+id/tv_comm"
+                android:layout_marginStart="13dp"
+                app:layout_constraintStart_toEndOf="@+id/iv_comm"
+                app:layout_constraintTop_toTopOf="@id/iv_comm"
+                android:text="Alert"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_comm"
+                app:layout_constraintStart_toStartOf="@+id/tv_comm"
+                app:layout_constraintTop_toBottomOf="@+id/tv_comm"
+                android:text="Recommended"
+                android:textColor="#979797"
+                android:textSize="10sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.cl.common_base.widget.SwitchButton
+                app:layout_constraintBottom_toBottomOf="@+id/tv_comm"
+                app:layout_constraintTop_toTopOf="@+id/tv_comm"
+                android:id="@+id/switch_comm"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:paddingEnd="15dp"
+            android:paddingStart="15dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_gray_r10">
+
+            <ImageView
+                android:background="@mipmap/my_asd_bg"
+                android:id="@+id/iv_asd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                app:layout_constraintBottom_toBottomOf="@+id/iv_asd"
+                android:id="@+id/tv_asd"
+                android:layout_marginStart="13dp"
+                app:layout_constraintStart_toEndOf="@+id/iv_asd"
+                app:layout_constraintTop_toTopOf="@id/iv_asd"
+                android:text="Alert"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_asd"
+                app:layout_constraintStart_toStartOf="@+id/tv_asd"
+                app:layout_constraintTop_toBottomOf="@+id/tv_asd"
+                android:text="Recommended"
+                android:textColor="#979797"
+                android:textSize="10sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.cl.common_base.widget.SwitchButton
+                app:layout_constraintBottom_toBottomOf="@+id/tv_asd"
+                app:layout_constraintTop_toTopOf="@+id/tv_asd"
+                android:id="@+id/switch_asd"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_desc"
+            tools:text="Recommended: Turn on Calendar and Alert notifications to stay informed about important updates."
+            android:layout_marginTop="31dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_done"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:background="@drawable/background_button_main_color_r100"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:text="Done"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+    </LinearLayout>
+</layout>

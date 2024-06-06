@@ -44,6 +44,7 @@ import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.util.device.TuyaCameraUtils
+import com.cl.modules_my.pop.NotifyPop
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.cl.modules_my.widget.LoginOutPop
 import com.cl.modules_my.widget.MyDeleteDevicePop
@@ -553,7 +554,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     // 缓存信息
                     GSON.toJsonInBackground(data) { it1 -> Prefs.putString(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 是否开启通知(1-开启、0-关闭)
-                    binding.ftNotif.setItemSwitch(data?.openNotify == 1)
+                    // binding.ftNotif.setItemSwitch(data?.openNotify == 1)
                     // 订阅时间
                     data?.subscriptionTime?.let {
                         binding.ftSub.itemValue = it
@@ -914,9 +915,14 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         }
 
         // 关闭还是打开推送
-        binding.ftNotif.setSwitchCheckedChangeListener { compoundButton, b ->
+        binding.ftNotif.setOnClickListener {
             // 是否开启通知(1-开启、0-关闭)
-            mViewModel.modifyUserDetail(ModifyUserDetailReq(openNotify = if (b) "1" else "0"))
+            // mViewModel.modifyUserDetail(ModifyUserDetailReq(openNotify = if (b) "1" else "0"))
+            xpopup(this@SettingActivity) {
+                dismissOnTouchOutside(false)
+                isDestroyOnDismiss(false)
+                asCustom(NotifyPop(this@SettingActivity, this@SettingActivity)).show()
+            }
         }
         // 固件升级
         /*binding.ftFirUpdate.setOnClickListener {

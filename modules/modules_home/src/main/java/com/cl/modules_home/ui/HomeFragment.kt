@@ -23,6 +23,7 @@ import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -2172,6 +2173,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let { LearnIdGuidePop(it) }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
@@ -3315,6 +3317,26 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     }).setBubbleBgColor(Color.WHITE)  //气泡背景
                             })
                             .show()
+
+                        // 检查是否拥有权限
+                        runCatching {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            val hasPermissions = PermissionHelp().hasPermissions(context, Manifest.permission.POST_NOTIFICATIONS)
+                                if (!hasPermissions) {
+                                    activity?.let {
+                                        PermissionHelp().applyPermissionHelp(it, "This app requires notification permission to keep you updated with the latest information. Please enable notification permissions in the settings.", object : PermissionHelp.OnCheckResultListener {
+                                            override fun onResult(result: Boolean) {
+                                                if (result) {
+                                                    ToastUtil.shortShow("Notification permission granted.")
+                                                } else {
+                                                    ToastUtil.shortShow("Notification permission denied")
+                                                }
+                                            }
+                                        }, Manifest.permission.POST_NOTIFICATIONS)
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物

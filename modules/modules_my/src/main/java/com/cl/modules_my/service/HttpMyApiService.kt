@@ -22,6 +22,7 @@ import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.modules_my.request.DigitalAsset
 import com.cl.modules_my.request.DigitalAssetData
 import com.cl.modules_my.request.ExchangeInfoBean
+import com.cl.modules_my.request.MessageConfigBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
 import com.cl.modules_my.request.VoucherBean
@@ -500,4 +501,16 @@ interface HttpMyApiService {
     @POST("abby/voucher/exchangeGiftVoucher")
     fun exchangeGiftVoucher(@Field("exchangeAmount") discountCode: String) : Flow<HttpResult<BaseBean>>
 
+
+    /**
+     * 推送消息设置
+     */
+    @POST("abby/userMessage/messageConfig")
+    fun messageConfig(@Body baseBean: MessageConfigBean) : Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取消息配置
+     */
+    @POST("abby/userMessage/messageConfigList")
+    fun messageConfigList() : Flow<HttpResult<MessageConfigBean>>
 }
