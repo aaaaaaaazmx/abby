@@ -1,35 +1,28 @@
-package com.cl.modules_my.pop
+package com.cl.common_base.pop
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
-import com.cl.common_base.BaseBean
+import com.cl.common_base.R
+import com.cl.common_base.bean.MessageConfigBean
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.databinding.MyPopNotifyBinding
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
-import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_my.R
-import com.cl.modules_my.databinding.MyPopNotifyBinding
-import com.cl.modules_my.request.MessageConfigBean
-import com.cl.modules_my.service.HttpMyApiService
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.BottomPopupView
 import kotlinx.coroutines.Dispatchers
@@ -44,13 +37,13 @@ import kotlinx.coroutines.launch
 /**
  * 通知界面的弹窗设置
  */
-class NotifyPop(context: Context, val activity: FragmentActivity) : BottomPopupView(context) {
+class NotifyPop(context: Context, val activity: FragmentActivity, private val getMessageConfigAction: ((Boolean)->Unit)? = null,) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.my_pop_notify
     }
 
     // 直接借口调用
-    private val service = ServiceCreators.create(HttpMyApiService::class.java)
+    private val service = ServiceCreators.create(BaseApiService::class.java)
     private lateinit var binding: MyPopNotifyBinding
 
     private val loadingPopup by lazy {
@@ -95,11 +88,11 @@ class NotifyPop(context: Context, val activity: FragmentActivity) : BottomPopupV
 
             // Recommended: Turn on Calendar and Alert notifications to stay informed about important updates.
             tvDesc.text = buildSpannedString {
-                bold { "Recommended: " }
+                bold { append("Recommended: ") }
                 append("Turn on ")
-                bold { "Calendar " }
+                bold { append("Calendar ") }
                 append("and ")
-                bold { "Alert " }
+                bold { append("Alert ") }
                 append("notifications to stay informed about important updates.")
             }
 
@@ -180,6 +173,7 @@ class NotifyPop(context: Context, val activity: FragmentActivity) : BottomPopupV
                     binding.switchWare.isChecked = it.data?.alert == true
                     binding.switchComm.isChecked = it.data?.community == true
                     binding.switchAsd.isChecked = it.data?.promotion == true
+                    getMessageConfigAction?.invoke(it.data?.calendar == true || it.data?.alert == true || it.data?.community == true || it.data?.promotion == true)
                 }
 
                 is Resource.DataError -> {

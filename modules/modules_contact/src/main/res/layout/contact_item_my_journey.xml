@@ -217,6 +217,21 @@
                 app:layout_constraintTop_toTopOf="@+id/tv_env_value" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:gravity="center"
+            android:background="@drawable/background_main_color_r0"
+            android:visibility="@{TextUtils.isEmpty(data.strainName) ? View.GONE : View.VISIBLE}"
+            android:paddingBottom="3dp"
+            android:text="@{data.strainName}"
+            app:layout_constraintTop_toTopOf="@+id/cl_env"
+            android:textStyle="bold"
+            tools:text="strainName"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/mainColor"
+            android:textSize="11sp"
+            android:layout_width="89dp"
+            android:layout_height="17dp" />
+
         <LinearLayout
             android:id="@+id/ll_action"
             android:layout_marginTop="5dp"

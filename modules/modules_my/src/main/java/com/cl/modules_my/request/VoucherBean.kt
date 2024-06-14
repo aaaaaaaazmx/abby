@@ -9,5 +9,6 @@ data class VoucherBean(
     val status: Int,
     val title: String,
     val type: String,
+    val description: String,
     val url: String
 )

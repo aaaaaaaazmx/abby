@@ -1,4 +1,4 @@
-package com.cl.modules_my.request
+package com.cl.common_base.bean
 
 data class Wallpaper(
     val goodsCode: String,

@@ -22,6 +22,7 @@ class RedeemPop(context: Context, private val userInfo: UserinfoBean?, private v
         super.onCreate()
         DataBindingUtil.bind<MyPopRedeemBinding>(popupImplView)?.apply {
             executePendingBindings()
+            ivClose.setSafeOnClickListener { dismiss() }
 
             tvTitle.text =  if (userInfo?.email.isNullOrEmpty()) {
                 """
@@ -35,7 +36,7 @@ class RedeemPop(context: Context, private val userInfo: UserinfoBean?, private v
                 Account Balance: ${oxygen?.minus(chooserOxygen)}
                 E-Gift Value:${'$'}$exchangeRate
 
-                A e-gift card secrect code will send to your ${userInfo?.email}
+                A e-gift card secrect code will send to your email ${userInfo?.email}
             """.trimIndent()
             }
 

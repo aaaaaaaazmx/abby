@@ -12,8 +12,8 @@ import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
-import com.cl.modules_my.request.DigitalAsset
-import com.cl.modules_my.request.DigitalAssetData
+import com.cl.common_base.bean.DigitalAsset
+import com.cl.common_base.bean.DigitalAssetData
 import com.cl.modules_my.request.ExchangeInfoBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
@@ -335,8 +335,8 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.getPlantData(req)
     }
 
-    fun getVoucherList(req: BaseBean): Flow<HttpResult<MutableList<VoucherBean>>> {
-        return remoteRepository.getVoucherList(req)
+    fun getVoucherList(): Flow<HttpResult<MutableList<VoucherBean>>> {
+        return remoteRepository.getVoucherList()
     }
 
     fun exchangeInfo(): Flow<HttpResult<ExchangeInfoBean>> {

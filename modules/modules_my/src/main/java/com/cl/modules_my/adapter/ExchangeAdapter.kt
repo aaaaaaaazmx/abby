@@ -10,11 +10,32 @@ import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.modules_my.databinding.MyExchangeItemBinding
 import com.tuya.smart.android.demo.camera.utils.ToastUtil
 
-class ExchangeAdapter(data: MutableList<String>?, var oxygen: String? = null, var chooserOxygen: ((String)->Unit)? = null) :
+class ExchangeAdapter(data: MutableList<String>?,var oxygen: String? = null, var chooserOxygen: ((String)->Unit)? = null) :
     BaseQuickAdapter<String, BaseDataBindingHolder<MyExchangeItemBinding>>(com.cl.modules_my.R.layout.my_exchange_item, data) {
 
-     var newSelectIndex = -1
-     var oldSelectIndex = -1
+    var newSelectIndex = -1
+    var oldSelectIndex = -1
+
+    fun updateDataAndOxygen(newOxygen: String?, newData: MutableList<String>?) {
+        oxygen = newOxygen // 更新oxygen
+        setList(newData) // 更新data
+        checkAndSelectFirstItem() // 检查并选择第一个项目
+    }
+
+    private fun checkAndSelectFirstItem() {
+        if (data.isEmpty()) return
+
+        val initialOxyGen = oxygen.safeToInt()
+        val firstItemOxy = data[0].safeToInt()
+
+        if (initialOxyGen >= firstItemOxy && newSelectIndex == -1) { // 确保尚未选择任何项目
+            newSelectIndex = 0
+            oldSelectIndex = -1
+            chooserOxygen?.invoke(data[0])
+            notifyItemChanged(0)
+        }
+    }
+
 
     @SuppressLint("SetTextI18n")
     override fun convert(holder: BaseDataBindingHolder<MyExchangeItemBinding>, item: String) {

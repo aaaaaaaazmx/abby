@@ -68,6 +68,7 @@
         </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:paddingBottom="30dp"
             android:id="@+id/rv_wallet"
             android:layout_width="match_parent"
             android:layout_height="0dp"

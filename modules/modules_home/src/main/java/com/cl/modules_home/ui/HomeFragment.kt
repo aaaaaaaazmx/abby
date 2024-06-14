@@ -2117,15 +2117,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
     private val envirPop by lazy {
         context?.let {
-            HomeEnvlrPop(
-                it,
-                disMissAction = {
-                    // 消失之后，刷新数据
-                    mViewMode.getEnvData()
-                    mViewMode.listDevice()
-                    mViewMode.userDetail()
-                }
-            )
+            activity?.let { it1 ->
+                HomeEnvlrPop(
+                    it1,
+                    it,
+                    disMissAction = {
+                        // 消失之后，刷新数据
+                        mViewMode.getEnvData()
+                        mViewMode.listDevice()
+                        mViewMode.userDetail()
+                    }
+                )
+            }
         }
     }
 

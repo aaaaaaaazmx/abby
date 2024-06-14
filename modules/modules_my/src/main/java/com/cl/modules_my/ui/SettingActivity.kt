@@ -7,7 +7,6 @@ import android.app.Activity
 import android.content.*
 import android.content.Intent.*
 import android.net.Uri
-import android.os.Handler
 import android.view.animation.LinearInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -44,7 +43,7 @@ import com.cl.modules_my.pop.EditPlantProfilePop
 import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.util.device.TuyaCameraUtils
-import com.cl.modules_my.pop.NotifyPop
+import com.cl.common_base.pop.NotifyPop
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.cl.modules_my.widget.LoginOutPop
 import com.cl.modules_my.widget.MyDeleteDevicePop
@@ -58,7 +57,6 @@ import com.thingclips.smart.android.user.bean.User
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.Serializable
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 import javax.inject.Inject

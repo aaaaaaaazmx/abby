@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
@@ -21,6 +22,7 @@ import com.cl.modules_my.viewmodel.WalletViewModel
 import com.cl.modules_my.widget.RedeemPop
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.log
 
 /**
  * 氧气币兑换界面
@@ -48,8 +50,8 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
         val animation = AlphaAnimation(
             0f, 1f
         )
-        animation.duration = 1500 //执行时间
-        animation.repeatCount = 1 //重复执行动画
+        animation.duration = 1000 //执行时间
+        animation.repeatCount = 0 //重复执行动画
         animation
     }
 
@@ -58,6 +60,7 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
             // 更新当前氧气币的兑换
             // 100 / 20  = 美元
             runCatching {
+                logI("123123123")
                 val money = it.safeToInt().div(mViewModel.exchangeInfo.value?.data?.exchangeRatio.safeToInt())
                 binding.tvYouGetTitle.text = "$$money"
                 chooserOxygen = it.safeToInt()
@@ -66,6 +69,7 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
                 binding.tvYouGet.visibility = View.VISIBLE
                 binding.clYouGet.visibility = View.VISIBLE
                 binding.clYouGet.animation = animation
+                animation.start()
             }
         })
     }
@@ -94,8 +98,7 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
                 }
 
                 success {
-                    adapter.oxygen = data?.oxygen.toString()
-                    adapter.setList(data?.exchangeAmounts?.toMutableList())
+                    adapter.updateDataAndOxygen(data?.oxygen.toString(), data?.exchangeAmounts?.toMutableList())
 
                     binding.tvDescription.text = data?.description
                     // *900 Oxygen Coins Available
@@ -133,14 +136,17 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
 
     override fun initData() {
         binding.tvTerms.setSafeOnClickListener {
-            if (chooserOxygen == -1 && exchangeRate == -1) return@setSafeOnClickListener
+            if (chooserOxygen == -1 && exchangeRate == -1)  {
+                ToastUtil.shortShow("Please select Oxygen Coins")
+                return@setSafeOnClickListener
+            }
 
             xpopup(this@ExchangeActivity) {
                 dismissOnTouchOutside(true)
                 isDestroyOnDismiss(false)
                 asCustom(RedeemPop(this@ExchangeActivity, userInfo, chooserOxygen, exchangeRate, mViewModel.exchangeInfo.value?.data?.oxygen) {
                     // 确认兑换
-                    mViewModel.exchangeVoucher(exchangeRate.toString())
+                    mViewModel.exchangeVoucher(chooserOxygen.toString())
                 }).show()
             }
         }

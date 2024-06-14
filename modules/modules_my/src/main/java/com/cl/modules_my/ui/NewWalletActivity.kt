@@ -45,9 +45,15 @@ class NewWalletActivity: BaseActivity<MyNewWalletActivityBinding>() {
     override fun observe() {
         mViewModel.apply {
             getVoucherList.observe(this@NewWalletActivity,  resourceObserver {
-                error { errorMsg, code -> com.cl.common_base.widget.toast.ToastUtil.shortShow(errorMsg) }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    com.cl.common_base.widget.toast.ToastUtil.shortShow(errorMsg) }
                 success {
+                    hideProgressLoading()
                     adapter.setList(data)
+                }
+                loading {
+                    showProgressLoading()
                 }
             })
         }

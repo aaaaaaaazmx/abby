@@ -13,6 +13,8 @@ import com.cl.common_base.ext.DateHelper.formatToStr
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.safeToLong
 import com.cl.common_base.ext.setSafeOnClickListener
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.web.VideoPLayActivity
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
@@ -30,7 +32,9 @@ class NewWalletAdapter (data: MutableList<VoucherBean>?) :
             executePendingBindings()
 
             // 设置时间
-            tvTime.text = "${formatToStr(item.startTime.safeToLong(), "yyyy/MM/dd")}-${formatToStr(item.endTime.safeToLong(), "yyyy/MM/dd")}"
+            if (!item.startTime.isNullOrEmpty() && !item.endTime.isNullOrEmpty()) {
+                tvTime.text = "${formatToStr(item.startTime.safeToLong(), "yyyy/MM/dd")}-${formatToStr(item.endTime.safeToLong(), "yyyy/MM/dd")}"
+            }
 
             ivCopy.setSafeOnClickListener {
                 // 复制到粘贴板
@@ -41,15 +45,37 @@ class NewWalletAdapter (data: MutableList<VoucherBean>?) :
                 val mClipData = ClipData.newPlainText("Code", item.discountCode)
                 // 将ClipData内容放到系统剪贴板里。
                 cm?.setPrimaryClip(mClipData)
-                // 提示
-                ToastUtil.shortShow("Your coupon code has been copied!")
+
+                xpopup(context) {
+                    isDestroyOnDismiss(false)
+                    dismissOnTouchOutside(true)
+                    asCustom(BaseCenterPop(context, confirmText = "OK", isShowCancelButton = false, content = "Your coupon code has been copied!")).show()
+                }
             }
 
             tvShopNow.setSafeOnClickListener {
+                // 复制到粘贴板
+                // 复制评论，需要是自己发的帖子
+                // 复制内容
+                val cm: ClipboardManager? = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                // 创建普通字符型ClipData
+                val mClipData = ClipData.newPlainText("Code", item.discountCode)
+                // 将ClipData内容放到系统剪贴板里。
+                cm?.setPrimaryClip(mClipData)
+
                 val intent = Intent(context, VideoPLayActivity::class.java)
                 intent.putExtra(WebActivity.KEY_WEB_URL, item.url)
                 intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, item.title)
                 context.startActivity(intent)
+            }
+
+            ivDown.setSafeOnClickListener {
+                // 弹窗。告知用户是怎么使用的
+                xpopup(context) {
+                   dismissOnTouchOutside(true)
+                    isDestroyOnDismiss(false)
+                    asCustom(BaseCenterPop(context, confirmText = "OK", isShowCancelButton = false, content = item.description)).show()
+                }
             }
         }
     }

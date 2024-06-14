@@ -131,6 +131,10 @@ class ContactRemoteRepository @Inject constructor() {
         return service.updateFollowStatus(body)
     }
 
+    fun getDigitalAsset(body: DigitalAsset): Flow<HttpResult<DigitalAssetData>> {
+        return service.getDigitalAsset(body)
+    }
+
 
     fun follower(): Flow<HttpResult<MutableList<FolowerData>>> {
         return service.follower()

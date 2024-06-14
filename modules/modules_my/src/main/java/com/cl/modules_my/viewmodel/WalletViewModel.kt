@@ -246,7 +246,7 @@ class WalletViewModel @Inject constructor(private val repository: MyRepository) 
     val getVoucherList: LiveData<Resource<MutableList<VoucherBean>>> = _getVoucherList
     fun getVoucherList(deviceId: BaseBean) {
         viewModelScope.launch {
-            repository.getVoucherList(deviceId)
+            repository.getVoucherList()
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

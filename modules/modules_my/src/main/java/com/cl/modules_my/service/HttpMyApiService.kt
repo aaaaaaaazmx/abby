@@ -19,10 +19,10 @@ import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
-import com.cl.modules_my.request.DigitalAsset
-import com.cl.modules_my.request.DigitalAssetData
+import com.cl.common_base.bean.DigitalAsset
+import com.cl.common_base.bean.DigitalAssetData
 import com.cl.modules_my.request.ExchangeInfoBean
-import com.cl.modules_my.request.MessageConfigBean
+import com.cl.common_base.bean.MessageConfigBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
 import com.cl.modules_my.request.VoucherBean
@@ -485,7 +485,7 @@ interface HttpMyApiService {
      * 获取优惠券列表
      */
     @POST("abby/voucher/getList")
-    fun getVoucherList(@Body baseBean: BaseBean) : Flow<HttpResult<MutableList<VoucherBean>>>
+    fun getVoucherList() : Flow<HttpResult<MutableList<VoucherBean>>>
 
     /**
      * 获取兑换界面的信息

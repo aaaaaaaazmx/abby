@@ -64,8 +64,10 @@ import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
 import com.cl.modules_contact.pop.ContactChooseTipPop
 import com.cl.modules_contact.pop.ContactDeletePop
 import com.cl.modules_contact.pop.ContactNewEnvPop
+import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.TagsBean
+import com.cl.modules_contact.ui.MyJourneyActivity.Companion
 import com.cl.modules_contact.viewmodel.ContactViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
 import com.lxj.xpopup.XPopup
@@ -74,6 +76,7 @@ import com.lxj.xpopup.util.XPopupUtils
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.random.Random
 
 
 /**
@@ -628,6 +631,38 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            userAssets.observe(viewLifecycleOwner, resourceObserver {
+                error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    // 切换顶部的标签
+                    val switchTag = switchTag(
+                        tags = tagAdapter.data.map { it.number },
+                        currentTag = mViewMode.currentTag.value ?: ""
+                    )
+
+                    mViewMode.updateCurrent(1)
+                    mViewMode.updateCurrentTag(switchTag)
+
+                    // 找到当前选中的标签并取消选中状态
+                    val currentIndex = tagAdapter.data.indexOfFirst { it.isSelected }
+                    if (currentIndex != -1) {
+                        tagAdapter.data[currentIndex].isSelected = false
+                        tagAdapter.notifyItemChanged(currentIndex)
+                    }
+
+                    // 更新新选中的标签
+                    tagAdapter.data.forEachIndexed { index, tagsBean ->
+                        val shouldSelect = tagsBean.number == switchTag
+                        if (tagsBean.isSelected != shouldSelect) {
+                            tagsBean.isSelected = shouldSelect
+                            tagAdapter.notifyItemChanged(index)
+                            binding.rvTags.scrollToPosition(index)
+                            binding.refreshLayout.autoRefresh()
+                        }
+                    }
+                }
+            })
+
             userDetail.observe(viewLifecycleOwner, resourceObserver {
                 success {
 
@@ -826,7 +861,25 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         super.onHiddenChanged(hidden)
         if (!hidden) {
             mViewMode.userDetail()
+
+            // 查看当前资产
+            mViewMode.userAssets()
         }
+    }
+
+    private fun switchTag(tags: List<String>, currentTag: String): String {
+        val switchingTags = if (mViewMode.userAssets.value?.data?.basicInfo?.following == 0)  listOf("New", "Hot", "Sync", "Harvesting") else listOf("New", "Hot", "Sync", "Following", "Harvesting")
+
+        if (switchingTags.size <= 1) {
+            return currentTag // 如果列表中只有一个标签，返回当前标签
+        }
+
+        var newTag: String
+        do {
+            newTag = switchingTags[Random.nextInt(switchingTags.size)]
+        } while (newTag == currentTag)
+
+        return newTag
     }
 
 

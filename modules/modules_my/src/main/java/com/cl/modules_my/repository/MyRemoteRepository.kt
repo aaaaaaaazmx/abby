@@ -13,8 +13,8 @@ import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
-import com.cl.modules_my.request.DigitalAsset
-import com.cl.modules_my.request.DigitalAssetData
+import com.cl.common_base.bean.DigitalAsset
+import com.cl.common_base.bean.DigitalAssetData
 import com.cl.modules_my.request.ExchangeInfoBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
@@ -296,8 +296,8 @@ class MyRemoteRepository @Inject constructor() {
         return service.getPlantData(req)
     }
 
-    fun getVoucherList(req: BaseBean): Flow<HttpResult<MutableList<VoucherBean>>> {
-        return service.getVoucherList(req)
+    fun getVoucherList(): Flow<HttpResult<MutableList<VoucherBean>>> {
+        return service.getVoucherList()
     }
 
     fun exchangeInfo(): Flow<HttpResult<ExchangeInfoBean>> {

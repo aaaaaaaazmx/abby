@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.DigitalAsset
+import com.cl.common_base.bean.DigitalAssetData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
@@ -20,6 +22,7 @@ import com.cl.modules_contact.request.NewPageReq
 import com.cl.modules_contact.request.ReportReq
 import com.cl.common_base.bean.RewardReq
 import com.cl.common_base.bean.UpdateFollowStatusReq
+import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.response.NewPageData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -375,6 +378,40 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
     }
 
     /**
+     * 获取个人资产
+     */
+    private val _userAssets = MutableLiveData<Resource<DigitalAssetData>>()
+    val userAssets: LiveData<Resource<DigitalAssetData>> = _userAssets
+    fun userAssets() = viewModelScope.launch {
+        repository.getDigitalAsset(DigitalAsset(userinfoBean?.userId))
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _userAssets.value = it
+            }
+    }
+
+
+    /**
      * 修改跟随者状态
      */
     private val _updateFollowStatus = MutableLiveData<Resource<com.cl.common_base.BaseBean>>()
@@ -399,4 +436,6 @@ class ContactViewModel @Inject constructor(private val repository: ContactReposi
             _updateFollowStatus.value = it
         }
     }
+
+
 }
