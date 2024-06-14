@@ -179,14 +179,7 @@ fun setCircleImageUrl(imageView: ImageView, src: String?) {
 // 设置圆角图片
 @BindingAdapter("circleCornerUrl")
 fun setCircleCornerImageUrl(imageView: ImageView, src: String?) {
-    //设置图片圆角角度
-    val roundedCorners = RoundedCorners(8)
-    val circleCornerOptions = RequestOptions.bitmapTransform(roundedCorners)
-    //    circleCornerOptions.placeholder(R.drawable.bitmap_occupation_tview)
-    //    circleCornerOptions.error(R.drawable.bitmap_occupation_tview)
-    Glide.with(imageView.context).load(src)
-        .apply(circleCornerOptions)
-        .into(imageView)
+    Glide.with(imageView.context).load(src).apply(RequestOptions.bitmapTransform(RoundedCorners(100))).into(imageView);//四周都是圆角的圆角矩形图片。
 }
 
 

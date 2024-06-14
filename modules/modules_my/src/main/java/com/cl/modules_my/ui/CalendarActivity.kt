@@ -1851,22 +1851,23 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
      * 设备下发指令
      */
     override fun onTuYaToAppDataChange(status: String) {
-        val map = GSON.parseObject(status, Map::class.java)
-        map?.forEach { (key, value) ->
-            when (key) {
-                // 当用户加了水，是需要动态显示当前水的状态的
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
-                    logI("KEY_DEVICE_WATER_STATUS： $value")
-                    mViewMode.setWaterVolume(value.toString())
-                }
+        GSON.parseObjectInBackground(status, Map::class.java) { map ->
+            map?.forEach { (key, value) ->
+                when (key) {
+                    // 当用户加了水，是需要动态显示当前水的状态的
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
+                        logI("KEY_DEVICE_WATER_STATUS： $value")
+                        mViewMode.setWaterVolume(value.toString())
+                    }
 
-                // 排水结束
-                TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
-                }
+                    // 排水结束
+                    TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
+                    }
 
-                // SN修复的通知
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
-                    logI("KEY_DEVICE_REPAIR_SN： $value")
+                    // SN修复的通知
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
+                        logI("KEY_DEVICE_REPAIR_SN： $value")
+                    }
                 }
             }
         }

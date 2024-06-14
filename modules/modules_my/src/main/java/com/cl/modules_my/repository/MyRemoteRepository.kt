@@ -13,10 +13,12 @@ import com.cl.modules_my.request.AccessorySubportData
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
-import com.cl.modules_my.request.DigitalAsset
-import com.cl.modules_my.request.DigitalAssetData
+import com.cl.common_base.bean.DigitalAsset
+import com.cl.common_base.bean.DigitalAssetData
+import com.cl.modules_my.request.ExchangeInfoBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
+import com.cl.modules_my.request.VoucherBean
 import com.cl.modules_my.service.HttpMyApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -292,6 +294,18 @@ class MyRemoteRepository @Inject constructor() {
 
     fun getPlantData(req: String): Flow<HttpResult<PlantData>> {
         return service.getPlantData(req)
+    }
+
+    fun getVoucherList(): Flow<HttpResult<MutableList<VoucherBean>>> {
+        return service.getVoucherList()
+    }
+
+    fun exchangeInfo(): Flow<HttpResult<ExchangeInfoBean>> {
+        return service.exchangeInfo()
+    }
+
+    fun exchangeGiftVoucher(discountCode: String): Flow<HttpResult<BaseBean>> {
+        return service.exchangeGiftVoucher(discountCode)
     }
 
 }

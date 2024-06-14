@@ -379,4 +379,10 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/log/getPlantIdByDeviceId")
     fun getPlantIdByDeviceId(@Field("deviceId") deviceId: String): Flow<HttpResult<MutableList<PlantIdByDeviceIdData>>>
+
+    /**
+     * 获取消息配置
+     */
+    @POST("abby/userMessage/messageConfigList")
+    fun messageConfigList() : Flow<HttpResult<MessageConfigBean>>
 }

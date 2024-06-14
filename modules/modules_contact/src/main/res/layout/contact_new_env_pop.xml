@@ -67,6 +67,7 @@
                     tools:text="122312" />
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_strain_name"
                     android:textStyle="bold"
                     android:layout_width="wrap_content"

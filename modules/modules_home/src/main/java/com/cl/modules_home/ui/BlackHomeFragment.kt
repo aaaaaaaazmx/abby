@@ -151,7 +151,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
      * 查询所有的dp点
      */
     private fun queryAllDp() {
-        GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
+        GSON.toJsonInBackground(AllDpBean(cmd = "2")) { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
     }
     override fun onHiddenChanged(hidden: Boolean) {
         if (!hidden) {
@@ -281,7 +281,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                                                 return@applyh*/
                                                 ToastUtil.shortShow("Connection error, try to delete device and pair again")
                                             }
-                                            GSON.toJson(this)?.let {
+                                            GSON.toJsonInBackground(this) {
                                                 Prefs.putStringAsync(
                                                     Constants.Tuya.KEY_DEVICE_DATA,
                                                     it
@@ -440,7 +440,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                     data?.deviceId?.let { mViewMode.setDeviceId(it) }
 
                     // 保存当前的信息.
-                    GSON.toJson(data)?.let {
+                    GSON.toJsonInBackground(data) {
                         logI("refreshToken: $it")
                         Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
                     }
@@ -850,30 +850,32 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
 
                 // 140 dp点
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TIME_STAMP -> {
-                    val allDpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
-                    // cmd == 3 返回实际灯光配置参数
-                    // cmd == 1 返回实际全部配置参数
-                    if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
-                        // 这段代码必须在首位。
-                        mViewMode.tuYaDps?.put(
-                            TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
-                            allDpBean.gl.toString()
-                        )
-                        // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
-                        // 不等于说明灯光刷新， 更新当前环境信息的数据
-                        if (isManual == false && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
-                            mViewMode.getEnvData()
-                            mViewMode.listDevice()
-                            mViewMode.userDetail()
+                    GSON.parseObjectInBackground(value.toString(), AllDpBean::class.java) { allDpBean ->
+                        // cmd == 3 返回实际灯光配置参数
+                        // cmd == 1 返回实际全部配置参数
+                        if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
+                            // 这段代码必须在首位。
+                            mViewMode.tuYaDps?.put(
+                                TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
+                                allDpBean.gl.toString()
+                            )
+                            // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
+                            // 不等于说明灯光刷新， 更新当前环境信息的数据
+                            if (isManual == false && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
+                                mViewMode.getEnvData()
+                                mViewMode.listDevice()
+                                mViewMode.userDetail()
+                            }
+
+                            // 设置灯光
+                            mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
+
+                            // 显示是否展示夜间模式 不是手动模式
+                            // 手动模式，设置当前灯光值或者是预设值。
+                            mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString())
                         }
-
-                        // 设置灯光
-                        mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
-
-                        // 显示是否展示夜间模式 不是手动模式
-                        // 手动模式，设置当前灯光值或者是预设值。
-                        mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString())
                     }
+
                 }
 
                 TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
@@ -1120,7 +1122,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                             dpBean.gle = muteOff.toString()
 
                             // 发送多个DP点
-                            GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
+                            GSON.toJsonInBackground(dpBean) { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
 
                             // 保存到后台
                             data.deviceId = mViewMode.userDetail.value?.data?.deviceId
@@ -1496,7 +1498,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                             else -> timeOn
                         }.toString(), ex = mViewMode.getFanExhaust.value.toString(), `in` = mViewMode.getFanIntake.value.toString()
                     )
-                    GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
+                    GSON.toJsonInBackground(dpBean) { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
 
                     // 保存到后台
                     mViewMode.addCurrentProMode(ProModeInfoBean(deviceId = mViewMode.userDetail.value?.data?.deviceId, bright = lightIntensity, lightOn = timeOn, lightOff = timeOff))
@@ -1534,19 +1536,21 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                     // 极光消息需要插入最前面，并且去重
                     val unReadList = mViewMode.unreadMessageList.value ?: mutableListOf()
                     // 接续数据
-                    val extras = GSON.parseObject(it.toString(), JpushMessageData::class.java)
-                    val unreadMessage =
-                        GSON.parseObject(extras?.extras.toString(), UnreadMessageData::class.java)
-                    // 删除和极光消息一样的ID
-                    unReadList.removeIf { data -> data.messageId == unreadMessage?.messageId }
-                    // 把极光消息添加到第一个，并且展示
-                    unreadMessage?.let { unRead -> unReadList.add(unRead) }
-                    // 添加到ViewModel
-                    mViewMode.setUnreadMessageList(unReadList)
-                    // 更改气泡内容
-                    // changUnReadMessageUI()
-                    // 刷新信息
-                    mViewMode.plantInfo()
+                    GSON.parseObjectInBackground(it.toString(), JpushMessageData::class.java) { extras ->
+                        GSON.parseObjectInBackground(extras?.extras.toString(), UnreadMessageData::class.java) { unreadMessage ->
+                            // 删除和极光消息一样的ID
+                            unReadList.removeIf { data -> data.messageId == unreadMessage?.messageId }
+                            // 把极光消息添加到第一个，并且展示
+                            unreadMessage?.let { unRead -> unReadList.add(unRead) }
+                            // 添加到ViewModel
+                            mViewMode.setUnreadMessageList(unReadList)
+                            // 更改气泡内容
+                            // changUnReadMessageUI()
+                            // 刷新信息
+                            mViewMode.plantInfo()
+                        }
+                    }
+
                 }
             }
 

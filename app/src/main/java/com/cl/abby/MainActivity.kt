@@ -577,15 +577,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     override fun inAppInfoChange(status: String) {
-        val map = GSON.parseObject(status, Map::class.java)
-        map?.forEach { (key, value) ->
-            when (key) {
-                // 开始种植
-                Constants.APP.KEY_IN_APP_START_RUNNING -> {
-                    logI("KEY_IN_APP_START_RUNNING: $value")
-                    mViewModel.setIsPlants(value == "true")
+        GSON.parseObjectInBackground(status, Map::class.java) { map ->
+            map?.forEach { (key, value) ->
+                when (key) {
+                    // 开始种植
+                    Constants.APP.KEY_IN_APP_START_RUNNING -> {
+                        logI("KEY_IN_APP_START_RUNNING: $value")
+                        mViewModel.setIsPlants(value == "true")
+                    }
                 }
             }
         }
+
     }
 }

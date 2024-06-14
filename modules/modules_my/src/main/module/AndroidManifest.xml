@@ -175,6 +175,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".ui.DeleteAccountActivity" />
         <activity android:name=".ui.TestActivity" />
+        <activity android:name=".ui.ExchangeActivity" />
+        <activity android:name=".ui.NewWalletActivity" />
 
 
     </application>

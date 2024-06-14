@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Handler
 import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.bean.EnvironmentInfoData
@@ -29,6 +30,7 @@ import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.ChooseTimePop
 import com.cl.common_base.pop.HomePlantDrainPop
+import com.cl.common_base.pop.NotifyPop
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.DeviceControl
@@ -50,6 +52,7 @@ import java.util.regex.Pattern
  * @author 李志军 2022-08-11 18:00
  */
 class HomeEnvlrPop(
+    private val activity: FragmentActivity,
     context: Context,
     private var disMissAction: (() -> Unit)? = null,
     private var data: MutableList<EnvironmentInfoData.Environment>? = null,
@@ -115,8 +118,11 @@ class HomeEnvlrPop(
                 noheadShow.text = nickName?.substring(0, 1)
 
                 tvNickname.text = nickName
-                tvPlantName.text = strainName
+                tvPlantName.Stext = strainName
             }*/
+
+            // 获取消息配置
+            getMessageConfig()
 
             cbNotify.setSafeOnClickListener {
                 val isChecked = cbNotify.isChecked
@@ -269,7 +275,7 @@ class HomeEnvlrPop(
     }
 
     private fun notifySetting(isChecked: Boolean) {
-        if (!isChecked) {
+        /*if (!isChecked) {
             xpopup(context) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(true)
@@ -285,6 +291,13 @@ class HomeEnvlrPop(
         }
         lifecycleScope.launch {
             modifyUserInfo(ModifyUserDetailReq(openNotify = if (isChecked) "1" else "0"), isChecked)
+        }*/
+        xpopup(context) {
+            dismissOnTouchOutside(false)
+            isDestroyOnDismiss(false)
+            asCustom(NotifyPop(context, this@HomeEnvlrPop.activity, getMessageConfigAction = {
+                binding?.cbNotify?.isChecked = it
+            })).show()
         }
     }
 
@@ -551,6 +564,42 @@ class HomeEnvlrPop(
 
     private var muteOn: String? = null
     private var muteOff: String? = null
+
+
+    // 获取配置
+    private fun getMessageConfig() = lifecycleScope.launch {
+        service.messageConfigList().map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            when (it) {
+                is Resource.Success -> {
+                    binding?.cbNotify?.isChecked = (it.data?.calendar == true || it.data?.alert == true || it.data?.community == true || it.data?.promotion == true)
+                }
+
+                is Resource.DataError -> {
+                    ToastUtil.shortShow(it.errorMsg)
+                }
+
+                is Resource.Loading -> {
+                }
+            }
+        }
+    }
 
     companion object {
         // 1. 通知

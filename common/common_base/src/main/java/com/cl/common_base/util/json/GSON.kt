@@ -19,7 +19,7 @@ object GSON {
      *
      * @param json
      */
-     fun <T> parseObject(json: String?, clazz: Class<T>?): T? {
+    fun <T> parseObject(json: String?, clazz: Class<T>?): T? {
         if (json.isNullOrEmpty()) {
             Log.e(TAG, "JSON string is null or empty")
             return null
@@ -54,7 +54,7 @@ object GSON {
     /**
      * json字符串转List集合
      */
-     fun <T> parseObjectList(json: String?, cls: Class<T>?): List<T> {
+    fun <T> parseObjectList(json: String?, cls: Class<T>?): List<T> {
         if (json.isNullOrEmpty()) {
             Log.e(TAG, "JSON string is null or empty")
             return emptyList()

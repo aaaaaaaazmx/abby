@@ -109,11 +109,7 @@ public class BaseWebActivity extends AppCompatActivity {
         @SuppressLint("WebViewClientOnReceivedSslError")
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-           new AlertDialog.Builder(BaseWebActivity.this)
-                    .setMessage("SSL Certificate Validation Failure")
-                    .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
-                    .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
-                    .show();
+            handler.proceed();
         }
     };
     private com.just.agentweb.WebChromeClient mWebChromeClient = new WebChromeClient() {

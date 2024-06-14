@@ -173,4 +173,16 @@ interface BaseApiService {
     @POST("abby/plant/deleteProModeRecord")
     fun deleteProModeRecord(@Field("id") id: String): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 推送消息设置
+     */
+    @POST("abby/userMessage/messageConfig")
+    fun messageConfig(@Body baseBean: MessageConfigBean) : Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取消息配置
+     */
+    @POST("abby/userMessage/messageConfigList")
+    fun messageConfigList() : Flow<HttpResult<MessageConfigBean>>
+
 }

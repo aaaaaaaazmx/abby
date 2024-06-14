@@ -124,6 +124,10 @@ class ContactRepository @Inject constructor(private var remoteRepository: Contac
         return remoteRepository.updateFollowStatus(body)
     }
 
+    fun getDigitalAsset(body: DigitalAsset): Flow<HttpResult<DigitalAssetData>> {
+        return remoteRepository.getDigitalAsset(body)
+    }
+
 
     fun follower(): Flow<HttpResult<MutableList<FolowerData>>> {
         return remoteRepository.follower()

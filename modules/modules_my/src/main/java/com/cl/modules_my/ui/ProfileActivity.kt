@@ -589,8 +589,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
     override fun onDestroy() {
         super.onDestroy()
         // 刷新缓存
-        GSON.toJson(userInfo)
-            ?.let {
+        GSON.toJsonInBackground(userInfo) {
                 logI("refreshData: $it")
                 Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
             }

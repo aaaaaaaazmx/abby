@@ -6,20 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.bean.FolowerData
 import com.cl.common_base.bean.UserinfoBean
-import com.cl.common_base.bean.WallpaperListBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
-import com.cl.modules_my.request.DigitalAsset
-import com.cl.modules_my.request.DigitalAssetData
+import com.cl.common_base.bean.DigitalAsset
+import com.cl.common_base.bean.DigitalAssetData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import retrofit2.http.Body
 import javax.inject.Inject
 
 @ActivityRetainedScoped

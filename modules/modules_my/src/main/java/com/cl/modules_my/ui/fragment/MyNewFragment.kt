@@ -216,7 +216,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
 
                     data?.let {
                         // 缓存信息
-                        GSON.toJson(it)?.let { it1 ->
+                        GSON.toJsonInBackground(it) { it1 ->
                             Prefs.putString(
                                 Constants.Login.KEY_LOGIN_DATA,
                                 it1

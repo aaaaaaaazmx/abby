@@ -131,7 +131,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                     tuyaUserId = data?.tuyaUserId,
                     tuyaUserType = data?.tuyaUserType
                 )
-                GSON.toJson(tuYaInfo)?.let { tuyainfos ->
+                GSON.toJsonInBackground(tuYaInfo) { tuyainfos ->
                     logI("tuYaInfoL: $tuyainfos")
                     Prefs.putStringAsync(Constants.Login.KEY_TU_YA_INFO, tuyainfos)
                 }
@@ -155,7 +155,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
             }
             success {
                 // 缓存信息
-                GSON.toJson(data)?.let { it1 ->
+                GSON.toJsonInBackground(data) { it1 ->
                     Prefs.putStringAsync(
                         Constants.Login.KEY_LOGIN_DATA,
                         it1

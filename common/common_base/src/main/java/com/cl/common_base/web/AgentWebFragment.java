@@ -311,11 +311,7 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            new AlertDialog.Builder(getContext())
-                    .setMessage("SSL Certificate Validation Failure")
-                    .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
-                    .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
-                    .show();
+            handler.proceed();
         }
 
         @Override
@@ -586,11 +582,7 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                new AlertDialog.Builder(getContext())
-                        .setMessage("SSL Certificate Validation Failure")
-                        .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
-                        .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
-                        .show();
+                handler.proceed();
             }
         };
     }

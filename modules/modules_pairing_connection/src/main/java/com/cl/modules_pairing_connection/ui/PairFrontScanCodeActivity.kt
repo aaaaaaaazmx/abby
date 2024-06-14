@@ -179,30 +179,32 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
      * 设备指令监听
      */
     override fun onTuYaToAppDataChange(status: String) {
-        val map = GSON.parseObject(status, Map::class.java)
-        map?.forEach { (key, value) ->
-            when (key) {
-                // SN修复的通知
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
-                    logI("ScanCodeActivity: KEY_DEVICE_REPAIR_SN： $value")
-                    // 修复SN的监听
-                    if (value == "OK") {
-                        // 上报成功，那么啥也不管了，
-                        val asCustom =
-                            pop.asCustom(ActivationSucceededPop(this@PairFrontScanCodeActivity) {
-                                finish()
-                            })
-                        if (asCustom.isShow) return
-                        asCustom.show()
-                    }
-                    if (value == "NG") {
-                        val asCustom = pop.asCustom(failPop)
-                        if (asCustom.isShow) return
-                        asCustom.show()
+        GSON.parseObjectInBackground(status, Map::class.java) { map->
+            map?.forEach { (key, value) ->
+                when (key) {
+                    // SN修复的通知
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
+                        logI("ScanCodeActivity: KEY_DEVICE_REPAIR_SN： $value")
+                        // 修复SN的监听
+                        if (value == "OK") {
+                            // 上报成功，那么啥也不管了，
+                            val asCustom =
+                                pop.asCustom(ActivationSucceededPop(this@PairFrontScanCodeActivity) {
+                                    finish()
+                                })
+                            if (asCustom.isShow) return@forEach
+                            asCustom.show()
+                        }
+                        if (value == "NG") {
+                            val asCustom = pop.asCustom(failPop)
+                            if (asCustom.isShow) return@forEach
+                            asCustom.show()
+                        }
                     }
                 }
             }
         }
+
     }
 
 }

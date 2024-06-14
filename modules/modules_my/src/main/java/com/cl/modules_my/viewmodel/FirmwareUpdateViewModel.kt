@@ -66,7 +66,7 @@ class FirmwareUpdateViewModel @Inject constructor(private val repository: MyRepo
     ) {
         tuYaHomeSdk.getOtaInfo(object : IGetOtaInfoCallback {
             override fun onSuccess(upgradeInfoBeans: MutableList<UpgradeInfoBean>?) {
-                logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
+                // logI("getOtaInfo:  ${GSON.toJson(upgradeInfoBeans?.firstOrNull { it.type == 9 })}")
                 _upgradeInfoBeans.value = upgradeInfoBeans
                 // 如果可以升级
                 if (hasHardwareUpdate(upgradeInfoBeans)) {

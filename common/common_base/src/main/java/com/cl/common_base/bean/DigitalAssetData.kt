@@ -1,7 +1,4 @@
-package com.cl.modules_my.request
-
-import com.cl.common_base.bean.BasicInfo
-import com.cl.common_base.bean.UserFlag
+package com.cl.common_base.bean
 
 data class DigitalAssetData(
     val achievements: List<Achievement>,

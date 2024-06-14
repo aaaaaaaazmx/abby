@@ -207,7 +207,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
                 // 解析文案。
                 val dataTime = mviewmodel.getPlantData.value?.data?.termpertureList?.map { it.dateTime.safeToLong().toDateString() }?.toList()
                 val yValue = mviewmodel.getPlantData.value?.data?.termpertureList?.map { temperatureConversionTwo(it.codeValue.safeToFloat(), aBoolean).safeToFloat() }?.toList()
-                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Temperture $unit", "#006241"))
+                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Temperature $unit", "#006241"))
             }
         }
         binding.cbTemperature.setOnClickListener {
@@ -220,7 +220,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
                 // 解析文案。
                 val dataTime = mviewmodel.getPlantData.value?.data?.termpertureList?.map { it.dateTime.safeToLong().toDateString() }?.toList()
                 val yValue = mviewmodel.getPlantData.value?.data?.termpertureList?.map { temperatureConversionTwo(it.codeValue.safeToFloat(), aBoolean).safeToFloat() }?.toList()
-                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Temperture $unit", "#006241"))
+                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Temperature $unit", "#006241"))
             } else {
                 binding.cbHumidity.setTextColor(Color.WHITE)
                 binding.cbTemperature.setTextColor(Color.parseColor("#006241"))

@@ -23,6 +23,7 @@ import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
@@ -232,19 +233,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 极光消息需要插入最前面，并且去重
                     val unReadList = mViewMode.unreadMessageList.value ?: mutableListOf()
                     // 接续数据
-                    val extras = GSON.parseObject(it.toString(), JpushMessageData::class.java)
-                    val unreadMessage =
-                        GSON.parseObject(extras?.extras.toString(), UnreadMessageData::class.java)
-                    // 删除和极光消息一样的ID
-                    unReadList.removeIf { data -> data.messageId == unreadMessage?.messageId }
-                    // 把极光消息添加到第一个，并且展示
-                    unreadMessage?.let { unRead -> unReadList.add(unRead) }
-                    // 添加到ViewModel
-                    mViewMode.setUnreadMessageList(unReadList)
-                    // 更改气泡内容
-                    changUnReadMessageUI()
-                    // 刷新信息
-                    mViewMode.plantInfo()
+                    GSON.parseObjectInBackground(it.toString(), JpushMessageData::class.java) { extras ->
+                        GSON.parseObjectInBackground(extras?.extras.toString(), UnreadMessageData::class.java) { unreadMessage ->
+                            // 删除和极光消息一样的ID
+                            unReadList.removeIf { data -> data.messageId == unreadMessage?.messageId }
+                            // 把极光消息添加到第一个，并且展示
+                            unreadMessage?.let { unRead -> unReadList.add(unRead) }
+                            // 添加到ViewModel
+                            mViewMode.setUnreadMessageList(unReadList)
+                            // 更改气泡内容
+                            changUnReadMessageUI()
+                            // 刷新信息
+                            mViewMode.plantInfo()
+                        }
+                    }
                 }
             }
 
@@ -1081,7 +1083,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             dpBean.gle = muteOff.toString()
 
                             // 发送多个DP点
-                            GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
+                            GSON.toJsonInBackground(dpBean) { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
 
                             // 保存到后台
                             data.deviceId = mViewMode.userDetail.value?.data?.deviceId
@@ -1462,7 +1464,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             else -> timeOn
                         }.toString(), ex = mViewMode.getFanExhaust.value.toString(), `in` = mViewMode.getFanIntake.value.toString()
                     )
-                    GSON.toJson(dpBean)?.let { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
+                    GSON.toJsonInBackground(dpBean) { it1 -> DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1) }
 
                     // 保存到后台
                     mViewMode.addCurrentProMode(ProModeInfoBean(deviceId = mViewMode.userDetail.value?.data?.deviceId, bright = lightIntensity, lightOn = timeOn, lightOff = timeOff))
@@ -2115,15 +2117,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
     private val envirPop by lazy {
         context?.let {
-            HomeEnvlrPop(
-                it,
-                disMissAction = {
-                    // 消失之后，刷新数据
-                    mViewMode.getEnvData()
-                    mViewMode.listDevice()
-                    mViewMode.userDetail()
-                }
-            )
+            activity?.let { it1 ->
+                HomeEnvlrPop(
+                    it1,
+                    it,
+                    disMissAction = {
+                        // 消失之后，刷新数据
+                        mViewMode.getEnvData()
+                        mViewMode.listDevice()
+                        mViewMode.userDetail()
+                    }
+                )
+            }
         }
     }
 
@@ -2171,6 +2176,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         context?.let { LearnIdGuidePop(it) }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("SetTextI18n")
     override fun observe() {
         mViewMode.apply {
@@ -2474,7 +2480,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                 return@applyh*/
                                                 ToastUtil.shortShow("Connection error, try to delete device and pair again")
                                             }
-                                            GSON.toJson(this)?.let {
+                                            GSON.toJsonInBackground(this) {
                                                 Prefs.putStringAsync(
                                                     Constants.Tuya.KEY_DEVICE_DATA,
                                                     it
@@ -2619,7 +2625,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.deviceId?.let { mViewMode.setDeviceId(it) }
 
                     // 保存当前的信息.
-                    GSON.toJson(data)?.let {
+                    GSON.toJsonInBackground(data) {
                         logI("refreshToken: $it")
                         Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
                     }
@@ -3032,10 +3038,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.getEnvData()
 
                     // 发送植物种植消息、主要用来判断消息小红点是否展示
-                    LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
-                        .postEvent(
-                            GSON.toJson(hashMapOf(Constants.APP.KEY_IN_APP_START_RUNNING to "true"))
-                        )
+                    GSON.toJsonInBackground(hashMapOf(Constants.APP.KEY_IN_APP_START_RUNNING to "true")) {
+                        LiveEventBus.get().with(Constants.APP.KEY_IN_APP, String::class.java)
+                            .postEvent(it)
+                    }
                 }
                 error { errorMsg, _ ->
                     hideProgressLoading()
@@ -3314,6 +3320,26 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     }).setBubbleBgColor(Color.WHITE)  //气泡背景
                             })
                             .show()
+
+                        // 检查是否拥有权限
+                        runCatching {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            val hasPermissions = PermissionHelp().hasPermissions(context, Manifest.permission.POST_NOTIFICATIONS)
+                                if (!hasPermissions) {
+                                    activity?.let {
+                                        PermissionHelp().applyPermissionHelp(it, "This app requires notification permission to keep you updated with the latest information. Please enable notification permissions in the settings.", object : PermissionHelp.OnCheckResultListener {
+                                            override fun onResult(result: Boolean) {
+                                                if (result) {
+                                                    ToastUtil.shortShow("Notification permission granted.")
+                                                } else {
+                                                    ToastUtil.shortShow("Notification permission denied")
+                                                }
+                                            }
+                                        }, Manifest.permission.POST_NOTIFICATIONS)
+                                    }
+                                }
+                            }
+                        }
                     }
 
                     //  todo 需要判断当前是seed阶段还是其他阶段，用来显示杯子，还是植物
@@ -4351,7 +4377,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     private fun queryAllDp() {
-        GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
+        // GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
+        GSON.toJsonInBackground(AllDpBean(cmd = "2")) { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
     }
 
     override fun onPause() {
@@ -4621,192 +4648,196 @@ class HomeFragment : BaseFragment<HomeBinding>() {
      */
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onTuYaToAppDataChange(status: String) {
-        val map = GSON.parseObject(status, Map::class.java)
-        map?.forEach { (key, value) ->
-            when (key) {
-                // 当用户加了水，是需要动态显示当前水的状态的
-                // 返回多少升水
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
-                    logI("KEY_DEVICE_WATER_STATUS： $value")
-                    mViewMode.setWaterVolume(value.toString())
-                    mViewMode.tuYaDps?.put(
-                        TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL,
-                        value.toString()
-                    )
-                }
+        // val map = GSON.parseObject(status, Map::class.java)
+        GSON.parseObjectInBackground(status, Map::class.java) { map ->
+            map?.forEach { (key, value) ->
+                when (key) {
+                    // 当用户加了水，是需要动态显示当前水的状态的
+                    // 返回多少升水
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_STATUS_INSTRUCTIONS -> {
+                        logI("KEY_DEVICE_WATER_STATUS： $value")
+                        mViewMode.setWaterVolume(value.toString())
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_WATER_LEVEL,
+                            value.toString()
+                        )
+                    }
 
-                // 排水结束
-                TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
-                    if (isManual != true) return
-                    /*binding.plantManual.ivDrainStatus.background =
-                        resources.getDrawable(
-                            R.mipmap.home_drain_start,
-                            context?.theme
-                        )*/
-                }
-                // 排水暂停
-                TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
-                    if (isManual != true) return
-                    binding.plantManual.ivDrainStatus.background =
-                        if ((value as? Boolean != true)) {
+                    // 排水结束
+                    TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_FINISHED_INSTRUCTION -> {
+                        if (isManual != true) return@forEach
+                        /*binding.plantManual.ivDrainStatus.background =
                             resources.getDrawable(
                                 R.mipmap.home_drain_start,
                                 context?.theme
-                            )
-                        } else {
-                            resources.getDrawable(
-                                R.mipmap.home_drain_pause,
-                                context?.theme
-                            )
-                        }
-                }
-
-                // SN修复的通知
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
-                    logI("KEY_DEVICE_REPAIR_SN： $value")
-                }
-
-                // 获取SN的通知
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_REST_STATUS_INSTRUCTION -> {
-                    logI("KEY_DEVICE_REPAIR_REST_STATUS： $value")
-                    mViewMode.saveSn(value.toString().split("#")[1])
-                }
-
-                // 童锁开关
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_CHILD_LOCK_INSTRUCT -> {
-                    mViewMode.setChildLockStatus(value.toString())
-                }
-
-                // 打开门
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR_LOOK_INSTRUCT -> {
-                    mViewMode.setOpenDoorStatus(value.toString())
-                }
-
-                // 是否关闭门
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
-                    logI("12312312312 KEY_DEVICE_DOOR: $value")
-                    // 是否关闭门
-                    mViewMode.setDoorStatus(value.toString())
-
-                    // 摄像头相关
-                    // 主要用户删除当前的door的气泡消息
-                    // true 开门、 fasle 关门
-                    isPrivateMode(value)
-
-                    // 主要用户删除当前的door的气泡消息
-                    // true 开门、 fasle 关门
-                    if (value.toString() == "true") return
-                    if (mViewMode.getUnreadMessageList()
-                            .firstOrNull()?.type == UnReadConstants.Device.KEY_CLOSE_DOOR
-                    ) {
-                        // 点击按钮就表示已读，已读会自动查看有没有下一条
-                        mViewMode.getRead(
-                            "${
-                                mViewMode.getUnreadMessageList().firstOrNull()?.messageId
-                            }"
-                        )
+                            )*/
                     }
-                }
-
-                // ----- 开始， 下面的都是需要传给后台的环境信息
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
-                    /*mViewMode.tuYaDps?.put(
-                        TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
-                        value.toString()
-                    )
-                    mViewMode.setCurrentGrowLight(value.toString())*/
-                    // 查询灯光信息
-                    queryAllDp()
-                }
-
-                // 140 dp点
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TIME_STAMP -> {
-                    val allDpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
-                    // cmd == 3 返回实际灯光配置参数
-                    // cmd == 1 返回实际全部配置参数
-                    if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
-                        // 这段代码必须在首位。
-                        mViewMode.tuYaDps?.put(
-                            TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
-                            allDpBean.gl.toString()
-                        )
-                        // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
-                        // 不等于说明灯光刷新， 更新当前环境信息的数据
-                        if (isManual == false && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
-                            mViewMode.getEnvData()
-                            mViewMode.listDevice()
-                            mViewMode.userDetail()
-                        }
-
-                        // 设置灯光
-                        mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
-
-                        // 显示是否展示夜间模式 不是手动模式
-                        if (isManual == false) {
-                            // 根据灯光来显示植物是否在睡觉，是否需要显示zzz
-                            mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
-                                val isShowIvTwo = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == false && allDpBean.gl == "0"
-                                ViewUtils.setVisible(
-                                    isShowIvTwo,
-                                    binding.pplantNinth.ivThree,
-                                    binding.pplantNinth.ivTwo
+                    // 排水暂停
+                    TuYaDeviceConstants.DeviceInstructions.KAY_PUMP_WATER_INSTRUCTIONS -> {
+                        if (isManual != true) return@forEach
+                        binding.plantManual.ivDrainStatus.background =
+                            if ((value as? Boolean != true)) {
+                                resources.getDrawable(
+                                    R.mipmap.home_drain_start,
+                                    context?.theme
+                                )
+                            } else {
+                                resources.getDrawable(
+                                    R.mipmap.home_drain_pause,
+                                    context?.theme
                                 )
                             }
-                        } else {
-                            // 手动模式，设置当前灯光值或者是预设值。
-                            mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString())
+                    }
+
+                    // SN修复的通知
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
+                        logI("KEY_DEVICE_REPAIR_SN： $value")
+                    }
+
+                    // 获取SN的通知
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_REST_STATUS_INSTRUCTION -> {
+                        logI("KEY_DEVICE_REPAIR_REST_STATUS： $value")
+                        mViewMode.saveSn(value.toString().split("#")[1])
+                    }
+
+                    // 童锁开关
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_CHILD_LOCK_INSTRUCT -> {
+                        mViewMode.setChildLockStatus(value.toString())
+                    }
+
+                    // 打开门
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR_LOOK_INSTRUCT -> {
+                        mViewMode.setOpenDoorStatus(value.toString())
+                    }
+
+                    // 是否关闭门
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_DOOR -> {
+                        logI("12312312312 KEY_DEVICE_DOOR: $value")
+                        // 是否关闭门
+                        mViewMode.setDoorStatus(value.toString())
+
+                        // 摄像头相关
+                        // 主要用户删除当前的door的气泡消息
+                        // true 开门、 fasle 关门
+                        isPrivateMode(value)
+
+                        // 主要用户删除当前的door的气泡消息
+                        // true 开门、 fasle 关门
+                        if (value.toString() == "true") return@forEach
+                        if (mViewMode.getUnreadMessageList()
+                                .firstOrNull()?.type == UnReadConstants.Device.KEY_CLOSE_DOOR
+                        ) {
+                            // 点击按钮就表示已读，已读会自动查看有没有下一条
+                            mViewMode.getRead(
+                                "${
+                                    mViewMode.getUnreadMessageList().firstOrNull()?.messageId
+                                }"
+                            )
                         }
                     }
-                }
 
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(
-                        TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT,
-                        value.toString()
-                    )
-                    mViewMode.setHumidity(value.toString())
-                }
+                    // ----- 开始， 下面的都是需要传给后台的环境信息
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_BRIGHT_VALUE_INSTRUCTION -> {
+                        /*mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
+                            value.toString()
+                        )
+                        mViewMode.setCurrentGrowLight(value.toString())*/
+                        // 查询灯光信息
+                        queryAllDp()
+                    }
 
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_INPUT_AIR_FLOW_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(
-                        TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW,
-                        value.toString()
-                    )
-                    mViewMode.setFanIntake(value.toString())
-                }
+                    // 140 dp点
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TIME_STAMP -> {
+                        // val allDpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
+                        GSON.parseObjectInBackground(value.toString(), AllDpBean::class.java) { allDpBean ->
+                            // cmd == 3 返回实际灯光配置参数
+                            // cmd == 1 返回实际全部配置参数
+                            if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
+                                // 这段代码必须在首位。
+                                mViewMode.tuYaDps?.put(
+                                    TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE,
+                                    allDpBean.gl.toString()
+                                )
+                                // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
+                                // 不等于说明灯光刷新， 更新当前环境信息的数据
+                                if (isManual == false && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
+                                    mViewMode.getEnvData()
+                                    mViewMode.listDevice()
+                                    mViewMode.userDetail()
+                                }
 
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TEMP_CURRENT_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(
-                        TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT,
-                        value.toString()
-                    )
-                    mViewMode.setWenDu(value.toString())
-                }
+                                // 设置灯光
+                                mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
 
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_VENTILATION_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(
-                        TuYaDeviceConstants.KEY_DEVICE_VENTILATION,
-                        value.toString()
-                    )
-                    mViewMode.setFanExhaust(value.toString())
-                }
+                                // 显示是否展示夜间模式 不是手动模式
+                                if (isManual == false) {
+                                    // 根据灯光来显示植物是否在睡觉，是否需要显示zzz
+                                    mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
+                                        val isShowIvTwo = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == false && allDpBean.gl == "0"
+                                        ViewUtils.setVisible(
+                                            isShowIvTwo,
+                                            binding.pplantNinth.ivThree,
+                                            binding.pplantNinth.ivTwo
+                                        )
+                                    }
+                                } else {
+                                    // 手动模式，设置当前灯光值或者是预设值。
+                                    mViewMode.getCurrentProMode(mViewMode.userDetail.value?.data?.deviceId.toString())
+                                }
+                            }
+                        }
+                    }
 
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_TEMPERATURE_INSTRUCTION -> {
-                    mViewMode.tuYaDps?.put(
-                        TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE,
-                        value.toString()
-                    )
-                    mViewMode.setWaterWenDu(value.toString())
-                }
-                // --------- 到这里结束
-                // 植物高度
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_PLANT_HEIGHT_INSTRUCTION -> {
-                    mViewMode.setPlantHeight(value.toString())
-                }
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_HUMIDITY_CURRENT,
+                            value.toString()
+                        )
+                        mViewMode.setHumidity(value.toString())
+                    }
 
-                // 气泵
-                TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_AIR_PUMP_INSTRUCTION -> {
-                    mViewMode.setAirPump(value.toString())
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_INPUT_AIR_FLOW_INSTRUCTION -> {
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_INPUT_AIR_FLOW,
+                            value.toString()
+                        )
+                        mViewMode.setFanIntake(value.toString())
+                    }
+
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TEMP_CURRENT_INSTRUCTION -> {
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_TEMP_CURRENT,
+                            value.toString()
+                        )
+                        mViewMode.setWenDu(value.toString())
+                    }
+
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_VENTILATION_INSTRUCTION -> {
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_VENTILATION,
+                            value.toString()
+                        )
+                        mViewMode.setFanExhaust(value.toString())
+                    }
+
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_WATER_TEMPERATURE_INSTRUCTION -> {
+                        mViewMode.tuYaDps?.put(
+                            TuYaDeviceConstants.KEY_DEVICE_WATER_TEMPERATURE,
+                            value.toString()
+                        )
+                        mViewMode.setWaterWenDu(value.toString())
+                    }
+                    // --------- 到这里结束
+                    // 植物高度
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_PLANT_HEIGHT_INSTRUCTION -> {
+                        mViewMode.setPlantHeight(value.toString())
+                    }
+
+                    // 气泵
+                    TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_AIR_PUMP_INSTRUCTION -> {
+                        mViewMode.setAirPump(value.toString())
+                    }
                 }
             }
         }

@@ -250,17 +250,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content">
             <TextView
-                android:visibility="@{TextUtils.isEmpty(data.deviceEdition) ? View.GONE : View.VISIBLE}"
+                android:gravity="center"
+                android:background="@drawable/background_main_color_r0"
+                android:visibility="@{TextUtils.isEmpty(data.strainName) ? View.GONE : View.VISIBLE}"
                 android:paddingBottom="3dp"
-                android:text="@{data.deviceEdition}"
+                android:text="@{data.strainName}"
                 app:layout_constraintTop_toTopOf="@+id/cl_env"
                 android:textStyle="bold"
-                tools:text="black edition"
+                tools:text="strainName"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:textColor="@color/black"
+                android:textColor="@color/mainColor"
                 android:textSize="11sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_width="89dp"
+                android:layout_height="17dp" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
