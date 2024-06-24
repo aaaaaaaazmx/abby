@@ -1855,17 +1855,39 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
     }
 
     // 关灯时间
+    // 检查5次。5次之后还获取不到正确的值，那么无能为力
     private val _getCloseLightTime = MutableLiveData<String>()
     val getCloseLightTime: LiveData<String> = _getCloseLightTime
-    fun getCloseLightTime() {
+    fun getCloseLightTime(retryCount: Int = 0) {
         kotlin.runCatching {
-            _getCloseLightTime.value =
-                thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
-                    ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME).toString()
+            val deviceBean = thingDeviceBean()
+            _getCloseLightTime.value = deviceBean?.dps
+                ?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME }
+                ?.get(TuYaDeviceConstants.KEY_DEVICE_LIGHT_OFF_TIME)
+                ?.toString()
+
             getTimeText()
             logI("getLightTime:${_getLightTime.value} -- ${_getCloseLightTime.value} --- ${getTimeText.value}")
+
+            // 检查 _getCloseLightTime.value 或 _getLightTime.value 是否为 null
+            if (_getCloseLightTime.value == null || _getLightTime.value == null) {
+                if (retryCount < 5) {
+                    logI("Retry fetching light time due to null value, attempt #${retryCount + 1}")
+                    getCloseLightTime(retryCount + 1)  // 递归调用以重试
+                } else {
+                    logI("Failed to fetch light time after 5 attempts.")
+                }
+            }
+        }.onFailure {
+            if (retryCount < 5) {
+                logI("Error fetching light time, retrying... Attempt #${retryCount + 1}: ${it.message}")
+                getCloseLightTime(retryCount + 1)  // 异常时也重试
+            } else {
+                logI("Error fetching light time, no more retries left. Error: ${it.message}")
+            }
         }
     }
+
 
     private val timeText = MutableLiveData<String>("")
     val getTimeText: LiveData<String> = timeText
