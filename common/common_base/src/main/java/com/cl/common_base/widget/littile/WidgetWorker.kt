@@ -19,6 +19,7 @@ import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.calendar.CalendarUtil
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -53,9 +54,62 @@ class WidgetWorker(context: Context, workerParams: WorkerParameters) : Coroutine
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.CUPCAKE)
     private suspend fun handleUpdateTask(appWidgetId: Int): Result {
-        // 处理定期更新任务的逻辑
-        // 示例：更新小组件数据
+        service.controlInfo()
+            .map { response ->
+                if (response.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(response.code, response.msg)
+                } else {
+                    Resource.Success(response.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                // emit(Resource.Loading)
+            }
+            .collectLatest { resource ->
+                when (resource) {
+                    is Resource.Success -> {
+                        val views = RemoteViews(applicationContext.packageName, R.layout.widget_layout)
+                        val widgetData = resource.data
+                        logD("Data error: $widgetData")
+                        views.setViewVisibility(R.id.tv_login_desc, View.GONE)
+                        views.setViewVisibility(R.id.rl_content, View.VISIBLE)
+                        views.setTextViewText(R.id.widget_text, if (widgetData?.plantName.isNullOrBlank()) "---" else widgetData?.plantName)
+                        views.setTextViewText(R.id.tv_device_type, if (widgetData?.deviceModel.isNullOrBlank()) "---" else widgetData?.deviceModel)
+                        views.setTextViewText(R.id.tv_period, if (widgetData?.period.isNullOrBlank()) "---" else widgetData?.period)
+                        views.setTextViewText(R.id.tv_date, if (widgetData?.plantPeriod.isNullOrBlank()) "---" else widgetData?.plantPeriod)
+                        views.setTextViewText(R.id.tv_humidity, if (widgetData?.humidityCurrent.isNullOrBlank()) "---" else widgetData?.humidityCurrent)
+                        views.setTextViewText(R.id.tv_grow_temp, if (widgetData?.temperatureCurrent.isNullOrBlank()) "---" else widgetData?.temperatureCurrent)
+                        views.setTextViewText(R.id.tv_water_temp, if (widgetData?.waterCurrent.isNullOrBlank()) "---" else widgetData?.waterCurrent)
+                        views.setTextViewText(R.id.tv_task_description, if (widgetData?.taskCurrent.isNullOrBlank()) "---" else widgetData?.taskCurrent)
+                        if (widgetData?.taskTime.isNullOrBlank()) {
+                            views.setTextViewText(R.id.tv_date_task, "---")
+                        } else {
+                            views.setTextViewText(R.id.tv_date_task, getYmdForEn(time = widgetData?.taskTime.safeToLong() * 1000))
+                        }
+
+                        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+                        appWidgetManager.updateAppWidget(appWidgetId, views)
+                    }
+
+                    is Resource.DataError -> {
+                        logD("Data error: ${resource.errorMsg}, ${resource.errorCode}")
+                        if (resource.errorCode == 401) {
+                            val views = RemoteViews(applicationContext.packageName, R.layout.widget_layout)
+                            views.setViewVisibility(R.id.tv_login_desc, View.VISIBLE)
+                            views.setViewVisibility(R.id.rl_content, View.GONE)
+                            val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+                            appWidgetManager.updateAppWidget(appWidgetId, views)
+                        }
+                    }
+
+                    is Resource.Loading -> {
+                        // 处理加载状态（可选）
+                    }
+                }
+            }
         return Result.success()
     }
 

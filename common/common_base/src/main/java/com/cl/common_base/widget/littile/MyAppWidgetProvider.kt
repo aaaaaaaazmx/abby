@@ -79,6 +79,7 @@ class MyAppWidgetProvider : AppWidgetProvider() {
     @RequiresApi(Build.VERSION_CODES.HONEYCOMB)
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
+        // 点击
         if (intent.action == "com.example.mywidget.CLICK") {
             val appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
             if (appWidgetId != -1) {
@@ -88,12 +89,11 @@ class MyAppWidgetProvider : AppWidgetProvider() {
                     .navigation()
             }
         }
+        // 刷新
         if (intent.action == ACTION_UPDATE_WIDGET) {
             val appWidgetManager = AppWidgetManager.getInstance(context)
             val appWidgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, MyAppWidgetProvider::class.java))
-            for (appWidgetId in appWidgetIds) {
-                updateAppWidget(context, appWidgetManager, appWidgetId)
-            }
+            onUpdate(context, appWidgetManager, appWidgetIds)
         }
     }
 
