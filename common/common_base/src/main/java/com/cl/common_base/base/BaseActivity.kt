@@ -26,6 +26,7 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.util.ActivityCollector
 import com.cl.common_base.util.StatusBarUtil
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.common_base.widget.littile.MyAppWidgetProvider
 import com.orhanobut.logger.Logger
 import java.lang.ref.WeakReference
 import java.lang.reflect.ParameterizedType
@@ -275,6 +276,14 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
 
     override fun VB.initBinding() {
 
+    }
+
+    @RequiresApi(Build.VERSION_CODES.CUPCAKE)
+    fun updateWidget(activity: Activity) {
+        val intent = Intent(activity, MyAppWidgetProvider::class.java).apply {
+            action = MyAppWidgetProvider.ACTION_UPDATE_WIDGET
+        }
+        sendBroadcast(intent)
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.cl.common_base.help
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.R
@@ -25,7 +26,7 @@ class PlantCheckHelp {
     /**
      * 检查种植统一跳转
      */
-    fun plantStatusCheck(activity: Activity? = null, data: CheckPlantData, isClearTask: Boolean = false, isLeftSwapAnim: Boolean = false, isNoAnim: Boolean = true) {
+    fun plantStatusCheck(activity: Activity? = null, data: CheckPlantData, isClearTask: Boolean = false, isLeftSwapAnim: Boolean = false, isNoAnim: Boolean = true, context: Context? = null) {
         val intAnim = if (isNoAnim) {
             0
         } else if (isLeftSwapAnim) {
@@ -67,7 +68,7 @@ class PlantCheckHelp {
                     )
                     .withTransition(intAnim, outAnim)
                     .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                    .navigation(activity)
+                    .navigation(activity ?: context)
             return
         }
 
@@ -100,7 +101,7 @@ class PlantCheckHelp {
                 )
                 .withTransition(intAnim, outAnim)
                 .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                .navigation(activity)
+                .navigation(activity ?: context)
             return
         }
 
@@ -125,7 +126,7 @@ class PlantCheckHelp {
                         )
                         .withTransition(intAnim, outAnim)
                         .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                        .navigation(activity)
+                        .navigation(activity ?: context)
             }
             KEY_PLANTED -> {
                 // 跳转回主页
@@ -145,7 +146,7 @@ class PlantCheckHelp {
                         )
                         .withTransition(intAnim, outAnim)
                         .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                        .navigation(activity)
+                        .navigation(activity ?: context)
             }
             KEY_PLANTING_RECORDS -> {
                 // 跳转未种植引导页面
@@ -166,7 +167,7 @@ class PlantCheckHelp {
                         )
                         .withTransition(intAnim, outAnim)
                         .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                        .navigation(activity)
+                        .navigation(activity ?: context)
             }
             KEY_PLANTING_COMPLETED -> {
                 //  种植完成
@@ -187,7 +188,7 @@ class PlantCheckHelp {
                         )
                         .withTransition(intAnim, outAnim)
                         .withFlags(if (isClearTask) Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK else 0)
-                        .navigation(activity)
+                        .navigation(activity ?: context)
             }
         }
     }

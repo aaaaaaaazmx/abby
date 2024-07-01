@@ -98,6 +98,8 @@ object Version {
     const val interCome = "15.2.0"
 
     const val chart = "v3.1.0"
+
+    const val workManager = "2.7.0"
 }
 
 object Deps {
@@ -251,4 +253,7 @@ object Deps {
 
     // mpachart
     const val chat = "com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT"
+
+    // workMagner
+    const val workManager = "androidx.work:work-runtime-ktx:${Version.workManager}"
 }

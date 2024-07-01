@@ -185,4 +185,10 @@ interface BaseApiService {
     @POST("abby/userMessage/messageConfigList")
     fun messageConfigList() : Flow<HttpResult<MessageConfigBean>>
 
+    /**
+     * 获取控件信息
+     */
+    @POST("abby/plant/controlInfo")
+    fun controlInfo() : Flow<HttpResult<ControlInfoBean>>
+
 }

@@ -5066,6 +5066,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val startActivityLauncherCheck =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
+                // 更新小组件
+                context?.let { updateWidget(it) }
                 // 刷新植物信息
                 mViewMode.plantInfo()
             }

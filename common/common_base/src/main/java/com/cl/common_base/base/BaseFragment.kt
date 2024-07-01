@@ -1,15 +1,21 @@
 package com.cl.common_base.base
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import com.cl.common_base.BaseBinding
 import com.cl.common_base.R
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.util.livedatabus.LiveEventBus
+import com.cl.common_base.widget.littile.MyAppWidgetProvider
 import com.orhanobut.logger.Logger
 import java.lang.reflect.ParameterizedType
 
@@ -99,6 +105,14 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment(), BaseBinding<VB> 
         cancelable: Boolean = true
     ) {
         (context as? BaseActivity<*>)?.showProgressLoading(text, cancelable)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.CUPCAKE)
+    fun updateWidget(activity: Context) {
+        val intent = Intent(activity, MyAppWidgetProvider::class.java).apply {
+            action = MyAppWidgetProvider.ACTION_UPDATE_WIDGET
+        }
+        activity.sendBroadcast(intent)
     }
 
     /**

@@ -44,6 +44,7 @@ import com.cl.modules_my.pop.MergeAccountPop
 import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.pop.NotifyPop
+import com.cl.common_base.widget.littile.MyAppWidgetProvider
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.cl.modules_my.widget.LoginOutPop
 import com.cl.modules_my.widget.MyDeleteDevicePop
@@ -905,6 +906,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 )
                             )
                         }
+                        // 更新小组件
+                        updateWidget(this@SettingActivity)
                     },
                     onDeviceChanged = {
                         mViewModel.listDevice()
