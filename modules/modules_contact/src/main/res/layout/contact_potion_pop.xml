@@ -137,14 +137,12 @@
        <androidx.constraintlayout.widget.ConstraintLayout
            android:visibility="gone"
            android:id="@+id/cl_report"
-           android:layout_marginBottom="17dp"
            android:layout_marginStart="14dp"
            android:layout_marginTop="17dp"
            app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintBottom_toBottomOf="parent"
            app:layout_constraintTop_toBottomOf="@+id/vv1"
            android:layout_width="match_parent"
-           android:layout_height="wrap_content">
+           android:layout_height="match_parent">
            <TextView
                app:layout_constraintStart_toStartOf="parent"
                app:layout_constraintTop_toTopOf="parent"
@@ -166,6 +164,44 @@
                app:layout_constraintStart_toEndOf="@+id/tv_repoert"
                app:layout_constraintTop_toTopOf="@+id/tv_repoert" />
        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:visibility="gone"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:id="@+id/vv3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="17dp"
+            android:background="#F7F7F7"
+            app:layout_constraintStart_toStartOf="@+id/cl_report"
+            app:layout_constraintTop_toBottomOf="@+id/cl_report" />
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="gone"
+            android:id="@+id/cl_down"
+            android:paddingStart="14dp"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="17dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/vv3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/tv_down"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bury"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

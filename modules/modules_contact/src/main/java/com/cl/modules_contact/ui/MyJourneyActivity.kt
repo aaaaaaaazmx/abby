@@ -135,6 +135,14 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
 
     override fun observe() {
         viewModel.apply {
+            hotReduce.observe(this@MyJourneyActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code -> hideProgressLoading()
+                ToastUtil.shortShow(errorMsg)}
+                success {
+                    hideProgressLoading()
+                }
+            })
             myPageData.observe(this@MyJourneyActivity, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
                 success {
@@ -363,6 +371,9 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                                                         viewModel.report(ReportReq(momentId = item?.id.toString(), reportContent = txt))
                                                     })
                                             ).show()
+                                    },
+                                    buryAction = {
+                                        viewModel.hotReduce(item?.id.toString())
                                     },
                                     itemSwitchAction = { isCheck ->
                                         // 关闭分享

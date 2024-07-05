@@ -43,4 +43,5 @@ data class LoginData(
     val wallAddress: String? = null,
     val wallId: Int? = null,
     val inchMetricMode: String? = null,
+    val permission: String? = null,
 ) : Serializable

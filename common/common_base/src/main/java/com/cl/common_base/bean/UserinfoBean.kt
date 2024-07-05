@@ -8,6 +8,7 @@ import com.thingclips.smart.home.sdk.bean.LightningSearchBean
 data class UserinfoBean(
     val deviceId: String? = null,
     val abbyId: String? = null,
+    val permission: String? = null,
     val avatarPicture: String? = null,
     val childLock: String? = null,
     val deviceOnlineStatus: String? = null,  // 0-不在线，1-在线
@@ -54,6 +55,7 @@ data class UserinfoBean(
         val deviceStatus: String? = null, // 1 绑定状态、其他是设备未绑定
         val deviceId: String? = null,
         val abbyId: String? = null,
+        val permission: String? = null,
         val deviceType: String? = null,
         val avatarPicture: String? = null,
         val eventCount: Int? = null,

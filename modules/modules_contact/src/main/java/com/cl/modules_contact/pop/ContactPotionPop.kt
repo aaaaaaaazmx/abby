@@ -2,6 +2,7 @@ package com.cl.modules_contact.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.util.ViewUtils
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactPotionPopBinding
@@ -18,6 +19,7 @@ class ContactPotionPop(
     private val shareAction: (() -> Unit)? = null,
     private val itemSwitchAction: ((isCheck: Boolean) -> Unit)? = null,
     private val followAction: (() -> Unit)? = null,
+    private val buryAction: (() -> Unit)? = null,
 ) : BubbleAttachPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.contact_potion_pop
@@ -30,7 +32,7 @@ class ContactPotionPop(
             executePendingBindings()
 
             // 不是举报就隐藏，其实就是查看trend是不是自己的
-            ViewUtils.setVisible(!isShowReport, clReport, clFollow, vv1)
+            ViewUtils.setVisible(!isShowReport, clReport, clFollow, vv1, clDown, vv3)
             // 是举报就显示，删除和分享
             ViewUtils.setVisible(isShowReport, clDelete, clShare, vv)
             // 是分享，其实就是查看trend是不是自己的
@@ -55,6 +57,11 @@ class ContactPotionPop(
 
             clFollow.setOnClickListener {
                 followAction?.invoke()
+                dismiss()
+            }
+
+            clDown.setSafeOnClickListener {
+                buryAction?.invoke()
                 dismiss()
             }
 

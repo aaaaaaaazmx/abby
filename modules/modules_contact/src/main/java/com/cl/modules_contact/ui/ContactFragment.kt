@@ -62,7 +62,6 @@ import com.cl.common_base.pop.BaseThreeTextPop
 import com.cl.common_base.web.VideoPLayActivity
 import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
 import com.cl.modules_contact.pop.ContactChooseTipPop
-import com.cl.modules_contact.pop.ContactDeletePop
 import com.cl.modules_contact.pop.ContactNewEnvPop
 import com.cl.modules_contact.request.MyMomentsReq
 import com.cl.modules_contact.response.NewPageData
@@ -282,7 +281,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
      * 条目点击事件
      */
     private fun initAdapterClick() {
-        adapter.addChildClickViewIds(R.id.tv_link, R.id.tv_live_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more)
+        adapter.addChildClickViewIds(R.id.tv_link, R.id.tv_live_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more, R.id.cl_to_chat)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? NewPageData.Records
             mViewMode.updateCurrentPosition(position)
@@ -466,6 +465,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                                     })
                                             ).show()
                                         }
+                                    },
+                                    buryAction = {
+                                        mViewMode.hotReduce(item?.id.toString())
                                     }
                                 )
                                     .setBubbleBgColor(Color.WHITE) //气泡背景
@@ -487,7 +489,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         ).show()
                 }
 
-                R.id.tv_to_chat -> {
+                R.id.tv_to_chat, R.id.cl_to_chat -> {
                     //  跳转到更多聊天记录弹窗
                     toCommentPop(item, position, adapter)
                 }
@@ -631,6 +633,22 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 帖子下称
+            hotReduce.observe(viewLifecycleOwner, resourceObserver {
+                loading {
+                    showProgressLoading()
+                }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    val position = mViewMode.currentPosition.value ?: -1
+                    if (position == -1) return@success
+                    adapter.removeAt(position)
+                }
+            })
             userAssets.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {

@@ -143,4 +143,8 @@ class ContactRemoteRepository @Inject constructor() {
     fun following(): Flow<HttpResult<MutableList<FolowerData>>> {
         return service.following()
     }
+
+    fun hotReduce(momentId: String): Flow<HttpResult<BaseBean>> {
+        return service.hotReduce(momentId)
+    }
 }

@@ -225,4 +225,10 @@ interface HttpContactApiService {
     @POST("abby/user/following")
     fun following(): Flow<HttpResult<MutableList<FolowerData>>>
 
+    // 帖子下称
+    @FormUrlEncoded
+    @POST("abby/moments/hotReduce")
+    fun hotReduce(@Field("momentId") momentId: String): Flow<HttpResult<BaseBean>>
+
+
 }

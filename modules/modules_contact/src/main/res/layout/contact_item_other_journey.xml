@@ -383,6 +383,7 @@
 
         <!--评论列表，只展示2条-->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_to_chat"
             android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:visibility="@{data.comments.size() > 0 ? View.VISIBLE : View.GONE}"
