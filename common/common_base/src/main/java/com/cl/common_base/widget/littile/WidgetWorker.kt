@@ -76,6 +76,7 @@ class WidgetWorker(context: Context, workerParams: WorkerParameters) : Coroutine
                         logD("Data error: $widgetData")
                         views.setViewVisibility(R.id.tv_login_desc, View.GONE)
                         views.setViewVisibility(R.id.rl_content, View.VISIBLE)
+                        views.setViewVisibility(R.id.bottom_section, if (widgetData?.taskCurrent.isNullOrBlank()) View.GONE else View.VISIBLE)
                         views.setTextViewText(R.id.widget_text, if (widgetData?.plantName.isNullOrBlank()) "---" else widgetData?.plantName)
                         views.setTextViewText(R.id.tv_device_type, if (widgetData?.deviceModel.isNullOrBlank()) "---" else widgetData?.deviceModel)
                         views.setTextViewText(R.id.tv_period, if (widgetData?.period.isNullOrBlank()) "---" else widgetData?.period)
