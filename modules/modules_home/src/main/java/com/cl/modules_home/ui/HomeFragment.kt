@@ -2304,7 +2304,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 判断设备数量，设定左右滑动图片的显示
                         val isVisible = dataList.filter { it.isSwitch == 1 }.size > 1
                         ViewUtils.setVisible(
-                            isVisible && mViewMode.isZp.value == false,
+                            isVisible,
                             binding.pplantNinth.imageLeftSwip,
                             binding.pplantNinth.imageRightSwip
                         )
@@ -2317,11 +2317,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             ViewUtils.setVisible(isCameraVisible, binding.pplantNinth.ivCamera)
                             ViewUtils.setVisible(isCameraVisible, binding.plantManual.ivCamera)
 
-                            // 是否显示rlInch
-                            ViewUtils.setVisible(
-                                device.deviceType == "OG" || device.deviceType == "OG_black",
-                                binding.plantManual.rlInch
-                            )
+                            // 查找当前设备，是否显示所有的传感器设备。
+                            // 是否显示rlInch植物高度
+                            ViewUtils.setVisible(device.heightSensor == true, binding.plantManual.rlInch)
+                            // 是否显示水位传感器
+                            ViewUtils.setVisible(device.waterLevelSensor == true, binding.plantManual.clWater)
+                            // 是否显示水泵
+                            ViewUtils.setVisible(device.waterPump == true, binding.plantManual.clDrain, binding.plantManual.clDrip)
+
                         }
 
                         if (dataList.isNotEmpty()) {
@@ -3722,7 +3725,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                  if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
                                 if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
                                 val currentDevice = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
-                                if ((currentDevice?.deviceType == "OG") || (currentDevice?.deviceType == "OG_black")) {
+                                // 是否显示高度
+                                if (currentDevice?.heightSensor == true) {
                                     // 隐藏氧气币，和气泡
                                     ViewUtils.setGone(binding.pplantNinth.clContinue, binding.pplantNinth.waterView)
 

@@ -25,6 +25,7 @@ import com.cl.modules_my.R
 import com.cl.modules_my.adapter.AddTenAccessoryAdapter
 import com.cl.modules_my.databinding.MyAddAccessoryBinding
 import com.cl.common_base.bean.AccessoryListBean
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.ViewUtils
@@ -153,13 +154,15 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         ToastUtil.shortShow(itemData.cannotMsg)
                         return@OnItemChildClickListener
                     }*/
+                    val usbNumber = (deviceList.firstOrNull { it.currentDevice == 1 }?.usbNum?.safeToInt() ?: 0) > 1
                     xpopup(this@AddAccessoryActivity) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(true)
                         asCustom(
-                            BaseCenterPop(this@AddAccessoryActivity, content = itemData.cannotMsg, isShowCancelButton = deviceType != "OG_black", cancelText = "No", confirmText = if (deviceType == "OG_black") "OK" else "Yes", onConfirmAction = {
-                                if (deviceType != "OG_black") {
+                            BaseCenterPop(this@AddAccessoryActivity, content = itemData.cannotMsg, isShowCancelButton = !usbNumber, cancelText = "No", confirmText = if (usbNumber) "OK" else "Yes", onConfirmAction = {
+                                if (!usbNumber) {
                                     // 这个后台逻辑是覆盖最早一个添加的配件。
+                                    // 如果只有1个usb，那么就直接覆盖
                                     addAccess(itemData)
                                 }
                             })

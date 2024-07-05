@@ -1,18 +1,11 @@
 package com.cl.modules_my.adapter
 
-import android.provider.ContactsContract.CommonDataKinds.Relation
-import android.text.TextUtils
-import android.view.View
-import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bhm.ble.BleManager
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyDeviceListItemBinding
@@ -20,11 +13,9 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToFloat
-import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.temperatureConversion
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
-import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.modules_my.databinding.MyDeviceListTextItemBinding
 import com.cl.modules_my.databinding.MyPairListItemBinding
 import com.cl.modules_my.databinding.MyPairTentInnerItemBinding
@@ -108,7 +99,7 @@ class DeviceListAdapter(
                         layoutManager = LinearLayoutManager(context)
                         val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck, usbPort ->
                             switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck, usbPort)
-                        }, item.deviceType)
+                        }, item.deviceType, item.usbNum)
                         adapter = accessAdapters
                         accessAdapters.addChildClickViewIds(R.id.iv_luosi, R.id.cl_pair)
                         accessAdapters.setOnItemChildClickListener { adapter, view, position ->

@@ -8,15 +8,21 @@ import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToFloat
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.temperatureConversion
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
-import com.cl.common_base.widget.FeatureItemSwitch
 import com.cl.common_base.widget.FeatureItemSwitchNoPadding
 import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyAccessItemBinding
 
-class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChooser: Boolean, private val switchListener: ((accessoryId: String, isCheck: Boolean, usbPort: String?) -> Unit)? = null, val deviceType: String? = null) :
+class AccessAdapter(
+    data: MutableList<ListDeviceBean.AccessoryList>?,
+    val isChooser: Boolean,
+    private val switchListener: ((accessoryId: String, isCheck: Boolean, usbPort: String?) -> Unit)? = null,
+    val deviceType: String? = null,
+    val usbNum: String?
+) :
     BaseQuickAdapter<ListDeviceBean.AccessoryList, BaseDataBindingHolder<MyAccessItemBinding>>(R.layout.my_access_item, data) {
     val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
 
@@ -27,8 +33,8 @@ class AccessAdapter(data: MutableList<ListDeviceBean.AccessoryList>?, val isChoo
             deviceType = deviceType
             executePendingBindings()
         }
-        // 是否显示和隐藏这个usb数字。
-        holder.setVisible(R.id.rl_one, deviceType == "OG_black")
+        // 是否显示和隐藏这个usb数字。是显示usb数量的，一个usb那么就不显示数量
+        holder.setVisible(R.id.rl_one, usbNum.safeToInt() > 1)
 
         val pairData = item
         val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN)

@@ -324,11 +324,8 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                             ViewUtils.setVisible(isCameraVisible, binding.ivCamera)
                             ViewUtils.setVisible(isCameraVisible, binding.ivCamera)
 
-                            // 是否显示rlInch
-                            ViewUtils.setVisible(
-                                device.deviceType == "OG" || device.deviceType == "OG_black",
-                                binding.rlInch
-                            )
+                            // 是否显示rlInch植物高度
+                            ViewUtils.setVisible(device.heightSensor == true, binding.rlInch)
                         }
                     }
                 }
