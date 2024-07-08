@@ -156,6 +156,18 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_period"
+                    android:layout_alignParentRight="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="13dp"
+                    tools:text="seed"
+                    android:textColor="@color/gray"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <TextView
                     android:id="@+id/tv_week_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

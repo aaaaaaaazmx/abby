@@ -40,6 +40,7 @@ public class StringPicker extends WheelPicker<String> {
             public void onWheelSelected(String item, int position) {
                 if (onSelectedListener != null) {
                     onSelectedListener.onScopeSelected(position);
+                    onSelectedListener.onScopeSelected(item);
                 }
             }
         });
@@ -70,5 +71,6 @@ public class StringPicker extends WheelPicker<String> {
 
     public interface OnStringSelectedListener {
         void onScopeSelected(int index);
+        void onScopeSelected(String index);
     }
 }

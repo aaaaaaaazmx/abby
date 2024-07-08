@@ -964,6 +964,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
         //  手动模式
         binding.plantManual.apply {
+            rlPeriod.setSafeOnClickListener {
+                // proMode下选择周期
+                context?.let { it1 ->
+                    xpopup(it1) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(ChooserPeriodPop(it1, mViewMode.plantInfo.value?.data?.period.toString(), mViewMode.plantInfo.value?.data?.week.toString(), mViewMode.plantInfo.value?.data?.day.toString(), mViewMode.plantInfo.value?.data?.plantId.toString(), selectAction = { period, time ->
+                            tvWeekDay.text = time
+                            tvPeriod.text = period
+                        })).show()
+                    }
+                }
+            }
+
             ivLive.setSafeOnClickListener {
                 startToVideoPlay()
             }
@@ -3363,6 +3377,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             binding.plantManual.tvWeekDay.text = """
                                 Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
                             """.trimIndent()
+
+                            binding.plantManual.tvPeriod.text = data?.period
 
                             ViewUtils.setVisible(
                                 info.journeyName != HomePeriodPop.KEY_SEED,
