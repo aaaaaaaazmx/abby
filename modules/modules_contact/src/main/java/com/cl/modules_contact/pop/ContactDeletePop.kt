@@ -20,6 +20,7 @@ class ContactDeletePop(
     private val isShowDelete: Boolean? = true,
     private val onCopyAction: (() -> Unit)? = null,
     private val onDeleteAction: (() -> Unit)? = null,
+    private val changText: String? = ""
 ) : BubbleAttachPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.contact_delete_pop
@@ -30,6 +31,10 @@ class ContactDeletePop(
 
         DataBindingUtil.bind<ContactDeletePopBinding>(popupImplView)?.apply {
             ViewUtils.setVisible(isShowDelete == true, tvDelete, vv)
+
+            if (changText?.isNotEmpty() == true) {
+                tvCopy.text = changText
+            }
 
             tvDelete.setOnClickListener {
                 onDeleteAction?.invoke()

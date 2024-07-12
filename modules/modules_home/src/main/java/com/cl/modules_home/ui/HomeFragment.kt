@@ -965,14 +965,30 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         //  手动模式
         binding.plantManual.apply {
             rlPeriod.setSafeOnClickListener {
+                val period = tvPeriod.text.toString().ifEmpty { mViewMode.plantInfo.value?.data?.period }
                 // proMode下选择周期
                 context?.let { it1 ->
                     xpopup(it1) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
-                        asCustom(ChooserPeriodPop(it1, mViewMode.plantInfo.value?.data?.period.toString(), mViewMode.plantInfo.value?.data?.week.toString(), mViewMode.plantInfo.value?.data?.day.toString(), mViewMode.plantInfo.value?.data?.plantId.toString(), selectAction = { period, time ->
+                        asCustom(ChooserPeriodPop(it1, period.toString(), tvWeekDay.text.toString(), mViewMode.plantInfo.value?.data?.plantId.toString(), selectAction = { period, time ->
                             tvWeekDay.text = time
                             tvPeriod.text = period
+                        })).show()
+                    }
+                }
+            }
+
+            rlHorPeriod.setSafeOnClickListener {
+                val period = tvHorPeriod.text.toString().ifEmpty { mViewMode.plantInfo.value?.data?.period }
+                // proMode下选择周期
+                context?.let { it1 ->
+                    xpopup(it1) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(ChooserPeriodPop(it1, period.toString(), tvHorWeekDay.text.toString(), mViewMode.plantInfo.value?.data?.plantId.toString(), selectAction = { period, time ->
+                            tvHorWeekDay.text = time
+                            tvHorPeriod.text = period
                         })).show()
                     }
                 }
@@ -2333,12 +2349,14 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             // 查找当前设备，是否显示所有的传感器设备。
                             // 是否显示rlInch植物高度
-                            ViewUtils.setVisible(device.heightSensor == true, binding.plantManual.rlInch)
+                            ViewUtils.setVisible(device.heightSensor == true, binding.plantManual.rlInch, binding.plantManual.rlPeriod)
                             // 是否显示水位传感器
                             ViewUtils.setVisible(device.waterLevelSensor == true, binding.plantManual.clWater)
                             // 是否显示水泵
-                            ViewUtils.setVisible(device.waterPump == true, binding.plantManual.clDrain, binding.plantManual.clDrip)
+                            ViewUtils.setVisible(device.waterPump == true, binding.plantManual.clDrain, binding.plantManual.clDrip, binding.plantManual.clAirPump)
 
+                            // 只要rlInch植物高度不显示，那么就显示横向的周期选择
+                            ViewUtils.setVisible(device.heightSensor == false, binding.plantManual.rlHorPeriod)
                         }
 
                         if (dataList.isNotEmpty()) {
@@ -3373,13 +3391,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 Day ${data?.day ?: "-"}
                             """.trimIndent()
 
-                            // 植物信息数据显示
-                            binding.plantManual.tvWeekDay.text = """
-                                Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
-                            """.trimIndent()
-
-                            binding.plantManual.tvPeriod.text = data?.period
-
                             ViewUtils.setVisible(
                                 info.journeyName != HomePeriodPop.KEY_SEED,
                                 binding.pplantNinth.ivWaterStatus
@@ -3765,6 +3776,20 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         }
 
+                    // proMode
+                    // 植物信息数据显示
+                    binding.plantManual.tvWeekDay.text = """
+                                Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
+                            """.trimIndent()
+
+                    binding.plantManual.tvPeriod.text = data?.period
+
+                    // 植物信息数据显示
+                    binding.plantManual.tvHorWeekDay.text = """
+                                Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
+                            """.trimIndent()
+
+                    binding.plantManual.tvHorPeriod.text = data?.period
 
                     // 植物的氧气
                     binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"

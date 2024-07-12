@@ -34,7 +34,7 @@ class AccessAdapter(
             executePendingBindings()
         }
         // 是否显示和隐藏这个usb数字。是显示usb数量的，一个usb那么就不显示数量
-        holder.setVisible(R.id.rl_one, usbNum.safeToInt() > 1)
+        holder.setVisible(R.id.rl_one, item.accessoryType != AccessoryListBean.KEY_CAMERA && usbNum.safeToInt() > 1)
 
         val pairData = item
         val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN)

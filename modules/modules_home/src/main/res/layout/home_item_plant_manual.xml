@@ -156,16 +156,25 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:layout_toLeftOf="@+id/iv_eights"
                     android:id="@+id/tv_period"
-                    android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="5dp"
                     android:layout_marginTop="13dp"
                     tools:text="seed"
                     android:textColor="@color/gray"
-                    android:textSize="10sp"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_eights"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@mipmap/iv_right"
+                    android:layout_width="5dp"
+                    android:layout_height="10dp"/>
 
                 <TextView
                     android:id="@+id/tv_week_day"
@@ -180,14 +189,78 @@
             </RelativeLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:minHeight="54dp"
+                android:id="@+id/rl_hor_period"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rl_inch"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/background_white_r6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="Period"
+                    android:textColor="@color/mainColor"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/iv_hor_eights"
+                    android:id="@+id/tv_hor_period"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    tools:text="seed"
+                    android:textColor="@color/gray"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/iv_hor_eights"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="10dp"
+                    android:background="@mipmap/iv_right"
+                    android:layout_width="5dp"
+                    android:layout_height="10dp"/>
+
+                <TextView
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/tv_hor_week_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    tools:text="10.6" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_value_show"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="17dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/background_white_r6"
-                app:layout_constraintTop_toBottomOf="@+id/rl_period">
+                app:layout_constraintTop_toBottomOf="@+id/rl_hor_period">
 
                 <TextView
                     android:id="@+id/tv_grow"
@@ -289,7 +362,6 @@
                         android:id="@+id/tv_water_temperature"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:text='@{viewModel.textCovert()}'
                         android:textColor="#999999"
@@ -302,7 +374,6 @@
                         android:id="@+id/tv_water_temperature_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:text='@{String.valueOf(viewModel.temperatureConversion(viewModel.getWaterWenDu))}'
                         android:textColor="@color/black"

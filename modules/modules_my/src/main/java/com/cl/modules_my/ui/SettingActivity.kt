@@ -351,6 +351,8 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             )
                         }
 
+                        // 是否显示排水
+                        ViewUtils.setVisible(deviceInfo.waterPump == true, binding.ftWaterTank)
 
                         // 是否开启usb电源模式
                         binding.ftUsb.isItemChecked = deviceInfo.smartUsbPowder == 1

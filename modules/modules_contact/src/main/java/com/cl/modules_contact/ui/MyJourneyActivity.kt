@@ -281,7 +281,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                         xpopup(this@MyJourneyActivity) {
                             dismissOnTouchOutside(false)
                             isDestroyOnDismiss(false)
-                            asCustom(ContactNewEnvPop(this@MyJourneyActivity, infoList.toMutableList(), item)).show()
+                            asCustom(ContactNewEnvPop(this@MyJourneyActivity, item?.waterPump == true, infoList.toMutableList(), item)).show()
                         }
                     }
 

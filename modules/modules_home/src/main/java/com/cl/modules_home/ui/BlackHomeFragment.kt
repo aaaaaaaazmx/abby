@@ -1000,12 +1000,13 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
         // 手动模式点击事件
         binding.apply {
             rlPeriod.setSafeOnClickListener {
+                val period = if(tvPeriod.text.toString().isEmpty()) mViewMode.plantInfo.value?.data?.period else tvPeriod.text.toString()
                 // proMode下选择周期
                 context?.let { it1 ->
                     xpopup(it1) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
-                        asCustom(ChooserPeriodPop(it1, mViewMode.plantInfo.value?.data?.period.toString(), mViewMode.plantInfo.value?.data?.week.toString(), mViewMode.plantInfo.value?.data?.day.toString(), mViewMode.plantInfo.value?.data?.plantId.toString(), selectAction = { period, time ->
+                        asCustom(ChooserPeriodPop(it1, period.toString(), tvWeekDay.text.toString(), mViewMode.plantInfo.value?.data?.plantId.toString(), selectAction = { period, time ->
                             tvWeekDay.text = time
                             tvPeriod.text = period
                         })).show()

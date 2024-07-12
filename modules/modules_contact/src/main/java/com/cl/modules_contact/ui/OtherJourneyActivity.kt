@@ -543,7 +543,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         xpopup(this@OtherJourneyActivity) {
                             dismissOnTouchOutside(false)
                             isDestroyOnDismiss(false)
-                            asCustom(ContactNewEnvPop(this@OtherJourneyActivity, infoList.toMutableList(), item)).show()
+                            asCustom(ContactNewEnvPop(this@OtherJourneyActivity, item?.waterPump == true, infoList.toMutableList(), item)).show()
                         }
                     }
 

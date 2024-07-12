@@ -2,6 +2,7 @@ package com.cl.modules_contact.pop
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.util.ViewUtils
 import com.cl.modules_contact.R
@@ -10,6 +11,7 @@ import com.lxj.xpopup.core.BubbleAttachPopupView
 
 class ContactPotionPop(
     private val context: Context,
+    private val permission: String? = null, // 是否是管理员
     private val isShowReport: Boolean = false,
     private val isShowShareToPublic: Boolean = false,
     private val fisItemSwitchIsCheck: Boolean = true,
@@ -32,7 +34,10 @@ class ContactPotionPop(
             executePendingBindings()
 
             // 不是举报就隐藏，其实就是查看trend是不是自己的
-            ViewUtils.setVisible(!isShowReport, clReport, clFollow, vv1, clDown, vv3)
+            ViewUtils.setVisible(!isShowReport, clReport, clFollow, vv1, vv3)
+            // 显示帖子下称按钮
+            ViewUtils.setVisible(!isShowReport && permission.safeToInt() == 1, clDown)
+
             // 是举报就显示，删除和分享
             ViewUtils.setVisible(isShowReport, clDelete, clShare, vv)
             // 是分享，其实就是查看trend是不是自己的

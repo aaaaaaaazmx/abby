@@ -93,11 +93,11 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraint_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:paddingBottom="10dp">
-
 
                 <ImageView
                     android:scaleType="centerCrop"
@@ -139,19 +139,19 @@
                     app:layout_constraintStart_toStartOf="@+id/tv_og_edition"
                     app:layout_constraintTop_toBottomOf="@+id/tv_og_edition" />
 
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_grow_chamber"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:minHeight="132dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/background_button_main_color_r9"
-                    app:layout_constraintBottom_toTopOf="@+id/cl_water_tank"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/iv_og_edition"
-                    app:layout_constraintTop_toTopOf="parent">
-
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/cl_water_tank"
+                    >
 
                     <TextView
                         android:id="@+id/tv_grow_chamber"
@@ -177,7 +177,6 @@
                         app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber"
                         android:text="Temperature    " />
-
 
                     <TextView
                         android:id="@+id/tv_grow_chamber_temperature_value"
@@ -249,21 +248,21 @@
                         app:layout_constraintTop_toTopOf="@+id/tv_grow_chamber_humidity_value"
                         tools:text="GooGoodGoodGoodd" />
 
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_water_tank"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
+                    android:minHeight="132dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="17dp"
                     android:background="@drawable/background_button_main_color_r9"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_bug_device"
                     app:layout_constraintEnd_toEndOf="@+id/cl_grow_chamber"
                     app:layout_constraintStart_toEndOf="@+id/iv_og_edition"
                     app:layout_constraintStart_toStartOf="@+id/cl_grow_chamber"
-                    app:layout_constraintTop_toBottomOf="@+id/cl_grow_chamber">
-
+                    app:layout_constraintTop_toBottomOf="@+id/cl_grow_chamber"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_bug_device"
+                    > <!-- 设置初始不可见 -->
 
                     <TextView
                         android:id="@+id/tv_water_tank"
@@ -289,7 +288,6 @@
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank"
                         android:text="Temperature    " />
-
 
                     <TextView
                         android:id="@+id/tv_water_tank_temperature_value"
@@ -318,7 +316,6 @@
                         app:layout_constraintTop_toTopOf="@+id/tv_water_tank_temperature_value"
                         tools:text="Good" />
 
-
                     <TextView
                         android:id="@+id/tv_water_tank_ph"
                         android:layout_width="wrap_content"
@@ -340,7 +337,6 @@
                         app:layout_constraintBottom_toBottomOf="@+id/tv_water_tank_ph"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank_temperature_status"
                         app:layout_constraintTop_toTopOf="@+id/tv_water_tank_ph" />
-
 
                     <TextView
                         android:text="--"
@@ -375,6 +371,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_list"

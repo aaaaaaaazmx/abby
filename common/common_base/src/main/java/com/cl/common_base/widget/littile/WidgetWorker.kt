@@ -27,7 +27,9 @@ import kotlinx.coroutines.flow.onStart
 import java.util.Date
 
 class WidgetWorker(context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
-    private val service = ServiceCreators.create(BaseApiService::class.java)
+    private val service by lazy {
+        ServiceCreators.create(BaseApiService::class.java)
+    }
 
     companion object {
         const val TASK_TYPE_KEY = "TASK_TYPE"

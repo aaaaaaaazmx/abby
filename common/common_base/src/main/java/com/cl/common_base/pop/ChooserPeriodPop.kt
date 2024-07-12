@@ -31,8 +31,7 @@ import kotlinx.coroutines.launch
 class ChooserPeriodPop(
     context: Context,
     private val period: String,
-    private val weekString: String,
-    private val dayString: String,
+    private val timeString: String,
     private val plantId: String,
     private val selectAction: ((String, String) -> Unit)? = null
 ) : BottomPopupView(context) {
@@ -60,7 +59,11 @@ class ChooserPeriodPop(
             executePendingBindings()
 
             etCode.text = period
-            etEmail.text = "Week $weekString Day $dayString"
+            val extractNumbers1 = extractNumbers(timeString)
+            week = extractNumbers1.first.toString()
+            day = extractNumbers1.second.toString()
+            etEmail.text = "Week ${extractNumbers1.first.toString()} Day ${extractNumbers1.second.toString()}"
+
 
             ivClose.setSafeOnClickListener { dismiss() }
 
@@ -94,7 +97,7 @@ class ChooserPeriodPop(
             btnSuccess.setSafeOnClickListener {
                 val period = etCode.text.toString()
                 // 更新植物信息接口
-                messageConfig(week, day, period)
+                messageConfig(week, day, period, plantId)
             }
         }!!
     }
@@ -116,8 +119,8 @@ class ChooserPeriodPop(
 
 
     // 设置配置
-    private fun messageConfig(week: String, day: String, period: String) = lifecycleScope.launch {
-        service.updatePlantInfo(UpPlantInfoReq(week = week.safeToInt(), day = day.safeToInt(), period = period)).map {
+    private fun messageConfig(week: String, day: String, period: String, plantId: String) = lifecycleScope.launch {
+        service.updatePlantInfo(UpPlantInfoReq(week = week.safeToInt(), day = day.safeToInt(), period = period, plantId = plantId.safeToInt())).map {
             if (it.code != Constants.APP_SUCCESS) {
                 Resource.DataError(
                     it.code, it.msg

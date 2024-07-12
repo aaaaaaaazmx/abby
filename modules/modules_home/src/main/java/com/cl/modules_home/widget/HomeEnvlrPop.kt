@@ -33,6 +33,7 @@ import com.cl.common_base.pop.HomePlantDrainPop
 import com.cl.common_base.pop.NotifyPop
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.service.HttpHomeApiService
@@ -94,6 +95,9 @@ class HomeEnvlrPop(
                 cbNotify.isChecked = userInfo?.openNotify == 1
                 cbNight.isChecked = it.nightMode == 1
                 cbLock.isChecked = it.childLock == 1
+
+                // 是否显示排水
+                ViewUtils.setVisible(currentDeviceInfo?.waterPump == true, cbDrain, tvDrain)
             }
         }
     }
