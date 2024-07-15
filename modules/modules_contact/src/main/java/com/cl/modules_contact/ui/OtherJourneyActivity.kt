@@ -601,7 +601,9 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
                         .atView(view).isCenterHorizontal(false).asCustom(this@OtherJourneyActivity.let {
                             ContactPotionPop(
-                                it, isShowShareToPublic = item?.userId.toString() == viewModel.userinfoBean?.userId,
+                                it,
+                                permission = viewModel.userinfoBean?.permission,
+                                isShowShareToPublic = item?.userId.toString() == viewModel.userinfoBean?.userId,
                                 deleteAction = { //  删除
                                     viewModel.delete(DeleteReq(momentId = item?.id.toString()))
                                 },

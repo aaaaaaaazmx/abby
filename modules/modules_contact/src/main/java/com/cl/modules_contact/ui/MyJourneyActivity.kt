@@ -352,6 +352,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                             this@MyJourneyActivity.let {
                                 ContactPotionPop(
                                     it,
+                                    permission = viewModel.userinfoBean?.permission,
                                     isShowShareToPublic = item?.syncTrend == 0,
                                     fisItemSwitchIsCheck = item?.syncTrend == 1,
                                     deleteAction = {

@@ -277,6 +277,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
         adapter.addChildClickViewIds(R.id.tv_link, R.id.tv_live_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more, R.id.cl_to_chat)
         adapter.setOnItemLongClickListener { adapter, view, position ->
             val item = adapter.data[position] as? NewPageData.Records
+            mViewMode.updateCurrentPosition(position)
             logI("1231231231: ${item?.userId}")
             logI("1231231231: ${item?.isFollow}")
             logI("1231231231111: ${mViewMode.userinfoBean?.userId}")
@@ -437,7 +438,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                             context?.let { cc ->
                                 ContactPotionPop(
                                     cc,
-                                    mViewMode.userinfoBean?.permission,
+                                    permission = mViewMode.userinfoBean?.permission,
                                     deleteAction = {
                                         //  删除
                                         mViewMode.delete(DeleteReq(momentId = item?.id.toString()))

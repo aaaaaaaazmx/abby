@@ -543,6 +543,7 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                                 this@ContactCommentActivity.let {
                                     ContactPotionPop(
                                         it,
+                                        permission = userinfoBean?.permission,
                                         deleteAction = {
                                             //  删除
                                             mViewModel.delete(DeleteReq(momentId = data?.id.toString()))

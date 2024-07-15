@@ -37,7 +37,7 @@ class AccessAdapter(
         holder.setVisible(R.id.rl_one, item.accessoryType != AccessoryListBean.KEY_CAMERA && usbNum.safeToInt() > 1)
 
         val pairData = item
-        val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN)
+        val isDisplay = (item.accessoryType != AccessoryListBean.KEY_OUTLETS && item.accessoryType != AccessoryListBean.KEY_MONITOR_IN && item.accessoryType != AccessoryListBean.KEY_MONITOR_VIEW_IN && item.accessoryType != AccessoryListBean.KEY_CAMERA)
         holder.setVisible(R.id.rl_check, isDisplay)
         val checkView = holder.getView<FeatureItemSwitchNoPadding>(R.id.ft_check)
         val textView = holder.getView<TextView>(R.id.tv_auto_desc)

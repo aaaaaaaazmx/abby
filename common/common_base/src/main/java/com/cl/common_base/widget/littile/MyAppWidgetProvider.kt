@@ -8,6 +8,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.annotation.RequiresApi
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -19,6 +20,7 @@ import androidx.work.workDataOf
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.R
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.widget.toast.ToastUtil
 import java.util.concurrent.TimeUnit
 
 @RequiresApi(Build.VERSION_CODES.CUPCAKE)
@@ -43,6 +45,7 @@ class MyAppWidgetProvider : AppWidgetProvider() {
         }
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         views.setOnClickPendingIntent(R.id.rl_root, pendingIntent)
+        views.setOnClickPendingIntent(R.id.rl_content, pendingIntent)
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
