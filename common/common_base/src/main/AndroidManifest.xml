@@ -43,5 +43,18 @@
 
         <service android:name=".listener.TuYaDeviceUpdateReceiver" />
 
+
+        <receiver android:name=".widget.littile.MyAppWidgetProvider" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.example.mywidget.CLICK" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/my_app_widget_info" />
+        </receiver>
+
+        <service android:name=".widget.littile.WidgetWorker" android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+
     </application>
 </manifest>

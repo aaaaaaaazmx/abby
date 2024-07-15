@@ -2,9 +2,6 @@ package com.cl.modules_contact.ui
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.text.TextUtils
@@ -26,16 +23,24 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.cl.common_base.base.BaseFragment
-import com.cl.common_base.bean.AutomaticLoginReq
+import com.cl.common_base.bean.LikeReq
+import com.cl.common_base.bean.RewardReq
+import com.cl.common_base.bean.UpdateFollowStatusReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.BaseThreeTextPop
+import com.cl.common_base.pop.RewardPop
 import com.cl.common_base.refresh.ClassicsHeader
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.web.VideoPLayActivity
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
@@ -43,31 +48,18 @@ import com.cl.modules_contact.adapter.TagsAdapter
 import com.cl.modules_contact.adapter.TrendListAdapter
 import com.cl.modules_contact.databinding.FragmentContactBinding
 import com.cl.modules_contact.pop.CommentPop
-import com.cl.modules_contact.pop.ContactEnvPop
-import com.cl.modules_contact.pop.ContactPeriodPop
-import com.cl.modules_contact.pop.ContactPotionPop
-import com.cl.modules_contact.pop.ContactReportPop
-import com.cl.common_base.pop.RewardPop
-import com.cl.modules_contact.request.ContactEnvData
-import com.cl.modules_contact.request.DeleteReq
-import com.cl.common_base.bean.LikeReq
-import com.cl.modules_contact.request.NewPageReq
-import com.cl.modules_contact.request.ReportReq
-import com.cl.common_base.bean.RewardReq
-import com.cl.common_base.bean.UpdateFollowStatusReq
-import com.cl.common_base.ext.safeToInt
-import com.cl.common_base.ext.xpopup
-import com.cl.common_base.pop.BaseCenterPop
-import com.cl.common_base.pop.BaseThreeTextPop
-import com.cl.common_base.web.VideoPLayActivity
-import com.cl.modules_contact.databinding.ContactChooserTipPopBinding
 import com.cl.modules_contact.pop.ContactChooseTipPop
 import com.cl.modules_contact.pop.ContactDeletePop
 import com.cl.modules_contact.pop.ContactNewEnvPop
-import com.cl.modules_contact.request.MyMomentsReq
+import com.cl.modules_contact.pop.ContactPeriodPop
+import com.cl.modules_contact.pop.ContactPotionPop
+import com.cl.modules_contact.pop.ContactReportPop
+import com.cl.modules_contact.request.ContactEnvData
+import com.cl.modules_contact.request.DeleteReq
+import com.cl.modules_contact.request.NewPageReq
+import com.cl.modules_contact.request.ReportReq
 import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.response.TagsBean
-import com.cl.modules_contact.ui.MyJourneyActivity.Companion
 import com.cl.modules_contact.viewmodel.ContactViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
 import com.lxj.xpopup.XPopup
@@ -282,7 +274,36 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
      * 条目点击事件
      */
     private fun initAdapterClick() {
-        adapter.addChildClickViewIds(R.id.tv_link, R.id.tv_live_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more)
+        adapter.addChildClickViewIds(R.id.tv_link, R.id.tv_live_link, R.id.cl_avatar, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.tv_learn_more, R.id.cl_to_chat)
+        adapter.setOnItemLongClickListener { adapter, view, position ->
+            val item = adapter.data[position] as? NewPageData.Records
+            mViewMode.updateCurrentPosition(position)
+            logI("1231231231: ${item?.userId}")
+            logI("1231231231: ${item?.isFollow}")
+            logI("1231231231111: ${mViewMode.userinfoBean?.userId}")
+            logI("12312312311111111: ${mViewMode.userinfoBean?.userId == item?.userId}")
+            if (mViewMode.userinfoBean?.permission.safeToInt() != 1) return@setOnItemLongClickListener false
+            XPopup.fixLongClick(view) //能保证弹窗弹出后，下层的View无法滑动
+            // 点击三个点
+            XPopup.Builder(context)
+                .dismissOnTouchOutside(true)
+                .isClickThrough(false)  //点击透传
+                .hasShadowBg(true) // 去掉半透明背景
+                //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
+                .atView(view)
+                .isCenterHorizontal(true)
+                .watchView(view)
+                .asCustom(
+                    context?.let {
+                        ContactDeletePop(it,isShowDelete = true, onCopyAction = {
+                            mViewMode.hotReduce(item?.id.toString())
+                        }, onDeleteAction = {
+                            mViewMode.delete(DeleteReq(item?.id.toString()))
+                        }, "Bury")
+                    }
+                ).show()
+            true
+        }
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? NewPageData.Records
             mViewMode.updateCurrentPosition(position)
@@ -334,7 +355,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                             xpopup(it) {
                                 dismissOnTouchOutside(false)
                                 isDestroyOnDismiss(false)
-                                asCustom(ContactNewEnvPop(it, infoList.toMutableList(), item)).show()
+                                asCustom(ContactNewEnvPop(it, item?.waterPump == true, infoList.toMutableList(), item)).show()
                             }
                         }
                     }
@@ -417,6 +438,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                             context?.let { cc ->
                                 ContactPotionPop(
                                     cc,
+                                    permission = mViewMode.userinfoBean?.permission,
                                     deleteAction = {
                                         //  删除
                                         mViewMode.delete(DeleteReq(momentId = item?.id.toString()))
@@ -466,6 +488,9 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                                     })
                                             ).show()
                                         }
+                                    },
+                                    buryAction = {
+                                        mViewMode.hotReduce(item?.id.toString())
                                     }
                                 )
                                     .setBubbleBgColor(Color.WHITE) //气泡背景
@@ -487,7 +512,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         ).show()
                 }
 
-                R.id.tv_to_chat -> {
+                R.id.tv_to_chat, R.id.cl_to_chat -> {
                     //  跳转到更多聊天记录弹窗
                     toCommentPop(item, position, adapter)
                 }
@@ -631,6 +656,22 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 帖子下称
+            hotReduce.observe(viewLifecycleOwner, resourceObserver {
+                loading {
+                    showProgressLoading()
+                }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    val position = mViewMode.currentPosition.value ?: -1
+                    if (position == -1) return@success
+                    adapter.removeAt(position)
+                }
+            })
             userAssets.observe(viewLifecycleOwner, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
                 success {

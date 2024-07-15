@@ -135,6 +135,14 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
 
     override fun observe() {
         viewModel.apply {
+            hotReduce.observe(this@MyJourneyActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code -> hideProgressLoading()
+                ToastUtil.shortShow(errorMsg)}
+                success {
+                    hideProgressLoading()
+                }
+            })
             myPageData.observe(this@MyJourneyActivity, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
                 success {
@@ -273,7 +281,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                         xpopup(this@MyJourneyActivity) {
                             dismissOnTouchOutside(false)
                             isDestroyOnDismiss(false)
-                            asCustom(ContactNewEnvPop(this@MyJourneyActivity, infoList.toMutableList(), item)).show()
+                            asCustom(ContactNewEnvPop(this@MyJourneyActivity, item?.waterPump == true, infoList.toMutableList(), item)).show()
                         }
                     }
 
@@ -344,6 +352,7 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                             this@MyJourneyActivity.let {
                                 ContactPotionPop(
                                     it,
+                                    permission = viewModel.userinfoBean?.permission,
                                     isShowShareToPublic = item?.syncTrend == 0,
                                     fisItemSwitchIsCheck = item?.syncTrend == 1,
                                     deleteAction = {
@@ -363,6 +372,9 @@ class MyJourneyActivity : BaseActivity<ContactMyJourneyActivityBinding>() {
                                                         viewModel.report(ReportReq(momentId = item?.id.toString(), reportContent = txt))
                                                     })
                                             ).show()
+                                    },
+                                    buryAction = {
+                                        viewModel.hotReduce(item?.id.toString())
                                     },
                                     itemSwitchAction = { isCheck ->
                                         // 关闭分享

@@ -18,6 +18,7 @@ data class PlantInfoData(
     var flushingWeight: Int? = 0, // 称重重量
     var healthStatus: String? = null,
     var name: String? = null,
+    var period: String? = null,
     var heigh: Int? = null,
     var id: Int? = null,
     var plantId: Int? = null,

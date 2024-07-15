@@ -31,6 +31,12 @@ data class ListDeviceBean(
     var smartUsbPowder: Int? = null, // USB开关：1-开启、0-关闭
     var spaceType: String? = KEY_SPACE_TYPE_BOX, // 判断是abby还是帐篷
     var textDesc: String? = null, // 文字描述
+    var heightSensor: Boolean? = null,
+    var imageUrl: String? = null,
+    var waterLevelSensor: Boolean? = null,
+    var waterPump: Boolean? = null,
+    var powerLower: Boolean? = null,
+    var usbNum: String? = null,
     var accessoryList: MutableList<AccessoryList>? = null,
 ) : BaseBean(), MultiItemEntity {
     data class AccessoryList(

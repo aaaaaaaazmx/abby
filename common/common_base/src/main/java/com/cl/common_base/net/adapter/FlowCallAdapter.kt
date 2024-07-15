@@ -51,7 +51,7 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                             // 捕获异常
                             // 如果是HostName异常、连接超时异常，那么不需要上报，也不需要提示
                             if (t.toString().contains("SocketTimeoutException") || t.toString().contains("UnknownHostException") || t.toString().contains("ConnectException") || t.toString().contains("Throwable")) {
-                                continuation.resumeWithException(Throwable(""))
+                                continuation.resumeWithException(Throwable("Server error, please contact support@heyabby.com"))
                                 kotlin.runCatching {
                                     Reporter.reportCatchError(
                                         t.message,

@@ -26,7 +26,7 @@ import com.lxj.xpopup.core.BottomPopupView
 /**
  * Trend 环境信息弹窗
  */
-class ContactNewEnvPop(private val context: Context, private val envInfoData: MutableList<ContactEnvData>, val record: NewPageData.Records? = null) : BottomPopupView(context) {
+class ContactNewEnvPop(private val context: Context, private val isShowWater: Boolean, private val envInfoData: MutableList<ContactEnvData>, val record: NewPageData.Records? = null) : BottomPopupView(context) {
 
     // 是否是公制
     // true 是C false F
@@ -56,6 +56,7 @@ class ContactNewEnvPop(private val context: Context, private val envInfoData: Mu
             // 头像
             ViewUtils.setGone(ivAvatar,TextUtils.isEmpty(record?.avatarPicture))
             ViewUtils.setVisible(TextUtils.isEmpty(record?.avatarPicture), noheadShow)
+            ViewUtils.setVisible(isShowWater, clWaterTank)
             Glide.with(context).load(record?.avatarPicture)
                 .apply(RequestOptions.circleCropTransform())
                 .into(ivAvatar)

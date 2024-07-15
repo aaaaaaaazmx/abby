@@ -236,6 +236,14 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
 
     override fun observe() {
         viewModel.apply {
+            hotReduce.observe(this@OtherJourneyActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code -> hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)}
+                success {
+                    hideProgressLoading()
+                }
+            })
             updateFollowStatus.observe(this@OtherJourneyActivity, resourceObserver {
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -512,7 +520,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
     }
 
     private fun initAdapterClick() {
-        adapter.addChildClickViewIds(R.id.tv_link, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat)
+        adapter.addChildClickViewIds(R.id.tv_link, R.id.cl_env, R.id.cl_love, R.id.cl_gift, R.id.cl_chat, R.id.rl_point, R.id.tv_to_chat, R.id.cl_to_chat)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val item = adapter.data[position] as? NewPageData.Records
             viewModel.updateCurrentPosition(position)
@@ -535,7 +543,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         xpopup(this@OtherJourneyActivity) {
                             dismissOnTouchOutside(false)
                             isDestroyOnDismiss(false)
-                            asCustom(ContactNewEnvPop(this@OtherJourneyActivity, infoList.toMutableList(), item)).show()
+                            asCustom(ContactNewEnvPop(this@OtherJourneyActivity, item?.waterPump == true, infoList.toMutableList(), item)).show()
                         }
                     }
 
@@ -583,7 +591,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     toCommentPop(item, position, adapter)
                 }
 
-                R.id.tv_to_chat -> { //  跳转到更多聊天记录弹窗
+                R.id.tv_to_chat, R.id.cl_to_chat -> { //  跳转到更多聊天记录弹窗
                     toCommentPop(item, position, adapter)
                 }
 
@@ -593,7 +601,9 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                         //.offsetX(XPopupUtils.dp2px(this@MainActivity, 10f))
                         .atView(view).isCenterHorizontal(false).asCustom(this@OtherJourneyActivity.let {
                             ContactPotionPop(
-                                it, isShowShareToPublic = item?.userId.toString() == viewModel.userinfoBean?.userId,
+                                it,
+                                permission = viewModel.userinfoBean?.permission,
+                                isShowShareToPublic = item?.userId.toString() == viewModel.userinfoBean?.userId,
                                 deleteAction = { //  删除
                                     viewModel.delete(DeleteReq(momentId = item?.id.toString()))
                                 },
@@ -631,6 +641,9 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                                                 })
                                         ).show()
                                     }
+                                },
+                                buryAction = {
+                                    viewModel.hotReduce(item?.id.toString())
                                 }
                             ).setBubbleBgColor(Color.WHITE) //气泡背景
                                 .setArrowWidth(XPopupUtils.dp2px(this@OtherJourneyActivity, 3f)).setArrowHeight(

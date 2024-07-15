@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="156dp"
+    android:background="@drawable/background_white_r10"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_centerInParent="true"
+        android:id="@+id/rl_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_marginStart="13dp"
+            android:orientation="vertical"
+            android:id="@+id/ll_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <!-- 顶部文本区域 -->
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/widget_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:text="-----"
+                tools:text="Loading..." />
+
+            <TextView
+                android:id="@+id/tv_device_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textSize="11sp"
+                android:textColor="#979797"
+                android:text="---"
+                tools:text="OG Edition" />
+
+            <TextView
+                android:text="---"
+                android:id="@+id/tv_period"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textSize="11sp"
+                android:textColor="#979797"
+                tools:text="Flowering" />
+
+            <TextView
+                android:text="---"
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textSize="11sp"
+                android:textColor="#979797"
+                tools:text="Week 3 Day 1" />
+
+        </LinearLayout>
+
+        <!-- 中间状态显示区域 -->
+        <LinearLayout
+            android:id="@+id/ll_middle"
+            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/cl_water"
+                android:layout_width="50dp"
+                android:layout_height="76dp"
+                android:background="@drawable/background_widget_color_r8">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:src="@mipmap/base_water" />
+
+                <TextView
+                    android:id="@+id/tv_humidity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="8dp"
+                    tools:text="718℉"
+                    android:text="---"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/cl_temp"
+                android:layout_width="50dp"
+                android:layout_height="76dp"
+                android:layout_marginStart="13dp"
+                android:background="@drawable/background_widget_color_r8">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:src="@mipmap/base_temp" />
+
+                <TextView
+                    android:id="@+id/tv_grow_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="8dp"
+                    tools:text="78.7℉"
+                    android:text="---"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/cl_humi"
+                android:layout_width="50dp"
+                android:layout_height="76dp"
+                android:layout_marginStart="13dp"
+                android:layout_marginEnd="13dp"
+                android:background="@drawable/background_widget_color_r8">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="8dp"
+                    android:src="@mipmap/base_humoi" />
+
+                <TextView
+                    android:id="@+id/tv_water_temp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="8dp"
+                    tools:text="78℉"
+                    android:text="---"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!-- 底部任务描述区域 -->
+        <LinearLayout
+            android:id="@+id/bottom_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:layout_marginStart="13dp"
+            android:layout_marginEnd="13dp"
+            android:paddingBottom="17dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_date_task"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="------"
+                tools:text="Sep 10th 2022"
+                android:textStyle="bold"
+                android:textColor="@color/mainColor"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:id="@+id/iv_circle"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginStart="28dp"
+                android:src="@drawable/base_dot_academy_task" />
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/tv_task_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="----------"
+                tools:text="Fill rFill rFill rFilllrFillrFillrFillrFillrFillrFillrFillrFillrFillrFillrFill89898989"
+                android:textSize="10sp"
+                android:textColor="@color/black" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+
+    <TextView
+        android:id="@+id/tv_login_desc"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:textColor="@color/black"
+        android:text="Please log in to your abby account"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

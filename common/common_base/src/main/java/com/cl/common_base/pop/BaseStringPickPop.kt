@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.R
 import com.cl.common_base.databinding.BaseStringPickPopBinding
+import com.cl.common_base.widget.wheel.time.StringPicker
 import com.lxj.xpopup.core.CenterPopupView
 
 /**
@@ -38,9 +39,14 @@ class BaseStringPickPop(
                 scopeLayoutTime.setStringList(it.toList())
             }
             scopeLayoutTime.setSelectedScope(0)
-            scopeLayoutTime.setOnStringSelectedListener {
-                index = it
-            }
+            scopeLayoutTime.setOnStringSelectedListener(object : StringPicker.OnStringSelectedListener {
+                override fun onScopeSelected(index: Int) {
+                    this@BaseStringPickPop.index = index
+                }
+
+                override fun onScopeSelected(index: String?) {
+                }
+            })
 
             tvCancel.setOnClickListener {
                 cancelAction?.invoke()

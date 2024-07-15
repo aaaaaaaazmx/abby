@@ -106,7 +106,7 @@ class ContactCommentAdapter(
                             .atView(view)
                             .asCustom(
                                 ContactDeletePop(context,
-                                    isShowDelete = !(reply.userId != userinfoBean?.userId && isSelfTrend == false),
+                                    isShowDelete = (userinfoBean?.permission.safeToInt() == 1 || !(reply.userId != userinfoBean?.userId && isSelfTrend == false)),
                                     onDeleteAction = {
                                     onDeleteAction?.invoke(reply)
                                 }, onCopyAction = {

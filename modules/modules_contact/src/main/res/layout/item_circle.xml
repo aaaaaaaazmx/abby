@@ -492,6 +492,7 @@
 
         <!--评论列表，只展示2条-->
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_to_chat"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"

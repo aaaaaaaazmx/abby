@@ -166,4 +166,6 @@ dependencies {
     api("com.github.AAChartModel:AAChartCore-Kotlin:7.1.0")
     // switchButton
     api("com.github.iielse:switchbutton:1.0.4")
+    // workManager
+    api(Deps.workManager)
 }

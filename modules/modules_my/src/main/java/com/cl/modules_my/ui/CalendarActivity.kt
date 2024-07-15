@@ -1914,6 +1914,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
      */
     private val refreshActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
         if (activityResult.resultCode == Activity.RESULT_OK) {
+            updateWidget(this@CalendarActivity)
             // 刷新任务
             mViewMode.refreshTask()
             mViewMode.checkPlant()

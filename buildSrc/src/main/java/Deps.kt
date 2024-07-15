@@ -16,8 +16,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 33
-    val versionCode = 65
-    const val versionName = "3.9.0"
+    val versionCode = 66
+    const val versionName = "3.9.1"
 
     const val coreKtxVersion = "1.8.0"
     const val appCompatVersion = "1.4.2"
@@ -98,6 +98,8 @@ object Version {
     const val interCome = "15.2.0"
 
     const val chart = "v3.1.0"
+
+    const val workManager = "2.7.0"
 }
 
 object Deps {
@@ -251,4 +253,7 @@ object Deps {
 
     // mpachart
     const val chat = "com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT"
+
+    // workMagner
+    const val workManager = "androidx.work:work-runtime-ktx:${Version.workManager}"
 }

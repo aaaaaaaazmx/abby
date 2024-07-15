@@ -294,7 +294,7 @@
                     android:layout_marginEnd="7dp"
                     android:id="@+id/rl_inch"
                     android:layout_width="0dp"
-                    android:layout_height="64dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="18dp"
                     android:background="@drawable/background_black_r6"
                     android:minWidth="78dp"
@@ -331,18 +331,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginBottom="31dp"
                         android:text='@{viewModel.formatIncPlant(viewModel.plantHeights)}'
                         android:textColor="@color/white"
                         android:textSize="11sp"
                         tools:text="10.6" />
                 </RelativeLayout>
 
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_marginEnd="7dp"
                     android:id="@+id/rl_period"
                     android:layout_width="0dp"
-                    android:layout_height="64dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="18dp"
                     android:background="@drawable/background_black_r6"
                     android:minWidth="78dp"
@@ -351,6 +351,10 @@
                     app:layout_constraintTop_toBottomOf="@+id/cl_quan">
 
                     <TextView
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:id="@+id/tv_periods"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -362,22 +366,41 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_period"
+                        android:gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:text="select"
+                        app:layout_constraintEnd_toEndOf="@+id/tv_periods"
+                        app:layout_constraintStart_toStartOf="@+id/tv_periods"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_periods"
+                        android:textSize="10sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/background_check_period_r3"
+                        android:layout_width="match_parent"
+                        android:layout_height="17dp"/>
+
+                    <TextView
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginBottom="31dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         android:id="@+id/tv_week_day"
                         android:layout_centerHorizontal="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="15dp"
+                        android:layout_centerInParent="true"
                         android:textColor="@color/white"
                         android:textSize="11sp"
-                        tools:text="10.6" />
-                </RelativeLayout>
+                        tools:text="Week1 Day 1" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <RelativeLayout
                     android:layout_marginEnd="7dp"
                     android:id="@+id/rl_water_tank"
                     android:layout_width="0dp"
-                    android:layout_height="64dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="18dp"
                     android:background="@drawable/background_black_r6"
                     android:minWidth="78dp"
@@ -403,7 +426,7 @@ Level"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="15dp"
+                        android:layout_marginBottom="31dp"
                         android:textColor="@color/white"
                         android:textSize="11sp"
                         tools:text="10.6" />
@@ -413,7 +436,7 @@ Level"
                     android:layout_marginEnd="17dp"
                     android:id="@+id/rl_light"
                     android:layout_width="0dp"
-                    android:layout_height="64dp"
+                    android:layout_height="100dp"
                     android:layout_marginTop="18dp"
                     android:background="@drawable/background_black_r6"
                     android:minWidth="78dp"
@@ -433,12 +456,12 @@ Level"
 
                     <TextView
                         android:text='@{viewModel.doorStatus == "true" ? "DIM(Door Open)" : viewModel.getCurrentGrowLight == 0 ? "OFF" : "ON" }'
-                        android:layout_centerInParent="true"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
                         android:layout_marginStart="10dp"
-                        android:layout_marginBottom="15dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_marginBottom="31dp"
                         android:textColor="@color/white"
                         android:textSize="11sp"
                         tools:text="10.6" />

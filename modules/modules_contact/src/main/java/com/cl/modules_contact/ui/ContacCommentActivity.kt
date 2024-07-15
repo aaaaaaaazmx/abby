@@ -43,7 +43,6 @@ import com.cl.modules_contact.request.ReplyReq
 import com.cl.common_base.bean.RewardReq
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
-import com.cl.modules_contact.pop.ContactNewEnvPop
 import com.cl.modules_contact.response.CommentByMomentData
 import com.cl.modules_contact.viewmodel.ContactCommentViewModel
 import com.cl.modules_contact.widget.emoji.BitmapProvider
@@ -544,6 +543,7 @@ class ContactCommentActivity : BaseActivity<ContactAddCommentBinding>() {
                                 this@ContactCommentActivity.let {
                                     ContactPotionPop(
                                         it,
+                                        permission = userinfoBean?.permission,
                                         deleteAction = {
                                             //  删除
                                             mViewModel.delete(DeleteReq(momentId = data?.id.toString()))

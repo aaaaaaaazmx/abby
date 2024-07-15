@@ -403,6 +403,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         hideFragment(transaction)
         when (position) {
             Constants.FragmentIndex.HOME_INDEX -> {
+                // 每次调用checkPlant方法或者首次进入首页，刷新组件信息
+                updateWidget(this@MainActivity)
+
                 val bundle = Bundle()
                 bundle.putString(
                     Constants.Global.KEY_GLOBAL_PLANT_GUIDE_FLAG, plantGuideFlag

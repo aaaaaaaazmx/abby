@@ -50,6 +50,7 @@ import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.ChooseTimePop
+import com.cl.common_base.pop.ChooserPeriodPop
 import com.cl.common_base.pop.FirmwareUpdatePop
 import com.cl.common_base.pop.MedalPop
 import com.cl.common_base.pop.PresetLoadPop
@@ -324,11 +325,8 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                             ViewUtils.setVisible(isCameraVisible, binding.ivCamera)
                             ViewUtils.setVisible(isCameraVisible, binding.ivCamera)
 
-                            // 是否显示rlInch
-                            ViewUtils.setVisible(
-                                device.deviceType == "OG" || device.deviceType == "OG_black",
-                                binding.rlInch
-                            )
+                            // 是否显示rlInch植物高度
+                            ViewUtils.setVisible(device.heightSensor == true, binding.rlInch)
                         }
                     }
                 }
@@ -675,6 +673,8 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                     binding.tvWeekDay.text = """
                                 Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
                             """.trimIndent()
+
+                    binding.tvPeriod.text = data?.period
                 }
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -999,6 +999,21 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
 
         // 手动模式点击事件
         binding.apply {
+            rlPeriod.setSafeOnClickListener {
+                val period = if(tvPeriod.text.toString().isEmpty()) mViewMode.plantInfo.value?.data?.period else tvPeriod.text.toString()
+                // proMode下选择周期
+                context?.let { it1 ->
+                    xpopup(it1) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(ChooserPeriodPop(it1, period.toString(), tvWeekDay.text.toString(), mViewMode.plantInfo.value?.data?.plantId.toString(), selectAction = { period, time ->
+                            tvWeekDay.text = time
+                            tvPeriod.text = period
+                        })).show()
+                    }
+                }
+            }
+
             // 直播
             ivLive.setSafeOnClickListener {
                 startToVideoPlay()

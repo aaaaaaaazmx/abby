@@ -672,7 +672,7 @@ class CommentPop(
                         .atView(view)
                         .asCustom(
                             ContactDeletePop(context,
-                                isShowDelete = !(item?.userId != userinfoBean?.userId && isSelfTrend == false),
+                                isShowDelete = (userinfoBean?.permission.safeToInt() == 1 || !(item?.userId != userinfoBean?.userId && isSelfTrend == false)),
                                 onDeleteAction = {
                                 //  删除评论
                                 item?.commentId?.let { deleteComment(it) }

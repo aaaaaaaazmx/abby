@@ -14,6 +14,7 @@ data class UpPlantInfoReq(
     var heigh: Int? = null,
     var id: Int? = null,
     var oxygen: Int? = null,
+    var period: String? = null,
     var nightMode: Int? = null, // 夜间模式
     var plantStatus: Int? = null,
     var week: Int? = null,

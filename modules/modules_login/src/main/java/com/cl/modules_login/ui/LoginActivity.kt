@@ -78,7 +78,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         binding.accountEditText.isFocusableInTouchMode = true;
         binding.accountEditText.requestFocus();
 
-
+        // 更新小组件
+        // 只要每次进入到这个界面，那么就更新一次小组件。
+        // 判断是否有无token
+        if (Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN, "").isNotEmpty()) {
+            updateWidget(this@LoginActivity)
+        }
     }
 
     private val plantSix by lazy {

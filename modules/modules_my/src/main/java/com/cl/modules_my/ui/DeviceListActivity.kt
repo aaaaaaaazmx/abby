@@ -436,6 +436,8 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                         )
                                     )
                                 }
+                                // 更新小组件
+                                updateWidget(this@DeviceListActivity)
                             },
                             onDeviceChanged = {
                                 mViewModel.listDevice()

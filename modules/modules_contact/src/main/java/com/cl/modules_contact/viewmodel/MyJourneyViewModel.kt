@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.FolowerData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.bean.WallpaperListBean
@@ -290,6 +291,32 @@ class MyJourneyViewModel @Inject constructor(private val repository: ContactRepo
         _updateCurrent.value = current
     }
 
+
+    /**
+     * 获取最新动态信息
+     */
+    private val _hotReduce = MutableLiveData<Resource<BaseBean>>()
+    val hotReduce: LiveData<Resource<BaseBean>> = _hotReduce
+    fun hotReduce(req: String) = viewModelScope.launch {
+        repository.hotReduce(req).map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {}.catch {
+            logD("catch ${it.message}")
+            emit(
+                Resource.DataError(
+                    -1, "${it.message}"
+                )
+            )
+        }.collectLatest {
+            _hotReduce.value = it
+        }
+    }
     /**
      * 公开动态
      */
