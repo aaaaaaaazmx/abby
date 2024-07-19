@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.multidex.MultiDexApplication
 import io.intercom.android.sdk.Intercom
 
-open class BaseApplication : MultiDexApplication() {
+open class BaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()

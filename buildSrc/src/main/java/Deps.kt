@@ -104,6 +104,8 @@ object Version {
     const val workManager = "2.9.0"
 
     const val multiDex = "2.0.1"
+
+    const val bugly = "4.1.9.3"
 }
 
 object Deps {
@@ -265,4 +267,7 @@ object Deps {
 
     // 合并文件
     const val multidex = "androidx.multidex:multidex:${Version.multiDex}"
+
+    // bugly
+    const val bugly = "com.tencent.bugly:crashreport:${Version.bugly}"
 }

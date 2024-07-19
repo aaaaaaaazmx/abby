@@ -82,7 +82,7 @@ android {
         versionCode = Version.versionCode
         versionName = Version.versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled = true
+        // multiDexEnabled = true
 
         ndk {
             "armeabi-v7a"
