@@ -1,6 +1,8 @@
 package com.cl.modules_my.ui
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Context
@@ -11,6 +13,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
@@ -31,6 +34,7 @@ import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.databinding.MyProfileActivityBinding
 import com.cl.common_base.bean.ModifyUserDetailReq
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.modules_my.viewmodel.ProfileViewModel
 import com.cl.common_base.pop.ChooserOptionPop
 import com.cl.modules_my.widget.LoginOutPop
@@ -235,6 +239,11 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         // 设置abbyID
         binding.ftId.itemValue = userInfo?.abbyId
         binding.ftId.setHideArrow(true)
+
+        // logI("getRegistrationID : ${JPushInterface.getRegistrationID(context)}")
+        binding.ftRegistration.itemValue = JPushInterface.getRegistrationID(this@ProfileActivity)
+        binding.ftRegistration.setHideArrow(true)
+
         // 设置头像
         // 设置头像是否显示
         val headUrl = userInfo?.avatarPicture ?: userInfo?.userDetailData?.avatarPicture
@@ -249,6 +258,7 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         binding.ftId.setItemTitle(getString(com.cl.common_base.R.string.profile_abby_id), true)
         binding.ftEmail.setItemTitle(getString(com.cl.common_base.R.string.profile_email), true)
         binding.ftWall.setItemTitle("Wall", true)
+        binding.ftRegistration.setItemTitle("Registration ID", true)
     }
 
     override fun observe() {
@@ -334,6 +344,13 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
     }
 
     override fun initData() {
+        binding.ftRegistration.setSafeOnClickListener {
+            val cm: ClipboardManager? = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+            // 创建普通字符型ClipData
+            val mClipData = ClipData.newPlainText("Registration", binding.ftRegistration.itemValue)
+            // 将ClipData内容放到系统剪贴板里。
+            cm?.setPrimaryClip(mClipData)
+        }
         // 删除账号
         binding.flDeleteAccount.setOnClickListener {
             startActivity(Intent(this@ProfileActivity, DeleteAccountActivity::class.java))

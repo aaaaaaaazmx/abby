@@ -4,7 +4,7 @@ object Version {
         const val hiltPluginVersion = "2.51.1"
         const val hiltCompilerVersion = "1.0.0"
         const val arouterPluginVersion = "1.0.2"
-        const val googleServicePluginVersion = "4.3.13"
+        const val googleServicePluginVersion = "4.3.8"
     }
 
     object ComposeVersion {
@@ -86,10 +86,10 @@ object Version {
 
     const val tuyaIpc = "5.14.1"
 
-    const val jcore = "3.3.0"
-    const val push = "4.7.2"
-    const val fcm = "4.7.2"
-    const val firBaseMessgae = "23.0.5"
+    const val jPushChina = "5.4.0"
+    const val push = "5.4.0"
+    const val fcm = "5.4.0"
+    const val firBaseMessgae = "23.1.2"
     const val stepView = "1.0.1"
     const val cardSwip = "1.0.0"
 
@@ -248,7 +248,6 @@ object Deps {
     const val firBaseMessage = "com.google.firebase:firebase-messaging:${Version.firBaseMessgae}"
     const val fcm = "cn.jiguang.sdk.plugin:fcm:${Version.fcm}"
     const val jpushGoogle = "cn.jiguang.sdk:jpush-google:${Version.push}"
-    const val jPushCodeGoogle = "cn.jiguang.sdk:jcore-google:${Version.jcore}"
 
     // lottie
     const val lottie = "com.airbnb.android:lottie:${Version.lottieVersion}"
