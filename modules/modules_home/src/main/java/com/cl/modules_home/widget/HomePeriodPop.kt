@@ -14,8 +14,8 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.widget.SvTextView
 import com.cl.common_base.bean.PlantInfoData
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePeriodPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomePeriodPopBinding
 import com.cl.common_base.ext.logI
 import com.cl.common_base.util.ViewUtils
 import com.cl.modules_home.ui.PeriodActivity

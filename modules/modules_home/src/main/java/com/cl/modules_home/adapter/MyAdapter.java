@@ -14,7 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bbgo.module_home.R;
+import com.cl.modules_home.R;
 import com.cl.common_base.widget.toast.ToastUtil;
 
 public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

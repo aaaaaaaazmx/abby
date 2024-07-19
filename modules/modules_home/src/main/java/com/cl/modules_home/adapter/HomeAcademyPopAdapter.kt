@@ -2,8 +2,8 @@ package com.cl.modules_home.adapter
 
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.bean.AcademyListData
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeAcademyItemPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeAcademyItemPopBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 

@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.bbgo.module_home.databinding.HomeBlackProModeFragmentBinding
+import com.cl.modules_home.databinding.HomeBlackProModeFragmentBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseFragment
@@ -626,11 +626,11 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                         binding.plantComplete.rvFinishGuide.adapter = plantCompleteItemAdapter
                         plantCompleteItemAdapter.setList(listBean)
                         // 设置点击事件
-                        plantCompleteItemAdapter.addChildClickViewIds(com.bbgo.module_home.R.id.ll_title)
+                        plantCompleteItemAdapter.addChildClickViewIds(com.cl.modules_home.R.id.ll_title)
                         plantCompleteItemAdapter.setOnItemChildClickListener { adapter, view, position ->
                             val data = adapter.data[position] as? FinishPageData.ListBean
                             when (view.id) {
-                                com.bbgo.module_home.R.id.ll_title -> {
+                                com.cl.modules_home.R.id.ll_title -> {
                                     /*data?.learnMoreId?.let { it1 ->
                                         mViewMode.getDetailByLearnMoreId(
                                             it1
@@ -779,12 +779,12 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                     binding.ivDrainStatus.background =
                         if ((value as? Boolean != true)) {
                             resources.getDrawable(
-                                com.bbgo.module_home.R.mipmap.home_drain_start_black,
+                                com.cl.modules_home.R.mipmap.home_drain_start_black,
                                 context?.theme
                             )
                         } else {
                             resources.getDrawable(
-                                com.bbgo.module_home.R.mipmap.home_drain_pause_black,
+                                com.cl.modules_home.R.mipmap.home_drain_pause_black,
                                 context?.theme
                             )
                         }
@@ -990,7 +990,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
     override fun lazyLoad() {
         // 设备不在线
         binding.plantOffLine.apply {
-            title.setRightButtonImg(com.bbgo.module_home.R.mipmap.home_device_list)
+            title.setRightButtonImg(com.cl.modules_home.R.mipmap.home_device_list)
                 .setRightClickListener {
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                         .navigation(activity)
@@ -1343,9 +1343,9 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                 // 背景颜色
                 synchronized(this@BlackHomeFragment) {
                     if (mViewMode.getDrainageFlag.value == true) {
-                        ivDrainStatus.setBackgroundResource(com.bbgo.module_home.R.mipmap.home_drain_pause_black)
+                        ivDrainStatus.setBackgroundResource(com.cl.modules_home.R.mipmap.home_drain_pause_black)
                     } else {
-                        ivDrainStatus.setBackgroundResource(com.bbgo.module_home.R.mipmap.home_drain_start_black)
+                        ivDrainStatus.setBackgroundResource(com.cl.modules_home.R.mipmap.home_drain_start_black)
                     }
                 }
             }

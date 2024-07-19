@@ -57,6 +57,10 @@ buildGitLogParams {
 android {
     compileSdk = Version.compileSdk
 
+    /*dexOptions {
+        preDexLibraries = false
+    }*/
+
     kapt {
         generateStubs = true
         correctErrorTypes = true // 这有助于更好地诊断错误
@@ -78,6 +82,7 @@ android {
         versionCode = Version.versionCode
         versionName = Version.versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
 
         ndk {
             "armeabi-v7a"

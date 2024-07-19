@@ -11,12 +11,11 @@ plugins {
 
 android {
     namespace 'com.bhm.ble'
-    compileSdk 33
+    compileSdk Version.compileSdk
 
     defaultConfig {
         minSdk 24
-        targetSdk 33
-
+        targetSdk Version.targetSdk
     }
 
     buildTypes {
@@ -35,5 +34,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.lifecycle:lifecycle-common:2.6.1'
+    implementation(Deps.lifecucleRuntimeKtx)
+    implementation(Deps.lifecycleLiveDataKtx)
+    implementation(Deps.lifecycleViewModelKtx)
+    // implementation 'androidx.lifecycle:lifecycle-common:2.8.3'
 }

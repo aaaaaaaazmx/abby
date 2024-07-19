@@ -2,8 +2,8 @@ package com.cl.modules_home.widget
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeTimeLapserPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeTimeLapserPopBinding
 import com.cl.common_base.pop.BaseCenterPop
 import com.lxj.xpopup.core.CenterPopupView
 

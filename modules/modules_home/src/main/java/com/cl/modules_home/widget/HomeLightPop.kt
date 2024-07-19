@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeLightPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeLightPopBinding
 import com.cl.common_base.bean.TrickData
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.bean.UpdateInfoReq

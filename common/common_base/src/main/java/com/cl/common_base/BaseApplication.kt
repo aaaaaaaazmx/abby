@@ -2,9 +2,10 @@ package com.cl.common_base
 
 import android.app.Application
 import android.content.Context
+import androidx.multidex.MultiDexApplication
 import io.intercom.android.sdk.Intercom
 
-open class BaseApplication : Application() {
+open class BaseApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()

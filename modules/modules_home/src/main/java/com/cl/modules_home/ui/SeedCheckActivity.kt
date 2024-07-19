@@ -1,7 +1,7 @@
 package com.cl.modules_home.ui
 
 import android.content.Intent
-import com.bbgo.module_home.databinding.HomeSeekCheckActivityBinding
+import com.cl.modules_home.databinding.HomeSeekCheckActivityBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.constants.Constants

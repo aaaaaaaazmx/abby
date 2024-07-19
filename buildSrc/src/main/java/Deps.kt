@@ -20,13 +20,13 @@ object Version {
     const val versionName = "3.9.1"
 
     const val coreKtxVersion = "1.9.0"
-    const val appCompatVersion = "1.4.2"
-    const val activity = "1.5.0"
-    const val fragment = "1.5.0"
-    const val materialVersion = "1.6.1"
+    const val appCompatVersion = "1.6.0"
+    const val fragment = "1.7.1"
+    const val activity = "1.7.1"
+    const val materialVersion = "1.12.0"
     const val constraintLayoutVersion = "2.1.4"
-    const val lifecycleVersion = "2.5.0"
-    const val navigationVersion = "2.4.2"
+    const val lifecycleVersion = "2.7.0"
+    const val navigationVersion = "2.7.7"
     const val swipeRefreshLayoutVersion = "1.1.0"
     const val recyclerViewVersion = "1.3.0-alpha02"
     const val preferenceVersion = "1.2.0"
@@ -35,10 +35,10 @@ object Version {
     const val pagingVersion = "3.1.1"
 
     // 网络
-    const val retrofitVersion = "2.9.0"
-    const val okHttp3Version = "4.10.0"
-    const val gsonVersion = "2.9.0"
-    const val frescoVersion = "2.6.0"
+    const val retrofitVersion = "2.11.0"
+    const val okHttp3Version = "4.12.0"
+    const val gsonVersion = "2.11.0"
+    const val frescoVersion = "3.2.0"
 
     const val testJunitVersion = "4.13.2"
     const val androidTestJunitAndroidExt = "1.1.3"
@@ -48,9 +48,9 @@ object Version {
     const val bannerVersion = "2.2.2"
     const val flexboxVersion = "3.0.0"
 
-    const val dataStoreVersion = "1.0.0"
+    const val dataStoreVersion = "1.1.0"
 
-    const val kotlinSerialVersion = "1.3.3"
+    const val kotlinSerialVersion = "1.7.1"
 
     const val leakcanaryVersion = "2.9.1"
 
@@ -58,7 +58,7 @@ object Version {
 
     const val loggerVersion = "2.2.0"
 
-    const val mmkv = "1.2.13"
+    const val mmkv = "1.3.7"
 
     const val rvHelp = "3.0.10"
 
@@ -66,17 +66,17 @@ object Version {
 
     const val web = "v5.0.0-alpha.1"
 
-    const val appStartup = "1.0.0"
+    const val appStartup = "1.1.1"
 
-    const val glide = "4.13.2"
+    const val glide = "4.16.0"
 
-    const val permission = "1.7.1"
+    const val permission = "1.8.0"
 
-    const val choosePhoto = "v3.11.1"
+    const val choosePhoto = "v3.11.2"
 
-    const val choosePhotoCamera = "v3.11.1"
+    const val choosePhotoCamera = "v3.11.2"
 
-    const val choosePhotoComporess = "v3.11.1"
+    const val choosePhotoComporess = "v3.11.2"
 
     const val epMedia = "v1.0.1"
 
@@ -93,15 +93,17 @@ object Version {
     const val stepView = "1.0.1"
     const val cardSwip = "1.0.0"
 
-    const val lottieVersion = "5.2.0"
+    const val lottieVersion = "6.4.1"
 
-    const val videoPlayer = "v8.3.4"
+    const val videoPlayer = "v8.6.0"
 
-    const val interCome = "15.2.0"
+    const val interCome = "15.8.3"
 
     const val chart = "v3.1.0"
 
-    const val workManager = "2.7.0"
+    const val workManager = "2.9.0"
+
+    const val multiDex = "2.0.1"
 }
 
 object Deps {
@@ -139,8 +141,8 @@ object Deps {
 
     const val coreKtx = "androidx.core:core-ktx:${Version.coreKtxVersion}"
     const val appcompat = "androidx.appcompat:appcompat:${Version.appCompatVersion}"
-    const val activity = "androidx.fragment:fragment-ktx:${Version.activity}"
-    const val fragment = "androidx.activity:activity-ktx:${Version.fragment}"
+    const val activity = "androidx.fragment:fragment-ktx:${Version.fragment}"
+    const val fragment = "androidx.activity:activity-ktx:${Version.activity}"
     const val material = "com.google.android.material:material:${Version.materialVersion}"
     const val constraintlayout =
         "androidx.constraintlayout:constraintlayout:${Version.constraintLayoutVersion}"
@@ -229,7 +231,6 @@ object Deps {
     // 涂鸦
     const val tuya = "com.thingclips.smart:thingsmart:${Version.tuya}"
 
-    // 涂鸦IPC
     const val tuyaIpc = "com.thingclips.smart:thingsmart-ipcsdk:${Version.tuyaIpc}"
 
     // fastJson for tuya
@@ -261,4 +262,7 @@ object Deps {
 
     // workMagner
     const val workManager = "androidx.work:work-runtime-ktx:${Version.workManager}"
+
+    // 合并文件
+    const val multidex = "androidx.multidex:multidex:${Version.multiDex}"
 }

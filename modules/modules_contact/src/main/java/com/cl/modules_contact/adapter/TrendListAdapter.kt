@@ -25,7 +25,6 @@ import com.cl.modules_contact.response.NewPageData
 import com.cl.modules_contact.widget.nineview.GlideNineGridImageLoader
 import com.cl.modules_contact.widget.nineview.NineGridImageView
 import com.cl.modules_contact.widget.nineview.OnImageItemClickListener
-import com.google.android.exoplayer2.upstream.AssetDataSource
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
 import com.lxj.xpopup.util.SmartGlideImageLoader

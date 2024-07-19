@@ -33,8 +33,8 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.JSONObject
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeCameraBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeCameraBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseActivity

@@ -3,6 +3,7 @@ package com.cl.common_base.init
 import android.app.Application
 import android.content.Context
 import android.os.Build
+import androidx.multidex.MultiDex
 import androidx.startup.Initializer
 import com.alibaba.android.arouter.launcher.ARouter
 import com.bhm.ble.BleManager
@@ -26,6 +27,8 @@ import com.thingclips.smart.home.sdk.ThingHomeSdk
  */
 class AppInitializer : Initializer<Unit> {
     override fun create(context: Context) {
+        // 初始化 Multidex
+        MultiDex.install(context);
         MMKV.initialize(context)
         if (BuildConfig.DEBUG) {           // 这两行必须写在init之前，否则这些配置在init过程中将无效
             ARouter.openLog()     // 打印日志

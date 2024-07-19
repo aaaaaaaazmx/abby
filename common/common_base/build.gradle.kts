@@ -175,4 +175,6 @@ dependencies {
     api("com.github.iielse:switchbutton:1.0.4")
     // workManager
     api(Deps.workManager)
+    // multidex
+    api(Deps.multidex)
 }

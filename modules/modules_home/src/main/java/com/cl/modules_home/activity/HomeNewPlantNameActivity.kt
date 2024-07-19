@@ -2,7 +2,7 @@ package com.cl.modules_home.activity
 
 import android.content.Intent
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.bbgo.module_home.databinding.HomeNewPlantBinding
+import com.cl.modules_home.databinding.HomeNewPlantBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
 

@@ -3,7 +3,7 @@ package com.cl.modules_home.ui
 import android.app.Activity
 import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bbgo.module_home.databinding.HomeAcademyDetailActivityBinding
+import com.cl.modules_home.databinding.HomeAcademyDetailActivityBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.AcademyDetails
