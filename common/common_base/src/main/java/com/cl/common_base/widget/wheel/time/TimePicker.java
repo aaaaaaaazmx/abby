@@ -2,6 +2,7 @@ package com.cl.common_base.widget.wheel.time;
 
 import static android.content.Intent.ACTION_TIME_CHANGED;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.cl.common_base.R;
 
@@ -135,10 +137,11 @@ public class TimePicker extends LinearLayout implements ScopePicker.OnScopeSelec
     }
 
 
+    @SuppressLint("WrongConstant")
     private void initListener() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Intent.ACTION_TIME_CHANGED);
-        getContext().registerReceiver(systemTimeChangedListener, intentFilter);
+        ContextCompat.registerReceiver(getContext(), systemTimeChangedListener, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
 

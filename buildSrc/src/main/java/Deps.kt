@@ -1,7 +1,7 @@
 object Version {
     object ClassPathVersion {
         const val kotlinVersion = "1.7.0"
-        const val hiltPluginVersion = "2.42"
+        const val hiltPluginVersion = "2.51.1"
         const val hiltCompilerVersion = "1.0.0"
         const val arouterPluginVersion = "1.0.2"
         const val googleServicePluginVersion = "4.3.13"
@@ -12,14 +12,14 @@ object Version {
         const val composeMaterial3Version = "1.0.0-alpha14"
     }
 
-    const val compileSdk = 33
+    const val compileSdk = 34
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
-    const val targetSdk = 33
+    const val targetSdk = 34
     val versionCode = 66
     const val versionName = "3.9.1"
 
-    const val coreKtxVersion = "1.8.0"
+    const val coreKtxVersion = "1.9.0"
     const val appCompatVersion = "1.4.2"
     const val activity = "1.5.0"
     const val fragment = "1.5.0"
@@ -82,7 +82,9 @@ object Version {
 
     const val luban = "1.1.8"
 
-    const val tuya = "5.0.1"
+    const val tuya = "5.14.0"
+
+    const val tuyaIpc = "5.14.1"
 
     const val jcore = "3.3.0"
     const val push = "4.7.2"
@@ -226,6 +228,9 @@ object Deps {
 
     // 涂鸦
     const val tuya = "com.thingclips.smart:thingsmart:${Version.tuya}"
+
+    // 涂鸦IPC
+    const val tuyaIpc = "com.thingclips.smart:thingsmart-ipcsdk:${Version.tuyaIpc}"
 
     // fastJson for tuya
     const val fastJson = "com.alibaba:fastjson:1.1.67.android"

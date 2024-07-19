@@ -25,11 +25,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     sourceSets {
@@ -44,9 +44,16 @@ android {
 
     viewBinding.isEnabled = true
     dataBinding.isEnabled = true
+
+
+    hilt {
+        enableExperimentalClasspathAggregation = true
+        enableAggregatingTask = false
+    }
 }
 
 kapt {
+    correctErrorTypes = true // 这有助于更好地诊断错误
     arguments {
         arg("AROUTER_MODULE_NAME", project.name)
     }
