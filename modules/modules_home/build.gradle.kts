@@ -63,7 +63,6 @@ kapt {
 }
 
 dependencies {
-    implementation("com.google.firebase:protolite-well-known-types:18.0.0")
     // 路由
     kapt(Deps.arouterKapt)
     implementation(project(mapOf("path" to ":common:common_base")))

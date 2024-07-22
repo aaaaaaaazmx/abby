@@ -61,7 +61,6 @@ kapt {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:15.0")
     // 路由
     kapt(Deps.arouterKapt)
     implementation(project(mapOf("path" to ":common:common_base")))

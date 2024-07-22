@@ -113,6 +113,7 @@ dependencies {
     api(Deps.firBaseMessage)
     api(Deps.fcm)
     api(Deps.jpushGoogle)
+    api("com.google.firebase:protolite-well-known-types:18.0.0")
     // Import the BoM for the Firebase platform
     api(platform("com.google.firebase:firebase-bom:30.5.0"))
     api("com.google.firebase:firebase-auth-ktx")
