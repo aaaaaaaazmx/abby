@@ -173,7 +173,6 @@ object Deps {
     const val retrofitGsonConverter =
         "com.squareup.retrofit2:converter-gson:${Version.retrofitVersion}"
     const val gson = "com.google.code.gson:gson:${Version.gsonVersion}"
-    const val fresco = "com.facebook.fresco:fresco:${Version.frescoVersion}"
     const val banner = "io.github.youth5201314:banner:${Version.bannerVersion}"
     const val flexbox = "com.google.android.flexbox:flexbox:${Version.flexboxVersion}"
     const val paging = "androidx.paging:paging-runtime:${Version.pagingVersion}"
