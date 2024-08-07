@@ -44,6 +44,8 @@ import com.lxj.xpopup.util.SmartGlideImageLoader
 import com.lxj.xpopup.widget.SmartDragLayout
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import dagger.hilt.android.AndroidEntryPoint
+import io.intercom.android.sdk.Intercom
+import io.intercom.android.sdk.IntercomContent
 import java.io.Serializable
 import javax.inject.Inject
 
@@ -366,6 +368,19 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     override fun observe() {
         mViewModel.apply {
+            // 生成会话
+            conversationId.observe(this@BasePopActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    data?.conversation_id?.let { IntercomContent.Conversation(id = it) }?.let { Intercom.client().presentContent(it) }
+                }
+            })
+
             // 延迟任务
             delayTask.observe(this@BasePopActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
@@ -526,7 +541,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     if (GSYVideoManager.instance().playTag == "$position" && (position < firstVisibleItem || position > lastVisibleItem)) { //如果滑出去了上面和下面就是否，和今日头条一样
                         //是否全屏
                         if (!GSYVideoManager.isFullState(this@BasePopActivity)) {
-                            adapter.data[position].videoPosition = GSYVideoManager.instance().currentPosition // 不释放全部
+                            if (adapter.data.size >= position) {
+                                adapter.data[position].videoPosition = GSYVideoManager.instance().currentPosition // 不释放全部
+                            }
                             // GSYVideoManager.instance().setListener(this@KnowMoreActivity)
                             // GSYVideoManager.onPause()
                             // 释放全部
@@ -542,10 +559,15 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt, R.id.input_delete, R.id.tv_delay_task)
+            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt, R.id.input_delete, R.id.tv_delay_task, R.id.rl_ono_on_one)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
+                    R.id.rl_ono_on_one -> {
+                        // 发起会话
+                        mViewModel.conversations(taskNo = snoozeNo, textId = mViewModel.richText.value?.data?.txtId)
+                    }
+
                     R.id.input_delete -> {
                         // 删除当前的输入框
                         val etWeight =
@@ -775,5 +797,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 共享设备ID KEY_RELATION_ID
         const val KEY_RELATION_ID = "key_relation_id"
+
+        // 返回的时候是否需要弹窗
+        const val KEY_IS_SHOW_POP = "key_is_show_pop"
+
     }
 }

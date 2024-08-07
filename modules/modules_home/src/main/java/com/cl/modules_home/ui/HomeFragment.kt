@@ -2263,9 +2263,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             getFanExhaust.observe(viewLifecycleOwner) {
                 binding.plantManual.fanExhaustSeekbar.setProgress(it.toFloat())
             }
-            getGrowLight.observe(viewLifecycleOwner) {
+            /*getGrowLight.observe(viewLifecycleOwner) {
                 // binding.plantManual.lightIntensitySeekbar.setProgress(it.toFloat())
-            }
+            }*/
 
             // transPlant周期自行处理逻辑
             transplantPeriodicity.observe(viewLifecycleOwner) {

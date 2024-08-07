@@ -205,4 +205,9 @@ interface BaseApiService {
     fun updatePlantInfo(
         @Body body: UpPlantInfoReq
     ): Flow<HttpResult<BaseBean>>
+
+    // 开启主动发话服务
+    @FormUrlEncoded
+    @POST("abby/plant/conversations")
+    fun conversations(@Field("taskNo")taskNo: String? = null, @Field("textId")textId: String? = null): Flow<HttpResult<ConversationsBean>>
 }

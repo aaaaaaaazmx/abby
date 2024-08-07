@@ -24,9 +24,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.alibaba.android.arouter.facade.annotation.Route
-import com.alibaba.android.arouter.launcher.ARouter
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
@@ -34,44 +31,45 @@ import com.cl.common_base.bean.UpdateReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.constants.UnReadConstants
-import com.cl.common_base.databinding.BasePopPumpActivityBinding
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.dp2px
+import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.*
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
-import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.Calendar
 import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
-import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.AbTextViewCalendar
 import com.cl.common_base.widget.SvTextView
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
+import com.cl.modules_my.adapter.TaskListAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
+import com.cl.modules_my.request.JumpTypeBean
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
-import com.cl.common_base.ext.letMultiple
-import com.cl.common_base.ext.safeToInt
-import com.cl.common_base.help.PlantCheckHelp
-import com.cl.common_base.intercome.InterComeHelp
-import com.cl.modules_my.adapter.TaskListAdapter
 import com.joketng.timelinestepview.LayoutType
 import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
 import com.joketng.timelinestepview.view.TimeLineStepView
-import com.lin.cardlib.CardLayoutManager
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import io.intercom.android.sdk.Intercom
+import io.intercom.android.sdk.IntercomContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -177,6 +175,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 主动服务
+            conversationId.observe(this@CalendarActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                loading {
+                    showProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    // 跳转到会话服务
+                    data?.conversation_id?.let { IntercomContent.Conversation(id = it) }?.let { Intercom.client().presentContent(content = it) }
+                }
+            })
             // 检查植物
             checkPlant.observe(this@CalendarActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -1002,6 +1015,16 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
                 ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
                 initTime(it.taskList ?: mutableListOf())
+
+                // 判断当前日期的第一个任务是否是pop_up类型，如果是就弹窗
+                // 只要是每次进来的第一个任务，和后面的完成最后一个任务时刷新时，pop任务就变成了第一个。
+                if ((it.taskList?.size ?: 0) > 0) {
+                    if ((it.taskList?.get(0)?.subTaskList?.size ?: 0) > 0) {
+                        if (it.taskList?.get(0)?.subTaskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP) {
+                            jumpToPop(it.taskList?.get(0)?.subTaskList)
+                        }
+                    }
+                }
             }
         }
     }
@@ -1204,9 +1227,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
                                     intent.putExtra(BasePopActivity.KEY_TASK_NO, mViewMode.taskNo.value)
                                     refreshActivityLauncher.launch(intent)
+                                } else if (taskData?.get(position)?.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP) {
+                                    jumpToPop(taskData)
                                 } else {
                                     val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                                     intent.putExtra(Constants.Global.KEY_TXT_ID, taskData?.get(position)?.textId)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_NO, taskData?.get(position)?.taskNo)
                                     intent.putExtra(BasePopActivity.KEY_PREVIEW, true)
                                     startActivity(intent)
                                 }
@@ -1247,12 +1273,22 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             // 首先需要判断是否是转周期任务，如果是转周期任务那么就会有一个弹窗
                             val taskData = listContent[position]
                             val taskId = taskData.taskId // 任务包的TaskId
+
+                            // 如果第一个任务就是弹窗
+                            if ((taskData.subTaskList?.size ?:0) >= 0) {
+                                if (taskData.subTaskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP) {
+                                    jumpToPop(taskData.subTaskList)
+                                    return@runCatching
+                                }
+                            }
+
                             // 记录taskId
                             listContent[position].taskId?.let { taskId ->
                                 mViewMode.setTaskId(
                                     taskId
                                 )
                             }
+
                             // 记录taskTime
                             listContent[position].taskTime?.let {
                                 mViewMode.setGuideInfoTime(
@@ -1265,6 +1301,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     it
                                 )
                             }
+                            // 有子任务
                             if (null != taskData.packetCondition) {
                                 XPopup.Builder(this@CalendarActivity)
                                     .asCustom(
@@ -1709,6 +1746,36 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }).setLayoutType(LayoutType.ALL)
             .setMarkSize(dp2px(10f))
             .setIsCustom(true)
+    }
+
+    private fun jumpToPop(taskData: MutableList<CalendarData.TaskList.SubTaskList>?) {
+        if (taskData.isNullOrEmpty()) return
+        // 跳转弹窗
+        taskData.firstOrNull { it.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP }?.let { data ->
+            // 解析jumpJson这个json
+            val parseObject = GSON.parseObject(data.jumpJson, JumpTypeBean::class.java)
+            // 如果是会员
+            val isVip = parseObject?.subscribe == true
+            xpopup(this@CalendarActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@CalendarActivity, content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
+                    cancelText = "No,thanks", confirmText = if (isVip) "Yes" else "Subscribe Now", onConfirmAction = {
+                        if (isVip) {
+                            // 请求发起会话接口，然后跳转到InterCome
+                            mViewMode.conversations(taskNo = data.taskNo)
+                        } else {
+                            //  跳转订阅网站
+                            val intent = Intent(this@CalendarActivity, WebActivity::class.java)
+                            intent.putExtra(WebActivity.KEY_WEB_URL, parseObject?.subscribeNow)
+                            startActivity(intent)
+                        }
+                    }, onCancelAction = {
+                        // 完成任务
+                    }
+                )).show()
+            }
+        }
     }
 
     private fun remindTaskToCalendar(listContent: MutableList<CalendarData.TaskList>, position: Int): Boolean {

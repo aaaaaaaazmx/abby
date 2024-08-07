@@ -63,11 +63,22 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         addItemType(RichTextData.KEY_TYPE_USB_PORT, R.layout.home_item_usb_port)
         addItemType(RichTextData.KEY_TYPE_USB_PORT_DETAIL, R.layout.home_item_usb_port_detail)
         /*addItemType(RichTextData.KEY_TYPE_PAGE_TXT, R.layout.home_itme_page_txt)*/
+        addItemType(RichTextData.KEY_TYPE_AI_CHECK, R.layout.home_item_usb_port_detail)
+        addItemType(RichTextData.KEY_TYPE_ONE_ON_ONE, R.layout.home_item_one_on_one)
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         when (holder.itemViewType) {
+            RichTextData.KEY_TYPE_ONE_ON_ONE -> {
+                val binding = DataBindingUtil.bind<HomeItemOneOnOneBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
             RichTextData.KEY_TYPE_USB_PORT_DETAIL -> {
                 val binding = DataBindingUtil.bind<HomeItemUsbPortDetailBinding>(holder.itemView)
                 if (binding != null) {

@@ -64,6 +64,8 @@ import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
+import io.intercom.android.sdk.Intercom
+import io.intercom.android.sdk.IntercomContent
 import javax.inject.Inject
 
 
@@ -501,6 +503,19 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 生成会话
+            conversationId.observe(this@KnowMoreActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    data?.conversation_id?.let { IntercomContent.Conversation(id = it) }?.let { Intercom.client().presentContent(it) }
+                }
+            })
+
             // 删除当前设备下的配件
             saveCameraSetting.observe(this@KnowMoreActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -796,10 +811,16 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 R.id.tv_delay_task,
                 R.id.tv_usb_detail,
                 R.id.iv_usb_what,
+                R.id.rl_ono_on_one,
             )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
+                    R.id.rl_ono_on_one -> {
+                        // 发起会话
+                        mViewMode.conversations(textId = mViewMode.richText.value?.data?.txtId)
+                    }
+
                     com.cl.common_base.R.id.iv_pic -> {
                         // 弹出图片
                         XPopup.Builder(context)
