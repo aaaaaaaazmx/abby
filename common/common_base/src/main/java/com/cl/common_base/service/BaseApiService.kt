@@ -3,6 +3,7 @@ package com.cl.common_base.service
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import kotlinx.coroutines.flow.Flow
+import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface BaseApiService {
@@ -210,4 +211,20 @@ interface BaseApiService {
     @FormUrlEncoded
     @POST("abby/plant/conversations")
     fun conversations(@Field("taskNo")taskNo: String? = null, @Field("textId")textId: String? = null): Flow<HttpResult<ConversationsBean>>
+
+    /**
+     * 上传图片多张
+     */
+    @Multipart
+    @POST("abby/base/uploadImgs")
+    fun uploadImages(@Part partLis: List<MultipartBody.Part>): Flow<HttpResult<MutableList<String>>>
+
+    /**
+     * ai 周期检查
+     * plant/checkPeriod
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/checkPeriod")
+    fun aiCheckPeriod(@Field("plantId") plantId: String, @Field("url")url: String): Flow<HttpResult<AiCheckBean>>
+
 }

@@ -72,7 +72,7 @@ data class RichTextData(
         val width: String? = null, // 宽度
         val icon: String? = null, // 按钮图标
         val autoplay: Boolean? = null, // 自动播放
-        var isCheck: Boolean? = false, // 是否选中
+        var select: Boolean? = false, // 是否选中
         @SerializedName("colour")
         var color: String? = null,  // 字体颜色
         var size: String? = null,   // 字体大小

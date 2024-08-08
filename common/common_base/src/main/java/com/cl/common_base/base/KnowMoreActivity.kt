@@ -482,7 +482,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     private fun isHaveCheckBoxViewType(): Boolean {
         /*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
         val size =
-            adapter.data.filter { data -> data.value?.isCheck == false && data.type == "option" }.size
+            adapter.data.filter { data -> data.value?.select == false && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
                 ToastUtil.shortShow("Please select all item")
@@ -875,10 +875,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     // 勾选框
                     R.id.cl_check -> {
                         view.findViewById<CheckBox>(R.id.curing_box)?.apply {
-                            logI("before: ${data[position].value?.isCheck}")
-                            data[position].value?.isCheck = !isChecked
+                            logI("before: ${data[position].value?.select}")
+                            data[position].value?.select = !isChecked
                             isChecked = !isChecked
-                            logI("after: ${data[position].value?.isCheck}")
+                            logI("after: ${data[position].value?.select}")
                         }
                     }
                     // 跳转到HTML

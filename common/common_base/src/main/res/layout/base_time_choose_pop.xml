@@ -33,7 +33,7 @@
                 android:paddingEnd="30dp"
                 app:wheelCurtainBorder="true"
                 app:itemHeightSpace="5dp"
-                app:selectedTextSize="17sp"
+                app:selectedTextSize="17dp"
                 app:itemTextSize="15sp"
                 app:itemTextColor="#979797"
                 app:wheelCurtainBorderColor="@color/mainColor"

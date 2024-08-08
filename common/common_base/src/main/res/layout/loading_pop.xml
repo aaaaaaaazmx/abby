@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:paddingTop="32dp"
+    android:paddingBottom="32dp"
+    android:paddingStart="34dp"
+    android:paddingEnd="34dp"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loadview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="loading.json"
+        app:lottie_loop="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_two"
+        />
+
+    <ProgressBar
+        android:id="@+id/loadProgress"
+        android:visibility="gone"
+        android:layout_width="30dp"
+        android:layout_height="30dp"/>
+
+    <!--<com.lxj.xpopup.widget.LoadingView
+        android:layout_width="60dp"
+        android:layout_height="60dp" />-->
+    <TextView
+        android:textStyle="bold"
+        android:id="@+id/tv_title"
+        android:maxLines="3"
+        android:visibility="gone"
+        android:text="AI check in progress, please do not exit this page."
+        android:paddingStart="12dp"
+        android:ellipsize="end"
+        android:paddingEnd="12dp"
+        android:textSize="18sp"
+        android:textColor="#EEEEEE"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AdvertisingData
+import com.cl.common_base.bean.AiCheckBean
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.ConversationsBean
 import com.cl.common_base.bean.FinishTaskReq
@@ -24,6 +25,7 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 @ActivityRetainedScoped
@@ -52,6 +54,74 @@ class BaseViewModel @Inject constructor(): ViewModel() {
     val sliderText: LiveData<String?> = _sliderText
     fun getSliderText(txt: String?) {
         _sliderText.value = txt
+    }
+
+    /**
+     * 上传多张图片
+     */
+    private val _uploadImg = MutableLiveData<Resource<MutableList<String>>>()
+    val uploadImg: LiveData<Resource<MutableList<String>>> = _uploadImg
+    fun uploadImg(body: List<MultipartBody.Part>) = viewModelScope.launch {
+        service.uploadImages(body)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _uploadImg.value = it
+            }
+    }
+
+    /**
+     * ai检查
+     */
+    private val _aiCheck = MutableLiveData<Resource<AiCheckBean>>()
+    val aiCheck: LiveData<Resource<AiCheckBean>> = _aiCheck
+    fun aiCheck(plantId: String, url: String) = viewModelScope.launch {
+        service.aiCheckPeriod(plantId, url)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+                emit(Resource.Loading())
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _aiCheck.value = it
+            }
     }
 
     // 会话ID

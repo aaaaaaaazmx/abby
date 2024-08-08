@@ -28,7 +28,6 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rl_ono_on_one"
-            android:layout_marginTop="10dp"
             android:layout_centerInParent="true"
             android:layout_width="match_parent"
             tools:ignore="MissingConstraints"
@@ -43,7 +42,7 @@
                 <ImageView
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintRight_toLeftOf="@+id/tv_txt"
+                    app:layout_constraintRight_toLeftOf="@+id/tv_txtsss"
                     app:layout_constraintStart_toStartOf="parent"
                     android:id="@+id/iv_support"
                     android:background="@mipmap/home_support_base"
@@ -60,7 +59,7 @@
                     isBold="@{data.value.bold}"
                     colorText='@{TextUtils.isEmpty(data.value.color) ? "#006241" : data.value.color}'
                     sizeText='@{TextUtils.isEmpty(data.value.size) ? "15" : data.value.size}'
-                    android:id="@+id/tv_txt"
+                    android:id="@+id/tv_txtsss"
                     android:layout_marginEnd="21dp"
                     android:layout_marginStart="10dp"
                     android:text="@{data.value.txt}"
