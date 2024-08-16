@@ -1,8 +1,16 @@
 package com.cl.common_base.pop.activity
 
+import android.Manifest
 import android.app.Activity
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -13,6 +21,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.view.children
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +31,10 @@ import com.cl.common_base.R
 import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
+import com.cl.common_base.bean.ChoosePicBean
 import com.cl.common_base.bean.FinishTaskReq
+import com.cl.common_base.bean.ImageUrl
+import com.cl.common_base.bean.JumpTypeBean
 import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.constants.Constants
@@ -32,18 +44,37 @@ import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.sp2px
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.intercome.InterComeHelp
+import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.CustomLoadingPopupView
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.file.FileUtil
+import com.cl.common_base.util.file.SDCard
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
+import com.luck.picture.lib.basic.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.XPopup.getAnimationDuration
+import com.lxj.xpopup.impl.LoadingPopupView
 import com.lxj.xpopup.util.SmartGlideImageLoader
+import com.lxj.xpopup.widget.LoadingView
 import com.lxj.xpopup.widget.SmartDragLayout
 import com.shuyu.gsyvideoplayer.GSYVideoManager
 import dagger.hilt.android.AndroidEntryPoint
+import io.intercom.android.sdk.Intercom
+import io.intercom.android.sdk.IntercomContent
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import top.zibin.luban.Luban
+import top.zibin.luban.OnNewCompressListener
+import java.io.File
 import java.io.Serializable
 import javax.inject.Inject
 
@@ -170,6 +201,21 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         if (isJumpPage) {
             fixedId?.let { // 这是个动态界面，我也不知道为什么不做成动态按钮
                 when (it) {
+                    Constants.Fixed.KEY_FIXED_ID_GO_TO_CAMERA -> {
+                        // 去拍照。
+                        PermissionHelp().applyPermissionHelp(
+                            this@BasePopActivity,
+                            getString(com.cl.common_base.R.string.profile_request_camera),
+                            object : PermissionHelp.OnCheckResultListener {
+                                override fun onResult(result: Boolean) {
+                                    if (!result) return
+                                    //跳转到调用系统相机
+                                    gotoCamera()
+                                }
+                            },
+                            Manifest.permission.CAMERA
+                        )
+                    }
                     Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED -> { // 如果是准备种子、那么直接跳转到种子界面
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
@@ -330,8 +376,156 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         }
     }
 
+    // 去拍照
+    private var imageUri: Uri? = null
+    private fun gotoCamera() {
+        imageUri = createImageUri()
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+             startActivityForResult(intent, REQUEST_CAPTURE)
+        }
+    }
+
+    /**
+     * 根据uri获取文件路径
+     */
+    private fun getRealFilePathFromUri(context: Context, uri: Uri?): String? {
+        if (null == uri) {
+            return null
+        }
+        val scheme = uri.scheme
+        var data: String? = null
+        if (scheme == null) {
+            data = uri.path
+        } else if (ContentResolver.SCHEME_FILE == scheme) {
+            data = uri.path
+        } else if (ContentResolver.SCHEME_CONTENT == scheme) {
+            val cursor = context.contentResolver.query(
+                uri,
+                arrayOf(MediaStore.Images.ImageColumns.DATA),
+                null,
+                null,
+                null
+            )
+            if (null != cursor) {
+                if (cursor.moveToFirst()) {
+                    val index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+                    if (index > -1) {
+                        data = cursor.getString(index)
+                    }
+                }
+                cursor.close()
+            }
+        }
+        return data
+    }
+
+    /**
+     * 结果返回
+     */
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            // camera
+            REQUEST_CAPTURE -> {
+                if (resultCode == RESULT_OK && imageUri != null) {
+                    // gotoClipActivity(imageUri)
+                    val cropImagePath = getRealFilePathFromUri(applicationContext, imageUri)
+                    // 直接上传
+                    cropImagePath?.let {
+                        Luban.with(this@BasePopActivity).load(it).ignoreBy(100)
+                            .setCompressListener(object : OnNewCompressListener {
+                                override fun onSuccess(source: String?, compressFile: File?) {
+                                    logI("@#!@#: ${source.toString()} mmm ${compressFile?.length()}")
+                                    compressFile?.let {
+                                        val upLoadImage = upLoadImage(compressFile)
+                                        mViewModel.uploadImg(upLoadImage)
+                                    }
+                                }
+
+                                override fun onError(source: String?, e: Throwable?) {
+                                   logI(e.toString())
+                                }
+
+                                override fun onStart() {
+
+                                }
+                            }).launch();
+
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 表单提交
+     * 需要循环上传
+     */
+    private fun upLoadImage(file: File): List<MultipartBody.Part> {
+        //1.创建MultipartBody.Builder对象
+        val builder = MultipartBody.Builder()
+            //表单类型
+            .setType(MultipartBody.FORM)
+
+        //2.获取图片，创建请求体
+        //表单类x型
+        //表单类型
+        val body: RequestBody = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+
+        //3.调用MultipartBody.Builder的addFormDataPart()方法添加表单数据
+        /**
+         * ps:builder.addFormDataPart("code","123456");
+         * ps:builder.addFormDataPart("file",file.getName(),body);
+         */
+        builder.addFormDataPart("imgType", "aiCheck") //传入服务器需要的key，和相应value值
+        builder.addFormDataPart("files", file.name, body) //添加图片数据，body创建的请求体
+        //4.创建List<MultipartBody.Part> 集合，
+        //  调用MultipartBody.Builder的build()方法会返回一个新创建的MultipartBody
+        //  再调用MultipartBody的parts()方法返回MultipartBody.Part集合
+        return builder.build().parts
+    }
+
+    /**
+     * 创建图片地址uri,用于保存拍照后的照片 Android 10以后使用这种方法
+     */
+    private fun createImageUri(): Uri? {
+        //Android 10以上
+        val photoUri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val status = Environment.getExternalStorageState()
+            // 判断是否有SD卡,优先使用SD卡存储,当没有SD卡时使用手机存储
+            if (status == Environment.MEDIA_MOUNTED) {
+                contentResolver.insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                    ContentValues()
+                )
+            } else {
+                contentResolver.insert(
+                    MediaStore.Images.Media.INTERNAL_CONTENT_URI,
+                    ContentValues()
+                )
+            }
+        } else {
+            val tempFile: File = FileUtil.createFileIfNotExists(
+                SDCard.getContextPictureDir(this@BasePopActivity)
+                    .toString() + File.separator + System.currentTimeMillis() + ".jpg"
+            )
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                //适配Android 7.0文件权限，通过FileProvider创建一个content类型的Uri
+                FileProvider.getUriForFile(
+                    this,
+                    "$packageName.fileprovider", tempFile
+                )
+            } else {
+                Uri.fromFile(tempFile)
+            }
+        }
+        return photoUri
+    }
+
     private fun isHaveCheckBoxViewType(): Boolean {/*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
-        val size = adapter.data.filter { data -> data.value?.isCheck == false && data.type == "option" }.size
+        val size = adapter.data.filter { data -> data.value?.select == false && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
                 ToastUtil.shortShow("Please select all item")
@@ -364,8 +558,124 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         }
     }
 
+    private val loadingPopup by lazy {
+        CustomLoadingPopupView(this@BasePopActivity, 0).setTitle("AI check in progress, please do not exit this page.")
+    }
+
     override fun observe() {
         mViewModel.apply {
+            // 上传图片回调
+            uploadImg.observe(this@BasePopActivity, resourceObserver {
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    hideProgressLoading()
+                }
+                success {
+                    hideProgressLoading()
+                    data?.forEach {
+                        val oneArray = it.split("com/")
+                        if (oneArray.isNotEmpty()) {
+                            if (oneArray.isNotEmpty()) {
+                                val result = oneArray[1].split("?")
+                                if (result.isNotEmpty()) {
+                                    logI(result[0])
+                                    // 更新用户信息
+                                    // 更新集合
+                                    aiCheck(plantId = userInfo?.plantId.toString(), url = result[0])
+                                }
+                            }
+                        }
+                    }
+                }
+                loading { showProgressLoading() }
+            })
+
+            aiCheck.observe(this@BasePopActivity, resourceObserver {
+                loading {
+                    xpopup(this@BasePopActivity) {
+                        asCustom(loadingPopup).show()
+                    }
+                }
+
+                error { errorMsg, code ->
+                    ToastUtil.shortShow(errorMsg)
+                    loadingPopup.dismiss()
+                }
+
+                success {
+                    loadingPopup.dismiss()
+                    //YES：识别成功并通过。返回一个富文本ID，打开后，并自动勾选，点击解锁，调用完成任务接口
+                    //NO: 弹提示窗
+                    //NG: 弹提示窗
+                    //USED_UP: 调用次数已经用完（非会员）跳转购买订阅地址
+                    //USED_UP_SUBSCRIPTION: 调用次数已用完（会员）
+                    //UNKNOWN:其它情况，弹出提示
+                    val code = data?.resultCode ?: ""
+                    when(code) {
+                        "YES" -> {
+                            val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                            intent.putExtra(Constants.Global.KEY_TXT_ID, data?.textId)
+                            intent.putExtra(KEY_IS_SHOW_BUTTON, true)
+                            intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Unlock")
+                            intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                            intent.putExtra(KEY_TASK_ID, taskId)
+                            intent.putExtra(KEY_FIXED_TASK_ID, taskId)
+                            refreshActivityLauncher.launch(intent)
+                        }
+
+                        "NG", "NO", "UNKNOWN" -> {
+                            xpopup(this@BasePopActivity) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(false)
+                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = "Exit")).show()
+                            }
+                        }
+
+                        "USED_UP" -> { // 非会员
+                            xpopup(this@BasePopActivity) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(false)
+                                asCustom(BaseCenterPop(this@BasePopActivity, cancelText = "No,thanks", content = data?.content, confirmText = "Subscribe Now", onConfirmAction =  {
+                                    // 跳转到购买地址
+                                    //  跳转订阅网站
+                                    val intent = Intent(this@BasePopActivity, WebActivity::class.java)
+                                    intent.putExtra(WebActivity.KEY_WEB_URL, data?.subscribeNow)
+                                    startActivity(intent)
+                                })).show()
+                            }
+                        }
+
+                        "USED_UP_SUBSCRIPTION" -> {  // 会员
+                            xpopup(this@BasePopActivity) {
+                                isDestroyOnDismiss(false)
+                                dismissOnTouchOutside(false)
+                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = "OK", onConfirmAction =  {
+                                    // 跳转到购买地址
+                                    //  跳转订阅网站
+                                    val intent = Intent(this@BasePopActivity, WebActivity::class.java)
+                                    intent.putExtra(WebActivity.KEY_WEB_URL, data?.subscribeNow)
+                                    startActivity(intent)
+                                })).show()
+                            }
+                        }
+
+                    }
+                }
+            })
+
+            // 生成会话
+            conversationId.observe(this@BasePopActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    data?.conversation_id?.let { IntercomContent.Conversation(id = it) }?.let { Intercom.client().presentContent(it) }
+                }
+            })
+
             // 延迟任务
             delayTask.observe(this@BasePopActivity, resourceObserver {
                 error { errorMsg, code -> ToastUtil.shortShow(errorMsg) }
@@ -480,6 +790,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 如果是连续解锁任务包到最后一个任务，完成之后就直接跳转到日历界面
                     if (isContinueUnlock) {
+                        // 判断当前是否还有最后一个任务，并且是弹窗任务
+                        if (taskIdList.size == 1) {
+                            if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP) {
+                                jumpToPop(taskIdList)
+                                return@success
+                            }
+                        }
                         // 跳转到日历界面
                         ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
                         return@success
@@ -526,7 +843,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     if (GSYVideoManager.instance().playTag == "$position" && (position < firstVisibleItem || position > lastVisibleItem)) { //如果滑出去了上面和下面就是否，和今日头条一样
                         //是否全屏
                         if (!GSYVideoManager.isFullState(this@BasePopActivity)) {
-                            adapter.data[position].videoPosition = GSYVideoManager.instance().currentPosition // 不释放全部
+                            if (adapter.data.size > position) {
+                                adapter.data[position].videoPosition = GSYVideoManager.instance().currentPosition // 不释放全部
+                            }
                             // GSYVideoManager.instance().setListener(this@KnowMoreActivity)
                             // GSYVideoManager.onPause()
                             // 释放全部
@@ -542,10 +861,40 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt, R.id.input_delete, R.id.tv_delay_task)
+            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt,
+                R.id.input_delete, R.id.tv_delay_task, R.id.rl_ono_on_one, R.id.rl_ai_check)
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
+                    R.id.rl_ai_check -> {
+                        // aiCheck
+                        // 跳转富文本界面,获取下面的txtId文本，继续跳转
+                        bean.value?.txtId?.let { // 继续请求弹窗
+                            val intent = Intent(context, BasePopActivity::class.java)
+                            intent.putExtra(Constants.Global.KEY_TXT_ID, it)
+                            intent.putExtra(KEY_TASK_ID, taskId)
+                            intent.putExtra(KEY_IS_SHOW_BUTTON, true)
+                            intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
+                            intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Next")
+                            intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
+                            intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_GO_TO_CAMERA)
+                            context.startActivity(intent)
+                        }
+                    }
+
+                    R.id.rl_ono_on_one -> {
+                        // 判断当前是否是vip
+                        if (mViewModel.userInfo?.isVip == 1) {
+                            // 发起会话
+                            mViewModel.conversations(taskNo = snoozeNo, textId = mViewModel.richText.value?.data?.txtId)
+                        } else {
+                            // 跳转到购买链接
+                            val intent = Intent(context, WebActivity::class.java)
+                            intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/app-subscription-plan")
+                            context.startActivity(intent)
+                        }
+                    }
+
                     R.id.input_delete -> {
                         // 删除当前的输入框
                         val etWeight =
@@ -556,7 +905,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     R.id.iv_pic -> { // 弹出图片
                         XPopup.Builder(context).asImageViewer(
                             (view as? ImageView), bean.value?.url, SmartGlideImageLoader()
-                        ).show()
+                        ).isShowSaveButton(false).show()
                     }
 
                     // 跳转HTML
@@ -595,10 +944,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     // 勾选框
                     R.id.cl_check -> {
                         view.findViewById<CheckBox>(R.id.curing_box)?.apply {
-                            logI("before: ${data[position].value?.isCheck}")
-                            data[position].value?.isCheck = !isChecked
+                            logI("before: ${data[position].value?.select}")
+                            data[position].value?.select = !isChecked
                             isChecked = !isChecked
-                            logI("after: ${data[position].value?.isCheck}")
+                            logI("after: ${data[position].value?.select}")
                         }
                     }
                     // 跳转到HTML
@@ -709,6 +1058,38 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         }
     }
 
+    private fun jumpToPop(taskData: MutableList<CalendarData.TaskList.SubTaskList>?) {
+        if (taskData.isNullOrEmpty()) return
+        // 跳转弹窗
+        taskData.firstOrNull { it.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP }?.let { data ->
+            // 解析jumpJson这个json
+            val parseObject = GSON.parseObject(data.jumpJson, JumpTypeBean::class.java)
+            // 如果是会员
+            val isVip = parseObject?.subscribe == true
+            xpopup(this@BasePopActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@BasePopActivity, content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
+                    cancelText = "No,thanks", confirmText = if (isVip) "Yes" else "Subscribe Now", onConfirmAction = {
+                        if (isVip) {
+                            // 跳转到日历界面，然后在发起会话。
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).withString(CalendarData.KEY_TASK_NO, data.taskNo).navigation(this@BasePopActivity)
+                        } else {
+                            //  跳转订阅网站
+                            val intent = Intent(this@BasePopActivity, WebActivity::class.java)
+                            intent.putExtra(WebActivity.KEY_WEB_URL, parseObject?.subscribeNow)
+                            startActivity(intent)
+                        }
+                    }, onCancelAction = {
+                        // 完成任务
+                        // 跳转到日历界面
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+                    }
+                )).show()
+            }
+        }
+    }
+
     companion object {
         const val KEY_IS_SHOW_BUTTON = "key_is_show_button"
         const val KEY_IS_SHOW_UNLOCK_BUTTON = "key_is_show_unlock_button"
@@ -775,5 +1156,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 共享设备ID KEY_RELATION_ID
         const val KEY_RELATION_ID = "key_relation_id"
+
+        // 返回的时候是否需要弹窗
+        const val KEY_IS_SHOW_POP = "key_is_show_pop"
+
+        private const val REQUEST_CAPTURE = 100
     }
 }

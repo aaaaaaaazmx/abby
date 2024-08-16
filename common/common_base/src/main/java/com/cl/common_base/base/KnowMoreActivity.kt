@@ -64,6 +64,8 @@ import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
+import io.intercom.android.sdk.Intercom
+import io.intercom.android.sdk.IntercomContent
 import javax.inject.Inject
 
 
@@ -480,7 +482,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     private fun isHaveCheckBoxViewType(): Boolean {
         /*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
         val size =
-            adapter.data.filter { data -> data.value?.isCheck == false && data.type == "option" }.size
+            adapter.data.filter { data -> data.value?.select == false && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
                 ToastUtil.shortShow("Please select all item")
@@ -501,6 +503,19 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            // 生成会话
+            conversationId.observe(this@KnowMoreActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    data?.conversation_id?.let { IntercomContent.Conversation(id = it) }?.let { Intercom.client().presentContent(it) }
+                }
+            })
+
             // 删除当前设备下的配件
             saveCameraSetting.observe(this@KnowMoreActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -796,10 +811,16 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 R.id.tv_delay_task,
                 R.id.tv_usb_detail,
                 R.id.iv_usb_what,
+                R.id.rl_ono_on_one,
             )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
+                    R.id.rl_ono_on_one -> {
+                        // 发起会话
+                        mViewMode.conversations(textId = mViewMode.richText.value?.data?.txtId)
+                    }
+
                     com.cl.common_base.R.id.iv_pic -> {
                         // 弹出图片
                         XPopup.Builder(context)
@@ -807,7 +828,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                 (view as? ImageView),
                                 bean.value?.url,
                                 SmartGlideImageLoader()
-                            )
+                            ).isShowSaveButton(false)
                             .show()
                     }
 
@@ -854,10 +875,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     // 勾选框
                     R.id.cl_check -> {
                         view.findViewById<CheckBox>(R.id.curing_box)?.apply {
-                            logI("before: ${data[position].value?.isCheck}")
-                            data[position].value?.isCheck = !isChecked
+                            logI("before: ${data[position].value?.select}")
+                            data[position].value?.select = !isChecked
                             isChecked = !isChecked
-                            logI("after: ${data[position].value?.isCheck}")
+                            logI("after: ${data[position].value?.select}")
                         }
                     }
                     // 跳转到HTML

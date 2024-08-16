@@ -2,9 +2,9 @@ package com.cl.modules_home.widget
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePopGerminationCountdownBinding
-import com.bbgo.module_home.databinding.HomePopRestartSeedBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomePopGerminationCountdownBinding
+import com.cl.modules_home.databinding.HomePopRestartSeedBinding
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.slidetoconfirmlib.SlideToConfirm

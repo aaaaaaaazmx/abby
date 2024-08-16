@@ -36,6 +36,7 @@
             tools:text="123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123123" />
 
         <CheckBox
+            android:checked="@{data.value.select}"
             android:enabled="false"
             android:clickable="false"
             android:id="@+id/curing_box"

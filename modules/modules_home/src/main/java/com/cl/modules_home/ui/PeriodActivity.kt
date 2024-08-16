@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.view.MotionEvent
-import com.bbgo.module_home.databinding.HomePeriodChartActivityBinding
+import com.cl.modules_home.databinding.HomePeriodChartActivityBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.resourceObserver

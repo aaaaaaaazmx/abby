@@ -12,6 +12,8 @@ import com.cl.common_base.util.crash.StabilityOptimize
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.help.BleConnectHandler
+import com.cl.common_base.util.ipc.FrescoManager
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
@@ -26,6 +28,8 @@ import com.thingclips.smart.home.sdk.ThingHomeSdk
  */
 class AppInitializer : Initializer<Unit> {
     override fun create(context: Context) {
+        // 初始化 Multidex
+        // MultiDex.install(context);
         MMKV.initialize(context)
         if (BuildConfig.DEBUG) {           // 这两行必须写在init之前，否则这些配置在init过程中将无效
             ARouter.openLog()     // 打印日志
@@ -33,6 +37,9 @@ class AppInitializer : Initializer<Unit> {
         }
         ARouter.init(context.applicationContext as? Application)
         initLogConfig()
+
+        // 初始化Fresco
+        FrescoManager.initFresco(context.applicationContext)
 
         // 涂鸦，需要同意隐私协议
         ThingHomeSdk.init(

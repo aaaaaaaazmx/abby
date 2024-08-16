@@ -383,4 +383,8 @@
 -keep class io.intercom.android.** { *; }
 -keep class com.intercom.** { *; }
 
+#lifecycle
+-keep class androidx.lifecycle.** { *; }
+-keep class androidx.lifecycle.lifecycle-livedata-core.** { *; }
+-keep interface androidx.lifecycle.** { *; }
 ###########################第三方库end#########################################

@@ -1,6 +1,6 @@
 package com.cl.modules_home.ui
 
-import com.bbgo.module_home.databinding.HomeChangTheSeedBinding
+import com.cl.modules_home.databinding.HomeChangTheSeedBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.resourceObserver

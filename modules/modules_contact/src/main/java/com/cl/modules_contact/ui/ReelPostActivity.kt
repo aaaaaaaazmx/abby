@@ -342,7 +342,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                             picList.toList(),
                             OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
-                        )
+                        ).isShowSaveButton(false)
                         .show()
                 }
             }
@@ -731,7 +731,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     // 并不是什么时候都展示展示Gif图
                     XPopup.Builder(this@ReelPostActivity).asImageViewer(
                         binding.ivPreview, destPath, SmartGlideImageLoader()
-                    ).show()
+                    ).isShowSaveButton(false).show()
                 }
 
                 override fun onError(msg: String?) {

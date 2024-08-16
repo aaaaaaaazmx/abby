@@ -7,8 +7,8 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.core.text.underline
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePopGerminationCountdownBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomePopGerminationCountdownBinding
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.ext.DateHelper
 import com.cl.common_base.ext.logI

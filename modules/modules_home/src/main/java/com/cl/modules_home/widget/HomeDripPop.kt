@@ -9,8 +9,8 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBinderMapper
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeDripPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeDripPopBinding
 import com.cl.common_base.bean.TrickData
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean

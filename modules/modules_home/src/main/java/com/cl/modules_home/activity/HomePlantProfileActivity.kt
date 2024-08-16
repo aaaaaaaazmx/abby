@@ -10,7 +10,7 @@ import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bbgo.module_home.databinding.HomePlantProfileBinding
+import com.cl.modules_home.databinding.HomePlantProfileBinding
 import com.cl.common_base.adapter.StrainNameSearchAdapter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpPlantInfoReq

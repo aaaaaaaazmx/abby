@@ -3,8 +3,8 @@ package com.cl.modules_home.widget
 import android.content.Context
 import android.widget.CompoundButton
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomePlantExtendPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomePlantExtendPopBinding
 import com.cl.modules_home.ui.HomeFragment.Companion.KEY_NEW_PLANT
 import com.lxj.xpopup.core.BottomPopupView
 

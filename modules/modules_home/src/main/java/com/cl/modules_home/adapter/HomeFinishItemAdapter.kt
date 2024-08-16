@@ -1,6 +1,6 @@
 package com.cl.modules_home.adapter
 
-import com.bbgo.module_home.R
+import com.cl.modules_home.R
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.FinishPageData

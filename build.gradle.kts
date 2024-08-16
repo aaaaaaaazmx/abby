@@ -15,12 +15,18 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.4.2")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.20")
         classpath(Deps.ClassPath.hiltPlugin)
         classpath(Deps.ClassPath.arouterPlugin)
         classpath(Deps.ClassPath.googleService)
         classpath(Deps.ClassPath.uploadPlugin)
         // classpath("io.github.leavesczy:trace:0.0.3")
+    }
+}
+
+allprojects {
+    configurations.all {
+        exclude(group = "com.thingclips.smart", module = "thingsmart-modularCampAnno")
     }
 }
 

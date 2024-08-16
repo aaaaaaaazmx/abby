@@ -45,6 +45,8 @@ data class RichTextData(
                 "intercom" -> KEY_TYPE_TXT
                 "usb_port_detail" -> KEY_TYPE_USB_PORT_DETAIL
                 "usb_port" -> KEY_TYPE_USB_PORT
+                "aiCheck" -> KEY_TYPE_AI_CHECK
+                "oneOnOne" -> KEY_TYPE_ONE_ON_ONE
                 else -> KEY_TYPE_BAR
             }
     }
@@ -70,7 +72,7 @@ data class RichTextData(
         val width: String? = null, // 宽度
         val icon: String? = null, // 按钮图标
         val autoplay: Boolean? = null, // 自动播放
-        var isCheck: Boolean? = false, // 是否选中
+        var select: Boolean? = false, // 是否选中
         @SerializedName("colour")
         var color: String? = null,  // 字体颜色
         var size: String? = null,   // 字体大小
@@ -146,6 +148,12 @@ data class RichTextData(
 
         // usb_port
         const val KEY_TYPE_USB_PORT = 21
+
+        // AICheck
+        const val KEY_TYPE_AI_CHECK = 22
+
+        // oneOnOne
+        const val KEY_TYPE_ONE_ON_ONE = 23
 
         // 自己创建的类型
         // 与商民的无关

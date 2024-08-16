@@ -40,9 +40,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import cn.jpush.android.api.JPushInterface
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeBinding
-import com.bbgo.module_home.databinding.HomeItemPlantManualBinding
+import com.bumptech.glide.Glide
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeBinding
+import com.cl.modules_home.databinding.HomeItemPlantManualBinding
 import com.bumptech.glide.request.RequestOptions
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.base.KnowMoreActivity
@@ -2262,9 +2263,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             getFanExhaust.observe(viewLifecycleOwner) {
                 binding.plantManual.fanExhaustSeekbar.setProgress(it.toFloat())
             }
-            getGrowLight.observe(viewLifecycleOwner) {
+            /*getGrowLight.observe(viewLifecycleOwner) {
                 // binding.plantManual.lightIntensitySeekbar.setProgress(it.toFloat())
-            }
+            }*/
 
             // transPlant周期自行处理逻辑
             transplantPeriodicity.observe(viewLifecycleOwner) {
@@ -2632,6 +2633,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     if (isManual == true) {
                         mViewMode.getProModeRecord(data?.deviceId.toString())
                     }
+
+
+                    // 判断是否是vip, 更改按钮的状态
+                    context?.let { Glide.with(it).load(if (data?.isVip == 1) R.mipmap.home_plant_last_support_vip else R.mipmap.home_plant_last_support) }?.into(binding.pplantNinth.ivSupport)
+                    context?.let { Glide.with(it).load(if (data?.isVip == 1) R.mipmap.home_plant_last_support_vip else R.mipmap.home_plant_last_support) }?.into(binding.plantFirst.ivSupport)
 
                     // 登录InterCome
                     InterComeHelp.INSTANCE.successfulLogin(

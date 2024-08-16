@@ -8,7 +8,7 @@ import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.transition.Transition
 
 
-abstract class SeamlessImageViewTargets<Z>(view: ImageView) : CustomViewTarget<ImageView, Z>(view),
+abstract class SeamlessImageViewTargets<Z : Any>(view: ImageView) : CustomViewTarget<ImageView, Z>(view),
     Transition.ViewAdapter {
     private var animatable: Animatable? = null
 

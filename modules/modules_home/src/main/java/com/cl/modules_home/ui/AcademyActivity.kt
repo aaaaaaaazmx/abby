@@ -5,7 +5,7 @@ import android.content.Intent
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bbgo.module_home.databinding.HomeAcademyActivityBinding
+import com.cl.modules_home.databinding.HomeAcademyActivityBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AcademyListData
 import com.cl.common_base.ext.logI

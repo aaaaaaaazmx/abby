@@ -2,8 +2,8 @@ package com.cl.modules_home.adapter
 
 import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeJoinItemBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeJoinItemBinding
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.modules_home.request.GrowSpaceData

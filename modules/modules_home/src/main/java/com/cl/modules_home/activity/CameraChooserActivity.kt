@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeCameraChooserBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeCameraChooserBinding
 import com.bumptech.glide.Glide
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.video.GSYPlayVideoActivity
@@ -214,7 +214,7 @@ class ImageAdapter(directoryPath: String) : RecyclerView.Adapter<ImageAdapter.Im
                     imagePaths.toList(),
                     OnSrcViewUpdateListener { _, _ -> },
                     SmartGlideImageLoader()
-                )
+                ).isShowSaveButton(false)
                 .show()
         }
     }

@@ -10,8 +10,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.bean.EnvironmentInfoData
 import com.cl.modules_home.adapter.HomeEnvirPopAdapter
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeEnvlrPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeEnvlrPopBinding
 import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.bean.UpDeviceInfoReq

@@ -388,6 +388,10 @@ object Constants {
         const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
         const val KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW = "d966091a08c048db962b710212eb223d"
 
+        // 去拍照界面
+        // KEY_FIXED_TASK_ID
+        const val KEY_FIXED_ID_GO_TO_CAMERA = "go_to_camera"
+
 
         // 提前解锁周期
         const val KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD = "dc2d55199a45b60fd324d6c4c75de0e3"

@@ -15,6 +15,7 @@ import com.cl.modules_my.request.AutomationTypeBean
 import com.cl.modules_my.request.DeviceDetailsBean
 import com.cl.common_base.bean.DigitalAsset
 import com.cl.common_base.bean.DigitalAssetData
+import com.cl.common_base.bean.ConversationsBean
 import com.cl.modules_my.request.ExchangeInfoBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
@@ -306,6 +307,10 @@ class MyRemoteRepository @Inject constructor() {
 
     fun exchangeGiftVoucher(discountCode: String): Flow<HttpResult<BaseBean>> {
         return service.exchangeGiftVoucher(discountCode)
+    }
+
+    fun conversations(taskNo: String? = null, textId: String? = null): Flow<HttpResult<ConversationsBean>> {
+        return service.conversations(taskNo, textId)
     }
 
 }

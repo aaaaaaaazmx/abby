@@ -26,11 +26,17 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
+    }
+
+
+    hilt {
+        enableExperimentalClasspathAggregation = true
+        enableAggregatingTask = false
     }
 
     sourceSets {
@@ -49,6 +55,7 @@ android {
 }
 
 kapt {
+    correctErrorTypes = true // 这有助于更好地诊断错误
     arguments {
         arg("AROUTER_MODULE_NAME", project.name)
     }
@@ -56,7 +63,6 @@ kapt {
 }
 
 dependencies {
-    implementation("com.google.firebase:protolite-well-known-types:18.0.0")
     // 路由
     kapt(Deps.arouterKapt)
     implementation(project(mapOf("path" to ":common:common_base")))

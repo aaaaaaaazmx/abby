@@ -8,8 +8,8 @@ import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeOxyPopBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeOxyPopBinding
 import com.cl.common_base.adapter.OxygenCoinBillAdapter
 import com.cl.common_base.bean.AccountFlowingReq
 import com.cl.common_base.bean.Flowing

@@ -1,14 +1,17 @@
 package com.cl.abby.ui
 
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.drawable.AnimationDrawable
 import android.os.Build
 import androidx.annotation.RestrictTo
+import androidx.core.content.ContextCompat
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.abby.R
 import com.cl.abby.databinding.CustomSplashActivityBinding
@@ -251,6 +254,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
         })
     }
 
+    @SuppressLint("WrongConstant")
     override fun initData() {
         // 开启蓝牙广播
         val intentFilter = IntentFilter()
@@ -259,7 +263,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
         intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_OFF")
         intentFilter.addAction("android.bluetooth.BluetoothAdapter.STATE_ON")
-        registerReceiver(borad, intentFilter)
+        ContextCompat.registerReceiver(this@CustomSplashActivity, borad, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onPause() {

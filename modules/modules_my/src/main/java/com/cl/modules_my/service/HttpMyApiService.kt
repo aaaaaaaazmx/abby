@@ -23,6 +23,7 @@ import com.cl.common_base.bean.DigitalAsset
 import com.cl.common_base.bean.DigitalAssetData
 import com.cl.modules_my.request.ExchangeInfoBean
 import com.cl.common_base.bean.MessageConfigBean
+import com.cl.common_base.bean.ConversationsBean
 import com.cl.modules_my.request.ResetPwdReq
 import com.cl.modules_my.request.UpdateSubportReq
 import com.cl.modules_my.request.VoucherBean
@@ -513,4 +514,9 @@ interface HttpMyApiService {
      */
     @POST("abby/userMessage/messageConfigList")
     fun messageConfigList() : Flow<HttpResult<MessageConfigBean>>
+
+    // 开启主动发话服务
+    @FormUrlEncoded
+    @POST("abby/plant/conversations")
+    fun conversations(@Field("taskNo")taskNo: String? = null, @Field("textId")textId: String? = null): Flow<HttpResult<ConversationsBean>>
 }

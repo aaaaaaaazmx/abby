@@ -18,11 +18,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
 
     viewBinding.isEnabled = true
@@ -33,10 +33,17 @@ android {
             dirs("libs")
         }
     }*/
+
+    hilt {
+        enableExperimentalClasspathAggregation = true
+        enableAggregatingTask = false
+    }
 }
 
 
 kapt {
+    correctErrorTypes = true // 这有助于更好地诊断错误
+    generateStubs = true
     arguments {
         arg("AROUTER_MODULE_NAME", project.name)
     }
@@ -106,7 +113,7 @@ dependencies {
     api(Deps.firBaseMessage)
     api(Deps.fcm)
     api(Deps.jpushGoogle)
-    api(Deps.jPushCodeGoogle)
+    api("com.google.firebase:protolite-well-known-types:18.0.0")
     // Import the BoM for the Firebase platform
     api(platform("com.google.firebase:firebase-bom:30.5.0"))
     api("com.google.firebase:firebase-auth-ktx")
@@ -117,7 +124,7 @@ dependencies {
     // 启动
     api("androidx.core:core-splashscreen:1.0.0-beta02")
     // bugly
-    api("com.tencent.bugly:crashreport:latest.release")
+    api(Deps.bugly)
     // todo 添加第三方依赖的时候，一定要注意不混淆下面依赖的类！！！！！！！ 不然正式环境会找不到混淆的类！
     api(project(mapOf("path" to ":common:BarcodeScanning")))
     /*api(project(mapOf("path" to ":common:kefu-easeui")))*/
@@ -168,4 +175,6 @@ dependencies {
     api("com.github.iielse:switchbutton:1.0.4")
     // workManager
     api(Deps.workManager)
+    // multidex 需要适配bugly
+    // api(Deps.multidex)
 }

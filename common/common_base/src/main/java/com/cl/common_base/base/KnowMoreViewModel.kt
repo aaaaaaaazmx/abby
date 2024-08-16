@@ -53,6 +53,40 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
         parseObject
     }
 
+    // 会话ID
+    private val _conversationId = MutableLiveData<Resource<ConversationsBean>>()
+    val conversationId: LiveData<Resource<ConversationsBean>> = _conversationId
+    fun conversations(taskNo: String? = null, textId: String? = null) {
+        viewModelScope.launch {
+            service.conversations(taskNo, textId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _conversationId.value = it
+                }
+        }
+    }
+
     /**
      * 富文本图文图文接口、所用东西都是从接口拉取
      */

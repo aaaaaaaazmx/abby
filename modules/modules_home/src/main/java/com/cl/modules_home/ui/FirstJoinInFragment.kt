@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SnapHelper
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
-import com.bbgo.module_home.R
-import com.bbgo.module_home.databinding.HomeBinding
-import com.bbgo.module_home.databinding.HomeFirstJoinFragmentBinding
+import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomeBinding
+import com.cl.modules_home.databinding.HomeFirstJoinFragmentBinding
 import com.cl.common_base.base.BaseFragment
 import com.cl.common_base.bean.LiveDataDeviceInfoBean
 import com.cl.common_base.constants.Constants
