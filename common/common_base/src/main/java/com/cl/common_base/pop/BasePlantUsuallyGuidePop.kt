@@ -305,7 +305,7 @@ class BasePlantUsuallyGuidePop(
                                     (view as? ImageView),
                                     picture,
                                     SmartGlideImageLoader()
-                                )
+                                ).isShowSaveButton(false)
                                 .show()
                         }
                     }

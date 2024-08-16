@@ -214,7 +214,7 @@ class ImageAdapter(directoryPath: String) : RecyclerView.Adapter<ImageAdapter.Im
                     imagePaths.toList(),
                     OnSrcViewUpdateListener { _, _ -> },
                     SmartGlideImageLoader()
-                )
+                ).isShowSaveButton(false)
                 .show()
         }
     }

@@ -34,6 +34,7 @@ import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.ChoosePicBean
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.ImageUrl
+import com.cl.common_base.bean.JumpTypeBean
 import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.constants.Constants
@@ -52,6 +53,7 @@ import com.cl.common_base.pop.CustomLoadingPopupView
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
+import com.cl.common_base.util.json.GSON
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
@@ -788,6 +790,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 如果是连续解锁任务包到最后一个任务，完成之后就直接跳转到日历界面
                     if (isContinueUnlock) {
+                        // 判断当前是否还有最后一个任务，并且是弹窗任务
+                        if (taskIdList.size == 1) {
+                            if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP) {
+                                jumpToPop(taskIdList)
+                                return@success
+                            }
+                        }
                         // 跳转到日历界面
                         ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
                         return@success
@@ -874,8 +883,16 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
 
                     R.id.rl_ono_on_one -> {
-                        // 发起会话
-                        mViewModel.conversations(taskNo = snoozeNo, textId = mViewModel.richText.value?.data?.txtId)
+                        // 判断当前是否是vip
+                        if (mViewModel.userInfo?.isVip == 1) {
+                            // 发起会话
+                            mViewModel.conversations(taskNo = snoozeNo, textId = mViewModel.richText.value?.data?.txtId)
+                        } else {
+                            // 跳转到购买链接
+                            val intent = Intent(context, WebActivity::class.java)
+                            intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/app-subscription-plan")
+                            context.startActivity(intent)
+                        }
                     }
 
                     R.id.input_delete -> {
@@ -888,7 +905,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     R.id.iv_pic -> { // 弹出图片
                         XPopup.Builder(context).asImageViewer(
                             (view as? ImageView), bean.value?.url, SmartGlideImageLoader()
-                        ).show()
+                        ).isShowSaveButton(false).show()
                     }
 
                     // 跳转HTML
@@ -1038,6 +1055,38 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         if (activityResult.resultCode == Activity.RESULT_OK) { // 刷新任务
             // 跳转到日历界面
             ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+        }
+    }
+
+    private fun jumpToPop(taskData: MutableList<CalendarData.TaskList.SubTaskList>?) {
+        if (taskData.isNullOrEmpty()) return
+        // 跳转弹窗
+        taskData.firstOrNull { it.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP }?.let { data ->
+            // 解析jumpJson这个json
+            val parseObject = GSON.parseObject(data.jumpJson, JumpTypeBean::class.java)
+            // 如果是会员
+            val isVip = parseObject?.subscribe == true
+            xpopup(this@BasePopActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@BasePopActivity, content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
+                    cancelText = "No,thanks", confirmText = if (isVip) "Yes" else "Subscribe Now", onConfirmAction = {
+                        if (isVip) {
+                            // 跳转到日历界面，然后在发起会话。
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).withString(CalendarData.KEY_TASK_NO, data.taskNo).navigation(this@BasePopActivity)
+                        } else {
+                            //  跳转订阅网站
+                            val intent = Intent(this@BasePopActivity, WebActivity::class.java)
+                            intent.putExtra(WebActivity.KEY_WEB_URL, parseObject?.subscribeNow)
+                            startActivity(intent)
+                        }
+                    }, onCancelAction = {
+                        // 完成任务
+                        // 跳转到日历界面
+                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
+                    }
+                )).show()
+            }
         }
     }
 

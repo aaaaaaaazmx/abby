@@ -619,7 +619,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                             picList.toList(),
                             OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
-                        )
+                        ).isShowSaveButton(false)
                         .show()
                 }
             }

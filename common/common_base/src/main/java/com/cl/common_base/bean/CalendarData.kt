@@ -110,5 +110,8 @@ data class CalendarData(
         const val KEY_JUMP_TYPE_TO_WATER = "drain_water"
         // 需要注意的是，taskNo- 当任务也就是日历界面pop_up交互时传 taskNo，也就是富文本界面textId-当页面交互时传两个值都需要传taskNo和textId
         const val KEY_JUMP_TYPE_POP_UP = "pop_up"
+
+        // taskNo
+        const val KEY_TASK_NO = "task_no"
     }
 }

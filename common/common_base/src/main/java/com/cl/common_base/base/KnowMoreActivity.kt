@@ -828,7 +828,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                 (view as? ImageView),
                                 bean.value?.url,
                                 SmartGlideImageLoader()
-                            )
+                            ).isShowSaveButton(false)
                             .show()
                     }
 

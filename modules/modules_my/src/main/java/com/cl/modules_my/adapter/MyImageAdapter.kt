@@ -42,7 +42,7 @@ class MyImageAdapter(val imageUrls: List<Int>, val context: Context) : BannerAda
                     imageUrls.toList(),
                     OnSrcViewUpdateListener { _, _ -> },
                     SmartGlideImageLoader()
-                )
+                ).isShowSaveButton(false)
                 .show()
         }
     }

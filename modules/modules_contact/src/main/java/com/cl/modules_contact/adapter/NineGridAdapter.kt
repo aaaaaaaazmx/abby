@@ -69,7 +69,7 @@ class NineGridAdapter(
                             urlList.toList(),
                             OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
-                        )
+                        ).isShowSaveButton(false)
                         .show()
                 }
             }
@@ -135,7 +135,7 @@ class NineGridAdapter(
                             urlList.toList(),
                             OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
-                        )
+                        ).isShowSaveButton(false)
                         .show()
                 }
             }

@@ -88,7 +88,7 @@ class LearnIdGuidePop(
                                     (view as? ImageView),
                                     content,
                                     SmartGlideImageLoader()
-                                )
+                                ).isShowSaveButton(false)
                                 .show()
                         }
                     }

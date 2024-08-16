@@ -830,7 +830,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                 list,
                 OnSrcViewUpdateListener { _, _ -> },
                 SmartGlideImageLoader()
-            )
+            ).isShowSaveButton(false)
             .show()
     }
 

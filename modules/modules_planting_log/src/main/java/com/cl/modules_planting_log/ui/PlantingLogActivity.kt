@@ -831,7 +831,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                             picList.toList(),
                             OnSrcViewUpdateListener { _, _ -> },
                             SmartGlideImageLoader()
-                        )
+                        ).isShowSaveButton(false)
                         .show()
                 }
             }

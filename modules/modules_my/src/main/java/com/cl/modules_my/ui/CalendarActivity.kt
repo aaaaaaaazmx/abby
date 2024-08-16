@@ -59,7 +59,7 @@ import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.adapter.TaskListAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
-import com.cl.modules_my.request.JumpTypeBean
+import com.cl.common_base.bean.JumpTypeBean
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.joketng.timelinestepview.LayoutType
@@ -99,6 +99,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        // 用来发起会话的, 主要是用来执行任务包的最后一个
+        if (!intent?.getStringExtra(CalendarData.KEY_TASK_NO).isNullOrEmpty()) {
+            mViewMode.conversations(intent?.getStringExtra(CalendarData.KEY_TASK_NO))
+            mViewMode.refreshTask()
+            return
+        }
         // 刷新任务
         mViewMode.refreshTask()
         mViewMode.checkPlant()
