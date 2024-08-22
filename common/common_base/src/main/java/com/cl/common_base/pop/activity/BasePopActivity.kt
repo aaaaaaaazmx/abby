@@ -230,6 +230,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         mViewModel.intoPlantBasket()
                     }
 
+                    // 土培种植前检查
+                    Constants.Fixed.KEY_FIXED_ID_SOIL_TRANSPLANT_CLONE_CHECK -> {
+                        mViewModel.startRunning(botanyId = "", goon = false)
+                    }
+
                     // 种植前检查
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK -> {
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
