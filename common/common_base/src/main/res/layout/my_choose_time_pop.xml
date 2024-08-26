@@ -140,11 +140,11 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/create_state_button"
-            android:text="Confirm"
+            android:text="@string/my_confirm"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text="Confirm" />
+            tools:text="@string/my_confirm" />
 
     </LinearLayout>
 </layout>

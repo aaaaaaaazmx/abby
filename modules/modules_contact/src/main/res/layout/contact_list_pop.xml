@@ -88,7 +88,7 @@
             android:layout_marginBottom="30dp"
             android:background="@drawable/create_state_button"
             android:enabled="true"
-            android:text="Confirm"
+            android:text="@string/my_confirm"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp" />

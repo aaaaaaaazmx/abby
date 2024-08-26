@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cl.common_base.BaseApplication;
 import com.cl.modules_home.R;
 import com.cl.common_base.widget.toast.ToastUtil;
 
@@ -99,7 +100,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // Add click listener to smoothly scroll to clicked item
             holder.itemView.setOnClickListener(v -> {
                 if (!shouldDisableClick) {
-                    ToastUtil.shortShow("Please stop the current mode first");
+                    ToastUtil.shortShow(BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1415));
                     return;
                 }
                 recyclerView.smoothScrollToPosition(position);

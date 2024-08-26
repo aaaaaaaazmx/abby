@@ -64,7 +64,7 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
         binding.rvList.adapter = adapter
         initBle()
 
-        binding.title.setRightButtonText("Refresh").setRightClickListener {
+        binding.title.setRightButtonText(getString(com.cl.common_base.R.string.string_1401)).setRightClickListener {
             BleManager.get().stopScan()
             checkPermissionAndStartScan()
         }

@@ -211,7 +211,7 @@ class HomeEnvlrPop(
                                             id = item.articleId
                                         )
                                     },
-                                    confirmText = "Detail",
+                                    confirmText = context.getString(com.cl.common_base.R.string.string_1398),
                                     content = item.articleDetails,
                                 )
                             ).show()
@@ -243,12 +243,12 @@ class HomeEnvlrPop(
                                 .asCustom(
                                     BaseCenterPop(
                                         context,
-                                        content = "In very rare case, the light is not running on schedule due to the connection issue, if you believe your lighting schedule is not correct, please click refresh.\n" +
+                                        content = context.getString(com.cl.common_base.R.string.string_1399) +
                                                 "\n" +
-                                                "Note: you can only refresh once per day.",
+                                                context.getString(com.cl.common_base.R.string.string_1400),
                                         isShowCancelButton = true,
-                                        cancelText = "Cancel",
-                                        confirmText = "Refresh",
+                                        cancelText = context.getString(com.cl.common_base.R.string.my_cancel),
+                                        confirmText = context.getString(com.cl.common_base.R.string.string_1401),
                                         onConfirmAction = {
                                             // 刷新回调、并且记录当前时间。
                                             lifecycleScope.launch {
@@ -266,9 +266,9 @@ class HomeEnvlrPop(
                                 .asCustom(
                                     BaseCenterPop(
                                         context,
-                                        content = "you can only refresh once per day.",
+                                        content = context.getString(com.cl.common_base.R.string.string_1402),
                                         isShowCancelButton = false,
-                                        confirmText = "Confirm",
+                                        confirmText = context.getString(com.cl.common_base.R.string.my_confirm),
                                     )
                                 ).show()
                         }
@@ -310,7 +310,7 @@ class HomeEnvlrPop(
             xpopup(context) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(true)
-                asCustom(BaseCenterPop(context, content = "Whether to disable night mode", cancelText = context.getString(com.cl.common_base.R.string.string_173), confirmText = context.getString(com.cl.common_base.R.string.string_174), isShowCancelButton = true, onConfirmAction = {
+                asCustom(BaseCenterPop(context, content = context.getString(com.cl.common_base.R.string.string_1403), cancelText = context.getString(com.cl.common_base.R.string.string_173), confirmText = context.getString(com.cl.common_base.R.string.string_174), isShowCancelButton = true, onConfirmAction = {
                     lifecycleScope.launch {
                         // 调用接口更新后台夜间模式
                         upDeviceInfo(
@@ -474,7 +474,7 @@ class HomeEnvlrPop(
                     xpopup(context) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
-                        asCustom(BaseCenterPop(context, content = "Light schedule and intensity have been synced with the server. If you still believe there is an error, please contact 1-on-1 support.", isShowCancelButton = false, confirmText = context.getString(
+                        asCustom(BaseCenterPop(context, content = context.getString(com.cl.common_base.R.string.string_1406), isShowCancelButton = false, confirmText = context.getString(
                             com.cl.common_base.R.string.string_10))).show()
                     }
                 }

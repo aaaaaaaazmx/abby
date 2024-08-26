@@ -1705,7 +1705,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 if (this == "TIME-LAPSE" || this == "PHOTO") {
                     this@CameraActivity.finish()
                 } else {
-                    com.cl.common_base.widget.toast.ToastUtil.shortShow("Please stop the current mode first")
+                    com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1415))
                 }
             } else {
                 this@CameraActivity.finish()

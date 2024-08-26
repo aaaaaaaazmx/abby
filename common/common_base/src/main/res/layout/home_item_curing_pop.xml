@@ -44,7 +44,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/curing_box"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="At least 3 gallons of pure water" />
+                    tools:text="@string/string_1413" />
 
                 <CheckBox
                     android:id="@+id/curing_box"

@@ -76,7 +76,7 @@ class EnvAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                                 id = item.articleId
                             )
                         },
-                        confirmText = "Detail",
+                        confirmText = context.getString(com.cl.common_base.R.string.string_1398),
                         content = item.articleDetails,
                     )
                 ).show()

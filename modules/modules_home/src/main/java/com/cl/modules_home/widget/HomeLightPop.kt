@@ -129,11 +129,11 @@ class HomeLightPop(
                 val endTime = tvEnd.text.toString()
 
                 if (startTime.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the light start value.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1418))
                     return@setOnClickListener
                 }
                 if (endTime.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the light end value.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1419))
                     return@setOnClickListener
                 }
 

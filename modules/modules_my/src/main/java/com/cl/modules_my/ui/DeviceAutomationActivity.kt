@@ -370,8 +370,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     .asCustom(
                         BaseCenterPop(this@DeviceAutomationActivity,
                             content = "Adding an automation will turn off the default smart profile. Are you sure you want to proceed?",
-                            cancelText = "Cancel",
-                            confirmText = "Confirm",
+                            cancelText = getString(R.string.my_cancel),
+                            confirmText = getString(R.string.my_confirm),
                             onConfirmAction = {
                                 // 先关闭默认的
                                 val req = OpenAutomationReq(

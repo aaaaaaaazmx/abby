@@ -701,7 +701,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     // 跳转到InterCome文章详情里面去
                                     InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = calendarData.articleId)
                                 },
-                                confirmText = "Detail",
+                                confirmText = getString(com.cl.common_base.R.string.string_1398),
                                 content = calendarData.articleDetails,
                             )
                         ).show()
@@ -727,7 +727,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     // 跳转到InterCome文章详情里面去
                                     InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = calendarData.articleId)
                                 },
-                                confirmText = "Detail",
+                                confirmText = getString(com.cl.common_base.R.string.string_1398),
                                 content = calendarData.articleDetails,
                             )
                         ).show()
@@ -1179,7 +1179,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         // 跳转到InterCome文章详情里面去
                                         InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = listContent[position].articleId)
                                     },
-                                    confirmText = "Detail",
+                                    confirmText = getString(com.cl.common_base.R.string.string_1398),
                                     content = listContent[position].articleDetails,
                                 )
                             ).show()

@@ -157,29 +157,29 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
 
                 val turnValue = runCatching { turnTime.toInt() }.getOrDefault(0)
                 if (turnValue < 5 || turnValue > 30) {
-                    ToastUtil.shortShow("Please enter the every value between 5 and 30.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1428))
                     return@setOnClickListener
                 }
                 if (turnTime.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the turn on value.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1429))
                     return@setOnClickListener
                 }
                 val minsValue = runCatching { mins.toInt() }.getOrDefault(0)
                 if (minsValue < 10 || minsValue > 120) {
-                    ToastUtil.shortShow("Please enter the every value between 10 and 120.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1430))
                     return@setOnClickListener
                 }
 
                 if (mins.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the every value.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1431))
                     return@setOnClickListener
                 }
                 if (startTime.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the during start value.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1432))
                     return@setOnClickListener
                 }
                 if (endTime.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the during end value.")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1433))
                     return@setOnClickListener
                 }
 

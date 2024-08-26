@@ -26,7 +26,7 @@ class HomePlantTwoPop(
     override fun beforeShow() {
         super.beforeShow()
         val isF = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-        binding?.tvAddWater?.text = if (!isF) "At least 3 gallons of pure water"  else "At least 12L of pure water"
+        binding?.tvAddWater?.text = if (!isF) context.getString(com.cl.common_base.R.string.string_1413)  else context.getString(com.cl.common_base.R.string.string_1414)
     }
 
     private var binding: HomePlantTwoPopBinding? = null

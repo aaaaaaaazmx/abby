@@ -57,7 +57,7 @@
             android:layout_marginBottom="30dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:background="@drawable/create_state_button"
-            android:text="Confirm"
+            android:text="@string/my_confirm"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"

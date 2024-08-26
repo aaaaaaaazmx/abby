@@ -34,13 +34,13 @@ class GerminationCountdownPop(
             lifecycleOwner = this@GerminationCountdownPop
             tVHtml.text = buildSpannedString {
                 /*Check for a tap root in 1 day(s) 23 hrs... Lights should be off at this stage*/
-                bold { append("Check for a tap root in") }
+                bold { append(context.getString(com.cl.common_base.R.string.string_1420)) }
                 appendLine()
                 color(ContextCompat.getColor(context, com.cl.common_base.R.color.textRed)) {
                     bold { append("${DateHelper.formatTime(plantInfoData?.germinationTime?.toLong()?.div(1000) ?: 0L, "dd")} day(s) ${DateHelper.formatTime(plantInfoData?.germinationTime?.toLong()?.div(1000) ?: 0L, "HH")} hrs..." ) }
                 }
                 appendLine()
-                bold { append("Lights should be off at this stage") }
+                bold { append(context.getString(com.cl.common_base.R.string.string_1422)) }
             }
             btnSkip.setOnClickListener {
                 onSkipAction.invoke()

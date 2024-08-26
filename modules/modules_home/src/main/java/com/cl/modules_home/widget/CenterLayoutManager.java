@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cl.common_base.BaseApplication;
 import com.cl.common_base.widget.toast.ToastUtil;
 
 
@@ -27,7 +28,7 @@ public class CenterLayoutManager extends LinearLayoutManager {
     @Override
     public boolean canScrollHorizontally() {
         if (!isScrollEnabled) {
-            ToastUtil.shortShow("Please stop the current mode first");
+            ToastUtil.shortShow(BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1415));
         }
         return isScrollEnabled && super.canScrollHorizontally();
     }
