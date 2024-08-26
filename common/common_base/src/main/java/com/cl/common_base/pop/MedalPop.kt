@@ -55,7 +55,7 @@ class MedalPop(context: Context, private val medalPopData: MedalPopData?) : Bott
                 ViewUtils.setVisible(bean.describe.isEmpty() || bean.popupType != "frame", tvAddAccessory)
                 ViewUtils.setVisible(bean.name.isEmpty() || bean.popupType != "frame", tvAddAccessoryTitle)
                 tvAdd.setOnClickListener {
-                    if (tvAdd.text == "Remove") {
+                    if (tvAdd.text == context.getString(R.string.string_192)) {
                         when (bean.popupType) {
                             "frame" -> {
                                 lifecycleScope.launch {
@@ -113,10 +113,10 @@ class MedalPop(context: Context, private val medalPopData: MedalPopData?) : Bott
                 ToastUtil.show(it.errorMsg)
             }
             if (it is Resource.Success) {
-                if (binding?.tvAdd?.text == "Remove") {
-                    binding?.tvAdd?.text = "Use"
+                if (binding?.tvAdd?.text == context.getString(R.string.string_192)) {
+                    binding?.tvAdd?.text = context.getString(R.string.string_194)
                 } else {
-                    binding?.tvAdd?.text = "Remove"
+                    binding?.tvAdd?.text = context.getString(R.string.string_192)
                 }
                 dismiss()
             }
@@ -147,10 +147,10 @@ class MedalPop(context: Context, private val medalPopData: MedalPopData?) : Bott
                 ToastUtil.show(it.errorMsg)
             }
             if (it is Resource.Success) {
-                if (binding?.tvAdd?.text == "Remove") {
-                    binding?.tvAdd?.text = "Use"
+                if (binding?.tvAdd?.text == context.getString(R.string.string_192)) {
+                    binding?.tvAdd?.text = context.getString(R.string.string_194)
                 } else {
-                    binding?.tvAdd?.text = "Remove"
+                    binding?.tvAdd?.text = context.getString(R.string.string_192)
                 }
                 dismiss()
             }

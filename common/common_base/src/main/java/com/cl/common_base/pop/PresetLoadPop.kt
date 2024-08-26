@@ -54,7 +54,7 @@ class PresetLoadPop(
                 // load 是调用dp接口
                 // 这个让数据保持一直，还没做好。需要和发送dp点给涂鸦设备。
                 if (index == -1) {
-                    ToastUtil.shortShow("Please select the preset")
+                    ToastUtil.shortShow(context.getString(R.string.string_195))
                     return@setSafeOnClickListener
                 }
                 onNextAction?.invoke(listPreset?.get(index))
@@ -67,7 +67,7 @@ class PresetLoadPop(
                         dismissOnTouchOutside(false)
                         isDestroyOnDismiss(false)
                         asCustom(
-                            BaseCenterPop(context, content = "Are you sure you want to delete this preset?", onConfirmAction = {
+                            BaseCenterPop(context, content = context.getString(R.string.string_196), onConfirmAction = {
                                 if (index == -1) return@BaseCenterPop
                                 lifecycleScope.launch {
                                     deletePresets(listPreset?.get(index)?.id ?: 0, index)
@@ -82,7 +82,7 @@ class PresetLoadPop(
                 clEmailInput.setSafeOnClickListener(lifecycleScope) {
                     val stringList = listPreset?.map { it.name }?.toMutableList()
                     if (stringList?.isEmpty() == true) {
-                        ToastUtil.shortShow("No preset")
+                        ToastUtil.shortShow(context.getString(R.string.string_197))
                         return@setSafeOnClickListener
                     }
                     // 显示已经save的配置
@@ -91,7 +91,7 @@ class PresetLoadPop(
                         dismissOnTouchOutside(false)
                         asCustom(
                             BaseStringPickPop(context,
-                                title = "Preset",
+                                title = context.getString(R.string.string_198),
                                 listString = stringList,
                                 confirmAction = {
                                     index = it
@@ -136,8 +136,8 @@ class PresetLoadPop(
             if (it is Resource.Success) {
                 // Prefs.removeObject(listPreset?.get(index))
                 listPreset?.removeAt(index)
-                ToastUtil.shortShow("Delete successful")
-                binding?.etEmail?.text = "Select Preset"
+                ToastUtil.shortShow(context.getString(R.string.string_199))
+                binding?.etEmail?.text = context.getString(R.string.string_200)
                 binding?.etNote?.text = ""
                 this.index = -1
             }

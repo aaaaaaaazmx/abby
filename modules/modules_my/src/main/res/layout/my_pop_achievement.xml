@@ -117,7 +117,7 @@
             android:layout_marginTop="37dp"
             android:layout_marginBottom="40dp"
             android:gravity="center"
-            android:text="@{isSelect ? `Remove` : `Use`}"
+            android:text="@{isSelect ? @string/string_192 : @string/string_194}"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"

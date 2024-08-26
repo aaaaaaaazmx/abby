@@ -107,7 +107,7 @@
             android:layout_marginTop="57dp"
             android:layout_marginBottom="40dp"
             android:gravity="center"
-            android:text="Use"
+            android:text="@string/string_194"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -94,7 +94,7 @@ class BasePumpWaterPop(
                     context.theme
                 )
             }
-            binding?.tvAddClockTime?.text = "Click to start draining"
+            binding?.tvAddClockTime?.text = context.getString(R.string.string_201)
         }
     }
 
@@ -133,7 +133,7 @@ class BasePumpWaterPop(
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<BasePumpWaterPopBinding>(popupImplView)?.apply {
-            tvAddClockTime.text = "Click to start draining"
+            tvAddClockTime.text = context.getString(R.string.string_201)
             btnSuccess.setOnClickListener {
                 onSuccessAction?.invoke(if (isFirst) isFirst else btnSuccess.isChecked)
                 isFirst = false

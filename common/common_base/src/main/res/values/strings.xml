@@ -160,4 +160,16 @@
     <string name="string_188">Open the water tank  cover and add 12L of water.</string>
     <string name="string_189">Follower</string>
     <string name="string_190">Following</string>
+    <string name="string_192">Remove</string>
+    <string name="string_194">Use</string>
+    <string name="string_195">Please select the preset</string>
+    <string name="string_196">Are you sure you want to delete this preset?</string>
+    <string name="string_197">No preset</string>
+    <string name="string_198">Preset</string>
+    <string name="string_199">Delete successful</string>
+    <string name="string_200">Select Preset</string>
+    <string name="string_201">Click to start draining</string>
+
+
+
 </resources>
