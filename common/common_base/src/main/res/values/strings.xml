@@ -146,4 +146,9 @@
 
     <string name="string_7">Press to exit the program again</string>
     <string name="string_10">OK</string>
+    <string name="string_163">Prepare a bucket or bottle of at least 1 gallon</string>
+    <string name="string_164">Prepare a bucket or bottle of at least 4L</string>
+    <string name="string_165">turn on Night mode</string>
+    <string name="string_166">turn off Night mode</string>
+
 </resources>

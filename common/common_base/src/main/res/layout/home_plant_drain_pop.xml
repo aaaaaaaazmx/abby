@@ -37,7 +37,7 @@
             android:textColor="#161B19"
             android:textSize="15sp"
             android:textStyle="bold"
-            tools:text="Prepare a bucket or bottle of at least 1 gallon" />
+            tools:text="@string/string_163" />
 
         <ImageView
             android:id="@+id/iv_add"

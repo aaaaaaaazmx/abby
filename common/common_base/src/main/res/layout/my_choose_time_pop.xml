@@ -29,13 +29,13 @@
             android:id="@+id/ft_turn_on"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            app:itemTitle="turn on Night mode" />
+            app:itemTitle="@string/string_165" />
 
         <com.cl.common_base.widget.FeatureItemView
             android:id="@+id/ft_turn_off"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            app:itemTitle="turn off Night mode" />
+            app:itemTitle="@string/string_166" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_light"

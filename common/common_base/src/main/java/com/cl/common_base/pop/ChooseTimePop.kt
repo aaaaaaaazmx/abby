@@ -33,8 +33,8 @@ import java.time.temporal.ChronoUnit
  */
 class ChooseTimePop(
     context: Context,
-    var turnOnText: String? = "turn on Night mode",
-    var turnOffText: String? = "turn off Night mode",
+    var turnOnText: String? = context.getString(R.string.string_165),
+    var turnOffText: String? = context.getString(R.string.string_166),
     var isShowNightMode: Boolean = true,
     var turnOnHour: Int? = null,
     var turnOffHour: Int? = null,
@@ -72,8 +72,8 @@ class ChooseTimePop(
             lightIntensity?.toFloat()?.let { lightIntensitySeekbar.setProgress(it) }
             seekBarChang(lightIntensitySeekbar)
 
-            ftTurnOn.setItemTitle(turnOnText ?: "turn on Night mode")
-            ftTurnOff.setItemTitle(turnOffText ?: "turn off Night mode")
+            ftTurnOn.setItemTitle(turnOnText ?: context.getString(R.string.string_165))
+            ftTurnOff.setItemTitle(turnOffText ?: context.getString(R.string.string_166))
             ViewUtils.setVisible(isShowNightMode, tvNightModeTime)
 
             ftTurnOn.itemValue = turnOnHour?.let {

@@ -51,7 +51,7 @@ class HomePlantDrainPop(
         isShow?.let { ViewUtils.setVisible(it, binding?.tvSkipAddWater) }
         // 判断是否是英制
         val isFractional = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-        binding?.tvDec?.text = if (!isFractional) "Prepare a bucket or bottle of at least 1 gallon" else "Prepare a bucket or bottle of at least 4L"
+        binding?.tvDec?.text = if (!isFractional) context.getString(R.string.string_163) else context.getString(R.string.string_164)
     }
 
     override fun onCreate() {
