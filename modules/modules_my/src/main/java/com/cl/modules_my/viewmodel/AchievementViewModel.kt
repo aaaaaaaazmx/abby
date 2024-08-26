@@ -1,5 +1,6 @@
 package com.cl.modules_my.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,7 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.repository.MyRepository
 import com.cl.modules_my.request.AchievementBean
 import com.cl.modules_my.request.ShowAchievementReq
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,7 +42,7 @@ import java.util.logging.Level
 import javax.inject.Inject
 
 @ActivityRetainedScoped
-class AchievementViewModel  @Inject constructor(private val repository: MyRepository) :
+class AchievementViewModel  @Inject constructor(private val repository: MyRepository, @ApplicationContext private val context: Context) :
     ViewModel() {
 
     // 当前连接中的BleDevice
@@ -161,11 +163,11 @@ class AchievementViewModel  @Inject constructor(private val repository: MyReposi
             }
             onScanFail {
                 val msg: String = when (it) {
-                    is BleScanFailType.UnSupportBle -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1160)
-                    is BleScanFailType.NoBlePermission -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1161)
-                    is BleScanFailType.GPSDisable -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1483)
-                    is BleScanFailType.BleDisable -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1163)
-                    is BleScanFailType.AlReadyScanning -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1485)
+                    is BleScanFailType.UnSupportBle -> context.getString(com.cl.common_base.R.string.string_1160)
+                    is BleScanFailType.NoBlePermission -> context.getString(com.cl.common_base.R.string.string_1161)
+                    is BleScanFailType.GPSDisable -> context.getString(com.cl.common_base.R.string.string_1483)
+                    is BleScanFailType.BleDisable -> context.getString(com.cl.common_base.R.string.string_1163)
+                    is BleScanFailType.AlReadyScanning -> context.getString(com.cl.common_base.R.string.string_1485)
                     is BleScanFailType.ScanError -> {
                         "${it.throwable?.message}"
                     }

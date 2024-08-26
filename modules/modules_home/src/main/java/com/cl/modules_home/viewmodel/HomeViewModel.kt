@@ -1,5 +1,6 @@
 package com.cl.modules_home.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -35,6 +36,7 @@ import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
 import com.thingclips.smart.sdk.api.IGetOtaInfoCallback
 import com.thingclips.smart.sdk.api.IResultCallback
 import com.thingclips.smart.sdk.bean.DeviceBean
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -46,7 +48,7 @@ import kotlin.system.exitProcess
 
 
 @ActivityRetainedScoped
-class HomeViewModel @Inject constructor(private val repository: HomeRepository) : ViewModel() {
+class HomeViewModel @Inject constructor(private val repository: HomeRepository, @ApplicationContext private val context: Context) : ViewModel() {
     // 账号
     val account by lazy {
         Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
@@ -1997,12 +1999,12 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
 
     fun textCovert(): String {
         val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-        return if (isMetric) "Temperature (°C)" else "Temperature (°F)"
+        return if (isMetric) context.getString(com.cl.common_base.R.string.string_1326) else context.getString(com.cl.common_base.R.string.string_1327)
     }
 
     fun incCovert(): String {
         val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-        return if (isMetric) "Plant Height" else "Plant Height"
+        return if (isMetric) context.getString(com.cl.common_base.R.string.string_1328) else context.getString(com.cl.common_base.R.string.string_1328)
     }
 
     private val _loadFirst = MutableLiveData<Boolean>(false)
@@ -2293,7 +2295,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository) 
                         if (it.data == null) {
                             Resource.DataError(
                                 -1,
-                                "data is null"
+                                context.getString(com.cl.common_base.R.string.string_1331)
                             )
                         } else {
                             Resource.Success(it.data)

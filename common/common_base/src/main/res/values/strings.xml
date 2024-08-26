@@ -238,7 +238,7 @@
     <string name="string_1151">To set</string>
     <string name="string_1152">Cancel</string>
     <string name="string_1153">Allow</string>
-    <string name="string_1156">Granting Hey abby access to your phone&apos;s location will be used for device automation, Wi-Fi listings, and locating nearby devices&#8212;even when the app is closed or not in use.</string>
+    <string name="string_1156">Granting Hey abby access to your phone\'s location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.</string>
 
     <string name="string_1483">The device has not enabled GPS positioning.</string>
     <string name="string_1485">Scanning in progress.</string>
@@ -253,4 +253,8 @@
     <string name="string_1168">Connection abnormal.(%s)</string>
 
 
+    <string name="string_1326">Temperature (°C)</string>
+    <string name="string_1327">Temperature (°F)</string>
+    <string name="string_1328">Plant Height</string>
+    <string name="string_1331">data is null</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.cl.modules_my.viewmodel
 
 import android.bluetooth.BluetoothGattCharacteristic
+import android.content.Context
 import android.util.SparseArray
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -33,6 +34,7 @@ import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logD
 import com.cl.common_base.help.BleConnectHandler
 import com.cl.common_base.help.ConnectEvent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -52,7 +54,7 @@ import javax.inject.Inject
 import kotlin.experimental.xor
 
 @ActivityRetainedScoped
-class BlePairViewModel @Inject constructor(private val repository: MyRepository) :
+class BlePairViewModel @Inject constructor(private val repository: MyRepository, @ApplicationContext private val context: Context) :
     ViewModel() {
 
     // 当前连接中的BleDevice
@@ -173,11 +175,11 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository)
             }
             onScanFail {
                 val msg: String = when (it) {
-                    is BleScanFailType.UnSupportBle -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1160)
-                    is BleScanFailType.NoBlePermission -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1161)
-                    is BleScanFailType.GPSDisable -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1483)
-                    is BleScanFailType.BleDisable -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1163)
-                    is BleScanFailType.AlReadyScanning -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1485)
+                    is BleScanFailType.UnSupportBle -> context.getString(com.cl.common_base.R.string.string_1160)
+                    is BleScanFailType.NoBlePermission -> context.getString(com.cl.common_base.R.string.string_1161)
+                    is BleScanFailType.GPSDisable -> context.getString(com.cl.common_base.R.string.string_1483)
+                    is BleScanFailType.BleDisable -> context.getString(com.cl.common_base.R.string.string_1163)
+                    is BleScanFailType.AlReadyScanning -> context.getString(com.cl.common_base.R.string.string_1485)
                     is BleScanFailType.ScanError -> {
                         "${it.throwable?.message}"
                     }

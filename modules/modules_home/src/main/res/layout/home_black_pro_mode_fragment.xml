@@ -308,7 +308,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:layout_marginTop="5dp"
-                        tools:text="Plant Height "
+                        tools:text="@string/string_1328"
                         android:layout_centerHorizontal="true"
                         android:text='@{viewModel.incCovert()}'
                         android:textColor="#FDD875"
