@@ -151,3 +151,5 @@ inline fun <T1 : Any, T2 : Any, T3 : Any, T4 : Any, T5 : Any, R : Any> letMultip
 inline fun <T1 : Any, T2 : Any, T3 : Any, T4 : Any, R : Any> Any?.let(p1: T1?, p2: T2?, p3: T3?, p4: T4?, block: (Any, T1, T2, T3, T4) -> R?): R? {
     return if (this != null && p1 != null && p2 != null && p3 != null && p4 != null) block(this, p1, p2, p3, p4) else null
 }
+
+fun String.equalsIgnoreCase(other: String) = this.lowercase() == other.lowercase()

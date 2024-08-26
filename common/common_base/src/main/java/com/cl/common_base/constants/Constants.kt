@@ -212,6 +212,9 @@ object Constants {
 
         // 设备端给APP端下发的信息
         const val KEY_DEVICE_TO_APP = "key_device_to_app"
+
+        // 土培设备
+        const val KEY_DEVICE_TYPE_O1_SOIL = "O1_soil"
     }
 
     object DebugTest {
@@ -387,6 +390,8 @@ object Constants {
         const val KEY_FIXED_ID_TRANSPLANT_3 = "6b05ffbadee746e6979a314613df75b2"
         const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
         const val KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW = "d966091a08c048db962b710212eb223d"
+        // soil_transplant_clone_check
+        const val KEY_FIXED_ID_SOIL_TRANSPLANT_CLONE_CHECK = "soil_transplant_clone_check"
 
         // 去拍照界面
         // KEY_FIXED_TASK_ID
