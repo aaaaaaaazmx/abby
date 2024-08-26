@@ -9,6 +9,7 @@ import com.bhm.ble.callback.BleScanCallback
 import com.bhm.ble.data.BleScanFailType
 import com.bhm.ble.device.BleDevice
 import com.bhm.ble.utils.BleLogger
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AccessoryAddData
 import com.cl.common_base.bean.CharacteristicNode
@@ -160,11 +161,11 @@ class AchievementViewModel  @Inject constructor(private val repository: MyReposi
             }
             onScanFail {
                 val msg: String = when (it) {
-                    is BleScanFailType.UnSupportBle -> "The device does not support Bluetooth."
-                    is BleScanFailType.NoBlePermission -> "Insufficient permissions, please check."
-                    is BleScanFailType.GPSDisable -> "The device has not enabled GPS positioning."
-                    is BleScanFailType.BleDisable -> "Bluetooth is not turned on."
-                    is BleScanFailType.AlReadyScanning -> "Scanning in progress."
+                    is BleScanFailType.UnSupportBle -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1160)
+                    is BleScanFailType.NoBlePermission -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1161)
+                    is BleScanFailType.GPSDisable -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1483)
+                    is BleScanFailType.BleDisable -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1163)
+                    is BleScanFailType.AlReadyScanning -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1485)
                     is BleScanFailType.ScanError -> {
                         "${it.throwable?.message}"
                     }

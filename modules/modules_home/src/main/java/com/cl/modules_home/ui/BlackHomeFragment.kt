@@ -280,7 +280,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                                                     )
                                                 }
                                                 return@applyh*/
-                                                ToastUtil.shortShow("Connection error, try to delete device and pair again")
+                                                ToastUtil.shortShow(getString(R.string.string_631))
                                             }
                                             GSON.toJsonInBackground(this) {
                                                 Prefs.putStringAsync(

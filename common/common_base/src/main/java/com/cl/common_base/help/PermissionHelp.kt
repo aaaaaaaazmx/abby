@@ -68,9 +68,9 @@ class PermissionHelp {
                     // 或者点击肯定时,也会回调此方法
                     scope.showForwardToSettingsDialog(
                         deniedList,
-                        "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
-                        "To set",
-                        "Cancel"
+                        activity.getString(com.cl.common_base.R.string.string_1150),
+                        activity.getString(com.cl.common_base.R.string.string_1151),
+                        activity.getString(com.cl.common_base.R.string.string_1152)
                     )
                 }
                 .explainReasonBeforeRequest()
@@ -78,9 +78,9 @@ class PermissionHelp {
                     // 用户单次拒绝权限时,回调
                     scope.showRequestReasonDialog(
                         deniedList,
-                        "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
-                        "Allow",
-                        "Cancel"
+                        activity.getString(com.cl.common_base.R.string.string_1150),
+                        activity.getString(com.cl.common_base.R.string.string_1153),
+                        activity.getString(com.cl.common_base.R.string.string_1152)
                     )
                 }
                 .request { allGranted, grantedList, deniedList ->
@@ -149,9 +149,9 @@ class PermissionHelp {
                 // 或者点击肯定时,也会回调此方法
                 scope.showForwardToSettingsDialog(
                     deniedList,
-                    "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
-                    "To set",
-                    "Cancel"
+                    activity.getString(com.cl.common_base.R.string.string_1156),
+                    activity.getString(com.cl.common_base.R.string.string_1151),
+                    activity.getString(com.cl.common_base.R.string.string_1152)
                 )
             }
             .explainReasonBeforeRequest()
@@ -159,9 +159,9 @@ class PermissionHelp {
                 // 用户单次拒绝权限时,回调
                 scope.showRequestReasonDialog(
                     deniedList,
-                    "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
-                    "Allow",
-                    "Cancel"
+                    activity.getString(com.cl.common_base.R.string.string_1156),
+                    activity.getString(com.cl.common_base.R.string.string_1153),
+                    activity.getString(com.cl.common_base.R.string.string_1152)
                 )
             }
             .request { allGranted, grantedList, deniedList ->
@@ -274,9 +274,9 @@ class PermissionHelp {
                         // 或者点击肯定时,也会回调此方法
                         scope.showForwardToSettingsDialog(
                             deniedList,
-                            "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
-                            "To set",
-                            "Cancel"
+                            activity.getString(com.cl.common_base.R.string.string_1150),
+                            activity.getString(com.cl.common_base.R.string.string_1151),
+                            activity.getString(com.cl.common_base.R.string.string_1152)
                         )
                     }
                     .explainReasonBeforeRequest()
@@ -284,9 +284,9 @@ class PermissionHelp {
                         // 用户单次拒绝权限时,回调
                         scope.showRequestReasonDialog(
                             deniedList,
-                            "Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions",
-                            "Allow",
-                            "Cancel"
+                            activity.getString(com.cl.common_base.R.string.string_1150),
+                            activity.getString(com.cl.common_base.R.string.string_1153),
+                            activity.getString(com.cl.common_base.R.string.string_1152)
                         )
                     }
                     .request { allGranted, grantedList, deniedList ->
@@ -354,9 +354,9 @@ class PermissionHelp {
                         // 或者点击肯定时,也会回调此方法
                         scope.showForwardToSettingsDialog(
                             deniedList,
-                            "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
-                            "To set",
-                            "Cancel"
+                            activity.getString(com.cl.common_base.R.string.string_1156),
+                            activity.getString(com.cl.common_base.R.string.string_1151),
+                            activity.getString(com.cl.common_base.R.string.string_1152)
                         )
                     }
                     .explainReasonBeforeRequest()
@@ -364,9 +364,9 @@ class PermissionHelp {
                         // 用户单次拒绝权限时,回调
                         scope.showRequestReasonDialog(
                             deniedList,
-                            "Granting Hey abby access to your phone's location will be used for device automation, Wi-Fi listings, and locating nearby devices—even when the app is closed or not in use.",
-                            "Allow",
-                            "Cancel"
+                            activity.getString(com.cl.common_base.R.string.string_1156),
+                            activity.getString(com.cl.common_base.R.string.string_1153),
+                            activity.getString(com.cl.common_base.R.string.string_1152)
                         )
                     }
                     .request { allGranted, grantedList, deniedList ->

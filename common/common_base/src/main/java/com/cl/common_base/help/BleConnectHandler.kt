@@ -5,6 +5,7 @@ import com.bhm.ble.callback.BleConnectCallback
 import com.bhm.ble.data.BleConnectFailType
 import com.bhm.ble.device.BleDevice
 import com.bhm.ble.utils.BleLogger
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.ext.logI
 import com.cl.common_base.widget.toast.ToastUtil
 import kotlinx.coroutines.CoroutineScope
@@ -27,14 +28,14 @@ class BleConnectHandler(private val coroutineScope: CoroutineScope) {
 
     private fun onConnectFail(bleDevice: BleDevice, connectFailType: BleConnectFailType) {
         val msg: String = when (connectFailType) {
-            is BleConnectFailType.UnSupportBle -> "The device does not support Bluetooth."
-            is BleConnectFailType.NoBlePermission -> "Insufficient permissions, please check."
-            is BleConnectFailType.NullableBluetoothDevice -> "The device is empty."
-            is BleConnectFailType.BleDisable -> "Bluetooth not turned on."
-            is BleConnectFailType.ConnectException -> "Connection abnormal.(${connectFailType.throwable.message})"
-            is BleConnectFailType.ConnectTimeOut -> "Connection timed out."
-            is BleConnectFailType.AlreadyConnecting -> "Connecting"
-            is BleConnectFailType.ScanNullableBluetoothDevice -> "Connection failed, scan data is empty."
+            is BleConnectFailType.UnSupportBle -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1160)
+            is BleConnectFailType.NoBlePermission -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1161)
+            is BleConnectFailType.NullableBluetoothDevice -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1162)
+            is BleConnectFailType.BleDisable -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1163)
+            is BleConnectFailType.ConnectException -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1168, connectFailType.throwable.message)
+            is BleConnectFailType.ConnectTimeOut -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1164)
+            is BleConnectFailType.AlreadyConnecting -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1165)
+            is BleConnectFailType.ScanNullableBluetoothDevice -> BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1166)
         }
         BleLogger.e(msg)
         logI("BLe -> msg: $msg")
@@ -49,7 +50,7 @@ class BleConnectHandler(private val coroutineScope: CoroutineScope) {
 
     private fun onDisConnected(isActiveDisConnected: Boolean, bleDevice: BleDevice,
                                gatt: BluetoothGatt?, status: Int) {
-        ToastUtil.shortShow("Disconnect")
+        ToastUtil.shortShow(BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1167))
         publishEvent(ConnectEvent.ConnectDisConnected(isActiveDisConnected, bleDevice = bleDevice, gatt, status = status))
     }
 

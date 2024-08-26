@@ -909,7 +909,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
     }
 
     private fun switchTag(tags: List<String>, currentTag: String): String {
-        val switchingTags = if (mViewMode.userAssets.value?.data?.basicInfo?.following == 0)  listOf("New", "Hot", "Sync", "Harvesting") else listOf("New", "Hot", "Sync", context?.getString(com.cl.common_base.R.string.string_190), "Harvesting")
+        val switchingTags = if (mViewMode.userAssets.value?.data?.basicInfo?.following == 0)  listOf("New", "Hot", "Sync", "Harvesting") else listOf("New", "Hot", "Sync", getString(com.cl.common_base.R.string.string_190), "Harvesting")
 
         if (switchingTags.size <= 1) {
             return currentTag // 如果列表中只有一个标签，返回当前标签

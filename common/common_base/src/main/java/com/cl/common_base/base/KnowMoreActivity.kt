@@ -190,7 +190,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 asCustom(
                     BaseCenterPop(
                         this@KnowMoreActivity,
-                        content = "Are you sure you want to delete it?",
+                        content = getString(R.string.string_1142),
                         isShowCancelButton = true,
                         cancelText = getString(com.cl.common_base.R.string.string_173),
                         confirmText = getString(com.cl.common_base.R.string.string_174),
@@ -445,7 +445,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                 val selectedUsbId = adapter.selectedUsbId // Retrieve the selected USB ID (example: from SharedPreferences)
 
                                 if (selectedUsbId == null) {
-                                    ToastUtil.show("No usb selected")
+                                    ToastUtil.show(getString(R.string.string_1144))
                                 } else {
                                     logI("1232132: $selectedUsbId")
                                     // Perform accessory addition logic
@@ -455,7 +455,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                     }
                                 }
                             } else {
-                                ToastUtil.shortShow("No available usb port")
+                                ToastUtil.shortShow(getString(R.string.string_1145))
                             }
                         } else {
                             letMultiple(accessoryId, deviceId) { a, b ->
@@ -575,7 +575,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                                                         )
                                                     }
                                                     return@applyh*/
-                                                    ToastUtil.shortShow("Connection error, try to delete device and pair again")
+                                                    ToastUtil.shortShow(getString(R.string.string_631))
                                                 }
                                                 GSON.toJsonInBackground(this) {
                                                     Prefs.putStringAsync(

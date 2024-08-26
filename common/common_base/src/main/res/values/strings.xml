@@ -229,4 +229,28 @@
     <string name="string_291">Subscribe Now</string>
     <string name="string_299">hey abby</string>
 
+    <string name="string_631">Connection error, try to delete device and pair again</string>
+    <string name="string_1142">Are you sure you want to delete it?</string>
+    <string name="string_1144">No usb selected</string>
+    <string name="string_1145">No available usb port</string>
+
+    <string name="string_1150">Bluetooth connection requires you to enable both Bluetooth Scan and Bluetooth Connect permissions</string>
+    <string name="string_1151">To set</string>
+    <string name="string_1152">Cancel</string>
+    <string name="string_1153">Allow</string>
+    <string name="string_1156">Granting Hey abby access to your phone&apos;s location will be used for device automation, Wi-Fi listings, and locating nearby devices&#8212;even when the app is closed or not in use.</string>
+
+    <string name="string_1483">The device has not enabled GPS positioning.</string>
+    <string name="string_1485">Scanning in progress.</string>
+    <string name="string_1160">The device does not support Bluetooth.</string>
+    <string name="string_1161">Insufficient permissions, please check.</string>
+    <string name="string_1162">The device is empty.</string>
+    <string name="string_1163">Bluetooth not turned on.</string>
+    <string name="string_1164">Connection timed out.</string>
+    <string name="string_1165">Connecting</string>
+    <string name="string_1166">Connection failed, scan data is empty.</string>
+    <string name="string_1167">Disconnect</string>
+    <string name="string_1168">Connection abnormal.(%s)</string>
+
+
 </resources>
