@@ -48,8 +48,8 @@ class FirstJoinInFragment : BaseFragment<HomeFirstJoinFragmentBinding>() {
     private val adapter by lazy {
         FirstJoinAdapter(
             mutableListOf(
-                GrowSpaceData(name = "Hey abby Grow Box", 1),
-                GrowSpaceData(name = "Grow Tent", 2),
+                GrowSpaceData(name = getString(com.cl.common_base.R.string.string_1341), 1),
+                GrowSpaceData(name = getString(com.cl.common_base.R.string.string_1342), 2),
             )
         )
     }

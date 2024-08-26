@@ -25,7 +25,7 @@
             android:id="@+id/tv_calendar_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Click here to access your growing calendar and view upcoming tasks"
+            android:text="@string/string_1384"
             android:textSize="15sp" />
 
         <Button
@@ -44,7 +44,7 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text="Done" />
+            tools:text="@string/string_1393" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -179,7 +179,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                                         xpopup(it) {
                                             isDestroyOnDismiss(false)
                                             dismissOnTouchOutside(false)
-                                            asCustom(HomeFanBottonPop(it, title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.", tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
+                                            asCustom(HomeFanBottonPop(it, title = context.getString(com.cl.common_base.R.string.string_1354), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
                                             }, benOKAction = {})).show()
                                         }
                                     }

@@ -131,7 +131,7 @@
                     android:layout_marginTop="15dp"
                     android:background="@drawable/background_button_main_color_r100"
                     android:gravity="center"
-                    android:text="Learn More"
+                    android:text="@string/string_1391"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold"

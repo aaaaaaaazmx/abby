@@ -16,6 +16,7 @@ import com.cl.common_base.ext.temperatureConversionTwo
 import com.cl.common_base.pop.PlantIdListPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.R
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartLineDashStyleType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
@@ -131,7 +132,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
                     // EnhancedChartUtil().setupEnhancedLineChart(binding.chart1, data?.humidityList, "humidity", "Grow Chamber Humidity")
                     val dataTime = mviewmodel.getPlantData.value?.data?.humidityList?.map { it.dateTime.safeToLong().toDateString() }?.toList()
                     val yValue = mviewmodel.getPlantData.value?.data?.humidityList?.map { it.codeValue.safeToFloat() }?.toList()
-                    val setupChart = ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Humidity %", "#70D9FF")
+                    val setupChart = ChartUtils.setupChart(dataTime, yValue, getString(com.cl.common_base.R.string.string_1334), "#70D9FF")
                     binding.chart1.aa_drawChartWithChartOptions(setupChart)
 
                     // ph
@@ -139,7 +140,7 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
 
                     val dataTime1 = mviewmodel.getPlantData.value?.data?.phList?.map { it.dateTime.safeToLong().toDateStringPh() }?.toList()
                     val yValue1 = mviewmodel.getPlantData.value?.data?.phList?.map { it.codeValue.safeToFloat() }?.toList()
-                    binding.chart2.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime1, yValue1, "ph", "#4CD964"))
+                    binding.chart2.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime1, yValue1, getString(com.cl.common_base.R.string.string_1336), "#4CD964"))
 
 
                     binding.tvPlantName.text = data?.plantName

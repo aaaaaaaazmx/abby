@@ -1234,7 +1234,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 xpopup(it) {
                                     isDestroyOnDismiss(false)
                                     dismissOnTouchOutside(false)
-                                    asCustom(HomeFanBottonPop(it, title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.", tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
+                                    asCustom(HomeFanBottonPop(it, title = getString(com.cl.common_base.R.string.string_1354), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
                                     }, benOKAction = {})).show()
                                 }
                             }
@@ -1328,7 +1328,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         .asCustom(context?.let {
                             BaseCenterPop(
                                 it,
-                                content = "Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?",
+                                content = getString(com.cl.common_base.R.string.string_1355),
                                 cancelText = context?.getString(com.cl.common_base.R.string.string_173),
                                 confirmText = context?.getString(com.cl.common_base.R.string.string_174),
                                 onCancelAction = {
@@ -1364,7 +1364,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             context?.let {
                                 BaseCenterPop(
                                     it,
-                                    content = "The air pump cannot be turned on when the tank has no water. Please fill the tank with water before turning on the air pump.",
+                                    content = getString(com.cl.common_base.R.string.string_1356),
                                     isShowCancelButton = false,
                                     confirmText = context?.getString(com.cl.common_base.R.string.string_10),
                                     onCancelAction = {
@@ -1467,8 +1467,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         pop.asCustom(context?.let { it1 ->
             ChooseTimePop(
                 it1,
-                turnOnText = "Turn on Light",
-                turnOffText = "Turn off Light",
+                turnOnText = getString(com.cl.common_base.R.string.string_1359),
+                turnOffText = getString(com.cl.common_base.R.string.string_1360),
                 isShowNightMode = false,
                 isTheSpacingHours = false,
                 turnOnHour = mViewMode.muteOn?.safeToInt(),
@@ -2097,7 +2097,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         dismissOnTouchOutside(false)
                         asCustom(
                             context?.let {
-                                BaseCenterPop(it, titleText = "Unlock Now", isShowCancelButton = true, cancelText = "Cancel", confirmText = context?.getString(com.cl.common_base.R.string.string_284), onConfirmAction = {
+                                BaseCenterPop(it, titleText = getString(com.cl.common_base.R.string.string_1367), isShowCancelButton = true, cancelText = "Cancel", confirmText = context?.getString(com.cl.common_base.R.string.string_284), onConfirmAction = {
                                     pop.dismiss()
                                     // 跳转副本界面
                                     // 跳转到富文本界面
@@ -2287,7 +2287,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     BasePopActivity.KEY_CATEGORYCODE,
                     mViewMode.plantInfo.value?.data?.categoryCode
                 )
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1368))
                 intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                 startActivity(intent)
             }
@@ -2451,11 +2451,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     if (online) {
                                         //  在线摄像头
                                         binding.pplantNinth.tvPrivacyMode.text =
-                                            "Private Mode"
+                                            getString(com.cl.common_base.R.string.string_1369)
                                     } else {
                                         //  离线摄像头
                                         binding.pplantNinth.tvPrivacyMode.text =
-                                            "The camera is offline"
+                                            getString(com.cl.common_base.R.string.string_1370)
                                     }
                                     /*ViewUtils.setVisible(!online, binding.pplantNinth.tvPrivacyMode)*/
                                 })
@@ -2563,7 +2563,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     },
                                     onCancelAction = {},
                                     spannedString = buildSpannedString {
-                                        bold { append("To ensure your first grow runs smoothly, we will be extending your subscription until ") }
+                                        bold { append(getString(com.cl.common_base.R.string.string_1371)) }
                                         bold { append(data?.subscriberTime) }
                                     }
                                 )
@@ -3215,7 +3215,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         binding.pplantNinth.tVHtml.text = buildSpannedString {
                             /*Check for a tap root in 1 day(s) 23 hrs... Lights should be off at this stage*/
                             /*Check the seed status in 24 hours (倒计时).Thr grow light is off during this stage.*/
-                            bold { append("Check the seed status in") }
+                            bold { append(getString(com.cl.common_base.R.string.string_1375)) }
                             appendLine()
                             context?.let {
                                 ContextCompat.getColor(
@@ -3240,7 +3240,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 }
                             }
                             appendLine()
-                            bold { append("Thr grow light is off during this stage.") }
+                            bold { append(getString(com.cl.common_base.R.string.string_1380)) }
                         }
 
                         // 按钮的背景颜色
@@ -3255,9 +3255,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)
                                     .asCustom(
                                         BaseCenterPop(it,
-                                            content = "Do you want to skip the germination wait?",
+                                            content = getString(com.cl.common_base.R.string.string_1381),
                                             isShowCancelButton = true,
-                                            confirmText = "Confirm",
+                                            confirmText = getString(com.cl.common_base.R.string.string_1382),
                                             onConfirmAction = {
                                                 it.startActivity(Intent(it, SeedCheckActivity::class.java))
                                             })
@@ -3267,7 +3267,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         binding.pplantNinth.btnCheck.setOnClickListener {
                             // 需要判断时间超过48小时了没。
                             if (DateHelper.before(System.currentTimeMillis(), backTime)) {
-                                ToastUtil.shortShow("it is not time yet")
+                                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1383))
                                 return@setOnClickListener
                             }
                             context?.let {
@@ -3343,7 +3343,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             .asCustom(context?.let {
                                 BaseGuidePop(
                                     it,
-                                    confirmText = "Click here to access your growing calendar and view upcoming tasks",
+                                    confirmText = getString(com.cl.common_base.R.string.string_1384),
                                     onConfirmAction = {
                                         // 如果不是会员那么不需要展示后面2个
                                         if (mViewMode.userDetail.value?.data?.isVip != 1) return@BaseGuidePop
@@ -3353,7 +3353,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             .asCustom(
                                                 BaseGuidePop(
                                                     it,
-                                                    confirmText = "You can access 1-on-1 support and chat with our growing experts here",
+                                                    confirmText = getString(com.cl.common_base.R.string.string_1385),
                                                     onConfirmAction = {
                                                         // todo 暂时没有朋友圈，所以暂时不弹出这个guide弹窗
                                                     }).setBubbleBgColor(Color.WHITE)
@@ -4519,21 +4519,21 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 按钮
         binding.pplantNinth.tvBtnDesc.text =
             if (UnReadConstants.Device.KEY_CHANGE_CUP_WATER == unRead?.type || UnReadConstants.Device.KEY_BURN_OUT_PROOF == unRead?.type) {
-                "Go"
+                 getString(com.cl.common_base.R.string.string_1388)
             } else if (UnReadConstants.plantStatus.contains(unRead?.type)) {
                 context?.getString(com.cl.common_base.R.string.string_284)
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_TREND) {
-                "View"
+                getString(com.cl.common_base.R.string.string_1389)
             } else if (UnReadConstants.noCancel.contains(unRead?.type) && unRead?.extension.isNullOrEmpty()) {
-                "Start"
+                getString(com.cl.common_base.R.string.string_1390)
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_LEARN_MORE) {
-                "Learn More"
+                getString(com.cl.common_base.R.string.string_1391)
             } else if (unRead?.extension?.startsWith(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
-                "Continue"
+                getString(com.cl.common_base.R.string.string_1392)
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_GUIDE) {
-                "Done"
+                getString(com.cl.common_base.R.string.string_1393)
             } else if (unRead?.type == UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING || unRead?.type == UnReadConstants.JumpType.KEY_CLOSE_DOOR) {
-                "Done"
+                getString(com.cl.common_base.R.string.string_1393)
             } else {
                 ""
             }.toString()
@@ -4561,7 +4561,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 内容
         binding.pplantNinth.tvPopTitle.text =
             if (unRead?.extension?.contains(UnReadConstants.Extension.KEY_EXTENSION_CONTINUE) == true) {
-                "You have Job to do."
+                getString(com.cl.common_base.R.string.string_1394)
             } else {
                 unRead?.title
             }

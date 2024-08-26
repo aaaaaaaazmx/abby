@@ -61,7 +61,7 @@
             android:textStyle="bold"
             android:id="@+id/tv_learn"
             android:layout_marginEnd="16dp"
-            android:text="Learn More"
+            android:text="@string/string_1391"
             app:layout_constraintBottom_toBottomOf="@+id/iv_img"
             app:layout_constraintTop_toTopOf="@id/iv_img"
             app:layout_constraintEnd_toEndOf="parent"

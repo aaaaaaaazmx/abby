@@ -248,7 +248,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Done")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_1393))
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, deviceId)
                 intent.putExtra(BasePopActivity.KEY_PART_ID, "${itemData?.accessoryId}")
                 /*accessoryList.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA }

@@ -57,7 +57,7 @@
                 android:textColor="@color/mainColor"
                 android:textSize="18sp"
                 android:id="@+id/tv_confirm"
-                android:text="Start"
+                android:text="@string/string_1390"
                 android:gravity="center"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"

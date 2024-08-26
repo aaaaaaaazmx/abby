@@ -722,10 +722,10 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
             resources, com.cl.common_base.R.color.transparent, context?.theme
         )
         binding.plantOffLine.tvSpan.text = buildSpannedString {
-            appendLine("1.Check if abby is plugged in and turned on")
-            appendLine("2.Check your Wi-Fi network connection")
-            appendLine("3.Try to power off and restart your abby")
-            append("4.If the problem persists, try to ")
+            appendLine(getString(R.string.string_1348))
+            appendLine(getString(R.string.string_1349))
+            appendLine(getString(R.string.string_1350))
+            append(getString(R.string.string_1351))
             context?.let { context ->
                 ContextCompat.getColor(
                     context, R.color.mainColor
@@ -734,7 +734,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                 color(
                     color
                 ) {
-                    appendClickable("Reconnect abby") {
+                    appendClickable(getString(R.string.string_1352)) {
                         // 跳转到ReconnectActivity
 
                         ARouter.getInstance().build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)
@@ -1261,7 +1261,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                                 xpopup(it) {
                                     isDestroyOnDismiss(false)
                                     dismissOnTouchOutside(false)
-                                    asCustom(HomeFanBottonPop(it, title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.", tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
+                                    asCustom(HomeFanBottonPop(it, title = getString(com.cl.common_base.R.string.string_1354), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
                                     }, benOKAction = {})).show()
                                 }
                             }
@@ -1358,7 +1358,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                         .asCustom(context?.let {
                             BaseCenterPop(
                                 it,
-                                content = "Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?",
+                                content = getString(R.string.string_1355),
                                 cancelText = context?.getString(com.cl.common_base.R.string.string_173),
                                 confirmText = context?.getString(com.cl.common_base.R.string.string_174),
                                 onCancelAction = {
@@ -1394,7 +1394,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
                             context?.let {
                                 BaseCenterPop(
                                     it,
-                                    content = "The air pump cannot be turned on when the tank has no water. Please fill the tank with water before turning on the air pump.",
+                                    content = getString(R.string.string_1356),
                                     isShowCancelButton = false,
                                     confirmText = context?.getString(R.string.string_10),
                                     onCancelAction = {
@@ -1485,8 +1485,8 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
         pop.asCustom(context?.let { it1 ->
             ChooseTimePop(
                 it1,
-                turnOnText = "Turn on Light",
-                turnOffText = "Turn off Light",
+                turnOnText = getString(R.string.string_1359),
+                turnOffText = getString(R.string.string_1360),
                 isShowNightMode = false,
                 isTheSpacingHours = false,
                 turnOnHour = mViewMode.muteOn?.safeToInt(),

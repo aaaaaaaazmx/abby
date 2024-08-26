@@ -229,11 +229,11 @@
             android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/create_state_button"
-            android:text="Done"
+            android:text="@string/string_1393"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text="Done" />
+            tools:text="@string/string_1393" />
 
         <TextView
             android:id="@+id/tv_show_again"

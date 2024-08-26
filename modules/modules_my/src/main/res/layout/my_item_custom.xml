@@ -104,7 +104,7 @@
                     android:textColor="@color/mainColor"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    tools:text="Done" />
+                    tools:text="@string/string_1393" />
 
                 <com.cl.common_base.widget.SvTextView
                     android:id="@+id/svt_gray_unlock"

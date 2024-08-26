@@ -543,7 +543,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             )
                                             intent.putExtra(
                                                 BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
-                                                "I am ready"
+                                                getString(com.cl.common_base.R.string.string_1368)
                                             )
                                             startActivity(intent)
                                         }
@@ -1250,7 +1250,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             ViewUtils.setGone(svtUnlock)
                             ViewUtils.setGone(svtGrayUnlock)
                             ViewUtils.setVisible(svtWaitUnlock)
-                            svtWaitUnlock.text = "Done"
+                            svtWaitUnlock.text = getString(com.cl.common_base.R.string.string_1393)
                         }
 
                         "0" -> {
@@ -1264,7 +1264,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             ViewUtils.setGone(svtWaitUnlock)
                             ViewUtils.setVisible(svtGrayUnlock)
                             ViewUtils.setGone(svtUnlock)
-                            svtGrayUnlock.text = "Go"
+                            svtGrayUnlock.text = getString(com.cl.common_base.R.string.string_1388)
                         }
                     }
                     tvTaskName.text = listContent[position].taskName

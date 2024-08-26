@@ -166,7 +166,7 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/create_state_button"
             android:enabled="false"
-            android:text="Start"
+            android:text="@string/string_1390"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp" />

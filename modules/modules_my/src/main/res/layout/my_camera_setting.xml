@@ -115,7 +115,7 @@
                 app:itemTitleBold="true"
                 app:itemChecked="false"
                 android:background="@color/black"
-                app:itemTitle="Private Mode"
+                app:itemTitle="@string/string_1369"
                 android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

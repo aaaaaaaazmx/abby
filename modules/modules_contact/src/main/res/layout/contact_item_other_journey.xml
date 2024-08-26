@@ -139,7 +139,7 @@
             android:id="@+id/tv_learn_more"
             app:layout_constraintStart_toStartOf="@+id/tvDesc"
             app:layout_constraintTop_toBottomOf="@+id/ff_banner"
-            android:text="Learn More"
+            android:text="@string/string_1391"
             android:textColor="@color/mainColor"
             android:textStyle="bold"
             android:textSize="15sp"

@@ -257,4 +257,42 @@
     <string name="string_1327">Temperature (°F)</string>
     <string name="string_1328">Plant Height</string>
     <string name="string_1331">data is null</string>
+
+
+    <string name="string_1334">Grow Chamber Humidity %</string>
+    <string name="string_1336">ph</string>
+    <string name="string_1341">Hey abby Grow Box</string>
+    <string name="string_1342">Grow Tent</string>
+    <string name="string_1348">1.Check if abby is plugged in and turned on</string>
+    <string name="string_1349">2.Check your Wi-Fi network connection</string>
+    <string name="string_1350">3.Try to power off and restart your abby</string>
+    <string name="string_1351">4.If the problem persists, try to </string>
+    <string name="string_1352">Reconnect abby</string>
+    <string name="string_1354">You\'re about to set the intake fan to its maximum level. Be aware that this may cause \'wind burn,\' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.</string>
+    <string name="string_1355">Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?</string>
+    <string name="string_1356">The air pump cannot be turned on when the tank has no water. Please fill the tank with water before turning on the air pump.</string>
+    <string name="string_1358">Live</string>
+    <string name="string_1359">Turn on Light</string>
+    <string name="string_1360">Turn off Light</string>
+    <string name="string_1367">Unlock Now</string>
+    <string name="string_1368">I am ready</string>
+    <string name="string_1369">Private Mode</string>
+    <string name="string_1370">The camera is offline</string>
+    <string name="string_1371">To ensure your first grow runs smoothly, we will be extending your subscription until </string>
+    <string name="string_1375">Check the seed status in</string>
+    <string name="string_1380">Thr grow light is off during this stage.</string>
+    <string name="string_1381">Do you want to skip the germination wait?</string>
+    <string name="string_1382">Confirm</string>
+    <string name="string_1383">it is not time yet</string>
+    <string name="string_1384">Click here to access your growing calendar and view upcoming tasks</string>
+    <string name="string_1385">You can access 1-on-1 support and chat with our growing experts here</string>
+    <string name="string_1386">Notification permission granted.</string>
+    <string name="string_1388">Go</string>
+    <string name="string_1389">View</string>
+    <string name="string_1390">Start</string>
+    <string name="string_1391">Learn More</string>
+    <string name="string_1392">Continue</string>
+    <string name="string_1393">Done</string>
+    <string name="string_1394">You have Job to do.</string>
+
 </resources>

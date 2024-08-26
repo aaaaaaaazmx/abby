@@ -122,7 +122,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
     override fun initView() {
         binding.title
             .setRightButtonTextBack(R.drawable.background_check_tags_r5)
-            .setRightButtonText("Done")
+            .setRightButtonText(getString(com.cl.common_base.R.string.string_1393))
             .setRightButtonTextSize(13f)
             .setRightButtonTextHeight(25f)
             .setRightButtonTextColor(Color.WHITE)

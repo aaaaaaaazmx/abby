@@ -183,7 +183,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
         // 文字修改
         binding.vmLog.text = if (isEmailLogin) "Enter the OTP" else if (isRegister) "Verify email" else "Reset password"
-        binding.btnSuccess.text = if (isEmailLogin) "Login" else "Continue"
+        binding.btnSuccess.text = if (isEmailLogin) "Login" else getString(com.cl.common_base.R.string.string_1392)
         binding.codeView.setOnInputListener(this)
 
         when(thirdSource) {
