@@ -117,7 +117,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             //
             //2.Your phone must be connected to the same 2.4G wifi as abby
             binding.titleBar.setTitle("")
-            binding.btnSuccess.text = "Next"
+            binding.btnSuccess.text = getString(com.cl.common_base.R.string.string_262)
             binding.tvDescThree.text = buildSpannedString {
                 append("1. smart camera only supports ")
                 bold { append("2.4GHz Wi-Fi.") }

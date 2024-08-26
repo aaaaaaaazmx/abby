@@ -135,7 +135,7 @@
                 android:textSize="18sp"
                 android:gravity="center"
                 android:background="@color/mainColor"
-                android:text="Next"
+                android:text="@string/string_262"
                 app:svRadius="100dp"
                 app:svSolidColor="@color/mainColor"
                 android:layout_width="match_parent"

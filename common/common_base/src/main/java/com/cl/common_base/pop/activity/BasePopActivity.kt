@@ -170,7 +170,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         // 是否展示固定按钮、是否展示滑动解锁
         ViewUtils.setVisible(isShowButton && !isPreview, binding.btnNext)
         ViewUtils.setVisible(isShowUnlockButton && !isPreview, binding.slideToConfirm)
-        binding.btnNext.text = showButtonText ?: "Next"
+        binding.btnNext.text = showButtonText ?: getString(R.string.string_262)
         binding.btnNext.setOnClickListener {
             fixedProcessingLogic()
         }
@@ -222,7 +222,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
                         intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
                         startActivity(intent)
                     }
 
@@ -245,7 +245,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
                         intent.putExtra(KEY_CATEGORYCODE, categoryCode)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Next")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(R.string.string_268))
                         startActivity(intent)
                     }
 
@@ -310,7 +310,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
                     intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                     intent.putExtra(KEY_TASK_PACKAGE_ID, true)
-                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
                     intent.putExtra(KEY_PACK_NO, packetNo)
                     startActivity(intent)
                 } else {
@@ -339,7 +339,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
                         intent.putExtra(KEY_CATEGORYCODE, categoryCode)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Next")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(R.string.string_268))
                         startActivity(intent)
                     }
 
@@ -352,7 +352,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
                         intent.putExtra(KEY_CATEGORYCODE, categoryCode)
-                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                        intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
                         startActivity(intent)
                     }
 
@@ -364,7 +364,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         intent.putExtra(KEY_IS_SHOW_BUTTON, true)
                         intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
-                        intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, if (categoryCode == "100002" || categoryCode == "100004") "Unlock Autoflowering" else "Unlock Veg")
+                        intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, if (categoryCode == "100002" || categoryCode == "100004") getString(R.string.string_271) else getString(R.string.string_272))
                         startActivity(intent)
                     }
 
@@ -533,7 +533,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         val size = adapter.data.filter { data -> data.value?.select == false && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
-                ToastUtil.shortShow("Please select all item")
+                ToastUtil.shortShow(getString(R.string.string_279))
             }
             return checkCount == 0
         }
@@ -564,7 +564,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     }
 
     private val loadingPopup by lazy {
-        CustomLoadingPopupView(this@BasePopActivity, 0).setTitle("AI check in progress, please do not exit this page.")
+        CustomLoadingPopupView(this@BasePopActivity, 0).setTitle(getString(R.string.string_280))
     }
 
     override fun observe() {
@@ -621,7 +621,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                             intent.putExtra(Constants.Global.KEY_TXT_ID, data?.textId)
                             intent.putExtra(KEY_IS_SHOW_BUTTON, true)
-                            intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Unlock")
+                            intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, getString(R.string.string_284))
                             intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
                             intent.putExtra(KEY_TASK_ID, taskId)
                             intent.putExtra(KEY_FIXED_TASK_ID, taskId)
@@ -632,7 +632,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             xpopup(this@BasePopActivity) {
                                 isDestroyOnDismiss(false)
                                 dismissOnTouchOutside(false)
-                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = "Exit")).show()
+                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = getString(R.string.string_288))).show()
                             }
                         }
 
@@ -640,7 +640,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             xpopup(this@BasePopActivity) {
                                 isDestroyOnDismiss(false)
                                 dismissOnTouchOutside(false)
-                                asCustom(BaseCenterPop(this@BasePopActivity, cancelText = "No,thanks", content = data?.content, confirmText = "Subscribe Now", onConfirmAction =  {
+                                asCustom(BaseCenterPop(this@BasePopActivity, cancelText = getString(R.string.string_290), content = data?.content, confirmText = getString(R.string.string_291), onConfirmAction =  {
                                     // 跳转到购买地址
                                     //  跳转订阅网站
                                     val intent = Intent(this@BasePopActivity, WebActivity::class.java)
@@ -722,7 +722,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
                     // 滑动结果按钮文案
                     mViewModel.getSliderText(data.topPage?.firstOrNull { it.type == "finishTask" }?.let {
-                        binding.slideToConfirm.setEngageText(it.value?.txt ?: "Slide to Unlock")
+                        binding.slideToConfirm.setEngageText(it.value?.txt ?: getString(com.cl.common_base.R.string.string_263))
                         it.value?.txt
                     })
 
@@ -880,7 +880,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             intent.putExtra(KEY_TASK_ID, taskId)
                             intent.putExtra(KEY_IS_SHOW_BUTTON, true)
                             intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
-                            intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, "Next")
+                            intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, getString(R.string.string_262))
                             intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
                             intent.putExtra(KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_GO_TO_CAMERA)
                             context.startActivity(intent)
@@ -1075,7 +1075,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(BaseCenterPop(this@BasePopActivity, content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
-                    cancelText = "No,thanks", confirmText = if (isVip) getString(com.cl.common_base.R.string.string_174) else "Subscribe Now", onConfirmAction = {
+                    cancelText = getString(R.string.string_290), confirmText = if (isVip) getString(com.cl.common_base.R.string.string_174) else getString(R.string.string_291), onConfirmAction = {
                         if (isVip) {
                             // 跳转到日历界面，然后在发起会话。
                             ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).withString(CalendarData.KEY_TASK_NO, data.taskNo).navigation(this@BasePopActivity)

@@ -675,7 +675,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                                 intent.putExtra(
                                     BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                                    "Slide to Next"
+                                    context?.getString(com.cl.common_base.R.string.string_268)
                                 )
                                 startActivityLauncherSeeding.launch(intent)
                             }
@@ -2097,7 +2097,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         dismissOnTouchOutside(false)
                         asCustom(
                             context?.let {
-                                BaseCenterPop(it, titleText = "Unlock Now", isShowCancelButton = true, cancelText = "Cancel", confirmText = "Unlock", onConfirmAction = {
+                                BaseCenterPop(it, titleText = "Unlock Now", isShowCancelButton = true, cancelText = "Cancel", confirmText = context?.getString(com.cl.common_base.R.string.string_284), onConfirmAction = {
                                     pop.dismiss()
                                     // 跳转副本界面
                                     // 跳转到富文本界面
@@ -2109,7 +2109,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     )
                                     intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, context?.getString(com.cl.common_base.R.string.string_263))
                                     intent.putExtra(BasePopActivity.KEY_PLANT_ID, mViewMode.plantInfo.value?.data?.plantId.toString())
                                     startActivityLauncherCheck.launch(intent)
                                 }, onCancelAction = {
@@ -3114,7 +3114,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     )
                     intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Next")
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, context?.getString(com.cl.common_base.R.string.string_262))
                     context?.startActivity(intent)
 
                     // 优先跳转选择种子还是继承界面
@@ -4521,7 +4521,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             if (UnReadConstants.Device.KEY_CHANGE_CUP_WATER == unRead?.type || UnReadConstants.Device.KEY_BURN_OUT_PROOF == unRead?.type) {
                 "Go"
             } else if (UnReadConstants.plantStatus.contains(unRead?.type)) {
-                "Unlock"
+                context?.getString(com.cl.common_base.R.string.string_284)
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_TREND) {
                 "View"
             } else if (UnReadConstants.noCancel.contains(unRead?.type) && unRead?.extension.isNullOrEmpty()) {

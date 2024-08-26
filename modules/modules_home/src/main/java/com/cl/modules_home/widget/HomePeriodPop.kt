@@ -175,7 +175,7 @@ class HomePeriodPop(
                         kotlin.runCatching {
                             when ("${data?.get(position)?.journeyStatus}") {
                                 KEY_WAIT -> {
-                                    svtWaitUnlock.text = "Unlock"
+                                    svtWaitUnlock.text = context?.getString(com.cl.common_base.R.string.string_284)
                                     svtWaitUnlock.visibility = View.VISIBLE
                                     // 待解锁状态下，不显示时间周期
 
@@ -235,7 +235,7 @@ class HomePeriodPop(
                                 }
 
                                 KEY_ALLOW_UNLOCKING -> {
-                                    svtUnlock.text = "Unlock"
+                                    svtUnlock.text = context?.getString(com.cl.common_base.R.string.string_284)
                                     svtUnlock.visibility = View.VISIBLE
 
                                     clRoot.background = ContextCompat.getDrawable(
@@ -252,7 +252,7 @@ class HomePeriodPop(
                                 }
 
                                 KEY_LOCK_COMPLETED -> {
-                                    svtUnlock.text = "Unlock"
+                                    svtUnlock.text = context?.getString(com.cl.common_base.R.string.string_284)
                                     svtUnlock.visibility = View.VISIBLE
 
                                     clRoot.background = ContextCompat.getDrawable(
@@ -269,7 +269,7 @@ class HomePeriodPop(
                                 }
 
                                 else -> {
-                                    svtWaitUnlock.text = "Unlock"
+                                    svtWaitUnlock.text = context?.getString(com.cl.common_base.R.string.string_284)
                                     svtWaitUnlock.visibility = View.VISIBLE
                                     // 待解锁状态下，不显示时间周期
 

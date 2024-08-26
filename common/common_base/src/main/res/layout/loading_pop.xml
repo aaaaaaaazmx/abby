@@ -38,7 +38,7 @@
         android:id="@+id/tv_title"
         android:maxLines="3"
         android:visibility="gone"
-        android:text="AI check in progress, please do not exit this page."
+        android:text="@string/string_280"
         android:paddingStart="12dp"
         android:ellipsize="end"
         android:paddingEnd="12dp"

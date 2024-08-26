@@ -6,6 +6,7 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.modules_home.R
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -59,7 +60,7 @@ class SeedCheckActivity: BaseActivity<HomeSeekCheckActivityBinding>() {
                 )
                 intent.putExtra(
                     BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
-                    "Next"
+                    getString(com.cl.common_base.R.string.string_262)
                 )
                 intent.putExtra(
                     BasePopActivity.KEY_INTENT_JUMP_PAGE,

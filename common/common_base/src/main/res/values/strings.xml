@@ -210,6 +210,23 @@
     <string name="string_251">Alert </string>
     <string name="string_252">notifications to stay informed about important updates.</string>
 
-
+    <string name="string_255">Updating</string>
+    <string name="string_256">No more data</string>
+    <string name="string_257">Loading completed</string>
+    <string name="string_258">Loading failed</string>
+    <string name="string_260">If there is still water left over, click &quot;Continue Draining&quot; to proceed. Otherwise, click &quot;Next&quot;</string>
+    <string name="string_261">Continue Draining</string>
+    <string name="string_262">Next</string>
+    <string name="string_263">Slide to Unlock</string>
+    <string name="string_268">Slide to Next</string>
+    <string name="string_271">Unlock Autoflowering</string>
+    <string name="string_272">Unlock Veg</string>
+    <string name="string_279">Please select all item</string>
+    <string name="string_280">AI check in progress, please do not exit this page.</string>
+    <string name="string_284">Unlock</string>
+    <string name="string_288">Exit</string>
+    <string name="string_290">No,thanks</string>
+    <string name="string_291">Subscribe Now</string>
+    <string name="string_299">hey abby</string>
 
 </resources>

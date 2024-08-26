@@ -715,7 +715,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 intent.putExtra(BasePopActivity.KEY_DEVICE_ID, mViewModel.userDetail.value?.data?.deviceId)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
                 startActivity(intent)
             } else {
                 // 删除植物、弹出提示框

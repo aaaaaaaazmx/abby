@@ -14,6 +14,7 @@ import com.cl.common_base.util.EmailUtil
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_login.R
 import com.cl.modules_login.databinding.ActivityCreateAccountBinding
 import com.cl.modules_login.request.UserRegisterReq
 import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_EMAIL_NAME
@@ -113,7 +114,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                     binding.tvCreateLog.text = "Bind Email"
                 }
                 "sms" -> {
-                    binding.btnContinue.text = "Next"
+                    binding.btnContinue.text = getString(com.cl.common_base.R.string.string_262)
                     binding.etEmail.hint = "Enter telephone number"
                     binding.tvCreateLog.text = "OTP Verification"
                     binding.tvCreateLogSub.visibility = View.VISIBLE

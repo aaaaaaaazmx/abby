@@ -54,7 +54,7 @@ class AttentionPop(
 
                 override fun onSlideDone() {
                     if (!curingBox.isChecked) {
-                        ToastUtil.shortShow("Please select all item")
+                        ToastUtil.shortShow(context?.getString(com.cl.common_base.R.string.string_279))
                         slideToConfirm.reset()
                         return
                     }

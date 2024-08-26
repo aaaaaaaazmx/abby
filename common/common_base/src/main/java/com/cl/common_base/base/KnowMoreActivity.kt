@@ -223,13 +223,13 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         ViewUtils.setVisible(isShowUnlockButton && !isPreview, binding.slideToConfirm)
         // 是否显示删除按钮
         ViewUtils.setVisible(!spaceType.isNullOrEmpty(), binding.unbindCamera)
-        binding.btnNext.text = showButtonText ?: "Next"
+        binding.btnNext.text = showButtonText ?: getString(R.string.string_262)
         binding.btnNext.setOnClickListener {
             fixedProcessingLogic()
         }
         /*binding.slideToConfirm.setEngageText(unLockButtonEngage ?: "Slide to Unlock")*/
         // 滑动解锁按钮的文案由后台下发
-        binding.slideToConfirm.setEngageText(mViewMode.sliderText.value ?: unLockButtonEngage ?: "Slide to Next")
+        binding.slideToConfirm.setEngageText(mViewMode.sliderText.value ?: unLockButtonEngage ?: getString(R.string.string_268))
         binding.slideToConfirm.slideListener = object : ISlideListener {
             override fun onSlideStart() {
             }
@@ -278,7 +278,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                         intent.putExtra(
                             BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                            "Slide to Unlock"
+                            getString(com.cl.common_base.R.string.string_263)
                         )
                         startActivity(intent)
                     }
@@ -307,7 +307,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                         intent.putExtra(
                             BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                            "Slide to Next"
+                            getString(R.string.string_268)
                         )
                         startActivity(intent)
                     }
@@ -371,7 +371,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, categoryCode)
                         intent.putExtra(
                             BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                            "Slide to Next"
+                            getString(R.string.string_268)
                         )
                         startActivity(intent)
                     }
@@ -393,7 +393,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, categoryCode)
                         intent.putExtra(
                             BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE,
-                            "Slide to Unlock"
+                            getString(com.cl.common_base.R.string.string_263)
                         )
                         startActivity(intent)
                     }
@@ -485,7 +485,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
             adapter.data.filter { data -> data.value?.select == false && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
-                ToastUtil.shortShow("Please select all item")
+                ToastUtil.shortShow(getString(R.string.string_279))
             }
             return checkCount == 0
         }
@@ -712,7 +712,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
                     // 滑动结果按钮文案
                     mViewMode.getSliderText(data.topPage?.firstOrNull { it.type == "finishTask" }?.let {
-                        binding.slideToConfirm.setEngageText(it.value?.txt ?: "Slide to Unlock")
+                        binding.slideToConfirm.setEngageText(it.value?.txt ?: getString(com.cl.common_base.R.string.string_263))
                         it.value?.txt
                     })
 

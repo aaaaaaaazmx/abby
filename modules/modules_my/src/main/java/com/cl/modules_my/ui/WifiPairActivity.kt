@@ -70,7 +70,7 @@ class WifiPairActivity : BaseActivity<MyWifiPairActivityBinding>() {
             ViewUtils.setGone(binding.llTwo)
             ViewUtils.setGone(binding.tvNextThree)
             ViewUtils.setVisible(binding.tvNext)
-            binding.tvNext.text = "Next"
+            binding.tvNext.text = getString(com.cl.common_base.R.string.string_262)
             binding.banner.setCurrentItem(1, true)
             binding.tvContent.text = "Power on the device after it has been powered off for 10s."
         }

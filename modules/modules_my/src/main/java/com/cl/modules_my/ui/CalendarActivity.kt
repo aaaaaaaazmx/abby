@@ -1340,7 +1340,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
                                                     intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_262))
                                                     intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
                                                     refreshActivityLauncher.launch(intent)
                                                 }
@@ -1363,7 +1363,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                     intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
                                                     intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_262))
                                                     intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
                                                     intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
                                                     intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
@@ -1412,7 +1412,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                                 intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
                                                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_262))
                                                 intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
                                                 refreshActivityLauncher.launch(intent)
                                             },
@@ -1458,7 +1458,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(BaseCenterPop(this@CalendarActivity, content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
-                    cancelText = "No,thanks", confirmText = if (isVip) getString(com.cl.common_base.R.string.string_174) else "Subscribe Now", onConfirmAction = {
+                    cancelText = getString(com.cl.common_base.R.string.string_290), confirmText = if (isVip) getString(com.cl.common_base.R.string.string_174) else getString(com.cl.common_base.R.string.string_291), onConfirmAction = {
                         if (isVip) {
                             // 请求发起会话接口，然后跳转到InterCome
                             mViewMode.conversations(taskNo = data.taskNo)

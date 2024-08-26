@@ -178,11 +178,11 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
     override fun initView() {
         // 刷新
         binding.waterPop.refreshLayout.apply {
-            ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
-            ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
-            ClassicsFooter.REFRESH_FOOTER_NOTHING = "No more data"
-            ClassicsFooter.REFRESH_FOOTER_FINISH = "Loading completed"
-            ClassicsFooter.REFRESH_FOOTER_FAILED = "Loading failed"
+            ClassicsFooter.REFRESH_FOOTER_LOADING = getString(R.string.string_255) //"正在刷新...";
+            ClassicsFooter.REFRESH_FOOTER_REFRESHING = getString(R.string.string_255) //"正在加载...";
+            ClassicsFooter.REFRESH_FOOTER_NOTHING = getString(R.string.string_256)
+            ClassicsFooter.REFRESH_FOOTER_FINISH = getString(R.string.string_257)
+            ClassicsFooter.REFRESH_FOOTER_FAILED = getString(R.string.string_258)
 
             // 加载更多是显示是否显示新内容
             setEnableScrollContentWhenLoaded(false)
@@ -253,8 +253,8 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
             // 点击排水跳过
             tvSkip.setOnClickListener {
                 XPopup.Builder(this@BasePumpActivity)
-                    .asCustom(BaseThreeTextPop(this@BasePumpActivity, content = "If there is still water left over, click \"Continue Draining\" to proceed. Otherwise, click \"Next\"",
-                        oneLineText = "Continue Draining", twoLineText = "Next",
+                    .asCustom(BaseThreeTextPop(this@BasePumpActivity, content = getString(R.string.string_260),
+                        oneLineText = getString(R.string.string_261), twoLineText = getString(R.string.string_262),
                         oneLineCLickEventAction = {
                             isOpenOrStop(true)
                         },
@@ -338,7 +338,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                         intent.putExtra(BasePopActivity.KEY_INPUT_BOX, viewDatas as? Serializable)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Slide to Unlock")
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
                         intent.putExtra(BasePopActivity.KEY_PACK_NO, packNo)
                         intent.putExtra(BasePopActivity.KEY_TASK_NO, taskIdList[0].taskNo)
                         startActivity(intent)

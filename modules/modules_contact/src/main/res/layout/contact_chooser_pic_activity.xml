@@ -93,7 +93,7 @@
                   app:layout_constraintTop_toTopOf="@+id/tv_desc"
                   android:id="@+id/btn_next"
                   android:layout_alignParentRight="true"
-                  android:text="Next"
+                  android:text="@string/string_262"
                   android:background="@drawable/background_main_color_r6"
                   android:layout_width="55dp"
                   android:layout_height="25dp"/>

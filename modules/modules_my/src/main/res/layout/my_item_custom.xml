@@ -93,7 +93,7 @@
                     app:svRadius="100dp"
                     app:svSolidColor="@color/mainColor"
                     app:svSolidType="solid"
-                    tools:text="Unlock" />
+                    tools:text="@string/string_284" />
 
                 <com.cl.common_base.widget.AbTextViewCalendar
                     android:visibility="gone"
@@ -118,7 +118,7 @@
                     app:svRadius="100dp"
                     app:svSolidColor="#C4C4C4"
                     app:svSolidType="solid"
-                    tools:text="Unlock" />
+                    tools:text="@string/string_284" />
             </RelativeLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

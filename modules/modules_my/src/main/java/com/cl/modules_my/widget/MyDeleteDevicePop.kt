@@ -52,7 +52,7 @@ class MyDeleteDevicePop(
 
                 override fun onSlideDone() {
                     if (!cbBox.isChecked) {
-                        ToastUtil.shortShow("Please select all item")
+                        ToastUtil.shortShow(context?.getString(com.cl.common_base.R.string.string_279))
                         return
                     }
                     dismiss()

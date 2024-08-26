@@ -66,11 +66,11 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
     private fun initRefresh() {
         binding.refreshLayout.apply {
-            ClassicsFooter.REFRESH_FOOTER_LOADING = "Updating" //"正在刷新...";
-            ClassicsFooter.REFRESH_FOOTER_REFRESHING = "Updating" //"正在加载...";
-            ClassicsFooter.REFRESH_FOOTER_NOTHING = "No more data"
-            ClassicsFooter.REFRESH_FOOTER_FINISH = "Loading completed"
-            ClassicsFooter.REFRESH_FOOTER_FAILED = "Loading failed"
+            ClassicsFooter.REFRESH_FOOTER_LOADING = context?.getString(com.cl.common_base.R.string.string_255) //"正在刷新...";
+            ClassicsFooter.REFRESH_FOOTER_REFRESHING = context?.getString(com.cl.common_base.R.string.string_255) //"正在加载...";
+            ClassicsFooter.REFRESH_FOOTER_NOTHING = context?.getString(com.cl.common_base.R.string.string_256)
+            ClassicsFooter.REFRESH_FOOTER_FINISH = context?.getString(com.cl.common_base.R.string.string_257)
+            ClassicsFooter.REFRESH_FOOTER_FAILED = context?.getString(com.cl.common_base.R.string.string_258)
 
             // 刷新监听
             setOnRefreshListener {
