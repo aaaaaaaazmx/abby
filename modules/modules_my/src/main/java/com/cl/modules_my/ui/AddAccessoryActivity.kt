@@ -159,7 +159,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(true)
                         asCustom(
-                            BaseCenterPop(this@AddAccessoryActivity, content = itemData.cannotMsg, isShowCancelButton = !usbNumber, cancelText = "No", confirmText = if (usbNumber) "OK" else "Yes", onConfirmAction = {
+                            BaseCenterPop(this@AddAccessoryActivity, content = itemData.cannotMsg, isShowCancelButton = !usbNumber, cancelText = "No", confirmText = if (usbNumber) getString(com.cl.common_base.R.string.string_10) else "Yes", onConfirmAction = {
                                 if (!usbNumber) {
                                     // 这个后台逻辑是覆盖最早一个添加的配件。
                                     // 如果只有1个usb，那么就直接覆盖

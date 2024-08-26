@@ -49,7 +49,7 @@ class NewWalletAdapter (data: MutableList<VoucherBean>?) :
                 xpopup(context) {
                     isDestroyOnDismiss(false)
                     dismissOnTouchOutside(true)
-                    asCustom(BaseCenterPop(context, confirmText = "OK", isShowCancelButton = false, content = "Your coupon code has been copied!")).show()
+                    asCustom(BaseCenterPop(context, confirmText = context.getString(R.string.string_10), isShowCancelButton = false, content = "Your coupon code has been copied!")).show()
                 }
             }
 
@@ -74,7 +74,7 @@ class NewWalletAdapter (data: MutableList<VoucherBean>?) :
                 xpopup(context) {
                    dismissOnTouchOutside(true)
                     isDestroyOnDismiss(false)
-                    asCustom(BaseCenterPop(context, confirmText = "OK", isShowCancelButton = false, content = item.description)).show()
+                    asCustom(BaseCenterPop(context, confirmText = context.getString(R.string.string_10), isShowCancelButton = false, content = item.description)).show()
                 }
             }
         }

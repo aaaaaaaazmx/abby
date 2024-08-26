@@ -146,7 +146,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                     xpopup(it) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
-                        asCustom(BaseCenterPop(it, isShowCancelButton = false, confirmText = "OK", content = "Connected with Discord ID ${mViewModel.userInfo()?.discordGlobalName}")).show()
+                        asCustom(BaseCenterPop(it, isShowCancelButton = false, confirmText = context?.getString(com.cl.common_base.R.string.string_10), content = "Connected with Discord ID ${mViewModel.userInfo()?.discordGlobalName}")).show()
                     }
                 }
                 return@setOnClickListener
@@ -172,7 +172,7 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                                 ct,
                                 content = "The settings are currently not available for the grow tent space. Please switch to the hey abby grow box to access the settings",
                                 oneLineText = "Switch",
-                                twoLineText = "OK",
+                                twoLineText = context?.getString(com.cl.common_base.R.string.string_10),
                                 oneLineCLickEventAction = {
                                     // 跳转到设别列表界面
                                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)

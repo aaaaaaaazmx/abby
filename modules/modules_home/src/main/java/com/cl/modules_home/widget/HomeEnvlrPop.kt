@@ -474,7 +474,8 @@ class HomeEnvlrPop(
                     xpopup(context) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
-                        asCustom(BaseCenterPop(context, content = "Light schedule and intensity have been synced with the server. If you still believe there is an error, please contact 1-on-1 support.", isShowCancelButton = false, confirmText = "OK")).show()
+                        asCustom(BaseCenterPop(context, content = "Light schedule and intensity have been synced with the server. If you still believe there is an error, please contact 1-on-1 support.", isShowCancelButton = false, confirmText = context.getString(
+                            com.cl.common_base.R.string.string_10))).show()
                     }
                 }
 

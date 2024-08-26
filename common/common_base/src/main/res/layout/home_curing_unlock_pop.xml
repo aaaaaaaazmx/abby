@@ -98,7 +98,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="OK"
+                android:text="@string/string_10"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
         </LinearLayout>

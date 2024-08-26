@@ -45,6 +45,7 @@ import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.pop.NotifyPop
 import com.cl.common_base.widget.littile.MyAppWidgetProvider
+import com.cl.modules_my.R
 import com.cl.modules_my.viewmodel.SettingViewModel
 import com.cl.modules_my.widget.LoginOutPop
 import com.cl.modules_my.widget.MyDeleteDevicePop
@@ -262,7 +263,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     this@SettingActivity, content = """
                 This option is designed to control the power of 3rd party accessories.
                 You are currently connect to a hey abby smart accessory, please remove it first from device manager.
-            """.trimIndent(), confirmText = "OK"
+            """.trimIndent(), confirmText = getString(com.cl.common_base.R.string.string_10)
                 )
             ).show()
         }
@@ -451,7 +452,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                     rePlantPop.show()
                                 },
                                 content = "Sorry for the bad experience you had, if you take a moment to complete the questionnaire, we can give you a month's subscription after approve.",
-                                confirmText = "OK",
+                                confirmText = getString(com.cl.common_base.R.string.string_10),
                                 cancelText = "Replant",
                             )
 

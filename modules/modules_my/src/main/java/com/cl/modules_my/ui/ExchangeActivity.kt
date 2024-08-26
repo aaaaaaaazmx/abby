@@ -16,6 +16,7 @@ import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.adapter.ExchangeAdapter
 import com.cl.modules_my.databinding.MyExchangeActivityBinding
 import com.cl.modules_my.viewmodel.WalletViewModel
@@ -118,7 +119,8 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
                     xpopup(this@ExchangeActivity) {
                         dismissOnTouchOutside(false)
                         isDestroyOnDismiss(false)
-                        asCustom(BaseCenterPop(this@ExchangeActivity, content = if (userInfo?.email.isNullOrEmpty()) "Your redemption is complete! " else "Your redemption is complete! Please check your email for the e-gift card details.", isShowCancelButton = false, confirmText = "OK", onConfirmAction = {
+                        asCustom(BaseCenterPop(this@ExchangeActivity, content = if (userInfo?.email.isNullOrEmpty()) "Your redemption is complete! " else "Your redemption is complete! Please check your email for the e-gift card details.", isShowCancelButton = false, confirmText = getString(
+                            com.cl.common_base.R.string.string_10), onConfirmAction = {
                             mViewModel.getExchangeInfo()
                             chooserOxygen = -1
                             exchangeRate = -1

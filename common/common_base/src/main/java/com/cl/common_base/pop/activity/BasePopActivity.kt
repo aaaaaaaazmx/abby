@@ -654,7 +654,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             xpopup(this@BasePopActivity) {
                                 isDestroyOnDismiss(false)
                                 dismissOnTouchOutside(false)
-                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = "OK", onConfirmAction =  {
+                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = getString(R.string.string_10), onConfirmAction =  {
                                     // 跳转到购买地址
                                     //  跳转订阅网站
                                     val intent = Intent(this@BasePopActivity, WebActivity::class.java)

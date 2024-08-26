@@ -376,7 +376,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                                 finish()
                             } else {
                                 mExitTime = System.currentTimeMillis()
-                                showToast("Press to exit the program again")
+                                showToast(getString(com.cl.common_base.R.string.string_7))
                             }
                             true
                         }
@@ -387,7 +387,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                     finish()
                 } else {
                     mExitTime = System.currentTimeMillis()
-                    showToast("Press to exit the program again")
+                    showToast(getString(com.cl.common_base.R.string.string_7))
                 }
             }
             return true

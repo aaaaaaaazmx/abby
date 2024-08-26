@@ -1366,7 +1366,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     it,
                                     content = "The air pump cannot be turned on when the tank has no water. Please fill the tank with water before turning on the air pump.",
                                     isShowCancelButton = false,
-                                    confirmText = "OK",
+                                    confirmText = context?.getString(com.cl.common_base.R.string.string_10),
                                     onCancelAction = {
                                     },
                                     onConfirmAction = {

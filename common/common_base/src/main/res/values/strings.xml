@@ -144,4 +144,6 @@
         <item quantity="other">%d seconds</item>
     </plurals>
 
+    <string name="string_7">Press to exit the program again</string>
+    <string name="string_10">OK</string>
 </resources>

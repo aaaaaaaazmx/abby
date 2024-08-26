@@ -73,7 +73,7 @@
                 android:layout_marginBottom="94dp"
                 android:background="@drawable/create_state_button"
                 android:enabled="true"
-                android:text="OK"
+                android:text="@string/string_10"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="18sp"
