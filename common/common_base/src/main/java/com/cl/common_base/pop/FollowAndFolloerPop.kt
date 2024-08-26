@@ -27,7 +27,7 @@ class FollowAndFolloerPop(context: Context, private val data: MutableList<Folowe
             lifecycleOwner = this@FollowAndFolloerPop
             executePendingBindings()
 
-            tvLogin.text = if (isFollow) "Follower" else "Following"
+            tvLogin.text = if (isFollow) context.getString(R.string.string_189) else context.getString(R.string.string_190)
 
             rv.layoutManager = LinearLayoutManager(context)
             rv.adapter = adapter

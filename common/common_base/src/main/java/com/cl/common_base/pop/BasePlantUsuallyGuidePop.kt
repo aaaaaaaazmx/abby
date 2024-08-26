@@ -331,7 +331,7 @@ class BasePlantUsuallyGuidePop(
 
                         // 如果是没有输入重量的话，是不允许勾选的
                         if (weight.isNullOrEmpty()) {
-                            ToastUtil.shortShow("Invalid weight value")
+                            ToastUtil.shortShow(context.getString(R.string.string_180))
                             cb?.isChecked = false
                             return@setOnItemChildClickListener
                         }
@@ -352,7 +352,7 @@ class BasePlantUsuallyGuidePop(
                         val weight = etWeight?.text
                         // 如果是没有输入重量的话，是不允许勾选的
                         if (weight.isNullOrEmpty()) {
-                            ToastUtil.shortShow("Invalid weight value")
+                            ToastUtil.shortShow(context.getString(R.string.string_180))
                             ((view as? CheckBox))?.isChecked = false
                             return@setOnItemChildClickListener
                         }
@@ -486,7 +486,7 @@ class BasePlantUsuallyGuidePop(
 
                         // 如果是没有输入重量的话，是不允许勾选的
                         if (weight.isEmpty()) {
-                            ToastUtil.shortShow("Invalid weight value")
+                            ToastUtil.shortShow(context.getString(R.string.string_180))
                             cbBox?.isChecked = false
                             return@setOnItemChildClickListener
                         }
@@ -509,7 +509,7 @@ class BasePlantUsuallyGuidePop(
                         val cbBox = ((view as? CheckBox))
                         // 如果是没有输入重量的话，是不允许勾选的
                         if (weight.isEmpty()) {
-                            ToastUtil.shortShow("Invalid weight value")
+                            ToastUtil.shortShow(context.getString(R.string.string_180))
                             cbBox?.isChecked = false
                             return@setOnItemChildClickListener
                         }

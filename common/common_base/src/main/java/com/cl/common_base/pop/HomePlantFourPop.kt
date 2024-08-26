@@ -25,7 +25,7 @@ class HomePlantFourPop(
     override fun beforeShow() {
         super.beforeShow()
         val isF = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
-        binding?.tvDec?.text = if (!isF)  "Open the water tank  cover and add 3 gallons of water." else "Open the water tank  cover and add 12L of water."
+        binding?.tvDec?.text = if (!isF)  context.getString(R.string.string_187) else context.getString(R.string.string_188)
     }
 
     private var binding: HomePlantFourPopBinding? = null

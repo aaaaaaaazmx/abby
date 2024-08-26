@@ -253,11 +253,11 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 success {
                     hideProgressLoading()
                     val followText = binding.tvFollower.text.toString()
-                    if (followText == "Following") {
+                    if (followText == getString(com.cl.common_base.R.string.string_190)) {
                         binding.tvFollower.text = "Follow"
                         viewModel.updateIsFollowAction(false)
                     } else {
-                        binding.tvFollower.text = "Following"
+                        binding.tvFollower.text = getString(com.cl.common_base.R.string.string_190)
                         viewModel.updateIsFollowAction(true)
                     }
                 }
@@ -270,7 +270,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                 success {
                     mediaAdapter.setList(data?.userFlags)
                     if (data?.followStatus == true) {
-                        binding.tvFollower.text = "Following"
+                        binding.tvFollower.text = getString(com.cl.common_base.R.string.string_190)
                     } else {
                         binding.tvFollower.text = "Follow"
                     }
@@ -450,7 +450,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
         }
         binding.clFollower.setOnClickListener {
             val followText = binding.tvFollower.text.toString()
-            val isFollowStatus = followText == "Following" // 判断是否是false
+            val isFollowStatus = followText == getString(com.cl.common_base.R.string.string_190) // 判断是否是false
             //  修改跟随状态
             viewModel.updateFollowStatus(UpdateFollowStatusReq(followStatus = !isFollowStatus, otherUserId = userId ?: ""))
             val followerNumber = binding.tvFollowNumber.text.safeToInt()
@@ -618,9 +618,9 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                                     viewModel.public(syncTrend = if (isCheck) 1 else 0, momentId = item?.id.toString())
                                 },
                                 isShowReport = item?.userId.toString() == viewModel.userinfoBean?.userId,
-                                isFollow = binding.tvFollower.text.toString() == "Following",
+                                isFollow = binding.tvFollower.text.toString() == getString(com.cl.common_base.R.string.string_190),
                                 followAction = {
-                                    val isFollowing = binding.tvFollower.text.toString() == "Following"
+                                    val isFollowing = binding.tvFollower.text.toString() == getString(com.cl.common_base.R.string.string_190)
                                     // 跟随
                                     xpopup(this@OtherJourneyActivity) {
                                         isDestroyOnDismiss(false)

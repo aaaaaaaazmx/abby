@@ -155,4 +155,9 @@
     <string name="string_172">Caution! Increasing the light intensity level above 7 may cause damage to the flowers. Are you sure you want to continue?</string>
     <string name="string_173">No</string>
     <string name="string_174">Yes</string>
+    <string name="string_180">Invalid weight value</string>
+    <string name="string_187">Open the water tank  cover and add 3 gallons of water.</string>
+    <string name="string_188">Open the water tank  cover and add 12L of water.</string>
+    <string name="string_189">Follower</string>
+    <string name="string_190">Following</string>
 </resources>
