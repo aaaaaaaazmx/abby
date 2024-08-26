@@ -192,8 +192,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         this@KnowMoreActivity,
                         content = "Are you sure you want to delete it?",
                         isShowCancelButton = true,
-                        cancelText = "No",
-                        confirmText = "Yes",
+                        cancelText = getString(com.cl.common_base.R.string.string_173),
+                        confirmText = getString(com.cl.common_base.R.string.string_174),
                         onConfirmAction = {
                             if (!relationId.isNullOrEmpty()) {
                                 // 删除当前设备的配件

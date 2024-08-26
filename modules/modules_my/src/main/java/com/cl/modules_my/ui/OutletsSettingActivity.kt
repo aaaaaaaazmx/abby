@@ -122,8 +122,8 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
                 asCustom(
                     BaseCenterPop(this@OutletsSettingActivity,
                         content = "Are you certain you wish to delete the Outlets?",
-                        cancelText = "No",
-                        confirmText = "Yes",
+                        cancelText = getString(com.cl.common_base.R.string.string_173),
+                        confirmText = getString(com.cl.common_base.R.string.string_174),
                         onCancelAction = {},
                         onConfirmAction = {
                             // 删除配件

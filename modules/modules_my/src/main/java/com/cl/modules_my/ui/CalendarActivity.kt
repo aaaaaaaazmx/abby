@@ -1458,7 +1458,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(BaseCenterPop(this@CalendarActivity, content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
-                    cancelText = "No,thanks", confirmText = if (isVip) "Yes" else "Subscribe Now", onConfirmAction = {
+                    cancelText = "No,thanks", confirmText = if (isVip) getString(com.cl.common_base.R.string.string_174) else "Subscribe Now", onConfirmAction = {
                         if (isVip) {
                             // 请求发起会话接口，然后跳转到InterCome
                             mViewMode.conversations(taskNo = data.taskNo)

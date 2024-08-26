@@ -1329,8 +1329,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             BaseCenterPop(
                                 it,
                                 content = "Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?",
-                                cancelText = "No",
-                                confirmText = "Yes",
+                                cancelText = context?.getString(com.cl.common_base.R.string.string_173),
+                                confirmText = context?.getString(com.cl.common_base.R.string.string_174),
                                 onCancelAction = {
                                     // 需要恢复到之前到档位
                                     mViewMode.setAirPump("true")

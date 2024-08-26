@@ -322,8 +322,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 .dismissOnTouchOutside(false).asCustom(
                     BaseCenterPop(this@DeviceAutomationActivity,
                         content = "Are you certain you wish to delete",
-                        cancelText = "No",
-                        confirmText = "Yes",
+                        cancelText = getString(com.cl.common_base.R.string.string_173),
+                        confirmText = getString(com.cl.common_base.R.string.string_174),
                         onCancelAction = {},
                         onConfirmAction = { // 解绑设备
                             // 上传解绑状态
@@ -454,8 +454,8 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                         .asCustom(
                                             BaseCenterPop(this@DeviceAutomationActivity,
                                                 content = "Are you sure you want to delete this automation?",
-                                                cancelText = "No",
-                                                confirmText = "Yes",
+                                                cancelText = getString(com.cl.common_base.R.string.string_173),
+                                                confirmText = getString(com.cl.common_base.R.string.string_174),
                                                 onConfirmAction = {
                                                     // 删除
                                                     mViewModel.deleteAutomation(

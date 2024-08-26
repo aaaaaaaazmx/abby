@@ -210,7 +210,7 @@ class ChooseTimePop(
 
                     if (isTheSpacingHours) {
                         if (turnOnHour == turnOffHour) {
-                            ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
+                            ToastUtil.shortShow(context.getString(R.string.string_169))
                             return@setOnClickListener
                         }
                     }
@@ -233,7 +233,7 @@ class ChooseTimePop(
                         logI("The difference is $hours hours.")
                         if (hours > 12) {
                             // 差距超过12小时
-                            ToastUtil.shortShow("The time interval cannot be greater than 12 hours.")
+                            ToastUtil.shortShow(context.getString(R.string.string_170))
                             return@setOnClickListener
                         }
                         if ((turnOffHour?.minus(turnOnHour ?: 0) ?: 0) <= 12) {
@@ -260,7 +260,7 @@ class ChooseTimePop(
                             }*/
                             dismiss()
                         } else {
-                            ToastUtil.shortShow("The time interval cannot be less than 12 hours.")
+                            ToastUtil.shortShow(context.getString(R.string.string_169))
                         }
                     } else {
                         val timeOpenHour = turnOnHour?.let {
@@ -324,9 +324,9 @@ class ChooseTimePop(
                         .asCustom(context?.let {
                             BaseCenterPop(
                                 it,
-                                content = "Caution! Increasing the light intensity level above 7 may cause damage to the flowers. Are you sure you want to continue?",
-                                cancelText = "No",
-                                confirmText = "Yes",
+                                content = context.getString(R.string.string_172),
+                                cancelText = context.getString(com.cl.common_base.R.string.string_173),
+                                confirmText = context.getString(com.cl.common_base.R.string.string_174),
                                 onCancelAction = {
                                     // 需要恢复到之前到档位
                                     // mViewMode.setGrowLight("${mViewMode.getGrowLight.value}")

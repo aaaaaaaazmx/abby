@@ -310,7 +310,7 @@ class HomeEnvlrPop(
             xpopup(context) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(true)
-                asCustom(BaseCenterPop(context, content = "Whether to disable night mode", cancelText = "No", confirmText = "Yes", isShowCancelButton = true, onConfirmAction = {
+                asCustom(BaseCenterPop(context, content = "Whether to disable night mode", cancelText = context.getString(com.cl.common_base.R.string.string_173), confirmText = context.getString(com.cl.common_base.R.string.string_174), isShowCancelButton = true, onConfirmAction = {
                     lifecycleScope.launch {
                         // 调用接口更新后台夜间模式
                         upDeviceInfo(

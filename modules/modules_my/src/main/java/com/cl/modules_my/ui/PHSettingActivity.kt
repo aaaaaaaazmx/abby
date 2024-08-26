@@ -349,8 +349,8 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                         this@PHSettingActivity,
                         content = "Are you certain you wish to delete the PH Meter?",
                         isShowCancelButton = true,
-                        cancelText = "No",
-                        confirmText = "Yes",
+                        cancelText = getString(com.cl.common_base.R.string.string_173),
+                        confirmText = getString(com.cl.common_base.R.string.string_174),
                         onConfirmAction = {
                             // 删除Ph笔
                             mViewMode.deleteDevice(deviceId.toString())

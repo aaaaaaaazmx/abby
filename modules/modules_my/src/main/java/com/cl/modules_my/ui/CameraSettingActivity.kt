@@ -118,8 +118,8 @@ class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
                 BaseCenterPop(this@CameraSettingActivity,
                     titleText = "Are you certain you wish to delete",
                     content = "*The photos you've taken will remain saved in the app, and any videos can be accessed through the micro SD card inside the budcam.",
-                    cancelText = "No",
-                    confirmText = "Yes",
+                    cancelText = getString(com.cl.common_base.R.string.string_173),
+                    confirmText = getString(com.cl.common_base.R.string.string_174),
                     onCancelAction = {},
                     onConfirmAction = { // 解绑相机
                         accessoryDeviceId?.let { it1 ->

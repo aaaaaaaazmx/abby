@@ -1075,7 +1075,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(BaseCenterPop(this@BasePopActivity, content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
-                    cancelText = "No,thanks", confirmText = if (isVip) "Yes" else "Subscribe Now", onConfirmAction = {
+                    cancelText = "No,thanks", confirmText = if (isVip) getString(com.cl.common_base.R.string.string_174) else "Subscribe Now", onConfirmAction = {
                         if (isVip) {
                             // 跳转到日历界面，然后在发起会话。
                             ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).withString(CalendarData.KEY_TASK_NO, data.taskNo).navigation(this@BasePopActivity)

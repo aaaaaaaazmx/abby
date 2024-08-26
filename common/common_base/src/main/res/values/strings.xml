@@ -150,5 +150,9 @@
     <string name="string_164">Prepare a bucket or bottle of at least 4L</string>
     <string name="string_165">turn on Night mode</string>
     <string name="string_166">turn off Night mode</string>
-
+    <string name="string_169">The time interval cannot be less than 12 hours.</string>
+    <string name="string_170">The time interval cannot be greater than 12 hours.</string>
+    <string name="string_172">Caution! Increasing the light intensity level above 7 may cause damage to the flowers. Are you sure you want to continue?</string>
+    <string name="string_173">No</string>
+    <string name="string_174">Yes</string>
 </resources>
