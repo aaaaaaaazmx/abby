@@ -170,6 +170,46 @@
     <string name="string_200">Select Preset</string>
     <string name="string_201">Click to start draining</string>
 
+    <string name="string_203">The program will pause every 2 minutes to prevent overflow. We recommend using a container of 1.5 gallons+ for water changes.</string>
+    <string name="string_210">Please enter the name</string>
+    <string name="string_211">Save the current preset Max 5 User Preset can be stored</string>
+    <string name="string_212">To ensure the best user experience, you must update your app to the latest version.</string>
+    <string name="string_216">Loading...</string>
+    <string name="string_217">Week 1</string>
+    <string name="string_218">Week 2</string>
+    <string name="string_219">Week 3</string>
+    <string name="string_220">Week 4</string>
+    <string name="string_221">Week 5</string>
+    <string name="string_222">Week 6</string>
+    <string name="string_223">Week 7</string>
+    <string name="string_224">Week 8</string>
+    <string name="string_225">Week 9</string>
+    <string name="string_226">Week 10</string>
+    <string name="string_227">Week 11</string>
+    <string name="string_228">Week 12</string>
+    <string name="string_229">Day 1</string>
+    <string name="string_230">Day 2</string>
+    <string name="string_231">Day 3</string>
+    <string name="string_232">Day 4</string>
+    <string name="string_233">Day 5</string>
+    <string name="string_234">Day 6</string>
+    <string name="string_235">Day 7</string>
+    <string name="string_237">Please email us at growsupport@heyabby.com. The email is already copied to your clipboard.</string>
+    <string name="string_238">Fill the tank with three gallons of water. Make sure the water level is between the second and third sensor. </string>
+    <string name="string_239">Fill the tank with 12L of water. Make sure the water level is between the second and third sensor. </string>
+    <string name="string_240">Searching...</string>
+    <string name="string_241">I don’t know</string>
+    <string name="string_242">To ensure a good user experience, please upgrade your device firmware in time.</string>
+    <string name="string_244">This app requires notification permission to keep you updated with the latest information. Please enable notification permissions in the settings.</string>
+    <string name="string_245">Notification permission granted</string>
+    <string name="string_246">Notification permission denied</string>
+    <string name="string_247">Recommended: </string>
+    <string name="string_248">Turn on </string>
+    <string name="string_249">Calendar </string>
+    <string name="string_250">and </string>
+    <string name="string_251">Alert </string>
+    <string name="string_252">notifications to stay informed about important updates.</string>
+
 
 
 </resources>

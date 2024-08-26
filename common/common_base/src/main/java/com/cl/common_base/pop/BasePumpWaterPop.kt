@@ -154,7 +154,7 @@ class BasePumpWaterPop(
                     }
 
                     tvAddClockTime.text =
-                        if (btnSuccess.isChecked) "The program will pause every 2 minutes to prevent overflow. We recommend using a container of 1.5 gallons+ for water changes."
+                        if (btnSuccess.isChecked) context.getString(R.string.string_203)
                         else context.getString(R.string.base_pump_stop_dec)
                 }
             }
@@ -279,14 +279,14 @@ class BasePumpWaterPop(
                                         if (value == false) {
                                             binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_auto_start_desc)
                                         } else {
-                                            binding?.tvAddClockTime?.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of 1.5 gallons+ for water changes."
+                                            binding?.tvAddClockTime?.text = context.getString(R.string.string_203)
                                         }
                                     } else {
                                         // 暂停
                                         if (value == false) {
                                             binding?.tvAddClockTime?.text = context.getString(R.string.base_pump_stop_dec)
                                         } else {
-                                            binding?.tvAddClockTime?.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of 1.5 gallons+ for water changes."
+                                            binding?.tvAddClockTime?.text = context.getString(R.string.string_203)
                                         }
                                     }
                                     binding?.btnSuccess?.isChecked = value as Boolean

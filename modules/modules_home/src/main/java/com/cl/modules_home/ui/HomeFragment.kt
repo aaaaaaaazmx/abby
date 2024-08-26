@@ -3368,12 +3368,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             val hasPermissions = PermissionHelp().hasPermissions(context, Manifest.permission.POST_NOTIFICATIONS)
                                 if (!hasPermissions) {
                                     activity?.let {
-                                        PermissionHelp().applyPermissionHelp(it, "This app requires notification permission to keep you updated with the latest information. Please enable notification permissions in the settings.", object : PermissionHelp.OnCheckResultListener {
+                                        PermissionHelp().applyPermissionHelp(it, it.getString(com.cl.common_base.R.string.string_244), object : PermissionHelp.OnCheckResultListener {
                                             override fun onResult(result: Boolean) {
                                                 if (result) {
-                                                    ToastUtil.shortShow("Notification permission granted.")
+                                                    ToastUtil.shortShow(context?.getString(com.cl.common_base.R.string.string_245))
                                                 } else {
-                                                    ToastUtil.shortShow("Notification permission denied")
+                                                    ToastUtil.shortShow(context?.getString(com.cl.common_base.R.string.string_246))
                                                 }
                                             }
                                         }, Manifest.permission.POST_NOTIFICATIONS)

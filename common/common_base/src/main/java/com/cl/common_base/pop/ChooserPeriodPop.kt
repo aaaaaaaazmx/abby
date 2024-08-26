@@ -45,7 +45,7 @@ class ChooserPeriodPop(
 
 
     private val loadingPopup by lazy {
-        XPopup.Builder(context).asLoading("Loading...")
+        XPopup.Builder(context).asLoading(context.getString(R.string.string_216))
     }
 
     private var week: String = ""

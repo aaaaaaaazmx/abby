@@ -79,7 +79,7 @@ class HomeEnvlrPop(
     }
 
     fun setStrainName(strainName: String?) {
-        if (strainName == "I don’t know") {
+        if (strainName == context.getString(com.cl.common_base.R.string.string_241)) {
             this.strainName = ""
         } else {
             this.strainName = strainName

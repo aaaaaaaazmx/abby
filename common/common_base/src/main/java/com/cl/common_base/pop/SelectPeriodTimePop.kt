@@ -28,14 +28,37 @@ class SelectPeriodTimePop(context: Context, private val timeString: String, priv
     private lateinit var binding: BaseSelectPeriodTimePopBinding
 
     private val loadingPopup by lazy {
-        XPopup.Builder(context).asLoading("Loading...")
+        XPopup.Builder(context).asLoading(context.getString(R.string.string_216))
     }
     private val weekList by lazy {
-        mutableListOf("Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12")
+        // Week 1 - 217 -288
+        mutableListOf(
+            context.getString(R.string.string_217),
+            context.getString(R.string.string_218),
+            context.getString(R.string.string_219),
+            context.getString(R.string.string_220),
+            context.getString(R.string.string_221),
+            context.getString(R.string.string_222),
+            context.getString(R.string.string_223),
+            context.getString(R.string.string_224),
+            context.getString(R.string.string_225),
+            context.getString(R.string.string_226),
+            context.getString(R.string.string_227),
+            context.getString(R.string.string_228),
+        )
     }
 
     private val dayList by lazy {
-        mutableListOf("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7")
+        // string_229 - string_235
+        mutableListOf(
+            context.getString(R.string.string_229),
+            context.getString(R.string.string_230),
+            context.getString(R.string.string_231),
+            context.getString(R.string.string_232),
+            context.getString(R.string.string_233),
+            context.getString(R.string.string_234),
+            context.getString(R.string.string_235),
+        )
     }
 
     private var selectWeekString: String = ""

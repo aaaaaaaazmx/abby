@@ -36,11 +36,11 @@ class PresetPop(
             ivClearEmail.setOnClickListener { etEmail.setText("") }
             btnSuccess.setSafeOnClickListener(lifecycleScope) {
                 if (etEmail.text.toString().isEmpty()) {
-                    ToastUtil.shortShow("Please enter the name")
+                    ToastUtil.shortShow(context.getString(R.string.string_210))
                     return@setSafeOnClickListener
                 }
                 if (listPreset?.size == 5) {
-                    ToastUtil.shortShow("Save the current preset Max 5 User Preset can be stored")
+                    ToastUtil.shortShow(context.getString(R.string.string_211))
                     return@setSafeOnClickListener
                 }
                 // save 之后是保存在本地。

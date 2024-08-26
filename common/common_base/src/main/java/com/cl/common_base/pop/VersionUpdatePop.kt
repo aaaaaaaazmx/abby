@@ -31,8 +31,7 @@ class VersionUpdatePop(
     override fun onCreate() {
         super.onCreate()
         DataBindingUtil.bind<BaseVersionUpdateBinding>(popupImplView)?.apply {
-            tvContent.text =
-                "To ensure the best user experience, you must update your app to the latest version."
+            tvContent.text = context.getString(R.string.string_212)
             appVersionData?.let {
                 forcedUpdate = it.forcedUpdate.toString()
                 // 0 不强制，1 强制升级

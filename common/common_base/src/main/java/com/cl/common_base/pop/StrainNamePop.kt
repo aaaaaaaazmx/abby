@@ -45,7 +45,7 @@ class StrainNamePop(
     }
 
     // 搜索时
-    private val searching: MutableList<String> = mutableListOf("Searching...")
+    private val searching: MutableList<String> = mutableListOf(context.getString(R.string.string_240))
 
     private var binding: StrainNameBinding? = null
     override fun onCreate() {
@@ -102,7 +102,7 @@ class StrainNamePop(
 
             clNotKnow.setOnClickListener {
                 // 跳过的话，默认名字
-                onConfirmAction?.invoke("I don’t know")
+                onConfirmAction?.invoke(context.getString(R.string.string_241))
             }
 
             btnSuccess.setOnClickListener {

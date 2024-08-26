@@ -47,7 +47,7 @@ class NotifyPop(context: Context, val activity: FragmentActivity, private val ge
     private lateinit var binding: MyPopNotifyBinding
 
     private val loadingPopup by lazy {
-        XPopup.Builder(context).asLoading("Loading...")
+        XPopup.Builder(context).asLoading(context.getString(R.string.string_216))
     }
 
     private val userInfoBean by lazy {
@@ -67,13 +67,13 @@ class NotifyPop(context: Context, val activity: FragmentActivity, private val ge
                     if (!isHash) {
                         PermissionHelp().applyPermissionHelp(
                             activity,
-                            "This app requires notification permission to keep you updated with the latest information. Please enable notification permissions in the settings.",
+                            context.getString(R.string.string_244),
                             object : PermissionHelp.OnCheckResultListener {
                                 override fun onResult(result: Boolean) {
                                     if (result) {
-                                        ToastUtil.shortShow("Notification permission granted")
+                                        ToastUtil.shortShow(context.getString(R.string.string_245))
                                     } else {
-                                        ToastUtil.shortShow("Notification permission denied")
+                                        ToastUtil.shortShow(context.getString(R.string.string_246))
                                     }
                                 }
                             },
@@ -88,12 +88,12 @@ class NotifyPop(context: Context, val activity: FragmentActivity, private val ge
 
             // Recommended: Turn on Calendar and Alert notifications to stay informed about important updates.
             tvDesc.text = buildSpannedString {
-                bold { append("Recommended: ") }
-                append("Turn on ")
-                bold { append("Calendar ") }
-                append("and ")
-                bold { append("Alert ") }
-                append("notifications to stay informed about important updates.")
+                bold { append(context.getString(R.string.string_247)) }
+                append(context.getString(R.string.string_248))
+                bold { append(context.getString(R.string.string_249)) }
+                append(context.getString(R.string.string_250))
+                bold { append(context.getString(R.string.string_251)) }
+                append(context.getString(R.string.string_252))
             }
 
             switchNotify.setSafeOnClickListener {

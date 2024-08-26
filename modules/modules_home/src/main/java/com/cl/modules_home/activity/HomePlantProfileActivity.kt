@@ -26,6 +26,7 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.util.json.GSON
+import com.cl.modules_home.R
 import com.cl.modules_home.viewmodel.HomePlantProfileViewModel
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
@@ -341,7 +342,7 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
     }
 
     // 搜索时
-    private val searching: MutableList<String> = mutableListOf("Searching...")
+    private val searching: MutableList<String> = mutableListOf(getString(com.cl.common_base.R.string.string_240))
     private val searchAdapter by lazy {
         StrainNameSearchAdapter(mutableListOf())
     }

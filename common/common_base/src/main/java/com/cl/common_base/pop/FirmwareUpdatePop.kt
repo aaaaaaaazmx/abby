@@ -43,7 +43,7 @@ class FirmwareUpdatePop(
                         ivImg.background =
                             ContextCompat.getDrawable(context, R.mipmap.my_remind_update)
                         tvContent.text =
-                            "To ensure a good user experience, please upgrade your device firmware in time."
+                            context.getString(R.string.string_242)
                     }
                     2 -> {
                         ivImg.background =
@@ -54,7 +54,7 @@ class FirmwareUpdatePop(
                         ivImg.background =
                             ContextCompat.getDrawable(context, R.mipmap.my_remind_update)
                         tvContent.text =
-                            "To ensure a good user experience, please upgrade your device firmware in time."
+                            context.getString(R.string.string_242)
                     }
                 }
             }
