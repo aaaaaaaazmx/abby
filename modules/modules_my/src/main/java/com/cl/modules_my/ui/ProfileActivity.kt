@@ -257,8 +257,8 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         binding.ftNickName.setItemTitle(getString(com.cl.common_base.R.string.profile_name), true)
         binding.ftId.setItemTitle(getString(com.cl.common_base.R.string.profile_abby_id), true)
         binding.ftEmail.setItemTitle(getString(com.cl.common_base.R.string.profile_email), true)
-        binding.ftWall.setItemTitle("Wall", true)
-        binding.ftRegistration.setItemTitle("Registration ID", true)
+        binding.ftWall.setItemTitle(getString(com.cl.common_base.R.string.string_1735), true)
+        binding.ftRegistration.setItemTitle(getString(com.cl.common_base.R.string.string_1736), true)
     }
 
     override fun observe() {

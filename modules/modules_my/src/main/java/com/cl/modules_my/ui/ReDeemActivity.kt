@@ -53,7 +53,7 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
 
     private fun htmlSpan() {
         binding.tvHtml.text = buildSpannedString {
-            append("If you would like to extend your growing service, please go to our official website ")
+            append(getString(com.cl.common_base.R.string.string_1710))
             appendClickable("https://heyabby.com/pages/subscription") {
                 // 跳转到重新连接页面
                 val intent = Intent(
@@ -65,11 +65,11 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
                     intent
                 )
             }
-            append(" to purchase the option most suitable for you. This service includes our one-on-one support, growing pack (fertilizers, basket, carbon filters, etc), and device connectivity to our server.")
+            append(getString(com.cl.common_base.R.string.string_1711))
 
             appendLine()
             appendLine()
-            append("After purchase, you’ll receive a verification code via email. Enter the code below to extend your service validity accordingly.")
+            append(getString(com.cl.common_base.R.string.string_1712))
         }
         binding.tvHtml.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击
         binding.tvHtml.highlightColor = ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色

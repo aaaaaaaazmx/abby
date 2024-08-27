@@ -347,7 +347,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                 asCustom(
                     BaseCenterPop(
                         this@PHSettingActivity,
-                        content = "Are you certain you wish to delete the PH Meter?",
+                        content = getString(com.cl.common_base.R.string.string_1760),
                         isShowCancelButton = true,
                         cancelText = getString(com.cl.common_base.R.string.string_173),
                         confirmText = getString(com.cl.common_base.R.string.string_174),

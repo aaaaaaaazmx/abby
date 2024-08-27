@@ -273,7 +273,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
             when (view.id) {
                 com.cl.modules_my.R.id.tv_attribute -> {
                     if (!isAdd) {
-                        ToastUtil.shortShow("Existing grow space cannot be modified")
+                        ToastUtil.shortShow(getString(R.string.string_1849))
                         return@setOnItemChildClickListener
                     }
                     val newList = List(2) {
@@ -295,7 +295,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
 
                 com.cl.modules_my.R.id.tv_plant_way -> {
                     if (!isAdd) {
-                        ToastUtil.shortShow("Existing grow space cannot be modified")
+                        ToastUtil.shortShow(getString(R.string.string_1849))
                         return@setOnItemChildClickListener
                     }
                     val newList = getPlantWayList(dataInfo?.attribute)

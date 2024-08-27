@@ -153,7 +153,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(
-                    BaseInputPop(this@DeviceAutomationActivity, title = "Outlet Name", hintText = binding.etEmail.text.toString(), onConfirmAction = {
+                    BaseInputPop(this@DeviceAutomationActivity, title = getString(com.cl.common_base.R.string.string_1843), hintText = binding.etEmail.text.toString(), onConfirmAction = {
                         // 上传名字
                         binding.etEmail.text = it
                         // 保存名字\修改配件信息
@@ -194,7 +194,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    ToastUtil.shortShow("Update successfully")
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1844))
                 }
             })
             saveCameraSetting.observe(this@DeviceAutomationActivity, resourceObserver {
@@ -286,7 +286,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     }
                     // 主开关需要开启，才显示
                     binding.tvAutoDesc.text =
-                        if (data?.status == 1 && openSize >= 1) "Auto\nOn" else "Auto\nOff"
+                        if (data?.status == 1 && openSize >= 1) getString(com.cl.common_base.R.string.string_1845) else getString(com.cl.common_base.R.string.string_1846)
 
                     adapter.setList(data?.list)
                 }
@@ -321,7 +321,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
             XPopup.Builder(this@DeviceAutomationActivity).isDestroyOnDismiss(false)
                 .dismissOnTouchOutside(false).asCustom(
                     BaseCenterPop(this@DeviceAutomationActivity,
-                        content = "Are you certain you wish to delete",
+                        content = getString(com.cl.common_base.R.string.string_1717),
                         cancelText = getString(com.cl.common_base.R.string.string_173),
                         confirmText = getString(com.cl.common_base.R.string.string_174),
                         onCancelAction = {},
@@ -369,7 +369,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                     .dismissOnTouchOutside(false)
                     .asCustom(
                         BaseCenterPop(this@DeviceAutomationActivity,
-                            content = "Adding an automation will turn off the default smart profile. Are you sure you want to proceed?",
+                            content = getString(com.cl.common_base.R.string.string_1847),
                             cancelText = getString(R.string.my_cancel),
                             confirmText = getString(R.string.my_confirm),
                             onConfirmAction = {
@@ -453,7 +453,7 @@ class DeviceAutomationActivity : BaseActivity<MyDeviceAutomationBinding>() {
                                         .dismissOnTouchOutside(false)
                                         .asCustom(
                                             BaseCenterPop(this@DeviceAutomationActivity,
-                                                content = "Are you sure you want to delete this automation?",
+                                                content = getString(com.cl.common_base.R.string.string_1848),
                                                 cancelText = getString(com.cl.common_base.R.string.string_173),
                                                 confirmText = getString(com.cl.common_base.R.string.string_174),
                                                 onConfirmAction = {

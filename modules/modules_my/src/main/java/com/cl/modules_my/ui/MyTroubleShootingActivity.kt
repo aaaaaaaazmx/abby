@@ -34,7 +34,7 @@ class MyTroubleShootingActivity : BaseActivity<MyTroubleShootingBinding>() {
 
     // 通用Title
     private val titleList by lazy {
-        mutableListOf("Growing", "abby", "Connect")
+        mutableListOf(getString(com.cl.common_base.R.string.string_1763), getString(com.cl.common_base.R.string.string_abby), getString(com.cl.common_base.R.string.string_1764))
     }
 
     // fragmentList

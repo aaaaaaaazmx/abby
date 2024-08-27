@@ -1,5 +1,6 @@
 package com.cl.modules_my.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import com.cl.common_base.bean.DigitalAsset
 import com.cl.common_base.bean.DigitalAssetData
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -21,7 +23,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ActivityRetainedScoped
-class MyViewModel @Inject constructor(private val repository: MyRepository) :
+class MyViewModel @Inject constructor(private val repository: MyRepository, @ApplicationContext private val context: Context) :
     ViewModel() {
 
     // 用户信息
@@ -171,13 +173,13 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) :
 
     fun isVipSHowText(): String {
         return if (userDetail.value?.data?.isVip == 0) {
-            "Subscription Expired"
+            context.getString(com.cl.common_base.R.string.string_1703)
         } else {
             if (userDetail.value?.data?.continuousVip == 1) {
                 // 如果是连续包月
-                "Subscription Active"
+                context.getString(com.cl.common_base.R.string.string_1704)
             } else {
-                "Subscription valid till " + parseTime(userDetail.value?.data?.subscriptionTime)
+                context.getString(com.cl.common_base.R.string.string_1705) + parseTime(userDetail.value?.data?.subscriptionTime)
             }
         }
     }

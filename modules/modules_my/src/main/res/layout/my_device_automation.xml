@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="13dp"
                 android:layout_marginTop="19dp"
-                android:text="Outlet Name"
+                android:text="@string/string_1843"
                 android:textColor="@color/black"
                 android:textSize="17sp"
                 android:textStyle="bold"

@@ -49,7 +49,7 @@ class PrivacyPop(
                 // 跳转到使用条款H5
                 onTermUsAction?.invoke()
             } }
-            append(" and ")
+            append(context.getString(com.cl.common_base.R.string.string_1699))
             color(
                 ResourcesCompat.getColor(
                     resources,

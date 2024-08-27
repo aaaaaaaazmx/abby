@@ -70,7 +70,7 @@ class LoginSelectEnvPop(context: Context) : BottomPopupView(context) {
                 // 移除任何配件设备，输入配件ID即可
                 tvUnbind.setOnEditorActionListener { v, actionId, event ->
                     if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_SEND || event != null && event.keyCode == KeyEvent.KEYCODE_ENTER) {
-                        TuyaCameraUtils().unBindCamera(v.text.toString(), {ToastUtil.shortShow(it)}, {ToastUtil.shortShow("success")})
+                        TuyaCameraUtils().unBindCamera(v.text.toString(), {ToastUtil.shortShow(it)}, {ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1701))})
                     }
                     false
                 }

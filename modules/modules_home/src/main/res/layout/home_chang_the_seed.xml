@@ -67,7 +67,7 @@
                 app:slider_vibration_duration="50"
                 app:slider_threshold="1dp"
                 app:completed_text=""
-                app:engage_text="Replant"
+                app:engage_text="@string/string_1748"
                 app:engage_text_size="18sp"
                 app:engage_text_color="@android:color/white"
                 app:completed_text_color="@android:color/white"

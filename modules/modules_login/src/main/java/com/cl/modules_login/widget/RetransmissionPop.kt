@@ -29,7 +29,7 @@ class RetransmissionPop(
             executePendingBindings()
 
             when(thirdSource) {
-                "sms" -> tvSend.text = "Resend"
+                "sms" -> tvSend.text = context.getString(com.cl.common_base.R.string.string_1700)
             }
 
             tvSend.setOnClickListener {

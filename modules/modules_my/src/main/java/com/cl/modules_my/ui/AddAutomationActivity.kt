@@ -245,7 +245,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                         .into(binding.ivThenImg)
                 }
                 binding.etEmail.setText(data?.accessoryName)
-                binding.tvThenType.text = if (data?.status == 0) "Turn Off" else "Turn On"
+                binding.tvThenType.text = if (data?.status == 0) getString(com.cl.common_base.R.string.string_1804) else getString(com.cl.common_base.R.string.string_1805)
 
                 // 获取自动化列表类型
                 deviceId?.let { mViewModel.getAutoType(it) }
@@ -397,13 +397,13 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                 .asCustom(
                     BaseThreeTextPop(
                         this@AddAutomationActivity,
-                        oneLineText = "Turn On",
-                        twoLineText = "Turn Off",
+                        oneLineText = getString(com.cl.common_base.R.string.string_1805),
+                        twoLineText = getString(com.cl.common_base.R.string.string_1804),
                         oneLineCLickEventAction = {
-                            binding.tvThenType.text = "Turn On"
+                            binding.tvThenType.text = getString(com.cl.common_base.R.string.string_1805)
                         },
                         twoLineCLickEventAction = {
-                            binding.tvThenType.text = "Turn Off"
+                            binding.tvThenType.text = getString(com.cl.common_base.R.string.string_1804)
                         },
                     )
                 ).show()
@@ -430,7 +430,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                     usbPort = usbPort,
                     deviceId = deviceId,
                     portId = portId,
-                    status = if (binding.tvThenType.text == "Turn On") 1 else 0,
+                    status = if (binding.tvThenType.text == getString(com.cl.common_base.R.string.string_1805)) 1 else 0,
                     list =
                     mutableListOf(
                         GetAutomationRuleBean.AutomationRuleListBean(

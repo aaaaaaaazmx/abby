@@ -73,7 +73,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
                     ToastUtil.show(errorMsg)
                 }
                 success {
-                    ToastUtil.shortShow("Activate success")
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1769))
                     val accessId = data?.accessoryId.safeToInt()
                     val accessDeviceId = data?.accessoryDeviceId
                     //  跳转到排插设置界面
@@ -141,7 +141,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
                         if (currentWifiName.startsWith("Smart") || currentWifiName.startsWith("SL")) {
                             goSearch()
                         } else {
-                            ToastUtil.shortShow("Please switch to the device's Wi-Fi")
+                            ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1773))
                         }
                     }
                 },
@@ -157,7 +157,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
     }
 
     private fun goSearch() {
-        binding.tvSearch.text = "Connecting.."
+        binding.tvSearch.text = getString(com.cl.common_base.R.string.string_1774)
         ViewUtils.setGone(binding.llWifiPairTwo)
         ViewUtils.setVisible(binding.llWifiPairThree)
         // showProgressLoading()

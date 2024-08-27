@@ -415,7 +415,7 @@
                     isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    app:itemTitle="Replant" />
+                    app:itemTitle="@string/string_1748" />
 
                 <TextView
                     android:layout_width="match_parent"

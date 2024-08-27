@@ -106,7 +106,7 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    ToastUtil.shortShow("Unbound successfully")
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1834))
                     ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
                         .navigation()
                 }
@@ -121,7 +121,7 @@ class OutletsSettingActivity : BaseActivity<MyOutletsSettingActivityBinding>() {
                 dismissOnTouchOutside(true)
                 asCustom(
                     BaseCenterPop(this@OutletsSettingActivity,
-                        content = "Are you certain you wish to delete the Outlets?",
+                        content = getString(com.cl.common_base.R.string.string_1835),
                         cancelText = getString(com.cl.common_base.R.string.string_173),
                         confirmText = getString(com.cl.common_base.R.string.string_174),
                         onCancelAction = {},

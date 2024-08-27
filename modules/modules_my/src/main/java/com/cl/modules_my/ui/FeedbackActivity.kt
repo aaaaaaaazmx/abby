@@ -78,9 +78,9 @@ class FeedbackActivity: BaseActivity<MyFeedbackActivityBinding>() {
                         val smsToUri = Uri.parse("smsto:")
                         val intent = Intent(Intent.ACTION_SENDTO, smsToUri)
                         //"sms_body"必须一样，smsbody是发送短信内容content
-                        intent.putExtra("sms_body", "I'm loving my grow box so far– my plant's growing great! You should check out Hey abby for yourself: [https://heyabby.com/pages/which-hey-abby-is-right-for-you](https://heyabby.com/pages/which-hey-abby-is-right-for-you)")
+                        intent.putExtra("sms_body", getString(com.cl.common_base.R.string.string_1781))
                         startActivity(intent)
-                    }, content = "Loving the grow journey? Tell your friends about Hey abby!", confirmText = "SMS")
+                    }, content = getString(com.cl.common_base.R.string.string_1782), confirmText = getString(com.cl.common_base.R.string.string_1783))
                 ).show()
         }
     }

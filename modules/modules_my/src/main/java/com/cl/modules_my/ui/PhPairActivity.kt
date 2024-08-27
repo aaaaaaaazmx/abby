@@ -221,10 +221,10 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
             val bleDevice: BleDevice? = adapter.data[position] as BleDevice?
             if (view.id == R.id.svt_add) {
                 if (mViewMode.isConnected(bleDevice)) {
-                    showProgressLoading("Disconnecting...")
+                    showProgressLoading(getString(com.cl.common_base.R.string.string_1721))
                     mViewMode.disConnect(bleDevice)
                 } else {
-                    showProgressLoading("Connecting...")
+                    showProgressLoading(getString(com.cl.common_base.R.string.string_1722))
                     mViewMode.connect(bleDevice)
                 }
             }

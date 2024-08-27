@@ -22,7 +22,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:textStyle="bold"
             android:textColor="@color/mainColor"
-            android:text="Timer"
+            android:text="@string/string_1807"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />

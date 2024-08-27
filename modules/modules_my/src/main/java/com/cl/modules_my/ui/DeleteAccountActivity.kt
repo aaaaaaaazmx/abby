@@ -51,7 +51,7 @@ class DeleteAccountActivity : BaseActivity<MyDeleteAccountActivityBinding>(), Ve
             xpopup(this@DeleteAccountActivity) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(true)
-                asCenterList("", arrayOf("Resend email", "Cancel"), OnSelectListener { position, text ->
+                asCenterList("", arrayOf(getString(com.cl.common_base.R.string.string_1832), getString(com.cl.common_base.R.string.my_cancel)), OnSelectListener { position, text ->
                     when (position) {
                         0 -> {
                             // 重发邮件
@@ -79,7 +79,7 @@ class DeleteAccountActivity : BaseActivity<MyDeleteAccountActivityBinding>(), Ve
                     " ${userInfo?.email} "
                 )
             }
-            append("enter the verification code, and your account and data will be deleted permanently. This operation is irreversible.")
+            append(getString(com.cl.common_base.R.string.string_1833))
         }
 
         // 删除账户

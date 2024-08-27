@@ -185,7 +185,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
                 runOnUiThread {
                     // 消失进度条
                     updateProgressPop.dismiss()
-                    updateFailPop.setFailtext("Time Out")
+                    updateFailPop.setFailtext(getString(com.cl.common_base.R.string.string_1765))
                     pop.asCustom(updateFailPop).show()
                 }
             }
@@ -201,15 +201,15 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
                         binding.tvVersion.text = "v${data.version}"
                         if (data.desc.isNullOrEmpty()) {
                             binding.tvMs.text = buildSpannedString {
-                                appendLine("1.Follow the APP instruction, change")
-                                appendLine("2.open the front door of the device, put the pipe into the bucket, operate on APP to start the pumping water; In the meantime, turn the water tank cover over to observe the situation of Root; after the pumping, check whether there are dead roots or trash on the pipe filter. If so, clean it up, and then place the tube back to the fixed position at the bottom of the tank;")
+                                appendLine(getString(com.cl.common_base.R.string.string_1766))
+                                appendLine(getString(com.cl.common_base.R.string.string_1767))
                             }
                         } else {
                             binding.tvMs.text = data.desc
                         }
                     } else {
                         binding.tvVersion.text = "v${data.currentVersion}"
-                        binding.tvMs.text = "Your firmware is up to date"
+                        binding.tvMs.text = getString(com.cl.common_base.R.string.string_1768)
                     }
                 }
             }

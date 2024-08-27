@@ -62,7 +62,7 @@ class WifiPairActivity : BaseActivity<MyWifiPairActivityBinding>() {
             ViewUtils.setGone(binding.tvNext)
             ViewUtils.setVisible(binding.llTwo)
             binding.banner.setCurrentItem(2, true)
-            binding.tvContent.text = "Press and hold the RESET button for 5s."
+            binding.tvContent.text = getString(com.cl.common_base.R.string.string_1854)
         }
 
         binding.tvBackTwo.setOnClickListener {
@@ -72,7 +72,7 @@ class WifiPairActivity : BaseActivity<MyWifiPairActivityBinding>() {
             ViewUtils.setVisible(binding.tvNext)
             binding.tvNext.text = getString(com.cl.common_base.R.string.string_262)
             binding.banner.setCurrentItem(1, true)
-            binding.tvContent.text = "Power on the device after it has been powered off for 10s."
+            binding.tvContent.text = getString(com.cl.common_base.R.string.string_1855)
         }
 
         binding.tvNextTwo.setOnClickListener {
@@ -81,7 +81,7 @@ class WifiPairActivity : BaseActivity<MyWifiPairActivityBinding>() {
             ViewUtils.setGone(binding.tvNext)
             ViewUtils.setVisible(binding.tvNextThree)
             binding.banner.setCurrentItem(3, true)
-            binding.tvContent.text = "Confirm the indicator is slowly blinking"
+            binding.tvContent.text = getString(com.cl.common_base.R.string.string_1856)
         }
 
         binding.tvNextThree.setOnClickListener {

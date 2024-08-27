@@ -119,7 +119,7 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
                     xpopup(this@ExchangeActivity) {
                         dismissOnTouchOutside(false)
                         isDestroyOnDismiss(false)
-                        asCustom(BaseCenterPop(this@ExchangeActivity, content = if (userInfo?.email.isNullOrEmpty()) "Your redemption is complete! " else "Your redemption is complete! Please check your email for the e-gift card details.", isShowCancelButton = false, confirmText = getString(
+                        asCustom(BaseCenterPop(this@ExchangeActivity, content = if (userInfo?.email.isNullOrEmpty()) getString(com.cl.common_base.R.string.string_1785) else getString(com.cl.common_base.R.string.string_1786), isShowCancelButton = false, confirmText = getString(
                             com.cl.common_base.R.string.string_10), onConfirmAction = {
                             mViewModel.getExchangeInfo()
                             chooserOxygen = -1
@@ -139,7 +139,7 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
     override fun initData() {
         binding.tvTerms.setSafeOnClickListener {
             if (chooserOxygen == -1 && exchangeRate == -1)  {
-                ToastUtil.shortShow("Please select Oxygen Coins")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1787))
                 return@setSafeOnClickListener
             }
 

@@ -53,7 +53,7 @@ class AccessAdapter(
         ViewUtils.setVisible(openSize == 0, checkView)
         ViewUtils.setVisible(openSize != 0, textView)
         checkView.setItemChecked(status == 1)
-        textView.text = if (status == 1 && openSize == 1) "Auto\nOn" else "Auto\nOff"
+        textView.text = if (status == 1 && openSize == 1) context.getString(com.cl.common_base.R.string.string_1845) else context.getString(com.cl.common_base.R.string.string_1846)
 
 
         // 需要根据单位来进行转变

@@ -70,15 +70,15 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
             appendLine()
             appendLine("the below items will be merged into ${userinfoBean?.email}")
             appendLine()
-            appendLine("1. Your subscription. (the subscription will be associated with the device) There is no need to pay for the existing subscription again.")
+            appendLine(getString(R.string.string_1725))
             appendLine()
-            appendLine("2. Plant information and progress")
+            appendLine(getString(R.string.string_1726))
             appendLine()
-            appendLine("3. Oxygen coins and transaction records")
+            appendLine(getString(R.string.string_1727))
             appendLine()
-            appendLine("4. Calendar")
+            appendLine(getString(R.string.string_1728))
             appendLine()
-            appendLine("5. Your trend post and replies")
+            appendLine(getString(R.string.string_1729))
             appendLine()
         }
 
@@ -99,8 +99,8 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
                     .isDestroyOnDismiss(false)
                     .asCustom(
                         BaseCenterPop(this@MergeAccountSureActivity,
-                            confirmText = "Try Again",
-                            cancelText = "Go Back",
+                            confirmText = getString(R.string.string_1730),
+                            cancelText = getString(R.string.string_1731),
                             content = "$errorMsg",
                             isShowCancelButton = true,
                             onConfirmAction = {
@@ -117,9 +117,9 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
                     .isDestroyOnDismiss(false)
                     .asCustom(
                         BaseCenterPop(this@MergeAccountSureActivity,
-                            titleText = "Congratulations!",
-                            confirmText = "Go to Device List",
-                            content = "Congrats! The merge is complete. You can now manage all your devices in the device management page", isShowCancelButton = false, onConfirmAction = {
+                            titleText = getString(R.string.string_1732),
+                            confirmText = getString(R.string.string_1733),
+                            content = getString(R.string.string_1734), isShowCancelButton = false, onConfirmAction = {
                                 // todo 跳转到设备列表界面
                                 val intent = Intent(this@MergeAccountSureActivity, DeviceListActivity::class.java)
                                 intent.putExtra(DeviceListActivity.KEY_SHOW_BIND_POP, true)

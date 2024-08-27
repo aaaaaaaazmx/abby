@@ -14,7 +14,7 @@
 
         <com.cl.common_base.widget.FeatureTitleBar
             android:id="@+id/title"
-            app:title="Wall"
+            app:title="@string/string_1735"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             />

@@ -162,7 +162,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                     .dismissOnTouchOutside(false).asCustom(
                         BaseCenterPop(
                             this@DeviceListActivity,
-                            content = "Please note that the merged device needs to be re-paired.",
+                            content = getString(com.cl.common_base.R.string.string_1788),
                             isShowCancelButton = false
                         )
                     ).show()
@@ -204,11 +204,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 val unSharedList = dataInfo.filter { it.isShared == false }.toMutableList()
                 // 3. 判断是否有isChooser为true的设备，如果有就新增一个元素spaceType = KEY_SPACE_TYPE_TEXT
                 if (sharedList.isNotEmpty()) {
-                    sharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = "Shared Add-ons"))
+                    sharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = getString(com.cl.common_base.R.string.string_1789)))
                 }
                 // 4. 判断是否有isChooser为false的设备，如果有就新增一个元素spaceType = KEY_SPACE_TYPE_TEXT
                 if (unSharedList.isNotEmpty()) {
-                    unSharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = "Grow Space"))
+                    unSharedList.add(0, ListDeviceBean(spaceType = ListDeviceBean.KEY_SPACE_TYPE_TEXT, textDesc = getString(com.cl.common_base.R.string.string_1790)))
                 }
 
                 // 5. 将isShared为true的设备放在前面
@@ -299,8 +299,8 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                 asCustom(
                                     BaseCenterPop(
                                         this@DeviceListActivity,
-                                        content = "You’re about to add a new device",
-                                        confirmText = "Confirm",
+                                        content = getString(com.cl.common_base.R.string.string_1791),
+                                        confirmText = getString(com.cl.common_base.R.string.my_confirm),
                                         onConfirmAction = {
                                             PermissionHelp().checkConnectForTuYaBle(this@DeviceListActivity,
                                                 object : PermissionHelp.OnCheckResultListener {

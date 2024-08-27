@@ -34,7 +34,7 @@ class AttentionPop(
             }
 
             ViewUtils.setVisible(isShowTalkButton == true, btnSuccess)
-            tvTitleDesc.text = if (isShowTalkButton == true) "You are about to replant. The current session will be lost, and this operation is irreversible. Our growing expert may help you save the plant." else "You are about to replant. The current session will be lost, and this operation is irreversible."
+            tvTitleDesc.text = if (isShowTalkButton == true) context.getString(com.cl.common_base.R.string.string_1750) else context.getString(com.cl.common_base.R.string.string_1751)
 
             clCheck.setOnClickListener {
                 curingBox.isChecked = !curingBox.isChecked

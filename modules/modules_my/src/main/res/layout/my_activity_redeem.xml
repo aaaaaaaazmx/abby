@@ -74,7 +74,7 @@ of the subscription."
                     android:layout_marginEnd="24dp"
                     android:background="@drawable/create_state_button"
                     android:enabled="true"
-                    android:text="Purchase"
+                    android:text="@string/string_1714"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="18sp" />

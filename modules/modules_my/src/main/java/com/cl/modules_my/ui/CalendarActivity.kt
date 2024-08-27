@@ -1257,7 +1257,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             ViewUtils.setVisible(svtUnlock)
                             ViewUtils.setGone(svtWaitUnlock)
                             ViewUtils.setGone(svtGrayUnlock)
-                            svtUnlock.text = "GO"
+                            svtUnlock.text = getString(com.cl.common_base.R.string.string_1859)
                         }
 
                         "2" -> {

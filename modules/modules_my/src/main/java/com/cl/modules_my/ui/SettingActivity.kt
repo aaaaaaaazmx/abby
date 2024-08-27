@@ -311,7 +311,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             asCustom(
                                 BaseCenterPop(
                                     this@SettingActivity,
-                                    titleText = "This option is designed to control the power of 3rd party accessories.",
+                                    titleText = getString(com.cl.common_base.R.string.string_1744),
                                     content = errorMsg,
                                     isShowCancelButton = false,
                                     onConfirmAction = {
@@ -362,7 +362,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                         // 显示当前的是否是手动模式
                         binding.itemTitle.text =
-                            if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
+                            if (deviceInfo.proMode == "On") getString(com.cl.common_base.R.string.string_1745) else getString(com.cl.common_base.R.string.string_1746)
                         binding.ftName.itemValue = deviceInfo.plantName
 
                         binding.ftChildLock.isItemChecked = deviceInfo.childLock == 1
@@ -451,9 +451,9 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 onCancelAction = {
                                     rePlantPop.show()
                                 },
-                                content = "Sorry for the bad experience you had, if you take a moment to complete the questionnaire, we can give you a month's subscription after approve.",
+                                content = getString(com.cl.common_base.R.string.string_1747),
                                 confirmText = getString(com.cl.common_base.R.string.string_10),
-                                cancelText = "Replant",
+                                cancelText = getString(com.cl.common_base.R.string.string_1748),
                             )
 
                         ).show()
@@ -635,7 +635,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             pop.isDestroyOnDismiss(false).asCustom(
                 AttentionPop(
                     this@SettingActivity,
-                    contentText = if (isVip) "You are about to replant. The current session will be lost, and this operation is irreversible. Our growing expert may help you save the plant" else "You are about to replant. The current session will be lost, and this operation is irreversible.",
+                    contentText = if (isVip) getString(com.cl.common_base.R.string.string_1750) else getString(com.cl.common_base.R.string.string_1751),
                     isShowTalkButton = isVip,
                     talkButtonAction = {
                         // 跳转到客服
@@ -700,44 +700,46 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
         // 手动模式还是自动模式
         binding.ftManualRoot.setOnClickListener {
-            val isChecked = binding.itemTitle.text.contains("ON")
-            if (!isChecked) {
-                // 如果是关闭的
-                val intent = Intent(this@SettingActivity, KnowMoreActivity::class.java)
-                intent.putExtra(
-                    Constants.Global.KEY_TXT_ID,
-                    Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
-                )
-                intent.putExtra(
-                    BasePopActivity.KEY_FIXED_TASK_ID,
-                    Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
-                )
-                intent.putExtra(BasePopActivity.KEY_DEVICE_ID, mViewModel.userDetail.value?.data?.deviceId)
-                intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
-                startActivity(intent)
-            } else {
-                // 删除植物、弹出提示框
-                XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
-                    .dismissOnTouchOutside(true)
-                    .asCustom(
-                        MyDeleteDevicePop(
-                            isShowUnlockButton = true,
-                            unLockText = "Slide to Turn Off",
-                            titleText = "Notice",
-                            context = this,
-                            contentText = "Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
-                        ) {
-                            mViewModel.updateDeviceInfo(
-                                UpDeviceInfoReq(
-                                    deviceId = mViewModel.saveDeviceId.value,
-                                    proMode = "Off"
+            mViewModel.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.let { deviceInfo ->
+                if (deviceInfo.proMode != "On") {
+                    // 如果是关闭的
+                    val intent = Intent(this@SettingActivity, KnowMoreActivity::class.java)
+                    intent.putExtra(
+                        Constants.Global.KEY_TXT_ID,
+                        Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
+                    )
+                    intent.putExtra(
+                        BasePopActivity.KEY_FIXED_TASK_ID,
+                        Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
+                    )
+                    intent.putExtra(BasePopActivity.KEY_DEVICE_ID, mViewModel.userDetail.value?.data?.deviceId)
+                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
+                    startActivity(intent)
+                } else {
+                    // 删除植物、弹出提示框
+                    XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
+                        .dismissOnTouchOutside(true)
+                        .asCustom(
+                            MyDeleteDevicePop(
+                                isShowUnlockButton = true,
+                                unLockText = getString(com.cl.common_base.R.string.string_1753),
+                                titleText = getString(com.cl.common_base.R.string.string_1754),
+                                context = this,
+                                contentText = getString(com.cl.common_base.R.string.string_1755)
+                            ) {
+                                mViewModel.updateDeviceInfo(
+                                    UpDeviceInfoReq(
+                                        deviceId = mViewModel.saveDeviceId.value,
+                                        proMode = getString(com.cl.common_base.R.string.string_1756)
+                                    )
                                 )
-                            )
-                            tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
-                        }).show()
+                                tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
+                            }).show()
+                }
             }
+
 
         }
 
@@ -997,7 +999,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         binding.ftCache.setOnClickListener {
             pop.asCustom(
                 BaseCenterPop(this@SettingActivity,
-                    content = "Clean up all the picture and video cache?",
+                    content = getString(com.cl.common_base.R.string.string_1757),
                     onConfirmAction = {
                         GSYVideoManager.instance().clearAllDefaultCache(this@SettingActivity)
                         kotlin.runCatching {
@@ -1109,7 +1111,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_REPAIR_SN_INSTRUCTION -> {
                         if (value.toString().isEmpty()) return@forEach
                         if (value.toString() == "NG") {
-                            binding.ftSub.setSvText("Activate")
+                            binding.ftSub.setSvText(getString(com.cl.common_base.R.string.string_1758))
                         } else {
                             mViewModel.userDetail.value?.data?.subscriptionTime?.let {
                                 binding.ftSub.itemValue = it

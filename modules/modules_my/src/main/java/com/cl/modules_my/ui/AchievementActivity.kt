@@ -41,7 +41,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
 
     override fun initView() {
         binding.featureTitleBar
-            .setTitle(if (isAchievement) "Achievements" else "Frames")
+            .setTitle(if (isAchievement) getString(com.cl.common_base.R.string.string_1839) else getString(com.cl.common_base.R.string.string_1840))
             /*.setRightButtonTextBack(com.cl.common_base.R.drawable.background_check_tags_r5)
             .setRightButtonText("Save")
             .setRightButtonTextSize(13f)
@@ -74,7 +74,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
                 }
                 success {
                     adapter.setList(data)
-                    binding.featureTitleBar.setTitle("Achievements( ${data?.filter { it.isGain }?.size ?: 0}/${data?.size ?: 0} )")
+                    binding.featureTitleBar.setTitle("${getString(com.cl.common_base.R.string.string_1839)}( ${data?.filter { it.isGain }?.size ?: 0}/${data?.size ?: 0} )")
                 }
             })
 
@@ -96,7 +96,7 @@ class AchievementActivity : BaseActivity<MyAchievementLayoutBinding>() {
                 }
                 success {
                     adapter.setList(data)
-                    binding.featureTitleBar.setTitle("Frames( ${data?.filter { it.isGain }?.size ?: 0}/${data?.size ?: 0} )")
+                    binding.featureTitleBar.setTitle("${getString(com.cl.common_base.R.string.string_1840)}( ${data?.filter { it.isGain }?.size ?: 0}/${data?.size ?: 0} )")
                 }
             })
 

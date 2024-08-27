@@ -75,7 +75,7 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
             setOnClickListener {
                 if (tenDeviceId?.isNotEmpty() == true) {
                     SoftInputUtils.hideSoftInput(this@GrowSpaceSetActivity)
-                    ToastUtil.shortShow("Non-editable")
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1828))
                     return@setOnClickListener
                 }
                 xpopup(this@GrowSpaceSetActivity) {
@@ -112,7 +112,7 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
             xpopup(this@GrowSpaceSetActivity) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
-                asCustom(BaseCenterPop(this@GrowSpaceSetActivity, content = "Are you certain you wish to delete", isShowCancelButton = true, onConfirmAction = {
+                asCustom(BaseCenterPop(this@GrowSpaceSetActivity, content = getString(com.cl.common_base.R.string.string_1717), isShowCancelButton = true, onConfirmAction = {
                     mViewModel.deleteDevice(tenDeviceId.toString())
                 })).show()
             }
@@ -128,12 +128,12 @@ class GrowSpaceSetActivity : BaseActivity<MyGrowSpaceActivityBinding>() {
             if (spaceName.isNullOrEmpty() || type.isNullOrEmpty() || binding.etNumberPlant.text
                     .isNullOrEmpty() || led.isNullOrEmpty()
             ) {
-                ToastUtil.shortShow("Please improve the content")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1829))
                 return@setOnClickListener
             }
 
             if (number > 12) {
-                ToastUtil.show("The maximum number of plants is 12.")
+                ToastUtil.show(getString(com.cl.common_base.R.string.string_1830))
                 return@setOnClickListener
             }
 
