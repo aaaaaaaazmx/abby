@@ -284,11 +284,16 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     viewDatas.add(FinishTaskReq.ViewData(textId = taskIdList[0].textId, dataArray = dataArray.toMutableList()))
                 }
 
-                if (taskIdList.size - 1 > 0) { // 移除掉第一个
+                if (taskIdList.any { it.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP } && taskIdList.size == 2) {
+                    taskIdList.removeAt(0)
+                    // 如果是倒数第二个任务，并且满足条件
+                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas))
+                } else if (taskIdList.size - 1 > 0) { // 移除掉第一个
                     taskIdList.removeAt(0)
 
                     // 换水任务
-                    if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) { // 换水加载图文数据
+                    if (taskIdList[0].jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
+                        // 换水加载图文数据
                         val intent = Intent(this@BasePopActivity, BasePumpActivity::class.java)
                         intent.putExtra(KEY_TASK_ID, taskId)
                         intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
@@ -314,8 +319,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     intent.putExtra(KEY_PACK_NO, packetNo)
                     startActivity(intent)
                 } else {
+                    // 最后一个任务执行finishTask
                     mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas))
                 }
+
                 return
             }
 
