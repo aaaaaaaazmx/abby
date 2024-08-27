@@ -98,9 +98,9 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
 
         // 设置富文本
         binding.tvTwo.text = buildSpannedString {
-            append("Can't find your abby currently？")
+            append(getString(com.cl.common_base.R.string.string_1613))
             color(ContextCompat.getColor(this@PairWifiOnePageActivity, R.color.mainColor)) {
-                appendClickable("Reconnect") {
+                appendClickable(getString(com.cl.common_base.R.string.string_1614)) {
                     // 跳转到重新连接页面
                     startActivity(
                         Intent(
@@ -113,11 +113,11 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
         }
 
         binding.tvDesc.text = when (tuYaWifiDevice) {
-            KEY_MONITOR_OUT, KEY_MONITOR_IN -> "Searching for the device...\n" +
-                    "Press and hold the reset button for 3-5 seconds using a tool until the blue indicator begins flashing. "
+            KEY_MONITOR_OUT, KEY_MONITOR_IN -> getString(com.cl.common_base.R.string.string_1615) +
+                    getString(com.cl.common_base.R.string.string_1616)
 
-            KEY_MONITOR_VIEW_OUT, KEY_MONITOR_VIEW_IN -> "Searching for the device...\n" +
-                    "Press and hold the \"+\" button on the device for 3-5 seconds until the Wi-Fi icon starts flashing."
+            KEY_MONITOR_VIEW_OUT, KEY_MONITOR_VIEW_IN -> getString(com.cl.common_base.R.string.string_1615) +
+                    getString(com.cl.common_base.R.string.string_1617)
             else -> ""
         }
 
@@ -263,7 +263,7 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
                                 adapter.addData(bleDats)
                             }
                             // 设置标题
-                            binding.title.setTitle("2/3")
+                            binding.title.setTitle(getString(com.cl.common_base.R.string.string_1619))
                         }
 
                         override fun onError(errorCode: String, errorMessage: String) {

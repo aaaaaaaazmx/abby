@@ -369,4 +369,47 @@
     <string name="string_1555">add Max 3 Photos</string>
     <string name="string_1556">Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.</string>
     <string name="string_1564">Bluetooth is turned off</string>
+
+    <string name="string_1590">Edit</string>
+    <string name="string_1591">Share</string>
+    <string name="string_1593">Today</string>
+
+    <string name="string_1594">no plants</string>
+    <string name="string_1595">Log</string>
+    <string name="string_1596">Actions</string>
+    <string name="string_1597">Training</string>
+
+
+    <string name="string_1607">Log out</string>
+    <string name="string_1608">Add Device</string>
+    <string name="string_1609">You need to grant hey abby permission to take photos and also give hey abby access to photos to add recent photos.</string>
+    <string name="string_1612">1/3</string>
+    <string name="string_1613">Can't find your abby currently？</string>
+    <string name="string_1614">Reconnect</string>
+    <string name="string_1615">Searching for the device...\n</string>
+    <string name="string_1616">Press and hold the reset button for 3-5 seconds using a tool until the blue indicator begins flashing. </string>
+    <string name="string_1617">Press and hold the \"+\" button on the device for 3-5 seconds until the Wi-Fi icon starts flashing.</string>
+    <string name="string_1619">2/3</string>
+    <string name="string_1621">1. Confirm that the Wi-Fi address and password you entered are correct.</string>
+    <string name="string_1622">2. Check your Wi-Fi network. Currently, abby can only support 2.4G Wi-Fi.</string>
+    <string name="string_1623">3.</string>
+    <string name="string_1624">Reboot abby, then try </string>
+    <string name="string_1625">reconnecting</string>
+    <string name="string_1626">4. Try to unplug abby, then plug it back in</string>
+    <string name="string_1627">5. Try restarting the iOS/Android device that needs to be paired with abby. Then try pairing again. </string>
+    <string name="string_1629">1. smart camera only supports </string>
+    <string name="string_1630">2.4GHz Wi-Fi.</string>
+    <string name="string_1631">\nWi-Fi only supports alphanumeric character</string>
+    <string name="string_1632">2. Your phone must be connected to the same 2.4G wifi as smart camera</string>
+    <string name="string_1633">1. Hey abby only supports </string>
+    <string name="string_1634">2.4GHz Wi-Fi networks.</string>
+    <string name="string_1635">2. Network names must be comprised of alpahnumeric characters only</string>
+    <string name="string_1636">3. Your phone must be connected to the same 2.4G Wi-Fi as abby.</string>
+    <string name="string_1637">Added successfully</string>
+    <string name="string_1641">Please switch wifi manually</string>
+    <string name="string_1642">Granting Hey abby access to your phone's location will be used to generate a Wi-Fi network list.</string>
+    <string name="string_1647">1. Make sure your phone's Bluetooth is on</string>
+    <string name="string_1648">2. Place the phone close to the device and try to pair again</string>
+    <string name="string_1649">3. </string>
+    <string name="string_1650"> the device</string>
 </resources>

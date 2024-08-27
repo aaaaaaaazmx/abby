@@ -20,7 +20,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:id="@+id/tv_edit"
-            android:text="Edit"
+            android:text="@string/string_1590"
             android:textColor="#161B19"
             android:textSize="12sp"
             android:layout_width="match_parent"

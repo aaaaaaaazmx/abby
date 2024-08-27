@@ -130,7 +130,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
         if (NetWorkUtil.isWifi(this@WifiPairTwoActivity)) {
             PermissionHelp().applyPermissionHelp(
                 this@WifiPairTwoActivity,
-                "Granting Hey abby access to your phone's location will be used to generate a Wi-Fi network list.",
+                getString(com.cl.common_base.R.string.string_1642),
                 object : PermissionHelp.OnCheckResultListener {
                     override fun onResult(result: Boolean) {
                         if (!result) return
@@ -214,7 +214,7 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
             val wifiSettingsIntent = Intent("android.settings.WIFI_SETTINGS")
             startActivity(wifiSettingsIntent)
         }.onFailure {
-            ToastUtil.shortShow("Please switch wifi manually")
+            ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1641))
         }
     }
 

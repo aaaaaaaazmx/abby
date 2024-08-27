@@ -119,11 +119,11 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             binding.titleBar.setTitle("")
             binding.btnSuccess.text = getString(com.cl.common_base.R.string.string_262)
             binding.tvDescThree.text = buildSpannedString {
-                append("1. smart camera only supports ")
-                bold { append("2.4GHz Wi-Fi.") }
-                appendLine("\nWi-Fi only supports alphanumeric character")
+                append(getString(com.cl.common_base.R.string.string_1629))
+                bold { append(getString(com.cl.common_base.R.string.string_1630)) }
+                appendLine(getString(com.cl.common_base.R.string.string_1631))
                 appendLine("\n")
-                appendLine("2. Your phone must be connected to the same 2.4G wifi as smart camera")
+                appendLine(getString(com.cl.common_base.R.string.string_1632))
             }
         } else {
             if (pairingEquipment == Constants.Global.KEY_GLOBAL_PAIR_DEVICE_OUTLETS) {
@@ -136,12 +136,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
             // Hey abby only supports 2.4G Wi-Fi networks.
             // Network names must be comprised of alpahnumeric characters only.
             binding.tvDescThree.text = buildSpannedString {
-                append("1. Hey abby only supports ")
-                bold { append("2.4GHz Wi-Fi networks.") }
+                append(getString(com.cl.common_base.R.string.string_1633))
+                bold { append(getString(com.cl.common_base.R.string.string_1634)) }
                 appendLine("\n")
-                appendLine("2. Network names must be comprised of alpahnumeric characters only")
+                appendLine(getString(com.cl.common_base.R.string.string_1635))
                 appendLine("\n")
-                appendLine("3. Your phone must be connected to the same 2.4G Wi-Fi as abby.")
+                appendLine(getString(com.cl.common_base.R.string.string_1636))
             }
         }
 
@@ -179,7 +179,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     hideProgressLoading()
                 }
                 success {
-                    ToastUtil.shortShow("Added successfully")
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1637))
                     // 添加成功跳转
                     when (pairingEquipment) {
                         Constants.Global.KEY_GLOBAL_PAIR_DEVICE_BOX -> {
@@ -378,7 +378,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                 val wifiSettingsIntent = Intent("android.settings.WIFI_SETTINGS")
                 startActivity(wifiSettingsIntent)
             }.onFailure {
-                ToastUtil.shortShow("Please switch wifi manually")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1641))
             }
 
             /*val i = Intent()
@@ -403,7 +403,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
         if (NetWorkUtil.isWifi(this@PairDistributionWifiActivity)) {
             PermissionHelp().applyPermissionHelp(
                 this@PairDistributionWifiActivity,
-                "Granting Hey abby access to your phone's location will be used to generate a Wi-Fi network list.",
+                getString(com.cl.common_base.R.string.string_1642),
                 object : PermissionHelp.OnCheckResultListener {
                     override fun onResult(result: Boolean) {
                         if (!result) return

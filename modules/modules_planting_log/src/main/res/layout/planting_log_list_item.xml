@@ -27,7 +27,7 @@
             android:text="@{adapter.formatText(bean.dateFormat)}"
             android:id="@+id/tv_time"
             android:textStyle="bold"
-            tools:text="Today"
+            tools:text="@string/string_1593"
             android:textColor="@color/black"
             android:textSize="12sp"
             android:layout_width="wrap_content"

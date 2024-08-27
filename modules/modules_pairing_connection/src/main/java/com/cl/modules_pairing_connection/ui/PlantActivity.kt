@@ -18,6 +18,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.lcoation.LocationUtil
 import com.cl.common_base.util.network.NetWorkUtil
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairPlantHomeBinding
 import com.cl.modules_pairing_connection.widget.PairLoginOutPop
 import com.lxj.xpopup.XPopup
@@ -66,8 +67,8 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
     }
 
     override fun initView() {
-        binding.title.setLeftText("Log out", true)
-            .setTitle("Add Device")
+        binding.title.setLeftText(getString(com.cl.common_base.R.string.string_1607), true)
+            .setTitle(getString(com.cl.common_base.R.string.string_1608))
             .setLeftClickListener { // 退出
                 confirm.show()
             }

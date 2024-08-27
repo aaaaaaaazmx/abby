@@ -66,7 +66,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="37dp"
-                    tools:text="Can't find your abby currently？"
+                    tools:text="@string/string_1613"
                     android:textColor="#161B19"
                     app:layout_constraintStart_toStartOf="@+id/iv_one"
                     app:layout_constraintTop_toBottomOf="@+id/iv_one" />

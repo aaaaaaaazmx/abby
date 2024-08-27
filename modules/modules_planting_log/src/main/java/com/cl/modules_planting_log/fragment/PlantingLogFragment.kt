@@ -139,7 +139,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
 
         binding.ivAddDevice.setSafeOnClickListener(viewLifecycleOwner.lifecycleScope){
             if (null == viewModel.getPlantInfoByPlantId.value?.data) {
-                ToastUtil.shortShow("no plants")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1594))
                 return@setSafeOnClickListener
             }
             XPopup.Builder(context).popupPosition(PopupPosition.Top).dismissOnTouchOutside(true).isClickThrough(false)  //点击透传
@@ -148,13 +148,13 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                 .atView(binding.ivAddDevice).isCenterHorizontal(false).asCustom(context?.let {
                     PlantChooseLogTypePop(it,
                         list = mutableListOf(
-                            PlantLogTypeBean("Log", false),
-                            PlantLogTypeBean("Actions", false),
-                            PlantLogTypeBean("Training", false)
+                            PlantLogTypeBean(getString(com.cl.common_base.R.string.string_1595), false),
+                            PlantLogTypeBean(getString(com.cl.common_base.R.string.string_1596), false),
+                            PlantLogTypeBean(getString(com.cl.common_base.R.string.string_1597), false)
                         ), onConfirmAction = { txt ->
                             // 跳转到相对应的界面
                             when (txt) {
-                                "Log" -> {
+                                getString(com.cl.common_base.R.string.string_1595) -> {
                                     logI("click Log")
                                     context?.startActivity(Intent(context, PlantingLogActivity::class.java).apply {
                                         putExtra("isAdd", true)
@@ -164,7 +164,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                     })
                                 }
 
-                                "Actions" -> {
+                                getString(com.cl.common_base.R.string.string_1596) -> {
                                     logI("click Actions")
                                     context?.startActivity(Intent(context, PlantActionActivity::class.java).apply {
                                         putExtra("isAdd", true)
@@ -174,7 +174,7 @@ class PlantingLogFragment : BaseFragment<PlantingMainFragmentBinding>() {
                                     })
                                 }
 
-                                "Training" -> {
+                                getString(com.cl.common_base.R.string.string_1597) -> {
                                     logI("click Training")
                                     context?.startActivity(Intent(context, PlantingTrainActivity::class.java).apply {
                                         putExtra("isAdd", true)

@@ -130,7 +130,7 @@
                 android:background="@color/lineBg"
                 android:gravity="center_vertical"
                 android:paddingStart="20dp"
-                android:text="Share"
+                android:text="@string/string_1591"
 
                 android:textSize="14sp" />
 

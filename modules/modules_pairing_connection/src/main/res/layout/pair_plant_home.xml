@@ -39,7 +39,7 @@
             app:svSolidColor="@color/mainColor"
             android:layout_marginEnd="26dp"
             android:layout_marginStart="26dp"
-            android:text="Add Device"
+            android:text="@string/string_1608"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

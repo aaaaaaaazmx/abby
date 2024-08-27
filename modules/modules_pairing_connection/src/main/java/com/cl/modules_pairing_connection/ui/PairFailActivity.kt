@@ -19,18 +19,18 @@ import com.cl.modules_pairing_connection.databinding.PairFailBinding
 class PairFailActivity : BaseActivity<PairFailBinding>() {
     override fun initView() {
         binding.tvSpan.text = buildSpannedString {
-            appendLine("1. Confirm that the Wi-Fi address and password you entered are correct.")
-            appendLine("2. Check your Wi-Fi network. Currently, abby can only support 2.4G Wi-Fi.")
-            append("3.")
-            append("Reboot abby, then try ")
+            appendLine(getString(com.cl.common_base.R.string.string_1621))
+            appendLine(getString(com.cl.common_base.R.string.string_1622))
+            append(getString(com.cl.common_base.R.string.string_1623))
+            append(getString(com.cl.common_base.R.string.string_1624))
             color(ContextCompat.getColor(this@PairFailActivity, R.color.mainColor)) {
-                appendClickable("reconnecting") {
+                appendClickable(getString(com.cl.common_base.R.string.string_1625)) {
                     startActivity(Intent(this@PairFailActivity, PairReconnectActivity::class.java))
                 }
             }
             appendLine()
-            appendLine("4. Try to unplug abby, then plug it back in")
-            appendLine("5. Try restarting the iOS/Android device that needs to be paired with abby. Then try pairing again. ")
+            appendLine(getString(com.cl.common_base.R.string.string_1626))
+            appendLine(getString(com.cl.common_base.R.string.string_1627))
         }
         binding.tvSpan.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击
         binding.tvSpan.highlightColor = ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色

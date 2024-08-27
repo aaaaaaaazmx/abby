@@ -28,7 +28,7 @@
 
             <com.cl.common_base.widget.FeatureTitleBar
                 android:id="@+id/title"
-                app:title="Log"
+                app:title="@string/string_1595"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

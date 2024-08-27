@@ -71,15 +71,15 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
 
     override fun initView() {
         // 标题设置
-        binding.title.setLeftText("Cancel")
-            .setTitle("1/3")
+        binding.title.setLeftText(getString(com.cl.common_base.R.string.my_cancel))
+            .setTitle(getString(com.cl.common_base.R.string.string_1612))
             .setLeftClickListener { finish() }
 
         // 设置富文本
         binding.tvTwo.text = buildSpannedString {
-            append("Can't find your abby currently？")
+            append(getString(com.cl.common_base.R.string.string_1613))
             color(ContextCompat.getColor(this@PairOnePageActivity, R.color.mainColor)) {
-                appendClickable("Reconnect") {
+                appendClickable(getString(com.cl.common_base.R.string.string_1614)) {
                     // 跳转到重新连接页面
                     startActivity(
                         Intent(
@@ -232,7 +232,7 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
                                 adapter.addData(bleDats)
                             }
                             // 设置标题
-                            binding.title.setTitle("2/3")
+                            binding.title.setTitle(getString(com.cl.common_base.R.string.string_1619))
                         }
 
                         override fun onError(errorCode: String, errorMessage: String) {

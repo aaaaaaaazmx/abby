@@ -62,18 +62,18 @@ class PlantLogListAdapter(data: MutableList<LogListDataItem>?, private val onDel
                                 .atView(view).isCenterHorizontal(false).asCustom(context.let {
                                     PlantChooseLogTypePop(it,
                                         list = mutableListOf(
-                                            PlantLogTypeBean("Edit", false),
-                                            PlantLogTypeBean("Share", false),
+                                            PlantLogTypeBean(context.getString(com.cl.common_base.R.string.string_1590), false),
+                                            PlantLogTypeBean(context.getString(com.cl.common_base.R.string.string_1591), false),
                                         ), onConfirmAction = { txt ->
                                             // 跳转到相对应的界面
                                             when (txt) {
-                                                "Edit" -> {
+                                                context.getString(com.cl.common_base.R.string.string_1590) -> {
                                                     logI("click Edit")
                                                     // 获取日志详情，然后跳转到日志界面
                                                     onEditCard?.invoke(item.period, cardInfoData.logId.toString(), cardInfoData.showType)
                                                 }
 
-                                                "Share" -> {
+                                                context.getString(com.cl.common_base.R.string.string_1591) -> {
                                                     // todo 分享到朋友圈
                                                     logI("click Share")
                                                 }
@@ -112,7 +112,7 @@ class PlantLogListAdapter(data: MutableList<LogListDataItem>?, private val onDel
     fun formatText(dataFormat: String?): String {
         return dataFormat?.let {
             val currentDate = DateHelper.formatTime(System.currentTimeMillis(), "MM/dd/yy")
-            if (currentDate == it) "Today" else it
+            if (currentDate == it) context.getString(com.cl.common_base.R.string.string_1593) else it
         } ?: ""
     }
 }

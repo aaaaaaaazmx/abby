@@ -71,7 +71,7 @@ Please press the on/off button for 3-5 seconds till you see the Bluetooth icon."
                     app:layout_constraintEnd_toEndOf="@id/iv_one"
                     app:layout_constraintStart_toStartOf="@+id/iv_one"
                     app:layout_constraintTop_toBottomOf="@+id/iv_one"
-                    tools:text="Can't find your abby currently？" />
+                    tools:text="@string/string_1613" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_list"

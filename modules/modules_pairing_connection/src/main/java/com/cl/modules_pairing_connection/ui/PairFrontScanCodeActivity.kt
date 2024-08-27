@@ -111,7 +111,7 @@ class PairFrontScanCodeActivity : BaseActivity<PairFontScanCodeBinding>() {
     private fun checkPermissionAndStartScan() {
         PermissionHelp().applyPermissionHelp(
             this@PairFrontScanCodeActivity,
-            "You need to grant hey abby permission to take photos and also give hey abby access to photos to add recent photos.",
+            getString(com.cl.common_base.R.string.string_1609),
             object : PermissionHelp.OnCheckResultListener {
                 override fun onResult(result: Boolean) {
                     if (!result) return
