@@ -138,7 +138,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
             Constants.Ble.KEY_BLE_OFF -> {
                 binding.tvSync.setBackgroundResource(com.cl.common_base.R.drawable.create_button_uncheck)
                 ViewUtils.setVisible(binding.tvUnConnect)
-                ToastUtil.shortShow("Bluetooth is turned off")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1564))
                 logI("KEY_BLE_OFF")
             }
         }
@@ -326,7 +326,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
                     asCustom(
                         BaseCenterPop(
                             this@PHSettingActivity,
-                            content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
+                            content = getString(com.cl.common_base.R.string.string_1556),
                             isShowCancelButton = false,
                             onConfirmAction = {
                                 // 先断开次设备、

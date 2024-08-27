@@ -139,7 +139,7 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:text="Load"
-            tools:text="Save" />
+            tools:text="@string/string_1515" />
 
     </LinearLayout>
 </layout>

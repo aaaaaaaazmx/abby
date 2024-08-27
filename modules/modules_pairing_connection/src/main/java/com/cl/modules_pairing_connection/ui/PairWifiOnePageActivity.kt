@@ -177,7 +177,7 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
             }
 
             Constants.Ble.KEY_BLE_OFF -> {
-                ToastUtil.shortShow("Bluetooth is turned off")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1564))
                 logI("KEY_BLE_OFF")
             }
         }

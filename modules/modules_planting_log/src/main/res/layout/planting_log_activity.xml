@@ -87,7 +87,7 @@
             <TextView
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
-                android:text="add Max 3 Photos"
+                android:text="@string/string_1555"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 android:layout_width="wrap_content"

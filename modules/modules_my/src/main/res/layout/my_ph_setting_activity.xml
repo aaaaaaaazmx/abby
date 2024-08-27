@@ -67,7 +67,7 @@
 
                 <TextView
                     android:labelFor="@+id/editText1"
-                    android:text="PH"
+                    android:text="@string/string_1534"
                     android:id="@+id/textView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -225,7 +225,7 @@
 
                 <TextView
                     android:labelFor="@+id/editText12"
-                    android:text="EC"
+                    android:text="@string/string_1539"
                     android:id="@+id/textView12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

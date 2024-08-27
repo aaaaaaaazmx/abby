@@ -133,7 +133,7 @@ Max 5 User Preset can be stored"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:text="Save" />
+            android:text="@string/string_1515" />
 
     </LinearLayout>
 </layout>

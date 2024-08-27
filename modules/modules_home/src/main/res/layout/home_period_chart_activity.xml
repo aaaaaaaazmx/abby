@@ -125,7 +125,7 @@
             <TextView
                 android:id="@+id/tv_ph"
                 android:textStyle="bold"
-                android:text="PH"
+                android:text="@string/string_1534"
                 android:layout_marginTop="12dp"
                 android:layout_marginStart="17dp"
                 app:layout_constraintStart_toStartOf="parent"

@@ -112,7 +112,7 @@ class PhPairActivity : BaseActivity<MyBlePairActivityBinding>() {
             Constants.Ble.KEY_BLE_OFF -> {
                 adapter.notifyItemRangeRemoved(0, mViewMode.listDRData.size)
                 mViewMode.listDRData.clear()
-                ToastUtil.shortShow("Bluetooth is turned off")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1564))
                 logI("KEY_BLE_OFF")
             }
         }

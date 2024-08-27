@@ -80,15 +80,15 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
     // 属性数组
     private val maps by lazy {
         mapOf(
-            "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            "logType" to FieldAttributes("Action Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            "waterType" to FieldAttributes("Water Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "volume" to FieldAttributes("Volume", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "L", "Gal"),
-            "feedingType" to FieldAttributes("Feeding Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "repellentType" to FieldAttributes("Repellent Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "declareDeathType" to FieldAttributes("DeclareDeath Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
-            "driedWeight" to FieldAttributes("Yield (Dried weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "g", "Oz"),
-            "wetWeight" to FieldAttributes("Yield (Wet weight)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "g", "Oz"),
+            "logTime" to FieldAttributes(getString(R.string.string_1494), "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "logType" to FieldAttributes(getString(R.string.string_1523), "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "waterType" to FieldAttributes(getString(R.string.string_1498), "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "volume" to FieldAttributes(getString(R.string.string_1500), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "L", "Gal"),
+            "feedingType" to FieldAttributes(getString(R.string.string_1504), "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "repellentType" to FieldAttributes(getString(R.string.string_1506), "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "declareDeathType" to FieldAttributes(getString(R.string.string_1508), "", "", CustomViewGroup.TYPE_CLASS_TEXT, false),
+            "driedWeight" to FieldAttributes(getString(R.string.string_1510), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "g", "Oz"),
+            "wetWeight" to FieldAttributes(getString(R.string.string_1514), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, false, "g", "Oz"),
         )
     }
 
@@ -113,7 +113,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
     override fun initView() {
         binding.title
             .setRightButtonTextBack(R.drawable.background_check_tags_r5)
-            .setRightButtonText("Save")
+            .setRightButtonText(getString(R.string.string_1515))
             .setRightButtonTextSize(13f)
             .setRightButtonTextHeight(25f)
             .setRightButtonTextColor(Color.WHITE)
@@ -132,7 +132,7 @@ class PlantActionActivity : BaseActivity<PlantingActionActivityBinding>(), EditT
     private fun handleSaveOrUpdateLog() {
         val logSaveOrUpdateReq = logAdapter.getLogData()
         if (logSaveOrUpdateReq.logType.isNullOrEmpty()) {
-            ToastUtil.shortShow("Please select the Action type")
+            ToastUtil.shortShow(getString(R.string.string_1524))
             return
         }
         logSaveOrUpdateReq.inchMetricMode = viewModel.getLogById.value?.data?.inchMetricMode

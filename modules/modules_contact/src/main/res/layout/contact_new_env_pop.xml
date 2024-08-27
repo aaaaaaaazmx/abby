@@ -321,7 +321,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
-                        android:text="PH"
+                        android:text="@string/string_1534"
                         android:textColor="#999999"
                         android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank"

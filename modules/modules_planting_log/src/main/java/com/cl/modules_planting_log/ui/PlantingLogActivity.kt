@@ -97,23 +97,23 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
 
     private val maps by lazy {
         mapOf(
-            "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            "spaceTemp" to FieldAttributes("Space Temp(ST)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
-            "waterTemp" to FieldAttributes("Water Temp (WT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
-            "humidity" to FieldAttributes("Humidity (RH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-            "roomTemp" to FieldAttributes("Room Temp(RT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
-            "roomRH" to FieldAttributes("Room RH (RRH)", "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-            "ph" to FieldAttributes("PH", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, isShowRefreshIcon = true),
-            "tdsEc" to FieldAttributes("TDS", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-            "ec" to FieldAttributes("EC", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
-            "plantHeight" to FieldAttributes("Height (HT)", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "cm", imperialUnits = "In"),
+            "logTime" to FieldAttributes(getString(R.string.string_1494), "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "spaceTemp" to FieldAttributes(getString(R.string.string_1526), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
+            "waterTemp" to FieldAttributes(getString(R.string.string_1528), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
+            "humidity" to FieldAttributes(getString(R.string.string_1529), "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "roomTemp" to FieldAttributes(getString(R.string.string_1531), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "°C", imperialUnits = "℉"),
+            "roomRH" to FieldAttributes(getString(R.string.string_1533), "", "%", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "ph" to FieldAttributes(getString(R.string.string_1534), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, isShowRefreshIcon = true),
+            "tdsEc" to FieldAttributes(getString(R.string.string_1536), "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "ec" to FieldAttributes(getString(R.string.string_1539), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "plantHeight" to FieldAttributes(getString(R.string.string_1541), "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL, metricUnits = "cm", imperialUnits = "In"),
             /*"vpd" to FieldAttributes("VPD", "", "", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
             /* "driedWeight" to FieldAttributes("Yield (Dried weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
              "wetWeight" to FieldAttributes("Yield (Wet weight)", "", if (viewModel.isMetric) "g" else "Oz", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),*/
             /*"lightingSchedule" to FieldAttributes("Lighting Schedule", "", "", CustomViewGroup.TYPE_CLASS_TEXT),*/
-            "lightingOn" to FieldAttributes("Lighting On", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            "lightingOff" to FieldAttributes("Lighting Off", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            "co2Concentration" to FieldAttributes("CO2 Concentration", "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
+            "lightingOn" to FieldAttributes(getString(R.string.string_1545), "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "lightingOff" to FieldAttributes(getString(R.string.string_1547), "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "co2Concentration" to FieldAttributes(getString(R.string.string_1549), "", "PPM", CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL),
         )
     }
 
@@ -182,7 +182,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
 
     private fun handleSaveOrUpdateLog() {
         if (chooserAdapter.data.any { it.isUploading == true }) {
-            ToastUtil.shortShow("Please wait for the picture to finish uploading")
+            ToastUtil.shortShow(getString(R.string.string_1550))
             return
         }
         if (binding.ftTrend.isItemChecked) {
@@ -190,7 +190,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             val picListUrl = viewModel.picAddress.value ?: mutableListOf()
 
             if (picListUrl.isEmpty() || notes.isNullOrEmpty()) {
-                ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                ToastUtil.show(getString(R.string.string_1518))
                 binding.ftTrend.isItemChecked = false
                 return
             }
@@ -283,7 +283,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
 
         binding.title
             .setRightButtonTextBack(R.drawable.background_check_tags_r5)
-            .setRightButtonText("Save")
+            .setRightButtonText(getString(R.string.string_1515))
             .setRightButtonTextSize(13f)
             .setRightButtonTextHeight(25f)
             .setRightButtonTextColor(Color.WHITE)
@@ -681,7 +681,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
             when (view.id) {
                 R.id.iv_pic_add -> {
                     if (viewModel.picAddress.value?.size == MAX_PHOTOS) {
-                        ToastUtil.show("add Max 3 Photos")
+                        ToastUtil.show(getString(R.string.string_1555))
                         return@setOnItemChildClickListener
                     }
                     // 添加图片
@@ -843,7 +843,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                 val picListUrl = viewModel.picAddress.value ?: mutableListOf()
 
                 if (picListUrl.isEmpty() || notes.isNullOrEmpty()) {
-                    ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                    ToastUtil.show(getString(R.string.string_1518))
                     binding.ftTrend.isItemChecked = false
                 }
             }
@@ -869,7 +869,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                 asCustom(
                     BaseCenterPop(
                         this@PlantingLogActivity,
-                        content = "Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.",
+                        content = getString(com.cl.common_base.R.string.string_1556),
                         isShowCancelButton = false,
                         onConfirmAction = {
                             viewModel.stopScan()
@@ -1074,7 +1074,7 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
 
             Constants.Ble.KEY_BLE_OFF -> {
                 indicatingIconChanged()
-                ToastUtil.shortShow("Bluetooth is turned off")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1564))
                 logI("KEY_BLE_OFF")
             }
         }

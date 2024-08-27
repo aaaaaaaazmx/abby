@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -317,7 +318,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
 
         binding.btnPost.setSafeOnClickListener(this@PostActivity.lifecycleScope) {
             if (chooserAdapter.data.any { it.isUploading == true }) {
-                ToastUtil.shortShow("Please wait for the picture to finish uploading")
+                ToastUtil.shortShow(getString(R.string.string_1550))
                 return@setSafeOnClickListener
             }
 

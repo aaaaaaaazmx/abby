@@ -105,17 +105,17 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
     // 属性数组
     private val maps by lazy {
         mapOf(
-            "logTime" to FieldAttributes("Date*", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
-            "logType" to FieldAttributes("Training Type", "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "logTime" to FieldAttributes(getString(R.string.string_1494), "", "", CustomViewGroup.TYPE_CLASS_TEXT),
+            "logType" to FieldAttributes(getString(R.string.string_1496), "", "", CustomViewGroup.TYPE_CLASS_TEXT),
             "waterType" to FieldAttributes(
-                "Water Type",
+                getString(R.string.string_1498),
                 "",
                 "",
                 CustomViewGroup.TYPE_CLASS_TEXT,
                 false
             ),
             "volume" to FieldAttributes(
-                "Volume",
+                getString(R.string.string_1500),
                 "",
                 "",
                 CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL,
@@ -124,28 +124,28 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                 imperialUnits = "Gal"
             ),
             "feedingType" to FieldAttributes(
-                "Feeding Type",
+                getString(R.string.string_1504),
                 "",
                 "",
                 CustomViewGroup.TYPE_CLASS_TEXT,
                 false
             ),
             "repellentType" to FieldAttributes(
-                "Repellent Type",
+                getString(R.string.string_1506),
                 "",
                 "",
                 CustomViewGroup.TYPE_CLASS_TEXT,
                 false
             ),
             "declareDeathType" to FieldAttributes(
-                "DeclareDeath Type",
+                getString(R.string.string_1508),
                 "",
                 "",
                 CustomViewGroup.TYPE_CLASS_TEXT,
                 false
             ),
             "driedWeight" to FieldAttributes(
-                "Yield (Dried weight)",
+                getString(R.string.string_1510),
                 "",
                 "",
                 CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL,
@@ -154,7 +154,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                 imperialUnits = "Oz"
             ),
             "wetWeight" to FieldAttributes(
-                "Yield (Wet weight)",
+                getString(R.string.string_1514),
                 "",
                 "",
                 CustomViewGroup.TYPE_NUMBER_FLAG_DECIMAL,
@@ -199,7 +199,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
     override fun initView() {
         binding.title
             .setRightButtonTextBack(R.drawable.background_check_tags_r5)
-            .setRightButtonText("Save")
+            .setRightButtonText(getString(R.string.string_1515))
             .setRightButtonTextSize(13f)
             .setRightButtonTextHeight(25f)
             .setRightButtonTextColor(Color.WHITE)
@@ -219,12 +219,12 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
     private fun handleSaveOrUpdateLog() {
         val logSaveOrUpdateReq = logAdapter.getLogData()
         if (logSaveOrUpdateReq.logType.isNullOrEmpty()) {
-            ToastUtil.shortShow("Please select the Training type")
+            ToastUtil.shortShow(getString(R.string.string_1516))
             return
         }
 
         if (binding.beforeLoading.isVisible || binding.afterLoading.isVisible) {
-            ToastUtil.shortShow("Please wait for the image to finish uploading.")
+            ToastUtil.shortShow(getString(R.string.string_1517))
             return
         }
 
@@ -234,7 +234,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
             val notes = binding.etNote.text.toString()
 
             if (beforeUrl.isNullOrEmpty() || afterUrl.isNullOrEmpty() || notes.isEmpty()) {
-                ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                ToastUtil.show(getString(R.string.string_1518))
                 binding.ftTrend.isItemChecked = false
                 return
             }
@@ -762,7 +762,7 @@ class PlantingTrainActivity : BaseActivity<PlantingTrainActivityBinding>(),
                 val notes = binding.etNote.text
 
                 if (beforeUrl.isNullOrEmpty() || afterUrl.isNullOrEmpty() || notes.isNullOrEmpty()) {
-                    ToastUtil.show("To synchronize with the trend, you need to upload photos and fill in notes.")
+                    ToastUtil.show(getString(R.string.string_1518))
                     binding.ftTrend.isItemChecked = false
                 }
             }

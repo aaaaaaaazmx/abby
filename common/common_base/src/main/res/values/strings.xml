@@ -336,4 +336,37 @@
     <string name="string_1462">PLAYBACK</string>
     <!-- =====> adapter <===== -->
     <string name="string_1479">To ensure your safety, the fan will stop and the light will be dimmed when the grow box door is opening.I Therefore, we kindly ask that you do not change the fan settings while the door is open.</string>
+
+
+    <string name="string_1494">Date*</string>
+    <string name="string_1496">Training Type</string>
+    <string name="string_1498">Water Type</string>
+    <string name="string_1500">Volume</string>
+    <string name="string_1504">Feeding Type</string>
+    <string name="string_1506">Repellent Type</string>
+    <string name="string_1508">DeclareDeath Type</string>
+    <string name="string_1510">Yield (Dried weight)</string>
+    <string name="string_1514">Yield (Wet weight)</string>
+    <string name="string_1515">Save</string>
+    <string name="string_1516">Please select the Training type</string>
+    <string name="string_1517">Please wait for the image to finish uploading.</string>
+    <string name="string_1518">To synchronize with the trend, you need to upload photos and fill in notes.</string>
+    <string name="string_1523">Action Type</string>
+    <string name="string_1524">Please select the Action type</string>
+    <string name="string_1526">Space Temp(ST)</string>
+    <string name="string_1528">Water Temp (WT)</string>
+    <string name="string_1529">Humidity (RH)</string>
+    <string name="string_1531">Room Temp(RT)</string>
+    <string name="string_1533">Room RH (RRH)</string>
+    <string name="string_1534">PH</string>
+    <string name="string_1536">TDS</string>
+    <string name="string_1539">EC</string>
+    <string name="string_1541">Height (HT)</string>
+    <string name="string_1545">Lighting On</string>
+    <string name="string_1547">Lighting Off</string>
+    <string name="string_1549">CO2 Concentration</string>
+    <string name="string_1550">Please wait for the picture to finish uploading</string>
+    <string name="string_1555">add Max 3 Photos</string>
+    <string name="string_1556">Please pair a bluetooth PH meter first to obtain the data, if you already paired one, please make sure to turn it on.</string>
+    <string name="string_1564">Bluetooth is turned off</string>
 </resources>
