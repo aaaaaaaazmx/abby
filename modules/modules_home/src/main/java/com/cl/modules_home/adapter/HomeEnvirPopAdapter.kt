@@ -135,7 +135,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                             xpopup(context) {
                                 isDestroyOnDismiss(false)
                                 dismissOnTouchOutside(false)
-                                asCustom(HomeFanBottonPop(context, title = "To ensure your safety, the fan will stop and the light will be dimmed when the grow box door is opening.I Therefore, we kindly ask that you do not change the fan settings while the door is open.", tag = HomeFanBottonPop.FAN_AUTO_TAG,
+                                asCustom(HomeFanBottonPop(context, title = context.getString(com.cl.common_base.R.string.string_1479), tag = HomeFanBottonPop.FAN_AUTO_TAG,
                                     benOKAction = {
                                         listener?.onCheckedChanged(button, isChecked)
                                     })).show()

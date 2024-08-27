@@ -268,7 +268,7 @@
     <string name="string_1350">3.Try to power off and restart your abby</string>
     <string name="string_1351">4.If the problem persists, try to </string>
     <string name="string_1352">Reconnect abby</string>
-    <string name="string_1354">You\'re about to set the intake fan to its maximum level. Be aware that this may cause \'wind burn,\' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.</string>
+    <string name="string_1354">You\'re about to set the intake fan to its maximum level. Be aware that this may cause \'wind burn,\' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant\'s first four weeks.</string>
     <string name="string_1355">Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?</string>
     <string name="string_1356">The air pump cannot be turned on when the tank has no water. Please fill the tank with water before turning on the air pump.</string>
     <string name="string_1358">Live</string>
@@ -318,4 +318,22 @@
     <string name="string_1431">Please enter the every value.</string>
     <string name="string_1432">Please enter the during start value.</string>
     <string name="string_1433">Please enter the during end value.</string>
+
+
+    <string name="string_1434">Photo vs Auto</string>
+    <string name="string_1435">Photoperiod strains are more common. Unless you’ve confirmed with your retailer that it is autoflower, please select “photoperiod” here.\n</string>
+    <string name="string_1436">Hey abby can generate an algorithm to tailor for either type.</string>
+    <string name="string_1437">Not Sure?</string>
+    <string name="string_1438">Please check with your local retailer or seed bank. You can also usually find this information in your order invoice. \n\n Note: choosing the wrong setting can delay flowering. We strongly encourage you to confirm with your provider first. </string>
+    <string name="string_1443">Photos</string>
+    <string name="string_1941">Trends</string>
+    <string name="string_1444">Videos</string>
+    <string name="string_1453">Pairing Failed</string>
+    <string name="string_1458">TIME-LAPSE</string>
+    <string name="string_1459">VIDEO</string>
+    <string name="string_1460">PHOTO</string>
+    <string name="string_1461">MIC</string>
+    <string name="string_1462">PLAYBACK</string>
+    <!-- =====> adapter <===== -->
+    <string name="string_1479">To ensure your safety, the fan will stop and the light will be dimmed when the grow box door is opening.I Therefore, we kindly ask that you do not change the fan settings while the door is open.</string>
 </resources>

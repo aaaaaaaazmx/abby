@@ -61,7 +61,7 @@ class CameraChooserActivity : BaseActivity<HomeCameraChooserBinding>() {
         binding.viewPager.adapter = adapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = if (position == 0) "Photos" else "Videos"
+            tab.text = if (position == 0) getString(com.cl.common_base.R.string.string_1443) else getString(com.cl.common_base.R.string.string_1444)
         }.attach()
     }
 

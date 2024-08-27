@@ -100,8 +100,8 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
             pop.asCustom(
                 BaseCenterPop(
                     this,
-                    titleText = "Photo vs Auto",
-                    content = "Photoperiod strains are more common. Unless you’ve confirmed with your retailer that it is autoflower, please select “photoperiod” here.\n" + "\n" + "Hey abby can generate an algorithm to tailor for either type.",
+                    titleText = getString(com.cl.common_base.R.string.string_1434),
+                    content = getString(com.cl.common_base.R.string.string_1435),
                     isShowCancelButton = false
                 )
             ).show()
@@ -111,8 +111,8 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
             pop.asCustom(
                 BaseCenterPop(
                     this,
-                    titleText = "Not Sure?",
-                    content = "Please check with your local retailer or seed bank. You can also usually find this information in your order invoice. \n\n Note: choosing the wrong setting can delay flowering. We strongly encourage you to confirm with your provider first. ",
+                    titleText = getString(com.cl.common_base.R.string.string_1437),
+                    content = getString(com.cl.common_base.R.string.string_1438),
                     isShowCancelButton = false
                 )
             ).show()

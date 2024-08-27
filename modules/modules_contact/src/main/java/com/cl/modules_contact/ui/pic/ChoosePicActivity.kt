@@ -82,8 +82,8 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
 
         val adapter = MyPagerAdapter(supportFragmentManager)
         val netWorkFragment = NetworkImagesFragment()
-        adapter.addFragment(netWorkFragment, "Trends")
-        adapter.addFragment(LocalImagesFragment(), "Photos")
+        adapter.addFragment(netWorkFragment, getString(com.cl.common_base.R.string.string_1941))
+        adapter.addFragment(LocalImagesFragment(), getString(com.cl.common_base.R.string.string_1443))
         binding.viewPager.adapter = adapter
 
         binding.tabLayout.setupWithViewPager(binding.viewPager)

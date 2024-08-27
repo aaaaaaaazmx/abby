@@ -135,7 +135,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_FAIL -> ToastUtil.shortToast(
                     this@CameraActivity,
-                    "Pairing Failed"
+                    getString(com.cl.common_base.R.string.string_1453)
                 )
 
                 com.tuya.smart.android.demo.camera.utils.Constants.MSG_VIDEO_RECORD_OVER -> handleVideoRecordOver(msg)
@@ -320,7 +320,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         } else {
             ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + "Pairing Failed"
+                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + getString(com.cl.common_base.R.string.string_1453)
             )
         }
     }
@@ -334,7 +334,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         } else {
             ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + "Pairing Failed"
+                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + getString(com.cl.common_base.R.string.string_1453)
             )
         }
     }
@@ -343,7 +343,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             /*ToastUtil.shortToast(this@CameraActivity, "Pairing Successful")*/
         } else {
-            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
+            ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.string_1453))
         }
     }
 
@@ -351,7 +351,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             /*ToastUtil.shortToast(this@CameraActivity, "Pairing Successful")*/
         } else {
-            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
+            ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.string_1453))
         }
     }
 
@@ -359,7 +359,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             binding.cameraMute.isSelected = (previewMute == ICameraP2P.MUTE)
         } else {
-            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
+            ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.string_1453))
         }
     }
 
@@ -368,7 +368,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             binding.cameraQuality.text =
                 if (videoClarity == ICameraP2P.HD) getString(com.tuya.smart.android.demo.camera.R.string.hd) else getString(com.tuya.smart.android.demo.camera.R.string.sd)
         } else {
-            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
+            ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.string_1453))
         }
     }
 
@@ -393,12 +393,12 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 getString(com.tuya.smart.android.demo.camera.R.string.get_current_clarity) + info
             )*/
         } else {
-            ToastUtil.shortToast(this@CameraActivity, "Pairing Failed")
+            ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.string_1453))
         }
     }
 
 
-    var letters = arrayOf("TIME-LAPSE", "VIDEO", "PHOTO", "MIC", "PLAYBACK")
+    var letters = arrayOf(getString(com.cl.common_base.R.string.string_1458), getString(com.cl.common_base.R.string.string_1459), getString(com.cl.common_base.R.string.string_1460), getString(com.cl.common_base.R.string.string_1461), getString(com.cl.common_base.R.string.string_1462))
 
     private val devId by lazy {
         intent.getStringExtra(Constants.Global.INTENT_DEV_ID)
@@ -551,17 +551,17 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                             val isOpen = Prefs.getBoolean(mViewModel.sn.value.toString(), false)
 
                             when (mode) {
-                                "TIME-LAPSE" -> {
+                                getString(com.cl.common_base.R.string.string_1458) -> {
                                     binding.ivCameraButton.isChecked = isOpen
                                     ViewUtils.setVisible(binding.ivGetImage)
                                 }
-                                "PLAYBACK" -> {
+                                getString(com.cl.common_base.R.string.string_1462) -> {
                                     ViewUtils.setVisible(binding.tvPlayBack)
                                 }
                             }
 
                             // 在其他情况下，将两个视图设置为隐藏
-                            if (mode != "TIME-LAPSE" && mode != "PLAYBACK") {
+                            if (mode != getString(com.cl.common_base.R.string.string_1458) && mode != getString(com.cl.common_base.R.string.string_1462)) {
                                 ViewUtils.setGone(binding.ivGetImage, binding.tvPlayBack)
                             }
                         }
@@ -651,7 +651,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
         binding.ivCameraButton.setOnCheckedChangeListener { buttonView, isChecked ->
             val currentLetter = adapters?.focusedPosition?.let { adapters?.getLetter(it) }
-            val isTimeLapse = currentLetter == "TIME-LAPSE" || currentLetter == "PHOTO"
+            val isTimeLapse = currentLetter == getString(com.cl.common_base.R.string.string_1458) || currentLetter == getString(com.cl.common_base.R.string.string_1460)
 
             // 主要用户在重置时产生的一系列问题
             if (mViewModel.selectCallBack.value == true) {
@@ -666,7 +666,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             }*/
 
             when (adapters?.focusedPosition?.let { adapters?.getLetter(it) }) {
-                "TIME-LAPSE" -> {
+                getString(com.cl.common_base.R.string.string_1458) -> {
                     val timeLapseKey = mViewModel.sn.value.toString()
                     val currentStatus = Prefs.getBoolean(timeLapseKey, false)
                     val isShowAlready = Prefs.getBoolean(Constants.Contact.KEY_TIMELAPSE_TIP_IS_SHOW, false)
@@ -732,21 +732,21 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 }
 
 
-                "VIDEO" -> {
+                getString(com.cl.common_base.R.string.string_1459) -> {
                     recordClick(!isChecked)
                 }
 
-                "PHOTO" -> {
+                getString(com.cl.common_base.R.string.string_1460) -> {
                     snapShotClick()
                 }
 
-                "MIC" -> {
+                getString(com.cl.common_base.R.string.string_1461) -> {
                     // onPause的时候，会自动关闭
                     isSpeaking = !isChecked
                     speakClick()
                 }
 
-                "PLAYBACK" -> {
+                getString(com.cl.common_base.R.string.string_1462) -> {
                     playBack(isChecked)
                 }
             }
@@ -1272,7 +1272,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 l2,
                 o
             )
-            if (adapters?.focusedPosition?.let { adapters?.getLetter(it) } == "PLAYBACK") {
+            if (adapters?.focusedPosition?.let { adapters?.getLetter(it) } == getString(com.cl.common_base.R.string.string_1462)) {
                 binding.timeline.setCurrentTimeInMillisecond(l * 1000L)
             }
         }
@@ -1443,17 +1443,17 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                             val mode = adapters?.focusedPosition?.let { adapters?.getLetter(it) }
 
                             when (mode) {
-                                "TIME-LAPSE" -> {
+                                getString(com.cl.common_base.R.string.string_1458) -> {
                                     binding.ivCameraButton.isChecked = isOpen
                                     ViewUtils.setVisible(binding.ivGetImage)
                                 }
-                                "PLAYBACK" -> {
+                                getString(com.cl.common_base.R.string.string_1462) -> {
                                     ViewUtils.setVisible(binding.tvPlayBack)
                                 }
                             }
 
                             // 在其他情况下，将两个视图设置为隐藏
-                            if (mode != "TIME-LAPSE" && mode != "PLAYBACK") {
+                            if (mode != getString(com.cl.common_base.R.string.string_1458) && mode != getString(com.cl.common_base.R.string.string_1462)) {
                                 ViewUtils.setGone(binding.ivGetImage, binding.tvPlayBack)
                             }
 
@@ -1702,7 +1702,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private fun isExit() {
         adapters?.focusedPosition?.let { adapters?.getLetter(it) }?.apply {
             if (binding.ivCameraButton.isChecked) {
-                if (this == "TIME-LAPSE" || this == "PHOTO") {
+                if (this == getString(com.cl.common_base.R.string.string_1458) || this == getString(com.cl.common_base.R.string.string_1460)) {
                     this@CameraActivity.finish()
                 } else {
                     com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1415))
@@ -1726,10 +1726,10 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     // 创建一个映射，将每个标签映射到对应的背景资源
     private val backgrounds = mapOf(
-        "TIME-LAPSE" to com.cl.common_base.R.drawable.create_camera_time_line,
-        "VIDEO" to com.cl.common_base.R.drawable.create_camera_video,
-        "PHOTO" to com.cl.common_base.R.drawable.create_camera_photo,
-        "MIC" to com.cl.common_base.R.drawable.create_camera_mic,
-        "PLAYBACK" to com.cl.common_base.R.drawable.create_camera_record
+        getString(com.cl.common_base.R.string.string_1458) to com.cl.common_base.R.drawable.create_camera_time_line,
+        getString(com.cl.common_base.R.string.string_1459) to com.cl.common_base.R.drawable.create_camera_video,
+        getString(com.cl.common_base.R.string.string_1460) to com.cl.common_base.R.drawable.create_camera_photo,
+        getString(com.cl.common_base.R.string.string_1461) to com.cl.common_base.R.drawable.create_camera_mic,
+        getString(com.cl.common_base.R.string.string_1462) to com.cl.common_base.R.drawable.create_camera_record
     )
 }
