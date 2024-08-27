@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cl.common_base.BaseApplication
 import com.cl.modules_home.databinding.HomePlantProfileBinding
 import com.cl.common_base.adapter.StrainNameSearchAdapter
 import com.cl.common_base.base.BaseActivity
@@ -342,7 +343,7 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
     }
 
     // 搜索时
-    private val searching: MutableList<String> = mutableListOf(getString(com.cl.common_base.R.string.string_240))
+    private val searching: MutableList<String> = mutableListOf(BaseApplication.getContext().getString(com.cl.common_base.R.string.string_240))
     private val searchAdapter by lazy {
         StrainNameSearchAdapter(mutableListOf())
     }

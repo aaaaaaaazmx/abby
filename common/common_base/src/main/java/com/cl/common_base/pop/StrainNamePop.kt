@@ -12,6 +12,7 @@ import android.widget.EditText
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import com.cl.common_base.adapter.StrainNameSearchAdapter
 import com.cl.common_base.constants.Constants
@@ -45,7 +46,7 @@ class StrainNamePop(
     }
 
     // 搜索时
-    private val searching: MutableList<String> = mutableListOf(context.getString(R.string.string_240))
+    private val searching: MutableList<String> = mutableListOf(BaseApplication.getContext().getString(R.string.string_240))
 
     private var binding: StrainNameBinding? = null
     override fun onCreate() {

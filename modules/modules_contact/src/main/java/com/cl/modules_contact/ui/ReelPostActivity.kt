@@ -150,7 +150,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
     override fun initView() {
         // 生成video的界面和gif不一致。
         if (isVideo) {
-            binding.btnPost.text = "Save"
+            binding.btnPost.text = getString(com.cl.common_base.R.string.string_1515)
             ViewUtils.setGone(binding.peopleAt, binding.vvOne, binding.tvEms, binding.etConnect, binding.vvThree)
         }
         binding.rvPic.apply {
