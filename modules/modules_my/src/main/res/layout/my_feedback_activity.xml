@@ -107,7 +107,7 @@
                 android:id="@+id/ft_terms"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Terms of Use" />
+                app:itemTitle="@string/string_1666" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height=".5dp"
@@ -119,7 +119,7 @@
                 android:id="@+id/ft_privacy"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Privacy Policy" />
+                app:itemTitle="@string/string_1667" />
 
             <TextView
                 android:layout_width="match_parent"

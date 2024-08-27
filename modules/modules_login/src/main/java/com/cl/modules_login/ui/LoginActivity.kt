@@ -126,7 +126,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 }
                 else -> {
                     hideProgressLoading()
-                    ToastUtil.shortShow("not exist user")
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1677))
                 }
             }
         }
@@ -176,7 +176,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                     hideProgressLoading() // 错误信息显示出来
                     when (it.errorCode) {
                         1007 -> {
-                            binding.tvErrorInfo.text = "Incorrect password!"
+                            binding.tvErrorInfo.text = getString(com.cl.common_base.R.string.string_1678)
                             ViewUtils.setVisible(binding.tvErrorInfo)
                         }
 
@@ -380,11 +380,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         val password = binding.passwordEditText.text.toString() // 直接劝退
         // 直接劝退
         if (account.isEmpty()) {
-            ToastUtil.shortShow("Account cannot be empty")
+            ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1687))
             return
         }
         if (password.isEmpty()) {
-            ToastUtil.shortShow("Password cannot be empty")
+            ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1688))
             return
         }
         letMultiple(account, password) { ac, ps ->

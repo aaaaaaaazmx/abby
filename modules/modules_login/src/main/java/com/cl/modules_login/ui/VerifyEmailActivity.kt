@@ -182,15 +182,15 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
             }
 
         // 文字修改
-        binding.vmLog.text = if (isEmailLogin) "Enter the OTP" else if (isRegister) "Verify email" else "Reset password"
-        binding.btnSuccess.text = if (isEmailLogin) "Login" else getString(com.cl.common_base.R.string.string_1392)
+        binding.vmLog.text = if (isEmailLogin) getString(com.cl.common_base.R.string.string_1657) else if (isRegister) getString(com.cl.common_base.R.string.string_1658) else getString(com.cl.common_base.R.string.string_1659)
+        binding.btnSuccess.text = if (isEmailLogin) getString(com.cl.common_base.R.string.string_1660) else getString(com.cl.common_base.R.string.string_1392)
         binding.codeView.setOnInputListener(this)
 
         when(thirdSource) {
             "sms" -> {
-                binding.tvSend.text = "Didn't receive OTP ?"
-                binding.btnSuccess.text = "Login"
-                binding.vmLog.text = "Enter the OTP"
+                binding.tvSend.text = getString(com.cl.common_base.R.string.string_1661)
+                binding.btnSuccess.text = getString(com.cl.common_base.R.string.string_1660)
+                binding.vmLog.text = getString(com.cl.common_base.R.string.string_1657)
             }
         }
     }

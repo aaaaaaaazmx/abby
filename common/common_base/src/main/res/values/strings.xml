@@ -412,4 +412,23 @@
     <string name="string_1648">2. Place the phone close to the device and try to pair again</string>
     <string name="string_1649">3. </string>
     <string name="string_1650"> the device</string>
+
+
+    <string name="string_1657">Enter the OTP</string>
+    <string name="string_1658">Verify email</string>
+    <string name="string_1659">Reset password</string>
+    <string name="string_1660">Login</string>
+    <string name="string_1661">Didn't receive OTP ?</string>
+    <string name="term_of_use_privacy_policy">Term of Use &amp; Privacy Policy</string>
+    <string name="string_1666">Terms of Use</string>
+    <string name="string_1667">Privacy Policy</string>
+    <string name="string_1668">Bind Email</string>
+    <string name="string_1669">Enter telephone number</string>
+    <string name="string_1670">OTP Verification</string>
+    <string name="string_1677">not exist user</string>
+    <string name="string_1678">Incorrect password!</string>
+    <string name="string_1687">Account cannot be empty</string>
+    <string name="string_1688">Password cannot be empty</string>
+    <string name="string_1697">The email address cannot be empty.</string>
+    <string name="string_1698">Please enter the correct email address.</string>
 </resources>

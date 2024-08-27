@@ -111,12 +111,12 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
         if (!thirdSource.isNullOrEmpty()) {
             when(thirdSource){
                 "google" -> {
-                    binding.tvCreateLog.text = "Bind Email"
+                    binding.tvCreateLog.text = getString(com.cl.common_base.R.string.string_1668)
                 }
                 "sms" -> {
                     binding.btnContinue.text = getString(com.cl.common_base.R.string.string_262)
-                    binding.etEmail.hint = "Enter telephone number"
-                    binding.tvCreateLog.text = "OTP Verification"
+                    binding.etEmail.hint = getString(com.cl.common_base.R.string.string_1669)
+                    binding.tvCreateLog.text = getString(com.cl.common_base.R.string.string_1670)
                     binding.tvCreateLogSub.visibility = View.VISIBLE
                 }
             }

@@ -59,7 +59,7 @@ class EmailLoginActivity : BaseActivity<LoginEmailLoginActivityBinding>() {
             // 调用接口
             val address = binding.accountEditText.text.toString()
             if (address.isEmpty()) {
-                ToastUtil.shortShow("The email address cannot be empty.")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1697))
                 return@setOnClickListener
             }
             if (address.contains("@") && address.contains(".")) {
@@ -67,7 +67,7 @@ class EmailLoginActivity : BaseActivity<LoginEmailLoginActivityBinding>() {
                 mViewModel.updatePwd(address, "6")
             } else {
                 // 不包含 "@" 或 "."
-                ToastUtil.shortShow("Please enter the correct email address.")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1698))
                 return@setOnClickListener
             }
         }
