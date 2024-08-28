@@ -63,7 +63,7 @@
                         app:layout_constraintTop_toTopOf="@+id/fl_back"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        android:text="Digital"
+                        android:text="@string/string_1888"
                         android:textColor="@color/white"
                         android:textSize="17sp"
                         android:layout_width="wrap_content"

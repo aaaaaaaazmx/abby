@@ -53,7 +53,7 @@ class WallAdapter(
                 strikeThrough {
                     append("$price")
                 }
-                append("  Free")
+                append(context.getString(com.cl.common_base.R.string.string_1880))
             }
         } else {
             buildSpannedString {

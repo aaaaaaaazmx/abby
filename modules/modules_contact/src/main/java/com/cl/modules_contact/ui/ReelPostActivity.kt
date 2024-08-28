@@ -468,7 +468,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
             if (!picList.none { it.type == ChoosePicBean.KEY_TYPE_PIC }) {
                 hideProgressLoading()
                 if (picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC }.size < 2) {
-                    ToastUtil.shortShow("You need at least two pictures.")
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1905))
                     return@setOnClickListener
                 }
             }
@@ -505,7 +505,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
         // 合成gif
         binding.tvPreview.setOnClickListener {
             if (picList.size == 1 || picList.size == 2) {
-                ToastUtil.shortShow("You need at least two pictures.")
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1905))
                 return@setOnClickListener
             }
             showProgressLoading()
@@ -943,7 +943,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                             // 保存到相册。
                             val uri = saveFileToGallery(this@ReelPostActivity, path, name, "video/mp4", albumName ?: "")
                             if (null != uri) {
-                                ToastUtil.shortShow("Saved successfully")
+                                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_1921))
                                 finish()
                             }
                         }

@@ -26,7 +26,7 @@ class ContactReportPop(
             tvConfirm.setOnClickListener {
                 val txt = etEmail.text.toString()
                 if (txt.isEmpty()) {
-                    ToastUtil.shortShow("Please enter the report content")
+                    ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1949))
                     return@setOnClickListener
                 }
                 onConfirmAction?.invoke(txt)

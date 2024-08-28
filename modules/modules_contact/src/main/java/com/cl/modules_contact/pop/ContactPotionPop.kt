@@ -43,7 +43,7 @@ class ContactPotionPop(
             // 是分享，其实就是查看trend是不是自己的
             ViewUtils.setVisible(isShowShareToPublic, clShare)
 
-            tvFollow.text = if (isFollow) "Unfollow" else "Follow"
+            tvFollow.text = if (isFollow) context.getString(com.cl.common_base.R.string.string_1890) else context.getString(com.cl.common_base.R.string.string_1889)
 
             clDelete.setOnClickListener {
                 deleteAction?.invoke()

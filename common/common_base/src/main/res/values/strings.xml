@@ -521,4 +521,43 @@
     <string name="string_1855">Power on the device after it has been powered off for 10s.</string>
     <string name="string_1856">Confirm the indicator is slowly blinking</string>
     <string name="string_1859">GO</string>
+
+    <string name="string_1861">The settings are currently not available for the grow tent space. Please switch to the hey abby grow box to access the settings</string>
+    <string name="string_1862">Switch</string>
+
+    <string name="string_1863">Send now</string>
+    <string name="string_1864">Not in the discord community yet? Click </string>
+    <string name="string_1865">here</string>
+    <string name="string_1866"> to join.</string>
+    <string name="string_1867">Binding successful.</string>
+    <string name="string_1869">The account you entered does not exist</string>
+    <string name="string_1870">Send successfully</string>
+
+    <string name="string_1874">This operation is irreversible.</string>
+    <string name="string_1875">I understand</string>
+    <string name="string_1876">Slide to unlock</string>
+
+    <string name="string_1879">Your coupon code has been copied!</string>
+    <string name="string_1880">  Free</string>
+    <string name="string_1881">Connected</string>
+    <string name="string_1882">Disconnected</string>
+
+    <string name="string_1888">Digital</string>
+    <string name="string_1889">Follow</string>
+    <string name="string_1890">Unfollow</string>
+    <string name="string_1891">Unfollow this grower</string>
+    <string name="string_1892">Do you want to follow this grower?</string>
+    <string name="string_1893">Add Link</string>
+    <string name="string_1894">Cannot post when empty</string>
+    <string name="string_1898">Bury</string>
+    <string name="string_1899">Don\'t show it again</string>
+    <string name="string_1900">New</string>
+    <string name="string_1901">Hot</string>
+    <string name="string_1902">Sync</string>
+    <string name="string_1903">Harvesting</string>
+    <string name="string_1905">You need at least two pictures.</string>
+    <string name="string_1921">Saved successfully</string>
+
+    <string name="string_1949">Please enter the report content</string>
+    <string name="string_1955">can’t mention select more than 9 users</string>
 </resources>

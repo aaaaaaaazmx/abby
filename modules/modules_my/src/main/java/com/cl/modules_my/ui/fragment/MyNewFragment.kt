@@ -170,8 +170,8 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                         asCustom(
                             BaseThreeTextPop(
                                 ct,
-                                content = "The settings are currently not available for the grow tent space. Please switch to the hey abby grow box to access the settings",
-                                oneLineText = "Switch",
+                                content = getString(com.cl.common_base.R.string.string_1861),
+                                oneLineText = getString(com.cl.common_base.R.string.string_1862),
                                 twoLineText = context?.getString(com.cl.common_base.R.string.string_10),
                                 oneLineCLickEventAction = {
                                     // 跳转到设别列表界面

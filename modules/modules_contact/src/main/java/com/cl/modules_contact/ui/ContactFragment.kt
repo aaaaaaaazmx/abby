@@ -299,7 +299,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                             mViewMode.hotReduce(item?.id.toString())
                         }, onDeleteAction = {
                             mViewMode.delete(DeleteReq(item?.id.toString()))
-                        }, "Bury")
+                        }, getString(com.cl.common_base.R.string.string_1898))
                     }
                 ).show()
             true
@@ -472,10 +472,10 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                                             asCustom(
                                                 BaseCenterPop(
                                                     cc,
-                                                    confirmText = if (item?.isFollow == true) "Unfollow" else "Follow",
+                                                    confirmText = if (item?.isFollow == true) getString(com.cl.common_base.R.string.string_1890) else getString(com.cl.common_base.R.string.string_1889),
                                                     isShowCancelButton = true,
-                                                    cancelText = "Cancel",
-                                                    content = if (item?.isFollow == true) "Unfollow this grower" else "Do you want to follow this grower?",
+                                                    cancelText = getString(com.cl.common_base.R.string.my_cancel),
+                                                    content = if (item?.isFollow == true) getString(com.cl.common_base.R.string.string_1891) else getString(com.cl.common_base.R.string.string_1892),
                                                     onConfirmAction = {
                                                         if (item?.isFollow == true) {
                                                             mViewMode.updateFollowStatus(UpdateFollowStatusReq(false, item.userId.toString()))
@@ -575,10 +575,10 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         asCustom(
                             BaseThreeTextPop(
                                 it,
-                                content = "Do you want to follow this grower?",
-                                oneLineText = "Don't show it again",
-                                twoLineText = "Follow",
-                                threeLineText = "Cancel",
+                                content = getString(com.cl.common_base.R.string.string_1892),
+                                oneLineText = getString(com.cl.common_base.R.string.string_1899),
+                                twoLineText = getString(com.cl.common_base.R.string.string_1889),
+                                threeLineText = getString(com.cl.common_base.R.string.my_cancel),
                                 twoLineCLickEventAction = {
                                     // 关注
                                     mViewMode.updateFollowStatus(UpdateFollowStatusReq(true, item.userId.toString()))
@@ -909,7 +909,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
     }
 
     private fun switchTag(tags: List<String>, currentTag: String): String {
-        val switchingTags = if (mViewMode.userAssets.value?.data?.basicInfo?.following == 0)  listOf("New", "Hot", "Sync", "Harvesting") else listOf("New", "Hot", "Sync", getString(com.cl.common_base.R.string.string_190), "Harvesting")
+        val switchingTags = if (mViewMode.userAssets.value?.data?.basicInfo?.following == 0)  listOf(getString(com.cl.common_base.R.string.string_1900), getString(com.cl.common_base.R.string.string_1901), getString(com.cl.common_base.R.string.string_1902), getString(com.cl.common_base.R.string.string_1903)) else listOf(getString(com.cl.common_base.R.string.string_1900), getString(com.cl.common_base.R.string.string_1901), getString(com.cl.common_base.R.string.string_1902), getString(com.cl.common_base.R.string.string_190), getString(com.cl.common_base.R.string.string_1903))
 
         if (switchingTags.size <= 1) {
             return currentTag // 如果列表中只有一个标签，返回当前标签

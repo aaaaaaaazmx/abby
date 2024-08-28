@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="19dp"
-                android:text="I understand"
+                android:text="@string/string_1875"
                 android:textColor="#161B19"
                 android:textSize="15sp"
                 android:textStyle="bold"

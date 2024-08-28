@@ -118,7 +118,7 @@ class ContactListPop(
                     // 添加的时候需要判断，取消的时候不需要判断
                     if (item.isSelect == false) {
                         if (((adapter.data as? MutableList<MentionData>)?.filter { it.isSelect == true }?.size ?: 0) >= 9) {
-                            ToastUtil.shortShow("can’t mention select more than 9 users")
+                            ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1955))
                             return@setOnItemChildClickListener
                         }
                     }

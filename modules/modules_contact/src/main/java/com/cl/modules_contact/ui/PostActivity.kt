@@ -306,7 +306,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                 .asCustom(
                     ContactLinkPop(
                         this@PostActivity,
-                        txt = if (binding.tvLink.text.toString() == "Add Link") "" else binding.tvLink.text.toString(),
+                        txt = if (binding.tvLink.text.toString() == getString(R.string.string_1893)) "" else binding.tvLink.text.toString(),
                         onConfirmAction = { txt ->
                             // 超链接
                             binding.tvLink.text = txt
@@ -325,7 +325,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
             if (isFastClick()) {
                 // 所有内容都是空的，
                 if (picList.size == 1 && TextUtils.isEmpty(binding.etConnect.text.toString())) {
-                    ToastUtil.shortShow("Cannot post when empty")
+                    ToastUtil.shortShow(getString(R.string.string_1894))
                     return@setSafeOnClickListener
                 }
                 // @的人
@@ -342,7 +342,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                         AddTrendReq(
                             content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
                             imageUrls = null,
-                            link = if (binding.tvLink.text.toString() == "Add Link") null else binding.tvLink.text.toString(),
+                            link = if (binding.tvLink.text.toString() == getString(R.string.string_1893)) null else binding.tvLink.text.toString(),
                             mentions = mentions,
                             openData = if (binding.plantToVisible.isItemChecked) 1 else 0,
                             ph = viewModel.phValue.value,
@@ -357,7 +357,7 @@ class PostActivity : BaseActivity<ContactPostActivityBinding>() {
                         AddTrendReq(
                             content = if (TextUtils.isEmpty(binding.etConnect.text.toString())) null else binding.etConnect.text.toString(),
                             imageUrls = viewModel.picAddress.value,
-                            link = if (binding.tvLink.text.toString() == "Add Link") null else binding.tvLink.text.toString(),
+                            link = if (binding.tvLink.text.toString() == getString(R.string.string_1893)) null else binding.tvLink.text.toString(),
                             mentions = mentions,
                             openData = if (binding.plantToVisible.isItemChecked) 1 else 0,
                             ph = viewModel.phValue.value,

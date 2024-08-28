@@ -2,6 +2,7 @@ package com.cl.modules_my.widget
 
 import android.content.Context
 import androidx.databinding.DataBindingUtil
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
@@ -19,7 +20,7 @@ class MyDeleteDevicePop(
     private val isShowUnlockButton: Boolean? = false,
     private val unLockText: String? = null,
     private val titleText: String? = null,
-    private val checkText: String? = "I understand",
+    private val checkText: String? = context.getString(com.cl.common_base.R.string.string_1875),
     private val contentText: String? = context.getString(com.cl.common_base.R.string.setting_delete_device),
     private val onNextAction: (() -> Unit)? = null,
 ) : BottomPopupView(context) {
@@ -39,7 +40,7 @@ class MyDeleteDevicePop(
             ViewUtils.setVisible(!titleText.isNullOrEmpty(), tvTitle)
             ViewUtils.setVisible(isShowUnlockButton ?: false, slideToConfirm)
             ViewUtils.setVisible(!(isShowUnlockButton ?: false), btnSuccess)
-            slideToConfirm.setEngageText(unLockText ?: "Slide to unlock")
+            slideToConfirm.setEngageText(unLockText ?: context.getString(com.cl.common_base.R.string.string_1876))
             slideToConfirm.slideListener = object : ISlideListener {
                 override fun onSlideStart() {
                 }

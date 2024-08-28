@@ -135,7 +135,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
     }
 
     override fun initView() {
-        binding.tvTitle.text = userName ?: "Digital"
+        binding.tvTitle.text = userName ?: getString(com.cl.common_base.R.string.string_1888)
         binding.linkageScroll.topScrollTarget = { binding.rvLinkageTop }
         binding.linkageScroll.listeners.add(object : BehavioralScrollListener {
             override fun onScrollChanged(v: BehavioralScrollView, from: Int, to: Int) {
@@ -254,7 +254,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     hideProgressLoading()
                     val followText = binding.tvFollower.text.toString()
                     if (followText == getString(com.cl.common_base.R.string.string_190)) {
-                        binding.tvFollower.text = "Follow"
+                        binding.tvFollower.text = getString(com.cl.common_base.R.string.string_1889)
                         viewModel.updateIsFollowAction(false)
                     } else {
                         binding.tvFollower.text = getString(com.cl.common_base.R.string.string_190)
@@ -272,7 +272,7 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                     if (data?.followStatus == true) {
                         binding.tvFollower.text = getString(com.cl.common_base.R.string.string_190)
                     } else {
-                        binding.tvFollower.text = "Follow"
+                        binding.tvFollower.text = getString(com.cl.common_base.R.string.string_1889)
                     }
 
                     // 动态更改宽高 iv_head_bg
@@ -628,10 +628,10 @@ class OtherJourneyActivity : BaseActivity<ContactOtherJourneyBinding>() {
                                         asCustom(
                                             BaseCenterPop(
                                                 this@OtherJourneyActivity,
-                                                confirmText = if (isFollowing) "Unfollow" else "Follow",
+                                                confirmText = if (isFollowing) getString(com.cl.common_base.R.string.string_1890) else getString(com.cl.common_base.R.string.string_1889),
                                                 isShowCancelButton = true,
-                                                cancelText = "Cancel",
-                                                content = if (isFollowing) "Unfollow this grower" else "Do you want to follow this grower?",
+                                                cancelText = getString(com.cl.common_base.R.string.my_cancel),
+                                                content = if (isFollowing) getString(com.cl.common_base.R.string.string_1891) else getString(com.cl.common_base.R.string.string_1892),
                                                 onConfirmAction = {
                                                     if (isFollowing) {
                                                         viewModel.updateFollowStatus(UpdateFollowStatusReq(false, item?.userId.toString()))

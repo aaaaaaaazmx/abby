@@ -341,7 +341,7 @@ class EditPlantProfilePop(
                         .isDestroyOnDismiss(false)
                         .asCustom(
                             BaseCenterPop(context,
-                                content = "The account you entered does not exist",
+                                content = context.getString(com.cl.common_base.R.string.string_1869),
                                 isShowCancelButton = false,
                                 onConfirmAction = {
                                 })
@@ -353,7 +353,7 @@ class EditPlantProfilePop(
                 )
             } else {
                 // todo 发送完毕。
-                binding?.btnSendCode?.text = "Send successfully"
+                binding?.btnSendCode?.text = context.getString(com.cl.common_base.R.string.string_1870)
                 Resource.Success(it.data)
             }
         }.flowOn(Dispatchers.Main).onStart {

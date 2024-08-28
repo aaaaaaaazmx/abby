@@ -170,7 +170,7 @@ class MergeAccountPop(
 
         override fun onFinish() {
             binding?.btnSendCode?.isEnabled = true
-            binding?.btnSendCode?.text = "Send now"
+            binding?.btnSendCode?.text = context.getString(com.cl.common_base.R.string.string_1863)
             cancel()
         }
     }

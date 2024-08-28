@@ -112,10 +112,10 @@ class DeviceListAdapter(
 
             ListDeviceBean.KEY_TYPE_PH -> {
                 if (BleManager.get().getAllConnectedDevice()?.any { it.deviceName == Constants.Ble.KEY_PH_DEVICE_NAME } == true) {
-                    holder.setText(R.id.tv_ble_status, "Connected")
+                    holder.setText(R.id.tv_ble_status, context.getString(com.cl.common_base.R.string.string_1881))
                     holder.setBackgroundColor(R.id.rl_ble_status, ContextCompat.getColor(context, com.cl.common_base.R.color.mainColor))
                 } else {
-                    holder.setText(R.id.tv_ble_status, "Disconnected")
+                    holder.setText(R.id.tv_ble_status, context.getString(com.cl.common_base.R.string.string_1882))
                     holder.setBackgroundColor(R.id.rl_ble_status, ContextCompat.getColor(context, com.cl.common_base.R.color.textError))
                 }
             }

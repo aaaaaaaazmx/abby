@@ -49,7 +49,7 @@ class NewWalletAdapter (data: MutableList<VoucherBean>?) :
                 xpopup(context) {
                     isDestroyOnDismiss(false)
                     dismissOnTouchOutside(true)
-                    asCustom(BaseCenterPop(context, confirmText = context.getString(R.string.string_10), isShowCancelButton = false, content = "Your coupon code has been copied!")).show()
+                    asCustom(BaseCenterPop(context, confirmText = context.getString(R.string.string_10), isShowCancelButton = false, content = context.getString(R.string.string_1879))).show()
                 }
             }
 

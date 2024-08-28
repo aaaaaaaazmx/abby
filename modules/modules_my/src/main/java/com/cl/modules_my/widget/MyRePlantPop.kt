@@ -33,7 +33,7 @@ class MyRePlantPop(
                     com.cl.common_base.R.color.textRed,
                     context.theme
                 )) {
-                    append("This operation is irreversible.")
+                    append(context.getString(com.cl.common_base.R.string.string_1874))
                 }
             }
 

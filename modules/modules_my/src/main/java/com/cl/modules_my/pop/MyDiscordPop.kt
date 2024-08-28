@@ -70,8 +70,8 @@ class MyDiscordPop(
 
             // Not in the discord community yet? Click here to join.
             tvJoin.text = buildSpannedString {
-                append("Not in the discord community yet? Click ")
-                appendClickable("here", isUnderlineText = true) {
+                append(context.getString(com.cl.common_base.R.string.string_1864))
+                appendClickable(context.getString(com.cl.common_base.R.string.string_1865), isUnderlineText = true) {
                     //  跳转到discord指定的频道
                     // https://discord.gg/8F747ZGbuv
                     val intent = Intent(context, WebActivity::class.java)
@@ -79,7 +79,7 @@ class MyDiscordPop(
                     intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                     context.startActivity(intent)
                 }
-                append(" to join.")
+                append(context.getString(com.cl.common_base.R.string.string_1866))
             }
             tvJoin.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击
             tvJoin.highlightColor = ResourcesCompat.getColor( // 设置之后点击才不会出现背景颜色
@@ -167,7 +167,7 @@ class MyDiscordPop(
                 is Resource.Success -> {
                     if (it.data.toString() == "true") {
                         // 绑定成功
-                        ToastUtil.shortShow("Binding successful.")
+                        ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_1867))
                         query.cancel()
                         dismiss()
                     }
