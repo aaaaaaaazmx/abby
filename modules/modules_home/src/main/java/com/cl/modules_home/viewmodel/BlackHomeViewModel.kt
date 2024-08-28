@@ -1961,12 +1961,12 @@ class BlackHomeViewModel @Inject constructor(private val repository: HomeReposit
             kotlin.runCatching {
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
-                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, roomTemp) else ""}"
             }.getOrElse {
-                return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+                return "$text ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp_desc, roomTemp) else ""}"
             }
         }
-        return "$text ${if (roomTemp.isNotEmpty()) "(Room $roomTemp)" else ""}"
+        return "$text ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp_desc, roomTemp) else ""}"
     }
 
     /**
@@ -2005,7 +2005,7 @@ class BlackHomeViewModel @Inject constructor(private val repository: HomeReposit
     fun getRoomHumidity(humidity: Int?): String {
         val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
         val roomHumidity = data?.envirVO?.roomHumiture
-        return if (roomHumidity.isNullOrEmpty()) "$humidity" else "$humidity (Room $roomHumidity)"
+        return if (roomHumidity.isNullOrEmpty()) "$humidity" else context.getString(com.cl.common_base.R.string.home_room, humidity.toString(), roomHumidity.toString())
     }
 
     fun getRoomHumidityForBlack(humidity: Int?): String {
@@ -2044,9 +2044,9 @@ class BlackHomeViewModel @Inject constructor(private val repository: HomeReposit
                 val incPlant = inc?.toFloat()?.times(2.54f)
                 if (incPlant != null) {
                     return if (incPlant <= 20) {
-                        "<20 cm"
+                        context.getString(com.cl.common_base.R.string.home_tt_cm)
                     } else {
-                        "${incPlant.safeToInt()} cm"
+                        context.getString(com.cl.common_base.R.string.home_cm, incPlant.safeToInt())
                     }
                 }
             }
@@ -2055,9 +2055,9 @@ class BlackHomeViewModel @Inject constructor(private val repository: HomeReposit
                 val incPlant = inc?.toFloat()
                 if (incPlant != null) {
                     return if (incPlant <= 8) {
-                        "<8 inch"
+                        context.getString(com.cl.common_base.R.string.home_eight_inch)
                     } else {
-                        "$inc inch"
+                        context.getString(com.cl.common_base.R.string.home_inch, inc.toString())
                     }
                 }
             }

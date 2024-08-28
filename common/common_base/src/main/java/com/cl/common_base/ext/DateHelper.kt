@@ -2,6 +2,7 @@ package com.cl.common_base.ext
 
 import android.content.Context
 import androidx.annotation.Size
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -622,19 +623,19 @@ object DateHelper {
         val timeDifference = endTime - startDate;
         val second = timeDifference / 1000;    //计算秒
         if (second < 60) {
-            return "$second second ago" //根据需要可以写成刚刚。
+            return BaseApplication.getContext().getString(R.string.second_ago, second.toString()) //根据需要可以写成刚刚。
         } else {
             val minute = second / 60
             if (minute < 60) {
-                return "$minute minutes ago"
+                return BaseApplication.getContext().getString(R.string.minutes_ago, minute.toString())
             } else {
                 val hour = minute / 60
                 if (hour < 24) {
-                    return "$hour hours ago"
+                    return BaseApplication.getContext().getString(R.string.hours_ago, hour.toString())
                 } else {
                     val day = hour / 24
                     if (day < 7) {
-                        return "$day days ago"
+                        return BaseApplication.getContext().getString(R.string.days_ago, day.toString())
                     } else {
                         return if (formatTime(startDate, "yyyy") == formatTime(endTime, "yyyy", Locale.US)) {
                             formatTime(startDate, "MMM dd", Locale.US)

@@ -260,10 +260,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             // 展示一下弹窗
             pop.asCustom(
                 BaseCenterPop(
-                    this@SettingActivity, content = """
-                This option is designed to control the power of 3rd party accessories.
-                You are currently connect to a hey abby smart accessory, please remove it first from device manager.
-            """.trimIndent(), confirmText = getString(com.cl.common_base.R.string.string_10)
+                    this@SettingActivity, content = getString(com.cl.common_base.R.string.home_usb_desc).trimIndent(), confirmText = getString(com.cl.common_base.R.string.string_10)
                 )
             ).show()
         }

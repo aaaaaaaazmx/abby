@@ -28,22 +28,14 @@ class HomePlantSixPop(
         super.beforeShow()
         if (isFattening == true) {
             // 是加肥
-            binding?.tvDec?.text ="""
-                Moving forward, you will use a full pod of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.
-
-                *Note: you must cut open the packets first
-            """.trimIndent()
+            binding?.tvDec?.text = context.getString(R.string.decs).trimIndent()
 
             binding?.ivAdd?.background = ContextCompat.getDrawable(
                 context,
                 R.mipmap.base_six_feed_bg
             )
         }else {
-            binding?.tvDec?.text = """
-                For the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. 
-
-                *Note: you must cut open the packets first
-            """.trimIndent()
+            binding?.tvDec?.text = context.getString(R.string.decs_two).trimIndent()
 
             binding?.ivAdd?.background = ContextCompat.getDrawable(
                 context,

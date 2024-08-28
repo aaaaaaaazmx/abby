@@ -98,7 +98,7 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
                                 val subscriberNumber = data?.subscriberNumber
                                 subscriberNumber?.let { mViewModel.topUpSubscriberNumber(it) }
                             },
-                            content = if (data?.month == "1") "${data?.month} month will be added to your account " else "${data?.month} months will be added to your account ",
+                            content = if (data?.month == "1") getString(com.cl.common_base.R.string.string_month, data?.month) else getString(com.cl.common_base.R.string.string_months, data?.month),
                             cancelText = getString(com.cl.common_base.R.string.my_cancel),
                             confirmText = getString(com.cl.common_base.R.string.base_ok),
                             richText = data?.email

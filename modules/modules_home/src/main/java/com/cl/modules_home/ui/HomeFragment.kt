@@ -3159,37 +3159,27 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // binding.pplantNinth.tvOxy.text = "${data?.oxygen ?: "---"}"
                         val startTime = data?.lightOn ?: 0
                         val endTime = data?.lightOff ?: 0
-                        binding.pplantNinth.tvOxy.text = """
-                            ${data?.lightOnOff ?: "---"}
-                            ON  ${
-                            when (startTime) {
+                        binding.pplantNinth.tvOxy.text = getString(
+                            com.cl.common_base.R.string.home_on_off, data?.lightOnOff ?: "---", when (startTime) {
                                 0 -> "12 AM"
                                 12 -> "12 PM"
                                 else -> "${if (startTime > 12) startTime - 12 else startTime} ${if (startTime > 12) "PM" else "AM"}"
-                            }
-                        }
-                            OFF ${
-                            when (endTime) {
+                            }, when (endTime) {
                                 0 -> "12 AM"
                                 12 -> "12 PM"
                                 else -> "${if (endTime > 12) endTime - 12 else endTime} ${if (endTime > 12) "PM" else "AM"}"
                             }
-                        }
-                        """.trimIndent()
+                        ).trimIndent()
 
                         // 设置周期
                         data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
                             ?.let { info ->
                                 // 植物信息数据显示
-                                binding.pplantNinth.tvWeekDay.text = """
-                                ${
-                                    if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
+                                binding.pplantNinth.tvWeekDay.text = getString(
+                                    com.cl.common_base.R.string.home_week_day, if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
                                         com.cl.common_base.R.string.base_autoflowering_abbreviations
-                                    ) else info.journeyName
-                                }
-                                Week ${data?.week ?: "-"}
-                                Day ${data?.day ?: "-"}
-                            """.trimIndent()
+                                    ) else info.journeyName, data?.week ?: "-", data?.day ?: "-"
+                                ).trimIndent()
                             }
 
                         // 植物的period 周期
@@ -3387,15 +3377,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
                         ?.let { info ->
                             // 植物信息数据显示
-                            binding.pplantNinth.tvWeekDay.text = """
-                                ${
-                                if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
+                            binding.pplantNinth.tvWeekDay.text = getString(
+                                com.cl.common_base.R.string.home_week_day, if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
                                     com.cl.common_base.R.string.base_autoflowering_abbreviations
-                                ) else info.journeyName
-                            }
-                                Week ${data?.week ?: "-"}
-                                Day ${data?.day ?: "-"}
-                            """.trimIndent()
+                                ) else info.journeyName, data?.week ?: "-", data?.day ?: "-"
+                            ).trimIndent()
 
                             ViewUtils.setVisible(
                                 info.journeyName != HomePeriodPop.KEY_SEED,
@@ -3784,16 +3770,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // proMode
                     // 植物信息数据显示
-                    binding.plantManual.tvWeekDay.text = """
-                                Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
-                            """.trimIndent()
+                    binding.plantManual.tvWeekDay.text = getString(com.cl.common_base.R.string.home_pro_week_day, data?.week ?: "-", data?.day ?: "-").trimIndent()
 
                     binding.plantManual.tvPeriod.text = data?.period
 
                     // 植物信息数据显示
-                    binding.plantManual.tvHorWeekDay.text = """
-                                Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
-                            """.trimIndent()
+                    binding.plantManual.tvHorWeekDay.text = getString(com.cl.common_base.R.string.home_pro_week_day, data?.week ?: "-", data?.day ?: "-").trimIndent().trimIndent()
 
                     binding.plantManual.tvHorPeriod.text = data?.period
 

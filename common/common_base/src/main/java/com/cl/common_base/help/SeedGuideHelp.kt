@@ -33,11 +33,7 @@ class SeedGuideHelp(val context: Context) {
                         pop.asCustom(
                             BaseBottomPop(
                                 context, ContextCompat.getDrawable(context, R.mipmap.base_six_bg),
-                                """
-                                 For the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. 
-
-                                 *Note: you must cut open the packets first
-                               """.trimIndent(),
+                                context.getString(R.string.string_1956).trimIndent(),
                                 context.getString(R.string.my_next),
                                 onNextAction = {
                                     pop.asCustom(HomePlantEightPop(context, onNextAction = {

@@ -33,9 +33,7 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            tools:text="Moving forward, you will use a full pod of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.
-\n\n
-*Note: you must cut open the packets first"
+            tools:text="@string/decs"
             android:textColor="#161B19"
             android:textSize="15sp"
             android:textStyle="bold" />

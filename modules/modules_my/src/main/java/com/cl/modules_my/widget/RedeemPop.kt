@@ -25,19 +25,9 @@ class RedeemPop(context: Context, private val userInfo: UserinfoBean?, private v
             ivClose.setSafeOnClickListener { dismiss() }
 
             tvTitle.text =  if (userInfo?.email.isNullOrEmpty()) {
-                """
-                Redeemed Oxygen Coins：$chooserOxygen
-                Account Balance: ${oxygen?.minus(chooserOxygen)}
-                E-Gift Value:${'$'}$exchangeRate
-            """.trimIndent()
+                context.getString(com.cl.common_base.R.string.home_reedee_desc_ont, chooserOxygen, oxygen?.minus(chooserOxygen), '$', exchangeRate).trimIndent()
             } else {
-                """
-                Redeemed Oxygen Coins：$chooserOxygen
-                Account Balance: ${oxygen?.minus(chooserOxygen)}
-                E-Gift Value:${'$'}$exchangeRate
-
-                A e-gift card secrect code will send to your email ${userInfo?.email}
-            """.trimIndent()
+                context.getString(com.cl.common_base.R.string.home_reedee_desc_two, chooserOxygen, oxygen?.minus(chooserOxygen), '$', exchangeRate, userInfo?.email).trimIndent()
             }
 
             tvDescription.setSafeOnClickListener {

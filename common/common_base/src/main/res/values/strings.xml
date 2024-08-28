@@ -560,4 +560,34 @@
 
     <string name="string_1949">Please enter the report content</string>
     <string name="string_1955">can’t mention select more than 9 users</string>
+
+    <!--特殊字符，字符串模版 Special Strings-->
+    <string name="decs">\nMoving forward, you will use a full pod of fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction.\n\n*Note: you must cut open the packets first\n</string>
+    <string name="decs_two">\nFor the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. \n\n*Note: you must cut open the packets first\n</string>
+    <string name="string_1956">\n For the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. \n\n *Note: you must cut open the packets first\n</string>
+    <string name="week">Week</string>
+    <string name="day">Day</string>
+    <string name="days_ago">%1$s days ago</string>
+    <string name="hours_ago">%1$s hours ago</string>
+    <string name="minutes_ago">%1$s minutes ago</string>
+    <string name="second_ago">%1$s second ago</string>
+    <string name="string_oxy_g">%1$s g</string>
+    <string name="string_add_g">+%1$s g</string>
+
+    <string name="home_reedee_desc_ont">\nRedeemed Oxygen Coins：%1$s\nAccount Balance: %2$s\nE-Gift Value:%3$s%4$s\n</string>
+    <string name="home_reedee_desc_two">\nRedeemed Oxygen Coins：%1$s\nAccount Balance: %2$s\nE-Gift Value:%3$s%4$s\n\nA e-gift card secrect code will send to your email %5$s\n</string>
+    <string name="home_usb_desc">\nThis option is designed to control the power of 3rd party accessories.\nYou are currently connect to a hey abby smart accessory, please remove it first from device manager.\n</string>
+    <string name="string_month">%1$s month will be added to your account </string>
+    <string name="string_months">%1$s months will be added to your account </string>
+
+    <string name="home_week_day">\n%1$s\nWeek %2$s\nDay %3$s\n</string>
+    <string name="home_pro_week_day">\nWeek %1$s Day %2$s\n</string>
+    <string name="home_on_off">\n%1$s\nON  %2$s\nOFF %3$s\n</string>
+    <string name="home_room">%1$s (Room %2$s)</string>
+    <string name="home_inch">%1$s inch</string>
+    <string name="home_eight_inch">&lt;8 inch></string>
+    <string name="home_tt_cm">&lt;20 cm</string>
+    <string name="home_room_temp">(Room %1$s)</string>
+    <string name="home_room_temp_desc">(Room %1$s)</string>
+    <string name="home_cm">%1$s cm</string>
 </resources>
