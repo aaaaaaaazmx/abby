@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">modules_contact</string>
+    <string name="contact_the_number">The number of selected photos cannot exceed %1$s.</string>
 </resources>

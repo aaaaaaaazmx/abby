@@ -1432,7 +1432,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         .withString(Constants.Global.KEY_SHARE_TYPE, "plant_complete")
                         .withString(
                             Constants.Global.KEY_SHARE_TEXT,
-                            "I’m #${mViewMode.getFinishPage.value?.data?.harvestComplete} Complete grower"
+                            getString(R.string.home_i_m_complete_grower, mViewMode.getFinishPage.value?.data?.harvestComplete)
                         )
                         .withString(Constants.Global.KEY_SHARE_CONTENT, filePath)
                         .navigation()
@@ -2924,7 +2924,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         if (data?.size == 0) return@success
                         data?.take(7)?.map {
                             Water(
-                                "${it.oxygen}g",
+                                getString(R.string.home_g, it.oxygen),
                                 it.tips,
                                 it.loseEfficacy.toString(),
                                 it.orderNo,
@@ -3175,11 +3175,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
                             ?.let { info ->
                                 // 植物信息数据显示
-                                binding.pplantNinth.tvWeekDay.text = getString(
-                                    com.cl.common_base.R.string.home_week_day, if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
+                                binding.pplantNinth.tvWeekDay.text = """
+                                ${
+                                    if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
                                         com.cl.common_base.R.string.base_autoflowering_abbreviations
-                                    ) else info.journeyName, data?.week ?: "-", data?.day ?: "-"
-                                ).trimIndent()
+                                    ) else info.journeyName
+                                }
+                                ${getString(com.cl.common_base.R.string.week)} ${data?.week ?: "-"}
+                                ${getString(com.cl.common_base.R.string.day)} ${data?.day ?: "-"}
+                            """.trimIndent()
                             }
 
                         // 植物的period 周期
@@ -3377,11 +3381,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.list?.firstOrNull { "${it.journeyStatus}" == HomePeriodPop.KEY_ON_GOING }
                         ?.let { info ->
                             // 植物信息数据显示
-                            binding.pplantNinth.tvWeekDay.text = getString(
-                                com.cl.common_base.R.string.home_week_day, if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
+                            binding.pplantNinth.tvWeekDay.text = """
+                                ${
+                                if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
                                     com.cl.common_base.R.string.base_autoflowering_abbreviations
-                                ) else info.journeyName, data?.week ?: "-", data?.day ?: "-"
-                            ).trimIndent()
+                                ) else info.journeyName
+                            }
+                                ${getString(com.cl.common_base.R.string.week)} ${data?.week ?: "-"}
+                                ${getString(com.cl.common_base.R.string.day)} ${data?.day ?: "-"}
+                            """.trimIndent()
 
                             ViewUtils.setVisible(
                                 info.journeyName != HomePeriodPop.KEY_SEED,
@@ -3770,12 +3778,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // proMode
                     // 植物信息数据显示
-                    binding.plantManual.tvWeekDay.text = getString(com.cl.common_base.R.string.home_pro_week_day, data?.week ?: "-", data?.day ?: "-").trimIndent()
+                    binding.plantManual.tvWeekDay.text = """
+                                ${getString(com.cl.common_base.R.string.week)} ${data?.week ?: "-"} ${getString(com.cl.common_base.R.string.day)} ${data?.day ?: "-"}
+                            """.trimIndent()
 
                     binding.plantManual.tvPeriod.text = data?.period
 
                     // 植物信息数据显示
-                    binding.plantManual.tvHorWeekDay.text = getString(com.cl.common_base.R.string.home_pro_week_day, data?.week ?: "-", data?.day ?: "-").trimIndent().trimIndent()
+                    binding.plantManual.tvHorWeekDay.text = """
+                                ${getString(com.cl.common_base.R.string.week)} ${data?.week ?: "-"} ${getString(com.cl.common_base.R.string.day)} ${data?.day ?: "-"}
+                            """.trimIndent()
 
                     binding.plantManual.tvHorPeriod.text = data?.period
 
@@ -4104,7 +4116,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
                     if (roomTemp.isNotEmpty() && roomHumidity.isNotEmpty()) {
-                        append("Room $roomTemp$tempUnit $roomHumidity$humidityUnit")
+                        append(getString(R.string.home_room, roomTemp, tempUnit, roomHumidity, humidityUnit))
                     }
                 }
 

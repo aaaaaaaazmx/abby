@@ -54,11 +54,11 @@ class EnvAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
         }
         if (!item.roomData.isNullOrEmpty()) {
             if (item.value?.contains("%") == true) {
-                helper.setText(R.id.tv_going_unit, "Room ${item.roomData}%")
+                helper.setText(R.id.tv_going_unit, context.getString(R.string.home_room_one, item.roomData))
             } else if (item.value?.contains("℉") == true) {
                 val temp = com.cl.common_base.ext.temperatureConversion(item.roomData.safeToFloat(), isMetric)
                 val tempUnit = if (isMetric) "℃" else "℉"
-                helper.setText(R.id.tv_going_unit, "Room $temp$tempUnit")
+                helper.setText(R.id.tv_going_unit, context.getString(R.string.home_rooms, temp, tempUnit))
             }
         }
 

@@ -1,5 +1,6 @@
 package com.cl.modules_my.pop
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.core.widget.doAfterTextChanged
 import androidx.databinding.DataBindingUtil
@@ -55,6 +56,7 @@ class EditPlantProfilePop(
 
     private var binding: MyEditProfilePopBinding? = null
 
+    @SuppressLint("StringFormatMatches")
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<MyEditProfilePopBinding>(popupImplView)?.apply {
@@ -63,7 +65,7 @@ class EditPlantProfilePop(
 
             ivClose.setOnClickListener { dismiss() }
 
-            tvDec.text = "Which account would you like to merge with ${userInfoBean?.email}?"
+            tvDec.text = context.getString(com.cl.common_base.R.string.my_which_account, userInfoBean?.email)
 
             etEmail.doAfterTextChanged {
                 (etEmail.text.toString().isNotEmpty()).also { btnSuccess.isEnabled = it }
@@ -141,7 +143,7 @@ class EditPlantProfilePop(
                                 """.trimIndent()
                             )
                         }
-                        .nightMode("lightOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},lightOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
+                        .nightMode(context.getString(com.cl.common_base.R.string.my_lighton_lightoff, if (muteOn?.safeToInt() == 12) 24 else muteOn, if (muteOff?.safeToInt() == 24) 12 else muteOff))
                 }
 
                 // 调用接口更新后台夜间模式
@@ -195,7 +197,7 @@ class EditPlantProfilePop(
                                             """.trimIndent()
                                         )
                                     }
-                                    .nightMode("lightOn:${if (timeOn == 12) 24 else timeOn},lightOff:${if (timeOff == 24) 12 else timeOff}", devId = beanData?.deviceId)
+                                    .nightMode(context.getString(com.cl.common_base.R.string.my_lighton_lightoff_two, if (timeOn == 12) 24 else timeOn, if (timeOff == 24) 12 else timeOff), devId = beanData?.deviceId)
                             })
                     ).show()
             }

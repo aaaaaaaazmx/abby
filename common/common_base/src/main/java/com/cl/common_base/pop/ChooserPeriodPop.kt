@@ -62,7 +62,7 @@ class ChooserPeriodPop(
             val extractNumbers1 = extractNumbers(timeString)
             week = extractNumbers1.first.toString()
             day = extractNumbers1.second.toString()
-            etEmail.text = "Week ${extractNumbers1.first.toString()} Day ${extractNumbers1.second.toString()}"
+            etEmail.text = "${context.getString(R.string.week)} ${extractNumbers1.first.toString()} ${context.getString(R.string.day)} ${extractNumbers1.second.toString()}"
 
 
             ivClose.setSafeOnClickListener { dismiss() }

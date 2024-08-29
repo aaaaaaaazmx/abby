@@ -287,12 +287,12 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
 
 
                     tvAddClockTime.text =
-                        if (btnSuccess.isChecked) "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                        if (btnSuccess.isChecked) getString(R.string.the_program, if (!isFractional) "1.5 gallons+" else "6L")
                         else getString(R.string.base_pump_stop_dec)
 
                     // The program will pause every 2 minutes to prevent overflow. We recommend using a container of 1.5 gallons+ for water changes.
                     tvAddClockTime.text =
-                        if (btnSuccess.isChecked) "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                        if (btnSuccess.isChecked) getString(R.string.the_program, if (!isFractional) "1.5 gallons+" else "6L")
                         else getString(R.string.base_pump_stop_dec)
                 }
             }
@@ -374,7 +374,7 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
             )
         }
 
-        binding.waterPop.tvAddClockTime.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+        binding.waterPop.tvAddClockTime.text = getString(R.string.the_program, if (!isFractional) "1.5 gallons+" else "6L")
 
 
         val setting = CardSetting()
@@ -503,14 +503,14 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
                                         if (value == false) {
                                             binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_auto_start_desc)
                                         } else {
-                                            binding.waterPop.tvAddClockTime.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                                            binding.waterPop.tvAddClockTime.text = getString(R.string.the_program, if (!isFractional) "1.5 gallons+" else "6L")
                                         }
                                     } else {
                                         // 暂停
                                         if (value == false) {
                                             binding.waterPop.tvAddClockTime.text = getString(R.string.base_pump_stop_dec)
                                         } else {
-                                            binding.waterPop.tvAddClockTime.text = "The program will pause every 2 minutes to prevent overflow. We recommend using a container of ${if (!isFractional) "1.5 gallons+" else "6L"} for water changes."
+                                            binding.waterPop.tvAddClockTime.text = getString(R.string.the_program, if (!isFractional) "1.5 gallons+" else "6L")
                                         }
                                     }
                                     binding.waterPop.btnSuccess.isChecked = value as Boolean

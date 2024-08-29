@@ -773,7 +773,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .nightMode("lightOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},lightOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}")
+                    .nightMode(getString(com.cl.common_base.R.string.my_lighton_lightoff, if (muteOn?.safeToInt() == 12) 24 else muteOn, if (muteOff?.safeToInt() == 24) 12 else muteOff))
             }
 
             // 调用接口更新后台夜间模式

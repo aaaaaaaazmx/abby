@@ -201,14 +201,14 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
                 binding.cbTemperature.setTextColor(Color.parseColor("#006241"))
                 val dataTime = mviewmodel.getPlantData.value?.data?.humidityList?.map { it.dateTime.safeToLong().toDateString() }?.toList()
                 val yValue = mviewmodel.getPlantData.value?.data?.humidityList?.map { it.codeValue.safeToFloat() }?.toList()
-                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Humidity %", "#70D9FF"))
+                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, getString(com.cl.common_base.R.string.string_1334), "#70D9FF"))
             } else {
                 binding.cbTemperature.setTextColor(Color.WHITE)
                 binding.cbHumidity.setTextColor(Color.parseColor("#006241"))
                 // 解析文案。
                 val dataTime = mviewmodel.getPlantData.value?.data?.termpertureList?.map { it.dateTime.safeToLong().toDateString() }?.toList()
                 val yValue = mviewmodel.getPlantData.value?.data?.termpertureList?.map { temperatureConversionTwo(it.codeValue.safeToFloat(), aBoolean).safeToFloat() }?.toList()
-                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Temperature $unit", "#006241"))
+                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, getString(R.string.home_grow_chamber_temperature, unit), "#006241"))
             }
         }
         binding.cbTemperature.setOnClickListener {
@@ -221,14 +221,14 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
                 // 解析文案。
                 val dataTime = mviewmodel.getPlantData.value?.data?.termpertureList?.map { it.dateTime.safeToLong().toDateString() }?.toList()
                 val yValue = mviewmodel.getPlantData.value?.data?.termpertureList?.map { temperatureConversionTwo(it.codeValue.safeToFloat(), aBoolean).safeToFloat() }?.toList()
-                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Temperature $unit", "#006241"))
+                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, getString(R.string.home_grow_chamber_temperature, unit), "#006241"))
             } else {
                 binding.cbHumidity.setTextColor(Color.WHITE)
                 binding.cbTemperature.setTextColor(Color.parseColor("#006241"))
 
                 val dataTime = mviewmodel.getPlantData.value?.data?.humidityList?.map { it.dateTime.safeToLong().toDateString() }?.toList()
                 val yValue = mviewmodel.getPlantData.value?.data?.humidityList?.map { it.codeValue.safeToFloat()}?.toList()
-                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, "Grow Chamber Humidity %", "#70D9FF"))
+                binding.chart1.aa_drawChartWithChartOptions(ChartUtils.setupChart(dataTime, yValue, getString(com.cl.common_base.R.string.string_1334), "#70D9FF"))
             }
         }
     }

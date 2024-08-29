@@ -517,7 +517,7 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
                 xpopup(context) {
                     dismissOnTouchOutside(true)
                     isDestroyOnDismiss(false)
-                    asCustom(BaseCenterPop(context, content = "The USB port #${clickedData.usbId} has been occupied. If you need to use it, please remove the smart add-on first from the settings.", isShowCancelButton = false, confirmText = context.getString(R.string.string_10))).show()
+                    asCustom(BaseCenterPop(context, content = context.getString(R.string.the_usb_port, clickedData.usbId), isShowCancelButton = false, confirmText = context.getString(R.string.string_10))).show()
                 }
             }
         }

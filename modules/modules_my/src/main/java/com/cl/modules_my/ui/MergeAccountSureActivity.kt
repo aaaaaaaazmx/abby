@@ -66,9 +66,9 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
             4. Calendar
 
             5. Your trend post and replies*/
-            appendLine("Please be ware that $email will be merged and deleted and this cannot be undone.")
+            appendLine(getString(R.string.my_please, email))
             appendLine()
-            appendLine("the below items will be merged into ${userinfoBean?.email}")
+            appendLine(getString(R.string.my_the_below, userinfoBean?.email))
             appendLine()
             appendLine(getString(R.string.string_1725))
             appendLine()

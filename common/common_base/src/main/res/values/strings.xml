@@ -580,8 +580,6 @@
     <string name="string_month">%1$s month will be added to your account </string>
     <string name="string_months">%1$s months will be added to your account </string>
 
-    <string name="home_week_day">\n%1$s\nWeek %2$s\nDay %3$s\n</string>
-    <string name="home_pro_week_day">\nWeek %1$s Day %2$s\n</string>
     <string name="home_on_off">\n%1$s\nON  %2$s\nOFF %3$s\n</string>
     <string name="home_room">%1$s (Room %2$s)</string>
     <string name="home_inch">%1$s inch</string>
@@ -590,4 +588,20 @@
     <string name="home_room_temp">(Room %1$s)</string>
     <string name="home_room_temp_desc">(Room %1$s)</string>
     <string name="home_cm">%1$s cm</string>
+    <string name="my_failed_to_read_data">Failed to read feature value data.：%1$s</string>
+    <string name="the_usb_port">The USB port #%1$s has been occupied. If you need to use it, please remove the smart add-on first from the settings.</string>
+    <string name="the_program">The program will pause every 2 minutes to prevent overflow. We recommend using a container of %1$s for water changes.</string>
+    <string name="my_oxygen_coins_available">*%1$s Oxygen Coins Available</string>
+    <string name="my_activate_error">Activate error—->%1$s></string>
+    <string name="my_discord_id">Connected with Discord ID %1$s</string>
+    <string name="my_last_data_synced_on">Last data synced on %1$s</string>
+    <string name="my_please">Please be ware that %1$s will be merged and deleted and this cannot be undone.</string>
+    <string name="my_the_below">the below items will be merged into %1$s</string>
+    <string name="my_which_account">Which account would you like to merge with %1$s?</string>
+    <string name="my_grow_space_name">grow space name%1$s</string>
+    <string name="my_lighton_lightoff">lightOn:%1$s,lightOff:%2$s</string>
+    <string name="my_lighton_lightoff_two">lightOn:%1$s,lightOff:%2$s</string>
+    <string name="my_v">v%1$s</string>
+    <string name="pair_device">Device: %1$s</string>
+    <string name="pair_hey_abby">hey abby-%1$s</string>
 </resources>

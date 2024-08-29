@@ -130,7 +130,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                 binding.titleBar.setTitle("")
             }
             // 设置设备名字
-            binding.tvBleNane.text = "Device: ${bleData?.subName}"
+            binding.tvBleNane.text = getString(com.cl.common_base.R.string.pair_device, bleData?.subName)
 
             // 设置富文本
             // Hey abby only supports 2.4G Wi-Fi networks.

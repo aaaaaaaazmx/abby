@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">modules_home</string>
+    <string name="home_g">%1$sg</string>
+    <string name="home_grow_chamber_temperature">Grow Chamber Temperature %1$s</string>
+    <string name="home_i_m_complete_grower">I’m #%1$s Complete grower</string>
+    <string name="home_room">Room %1$s%2$s %3$s%4$s</string>
+    <string name="home_rooms">Room %1$s%2$s</string>
+    <string name="home_room_one">Room %1$s%</string>
 </resources>

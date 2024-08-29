@@ -146,7 +146,10 @@ class MyNewFragment : BaseFragment<MyNewFragmentBinding>() {
                     xpopup(it) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
-                        asCustom(BaseCenterPop(it, isShowCancelButton = false, confirmText = context?.getString(com.cl.common_base.R.string.string_10), content = "Connected with Discord ID ${mViewModel.userInfo()?.discordGlobalName}")).show()
+                        asCustom(BaseCenterPop(it, isShowCancelButton = false, confirmText = context?.getString(com.cl.common_base.R.string.string_10), content = getString(
+                            com.cl.common_base.R.string.my_discord_id,
+                            mViewModel.userInfo()?.discordGlobalName
+                        ))).show()
                     }
                 }
                 return@setOnClickListener

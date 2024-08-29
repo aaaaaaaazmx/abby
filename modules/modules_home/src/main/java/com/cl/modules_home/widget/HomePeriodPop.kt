@@ -170,7 +170,7 @@ class HomePeriodPop(
                             data?.get(position)?.journeyName
                         // 未解锁时不显示周期
                         periodTime.text =
-                            "Week${data?.get(position)?.week} Day${data?.get(position)?.day}"
+                            "${context.getString(com.cl.common_base.R.string.week)}${data?.get(position)?.week} ${context.getString(com.cl.common_base.R.string.day)}${data?.get(position)?.day}"
 
                         kotlin.runCatching {
                             when ("${data?.get(position)?.journeyStatus}") {

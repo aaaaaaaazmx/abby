@@ -1,5 +1,6 @@
 package com.cl.modules_my.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.view.View
@@ -119,6 +120,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
         })
     }
 
+    @SuppressLint("StringFormatMatches")
     override fun initView() {
         binding.title
             .setRightButtonTextBack(R.drawable.background_check_tags_r5)
@@ -205,7 +207,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                         DeviceDetailInfo(
                             attribute = "Photo",
                             plantWay = "Seed",
-                            plantName = "grow space name${existingSize + it}"
+                            plantName = getString(R.string.my_grow_space_name, existingSize + it)
                         )
                     }
                     list.addAll(toBeAdded)

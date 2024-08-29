@@ -34,6 +34,7 @@ import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logD
 import com.cl.common_base.help.BleConnectHandler
 import com.cl.common_base.help.ConnectEvent
+import com.cl.modules_my.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -260,7 +261,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository,
     /**
      * 读特征值数据
      */
-    private val listLogMutableStateFlow = MutableStateFlow(LogEntity(Level.INFO, "数据适配完毕"))
+    private val listLogMutableStateFlow = MutableStateFlow(LogEntity(Level.INFO, "Data adaptation complete"))
     val listLogStateFlow: StateFlow<LogEntity> = listLogMutableStateFlow
     fun readData(
         bleDevice: BleDevice,
@@ -268,7 +269,7 @@ class BlePairViewModel @Inject constructor(private val repository: MyRepository,
     ) {
         BleManager.get().readData(bleDevice, node.serviceUUID, node.characteristicUUID) {
             onReadFail {
-                addLogMsg(LogEntity(Level.OFF, "Failed to read feature value data.：${it.message}"))
+                addLogMsg(LogEntity(Level.OFF, context.getString(com.cl.common_base.R.string.my_failed_to_read_data, it.message)))
             }
             onReadSuccess {
                 // addLogMsg(LogEntity(Level.FINE, "${node.characteristicUUID} -> 读特征值数据成功：${BleUtil.bytesToHex(it)}"))

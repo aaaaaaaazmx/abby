@@ -18,6 +18,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.network.NetWorkUtil
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyWifiPairTwoActivityBinding
 import com.cl.modules_my.viewmodel.BlePairViewModel
 import com.thingclips.smart.home.sdk.ThingHomeSdk
@@ -194,8 +195,8 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
                     errorMsg: String?
                 ) {
                     hideProgressLoading()
-                    ToastUtil.shortShow("Activate error-->$errorMsg")
-                    binding.tvSearch.text = "Activate error-->$errorMsg"
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_activate_error, errorMsg))
+                    binding.tvSearch.text = getString(com.cl.common_base.R.string.my_activate_error, errorMsg)
                 }
             }
             )

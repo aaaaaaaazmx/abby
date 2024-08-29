@@ -30,6 +30,7 @@ import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyPhSettingActivityBinding
 import com.cl.modules_my.viewmodel.BlePairViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -304,7 +305,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
 
         // Last data synced on 08/22/2023 11:23AM.
         ViewUtils.setVisible(binding.tvSyncDesc)
-        binding.tvSyncDesc.text = "Last data synced on ${DateHelper.formatTime(time, "MM/dd/yyyy hh:mm a")}"
+        binding.tvSyncDesc.text = getString(com.cl.common_base.R.string.my_last_data_synced_on, DateHelper.formatTime(time, "MM/dd/yyyy hh:mm a"))
 
         // 背光状态
         binding.editText123.isChecked = getBacklightStatus(decrypted)

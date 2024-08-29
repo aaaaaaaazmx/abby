@@ -32,6 +32,7 @@ import com.cl.modules_planting_log.request.LogListReq
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
 import com.cl.modules_planting_log.request.LogTypeListDataItem
 import com.cl.common_base.bean.PlantIdByDeviceIdData
+import com.cl.modules_planting_log.R
 import com.cl.modules_planting_log.request.PlantInfoByPlantIdData
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -561,7 +562,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     ) {
         BleManager.get().readData(bleDevice, node.serviceUUID, node.characteristicUUID) {
             onReadFail {
-                addLogMsg(LogEntity(Level.OFF, "Failed to read feature value data.：${it.message}"))
+                addLogMsg(LogEntity(Level.OFF, context.getString(com.cl.common_base.R.string.my_failed_to_read_data, it.message)))
             }
             onReadSuccess {
                 // addLogMsg(LogEntity(Level.FINE, "${node.characteristicUUID} -> 读特征值数据成功：${BleUtil.bytesToHex(it)}"))

@@ -13,6 +13,7 @@ import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.pop.*
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyUpdateFirmwareBinding
 import com.cl.modules_my.viewmodel.FirmwareUpdateViewModel
 import com.lxj.xpopup.XPopup
@@ -198,7 +199,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
                 ViewUtils.setVisible(isShow, binding.btnSuccess)
                 bean?.firstOrNull { it.type == 9 }?.let { data ->
                     if (isShow) {
-                        binding.tvVersion.text = "v${data.version}"
+                        binding.tvVersion.text = getString(com.cl.common_base.R.string.my_v, data.version)
                         if (data.desc.isNullOrEmpty()) {
                             binding.tvMs.text = buildSpannedString {
                                 appendLine(getString(com.cl.common_base.R.string.string_1766))
@@ -208,7 +209,7 @@ class FirmwareUpdateActivity : BaseActivity<MyUpdateFirmwareBinding>() {
                             binding.tvMs.text = data.desc
                         }
                     } else {
-                        binding.tvVersion.text = "v${data.currentVersion}"
+                        binding.tvVersion.text = getString(com.cl.common_base.R.string.my_v, data.currentVersion)
                         binding.tvMs.text = getString(com.cl.common_base.R.string.string_1768)
                     }
                 }
