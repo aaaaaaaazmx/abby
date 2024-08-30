@@ -29,7 +29,7 @@
                 android:layout_marginStart="21dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="21dp"
-                android:text="Reset The Device"
+                android:text="@string/string_2249"
                 android:textColor="#161B19"
                 android:textSize="15sp"
                 android:textStyle="bold" />
@@ -109,7 +109,7 @@
                         android:layout_gravity="center"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="Back"
+                        android:text="@string/string_2251"
                         android:textColor="@color/mainColor"
                         android:textSize="15sp"
                         app:svRadius="10dp"

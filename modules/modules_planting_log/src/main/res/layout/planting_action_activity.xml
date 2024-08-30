@@ -126,7 +126,7 @@
                 android:layout_height="60dp"
                 app:itemChecked="true"
                 app:hideArrow="true"
-                app:itemTitle="Sync to all plants"
+                app:itemTitle="@string/string_2044"
                 />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

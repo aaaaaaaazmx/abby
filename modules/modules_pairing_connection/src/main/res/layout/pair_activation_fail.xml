@@ -23,7 +23,7 @@
             android:paddingTop="15dp"
             android:paddingEnd="14dp"
             android:paddingBottom="5dp"
-            android:text="Activation Failed"
+            android:text="@string/string_2064"
             android:textColor="@color/_xpopup_content_color"
             android:textSize="16sp" />
 
@@ -61,7 +61,7 @@
                 android:gravity="center"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:text="Try again"
+                android:text="@string/string_2065"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -95,7 +95,7 @@
             android:layout_marginBottom="34dp"
             android:layout_gravity="center"
             android:textSize="13sp"
-            android:text="Can be activated in the settings page"
+            android:text="@string/string_2066"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
     </LinearLayout>

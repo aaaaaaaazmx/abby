@@ -49,7 +49,7 @@
                     android:background="@null"
                     android:ellipsize="end"
                     android:gravity="center_vertical"
-                    android:hint="Search what u want to mention"
+                    android:hint="@string/string_2392"
                     android:maxLines="1"
                     android:paddingStart="12dp"
                     android:textColor="@color/black"

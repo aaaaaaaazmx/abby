@@ -176,7 +176,7 @@
                         android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber"
-                        android:text="Temperature    " />
+                        android:text="@string/string_2404" />
 
                     <TextView
                         android:id="@+id/tv_grow_chamber_temperature_value"
@@ -214,7 +214,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:textSize="10sp"
-                        android:text="Humidity   "
+                        android:text="@string/string_2406"
                         app:layout_constraintStart_toStartOf="@+id/tv_grow_chamber"
                         app:layout_constraintTop_toBottomOf="@+id/tv_grow_chamber_temperature_value" />
 
@@ -287,7 +287,7 @@
                         android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_water_tank"
                         app:layout_constraintTop_toBottomOf="@+id/tv_water_tank"
-                        android:text="Temperature    " />
+                        android:text="@string/string_2404" />
 
                     <TextView
                         android:id="@+id/tv_water_tank_temperature_value"
@@ -331,7 +331,7 @@
                         android:id="@+id/tv_water_tank_tds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TDS"
+                        android:text="@string/string_2328"
                         android:textColor="#999999"
                         android:textSize="10sp"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_water_tank_ph"

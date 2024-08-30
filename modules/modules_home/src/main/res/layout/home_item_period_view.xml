@@ -104,7 +104,7 @@
             app:layout_constraintTop_toTopOf="@+id/ll_title"
             android:visibility="gone"
             android:id="@+id/tv_going"
-            android:text="Ongoing.."
+            android:text="@string/string_2014"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
             android:layout_width="wrap_content"

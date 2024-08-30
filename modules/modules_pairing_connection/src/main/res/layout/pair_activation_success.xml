@@ -22,7 +22,7 @@
             android:paddingTop="15dp"
             android:paddingEnd="14dp"
             android:paddingBottom="5dp"
-            android:text="Activation complete. Please close and reopen your app."
+            android:text="@string/string_2058"
             android:textColor="@color/_xpopup_content_color"
             android:textSize="16sp" />
 

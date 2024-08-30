@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:title="Settings" />
+                app:title="@string/string_2131" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                     android:id="@+id/ft_notif"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    app:itemTitle="Notifications" />
+                    app:itemTitle="@string/string_2262" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -53,7 +53,7 @@
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Service"
+                    android:text="@string/string_2263"
                     android:textColor="#C4C4C4"
                     android:textSize="14sp" />
 
@@ -64,7 +64,7 @@
                     android:layout_height="60dp"
                     android:layout_marginTop="7dp"
                     app:hideArrow="true"
-                    app:itemTitle="Digital service"
+                    app:itemTitle="@string/string_2264"
                     app:itemValue="@string/setting_sub_time" />
                 <View
                     android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_purchase"
                     app:hideArrow="true"
-                    app:itemTitle="Purchase Growing Supplies"
+                    app:itemTitle="@string/string_2266"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"/>
                 <View
@@ -102,13 +102,13 @@
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Device"
+                    android:text="@string/string_2268"
                     android:textColor="#C4C4C4"
                     android:textSize="14sp" />
 
                 <com.cl.common_base.widget.FeatureItemView
                     android:id="@+id/ft_name"
-                    app:itemTitle="Name"
+                    app:itemTitle="@string/string_2269"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"/>
 
@@ -125,7 +125,7 @@
                     android:id="@+id/dt_delete_device"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    app:itemTitle="Delete Abby"
+                    app:itemTitle="@string/string_2270"
                     app:itemTitleColor="#D61744" />
 
                 <View
@@ -140,7 +140,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="@color/white"
-                    app:itemTitle="Manage Device" />
+                    app:itemTitle="@string/string_2271" />
 
                 <View
                     android:layout_width="match_parent"
@@ -154,7 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     app:hideArrow="true"
-                    app:itemTitle="SN" />
+                    app:itemTitle="@string/string_2272" />
 
                 <View
                     android:layout_width="match_parent"
@@ -168,7 +168,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="@color/white"
-                    app:itemTitle="Version" />
+                    app:itemTitle="@string/string_2273" />
 
                 <View
                     android:layout_width="match_parent"
@@ -182,7 +182,7 @@
                     isOffline="@{data.isOffLine()}"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    app:itemTitle="Current firmware" />
+                    app:itemTitle="@string/string_2274" />
 
                <!-- <View
                     android:layout_width="match_parent"
@@ -207,7 +207,7 @@
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Advanced Features"
+                    android:text="@string/string_2276"
                     android:textColor="#C4C4C4"
                     android:textSize="14sp" />
 
@@ -249,7 +249,7 @@
                             android:layout_marginStart="20dp"
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="20dp"
-                            android:text="While in sleep mode, notifications will be muted, and light strip will be turned off during the sepcified time."
+                            android:text="@string/string_2277"
                             android:textColor="@color/black"
                             android:textSize="11sp"
                              />
@@ -272,7 +272,7 @@
                             android:layout_marginTop="5dp"
                             android:layout_marginEnd="20dp"
                             android:layout_marginBottom="10dp"
-                            android:text="After opening, the door will automatically lock when closed.Afterwards, the door can only be opened through the app"
+                            android:text="@string/string_2278"
                             android:textColor="@color/black"
                             android:textSize="11sp" />
                     </LinearLayout>
@@ -284,7 +284,7 @@
                         android:layout_height="60dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
-                        app:itemTitle="Pro Mode" />
+                        app:itemTitle="@string/string_2279" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/ft_manual_root"
@@ -302,7 +302,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:singleLine="true"
-                            android:text="Pro Mode: Off"
+                            android:text="@string/string_2280"
                             tools:text="123123"
                             android:textColor="@color/black"
                             android:textSize="16sp"
@@ -310,7 +310,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
-                            android:text="Beta"
+                            android:text="@string/string_2281"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="30dp"
@@ -368,7 +368,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         app:hideArrow="true"
-                        app:itemTitle="Burn-Proof Mode"
+                        app:itemTitle="@string/string_2283"
                         />
 
                     <TextView
@@ -378,7 +378,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginEnd="20dp"
-                        android:text="*Ensure all objects (fans/cameras) above 20 inches in the grow box are removed to prevents sensor misreads."
+                        android:text="@string/string_2284"
                         android:textColor="#F72E47"
                         android:textSize="12sp"
                         android:layout_width="wrap_content"
@@ -399,7 +399,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     app:hideArrow="true"
-                    app:itemTitle="Smart USB Power"
+                    app:itemTitle="@string/string_2285"
                     />
 
                 <View
@@ -426,7 +426,7 @@
                     android:background="@color/lineBg"
                     android:gravity="center_vertical"
                     android:paddingStart="20dp"
-                    android:text="Account"
+                    android:text="@string/string_2287"
                     android:textColor="#C4C4C4"
                     android:textSize="14sp" />
 
@@ -437,7 +437,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="@color/white"
-                    app:itemTitle="Merge Account" />
+                    app:itemTitle="@string/string_2288" />
 
                 <View
                     android:layout_width="match_parent"
@@ -477,7 +477,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:background="@color/white"
-                    app:itemTitle="Change the password" />
+                    app:itemTitle="@string/string_2291" />
 
 
                 <View

@@ -66,7 +66,7 @@
                 android:layout_marginEnd="24dp"
                 android:textColor="@color/black"
                 android:textSize="15sp"
-                tools:text="1.Check if abby is plugged in and turned on \n2.Check your Wi-Fi network connection\n3.Try to power off and restart your abby" />
+                tools:text="@string/string_2069" />
         </LinearLayout>
 
         <TextView

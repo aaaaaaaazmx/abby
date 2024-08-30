@@ -78,7 +78,7 @@
                   android:textColor="@color/black"
                   android:textSize="13sp"
                   app:layout_constraintEnd_toStartOf="@+id/btn_next"
-                  android:text="You can select photos from trends or your photo albums"
+                  android:text="@string/string_2379"
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"/>
 

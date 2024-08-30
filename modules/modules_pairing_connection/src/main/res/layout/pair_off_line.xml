@@ -54,7 +54,7 @@
             android:id="@+id/tv_span"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
-            android:text="1.Check if abby is plugged in and turned on \n2.Check your Wi-Fi network connection\n3.Try to power off and restart your abby"
+            android:text="@string/string_2069"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:layout_width="wrap_content"
@@ -70,7 +70,7 @@
                 android:id="@+id/tv_five"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4.If the problem persists, try to "
+                android:text="@string/string_1351"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 tools:ignore="MissingConstraints"
@@ -83,12 +83,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="2dp"
-                android:text="Reconnect abby"
+                android:text="@string/string_1352"
                 android:textColor="@color/mainColor"
                 android:textSize="15sp"
                 app:layout_constraintStart_toEndOf="@+id/tv_five"
                 tools:ignore="MissingConstraints"
-                tools:text="Reconnect abby" />
+                tools:text="@string/string_1352" />
 
             <View
                 android:layout_width="0dp"

@@ -78,7 +78,7 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="@+id/iv_add_accessory"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="ADD"
+            android:text="@string/string_2197"
             android:textSize="10sp"
             tools:background="@drawable/background_circle_gray_color_r20"
             android:background="@{data.isAdd ? @drawable/background_circle_main_color_r20 : @drawable/background_circle_gray_color_r20}"
@@ -95,7 +95,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/tv_add"
             android:textStyle="bold"
-            android:text="BUY NOW"
+            android:text="@string/string_2198"
             android:background="@drawable/background_circle_stroke_main_color_r20"
             android:layout_width="77dp"
             android:layout_height="25dp"/>

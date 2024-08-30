@@ -133,7 +133,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="Delete my account"
+                    android:text="@string/string_2117"
                     android:textColor="#D61744"
                     android:textSize="15sp"
                     android:textStyle="bold" />

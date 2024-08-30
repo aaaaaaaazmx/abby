@@ -83,7 +83,7 @@
                 android:visibility="@{data.use == 1 ? View.VISIBLE : View.GONE}"
                 android:textStyle="bold"
                 android:id="@+id/tv_use"
-                android:text="Using..."
+                android:text="@string/string_2238"
                 android:textColor="@color/mainColor"
                 android:textSize="15sp"
                 android:layout_width="wrap_content"
@@ -96,7 +96,7 @@
                 app:svRadius="18dp"
                 app:svSolidColor="@color/mainColor"
                 android:textColor="@color/white"
-                android:text="apply"
+                android:text="@string/string_2239"
                 android:layout_width="88dp"
                 android:layout_height="36dp"/>
 

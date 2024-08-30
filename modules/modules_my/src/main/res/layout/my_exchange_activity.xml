@@ -75,7 +75,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_available"
                 android:textSize="16sp"
                 android:textColor="@color/black"
-                android:text="You get"
+                android:text="@string/string_2156"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
 
@@ -113,7 +113,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cl_you_get"
-                android:text="Redeem"
+                android:text="@string/string_2157"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:background="@drawable/background_button_main_color_r100"
@@ -128,7 +128,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/tv_terms"
                 app:layout_constraintStart_toStartOf="@+id/tv_terms"
                 app:layout_constraintTop_toBottomOf="@+id/tv_terms"
-                android:text="*Terms &amp; Conditions apply. The exchange rates and conditions are subject to change."
+                android:text="@string/string_2158"
                 android:textColor="#979797"
                 android:textSize="12sp"
                 android:layout_width="0dp"

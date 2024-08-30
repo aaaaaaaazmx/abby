@@ -83,7 +83,7 @@
                 android:id="@+id/tv_off"
                 android:layout_width="58dp"
                 android:layout_height="wrap_content"
-                android:text="OFF"
+                android:text="@string/string_2010"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="@+id/rl_turn_end"

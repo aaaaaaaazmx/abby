@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="Plant Environment"
+                android:text="@string/string_2396"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp"
                 android:textStyle="bold"

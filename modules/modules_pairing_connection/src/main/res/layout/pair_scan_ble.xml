@@ -41,7 +41,7 @@
                     android:layout_marginTop="50dp"
                     android:layout_marginEnd="24dp"
                     android:lineSpacingExtra="5dp"
-                    android:text="Scanning for abby nearby, please move your phone as close as possible."
+                    android:text="@string/string_2072"
                     android:textColor="#161B19"
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"

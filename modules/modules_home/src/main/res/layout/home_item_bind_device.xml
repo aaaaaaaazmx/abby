@@ -129,7 +129,7 @@
             app:layout_constraintEnd_toEndOf="@id/iv_device"
             app:layout_constraintStart_toStartOf="@id/iv_device"
             app:layout_constraintTop_toBottomOf="@+id/iv_device"
-            android:text="Connect your hey abby>"
+            android:text="@string/string_2017"
             android:textColor="@color/mainColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

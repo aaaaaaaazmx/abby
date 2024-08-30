@@ -117,7 +117,7 @@
                 android:id="@+id/tv_public"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Share to public"
+                android:text="@string/string_2360"
                 android:textColor="@color/black"
                 android:textSize="12sp"
                 android:textStyle="bold"

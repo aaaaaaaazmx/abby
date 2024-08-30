@@ -102,7 +102,7 @@
 
         <TextView
             android:visibility="gone"
-            android:text="P"
+            android:text="@string/string_2021"
             android:id="@+id/nohead_show"
             android:layout_width="60dp"
             android:layout_height="60dp"

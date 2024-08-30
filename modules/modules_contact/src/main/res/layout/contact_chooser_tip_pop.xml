@@ -23,7 +23,7 @@
             android:id="@+id/tv_photo_post"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
-            android:text="Regular Photo Post"
+            android:text="@string/string_2398"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
@@ -39,7 +39,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_photo_post"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
-            android:text="Time-Lapse Reel Post"
+            android:text="@string/string_2399"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

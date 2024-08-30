@@ -23,7 +23,7 @@
             android:text="@{data.detectionValue}"
             android:textColor="#979797"
             android:textSize="10sp"
-            tools:text="Grow Chamber Humidity"
+            tools:text="@string/string_2002"
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

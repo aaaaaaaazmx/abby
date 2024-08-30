@@ -81,7 +81,7 @@
                 android:paddingLeft="15dp"
                 android:paddingEnd="0dp"
                 android:paddingRight="0dp"
-                android:text="Retake"
+                android:text="@string/string_2245"
                 android:textColor="#ffffff"
                 android:textSize="16sp" />
 
@@ -97,7 +97,7 @@
                 android:paddingLeft="0dp"
                 android:paddingEnd="15dp"
                 android:paddingRight="15dp"
-                android:text="Use Photo"
+                android:text="@string/string_2246"
                 android:textColor="#ffffff"
                 android:textSize="16sp" />
         </RelativeLayout>

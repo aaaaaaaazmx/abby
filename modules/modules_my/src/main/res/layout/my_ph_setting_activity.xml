@@ -19,7 +19,7 @@
 
             <com.cl.common_base.widget.FeatureTitleBar
                 android:id="@+id/title"
-                app:title="Settings"
+                app:title="@string/string_2131"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -27,7 +27,7 @@
                 android:layout_marginTop="9dp"
                 android:layout_marginEnd="19dp"
                 android:layout_marginStart="19dp"
-                android:text="Perform PH Meter Calibration\n\nEvery pH meter has been calibrated. You can start the test directly. After that, it is suggested to calibrate at least once a month."
+                android:text="@string/string_2325"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="15sp"
@@ -47,7 +47,7 @@
                 android:layout_marginTop="9dp"
                 android:layout_marginEnd="19dp"
                 android:layout_marginStart="19dp"
-                android:text="Readings Test\n\nThe test data won’t be stored, if you like the meter readings to be stored, please use the grow log."
+                android:text="@string/string_2326"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:textSize="15sp"
@@ -105,7 +105,7 @@
                         android:maxWidth="100dp"
                         android:minWidth="20dp"
                         android:singleLine="true"
-                        android:text="N/A"
+                        android:text="@string/string_2327"
                         android:textColor="#979797"
                         android:textColorHint="#979797"
                         android:textSize="14sp"
@@ -130,7 +130,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/frame1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/frame1"
-                    tools:text="PPM" />
+                    tools:text="@string/string_2329" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -146,7 +146,7 @@
 
                 <TextView
                     android:labelFor="@+id/editText11"
-                    android:text="TDS"
+                    android:text="@string/string_2328"
                     android:id="@+id/textView11"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
                         android:maxWidth="100dp"
                         android:minWidth="20dp"
                         android:singleLine="true"
-                        android:text="N/A"
+                        android:text="@string/string_2327"
                         android:textColor="#979797"
                         android:textColorHint="#979797"
                         android:textSize="14sp"
@@ -197,7 +197,7 @@
 
 
                 <TextView
-                    android:text="PPM"
+                    android:text="@string/string_2329"
                     android:id="@+id/textView21"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -209,7 +209,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/frame11"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/frame11"
-                    tools:text="PPM" />
+                    tools:text="@string/string_2329" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -263,7 +263,7 @@
                         android:maxWidth="100dp"
                         android:minWidth="20dp"
                         android:singleLine="true"
-                        android:text="N/A"
+                        android:text="@string/string_2327"
                         android:textColor="#979797"
                         android:textColorHint="#979797"
                         android:textSize="14sp"
@@ -305,7 +305,7 @@
 
                 <TextView
                     android:labelFor="@+id/editText12"
-                    android:text="Backlight"
+                    android:text="@string/string_2331"
                     android:id="@+id/textView123"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -357,10 +357,10 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:contentDescription="Sync Data"
+                android:contentDescription="@string/string_2332"
                 android:id="@+id/tv_sync"
                 android:gravity="center"
-                android:text="Sync Data"
+                android:text="@string/string_2332"
                 android:textColor="@color/white"
                 android:textSize="15sp"
                 android:layout_marginTop="16dp"
@@ -390,7 +390,7 @@
                 android:layout_marginEnd="19dp"
                 android:layout_marginStart="19dp"
                 android:textColor="#F72E47"
-                android:text="Your Bluetooth pH meter is turned off or out of range. Please turn on the power to sync the data."
+                android:text="@string/string_2333"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -408,7 +408,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="50dp"
                     android:gravity="center"
-                    android:text="Delete PH Meter"
+                    android:text="@string/string_2334"
                     android:textColor="#F72E47"
                     android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="parent"

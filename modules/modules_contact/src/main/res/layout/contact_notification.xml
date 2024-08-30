@@ -17,7 +17,7 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="Notifications" />
+            app:title="@string/string_2262" />
 
         <com.scwang.smart.refresh.layout.SmartRefreshLayout
             android:id="@+id/refreshLayout"

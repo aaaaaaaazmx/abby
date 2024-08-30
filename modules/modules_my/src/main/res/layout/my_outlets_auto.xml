@@ -38,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:background="@null"
-                android:hint="Optional "
+                android:hint="@string/string_2201"
                 android:paddingStart="12dp"
                 android:textColorHint="#80000000"
                 android:textSize="16sp"
@@ -64,7 +64,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_device"
             android:textColor="@color/black"
             android:textSize="17sp"
-            android:text="Automations"
+            android:text="@string/string_2203"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

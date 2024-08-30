@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="50dp"
-            android:text="Delete you account and data"
+            android:text="@string/string_2187"
             android:textColor="#D61744"
             android:textSize="24sp"
             android:textStyle="bold"

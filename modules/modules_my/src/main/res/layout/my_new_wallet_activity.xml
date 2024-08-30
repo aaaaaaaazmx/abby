@@ -43,7 +43,7 @@
                     android:ellipsize="end"
                     android:maxEms="10"
                     android:maxLines="1"
-                    android:text="Wallet"
+                    android:text="@string/string_2306"
                     android:textColor="@color/white"
                     android:textSize="17sp"
                     android:textStyle="bold"

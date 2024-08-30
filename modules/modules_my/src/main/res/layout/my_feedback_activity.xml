@@ -19,7 +19,7 @@
             <com.cl.common_base.widget.FeatureTitleBar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title="Feedback" />
+                app:title="@string/string_2133" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -30,7 +30,7 @@
                 android:background="@color/lineBg"
                 android:gravity="center_vertical"
                 android:paddingStart="20dp"
-                android:text="Feedback"
+                android:text="@string/string_2133"
 
                 android:textSize="14sp" />
 
@@ -39,7 +39,7 @@
                 android:id="@+id/ft_rate"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Rate the app" />
+                app:itemTitle="@string/string_2145" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height=".5dp"
@@ -51,7 +51,7 @@
                 android:id="@+id/ft_us"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Rate us on Trustpilot" />
+                app:itemTitle="@string/string_2146" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height=".5dp"
@@ -63,14 +63,14 @@
                 android:id="@+id/ft_discord"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Discord Community" />
+                app:itemTitle="@string/string_2147" />
 
             <com.cl.common_base.widget.FeatureItemView
                 app:itemTitleBold="true"
                 android:id="@+id/ft_instagram"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Instagram" />
+                app:itemTitle="@string/string_2148" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height=".5dp"
@@ -86,7 +86,7 @@
                 android:background="@color/lineBg"
                 android:gravity="center_vertical"
                 android:paddingStart="20dp"
-                android:text="About"
+                android:text="@string/string_2149"
 
                 android:textSize="14sp" />
 
@@ -139,7 +139,7 @@
                 android:id="@+id/ft_become"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Become a Brand Ambassador" />
+                app:itemTitle="@string/string_2154" />
             <View
                 android:layout_width="match_parent"
                 android:layout_height=".5dp"
@@ -152,7 +152,7 @@
                 android:id="@+id/ft_tell"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                app:itemTitle="Tell your friends about hey abby" />
+                app:itemTitle="@string/string_2155" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

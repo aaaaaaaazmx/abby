@@ -37,7 +37,7 @@
                     android:textStyle="bold"
                     android:textSize="17sp"
                     android:textColor="@color/black"
-                    android:text="If"
+                    android:text="@string/string_2252"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -113,7 +113,7 @@
                     android:textSize="17sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
-                    android:text="Then"
+                    android:text="@string/string_2254"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -197,7 +197,7 @@
                     android:textColor="@color/black"
                     android:layout_marginTop="15dp"
                     android:layout_marginStart="24dp"
-                    android:text="Automation Name"
+                    android:text="@string/string_2255"
                     android:textStyle="bold"
                     android:textSize="17sp"
                     android:layout_width="wrap_content"
@@ -219,7 +219,7 @@
                         android:layout_width="0dp"
                         android:layout_height="60dp"
                         android:background="@null"
-                        android:hint="Optional "
+                        android:hint="@string/string_2201"
                         android:paddingStart="12dp"
                         android:textColorHint="#80000000"
                         android:textSize="16sp"
@@ -241,7 +241,7 @@
                     android:lineSpacingExtra="5dp"
                     android:textStyle="bold"
                     android:layout_marginEnd="24dp"
-                    android:text="*To avoid frequent on and off cycles, the automation will trigger only when the criteria have been met for a few minutes. Please note that it's normal to experience a slight time delay."
+                    android:text="@string/string_2256"
                     android:layout_marginTop="15dp"
                     android:layout_marginStart="24dp"
                     android:textColor="@color/black"

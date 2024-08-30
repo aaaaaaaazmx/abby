@@ -29,7 +29,7 @@
             android:textStyle="bold"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:text="The door will open automatically when unlocked"
+            android:text="@string/string_2005"
             android:textSize="15sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -54,7 +54,7 @@
             app:engage_text="@string/string_263"
             app:engage_text_size="18sp"
             app:engage_text_color="@android:color/white"
-            app:completed_text="Unlocked!"
+            app:completed_text="@string/string_2007"
             app:completed_text_color="@android:color/white"
             app:completed_text_size="18sp"
             android:layout_marginBottom="96dp"

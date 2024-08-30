@@ -22,7 +22,7 @@
             android:id="@+id/tv_photo_post"
             android:textColor="@color/black"
             android:textSize="15sp"
-            android:text="You just ended the time lapse shooting mode, click here to generate the gif or video."
+            android:text="@string/string_2019"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             />

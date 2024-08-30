@@ -135,7 +135,7 @@
                                     app:layout_constraintStart_toEndOf="@+id/tv_vip"
                                     android:background="@mipmap/my_vip_still_bg"
                                     android:layout_width="52dp"
-                                    android:text="Renew"
+                                    android:text="@string/string_2120"
                                     android:layout_height="wrap_content"/>
 
                             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -165,7 +165,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_centerInParent="true"
-                                        android:text="Renew Now"
+                                        android:text="@string/string_2121"
                                         android:textColor="@color/white"
                                         android:textSize="22sp"
                                         android:textStyle="bold" />
@@ -200,7 +200,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="20dp"
-                                        android:text="Days"
+                                        android:text="@string/string_2123"
                                         android:textColor="#979797"
                                         android:textSize="11sp"
                                         app:layout_constraintBottom_toBottomOf="parent"
@@ -237,7 +237,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="20dp"
-                                        android:text="Unit(s)"
+                                        android:text="@string/string_2125"
                                         android:textColor="#979797"
                                         android:textSize="11sp"
                                         app:layout_constraintBottom_toBottomOf="parent"
@@ -274,7 +274,7 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_marginBottom="20dp"
-                                        android:text="Harvest(s)"
+                                        android:text="@string/string_2127"
                                         android:textColor="#979797"
                                         android:textSize="11sp"
                                         app:layout_constraintBottom_toBottomOf="parent"
@@ -293,7 +293,7 @@
                                 android:layout_height="60dp"
                                 android:layout_marginTop="17dp"
                                 app:itemIcon="@mipmap/my_message"
-                                app:itemTitle="Help Center" />
+                                app:itemTitle="@string/string_2128" />
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height=".5dp"
@@ -307,7 +307,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
                                 app:itemIcon="@mipmap/my_digital"
-                                app:itemTitle="Digital Assets" />
+                                app:itemTitle="@string/string_2129" />
 
                             <View
                                 android:layout_width="match_parent"
@@ -322,7 +322,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
                                 app:itemIcon="@mipmap/my_oxy_bg"
-                                app:itemTitle="Oxygen Bag" />
+                                app:itemTitle="@string/string_2130" />
                             <View
                                 android:visibility="gone"
                                 android:layout_width="match_parent"
@@ -336,7 +336,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
                                 app:itemIcon="@mipmap/my_setting"
-                                app:itemTitle="Settings" />
+                                app:itemTitle="@string/string_2131" />
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height=".5dp"
@@ -363,7 +363,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="60dp"
                                 app:itemIcon="@mipmap/my_feedback_bg"
-                                app:itemTitle="Feedback" />
+                                app:itemTitle="@string/string_2133" />
                         </LinearLayout>
 
 

@@ -83,7 +83,7 @@
                 android:layout_marginStart="17dp"
                 android:layout_marginTop="20dp"
                 android:button="@null"
-                android:text="Grow Chamber Humidity"
+                android:text="@string/string_2002"
                 app:layout_constraintEnd_toStartOf="@+id/cb_temperature"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cs" />
@@ -102,7 +102,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="17dp"
                 android:button="@null"
-                android:text="Grow Chamber Temperature"
+                android:text="@string/string_2003"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cb_humidity"
                 app:layout_constraintTop_toTopOf="@+id/cb_humidity" />

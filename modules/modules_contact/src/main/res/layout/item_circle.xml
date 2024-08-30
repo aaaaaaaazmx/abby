@@ -178,14 +178,14 @@
             android:drawablePadding="3dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Watch Now"
+            android:text="@string/string_2369"
             android:textColor="@color/mainColor"
             android:textSize="13sp"
             android:visibility="@{TextUtils.isEmpty(data.liveLink)? View.GONE : View.VISIBLE}"
             app:layout_constraintEnd_toEndOf="@id/tvDesc"
             app:layout_constraintStart_toStartOf="@+id/tvDesc"
             app:layout_constraintTop_toBottomOf="@+id/tvDesc"
-            tools:text="Watch Now" />
+            tools:text="@string/string_2369" />
 
 
         <!--link-->
@@ -319,7 +319,7 @@
                     android:layout_marginTop="3dp"
                     android:drawableStart="@mipmap/v"
                     android:drawablePadding="5dp"
-                    android:text="ENVIR"
+                    android:text="@string/string_2034"
                     android:textColor="#008961"
                     android:textSize="11sp"
                     app:layout_constraintTop_toBottomOf="@+id/tv_periodicity" />
@@ -565,12 +565,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text='@{data.comments.size() &lt;= 2 ? "Add a comment" : "View all comments"}'
+                android:text='@{data.comments.size() &lt;= 2 ? @string/string_2354 : @string/string_23554}'
                 android:textColor="@color/mainColor"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@+id/tv_two_content"
-                tools:text="Add a comment" />
+                tools:text="@string/string_2354" />
 
             <ImageView
                 android:layout_width="wrap_content"

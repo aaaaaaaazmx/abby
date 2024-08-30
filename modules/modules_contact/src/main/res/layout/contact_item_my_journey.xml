@@ -59,7 +59,7 @@
 
         <TextView
             android:visibility="@{data.syncTrend == 1 ? View.VISIBLE : View.GONE}"
-            android:text='@{data.syncTrend == 1 ? "Synced to Trend" : ""}'
+            android:text='@{data.syncTrend == 1 ? @string/string_23955 : ""}'
             android:textSize="11sp"
             android:textColor="#979797"
             android:layout_marginEnd="14dp"
@@ -188,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@mipmap/v"
                 android:drawablePadding="5dp"
-                android:text="ENVIR"
+                android:text="@string/string_2034"
                 android:textColor="#008961"
                 android:textSize="11sp"
                 app:layout_constraintTop_toBottomOf="@+id/tv_periodicity" />

@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:background="@drawable/background_button_gray_r100"
-            android:text="Check"
+            android:text="@string/string_2023"
             android:textSize="15sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

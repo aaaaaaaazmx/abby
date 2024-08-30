@@ -66,7 +66,7 @@
                     android:textColor="@color/mainColor"
                     android:layout_marginTop="7dp"
                     android:layout_marginStart="24dp"
-                    android:text="Router setting"
+                    android:text="@string/string_2060"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
@@ -77,7 +77,7 @@
                     android:padding="9dp"
                     android:textSize="12sp"
                     android:textColor="@color/mainColor"
-                    android:text="Enter your Wi-Fi name or allow location access to find nearby Wi-Fi devices."
+                    android:text="@string/string_2061"
                     app:svRadius="5dp"
                     android:layout_marginStart="21dp"
                     android:layout_marginEnd="24dp"
@@ -147,7 +147,7 @@
                         android:layout_marginStart="6dp"
                         android:layout_marginTop="44dp"
                         android:background="@null"
-                        android:hint="Network Password"
+                        android:hint="@string/string_2062"
                         android:textColorHint="#C9C9C9"
                         android:textSize="16sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -170,10 +170,10 @@
                         android:layout_marginTop="14dp"
                         android:textColor="#D61744"
                         android:textSize="15sp"
-                        android:text="Wrong password!"
+                        android:text="@string/string_2063"
                         app:layout_constraintTop_toBottomOf="@+id/vv_two"
                         tools:ignore="MissingConstraints"
-                        tools:text="Wrong password!" />
+                        tools:text="@string/string_2063" />
 
                     <FrameLayout
                         android:id="@+id/fl_psd_state"

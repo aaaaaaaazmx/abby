@@ -183,7 +183,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
-                        android:text="Reply"
+                        android:text="@string/string_2394"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
@@ -193,7 +193,7 @@
                         app:layout_constraintBottom_toBottomOf="@id/curing_box_chat"
                         app:layout_constraintStart_toEndOf="@+id/curing_box_chat"
                         app:layout_constraintTop_toTopOf="@id/curing_box_chat"
-                        tools:text="Reply" />
+                        tools:text="@string/string_2394" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <RelativeLayout

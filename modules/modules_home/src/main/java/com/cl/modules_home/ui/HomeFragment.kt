@@ -4374,10 +4374,10 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             resources, com.cl.common_base.R.color.transparent, context?.theme
         )
         binding.plantOffLine.tvSpan.text = buildSpannedString {
-            appendLine("1.Check if abby is plugged in and turned on")
-            appendLine("2.Check your Wi-Fi network connection")
-            appendLine("3.Try to power off and restart your abby")
-            append("4.If the problem persists, try to ")
+            appendLine(getString(com.cl.common_base.R.string.string_1348))
+            appendLine(getString(com.cl.common_base.R.string.string_1349))
+            appendLine(getString(com.cl.common_base.R.string.string_1350))
+            append(getString(com.cl.common_base.R.string.string_1351))
             context?.let { context ->
                 ContextCompat.getColor(
                     context, com.cl.common_base.R.color.mainColor
@@ -4386,7 +4386,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 color(
                     color
                 ) {
-                    appendClickable("Reconnect abby") {
+                    appendClickable(getString(com.cl.common_base.R.string.string_1352)) {
                         // 跳转到ReconnectActivity
 
                         ARouter.getInstance().build(RouterPath.PairConnect.KEY_PAIR_RECONNECTING)

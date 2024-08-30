@@ -36,7 +36,7 @@
             app:svSolidType="solid"
             app:svSolidColor="@color/mainColor"
             app:svRadius="100dp"
-            android:text="Add"
+            android:text="@string/string_2057"
             android:textSize="15sp"
             android:gravity="center"
             android:textColor="@color/white"

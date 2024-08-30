@@ -20,7 +20,7 @@
         <com.cl.common_base.widget.FeatureTitleBar
             android:background="@color/white"
             android:id="@+id/title"
-            app:title="Select Country"
+            app:title="@string/string_2111"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

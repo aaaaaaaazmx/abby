@@ -213,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:drawableStart="@mipmap/v"
                 android:drawablePadding="5dp"
-                android:text="ENVIR"
+                android:text="@string/string_2034"
                 android:textColor="#008961"
                 android:textSize="11sp"
                 app:layout_constraintTop_toBottomOf="@+id/tv_periodicity" />
@@ -456,7 +456,7 @@
                 tools:text="Add a comment"
                 android:textSize="12sp"
                 android:id="@+id/tv_to_chat"
-                android:text='@{data.comments.size() &lt;= 2 ? "Add a comment" : "View all comments"}'
+                android:text='@{data.comments.size() &lt;= 2 ? @string/string_2354 : @string/string_23554}'
                 android:layout_marginTop="5dp"
                 app:layout_constraintTop_toBottomOf="@+id/tv_two_content"
                 android:textColor="@color/mainColor"

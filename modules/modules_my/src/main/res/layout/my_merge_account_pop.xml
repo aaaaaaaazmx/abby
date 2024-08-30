@@ -46,7 +46,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
-            android:text="Account (Email Address)"
+            android:text="@string/string_2188"
             android:textColor="#000000"
             android:textSize="21sp"
             android:textStyle="bold" />
@@ -59,7 +59,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="24dp"
-            android:text="A verification code will be sent to this email address"
+            android:text="@string/string_2174"
             android:textColor="#837C7C"
             android:textSize="12sp" />
 
@@ -79,7 +79,7 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:background="@null"
-                android:hint="Enter account email to be merged"
+                android:hint="@string/string_2189"
                 android:paddingStart="12dp"
                 android:textColorHint="#D0C7C7"
                 android:textSize="16sp"
@@ -105,7 +105,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
-            android:text="Verification Code"
+            android:text="@string/string_2190"
             android:textColor="#000000"
             android:textSize="21sp"
             android:textStyle="bold" />
@@ -133,7 +133,7 @@
                     android:layout_width="0dp"
                     android:layout_height="60dp"
                     android:background="@null"
-                    android:hint="XXXX"
+                    android:hint="@string/string_2191"
                     android:paddingStart="12dp"
                     android:textColorHint="#D0C7C7"
                     android:textSize="16sp"
@@ -157,7 +157,7 @@
                 android:id="@+id/btn_send_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Send Now"
+                android:text="@string/string_2178"
                 android:textAllCaps="false"
                 android:textColor="#000000"
                 android:textSize="12sp"
@@ -175,7 +175,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="24dp"
-            android:text="check you email for verification code"
+            android:text="@string/string_2192"
             android:textColor="#000000"
             android:textSize="12sp" />
 
@@ -190,11 +190,11 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/create_state_button"
             android:enabled="false"
-            android:text="Merge"
+            android:text="@string/string_2193"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text="Merge" />
+            tools:text="@string/string_2193" />
 
         <TextView
             android:id="@+id/tv_show_again"

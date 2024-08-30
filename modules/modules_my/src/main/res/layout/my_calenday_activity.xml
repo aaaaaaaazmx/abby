@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="S"
+                android:text="@string/string_2206"
                 android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="M"
+                android:text="@string/string_2207"
                 android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="T"
+                android:text="@string/string_2208"
                 android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
@@ -91,7 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="W"
+                android:text="@string/string_2209"
                 android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="T"
+                android:text="@string/string_2208"
                 android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
@@ -109,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="F"
+                android:text="@string/string_2210"
                 android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="S"
+                android:text="@string/string_2206"
                 android:textColor="@color/mainColor"
                 tools:ignore="MissingConstraints" />
 

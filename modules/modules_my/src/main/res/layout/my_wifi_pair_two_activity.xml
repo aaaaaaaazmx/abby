@@ -36,7 +36,7 @@
                     android:layout_marginStart="21dp"
                     android:layout_marginTop="32dp"
                     android:layout_marginEnd="21dp"
-                    android:text="Connect Your Mobile Phone to the Device's Hotspot"
+                    android:text="@string/string_2339"
                     android:textColor="#161B19"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -47,7 +47,7 @@
                     android:layout_marginStart="21dp"
                     android:layout_marginTop="24dp"
                     android:layout_marginEnd="21dp"
-                    android:text="1.Connect your phone to the hotspot shown below:"
+                    android:text="@string/string_2340"
                     android:textColor="#161B19"
                     android:textSize="15sp" />
 
@@ -65,7 +65,7 @@
                     android:layout_marginStart="21dp"
                     android:layout_marginTop="51dp"
                     android:layout_marginEnd="21dp"
-                    android:text="2.Go back and add devices."
+                    android:text="@string/string_2341"
                     android:textColor="#161B19"
                     android:textSize="15sp" />
 
@@ -78,7 +78,7 @@
                     android:layout_marginTop="110dp"
                     android:layout_marginEnd="21dp"
                     android:gravity="center"
-                    android:text="Go To Connect"
+                    android:text="@string/string_2342"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     app:svRadius="100dp"
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="133dp"
-                    android:text="Connecting Device"
+                    android:text="@string/string_2343"
                     android:textColor="#161B19"
                     android:textSize="21sp"
                     android:textStyle="bold" />

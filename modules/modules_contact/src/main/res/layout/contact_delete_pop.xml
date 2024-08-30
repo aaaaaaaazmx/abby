@@ -51,14 +51,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="Copy"
+            android:text="@string/string_2350"
             android:id="@+id/tv_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:textColor="@color/white"
             android:textSize="15sp"
-            tools:text="Copy" />
+            tools:text="@string/string_2350" />
 
 
 

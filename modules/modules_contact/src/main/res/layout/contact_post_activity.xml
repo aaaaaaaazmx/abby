@@ -42,7 +42,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="14dp"
                 android:background="@drawable/background_main_color_r6"
-                android:text="Post"
+                android:text="@string/string_2355"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="15sp"
@@ -64,7 +64,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@null"
                 android:gravity="start"
-                android:hint="Record your growth progress"
+                android:hint="@string/string_2407"
                 android:maxEms="140"
                 android:maxLength="140"
                 android:padding="10dp"
@@ -102,14 +102,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="26dp"
                 android:paddingTop="3dp"
-                android:text="0/140"
+                android:text="@string/string_2356"
                 android:textColor="#C4C4C4"
                 android:textSize="15sp"
                 app:layout_constraintStart_toEndOf="@+id/tv_link"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_link"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_link"
-                tools:text="0/140" />
+                tools:text="@string/string_2356" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_pic"
@@ -139,7 +139,7 @@
                     android:id="@+id/option_ph"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    app:itemTitle="ph(optional)" />
+                    app:itemTitle="@string/string_2387" />
                 
                 <View
                     android:background="#F7F7F7"
@@ -156,7 +156,7 @@
                     android:id="@+id/option_tds"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    app:itemTitle="TDS(optional)" />
+                    app:itemTitle="@string/string_2375" />
 
                 <View
                     android:background="#F7F7F7"
@@ -173,7 +173,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     app:hideArrow="true"
-                    app:itemTitle="Share to public" />
+                    app:itemTitle="@string/string_2360" />
 
                 <View
                     android:background="#F7F7F7"
@@ -191,7 +191,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     app:hideArrow="true"
-                    app:itemTitle="Plant data is visible" />
+                    app:itemTitle="@string/string_2411" />
 
                 <View
                     android:background="#F7F7F7"
@@ -206,7 +206,7 @@
                     android:id="@+id/people_at"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    app:itemTitle="Mention someone" />
+                    app:itemTitle="@string/string_2412" />
 
                 <View
                     android:background="#F7F7F7"

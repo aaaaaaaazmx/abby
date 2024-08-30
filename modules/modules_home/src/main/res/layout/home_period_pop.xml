@@ -35,7 +35,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Growth Period"
+                android:text="@string/string_2008"
                 android:textColor="@color/mainColor"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_time"

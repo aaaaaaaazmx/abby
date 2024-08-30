@@ -187,7 +187,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/iv_collection"
         app:layout_constraintRight_toRightOf="@+id/iv_collection"
         app:layout_constraintTop_toTopOf="@+id/iv_collection"
-        tools:text="name" />
+        tools:text="@string/string_2269" />
 
     <TextView
         android:id="@+id/tv_collection_add"

@@ -73,7 +73,7 @@
 
                 <com.cl.common_base.widget.AbTextViewSimpleCalendar
                     android:visibility="@{viewModel.getPlantInfoByPlantId.data == null ? View.VISIBLE : View.GONE}"
-                    android:text="No Plant"
+                    android:text="@string/string_2053"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="15dp"

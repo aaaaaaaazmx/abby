@@ -44,7 +44,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="26dp"
                         android:layout_marginTop="40dp"
-                        android:text="Reconnect instructions"
+                        android:text="@string/string_2073"
                         android:textColor="@color/mainColor"
                         android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -56,13 +56,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="29dp"
-                        android:text="Tap the dial display 3 times to reconnect."
+                        android:text="@string/string_2074"
                         android:textColor="#161B19"
                         android:textSize="15sp"
                         app:layout_constraintStart_toStartOf="@id/tv_one"
                         app:layout_constraintTop_toBottomOf="@+id/tv_one"
                         tools:ignore="MissingConstraints"
-                        tools:text="Tap the dial display 3 times to reconnect." />
+                        tools:text="@string/string_2074" />
 
                     <com.airbnb.lottie.LottieAnimationView
                         android:layout_marginTop="21dp"
