@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="29dp"
                     android:layout_marginTop="20dp"
-                    android:text="Select the plant type"
+                    android:text="@string/home_select_the_plant_type"
                     android:textColor="@color/black"
                     android:textSize="21sp"
                     android:textStyle="bold" />
@@ -51,7 +51,7 @@
                         android:id="@+id/tv_how"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="What’s the difference?"
+                        android:text="@string/home_what_s_the_difference"
                         android:textColor="#979797"
                         android:textSize="16sp" />
 
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="29dp"
                     android:layout_marginTop="12dp"
-                    android:text="Photoperiod (Recommended)"
+                    android:text="@string/home_photoperiod_recommended"
                     android:textColor="@color/mainColor"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="29dp"
                     android:layout_marginTop="30dp"
-                    android:text="Autoflower"
+                    android:text="@string/home_autoflower"
                     android:textColor="#C4C4C4"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -146,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="29dp"
                     android:layout_marginTop="41dp"
-                    android:text="Enter Your Strain Name"
+                    android:text="@string/home_enter_your_strain_name"
                     android:textColor="@color/black"
                     android:textSize="21sp"
                     android:textStyle="bold" />
@@ -162,7 +162,7 @@
                         android:id="@+id/tv_not"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Not sure?"
+                        android:text="@string/home_not_sure"
                         android:textColor="#979797"
                         android:textSize="16sp" />
 
@@ -191,7 +191,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:background="@null"
-                        android:hint="eg. OG Kush.. (Optional)"
+                        android:hint="@string/home_eg_og_kush_optional"
                         android:maxLength="24"
                         android:paddingStart="12dp"
                         android:textColorHint="#D0C7C7"

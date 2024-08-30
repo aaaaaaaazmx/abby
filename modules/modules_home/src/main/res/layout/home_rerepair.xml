@@ -25,7 +25,7 @@
             android:textSize="16sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Activate your grow box." />
+            android:text="@string/home_activate_your_grow_box" />
 
         <EditText
             android:id="@+id/et_input"

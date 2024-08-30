@@ -29,7 +29,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="24dp"
             android:layout_marginStart="24dp"
-            android:text="Load Preset"
+            android:text="@string/load_preset"
             android:textColor="@color/mainColor"
             android:textSize="18sp"
             android:layout_width="wrap_content"
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:background="@null"
-                android:text="Select a Preset"
+                android:text="@string/select_a_preset"
                 android:paddingStart="12dp"
                 android:textColorHint="#D0C7C7"
                 android:textColor="@color/black"
@@ -86,7 +86,7 @@
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:layout_marginStart="10dp"
-                android:text="Notes"
+                android:text="@string/planting_notes"
                 android:textSize="14sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
@@ -121,9 +121,9 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:text="Delete"
+            android:text="@string/my_delete"
             android:layout_marginTop="50dp"
-            tools:text="Delete" />
+            tools:text="@string/my_delete" />
 
         <Button
             android:layout_marginTop="19dp"
@@ -138,7 +138,7 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:text="Load"
+            android:text="@string/home_load"
             tools:text="@string/string_1515" />
 
     </LinearLayout>

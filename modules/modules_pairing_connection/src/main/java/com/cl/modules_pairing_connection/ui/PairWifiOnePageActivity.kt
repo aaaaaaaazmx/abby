@@ -92,8 +92,8 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
 
     override fun initView() {
         // 标题设置
-        binding.title.setLeftText("Cancel")
-            .setTitle("1/3")
+        binding.title.setLeftText(getString(com.cl.common_base.R.string.my_cache))
+            .setTitle(getString(com.cl.common_base.R.string.pair_one_three))
             .setLeftClickListener { finish() }
 
         // 设置富文本

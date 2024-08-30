@@ -2097,7 +2097,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         dismissOnTouchOutside(false)
                         asCustom(
                             context?.let {
-                                BaseCenterPop(it, titleText = getString(com.cl.common_base.R.string.string_1367), isShowCancelButton = true, cancelText = "Cancel", confirmText = context?.getString(com.cl.common_base.R.string.string_284), onConfirmAction = {
+                                BaseCenterPop(it, titleText = getString(com.cl.common_base.R.string.string_1367), isShowCancelButton = true, cancelText = getString(com.cl.common_base.R.string.my_cancel), confirmText = context?.getString(com.cl.common_base.R.string.string_284), onConfirmAction = {
                                     pop.dismiss()
                                     // 跳转副本界面
                                     // 跳转到富文本界面

@@ -67,7 +67,7 @@ fully understand the situation. Before you agree to use our services, please rea
                 android:textColor="@color/mainColor"
                 android:id="@+id/tv_cancel"
                 android:textSize="18sp"
-                android:text="Cancel"
+                android:text="@string/my_cancel"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="10dp"

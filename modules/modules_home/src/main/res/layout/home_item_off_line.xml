@@ -43,7 +43,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="23dp"
                 android:layout_marginEnd="24dp"
-                android:text="If abby displays an offline prompt, it could be due to poor network connectivity or a power outage. \n"
+                android:text="@string/pair_if_abby"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
 
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:text="Please try the following:"
+                android:text="@string/pair_please_try_the_following"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" />

@@ -131,7 +131,7 @@
                 android:textColor="@color/textRed"
                 android:id="@+id/tv_cancel"
                 android:textSize="18sp"
-                android:text="Delete"
+                android:text="@string/my_delete"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="10dp"

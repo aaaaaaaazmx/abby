@@ -43,14 +43,14 @@
             android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fan"
+            android:text="@string/home_fan"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/iv_fan"
             app:layout_constraintTop_toTopOf="@+id/iv_fan"
             app:layout_constraintBottom_toBottomOf="@+id/iv_fan"
-            tools:text="Fan" />
+            tools:text="@string/home_fan" />
 
         <FrameLayout
             android:visibility="@{TextUtils.isEmpty(data.articleId) ? View.GONE: View.VISIBLE}"
@@ -79,7 +79,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/fis_item_switch"
             app:layout_constraintTop_toTopOf="@+id/fis_item_switch"
             app:layout_constraintEnd_toStartOf="@+id/fis_item_switch"
-            android:text="Auto"
+            android:text="@string/home_auto"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:textSize="17sp"
@@ -114,7 +114,7 @@
                 android:id="@+id/tv_fan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Intake"
+                android:text="@string/home_intake"
                 android:textColor="@color/mainColor"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -207,7 +207,7 @@
                 android:id="@+id/tv_fan_exhaust"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Exhaust"
+                android:text="@string/home_exhaust"
                 android:textColor="@color/mainColor"
                 android:textSize="12sp"
                 android:textStyle="bold"

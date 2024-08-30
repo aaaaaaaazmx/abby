@@ -22,7 +22,7 @@
             android:id="@+id/tv_photo_post"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
-            android:text="Gif"
+            android:text="@string/home_gif"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             />
@@ -37,7 +37,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_photo_post"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
-            android:text="Video"
+            android:text="@string/home_video"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>

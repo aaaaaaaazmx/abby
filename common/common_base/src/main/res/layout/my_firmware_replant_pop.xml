@@ -25,7 +25,7 @@
             android:textSize="16sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="The firmware has been upgraded. Please power off and restart your abby, then re-pair the device." />
+            android:text="@string/the_firmware_has" />
 
         <EditText
             android:id="@+id/et_input"

@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:title="Upgrade" />
+                app:title="@string/upgrade" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -70,7 +70,7 @@
                     android:layout_marginBottom="160dp"
                     android:background="@drawable/create_state_button"
                     android:enabled="true"
-                    android:text="Upgrade"
+                    android:text="@string/upgrade"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="18sp"

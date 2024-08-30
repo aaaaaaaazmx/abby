@@ -37,7 +37,7 @@
                     android:layout_marginTop="18dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Are you starting your planting journey from a seed or clone?"
+                    android:text="@string/are_you"
                     android:textSize="21sp"
                     />
 

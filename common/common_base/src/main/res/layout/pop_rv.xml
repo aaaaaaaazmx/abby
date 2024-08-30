@@ -20,7 +20,7 @@
             android:textStyle="bold"
             android:layout_marginTop="20dp"
             android:layout_gravity="center_horizontal"
-            android:text="Discord ID"
+            android:text="@string/discord_id"
             android:textSize="20sp"
             android:textColor="@color/black"
             android:layout_width="wrap_content"

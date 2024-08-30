@@ -40,7 +40,7 @@
 
 
             <Button
-                android:text="Cancel"
+                android:text="@string/my_cancel"
                 android:id="@+id/btn_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

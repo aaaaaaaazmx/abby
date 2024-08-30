@@ -8,6 +8,8 @@ import android.os.Build
 import android.provider.Settings
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.cl.common_base.BaseApplication
+import com.cl.common_base.R
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.pop.GuideBlePop
@@ -416,8 +418,8 @@ class PermissionHelp {
                     scope.showForwardToSettingsDialog(
                         deniedList,
                         message,
-                        "To set",
-                        "Cancel"
+                        activity.getString(R.string.to_set),
+                        activity.getString(com.cl.common_base.R.string.my_cancel)
                     )
                 }
                 .explainReasonBeforeRequest()
@@ -426,8 +428,8 @@ class PermissionHelp {
                     scope.showRequestReasonDialog(
                         deniedList,
                         message,
-                        "Allow",
-                        "Cancel"
+                        activity.getString(R.string.allow),
+                        activity.getString(com.cl.common_base.R.string.my_cancel)
                     )
                 }
                 .request { allGranted, grantedList, deniedList ->

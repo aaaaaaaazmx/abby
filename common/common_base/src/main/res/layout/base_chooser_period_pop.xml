@@ -32,7 +32,7 @@
             android:textStyle="bold"
             android:textSize="15sp"
             android:textColor="@color/mainColor"
-            android:text="Edit period"
+            android:text="@string/edit_period"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -51,7 +51,7 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:background="@null"
-                android:hint="Select Period"
+                android:hint="@string/select_period"
                 android:paddingStart="12dp"
                 android:textColorHint="#D0C7C7"
                 android:textSize="16sp"
@@ -84,7 +84,7 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:background="@null"
-                android:hint="Week - Day -"
+                android:hint="@string/week_day"
                 android:paddingStart="12dp"
                 android:textColorHint="#D0C7C7"
                 android:textSize="16sp"

@@ -136,7 +136,7 @@
                         android:layout_height="60dp"
                         android:background="@drawable/create_state_button"
                         android:enabled="true"
-                        android:text="Extend"
+                        android:text="@string/extend"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="18sp"

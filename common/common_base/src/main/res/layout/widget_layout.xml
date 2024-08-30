@@ -211,7 +211,7 @@
         android:visibility="gone"
         android:layout_centerInParent="true"
         android:textColor="@color/black"
-        android:text="To use this widget, please log into the hey abby app first and connect to a grow box."
+        android:text="@string/to_use_this"
         android:textSize="15sp"
         android:textStyle="bold"
         android:layout_width="wrap_content"

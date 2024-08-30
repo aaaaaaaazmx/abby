@@ -28,7 +28,7 @@
                android:layout_marginStart="19dp"
                app:layout_constraintStart_toStartOf="parent"
                android:id="@+id/tv_total"
-               android:text="Total"
+               android:text="@string/my_total"
                android:textColor="#C9C9C9"
                android:textSize="12sp"
                android:layout_width="wrap_content"

@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
                     android:layout_marginEnd="20dp"
-                    android:text="Are you using a single-use or reusable seed kit?"
+                    android:text="@string/are_you_using"
                     android:textColor="#000000"
                     android:textSize="21sp"
                     android:textStyle="bold" />

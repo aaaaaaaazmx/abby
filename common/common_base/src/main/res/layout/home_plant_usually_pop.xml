@@ -37,7 +37,7 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="You need to complete these three things at once before you can start planting journey."
+            android:text="@string/home_you"
             android:textColor="@color/black"
             android:textSize="21sp"
             android:textStyle="bold" />

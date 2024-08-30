@@ -28,7 +28,7 @@
                 android:layout_marginTop="26dp"
                 android:layout_marginStart="31dp"
                 android:textStyle="bold"
-                android:text="Please check your seed and select its status:"
+                android:text="@string/home_please_check_your_seed_and_select_its_status"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:layout_width="wrap_content"
@@ -45,7 +45,7 @@
                 android:background="@drawable/bg_round_gray">
 
                 <TextView
-                    android:text="Floating on water."
+                    android:text="@string/home_floating_on_water"
                     android:textStyle="bold"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                 android:background="@drawable/bg_round_gray">
 
                 <TextView
-                    android:text="Sunk to the cup's bottom."
+                    android:text="@string/home_sunk_to_the_cup_s_bottom"
                     android:textStyle="bold"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/sunk_box"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Sunk to the cup's bottom." />
+                    tools:text="@string/home_sunk_to_the_cup_s_bottom" />
 
                 <CheckBox
                     android:id="@+id/sunk_box"

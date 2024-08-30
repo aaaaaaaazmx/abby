@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="22dp"
                 android:layout_marginTop="34dp"
-                android:text="Activate your grow box."
+                android:text="@string/home_activate_your_grow_box"
                 android:textColor="@color/black"
                 android:textSize="21sp" />
 

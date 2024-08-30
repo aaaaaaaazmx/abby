@@ -82,7 +82,7 @@
                     android:layout_marginStart="5dp"
                     android:layout_marginEnd="5dp"
                     android:background="@null"
-                    android:hint="Enter the plant weight (g)"
+                    android:hint="@string/enter_the_plant_weight_g"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_delete"
                     app:layout_constraintStart_toEndOf="@+id/type_ask"
@@ -119,14 +119,14 @@
                     android:id="@+id/tv_three"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Skip this option"
+                    android:text="@string/skip_this_option"
                     android:textColor="#161B19"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@id/type_two_box"
                     app:layout_constraintTop_toTopOf="@+id/type_two_box"
                     tools:ignore="MissingConstraints"
-                    tools:text="Skip this option" />
+                    tools:text="@string/skip_this_option" />
 
                 <CheckBox
                     android:id="@+id/type_two_box"

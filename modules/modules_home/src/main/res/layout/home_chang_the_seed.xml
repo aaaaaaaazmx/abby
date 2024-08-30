@@ -28,8 +28,7 @@
                 android:layout_marginEnd="31dp"
                 android:layout_marginStart="31dp"
                 android:textStyle="bold"
-                android:text="Looks like this seed isn't sprouting. Time for a fresh start with a new seed. Let's keep growing!
-"
+                android:text="@string/home_looks_like_this"
                 android:textColor="@color/black"
                 android:textSize="15sp"
                 android:layout_width="wrap_content"

@@ -47,7 +47,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:textStyle="bold"
-            android:text="The #of the usb port is printed on the USB hub."
+            android:text="@string/the_of_the_usb"
             android:textColor="@color/black"
             sizeText="15sp"
             android:layout_width="0dp"

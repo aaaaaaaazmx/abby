@@ -29,7 +29,7 @@
         <TextView
             android:layout_gravity="center"
             android:textColor="@color/black"
-            android:text="Give It Another Try! "
+            android:text="@string/home_give_it_another_try"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
             android:textColor="@color/black"
             android:layout_marginEnd="47dp"
             android:layout_marginStart="47dp"
-            android:text="Seed still not working out? It’s NOT your fault, this happens all the time. Let’s try to start with another seed or consider using a clone if possible.\n\nNote: after selecting restart, you will return to the initial setup page and your current progress will be lost."
+            android:text="@string/home_seed_still_not"
             android:textSize="15sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -64,7 +64,7 @@
             app:slider_reset_duration="300"
             app:slider_vibration_duration="50"
             app:slider_threshold="1dp"
-            app:engage_text="Slide to Restart"
+            app:engage_text="@string/home_slide_to_restart"
             app:engage_text_size="18sp"
             app:engage_text_color="@android:color/white"
             app:completed_text_color="@android:color/white"

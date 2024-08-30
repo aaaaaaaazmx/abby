@@ -35,7 +35,7 @@
             android:layout_below="@+id/iv_close"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:text="You need to complete these three things at once before you can start planting journey."
+            android:text="@string/home_you"
             android:textColor="@color/mainColor"
             android:textSize="15sp" />
 
@@ -65,7 +65,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Start  New Planting Journey."
+                        android:text="@string/home_start_new_planting_journey"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -97,7 +97,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Continue the previous \nPlanting Journey."
+                        android:text="@string/home_continue_the_previous_nplanting_journey"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"

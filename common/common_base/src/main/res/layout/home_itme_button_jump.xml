@@ -45,7 +45,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_su"
-                tools:text="1 on 1 Support"
+                tools:text="@string/my_solo"
                 android:text="@{data.value.txt}"
                 android:textColor="@color/white"
                 android:textSize="15sp"

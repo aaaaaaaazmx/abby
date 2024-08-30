@@ -36,7 +36,7 @@
                 android:id="@+id/tv_desc"
                 android:textSize="17sp"
                 android:textColor="@color/black"
-                android:text="Welcome to hey abby, the only indoor growing app you'll ever need for grow logs and sharing. Please add your first grow space to start."
+                android:text="@string/home_welcome_to_hey_abby"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"/>
 

@@ -20,7 +20,7 @@
             app:layout_constraintEnd_toStartOf="@+id/vv"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:text="Delete"
+            android:text="@string/my_delete"
             android:id="@+id/tv_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             android:textColor="@color/white"
             android:layout_marginEnd="5dp"
             android:textSize="15sp"
-            tools:text="Delete" />
+            tools:text="@string/my_delete" />
         <View
             android:id="@+id/vv"
             android:layout_marginEnd="5dp"

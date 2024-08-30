@@ -35,7 +35,7 @@
             android:layout_marginEnd="24dp"
             android:textColor="@color/mainColor"
             android:textSize="15sp"
-            tools:text="You need to complete these three things at once before you can start planting journey." />
+            tools:text="@string/home_you" />
 
 
         <androidx.core.widget.NestedScrollView
@@ -64,7 +64,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Female clone"
+                        android:text="@string/home_female_clone"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"
@@ -137,7 +137,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
-                        android:text="Fertilizer（Gold and Silver)"
+                        android:text="@string/home_fertilizer_gold_and_silver"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold"

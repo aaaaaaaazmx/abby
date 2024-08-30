@@ -33,7 +33,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:gravity="center"
-                    android:text="Oxygen Coin Bag"
+                    android:text="@string/home_oxygen_coin_bag"
                     android:textColor="@color/black"
                     android:textSize="17sp"
                     app:layout_constraintBottom_toBottomOf="parent"

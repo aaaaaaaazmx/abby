@@ -18,7 +18,7 @@
             android:layout_gravity="center_horizontal"
             android:textSize="17sp"
             android:textColor="@color/mainColor"
-            android:text="Upgrade failed"
+            android:text="@string/upgrade_failed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
@@ -38,8 +38,7 @@
             android:paddingTop="15dp"
             android:paddingEnd="14dp"
             android:paddingBottom="5dp"
-            tools:text="* The upgrade may take a few minutes, and the device will not work during the upgrade process.
-* Please do not power off or reset during the update"
+            tools:text="@string/the_upgrade_may"
             android:textColor="@color/_xpopup_content_color"
             android:textSize="16sp" />
 
@@ -75,7 +74,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="Cancel"
+                android:text="@string/my_cancel"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
 
@@ -93,7 +92,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="Retry"
+                android:text="@string/retry"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
         </LinearLayout>

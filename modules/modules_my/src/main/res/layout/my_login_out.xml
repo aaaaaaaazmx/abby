@@ -25,7 +25,7 @@
             android:textSize="16sp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Are you sure to sign out of account?" />
+            android:text="@string/home_are_you_sure_to_sign_out_of_account" />
 
         <EditText
             android:id="@+id/et_input"
@@ -57,7 +57,7 @@
                 android:textColor="@color/mainColor"
                 android:id="@+id/tv_cancel"
                 android:textSize="18sp"
-                android:text="Cancel"
+                android:text="@string/my_cancel"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
                 android:paddingTop="10dp"

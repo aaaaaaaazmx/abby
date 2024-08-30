@@ -96,7 +96,7 @@
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:layout_marginStart="10dp"
-                    android:text="Notes"
+                    android:text="@string/planting_notes"
                     android:textSize="14sp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
@@ -107,7 +107,7 @@
                     android:id="@+id/et_note"
                     android:gravity="start"
                     android:padding="5dp"
-                    android:hint="input your notes here"
+                    android:hint="@string/input_your_notes_here"
                     android:textColorHint="#979797"
                     android:textColor="@color/black"
                     android:textSize="12sp"

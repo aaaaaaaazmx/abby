@@ -21,7 +21,7 @@ import com.cl.modules_pairing_connection.databinding.PairBleScanTimeOutBinding
  */
 class PairBleScanTimeOutActivity : BaseActivity<PairBleScanTimeOutBinding>() {
     override fun initView() {
-        binding.title.setLeftText("Cancel")
+        binding.title.setLeftText(getString(com.cl.common_base.R.string.my_cancel))
             .setOnClickListener { finish() }
 
         //span

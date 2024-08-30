@@ -20,7 +20,7 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/create_state_button"
             android:enabled="false"
-            android:text="Extend"
+            android:text="@string/extend"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp"

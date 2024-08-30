@@ -31,7 +31,7 @@
             android:paddingTop="15dp"
             android:paddingEnd="14dp"
             android:paddingBottom="5dp"
-            tools:text="Are you sure to sign out of account?"
+            tools:text="@string/home_are_you_sure_to_sign_out_of_account"
             android:textColor="@color/_xpopup_content_color"
             android:textSize="16sp" />
 
@@ -67,7 +67,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="Cancel"
+                android:text="@string/my_cancel"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
 
@@ -85,7 +85,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="Upgrade"
+                android:text="@string/upgrade"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
         </LinearLayout>

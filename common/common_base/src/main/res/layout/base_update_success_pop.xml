@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Instruction"
+            android:text="@string/instruction"
             android:textColor="@color/mainColor"
             android:textSize="17sp" />
 
@@ -78,7 +78,7 @@
                 android:layout_weight="1"
                 android:background="?android:attr/selectableItemBackground"
                 android:gravity="center"
-                android:text="Cancel"
+                android:text="@string/my_cancel"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp" />
 
