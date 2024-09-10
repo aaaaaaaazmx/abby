@@ -289,13 +289,13 @@ object DateHelper {
     fun week(dateTime: String? = null, context: Context): String {
         var week = ""
         when (getDayOfWeek(dateTime)) {
-            1 -> week = context.getString(R.string.sunday)
-            2 -> week = context.getString(R.string.monday)
-            3 -> week = context.getString(R.string.tuesday)
-            4 -> week = context.getString(R.string.wednesday)
-            5 -> week = context.getString(R.string.thursday)
-            6 -> week = context.getString(R.string.friday)
-            7 -> week = context.getString(R.string.saturday)
+            1 -> week = "周日"
+            2 -> week = "周一"
+            3 -> week = "周二"
+            4 -> week = "周三"
+            5 -> week = "周四"
+            6 -> week = "周五"
+            7 -> week = "周六"
         }
         return week
     }
