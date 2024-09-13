@@ -4116,7 +4116,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
                     if (roomTemp.isNotEmpty() && roomHumidity.isNotEmpty()) {
-                        append(getString(R.string.home_room, roomTemp, tempUnit, roomHumidity, humidityUnit))
+                        append(getString(R.string.home_room_four, roomTemp, tempUnit, roomHumidity, humidityUnit))
                     }
                 }
 
