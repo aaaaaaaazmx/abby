@@ -97,7 +97,7 @@ object Version {
 
     const val videoPlayer = "v8.6.0"
 
-    const val interCome = "15.8.3"
+    const val interCome = "15.7.1"
 
     const val chart = "v3.1.0"
 
