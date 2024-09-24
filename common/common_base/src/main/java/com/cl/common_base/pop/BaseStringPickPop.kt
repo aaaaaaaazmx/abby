@@ -17,6 +17,7 @@ class BaseStringPickPop(
     private val title: String? = null,
     private val cancelText: String? = null,
     private val confirmText: String? = null,
+    private val selectIndex: Int = 0,
     private val cancelAction: (() -> Unit)? = null,
     private val confirmAction: ((Int) -> Unit)? = null,
     private val listString: MutableList<String?>? = null
@@ -25,7 +26,6 @@ class BaseStringPickPop(
         return R.layout.base_string_pick_pop
     }
 
-    private var index = 0
 
     @RequiresApi(Build.VERSION_CODES.CUPCAKE)
     override fun onCreate() {
@@ -38,15 +38,7 @@ class BaseStringPickPop(
             this@BaseStringPickPop.listString?.let {
                 scopeLayoutTime.setStringList(it.toList())
             }
-            scopeLayoutTime.setSelectedScope(0)
-            scopeLayoutTime.setOnStringSelectedListener(object : StringPicker.OnStringSelectedListener {
-                override fun onScopeSelected(index: Int) {
-                    this@BaseStringPickPop.index = index
-                }
-
-                override fun onScopeSelected(index: String?) {
-                }
-            })
+            scopeLayoutTime.setSelectedScope(selectIndex)
 
             tvCancel.setOnClickListener {
                 cancelAction?.invoke()
@@ -54,7 +46,7 @@ class BaseStringPickPop(
             }
 
             tvConfirm.setOnClickListener {
-                confirmAction?.invoke(index)
+                confirmAction?.invoke(scopeLayoutTime.currentPosition)
                 dismiss()
             }
         }

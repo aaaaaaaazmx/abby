@@ -60,6 +60,7 @@ import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.adapter.TaskListAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.common_base.bean.JumpTypeBean
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.joketng.timelinestepview.LayoutType
@@ -85,6 +86,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     @Inject
     lateinit var mViewMode: CalendarViewModel
+
+
+    //Constants.Global.KEY_IS_TEMPLATE_ID
+    private val isTemplateId by lazy {
+        intent.getStringExtra(Constants.Global.KEY_IS_TEMPLATE_ID)
+    }
 
     private val adapter by lazy {
         MyCalendarAdapter(mutableListOf())
@@ -181,6 +188,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     override fun observe() {
         mViewMode.apply {
+            startRunning.observe(this@CalendarActivity, resourceObserver {
+                loading { showProgressLoading() }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                success {
+                    hideProgressLoading()
+                    checkPlant()
+                }
+            })
+
             // 主动服务
             conversationId.observe(this@CalendarActivity, resourceObserver {
                 error { errorMsg, code ->
@@ -682,6 +701,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     override fun initData() {
+        // startGrowing点击时间
+        binding.btnSuccess.setSafeOnClickListener {
+            mViewMode.startRunning("", false, isTemplateId)
+        }
         // 周期点击事件
         binding.ivAsk.setOnClickListener {
             // 需要小问号

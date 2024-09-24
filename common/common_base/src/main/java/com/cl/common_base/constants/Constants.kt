@@ -342,6 +342,10 @@ object Constants {
 
         // 是否显示camera
         const val KEY_IS_SHOW_CAMERA = "key_is_show_camera"
+
+        // 带模板参数到日历界面去 templateId
+        const val KEY_IS_TEMPLATE_ID = "templateId"
+
     }
 
     // Fixed Id

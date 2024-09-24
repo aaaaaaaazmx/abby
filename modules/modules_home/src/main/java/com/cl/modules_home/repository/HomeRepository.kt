@@ -7,6 +7,20 @@ import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.bean.UpdateInfoReq
+import com.cl.modules_home.request.CheckEnvData
+import com.cl.modules_home.request.CycleListBean
+import com.cl.modules_home.request.DeleteTaskReq
+import com.cl.modules_home.request.EnvData
+import com.cl.modules_home.request.EnvDeleteReq
+import com.cl.modules_home.request.EnvParamListBeanItem
+import com.cl.modules_home.request.EnvParamListReq
+import com.cl.modules_home.request.EnvSaveReq
+import com.cl.modules_home.request.PeriodListBody
+import com.cl.modules_home.request.PeriodListSaveReq
+import com.cl.modules_home.request.SaveTaskReq
+import com.cl.modules_home.request.Task
+import com.cl.modules_home.request.TaskConfigurationListData
+import com.cl.modules_home.request.TempData
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -45,8 +59,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 开始种植植物
      */
-    fun startRunning(botanyId: String?, goon: Boolean): Flow<HttpResult<Boolean>> {
-        return remoteRepository.startRunning(botanyId, goon)
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null): Flow<HttpResult<Boolean>> {
+        return remoteRepository.startRunning(botanyId, goon, templateId)
     }
 
     /**
@@ -298,5 +312,49 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
 
     fun getPlantIdByDeviceId(deviceId: String): Flow<HttpResult<MutableList<PlantIdByDeviceIdData>>> {
         return remoteRepository.getPlantIdByDeviceId(deviceId)
+    }
+
+    fun getCycleList(plantId: PeriodListBody): Flow<HttpResult<MutableList<CycleListBean>>> {
+        return remoteRepository.getCycleList(plantId)
+    }
+
+    fun createCalendar(plantId: PeriodListBody): Flow<HttpResult<TempData>> {
+        return remoteRepository.createCalendar(plantId)
+    }
+
+    fun periodListSave(plantId: PeriodListSaveReq): Flow<HttpResult<Boolean>> {
+        return remoteRepository.periodListSave(plantId)
+    }
+
+    fun getEnvParamList(plantId: EnvParamListReq): Flow<HttpResult<EnvData>> {
+        return remoteRepository.getEnvParamList(plantId)
+    }
+
+    fun envParamDelete(plantId: EnvDeleteReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.envParamDelete(plantId)
+    }
+
+    fun envParamListCheck(plantId: EnvSaveReq): Flow<HttpResult<CheckEnvData>> {
+        return remoteRepository.envParamListCheck(plantId)
+    }
+
+    fun envParamListSave(plantId: EnvSaveReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.envParamListSave(plantId)
+    }
+
+    fun taskConfigurationList(req: EnvSaveReq): Flow<HttpResult<TaskConfigurationListData>> {
+        return remoteRepository.taskConfigurationList(req)
+    }
+
+    fun taskList(req: EnvSaveReq): Flow<HttpResult<MutableList<Task>>> {
+        return remoteRepository.taskList(req)
+    }
+
+    fun taskListSave(req: SaveTaskReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.taskListSave(req)
+    }
+
+    fun taskDelete(req: DeleteTaskReq): Flow<HttpResult<Boolean>> {
+        return remoteRepository.taskDelete(req)
     }
 }

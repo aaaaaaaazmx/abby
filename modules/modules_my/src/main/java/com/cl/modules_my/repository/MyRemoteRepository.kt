@@ -104,6 +104,10 @@ class MyRemoteRepository @Inject constructor() {
         return service.getCalendar(startDate, endDate)
     }
 
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null): Flow<HttpResult<Boolean>> {
+        return service.startRunning(botanyId, goon, templateId)
+    }
+
     fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {
         return service.updateTask(body)
     }

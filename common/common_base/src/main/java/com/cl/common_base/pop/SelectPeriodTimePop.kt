@@ -18,7 +18,7 @@ import com.cl.common_base.widget.wheel.time.StringPicker
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.CenterPopupView
 
-class SelectPeriodTimePop(context: Context, private val timeString: String, private val selectAction: ((String, String) -> Unit)? = null) : CenterPopupView(context) {
+class SelectPeriodTimePop(context: Context, private val timeString: String, private var weekList: MutableList<String> ? = null,  private var dayList: MutableList<String>? = null, private val selectAction: ((String, String) -> Unit)? = null) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_select_period_time_pop
     }
@@ -29,13 +29,6 @@ class SelectPeriodTimePop(context: Context, private val timeString: String, priv
 
     private val loadingPopup by lazy {
         XPopup.Builder(context).asLoading("Loading...")
-    }
-    private val weekList by lazy {
-        mutableListOf("Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12")
-    }
-
-    private val dayList by lazy {
-        mutableListOf("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7")
     }
 
     private var selectWeekString: String = ""
@@ -62,6 +55,15 @@ class SelectPeriodTimePop(context: Context, private val timeString: String, priv
         DataBindingUtil.bind<BaseSelectPeriodTimePopBinding>(popupImplView)?.apply {
             lifecycleOwner = this@SelectPeriodTimePop
             executePendingBindings()
+
+            // 设置默认值。
+            if (weekList.isNullOrEmpty()) {
+                weekList = mutableListOf("Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6", "Week 7", "Week 8", "Week 9", "Week 10", "Week 11", "Week 12")
+            }
+
+            if (dayList.isNullOrEmpty()) {
+                dayList = mutableListOf("Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7")
+            }
 
             tvCancel.setSafeOnClickListener { dismiss() }
             tvConfirm.setSafeOnClickListener {

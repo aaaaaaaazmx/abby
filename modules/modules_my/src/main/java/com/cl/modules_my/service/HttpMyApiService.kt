@@ -166,6 +166,18 @@ interface HttpMyApiService {
         @Field("endDate") endDate: String
     ): Flow<HttpResult<MutableList<CalendarData>>>
 
+
+    /**
+     * 开始种植
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/startRuning")
+    fun startRunning(
+        @Field("botanyId") botanyId: String?,
+        @Field("goon") goon: Boolean,
+        @Field("templateId") templateId: String? = null
+    ): Flow<HttpResult<Boolean>>
+
     /**
      * 更新任务
      */

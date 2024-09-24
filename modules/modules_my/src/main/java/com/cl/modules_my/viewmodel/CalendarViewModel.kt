@@ -106,6 +106,36 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         }
     }
 
+    /**
+     * 开始种植
+     */
+    private val _startRunning = MutableLiveData<Resource<Boolean>>()
+    val startRunning: LiveData<Resource<Boolean>> = _startRunning
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null) {
+        viewModelScope.launch {
+            repository.startRunning(botanyId, goon, templateId).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _startRunning.value = it
+            }
+        }
+    }
+
 
     // 会话ID
     private val _conversationId = MutableLiveData<Resource<ConversationsBean>>()

@@ -142,6 +142,10 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
         return remoteRepository.getCalendar(startDate, endDate)
     }
 
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null): Flow<HttpResult<Boolean>> {
+        return remoteRepository.startRunning(botanyId, goon, templateId)
+    }
+
     /**
      * 更新日历任务
      */

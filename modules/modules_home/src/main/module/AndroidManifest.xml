@@ -90,5 +90,10 @@
         <activity android:name="com.cl.modules_home.ui.ChangTheSeedActivity"
             android:screenOrientation="portrait"/>
         <activity android:name="com.cl.modules_home.ui.PeriodActivity" />
+        <activity android:name=".activity.GrowModeActivity" />
+        <activity android:name=".activity.ProModeStartActivity" />
+        <activity android:name=".activity.ProModeEnvActivity" />
+        <activity android:name=".activity.ProModeTaskActivity" />
+        <activity android:name=".activity.ProModeTaskSetActivity" />
     </application>
 </manifest>
