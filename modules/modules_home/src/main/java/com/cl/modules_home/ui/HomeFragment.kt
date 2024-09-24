@@ -2485,7 +2485,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    hideProgressLoading()
                     // 更新InterCome用户信息
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
                         map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
@@ -2749,6 +2748,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 success {
+                    hideProgressLoading()
                     // 删除未读消息
                     mViewMode.removeFirstUnreadMessage()
                     // 清空气泡状态
@@ -2764,6 +2764,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         )
                     }
                 }
+                loading { showProgressLoading() }
             })
             // 获取通用图文信息接口
             getDetailByLearnMoreId.observe(viewLifecycleOwner, resourceObserver {

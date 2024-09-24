@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
+import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.Resource
@@ -62,6 +63,71 @@ class ListDeviceViewModel @Inject constructor(private val repository: MyReposito
                     )
                 }.collectLatest {
                     _listDevice.value = it
+                }
+        }
+    }
+
+    val homeId by lazy {
+        Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
+    }
+
+    private val _checkPlant = MutableLiveData<Resource<CheckPlantData>>()
+    val checkPlant: LiveData<Resource<CheckPlantData>> = _checkPlant
+    fun checkPlant() = viewModelScope.launch {
+        repository.checkPlant().map {
+            if (it.code != Constants.APP_SUCCESS) {
+                Resource.DataError(
+                    it.code, it.msg
+                )
+            } else {
+                Resource.Success(it.data)
+            }
+        }.flowOn(Dispatchers.IO).onStart {
+            emit(Resource.Loading())
+        }.catch {
+            logD("catch $it")
+            emit(
+                Resource.DataError(
+                    -1, "$it"
+                )
+            )
+        }.collectLatest {
+            _checkPlant.value = it
+        }
+    }
+
+    /**
+     * 合并账号
+     */
+    private val _switchDevice = MutableLiveData<Resource<String>>()
+    val switchDevice: LiveData<Resource<String>> = _switchDevice
+    fun switchDevice(deviceId: String) {
+        viewModelScope.launch {
+            repository.switchDevice(deviceId)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _switchDevice.value = it
                 }
         }
     }

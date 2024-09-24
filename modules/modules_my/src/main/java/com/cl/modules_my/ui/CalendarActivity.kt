@@ -60,7 +60,9 @@ import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.adapter.TaskListAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
 import com.cl.common_base.bean.JumpTypeBean
+import com.cl.common_base.ext.setGone
 import com.cl.common_base.ext.setSafeOnClickListener
+import com.cl.common_base.ext.setVisible
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.joketng.timelinestepview.LayoutType
@@ -118,6 +120,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     override fun initView() {
+        binding.btnSuccess.setVisible(null != isTemplateId)
         // 设置标题颜色以及标题文案
         binding.title.setTitle(getString(com.cl.common_base.R.string.my_calendar))
             .setTitleColor(com.cl.common_base.R.color.mainColor)

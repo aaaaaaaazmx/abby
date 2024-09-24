@@ -30,12 +30,20 @@ import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.pop.MyChooerTipPop
 import com.cl.common_base.bean.AccessoryListBean
+import com.cl.common_base.help.PlantCheckHelp
+import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.activity.BasePopActivity.Companion.KEY_USB_PORT
+import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.viewmodel.ListDeviceViewModel
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import com.thingclips.bouncycastle.asn1.x509.KeyUsage
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.home.sdk.bean.HomeBean
+import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import java.util.ArrayList
@@ -48,6 +56,8 @@ import javax.inject.Inject
 @Route(path = RouterPath.My.PAGE_MY_DEVICE_LIST)
 @AndroidEntryPoint
 class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
+    // 当前设备的ID
+    private var isCurrentDeviceIndex = 0
     private val adapter by lazy {
         DeviceListAdapter(mutableListOf(), switchListener = { accessoryId, deviceId, isChooser, usbPort ->
             // 选择设备开关
@@ -127,20 +137,27 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             finish()
             return
         }
-        list.firstOrNull { it.isChooser == true }?.apply {
-            // 删除原先的、或者切换了设备
-            // 跳转到主页、加载。
-            // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
-            // 改用Eventbus吧。
-            // 切换了设备，需要重新刷新主页。
-            logI("123123123: $deviceId,,$spaceType")
-            ARouter.getInstance()
-                .build(RouterPath.Main.PAGE_MAIN).navigation()
-            LiveEventBus.get()
-                .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
-                .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType, onlineStatus))
+        list.indexOfFirst { it.isChooser == true }.let {
+            if (it == isCurrentDeviceIndex) {
+                finish()
+            } else {
+                // 切换设备。
+                list.firstOrNull { data -> data.isChooser == true }?.apply {
+                    deviceId?.let { it1 -> mViewModel.switchDevice(it1) }
+                    // 删除原先的、或者切换了设备
+                    // 跳转到主页、加载。
+                    // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
+                    // 改用Eventbus吧。
+                    // 切换了设备，需要重新刷新主页。
+                    /*logI("123123123: $deviceId,,$spaceType")
+                    ARouter.getInstance()
+                        .build(RouterPath.Main.PAGE_MAIN).navigation()
+                    LiveEventBus.get()
+                        .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+                        .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType, onlineStatus))*/
+                }
+            }
         }
-        finish()
     }
 
     /**
@@ -171,6 +188,85 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     }
 
     override fun observe() {
+        mViewModel.switchDevice.observe(this@DeviceListActivity, resourceObserver {
+            loading { showProgressLoading() }
+            error { errorMsg, code ->
+                ToastUtil.shortShow(errorMsg)
+                hideProgressLoading()
+            }
+            success {
+                adapter.data.firstOrNull { data -> data.isChooser == true }?.apply {
+                    if (spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                        //  切换设备之后、可以直接调用刷新userDtail接口，走到showView方法中、通过plantInfo和listDevice来显示和隐藏当前abby的信息。
+                        // mViewMode.userDetail()
+                        // 删除未读消息
+                        // mViewMode.removeFirstUnreadMessage()
+                        // 清空气泡状态
+                        // mViewMode.clearPopPeriodStatus()
+                        mViewModel.checkPlant()
+                        return@success
+                    }
+                }
+                // 更新涂鸦Bean
+                ThingHomeSdk.newHomeInstance(mViewModel.homeId)
+                    .getHomeDetail(object : IThingHomeResultCallback {
+                        override fun onSuccess(bean: HomeBean?) {
+                            bean?.let { it ->
+                                val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                logI("123123123: ${arrayList.size}")
+                                adapter.data.firstOrNull { data -> data.isChooser == true }?.apply {
+                                    deviceId?.let { id ->
+                                        arrayList.firstOrNull { dev -> dev.devId == id }.apply {
+                                                logI("thingDeviceBean ID: $id")
+                                                // 在线的、数据为空、并且是abby机器
+                                                if (null == this && spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && onlineStatus != "Offline") {
+                                                    ToastUtil.shortShow("Connection error, try to delete device and pair again")
+                                                }
+                                                GSON.toJsonInBackground(this) {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA, it
+                                                    )
+                                                }
+                                                // 重新注册服务
+                                                // 开启服务
+                                                val intent = Intent(
+                                                    this@DeviceListActivity, TuYaDeviceUpdateReceiver::class.java
+                                                )
+                                                startService(intent)
+                                                // 切换之后需要重新刷新所有的东西
+                                                mViewModel.checkPlant()
+                                            }
+                                    }
+                                }
+                            }
+                        }
+
+                        override fun onError(errorCode: String?, errorMsg: String?) {
+
+                        }
+                    })
+            }
+        })
+
+        mViewModel.checkPlant.observe(this@DeviceListActivity, resourceObserver {
+            error { errorMsg, code ->
+                ToastUtil.shortShow(errorMsg)
+                hideProgressLoading()
+            }
+            success {
+                hideProgressLoading()
+                data?.let {
+                    PlantCheckHelp().plantStatusCheck(
+                        this@DeviceListActivity,
+                        it,
+                        true,
+                        isLeftSwapAnim = true,
+                        isNoAnim = false
+                    )
+                }
+            }
+        })
+
         // 更改设备附件开光
         mViewModel.deviceStatus.observe(this@DeviceListActivity, resourceObserver {
             loading { showProgressLoading() }
@@ -191,7 +287,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             }
             success {
                 // 检查data是否非空和非空列表
-                var dataInfo = data
+                val dataInfo = data
                 if (null == dataInfo) {
                     adapter.setList(dataInfo)
                     return@success
@@ -237,6 +333,9 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             binding.rvList.smoothScrollToPosition(0)
                         }, 200)
                     }
+
+                    // 找到当前current的设备，然后记录下，用户返回的时候判断是否是切换了设备。
+                    isCurrentDeviceIndex = adapter.data.indexOfFirst { it.isChooser == true }
                 }
             }
         })
@@ -360,7 +459,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             logI("123131231: ${deviceBean?.deviceId},,,,${deviceBean?.nightTimer}")
             when (view.id) {
                 R.id.iv_pair_luosi -> {
-                    when(type) {
+                    when (type) {
                         // PH笔
                         ListDeviceBean.KEY_TYPE_PH -> {
                             startActivityLauncher.launch(Intent(
@@ -499,7 +598,8 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 R.id.btn_jump_to_device -> {
                     // 跳转到首页
                     // (data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE
-                    this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
+                    isSwitchDevice()
+                    /*this.adapter.data.firstOrNull { it.isChooser == true }?.apply {
                         if (onlineStatus.equals("Offline")) {
                             // 如果权限都已经同意了
                             ARouter.getInstance().build(RouterPath.PairConnect.PAGE_PLANT_SCAN)
@@ -517,7 +617,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                             .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
                             .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType, onlineStatus))
                         finish()
-                    }
+                    }*/
                 }
             }
         }
