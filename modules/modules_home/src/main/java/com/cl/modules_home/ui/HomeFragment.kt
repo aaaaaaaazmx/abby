@@ -529,6 +529,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
 
+            // 点击种子阶段的感叹号
+            clGth.setSafeOnClickListener {
+                context?.let{
+                    com.cl.common_base.ext.xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(
+                            BaseCenterPop(context = it, content = "The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them", isShowCancelButton = false)
+                        ).show()
+                    }
+                }
+            }
+
             // 点击live直接打开直播
             ivLive.setSafeOnClickListener {
                 startToVideoPlay()
@@ -2208,7 +2221,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     override fun observe() {
         mViewMode.apply {
             // 获取当前设备的proMode下的预设灯光。
