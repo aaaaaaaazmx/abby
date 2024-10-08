@@ -16,4 +16,6 @@
     <string name="home_setup_later"><u>Setup Later</u></string>
     <string name="home_settings">Setting</string>
     <string name="home_calendar_settings_for">Calendar Settings for</string>
+    <string name="home_period_for">Current Period for</string>
+    <string name="home_pro_modessss">Pro Mode</string>
 </resources>

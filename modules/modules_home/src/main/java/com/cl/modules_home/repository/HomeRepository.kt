@@ -21,6 +21,7 @@ import com.cl.modules_home.request.SaveTaskReq
 import com.cl.modules_home.request.Task
 import com.cl.modules_home.request.TaskConfigurationListData
 import com.cl.modules_home.request.TempData
+import com.cl.modules_home.request.UpdateFanModelReq
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
@@ -356,5 +357,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
 
     fun taskDelete(req: DeleteTaskReq): Flow<HttpResult<Boolean>> {
         return remoteRepository.taskDelete(req)
+    }
+
+    fun getFanModel(): Flow<HttpResult<MutableList<UpdateFanModelReq>>> {
+        return remoteRepository.getFanModel()
+    }
+
+    fun updateFanModel(req: UpdateFanModelReq): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateFanModel(req)
     }
 }

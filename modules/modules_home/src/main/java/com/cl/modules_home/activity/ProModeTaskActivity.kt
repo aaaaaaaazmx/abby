@@ -17,6 +17,7 @@ import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.R
+import com.cl.modules_home.activity.ProModeEnvActivity.Companion.IS_CURRENT_PERIOD
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP_NOW
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.TEMPLATE_ID
@@ -60,6 +61,12 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
         intent.getLongExtra(ProModeEnvActivity.START_TIME, 0L)
     }
 
+    // 是否是当前周期,如果不为空，那么就是从首页的周期界面跳转过来的
+    // 不为空时，true为当前周期，false为其他周期。
+    private val isCurrentPeriod by lazy {
+        intent.getStringExtra(IS_CURRENT_PERIOD)
+    }
+
     private val adapter by lazy {
         ProModeTaskListAdapter(mutableListOf())
     }
@@ -72,6 +79,11 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
         binding.tvPeriod.text = "[${stepShow}]"
         binding.recyclerView.layoutManager = LinearLayoutManager(this@ProModeTaskActivity)
         binding.recyclerView.adapter = adapter
+
+        // 如果不为空，到这一步一定是为false
+        if (!isCurrentPeriod.isNullOrEmpty() && isCurrentPeriod == "false") {
+            binding.btnSuccess.text = "OK"
+        }
     }
 
     override fun observe() {
@@ -107,6 +119,10 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    if (!isCurrentPeriod.isNullOrEmpty() && isCurrentPeriod == "false") {
+                        checkPlant()
+                        return@success
+                    }
                     // 根据状态跳转到哪个地方。
                     when (intentflag) {
                         0 -> {
@@ -178,6 +194,7 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                         this@ProModeTaskActivity,
                         content = "By clicking 'Setup Later,' you will start your growing journey without a calendar. You can edit your growing calendar anytime later by clicking the calendar icon.",
                         onConfirmAction = {
+                            // 跳转到主页
                             intentflag = 1
                             // 确认。
                             // 跳转到日历界面，显示空白日历。
@@ -188,9 +205,8 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
         }
 
         binding.btnSuccess.setSafeOnClickListener {
+            // 跳转到日历界面
             intentflag = 0
-            // 显示自己配置的任务的日历
-            // 保存多个任务，然后跳转到日历界面
             viewModel.saveTask(SaveTaskReq(step = step, taskContent = adapter.data, templateId = templateId, useOfficialCalendar = false))
         }
         binding.tvCalendar.setSafeOnClickListener {
@@ -202,10 +218,8 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                         this@ProModeTaskActivity,
                         content = "By clicking “Use official Calendar”, you will start your growing journey with hey abby recommended calendar. You can edit your growing calendar anytime later by clicking the calendar icon.",
                         onConfirmAction = {
+                            // 跳转到主页
                             intentflag = 1
-                            // 确认。
-                            // 使用官方日历
-                            // 跳转到日历界面
                             viewModel.saveTask(SaveTaskReq(step = step, taskContent = adapter.data, templateId = templateId, useOfficialCalendar = true))
                         })
                 ).show()

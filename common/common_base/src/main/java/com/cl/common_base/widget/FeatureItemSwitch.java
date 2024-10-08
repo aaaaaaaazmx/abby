@@ -216,6 +216,12 @@ public class FeatureItemSwitch extends FrameLayout implements View.OnClickListen
 
     public void setItemBackgroundColor(int colorRes) {
         setBackgroundColor(colorRes);
+        swToggle.setBackgroundColor(colorRes);
+    }
+
+    @BindingAdapter("switchItemBackground")
+    public static void setSwitchItemBackgroundColor(FeatureItemSwitch view, String color) {
+        view.setItemBackgroundColor(Color.parseColor(color));
     }
 
 

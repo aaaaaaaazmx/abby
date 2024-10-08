@@ -10,6 +10,7 @@ import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.modules_home.request.CheckEnvData
 import com.cl.modules_home.request.CycleListBean
 import com.cl.modules_home.request.DeleteTaskReq
+import com.cl.modules_home.request.DripListData
 import com.cl.modules_home.request.EnvData
 import com.cl.modules_home.request.EnvDeleteReq
 import com.cl.modules_home.request.EnvParamListBeanItem
@@ -21,6 +22,7 @@ import com.cl.modules_home.request.SaveTaskReq
 import com.cl.modules_home.request.Task
 import com.cl.modules_home.request.TaskConfigurationListData
 import com.cl.modules_home.request.TempData
+import com.cl.modules_home.request.UpdateFanModelReq
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.*
 
@@ -135,21 +137,21 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/userMessage/flag")
-    fun userMessageFlag(@Field("flag")flag: String, @Field("messageId")messageId: String): Flow<HttpResult<BaseBean>>
+    fun userMessageFlag(@Field("flag") flag: String, @Field("messageId") messageId: String): Flow<HttpResult<BaseBean>>
 
     /**
      * 设备操作开始
      */
     @FormUrlEncoded
     @POST("abby/deviceOperate/start")
-    fun deviceOperateStart(@Field("businessId")businessId: String, @Field("type")type: String): Flow<HttpResult<BaseBean>>
+    fun deviceOperateStart(@Field("businessId") businessId: String, @Field("type") type: String): Flow<HttpResult<BaseBean>>
 
     /**
      * 设备操作完成
      */
     @FormUrlEncoded
     @POST("abby/deviceOperate/finish")
-    fun deviceOperateFinish(@Field("type")type: String): Flow<HttpResult<BaseBean>>
+    fun deviceOperateFinish(@Field("type") type: String): Flow<HttpResult<BaseBean>>
 
     /**
      * 获取完成界面配置参数
@@ -162,14 +164,14 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/moments/getDetailByLearnMoreId")
-    fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String):Flow<HttpResult<DetailByLearnMoreIdData>>
+    fun getDetailByLearnMoreId(@Field("learnMoreId") learnMoreId: String): Flow<HttpResult<DetailByLearnMoreIdData>>
 
     /**
      * 删除植物
      */
     @FormUrlEncoded
     @POST("abby/plant/delete")
-    fun plantDelete(@Field("deviceUuid")deviceUuid: String): Flow<HttpResult<Boolean>>
+    fun plantDelete(@Field("deviceUuid") deviceUuid: String): Flow<HttpResult<Boolean>>
 
     /**
      * 是否种植
@@ -201,7 +203,7 @@ interface HttpHomeApiService {
      */
     @POST("abby/calendar/finishTask")
     fun finishTask(
-      @Body body: FinishTaskReq
+        @Body body: FinishTaskReq
     ): Flow<HttpResult<String>>
 
     @POST("abby/calendar/updateTask")
@@ -322,7 +324,7 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/syncLightParam")
-    fun syncLightParam(@Field("deviceId")deviceId: String): Flow<HttpResult<BaseBean>>
+    fun syncLightParam(@Field("deviceId") deviceId: String): Flow<HttpResult<BaseBean>>
 
 
     /**
@@ -330,7 +332,7 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/plant/unlockNow")
-    fun unlockNow(@Field("plantId")deviceId: String): Flow<HttpResult<BaseBean>>
+    fun unlockNow(@Field("plantId") deviceId: String): Flow<HttpResult<BaseBean>>
 
 
     /**
@@ -338,7 +340,7 @@ interface HttpHomeApiService {
      */
     @FormUrlEncoded
     @POST("abby/accessory/getTrickleIrrigationConfig")
-    fun getTrickleIrrigationConfig(@Field("deviceId")deviceId: String): Flow<HttpResult<TrickData>>
+    fun getTrickleIrrigationConfig(@Field("deviceId") deviceId: String): Flow<HttpResult<TrickData>>
 
     /**
      * 滴灌参数设置
@@ -399,7 +401,7 @@ interface HttpHomeApiService {
      * 获取消息配置
      */
     @POST("abby/userMessage/messageConfigList")
-    fun messageConfigList() : Flow<HttpResult<MessageConfigBean>>
+    fun messageConfigList(): Flow<HttpResult<MessageConfigBean>>
 
     /**
      * 获取周期列表接口
@@ -471,4 +473,33 @@ interface HttpHomeApiService {
      */
     @POST("abby/tempCalendar/taskDelete")
     fun taskDelete(@Body req: DeleteTaskReq): Flow<HttpResult<Boolean>>
+
+    /**
+     * app/userDevice/getFanModel
+     * 获取风扇模式
+     */
+    @POST("abby/userDevice/getFanModel")
+    fun getFanModel(): Flow<HttpResult<MutableList<UpdateFanModelReq>>>
+
+
+    /**
+     * 修改风扇模式
+     */
+    @POST("abby/userDevice/updateFanModel")
+    fun updateFanModel(@Body req: UpdateFanModelReq): Flow<HttpResult<BaseBean>>
+
+    /**
+     * 获取滴灌参数列表
+     */
+    @FormUrlEncoded
+    @POST("abby/accessory/getTrickleIrrigationConfigList")
+    fun getTrickleIrrigationConfigList(@Field("deviceId")deviceId:String): Flow<HttpResult<DripListData>>
+
+    /**
+     * 修改滴灌参数列表
+     */
+    @POST("abby/accessory/trickleIrrigationConfigList")
+    fun trickleIrrigationConfigList(@Body req: DripListData): Flow<HttpResult<BaseBean>>
+
+
 }

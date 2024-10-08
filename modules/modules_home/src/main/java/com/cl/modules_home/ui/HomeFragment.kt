@@ -154,9 +154,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     // 是否是手动模式
-    private val isManual by lazy {
-        arguments?.getBoolean(Constants.Global.KEY_MANUAL_MODE, false)
-    }
+    private var isManual = false
+    private var isManuals = false
 
     // 导航气泡
     private val bubblePopHor by lazy {
@@ -893,7 +892,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             clPeroid.setOnClickListener {
                 // 调用接口一次
                 mViewMode.plantInfo()
-                mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
+                mViewMode.periodData.value?.let { data -> periodPop?.setData(data, mViewMode.plantInfo.value?.data?.harvestTime, mViewMode.plantInfo.value?.data?.templateId) }
                 periodPopDelegate.show()
             }
 
@@ -2079,7 +2078,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     // 这是周期弹窗解锁周期的
     private val periodPop by lazy {
         context?.let {
-            HomePeriodPop(it, unLockAction = { guideType, taskId, lastOneGuideType, taskTime ->
+            HomePeriodPop(it, isManuals, unLockAction = { guideType, taskId, lastOneGuideType, taskTime ->
                 /*if (lastOneGuideType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
                     // 表示是seed to veg
                     SeedGuideHelp(it).showGuidePop {
@@ -2355,6 +2354,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // 寻找当前设备
                         dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
+                            isManuals = device.proMode == "On"
+                            binding.pplantNinth.svtProMode.visibility = if (device.proMode == "On") View.VISIBLE else View.GONE
                             // 是否显示摄像头
                             val isCameraVisible =
                                 device.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA } != null
@@ -2371,6 +2372,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             // 只要rlInch植物高度不显示，那么就显示横向的周期选择
                             ViewUtils.setVisible(device.heightSensor == false, binding.plantManual.rlHorPeriod)
+
+
+                            // 更新涂鸦数据Bean、因为只有在登陆的时候才会更新，可能会导致数据错乱。
+                            ThingHomeSdk.newHomeInstance(mViewMode.homeId).getHomeDetail(object : IThingHomeResultCallback {
+                                override fun onSuccess(bean: HomeBean?) {
+                                    bean?.let { it ->
+                                        val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                        arrayList.firstOrNull { dev -> dev.devId == device.deviceId.toString() }.let { data ->
+                                            GSON.toJsonInBackground(data) {
+                                                logI("1231231toJsonInBackground: $it")
+                                            }
+                                            // 在线的、数据为空、并且是abby机器
+                                            if (device.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && device.onlineStatus != "Offline") {
+
+                                            } else {
+                                                // 保存Tuya数据Bean
+                                                GSON.toJsonInBackground(data) {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA, it
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                override fun onError(errorCode: String?, errorMsg: String?) {
+
+                                }
+                            })
                         }
 
                         if (dataList.isNotEmpty()) {
@@ -3828,7 +3859,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 刷新数据
                     if (periodPopDelegate.isShow) {
-                        mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
+                        mViewMode.periodData.value?.let { data -> periodPop?.setData(data, mViewMode.plantInfo.value?.data?.harvestTime, mViewMode.plantInfo.value?.data?.templateId) }
                     }
                 }
                 error { errorMsg, code ->
@@ -3882,7 +3913,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // Update UI or data display
                         dataItem.environments?.let {
-                            envirPop?.setData(it, mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }, mViewMode.userDetail.value?.data)
+                            envirPop?.setData(it, mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }, mViewMode.userDetail.value?.data, mViewMode.getAirPump.value == true, mViewMode.getWaterLevel.value.toString())
                         }
                     }
 
@@ -4826,7 +4857,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                                 // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
                                 // 不等于说明灯光刷新， 更新当前环境信息的数据
-                                if (isManual == false && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
+                                if (!isManual && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
                                     mViewMode.getEnvData()
                                     mViewMode.listDevice()
                                     mViewMode.userDetail()

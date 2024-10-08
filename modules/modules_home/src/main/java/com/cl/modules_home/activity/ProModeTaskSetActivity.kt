@@ -327,6 +327,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         }
 
         time?.let {
+            if (time == 0L) return ""
             val mm = CalendarUtil.getFormat("MMM").format(time)
             val date = Date()
             date.time = time

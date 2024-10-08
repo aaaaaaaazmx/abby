@@ -15,6 +15,7 @@ import com.cl.common_base.pop.ChooseTimePop
 import com.cl.common_base.pop.SelectPeriodTimePop
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.R
+import com.cl.modules_home.activity.ProModeStartActivity.Companion.IS_CURRENT_PERIOD
 import com.cl.modules_home.adapter.ProModeEnvAdapter
 import com.cl.modules_home.databinding.HomeProModeEnvActivityBinding
 import com.cl.modules_home.request.EnvDeleteReq
@@ -24,6 +25,7 @@ import com.cl.modules_home.request.EnvSaveReq
 import com.cl.modules_home.viewmodel.ProModeViewModel
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.internal.isSensitiveHeader
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -53,6 +55,18 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
         // 周期开始时间
         const val START_TIME = "start_time"
+
+        // 是否是当前周期
+        const val IS_CURRENT_PERIOD = "is_current_period"
+
+        // 是否是修改灯光
+        const val IS_UPDATE_LIGHT = "is_update_light"
+    }
+
+    // 是否是当前周期,如果不为空，那么就是从首页的周期界面跳转过来的
+    // 不为空时，true为当前周期，false为其他周期。
+    private val isCurrentPeriod by lazy {
+        intent.getStringExtra(IS_CURRENT_PERIOD)
     }
 
     private val daysList by lazy {
@@ -76,9 +90,17 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         ProModeEnvAdapter(mutableListOf())
     }
 
+    // 从环境卡片界面跳转过来修改灯光的，只需要更改这一个界面。
+    private val isUpdateLight by lazy {
+        intent.getBooleanExtra(IS_UPDATE_LIGHT, false)
+    }
+
     @SuppressLint("SetTextI18n")
     override fun initView() {
         binding.tvPeriod.text = "[${stepShow}]"
+        if (isUpdateLight) {
+            binding.btnSuccess.text = "OK"
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -135,7 +157,11 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    // todo 保存成功
+                    if (isUpdateLight) {
+                        finish()
+                        return@success
+                    }
+                    // 保存成功
                     // 跳转到测试任务配置界面
                     startActivity(Intent(this@ProModeEnvActivity, ProModeTaskActivity::class.java).apply {
                         putExtra(STEP_NOW, stepShow)
@@ -143,6 +169,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                         putExtra(TEMPLATE_ID, templateId)
                         putExtra(END_TIME,  viewModel.cycleEnvList.value?.data?.stepEnd?.safeToLong() ?: 0L)
                         putExtra(START_TIME,  viewModel.cycleEnvList.value?.data?.stepStart?.safeToLong() ?: 0L)
+                        putExtra(IS_CURRENT_PERIOD, isCurrentPeriod)
                     })
                 }
             })
@@ -213,7 +240,13 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         binding.recyclerView.adapter = adapter
 
         binding.tvRecommend.setSafeOnClickListener {
-            viewModel.saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = true))
+            xpopup(this@ProModeEnvActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@ProModeEnvActivity, content = "You will proceed to next step with recommend settings", onConfirmAction = {
+                    viewModel.saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = true))
+                })).show()
+            }
         }
 
         binding.btnSuccess.setSafeOnClickListener {

@@ -316,20 +316,36 @@
             </LinearLayout>
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_success"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="24dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="35dp"
-            android:background="@drawable/create_state_button"
-            android:text="@string/my_start_growingasd"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:layout_marginBottom="35dp">
+
+            <Button
+                android:id="@+id/btn_success"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/create_state_button"
+                android:text="@string/my_start_growingasd"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <ImageView
+                android:id="@+id/iv_pro_mode_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@mipmap/my_add"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </RelativeLayout>
+
     </RelativeLayout>
 </layout>

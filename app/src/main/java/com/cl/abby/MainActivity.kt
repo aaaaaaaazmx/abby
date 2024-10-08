@@ -122,8 +122,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         CacheFactory.setCacheManager(ExoPlayerCacheManager::class.java)
         // Arouter注入
         ARouter.getInstance().inject(this)
-        // 切换Fragment
-        switchFragment(mIndex)
         // 为null的情况下就是用户第一次种植
         logI(plantGuideFlag)
         // 查看是否需要显示红点
@@ -132,6 +130,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         // 是否显示和隐藏种植Menu
         val menu = binding.bottomNavigation.menu
         menu.findItem(R.id.action_plant).isVisible = !firstLoginAndNoDevice
+
+        // 切换Fragment
+        switchFragment(mIndex)
     }
 
     private val bubblePopHor by lazy {

@@ -29,7 +29,17 @@ class EnvironmentInfoData(
         val environmentType: String? = null, // 根据这个来判断是否是其他itemType
         val type: String? = null, // 根据这个来判断是否是其他itemType
         val alert: Int? = null,
+        val runningInfo: String? = null,
+        var runningModelShow: String? = null,
+        var runningModel: String? = null,
+        var isProMode: Boolean? = false, // 是否是ProMode
+        var waterPump: Boolean? = false, // 是否有水泵
         val articleDetails: String? = null,
+        var step: String? = null,
+        var templateId: String? = null,
+        var dripKit: Boolean? = null,
+        var airPump: Boolean? = null,
+        var stepShow: String? = null,
         var additionalData:MutableList<Environment>? = null,
         var textDesc: String? = null, // 文字描述
         var automation: Int? = null, // 是否是自动模式
@@ -40,6 +50,7 @@ class EnvironmentInfoData(
                 KEY_TYPE_LIGHT_TYPE -> KEY_TYPE_LIGHT
                 KEY_SPACE_TYPE_TEXT -> KEY_TYPE_TEXT
                 KEY_SPACE_TYPE_GRID -> KEY_TYPE_GRID
+                KEY_TYPE_DRIP_TYPE -> KEY_DRIP
                 else -> KEY_TYPE_NORMAL
             }
     }
@@ -53,6 +64,9 @@ class EnvironmentInfoData(
 
         // 这是开关灯状态的Item
         const val KEY_TYPE_LIGHT = 2
+
+        // 滴灌的Item
+        const val KEY_DRIP = 5
 
         // 文字描述类型，自己新增
         const val KEY_SPACE_TYPE_TEXT = "text"
@@ -71,6 +85,9 @@ class EnvironmentInfoData(
         const val KEY_TYPE_WATER_TEMPERATURE_TYPE = "water_temperature"
         // type temperature
         const val KEY_TYPE_TEMPERATURE_TYPE = "temperature"
+
+        // type Drip
+        const val KEY_TYPE_DRIP_TYPE = "Drip"
 
 
         // 新增的1个类型。文字描述

@@ -1,5 +1,6 @@
 package com.cl.modules_home.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -17,7 +18,11 @@ import com.cl.common_base.bean.PlantInfoData
 import com.cl.modules_home.R
 import com.cl.modules_home.databinding.HomePeriodPopBinding
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToLong
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.calendar.CalendarUtil
+import com.cl.modules_home.activity.ProModeStartActivity
 import com.cl.modules_home.ui.PeriodActivity
 import com.google.api.Distribution.BucketOptions.Linear
 import com.joketng.timelinestepview.LayoutType
@@ -26,6 +31,7 @@ import com.joketng.timelinestepview.TimeLineState
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
 import com.joketng.timelinestepview.view.TimeLineStepView
 import com.lxj.xpopup.core.BottomPopupView
+import java.util.Date
 
 /**
  * This is a short description.
@@ -34,6 +40,9 @@ import com.lxj.xpopup.core.BottomPopupView
  */
 class HomePeriodPop(
     context: Context,
+    private val isManual: Boolean? = null,
+    private var templateId: String? = null,
+    private var harvestTime: String? = null,
     private var data: MutableList<PlantInfoData.InfoList>? = null,
     val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?, taskTime: String?) -> Unit)? = null,
     val unLockNow: ((pop: HomePeriodPop) -> Unit)? = null,
@@ -42,8 +51,10 @@ class HomePeriodPop(
         return R.layout.home_period_pop
     }
 
-    fun setData(data: MutableList<PlantInfoData.InfoList>) {
+    fun setData(data: MutableList<PlantInfoData.InfoList>, harvestTime: String? = null, templateId: String?) {
         this.data = data
+        this.harvestTime = harvestTime
+        this.templateId = templateId
         for (i: Int in data.indices) {
             val info = data[i]
             when ("${info.journeyStatus}") {
@@ -82,11 +93,15 @@ class HomePeriodPop(
     }
 
     var binding: HomePeriodPopBinding? = null
+    @SuppressLint("SetTextI18n")
     override fun onCreate() {
         super.onCreate()
         binding = DataBindingUtil.bind<HomePeriodPopBinding>(popupImplView)?.apply {
             ivClose.setOnClickListener { dismiss() }
             showView(LayoutType.RIGHT)
+            ViewUtils.setVisible(!harvestTime.isNullOrEmpty(), binding?.llHarvest)
+            binding?.tvEta?.text = "ETA ${getYmdForEn(time = harvestTime.safeToLong() * 1000L)}"
+
 
             ivChart.setOnClickListener {
                 // 跳转到图表洁面
@@ -95,9 +110,39 @@ class HomePeriodPop(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun beforeShow() {
         super.beforeShow()
         showView(LayoutType.RIGHT)
+        ViewUtils.setVisible(!harvestTime.isNullOrEmpty(), binding?.llHarvest)
+        // ETA Jun （月份缩写） 20(日期）,2025 (年）
+        binding?.tvEta?.text = "ETA ${getYmdForEn(time = harvestTime.safeToLong() * 1000L)}"
+    }
+
+    /**
+     * 获取当前年月日-- 后面跟着英文的th
+     * 如 9 12th 2022
+     */
+    private fun getYmdForEn(dateTime: Date? = null, time: Long? = null): String {
+        dateTime?.let {
+            val mm = CalendarUtil.getFormat("MMM").format(dateTime.time)
+            val dd = CalendarUtil.getFormat("dd").format(dateTime.time) + CalendarUtil.getDaySuffix(
+                dateTime
+            )
+            val yyyy = CalendarUtil.getFormat("yyyy").format(dateTime.time)
+            return "$mm $dd $yyyy"
+        }
+
+        time?.let {
+            if (time == 0L) return ""
+            val mm = CalendarUtil.getFormat("MMM").format(time)
+            val date = Date()
+            date.time = time
+            val dd = CalendarUtil.getFormat("dd").format(time)
+            val yyyy = CalendarUtil.getFormat("yyyy").format(time)
+            return "$mm $dd ,$yyyy"
+        }
+        return ""
     }
 
     private fun showView(type: LayoutType) {
@@ -116,6 +161,7 @@ class HomePeriodPop(
                             .inflate(R.layout.home_item_period_view, rightLayout, true)
                     }
 
+                    @SuppressLint("ResourceAsColor")
                     override fun onBindDataViewHolder(
                         holder: TimeLineStepAdapter.CustomViewHolder,
                         position: Int
@@ -129,14 +175,28 @@ class HomePeriodPop(
                         val svtUnlock = holder.itemView.findViewById<SvTextView>(R.id.svt_unlock)
                         val tvGoing = holder.itemView.findViewById<TextView>(R.id.tv_going)
                         val isLock = holder.itemView.findViewById<FrameLayout>(R.id.fl_root)
+                        val svtProEdit = holder.itemView.findViewById<SvTextView>(R.id.svt_pro_edit)
 
                         tvGoing.visibility = View.GONE
                         svtUnlock.visibility = View.GONE
                         ivGou.visibility = View.GONE
                         svtWaitUnlock.visibility = View.GONE
-                        periodTime.visibility = View.GONE
+                        periodTime.visibility = if (data?.get(position)?.etaTime.safeToLong() != 0L) View.VISIBLE else View.GONE
+                        svtProEdit.visibility = View.GONE
                         if (data?.isEmpty() == true) return
                         ViewUtils.setInvisible(isLock, data?.get(position)?.unlockNow == false)
+
+                        // 更改当前周期时间 proMode下专属
+                        svtProEdit.setSafeOnClickListener {
+                            // 跳转到周期选择界面
+                            // 回来后还得刷新一下PlantInfo更新当前周期时间以及顺序。
+                            context.startActivity(Intent(context, ProModeStartActivity::class.java).apply {
+                                putExtra(ProModeStartActivity.STEP, this@HomePeriodPop.data?.get(position)?.step)
+                                putExtra(ProModeStartActivity.TEMPLATE_ID , templateId)
+                                putExtra(ProModeStartActivity.IS_CURRENT_PERIOD, "${this@HomePeriodPop.data?.get(position)?.journeyStatus.toString() == KEY_ON_GOING}")
+                            })
+                            dismiss()
+                        }
 
                         // 提前解锁
                         isLock.setOnClickListener {
@@ -169,14 +229,23 @@ class HomePeriodPop(
                         periodTitle.text =
                             data?.get(position)?.journeyName
                         // 未解锁时不显示周期
-                        periodTime.text =
-                            "Week${data?.get(position)?.week} Day${data?.get(position)?.day}"
+                        val journeyStatus =  "${data?.get(position)?.journeyStatus}"
+                        if (journeyStatus == KEY_ON_GOING || journeyStatus == KEY_LOCK_COMPLETED) {
+                            periodTime.text = "Week${data?.get(position)?.week} Day${data?.get(position)?.day}"
+                        } else {
+                            "ETA ${getYmdForEn(time = data?.get(position)?.etaTime.safeToLong() * 1000L)}"
+                        }
 
                         kotlin.runCatching {
-                            when ("${data?.get(position)?.journeyStatus}") {
+                            when (journeyStatus) {
                                 KEY_WAIT -> {
-                                    svtWaitUnlock.text = "Unlock"
-                                    svtWaitUnlock.visibility = View.VISIBLE
+                                    if (isManual == true) {
+                                        svtProEdit.visibility = View.VISIBLE
+                                    } else {
+                                        svtWaitUnlock.text = "Unlock"
+                                        svtWaitUnlock.visibility = View.VISIBLE
+                                    }
+
                                     // 待解锁状态下，不显示时间周期
 
                                     clRoot.background = ContextCompat.getDrawable(
@@ -210,9 +279,13 @@ class HomePeriodPop(
                                 }
 
                                 KEY_ON_GOING -> {
-                                    tvGoing.visibility = View.VISIBLE
-                                    periodTime.visibility = View.VISIBLE
+                                    if (isManual == true) {
+                                        svtProEdit.visibility = View.VISIBLE
+                                    } else {
+                                        tvGoing.visibility = View.VISIBLE
+                                    }
 
+                                    periodTime.visibility = View.VISIBLE
                                     // 进行中
                                     clRoot.background = ContextCompat.getDrawable(
                                         context,
@@ -230,13 +303,16 @@ class HomePeriodPop(
                                             com.cl.common_base.R.color.mainColor
                                         )
                                     )
-                                    tvGoing.visibility =
-                                        View.VISIBLE
                                 }
 
                                 KEY_ALLOW_UNLOCKING -> {
-                                    svtUnlock.text = "Unlock"
-                                    svtUnlock.visibility = View.VISIBLE
+                                    // 区分专业模式和普通模式下的文案。
+                                    if (isManual == true) {
+                                        svtProEdit.visibility = View.VISIBLE
+                                    } else {
+                                        svtUnlock.text = "Unlock"
+                                        svtUnlock.visibility = View.VISIBLE
+                                    }
 
                                     clRoot.background = ContextCompat.getDrawable(
                                         context,
@@ -252,8 +328,12 @@ class HomePeriodPop(
                                 }
 
                                 KEY_LOCK_COMPLETED -> {
-                                    svtUnlock.text = "Unlock"
-                                    svtUnlock.visibility = View.VISIBLE
+                                    if (isManual == true) {
+                                        svtProEdit.visibility = View.VISIBLE
+                                    } else {
+                                        svtUnlock.text = "Unlock"
+                                        svtUnlock.visibility = View.VISIBLE
+                                    }
 
                                     clRoot.background = ContextCompat.getDrawable(
                                         context,
@@ -269,8 +349,13 @@ class HomePeriodPop(
                                 }
 
                                 else -> {
-                                    svtWaitUnlock.text = "Unlock"
-                                    svtWaitUnlock.visibility = View.VISIBLE
+                                    if (isManual == true) {
+                                        svtProEdit.visibility = View.VISIBLE
+                                    } else {
+                                        svtWaitUnlock.text = "Unlock"
+                                        svtWaitUnlock.visibility = View.VISIBLE
+                                    }
+
                                     // 待解锁状态下，不显示时间周期
 
                                     clRoot.background = ContextCompat.getDrawable(

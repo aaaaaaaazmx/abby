@@ -22,6 +22,7 @@ import com.cl.modules_home.request.SaveTaskReq
 import com.cl.modules_home.request.Task
 import com.cl.modules_home.request.TaskConfigurationListData
 import com.cl.modules_home.request.TempData
+import com.cl.modules_home.request.UpdateFanModelReq
 import com.cl.modules_home.service.HttpHomeApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -283,4 +284,14 @@ class HomeRemoteRepository @Inject constructor() {
     fun taskDelete(req: DeleteTaskReq): Flow<HttpResult<Boolean>> {
         return service.taskDelete(req)
     }
+
+    fun getFanModel(): Flow<HttpResult<MutableList<UpdateFanModelReq>>> {
+        return service.getFanModel()
+    }
+
+        fun updateFanModel(req: UpdateFanModelReq): Flow<HttpResult<BaseBean>> {
+        return service.updateFanModel(req)
+    }
+
+
 }

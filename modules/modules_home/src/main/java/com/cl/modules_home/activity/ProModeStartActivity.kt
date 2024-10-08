@@ -45,6 +45,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
         intent.getStringExtra(TEMPLATE_ID)
     }
 
+    // 是否是当前周期
+    private val isCurrentPeriod by lazy {
+        intent.getStringExtra(IS_CURRENT_PERIOD)
+    }
+
     private val adapter by lazy {
         ProModePeriodChooserAdapter(mutableListOf())
     }
@@ -95,7 +100,19 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                     val selectedBean = if (step == null) {
                         data.firstOrNull()?.apply { isSelect = true } // 默认选择第一个
                     } else {
-                        data.find { it.step == step }?.apply { isSelect = true } // 从外面跳转过来进行比对
+                        data.find { it.step == step }?.apply {
+                            isSelect = true
+                            binding.tvPeriod.text = stepShow
+                            binding.clPeriod.visibility = View.VISIBLE
+                            binding.tvTitle.visibility = View.GONE
+                            binding.vvVvvv.visibility = View.VISIBLE
+                            binding.recyclerView.isClickable = false
+                            binding.recyclerView.isFocusable = false
+                            // 是当前周期跳转过来修改的，那么就改为OK，改为时间就结束。
+                            if (isCurrentPeriod == "true") {
+                                binding.btnSuccess.text = "OK"
+                            }
+                        } // 从外面跳转过来进行比对
                     }
 
                     // 更新UI和适配器
@@ -123,24 +140,45 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    // 跳转到ProModeEnv设置界面
-                    startActivity(Intent(this@ProModeStartActivity, ProModeEnvActivity::class.java).apply {
-                        adapter.data.firstOrNull { it.isSelect }?.apply {
-                            putExtra(ProModeEnvActivity.STEP_NOW, stepShow)
-                            putExtra(ProModeEnvActivity.STEP, step)
-                            putExtra(ProModeEnvActivity.TEMPLATE_ID, templateId)
+                    if (!step.isNullOrEmpty()) {
+                        if (isCurrentPeriod == "true") {
+                            finish()
+                            return@success
+                        } else {
+                            // 周期选择界面跳转过来编辑周期时间以及任务的。
+                            // 跳转到ProModeEnv设置界面，并传递IS_CURRENT_PERIOD
+                            startProModeEnvActivity(addIsCurrentPeriod = true)
+                            return@success
                         }
-                    })
+                    }
+                    // 如果step为空或null，直接启动ProModeEnvActivity
+                    startProModeEnvActivity()
                 }
             })
         }
     }
 
+    private fun startProModeEnvActivity(addIsCurrentPeriod: Boolean = false) {
+        adapter.data.firstOrNull { it.isSelect }?.let { selectedItem ->
+            Intent(this@ProModeStartActivity, ProModeEnvActivity::class.java).apply {
+                putExtra(ProModeEnvActivity.STEP_NOW, selectedItem.stepShow)
+                putExtra(ProModeEnvActivity.STEP, selectedItem.step)
+                putExtra(ProModeEnvActivity.TEMPLATE_ID, templateId)
+                if (addIsCurrentPeriod) {
+                    putExtra(ProModeEnvActivity.IS_CURRENT_PERIOD, isCurrentPeriod)
+                }
+            }.also { intent ->
+                startActivity(intent)
+            }
+        }
+    }
+
+
     override fun initData() {
         // 请求获取周期列表接口
         mViewMode.getCycleList(PeriodListBody(templateId = templateId))
 
-        adapter.addChildClickViewIds(R.id.container)
+        (if (!isCurrentPeriod.isNullOrEmpty()) null else R.id.container)?.let { adapter.addChildClickViewIds(it) }
         adapter.setOnItemChildClickListener { adapter, view, position ->
             when (view.id) {
                 R.id.container -> {
@@ -231,5 +269,8 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
 
         // STEP
         const val STEP = "step"
+
+        // 是否是当前周期
+        const val IS_CURRENT_PERIOD = "is_current_period"
     }
 }

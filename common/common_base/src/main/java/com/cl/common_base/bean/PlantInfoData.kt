@@ -34,6 +34,8 @@ data class PlantInfoData(
     var list: MutableList<InfoList>? = null,
     var cupType: Int? = null, // 塑料杯、纸杯
     var plantName: String? = null,
+    var harvestTime: String? = null,
+    var templateId: String? = null,
     @SerializedName("timeRemaining")
     var germinationTime: String? = null, // 剩余发芽时间
 ) : BaseBean() {
@@ -54,6 +56,8 @@ data class PlantInfoData(
         var journeyStatus: Int? = null,
         var totalDay: Int? = null,
         var week: String? = null,
+        var step: String? = null,
+        var etaTime: String? = null,
         var unlockNow: Boolean? = null, // 是否解锁
     ) : com.joketng.timelinestepview.bean.BaseBean()
 }

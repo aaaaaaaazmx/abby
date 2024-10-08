@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:layout_marginBottom="13dp"
             android:textSize="13sp"
             android:textStyle="bold"
@@ -72,7 +72,7 @@
         <FrameLayout
             android:visibility="@{TextUtils.isEmpty(data.articleId) ? View.GONE: View.VISIBLE}"
             android:layout_marginEnd="50dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="5dp"
             app:layout_constraintBottom_toBottomOf="@+id/period_status"
             app:layout_constraintTop_toTopOf="@+id/period_status"
             app:layout_constraintStart_toEndOf="@+id/period_status"
@@ -141,6 +141,7 @@
 
 
         <TextView
+            android:visibility="@{data.isProMode ? View.GONE : View.VISIBLE}"
             android:textColor="@color/textRed"
             android:id="@+id/tv_healthStatuss"
             android:layout_marginEnd="16dp"
@@ -153,6 +154,33 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+
+        <TextView
+            android:visibility="@{data.isProMode ? View.VISIBLE : View.GONE}"
+            android:textStyle="bold"
+            app:layout_goneMarginStart="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="13dp"
+            app:layout_constraintTop_toBottomOf="@+id/period"
+            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/rc_running_info"
+            android:text='@{String.valueOf(data.runningInfo)}'
+            tools:text="running on Light [profile 1]."
+            android:textColor="@color/mainColor"
+            android:textSize="10sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:visibility="@{data.isProMode ? View.VISIBLE : View.GONE}"
+            android:id="@+id/iv_light_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="11dp"
+            android:background="@mipmap/home_chilun_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
