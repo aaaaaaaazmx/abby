@@ -14,12 +14,14 @@ data class CalendarData(
     var articleId: String? = null,
     var articleDetails: String? = null,
     var epochEndTime: String? = null,
+    var step: String? = null,
     var epochExplain: String? = null,
     var epochStartTime: String? = null,
     var plantId: String? = null,
     var taskList: MutableList<TaskList>? = null
 ) : BaseBean() {
     data class TaskList(
+        var deleted: Boolean? = null,
         var createTime: String? = null,
         var finishTime: String? = null,
         var isDeleted: String? = null,

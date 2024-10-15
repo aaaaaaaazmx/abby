@@ -310,19 +310,70 @@ class HomeEnvlrPop(
                             asCenterList(
                                 "", fanModelData?.map { it.fanModelShow }?.toTypedArray()
                             ) { position, text ->
+                                // 提取当前位置的fanModelData以提高可读性并避免多次安全调用
+                                val currentFanModel = fanModelData?.get(position) ?: return@asCenterList
 
-                                // 修改。
-                                adapter.data.indexOfFirst { data -> (data as? EnvironmentInfoData.Environment)?.itemType == EnvironmentInfoData.KEY_TYPE_FAN }.also {
-                                    if (it == -1) return@also
-                                    (adapter.data[it] as? EnvironmentInfoData.Environment)?.runningModelShow = text
-                                    (adapter.data[it] as? EnvironmentInfoData.Environment)?.automation = if (text.equalsIgnoreCase("Manual")) 1 else 0
-                                    adapter.notifyItemChanged(it)
+                                // 检查durationTime是否不为空
+                                if (!currentFanModel.durationTime.isNullOrEmpty()) {
+                                    xpopup(context) {
+                                        dismissOnTouchOutside(false)
+                                        isDestroyOnDismiss(false)
+                                        asCustom(
+                                            BaseCenterPop(
+                                                context = context,
+                                                content = "The ${currentFanModel.fanModelShow} will last for ${currentFanModel.durationTime} minutes for the best results then the fan will go back to Auto mode.",
+                                                isShowCancelButton = true,
+                                                onConfirmAction = {
+                                                    // 查找并更新适配器中的风扇项
+                                                    val fanIndex = adapter.data.indexOfFirst { data ->
+                                                        (data as? EnvironmentInfoData.Environment)?.itemType == EnvironmentInfoData.KEY_TYPE_FAN
+                                                    }
+                                                    if (fanIndex != -1) {
+                                                        val environment = adapter.data[fanIndex] as? EnvironmentInfoData.Environment
+                                                        environment?.runningModelShow = text
+                                                        environment?.automation = if (text.equals("Manual", ignoreCase = true)) 1 else 0
+                                                        adapter.notifyItemChanged(fanIndex)
+                                                    }
+
+                                                    // 异步更新风扇模型
+                                                    lifecycleScope.launch {
+                                                        updateFanModel(
+                                                            UpdateFanModelReq(
+                                                                fanModel = currentFanModel.fanModel,
+                                                                fanModelShow = currentFanModel.fanModelShow
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            )
+                                        ).show()
+                                    }
+                                    return@asCenterList
                                 }
 
-                                // 修改风扇
-                                lifecycleScope.launch {
-                                    updateFanModel(UpdateFanModelReq(fanModel = fanModelData?.get(position)?.fanModel, fanModelShow = fanModelData?.get(position)?.fanModelShow))
+                                // 如果durationTime为空，直接更新适配器和风扇模型
+                                val fanIndex = adapter.data.indexOfFirst { data ->
+                                    (data as? EnvironmentInfoData.Environment)?.itemType == EnvironmentInfoData.KEY_TYPE_FAN
                                 }
+                                if (fanIndex != -1) {
+                                    val environment = adapter.data[fanIndex] as? EnvironmentInfoData.Environment
+                                    environment?.runningModelShow = text
+                                    environment?.automation = if (text.equals("Manual", ignoreCase = true)) 1 else 0
+                                    adapter.notifyItemChanged(fanIndex)
+                                }
+
+                                // 异步更新风扇模型
+                                currentFanModel.let {
+                                    lifecycleScope.launch {
+                                        updateFanModel(
+                                            UpdateFanModelReq(
+                                                fanModel = it.fanModel,
+                                                fanModelShow = it.fanModelShow
+                                            )
+                                        )
+                                    }
+                                }
+
                             }.show()
                         }
                     }

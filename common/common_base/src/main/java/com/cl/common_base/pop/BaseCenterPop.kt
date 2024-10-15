@@ -76,7 +76,7 @@ class BaseCenterPop(
             // 是否显示和隐藏按钮
             ViewUtils.setVisible(isShowCancelButton, tvCancel, xpopupDivider2)
             // 隐藏中间内容
-            ViewUtils.setVisible(content?.isNotEmpty() == true, tvContent)
+            ViewUtils.setVisible(content?.isNotEmpty() == true || richText?.isNotEmpty() == true || spannedString?.isNotEmpty() == true, tvContent)
 
             tvCancel.setOnClickListener {
                 dismiss()

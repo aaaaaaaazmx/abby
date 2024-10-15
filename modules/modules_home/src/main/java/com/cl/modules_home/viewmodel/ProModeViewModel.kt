@@ -90,9 +90,9 @@ class ProModeViewModel @Inject constructor(private val repository: HomeRepositor
      */
     private val _startRunning = MutableLiveData<Resource<Boolean>>()
     val startRunning: LiveData<Resource<Boolean>> = _startRunning
-    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null) {
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null,) {
         viewModelScope.launch {
-            repository.startRunning(botanyId, goon, templateId).map {
+            repository.startRunning(botanyId, goon, templateId, step).map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(
                         it.code, it.msg

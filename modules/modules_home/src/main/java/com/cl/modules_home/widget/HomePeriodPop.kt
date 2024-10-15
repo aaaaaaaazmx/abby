@@ -140,7 +140,7 @@ class HomePeriodPop(
             date.time = time
             val dd = CalendarUtil.getFormat("dd").format(time)
             val yyyy = CalendarUtil.getFormat("yyyy").format(time)
-            return "$mm $dd ,$yyyy"
+            return "$mm $dd, $yyyy"
         }
         return ""
     }
@@ -184,7 +184,7 @@ class HomePeriodPop(
                         periodTime.visibility = if (data?.get(position)?.etaTime.safeToLong() != 0L) View.VISIBLE else View.GONE
                         svtProEdit.visibility = View.GONE
                         if (data?.isEmpty() == true) return
-                        ViewUtils.setInvisible(isLock, data?.get(position)?.unlockNow == false)
+                        ViewUtils.setInvisible(isLock, data?.get(position)?.unlockNow == false || data?.get(position)?.unlockNow == null)
 
                         // 更改当前周期时间 proMode下专属
                         svtProEdit.setSafeOnClickListener {
@@ -230,8 +230,8 @@ class HomePeriodPop(
                             data?.get(position)?.journeyName
                         // 未解锁时不显示周期
                         val journeyStatus =  "${data?.get(position)?.journeyStatus}"
-                        if (journeyStatus == KEY_ON_GOING || journeyStatus == KEY_LOCK_COMPLETED) {
-                            periodTime.text = "Week${data?.get(position)?.week} Day${data?.get(position)?.day}"
+                        periodTime.text = if (journeyStatus == KEY_ON_GOING || journeyStatus == KEY_LOCK_COMPLETED) {
+                            "Week${data?.get(position)?.week} Day${data?.get(position)?.day}"
                         } else {
                             "ETA ${getYmdForEn(time = data?.get(position)?.etaTime.safeToLong() * 1000L)}"
                         }

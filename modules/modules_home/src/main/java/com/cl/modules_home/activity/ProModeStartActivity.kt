@@ -3,9 +3,11 @@ package com.cl.modules_home.activity
 import android.content.Intent
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
@@ -29,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 // ProMode周期选择界面
+@Route(path = RouterPath.Home.PAGE_HOME_PRO_MODE_START)
 @AndroidEntryPoint
 class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
 
@@ -95,6 +98,9 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
 
                     // 检查数据是否为空
                     val data = data ?: return@success
+
+
+                    
 
                     // 判断是否是第一次进来
                     val selectedBean = if (step == null) {

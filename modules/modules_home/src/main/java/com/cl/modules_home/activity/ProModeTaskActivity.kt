@@ -76,19 +76,14 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
 
     @SuppressLint("SetTextI18n")
     override fun initView() {
-        binding.tvPeriod.text = "[${stepShow}]"
+        binding.tvPeriod.text = "$stepShow"
         binding.recyclerView.layoutManager = LinearLayoutManager(this@ProModeTaskActivity)
         binding.recyclerView.adapter = adapter
-
-        // 如果不为空，到这一步一定是为false
-        if (!isCurrentPeriod.isNullOrEmpty() && isCurrentPeriod == "false") {
-            binding.btnSuccess.text = "OK"
-        }
     }
 
     override fun observe() {
         viewModel.apply {
-            taskList.observe(this@ProModeTaskActivity, resourceObserver {
+            taskConfigurationList.observe(this@ProModeTaskActivity, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -96,7 +91,7 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    adapter.setList(data)
+                    adapter.setList(data?.list)
                 }
             })
 
@@ -119,21 +114,20 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    if (!isCurrentPeriod.isNullOrEmpty() && isCurrentPeriod == "false") {
-                        checkPlant()
-                        return@success
-                    }
                     // 根据状态跳转到哪个地方。
                     when (intentflag) {
                         0 -> {
                             // 跳转到日历界面
-                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).withString(Constants.Global.KEY_IS_TEMPLATE_ID, templateId).navigation(this@ProModeTaskActivity)
+                            ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
+                                .withString(Constants.Global.KEY_IS_TEMPLATE_ID, templateId)
+                                .withString(Constants.Global.KEY_STEP, step)
+                                .navigation(this@ProModeTaskActivity)
                         }
 
                         else -> {
                             // setUpdater\Use Official Calendar
                             // startRunning
-                            startRunning("", false, templateId)
+                            startRunning("", false, templateId, step)
                         }
                     }
 
@@ -248,6 +242,6 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
     override fun onResume() {
         super.onResume()
         // 接口请求
-        viewModel.getTaskList(EnvSaveReq(step = step, templateId = templateId))
+        viewModel.getTaskConfigurationList(EnvSaveReq(step = step, templateId = templateId))
     }
 }

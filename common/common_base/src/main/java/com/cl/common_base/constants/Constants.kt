@@ -40,7 +40,7 @@ object Constants {
         const val TEST_URL = "http://192.168.3.6:9997/"
 
         // 本地环境
-        const val BD_URL = "http://192.168.3.101:9330/"
+        const val BD_URL = "http://192.168.3.113:9330/"
 
         // 正式环境
 //        const val FORMAL_URL = "https://52.9.50.27:9330/"
@@ -345,6 +345,8 @@ object Constants {
 
         // 带模板参数到日历界面去 templateId
         const val KEY_IS_TEMPLATE_ID = "templateId"
+
+        const val KEY_STEP = " step"
 
     }
 

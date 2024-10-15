@@ -5,7 +5,9 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.TextView
 import androidx.databinding.BindingConversion
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToLong
@@ -31,7 +33,7 @@ import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 
-
+@Route(path = RouterPath.Home.PAGE_HOME_TASK_SET)
 @AndroidEntryPoint
 class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
 
@@ -64,6 +66,10 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
 
     private val taskData by lazy {
         intent.getSerializableExtra(ProModeEnvActivity.TASK_DATA) as? Task
+    }
+
+    private val isCalendarPage by lazy {
+        intent.getBooleanExtra("${ProModeEnvActivity.KEY_REQUEST_TASK_SET}", false)
     }
 
     private val daysList by lazy {
@@ -105,7 +111,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
     @SuppressLint("SetTextI18n")
     override fun observe() {
         viewModel.apply {
-            taskConfigurationList.observe(this@ProModeTaskSetActivity, resourceObserver {
+            taskList.observe(this@ProModeTaskSetActivity, resourceObserver {
                 loading { showProgressLoading() }
                 error { errorMsg, code ->
                     hideProgressLoading()
@@ -113,8 +119,8 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    if (data?.list.isNullOrEmpty()) return@success
-                    val task = data?.list?.get(0)
+                    if (data.isNullOrEmpty()) return@success
+                    val task = data?.get(0)
                     // 说明是空的，是新增的
                     if (copyTaskDataForUpload.taskName.isNullOrEmpty() && copyTaskDataForUpload.taskType.isNullOrEmpty() && copyTaskDataForUpload.taskId.isNullOrEmpty()) {
                         copyTaskDataForUpload.taskName = task?.taskName
@@ -139,6 +145,9 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    if (isCalendarPage) {
+                        setResult(RESULT_OK)
+                    }
                     finish()
                 }
             })
@@ -148,7 +157,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
     @SuppressLint("SetTextI18n")
     override fun initData() {
         // 请求周期任务列表
-        viewModel.getTaskConfigurationList(EnvSaveReq(step = step, templateId = templateId))
+        viewModel.getTaskList(EnvSaveReq(step = step, templateId = templateId))
 
         // 是否打开循环任务
         binding.recurringTaskSwitch.setSwitchClickListener {
@@ -186,7 +195,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         // 选择Task
         binding.etEmail.setSafeOnClickListener {
             runCatching {
-                val taskList = viewModel.taskConfigurationList.value?.data?.list?.map { it.taskName }
+                val taskList = viewModel.taskList.value?.data?.map { it.taskName }
                 xpopup(this@ProModeTaskSetActivity) {
                     isDestroyOnDismiss(false)
                     isDestroyOnDismiss(false)
@@ -200,7 +209,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                                 // 选择好之后，需要保存
                                 copyTaskDataForUpload.taskName = taskList?.get(it) ?: ""
 
-                                viewModel.taskConfigurationList.value?.data?.list?.firstOrNull { be -> be.taskName == taskList?.get(it) }?.let { data ->
+                                viewModel.taskList.value?.data?.firstOrNull { be -> be.taskName == taskList?.get(it) }?.let { data ->
                                     copyTaskDataForUpload.taskName = data.taskName
                                     copyTaskDataForUpload.taskType = data.taskType
                                     copyTaskDataForUpload.taskTime = data.taskTime
@@ -222,6 +231,8 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                 val (weeks, days) = calculateWeeksAndDaysIncludingStartDate(startTime, it / 1000L)
                 binding.etEmails.text = "$ymd (Week $weeks Day $days)"
                 copyTaskDataForUpload.taskTime = it / 1000L
+                copyTaskDataForUpload.week = weeks.toString()
+                copyTaskDataForUpload.day = days.toString()
             }
         }
 
@@ -296,15 +307,32 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
      * 包含当天。
      */
 
-    private fun calculateWeeksAndDaysIncludingStartDate(startTimestamp: Long, endTimestamp: Long): Pair<Long, Long> {
-        val zoneId = ZoneId.systemDefault()
+    /**
+     * 计算包含起始日期在内的周数和天数。
+     *
+     * @param startTimestamp 起始时间戳（秒）。
+     * @param endTimestamp 结束时间戳（秒）。
+     * @param zoneId 时间区域，默认使用系统默认时区。
+     * @return WeeksAndDays 表示周数和天数，天数范围为 1 到 7。
+     * @throws IllegalArgumentException 如果结束时间早于起始时间。
+     */
+    private fun calculateWeeksAndDaysIncludingStartDate(
+        startTimestamp: Long,
+        endTimestamp: Long,
+        zoneId: ZoneId = ZoneId.systemDefault()
+    ): Pair<Int, Int> {
+        // 输入验证
         val startDate = Instant.ofEpochSecond(startTimestamp).atZone(zoneId).toLocalDate()
         val endDate = Instant.ofEpochSecond(endTimestamp).atZone(zoneId).toLocalDate()
 
         // 计算总天数，包含起始日期
-        val totalDays = ChronoUnit.DAYS.between(startDate, endDate)
-        val weeks = totalDays / 7
-        val days = totalDays % 7
+        val totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1
+
+        // 计算完整的周数
+        val weeks = ((totalDays - 1) / 7).toInt()
+
+        // 计算剩余的天数，范围为 1 到 7
+        val days = ((totalDays - 1) % 7 + 1).toInt()
 
         return Pair(weeks + 1, days)
     }

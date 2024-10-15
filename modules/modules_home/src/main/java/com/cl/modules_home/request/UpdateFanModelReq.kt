@@ -4,5 +4,6 @@ import com.cl.common_base.BaseBean
 
 data class UpdateFanModelReq(
     val fanModel: String? = null,
+    val durationTime: String? = null,
     val fanModelShow: String? = null,
 ): BaseBean()

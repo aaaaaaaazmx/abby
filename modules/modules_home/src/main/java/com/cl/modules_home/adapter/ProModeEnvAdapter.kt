@@ -45,11 +45,7 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
                 item.sday = 1
             } else {
                 // 开始时间是上一个的结束时间
-                val beforeWeek = if (this@ProModeEnvAdapter.data[holder.layoutPosition - 1].day == 6) this@ProModeEnvAdapter.data[holder.layoutPosition - 1].week + 1 else this@ProModeEnvAdapter.data[holder.layoutPosition - 1].day
-                val beforeDay = if (this@ProModeEnvAdapter.data[holder.layoutPosition - 1].day == 6) 0 else this@ProModeEnvAdapter.data[holder.layoutPosition - 1].day
-                tvDateRang.text = "week${beforeWeek} day${beforeDay}-week${item.week} day${item.day}"
-                item.sweek = beforeWeek
-                item.sday = beforeDay
+                tvDateRang.text = "week${item.sweek} day${item.sday}-week${item.week} day${item.day}"
             }
 
             ivGth.setSafeOnClickListener {
@@ -72,7 +68,7 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
             }
 
             // 只有最后一个和只有第0个时候才能显示删除按钮
-            ivClose.visibility = if (this@ProModeEnvAdapter.data.size == 1 || holder.layoutPosition == this@ProModeEnvAdapter.data.size - 1) {
+            ivClose.visibility = if (holder.layoutPosition == this@ProModeEnvAdapter.data.size - 1 && holder.layoutPosition != 0) {
                 View.VISIBLE
             } else {
                 View.INVISIBLE

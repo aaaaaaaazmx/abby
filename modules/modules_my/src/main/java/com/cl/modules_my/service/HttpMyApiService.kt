@@ -167,6 +167,16 @@ interface HttpMyApiService {
     ): Flow<HttpResult<MutableList<CalendarData>>>
 
 
+    @FormUrlEncoded
+    @POST("abby/calendar/getCalendarTemplate")
+    fun getCalendarTemplate(
+        @Field("startDate") startDate: String, @Field("endDate") endDate: String, @Field("step") step: String? = null,
+    ): Flow<HttpResult<CalendarNewData>>
+
+    @FormUrlEncoded
+    @POST("abby/calendar/deleteTask")
+    fun deleteTask(@Field("taskId")taskId: String): Flow<HttpResult<BaseBean>>
+
     /**
      * 开始种植
      */
@@ -175,7 +185,8 @@ interface HttpMyApiService {
     fun startRunning(
         @Field("botanyId") botanyId: String?,
         @Field("goon") goon: Boolean,
-        @Field("templateId") templateId: String? = null
+        @Field("templateId") templateId: String? = null,
+        @Field("step") step: String? = null
     ): Flow<HttpResult<Boolean>>
 
     /**

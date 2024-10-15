@@ -51,8 +51,8 @@ class HomeRemoteRepository @Inject constructor() {
         return service.saveOrUpdate(body)
     }
 
-    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null): Flow<HttpResult<Boolean>> {
-        return service.startRunning(botanyId, goon, templateId)
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null,): Flow<HttpResult<Boolean>> {
+        return service.startRunning(botanyId, goon, templateId, step)
     }
 
     fun plantInfo(): Flow<HttpResult<PlantInfoData>> {

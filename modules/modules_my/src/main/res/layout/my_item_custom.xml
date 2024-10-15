@@ -72,6 +72,18 @@
             <!--            app:layout_constraintStart_toStartOf="parent"-->
             <!--            tools:text="Week5 Day5" />-->
 
+            <ImageView
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="20dp"
+                app:layout_constraintBottom_toBottomOf="@+id/rl_btn"
+                app:layout_constraintEnd_toStartOf="@+id/rl_btn"
+                app:layout_constraintTop_toTopOf="@+id/rl_btn"
+                android:visibility="gone"
+                android:id="@+id/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/iv_close"
+                />
 
             <RelativeLayout
                 android:id="@+id/rl_btn"

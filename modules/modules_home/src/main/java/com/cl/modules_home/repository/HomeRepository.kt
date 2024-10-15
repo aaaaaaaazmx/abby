@@ -60,8 +60,8 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
     /**
      * 开始种植植物
      */
-    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null): Flow<HttpResult<Boolean>> {
-        return remoteRepository.startRunning(botanyId, goon, templateId)
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null,): Flow<HttpResult<Boolean>> {
+        return remoteRepository.startRunning(botanyId, goon, templateId, step)
     }
 
     /**

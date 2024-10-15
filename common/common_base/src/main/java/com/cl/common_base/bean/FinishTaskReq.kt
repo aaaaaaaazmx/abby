@@ -8,6 +8,7 @@ data class FinishTaskReq(
     val taskId: String? = null,
     val weight: String? = null,
     val packetNo: String? = null,
+    val templateId: String? = null,
     val viewDatas: MutableList<ViewData>? = null
 ) : com.cl.common_base.BaseBean() {
     /**

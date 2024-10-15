@@ -1,6 +1,8 @@
 package com.cl.common_base.video;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -31,6 +33,7 @@ import com.shuyu.gsyvideoplayer.GSYVideoManager;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
 import com.shuyu.gsyvideoplayer.utils.Debuger;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
+import com.shuyu.gsyvideoplayer.utils.NetworkUtils;
 import com.shuyu.gsyvideoplayer.utils.OrientationUtils;
 import com.shuyu.gsyvideoplayer.video.NormalGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
@@ -609,5 +612,22 @@ public class SampleCoverVideo extends NormalGSYVideoPlayer {
     @Override
     public boolean isNeedShowWifiTip() {
         return false;
+    }
+
+    @Override
+    protected void showWifiDialog() {
+        if (!NetworkUtils.isAvailable(mContext)) {
+            //Toast.makeText(mContext, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+            startPlayLogic();
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setMessage(R.string.base_tips_not_wifi);
+        builder.setPositiveButton(R.string.base_keep_playing, (dialog, which) -> {
+            dialog.dismiss();
+            startPlayLogic();
+        });
+        builder.setNegativeButton(R.string.base_stop_playing, (dialog, which) -> dialog.dismiss());
+        builder.create().show();
     }
 }

@@ -69,13 +69,13 @@ class SelectPeriodTimePop(context: Context, private val timeString: String, priv
             tvConfirm.setSafeOnClickListener {
                 if (!datePickerLayoutDate.dataList.isNullOrEmpty()) {
                     if (selectWeekString.isEmpty()) {
-                        selectWeekString = datePickerLayoutDate.dataList[0]
+                        selectWeekString = datePickerLayoutDate.dataList[datePickerLayoutDate.currentPosition]
                     }
                 }
 
                 if (!hourPickerLayoutTime.dataList.isNullOrEmpty()) {
                     if (selectDayString.isEmpty()) {
-                        selectDayString = hourPickerLayoutTime.dataList[0]
+                        selectDayString = hourPickerLayoutTime.dataList[hourPickerLayoutTime.currentPosition]
                     }
                 }
 

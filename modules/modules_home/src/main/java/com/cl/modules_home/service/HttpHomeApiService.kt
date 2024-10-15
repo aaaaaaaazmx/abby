@@ -75,7 +75,8 @@ interface HttpHomeApiService {
     fun startRunning(
         @Field("botanyId") botanyId: String?,
         @Field("goon") goon: Boolean,
-        @Field("templateId") templateId: String? = null
+        @Field("templateId") templateId: String? = null,
+        @Field("step") step: String? = null
     ): Flow<HttpResult<Boolean>>
 
     /**

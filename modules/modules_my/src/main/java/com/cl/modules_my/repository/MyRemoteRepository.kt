@@ -104,8 +104,21 @@ class MyRemoteRepository @Inject constructor() {
         return service.getCalendar(startDate, endDate)
     }
 
-    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null): Flow<HttpResult<Boolean>> {
-        return service.startRunning(botanyId, goon, templateId)
+
+    fun getCalendarTemplate(
+        startDate: String,
+        endDate: String,
+        step: String? = null
+    ): Flow<HttpResult<CalendarNewData>> {
+        return service.getCalendarTemplate(startDate, endDate, step)
+    }
+
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null): Flow<HttpResult<Boolean>> {
+        return service.startRunning(botanyId, goon, templateId, step)
+    }
+
+    fun deleteTask(taskId: String): Flow<HttpResult<BaseBean>> {
+        return service.deleteTask(taskId)
     }
 
     fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {

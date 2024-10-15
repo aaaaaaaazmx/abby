@@ -50,7 +50,6 @@
             app:svSolidType="solid" />
 
         <com.cl.common_base.widget.SvTextView
-            android:visibility="gone"
             android:id="@+id/tv_bd"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -58,7 +57,7 @@
             android:layout_margin="10dp"
             android:background="@color/lineBg"
             android:gravity="center"
-            android:text="本地环境-http://192.168.3.101:9330/"
+            android:text="本地环境-https://192.168.3.113:9330/"
             app:svRadius="16dp"
             app:svSolidType="solid" />
 

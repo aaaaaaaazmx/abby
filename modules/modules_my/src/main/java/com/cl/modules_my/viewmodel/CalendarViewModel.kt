@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
@@ -17,6 +18,7 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.bean.ConversationsBean
+import com.cl.common_base.constants.RouterPath
 import com.thingclips.smart.android.user.bean.User
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
@@ -111,9 +113,9 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
      */
     private val _startRunning = MutableLiveData<Resource<Boolean>>()
     val startRunning: LiveData<Resource<Boolean>> = _startRunning
-    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null) {
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null,) {
         viewModelScope.launch {
-            repository.startRunning(botanyId, goon, templateId).map {
+            repository.startRunning(botanyId, goon, templateId, step).map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(
                         it.code, it.msg
@@ -132,6 +134,37 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                 )
             }.collectLatest {
                 _startRunning.value = it
+            }
+        }
+    }
+
+
+    /**
+     * 开始种植
+     */
+    private val _deleteTask = MutableLiveData<Resource<BaseBean>>()
+    val deleteTask: LiveData<Resource<BaseBean>> = _deleteTask
+    fun deleteTask(taskId: String) {
+        viewModelScope.launch {
+            repository.deleteTask(taskId).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _deleteTask.value = it
             }
         }
     }
@@ -211,10 +244,13 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     /**
      * 获取日历任务
      */
-    private val _getCalendar = MutableLiveData<Resource<MutableList<CalendarData>>>()
-    val getCalendar: LiveData<Resource<MutableList<CalendarData>>> = _getCalendar
-    fun getCalendar(startDate: String, endDate: String) = viewModelScope.launch {
-        repository.getCalendar(startDate, endDate)
+    private val _getCalendar = MutableLiveData<Resource<CalendarNewData>>()
+    val getCalendar: LiveData<Resource<CalendarNewData>> = _getCalendar
+    /**
+     * 获取日历任务模版
+     */
+     fun getCalendarTemplate(startDate: String, endDate: String, step: String? = null,) = viewModelScope.launch {
+        repository.getCalendarTemplate(startDate, endDate, step)
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(
@@ -238,7 +274,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     )
                 )
             }.collectLatest {
-                if (it.data.isNullOrEmpty()) return@collectLatest
+                if (it.data?.list.isNullOrEmpty()) return@collectLatest
                 _getCalendar.value = it
             }
     }
@@ -279,14 +315,23 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             }
     }
 
+    private val _step = MutableLiveData<String>()
+    val step: LiveData<String> = _step
+    fun setSteps(step: String? = null) {
+        step?.let {
+            _step.value = it
+        }
+    }
+
     fun refreshTask() {
         _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
             _localCalendar.value?.let { list ->
                 setOnlyRefreshLoad(true)
                 letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
-                    getCalendar(
+                    getCalendarTemplate(
                         first,
-                        last
+                        last,
+                        step.value
                     )
                 }
             }
@@ -379,10 +424,20 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             repository.finishTask(body)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
+                        if (it.code == 1065) {
+                            ARouter.getInstance().build(RouterPath.Home.PAGE_HOME_PRO_MODE_START)
+                                .withString("templateId", body.templateId)
+                                .withString("step", it.data)
+                                .withBoolean("is_current_period", false)
+                                .navigation()
+                            // 直接跳转到
+                            Resource.Success(it.data)
+                        } else {
+                            Resource.DataError(
+                                it.code,
+                                it.msg
+                            )
+                        }
                     } else {
                         // 刷新任务
                         refreshTask()

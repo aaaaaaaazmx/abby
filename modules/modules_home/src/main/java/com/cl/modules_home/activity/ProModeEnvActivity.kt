@@ -61,6 +61,8 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
         // 是否是修改灯光
         const val IS_UPDATE_LIGHT = "is_update_light"
+
+        const val KEY_REQUEST_TASK_SET = 101
     }
 
     // 是否是当前周期,如果不为空，那么就是从首页的周期界面跳转过来的
@@ -70,7 +72,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
     }
 
     private val daysList by lazy {
-        mutableListOf("0 Day", "1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day")
+        mutableListOf("1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day", "7 Day")
     }
 
     private val step by lazy {
@@ -97,7 +99,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
     @SuppressLint("SetTextI18n")
     override fun initView() {
-        binding.tvPeriod.text = "[${stepShow}]"
+        binding.tvPeriod.text = "$stepShow"
         if (isUpdateLight) {
             binding.btnSuccess.text = "OK"
         }
@@ -128,7 +130,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                                         cancelText = "Back to Editing",
                                         confirmText = "Proceed",
                                         onConfirmAction = {
-                                            saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = true))
+                                            saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
                                         })
                                 ).show()
                             }
@@ -143,7 +145,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                             // 存在时间上的冲突
                             ToastUtil.shortShow(data?.checkMeg)
                             if (data?.errorEnvId.isNullOrEmpty()) return@success
-                            binding.recyclerView.smoothScrollToPosition(data?.errorEnvId?.get(0).safeToInt() - 1)
+                            binding.recyclerView.smoothScrollToPosition(data?.errorEnvId?.get(0).safeToInt())
                         }
                     }
                 }
@@ -197,6 +199,9 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                     hideProgressLoading()
                     // 只有最后一个可以删除
                     adapter.removeAt(adapter.data.size - 1)
+                    val size = adapter.data.size
+                    if (size == 0) return@success
+                    adapter.notifyItemChanged(adapter.data.size - 1)
                 }
             })
         }
@@ -205,17 +210,25 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
     /**
      * 计算出多少开始和结束时距离多少个星期
      */
-    private fun calculateWeeksAndDaysIncludingStartDate(startTimestamp: Long, endTimestamp: Long): Pair<Long, Long> {
-        val zoneId = ZoneId.systemDefault()
+    private fun calculateWeeksAndDaysIncludingStartDate(
+        startTimestamp: Long,
+        endTimestamp: Long,
+        zoneId: ZoneId = ZoneId.systemDefault()
+    ): Pair<Int, Int> {
+        // 输入验证
         val startDate = Instant.ofEpochSecond(startTimestamp).atZone(zoneId).toLocalDate()
         val endDate = Instant.ofEpochSecond(endTimestamp).atZone(zoneId).toLocalDate()
 
         // 计算总天数，包含起始日期
-        val totalDays = ChronoUnit.DAYS.between(startDate, endDate)
-        val weeks = totalDays / 7
-        val days = totalDays % 7
+        val totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1
 
-        return Pair(weeks, days)
+        // 计算完整的周数
+        val weeks = ((totalDays - 1) / 7).toInt()
+
+        // 计算剩余的天数，范围为 1 到 7
+        val days = ((totalDays - 1) % 7 + 1).toInt()
+
+        return Pair(weeks + 1, days)
     }
 
     private fun extractNumbers(input: String): Pair<Int, Int> {
@@ -284,12 +297,17 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 return@setSafeOnClickListener
             }
 
+            val beforeWeek = if (lastData.day == 7) lastData.week + 1 else lastData.week
+            val beforeDay = if (lastData.day == 7) 1 else lastData.day
+
             val newData = lastData.copy(
                 runningOn = false,
                 envId = null,
                 envName = "Profile ${adapter.data.size + 1}",
                 week = weeks.safeToInt(),
-                day = days.safeToInt()
+                day = days.safeToInt(),
+                sweek = beforeWeek,
+                sday =  beforeDay
             )
 
             // Add the new data to the adapter
@@ -312,6 +330,9 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 R.id.iv_close -> {
                     if (data?.envId.isNullOrEmpty()) {
                         adapter.removeAt(position)
+                        val size = adapter.data.size
+                        if (size == 0) return@setOnItemChildClickListener
+                        adapter.notifyItemChanged(adapter.data.size - 1)
                     } else {
                         // 调用删除接口。
                         viewModel.deleteEnvParam(EnvDeleteReq(envId = data?.envId.safeToInt(), templateId.toString()))
@@ -397,7 +418,10 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 }
             }
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         // 获取环境列表
         viewModel.getCycleEnvList(EnvParamListReq(step = step.toString(), templateId = templateId.toString()))
     }
