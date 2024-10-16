@@ -4,16 +4,19 @@
     package="com.cl.abby">
 
     <!--无障碍-->
-    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
+    <uses-permission
+        android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <!--必选权限，解决安全风险漏洞，发送和注册广播事件需要调用带有传递权限的接口-->
-    <permission android:name="${applicationId}.permission.JPUSH_MESSAGE" android:protectionLevel="signature" />
+    <permission
+        android:name="${applicationId}.permission.JPUSH_MESSAGE"
+        android:protectionLevel="signature" />
     <uses-permission android:name="${applicationId}.permission.JPUSH_MESSAGE" />
-    <permission android:name="${applicationId}.permission.JOPERATE_MESSAGE"/>
+    <permission android:name="${applicationId}.permission.JOPERATE_MESSAGE" />
 
     <!-- 必选权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -29,20 +32,18 @@
     <uses-permission
         android:name="android.permission.REQUEST_INSTALL_PACKAGES"
         tools:node="remove" />
-<!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
+    <!--    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />-->
 
     <!--可选，只有当应用添加位置权限并且在用户权限地理位置权限情况下，SDK才可能会去获取地理位置信息，SDK不强制获取地理位置信息-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
+    <!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
 
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:requestLegacyExternalStorage="true"
-        android:usesCleartextTraffic="true"
         android:name="com.cl.abby.EntranceApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -50,15 +51,17 @@
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.Abby"
+        android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup,android:supportsRtl"
         tools:targetApi="31">
         <activity
-            android:screenOrientation="portrait"
-            android:theme="@style/StartAppTheme"
             android:name="com.cl.abby.ui.SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/StartAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,10 +70,10 @@
         </activity>
 
         <activity
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:screenOrientation="portrait"
             android:name="com.cl.abby.MainActivity"
-            android:launchMode="singleTask" />
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
 
         <activity android:name=".ui.CustomSplashActivity" />
 
@@ -96,7 +99,7 @@
             <meta-data
                 android:name="com.cl.common_base.init.PolicyInitializer"
                 android:value="androidx.startup"
-                tools:node="remove"/>
+                tools:node="remove" />
         </provider>
 
 
@@ -108,7 +111,8 @@
         <!-- Since JCore2.0.0 Required SDK核心功能-->
         <!-- 可配置android:process参数将Service放在其他进程中；android:enabled属性不能是false -->
         <!-- 这个是自定义Service，要继承极光JCommonService，可以在更多手机平台上使得推送通道保持的更稳定 -->
-        <service android:name="com.cl.abby.JpushService"
+        <service
+            android:name="com.cl.abby.JpushService"
             android:enabled="true"
             android:exported="false"
             android:process=":pushcore">
@@ -118,13 +122,13 @@
         </service>
 
         <!--环信声网服务-->
-       <!-- <activity android:name="io.agora.rtc.ss.impl.ScreenSharing$LocalScreenCaptureAssistantActivity"
-            android:exported="false"
-            tools:node="merge" />
-        <service
-            android:name="io.agora.rtc.ss.impl.LocalScreenSharingService"
-            android:exported="false"
-            android:foregroundServiceType="mediaProjection" tools:node="merge" />-->
+        <!-- <activity android:name="io.agora.rtc.ss.impl.ScreenSharing$LocalScreenCaptureAssistantActivity"
+             android:exported="false"
+             tools:node="merge" />
+         <service
+             android:name="io.agora.rtc.ss.impl.LocalScreenSharingService"
+             android:exported="false"
+             android:foregroundServiceType="mediaProjection" tools:node="merge" />-->
 
         <!-- Required since 3.0.7 -->
         <!-- 新的 tag/alias 接口结果返回需要开发者配置一个自定的广播 -->
@@ -133,7 +137,7 @@
         <receiver
             android:name="com.cl.abby.JpushReceiver"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="cn.jpush.android.intent.RECEIVE_MESSAGE" />
                 <category android:name="${applicationId}" />
@@ -143,19 +147,48 @@
 
         <service
             android:name="com.cl.common_base.multidatasetservice.MyAutofillService"
+            android:exported="true"
             android:label="hey Abby"
-            android:permission="android.permission.BIND_AUTOFILL_SERVICE"
-            android:exported="true">
+            android:permission="android.permission.BIND_AUTOFILL_SERVICE">
             <!--安装时佩带的页面-->
-           <!-- <meta-data
-                android:name="android.autofill"
-                android:resource="@xml/multidataset_service" />-->
+            <!-- <meta-data
+                 android:name="android.autofill"
+                 android:resource="@xml/multidataset_service" />-->
 
             <intent-filter>
                 <action android:name="android.service.autofill.AutofillService" />
             </intent-filter>
         </service>
 
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://13b69bfd38f36a426e06f22889c727f5@o4508125722247168.ingest.us.sentry.io/4508131067363328" />
+
+        <!-- enable automatic breadcrumbs for user interactions (clicks, swipes, scrolls) -->
+        <meta-data
+            android:name="io.sentry.traces.user-interaction.enable"
+            android:value="true" />
+        <!-- enable screenshot for crashes (could contain sensitive/PII data) -->
+        <meta-data
+            android:name="io.sentry.attach-screenshot"
+            android:value="true" />
+        <!-- enable view hierarchy for crashes -->
+        <meta-data
+            android:name="io.sentry.attach-view-hierarchy"
+            android:value="true" />
+
+        <!-- enable the performance API by setting a sample-rate, adjust in production env -->
+        <meta-data
+            android:name="io.sentry.traces.sample-rate"
+            android:value="0.2" />
+        <!-- enable profiling when starting transactions, adjust in production env -->
+        <meta-data
+            android:name="io.sentry.traces.profiling.sample-rate"
+            android:value="0.2" />
+
+        <meta-data
+            android:name="io.sentry.additional-context"
+            android:value="false" />
     </application>
 
 </manifest>

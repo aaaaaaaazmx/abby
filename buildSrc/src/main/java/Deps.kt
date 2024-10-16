@@ -106,6 +106,8 @@ object Version {
     const val multiDex = "2.0.1"
 
     const val bugly = "4.1.9.3"
+
+    const val sentry = "7.15.0"
 }
 
 object Deps {
@@ -268,4 +270,7 @@ object Deps {
 
     // bugly
     const val bugly = "com.tencent.bugly:crashreport:${Version.bugly}"
+
+    // sentry
+    const val sentry = "io.sentry:sentry-android:${Version.sentry}"
 }

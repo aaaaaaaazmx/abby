@@ -177,4 +177,5 @@ dependencies {
     api(Deps.workManager)
     // multidex 需要适配bugly
     // api(Deps.multidex)
+    api(Deps.sentry)
 }

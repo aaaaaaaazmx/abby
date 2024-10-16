@@ -387,4 +387,11 @@
 -keep class androidx.lifecycle.** { *; }
 -keep class androidx.lifecycle.lifecycle-livedata-core.** { *; }
 -keep interface androidx.lifecycle.** { *; }
+
+#sentry
+-keepattributes LineNumberTable,SourceFile
+-keep class io.sentry.** { *; }
+-keep class org.jetbrains.annotations.** { *; }
+-dontwarn org.slf4j.**
+
 ###########################第三方库end#########################################
