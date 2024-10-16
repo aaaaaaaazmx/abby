@@ -130,7 +130,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         mViewMode.setSteps(step)
         binding.btnSuccess.setVisible(null != isTemplateId)
         // 设置标题颜色以及标题文案
-        binding.title.setTitle(getString(com.cl.common_base.R.string.my_calendar)).setTitleColor(com.cl.common_base.R.color.mainColor).setQuickClickListener {
+        binding.title.setTitle(if (null == isTemplateId) getString(com.cl.common_base.R.string.my_calendar) else "Calendar Preview").setTitleColor(com.cl.common_base.R.color.mainColor).setQuickClickListener {
             // 会滚到当前日期
             val data = adapter.data
             if (data.isEmpty()) return@setQuickClickListener
@@ -612,6 +612,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     getCalendarDate?.firstOrNull { it.taskList?.isNotEmpty() == true }?.let { data ->
                                         adapter.data.indexOfFirst { it.ymd == data.date }.let { index ->
                                             if (index != -1) {
+                                                // 滚动到当前有任务的一天。
+                                                binding.rvList.scrollToPosition(index - 7)
                                                 showTaskList(adapter.data[index])
                                             }
                                         }
@@ -1176,7 +1178,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 // 按钮 右边布局
                 val ivClose = holder.rightLayout.findViewById<ImageView>(R.id.iv_close)
                 // 显示和隐藏。
-                ViewUtils.setVisible(mViewMode.getCalendar.value?.data?.proMode == true && listContent[position].deleted == true, ivClose)
+                ViewUtils.setVisible(null == isTemplateId && (mViewMode.getCalendar.value?.data?.proMode == true && listContent[position].deleted == true), ivClose)
                 ivClose.setSafeOnClickListener {
                     xpopup(this@CalendarActivity) {
                         isDestroyOnDismiss(false)

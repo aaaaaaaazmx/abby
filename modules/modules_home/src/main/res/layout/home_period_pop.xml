@@ -89,6 +89,8 @@
 
 
             <LinearLayout
+                android:paddingStart="34dp"
+                android:paddingEnd="34dp"
                 android:id="@+id/ll_harvest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

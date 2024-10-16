@@ -230,7 +230,7 @@ class HomePeriodPop(
                             data?.get(position)?.journeyName
                         // 未解锁时不显示周期
                         val journeyStatus =  "${data?.get(position)?.journeyStatus}"
-                        periodTime.text = if (journeyStatus == KEY_ON_GOING || journeyStatus == KEY_LOCK_COMPLETED) {
+                        periodTime.text = if (journeyStatus == KEY_ON_GOING || journeyStatus == KEY_LOCK_COMPLETED || journeyStatus == KEY_UNLOCKING_COMPLETED) {
                             "Week${data?.get(position)?.week} Day${data?.get(position)?.day}"
                         } else {
                             "ETA ${getYmdForEn(time = data?.get(position)?.etaTime.safeToLong() * 1000L)}"
@@ -279,12 +279,7 @@ class HomePeriodPop(
                                 }
 
                                 KEY_ON_GOING -> {
-                                    if (isManual == true) {
-                                        svtProEdit.visibility = View.VISIBLE
-                                    } else {
-                                        tvGoing.visibility = View.VISIBLE
-                                    }
-
+                                    tvGoing.visibility = View.VISIBLE
                                     periodTime.visibility = View.VISIBLE
                                     // 进行中
                                     clRoot.background = ContextCompat.getDrawable(

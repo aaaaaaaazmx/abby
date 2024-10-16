@@ -298,7 +298,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             }
 
             val beforeWeek = if (lastData.day == 7) lastData.week + 1 else lastData.week
-            val beforeDay = if (lastData.day == 7) 1 else lastData.day
+            val beforeDay = if (lastData.day == 7) 1 else lastData.day + 1
 
             val newData = lastData.copy(
                 runningOn = false,
