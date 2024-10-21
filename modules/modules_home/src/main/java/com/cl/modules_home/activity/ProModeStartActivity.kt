@@ -260,6 +260,7 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
             // 保存和修改周期
             mViewMode.updateCycle(PeriodListSaveReq(templateId = templateId.toString(), list = adapter.data.map {
                 com.cl.modules_home.request.Req(
+                    currentStep = step == it.step,
                     periodId = it.periodId,
                     step = it.step,
                     stepDay = it.stepDay,

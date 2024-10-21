@@ -3,6 +3,7 @@ package com.cl.modules_home.activity
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
+import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingConversion
 import com.alibaba.android.arouter.facade.annotation.Route
@@ -15,6 +16,7 @@ import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.setVisible
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseStringPickPop
+import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP
@@ -68,6 +70,12 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         intent.getSerializableExtra(ProModeEnvActivity.TASK_DATA) as? Task
     }
 
+    // 添加任务，从日历界面带过的当前时间
+    private val addCurrentTime by lazy {
+        intent.getLongExtra(ProModeEnvActivity.CURRENT_TIME, 0L)
+    }
+
+    // 添加任务 从日历界面带过来的。
     private val isCalendarPage by lazy {
         intent.getBooleanExtra("${ProModeEnvActivity.KEY_REQUEST_TASK_SET}", false)
     }
@@ -76,32 +84,41 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         mutableListOf("1", "2", "3", "4", "5", "6", "7")
     }
 
-    private val copyTaskDataForUpload by lazy {
-        taskData ?: Task(
-            recurringTask = false,
-            recurringDay = "1",
-            endTime = endTime,
-            taskTime = startTime,
-        )
-    }
+    // 延迟初始化 copyTaskDataForUpload，在需要时才进行赋值
+    private lateinit var copyTaskDataForUpload: Task
 
 
     @SuppressLint("SetTextI18n")
     override fun initView() {
+        // 初始化 copyTaskDataForUpload，根据 taskData 是否为空提供合理的默认值
+        copyTaskDataForUpload = taskData ?: Task(
+            recurringTask = false,
+            recurringDay = "1",
+            endTime = endTime,
+            taskTime = if (addCurrentTime != 0L) addCurrentTime else startTime
+        )
+
         // 是否循环任务
         binding.recurringTaskSwitch.isItemChecked = copyTaskDataForUpload.recurringTask
         binding.clRoot.setVisible(copyTaskDataForUpload.recurringTask)
+        // 顺序不能乱
+        ViewUtils.setVisible(!isCalendarPage, binding.recurringTaskTextView, binding.recurringTaskSwitch, binding.clRoot)
+
         // 循环天数
         if (copyTaskDataForUpload.recurringDay.isNullOrBlank()) {
-            binding.tvDay.text = "[1]"
+            binding.tvDay.text = "1"
             copyTaskDataForUpload.recurringDay = "1"
         } else {
-            binding.tvDay.text = "[${copyTaskDataForUpload.recurringDay}]"
+            binding.tvDay.text = "${copyTaskDataForUpload.recurringDay}"
         }
         // 循环结束时间
-        binding.tvDate.text = getYmdForEn(time = endTime * 1000L)
+        binding.tvDate.text = getYmdForEn(time = copyTaskDataForUpload.endTime * 1000L)
         // 周期任务
         binding.etEmail.text = copyTaskDataForUpload.taskName
+        // 周期任务描述
+        binding.taskTextViews.text = copyTaskDataForUpload.taskdescription
+        ViewUtils.setVisible(!copyTaskDataForUpload.taskdescription.isNullOrEmpty(), binding.taskTextViews)
+
         // 任务时间
         if (!copyTaskDataForUpload.week.isNullOrEmpty() && !copyTaskDataForUpload.day.isNullOrEmpty()) {
             binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${copyTaskDataForUpload.week} Day ${copyTaskDataForUpload.day})"
@@ -120,19 +137,25 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                 success {
                     hideProgressLoading()
                     if (data.isNullOrEmpty()) return@success
-                    val task = data?.get(0)
+                    val task = data?.get(0) ?: return@success
                     // 说明是空的，是新增的
                     if (copyTaskDataForUpload.taskName.isNullOrEmpty() && copyTaskDataForUpload.taskType.isNullOrEmpty() && copyTaskDataForUpload.taskId.isNullOrEmpty()) {
-                        copyTaskDataForUpload.taskName = task?.taskName
-                        copyTaskDataForUpload.taskType = task?.taskType
-                        copyTaskDataForUpload.taskTime = task?.taskTime ?: 0
-                        copyTaskDataForUpload.week = task?.week
-                        copyTaskDataForUpload.day = task?.day
+                        copyTaskDataForUpload = task.copy(
+                            endTime = copyTaskDataForUpload.endTime,
+                            recurringTask = copyTaskDataForUpload.recurringTask,
+                            recurringDay = copyTaskDataForUpload.recurringDay,
+                            taskTime = if (addCurrentTime != 0L) addCurrentTime else task.taskTime,
+                            week = calculateWeeksAndDaysIncludingStartDate(startTime, if (addCurrentTime != 0L) addCurrentTime else task.taskTime).first.toString(),
+                            day = calculateWeeksAndDaysIncludingStartDate(startTime, if (addCurrentTime != 0L) addCurrentTime else task.taskTime).second.toString()
+                        )
 
+                        // 周期任务描述
+                        binding.taskTextViews.text = copyTaskDataForUpload.taskdescription
+                        ViewUtils.setVisible(!copyTaskDataForUpload.taskdescription.isNullOrEmpty(), binding.taskTextViews)
                         // 周期任务
-                        binding.etEmail.text = task?.taskName
+                        binding.etEmail.text = copyTaskDataForUpload.taskName
                         // task时间
-                        binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${task?.week} Day ${task?.day})"
+                        binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${copyTaskDataForUpload.week} Day ${copyTaskDataForUpload.day})"
                     }
                 }
             })
@@ -176,7 +199,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                             selectIndex = daysList.indexOf(copyTaskDataForUpload.recurringDay?.ifEmpty { "1" }),
                             listString = daysList.toMutableList(),
                             confirmAction = {
-                                binding.tvDay.text = "[${it + 1}]"
+                                binding.tvDay.text = "${it + 1}"
                                 copyTaskDataForUpload.recurringDay = "${it + 1}"
                             })
                     ).show()
@@ -185,7 +208,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         }
         // 修改循环周期截止日期
         binding.tvDate.setSafeOnClickListener {
-            copyTaskDataForUpload.endTime = showDatePickerDialog(this@ProModeTaskSetActivity, binding.tvDate, startTime * 1000L, endTime * 1000L) {
+            showDatePickerDialog(this@ProModeTaskSetActivity, binding.tvDate, startTime * 1000L, endTime * 1000L) {
                 copyTaskDataForUpload.endTime = it / 1000L
                 // 更新 TextView 显示
                 binding.tvDate.text = getYmdForEn(time = it)
@@ -205,18 +228,24 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                             selectIndex = taskList?.indexOf(if (copyTaskDataForUpload.taskName.isNullOrEmpty()) 0 else copyTaskDataForUpload.taskName) ?: 0,
                             listString = taskList?.toMutableList(),
                             confirmAction = {
-                                binding.etEmail.text = taskList?.get(it) ?: ""
                                 // 选择好之后，需要保存
-                                copyTaskDataForUpload.taskName = taskList?.get(it) ?: ""
-
                                 viewModel.taskList.value?.data?.firstOrNull { be -> be.taskName == taskList?.get(it) }?.let { data ->
-                                    copyTaskDataForUpload.taskName = data.taskName
-                                    copyTaskDataForUpload.taskType = data.taskType
-                                    copyTaskDataForUpload.taskTime = data.taskTime
-                                    copyTaskDataForUpload.week = data.week
-                                    copyTaskDataForUpload.day = data.day
+                                    copyTaskDataForUpload = data.copy(
+                                        endTime = copyTaskDataForUpload.endTime,
+                                        recurringTask = copyTaskDataForUpload.recurringTask,
+                                        recurringDay = copyTaskDataForUpload.recurringDay,
+                                        taskTime = if (addCurrentTime != 0L) addCurrentTime else data.taskTime,
+                                        week = calculateWeeksAndDaysIncludingStartDate(startTime, if (addCurrentTime != 0L) addCurrentTime else data.taskTime).first.toString(),
+                                        day = calculateWeeksAndDaysIncludingStartDate(startTime, if (addCurrentTime != 0L) addCurrentTime else data.taskTime).second.toString()
+                                    )
+
+                                    // 周期名字
+                                    binding.etEmail.text = copyTaskDataForUpload.taskName
                                     // task时间
-                                    binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${data.week} Day ${data.day})"
+                                    binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${copyTaskDataForUpload.week} Day ${copyTaskDataForUpload.day})"
+                                    // 周期任务描述
+                                    binding.taskTextViews.text = copyTaskDataForUpload.taskdescription
+                                    ViewUtils.setVisible(!copyTaskDataForUpload.taskdescription.isNullOrEmpty(), binding.taskTextViews)
                                 }
                             })
                     ).show()
@@ -226,6 +255,9 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
 
         // 选择Task日期
         binding.etEmails.setSafeOnClickListener {
+            if(addCurrentTime != 0L) {
+                return@setSafeOnClickListener
+            }
             showDatePickerDialog(this@ProModeTaskSetActivity, binding.etEmails, startTime * 1000L, endTime * 1000L) {
                 val ymd = getYmdForEn(time = it)
                 val (weeks, days) = calculateWeeksAndDaysIncludingStartDate(startTime, it / 1000L)

@@ -125,8 +125,10 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                         if (inputValue != null) {
                             if (inputValue < 5) {
                                 etTurnTime.setText("5")
+                                ToastUtil.shortShow("5-30 seconds allowed")
                             } else if (inputValue > 30) {
                                 etTurnTime.setText("30")
+                                ToastUtil.shortShow("5-30 seconds allowed")
                             }
                         }
                     }
@@ -141,8 +143,10 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                         if (inputValue != null) {
                             if (inputValue < 10) {
                                 etTurnMin.setText("10")
+                                ToastUtil.shortShow("10-120 minutes allowed")
                             } else if (inputValue > 120) {
                                 etTurnMin.setText("120")
+                                ToastUtil.shortShow("10-120 minutes allowed")
                             }
                         }
                     }

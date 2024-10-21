@@ -10,12 +10,12 @@ data class DripListData(
     data class DripData(
         val name: String? = null,
         val deviceId: String,
-        val everyEndTime: Int,
-        val everyMinute: Int,
-        val everyStartTime: Int,
+        var everyEndTime: Int,
+        var everyMinute: Int,
+        var everyStartTime: Int,
         val irrigationId: Int,
         val status: Boolean,
-        val turnOnSecond: Int,
+        var turnOnSecond: Int,
         var turnOnHour: Int? = null,
         var turnOffHour: Int? = null,
     ) : BaseBean()

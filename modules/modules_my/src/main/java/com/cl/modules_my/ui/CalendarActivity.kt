@@ -613,7 +613,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         adapter.data.indexOfFirst { it.ymd == data.date }.let { index ->
                                             if (index != -1) {
                                                 // 滚动到当前有任务的一天。
-                                                binding.rvList.scrollToPosition(index - 7)
+                                                binding.rvList.scrollToPosition(index + 7 * 2)
                                                 showTaskList(adapter.data[index])
                                             }
                                         }
@@ -692,6 +692,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 .withLong(START_TIME, DateHelper.dateToEpochSeconds(calendarData?.epochStartTime.toString()))
                 .withLong(END_TIME, DateHelper.dateToEpochSeconds(calendarData?.epochEndTime.toString()))
                 .withBoolean("$KEY_REQUEST_TASK_SET", true)
+                .withLong(CURRENT_TIME, DateHelper.dateToEpochSeconds(calendarData?.date.toString()))
                 .navigation(this@CalendarActivity, KEY_REQUEST_TASK_SET)
         }
 
@@ -992,8 +993,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 null == calendarData, binding.svtDayBg, binding.svtPeriodBg, binding.svtTaskListBg
             )
             // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
-            ViewUtils.setGone(binding.timeLine, null == calendarData)
-
+            ViewUtils.setVisible(null != calendarData, binding.ivProModeAdd, binding.timeLine)
             // 如果日历数据不为空，那么开始加载数据
             calendarData?.let {
                 // 设置下面卡片的数据
@@ -1066,6 +1066,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             )
                         )*/
                     return
+                }
+                // 说明是在预览，左边时间隐藏
+                if (null != isTemplateId || mViewMode.getCalendar.value?.data?.proMode == true) {
+                    holder.leftLayout.visibility = View.GONE
                 }
                 val layoutParams = holder.imgMark.layoutParams as LinearLayout.LayoutParams
                 holder.imgMark.layoutParams = layoutParams
@@ -1186,7 +1190,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         asCustom(BaseCenterPop(this@CalendarActivity, isShowCancelButton = true, content = "Are you sure you want to delete this task?", onConfirmAction = {
                             mViewMode.deleteTask(listContent[position].taskId.toString())
                             data.removeAt(position - 1)
-                            initTime(data)
                         })).show()
                     }
                 }
@@ -1495,7 +1498,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 )
             )
             listContent.removeAt(position - 1)
-            initTime(listContent)
             /*pop.asCustom(
                 BaseTimeChoosePop(this@CalendarActivity, currentTime = listContent[position].taskTime?.toLong(), onConfirmAction = { time, timeMis ->
                     // 时间
@@ -1645,7 +1647,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 KEY_REQUEST_TASK_SET -> {
                     // 刷新任务
                     mViewMode.refreshTask()
-                    mViewMode.checkPlant()
                 }
             }
         }
@@ -1706,6 +1707,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
         // 周期开始时间
         const val START_TIME = "start_time"
+
+        // 当前时间
+        const val CURRENT_TIME = "current_time"
 
         // 是否是当前周期
         const val IS_CURRENT_PERIOD = "is_current_period"

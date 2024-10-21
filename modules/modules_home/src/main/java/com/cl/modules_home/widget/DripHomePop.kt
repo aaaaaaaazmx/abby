@@ -63,6 +63,33 @@ class DripHomePop(context: Context, val deviceId: String) : BottomPopupView(cont
             }
 
             tvConfirm.setSafeOnClickListener {
+                adapter.data.forEach {
+                    runCatching {
+                        val turnOnSecond = it.turnOnSecond.toString().toIntOrNull()
+                        if (turnOnSecond != null) {
+                            if (turnOnSecond < 5) {
+                                ToastUtil.shortShow("5-30 seconds allowed")
+                                return@setSafeOnClickListener
+                            } else if (turnOnSecond > 30) {
+                                ToastUtil.shortShow("5-30 seconds allowed")
+                                return@setSafeOnClickListener
+                            }
+                        }
+                        val inputValue = it.everyMinute.toString().toIntOrNull()
+                        if (inputValue != null) {
+                            if (inputValue < 10) {
+                                ToastUtil.shortShow("10-120 minutes allowed")
+                                return@setSafeOnClickListener
+                            } else if (inputValue > 120) {
+                                ToastUtil.shortShow("10-120 minutes allowed")
+                                return@setSafeOnClickListener
+                            }
+                        }
+                    }
+                }
+                lifecycleScope.launch {
+                    updateDripList(DripListData(dripIrrigationTimerStatus = binding.ftSwitch.isItemChecked, list = adapter.data as? MutableList<DripListData.DripData>))
+                }
                 dismiss()
             }
         }!!
@@ -75,13 +102,6 @@ class DripHomePop(context: Context, val deviceId: String) : BottomPopupView(cont
                 }
             }
         }
-    }
-
-    override fun onDismiss() {
-        lifecycleScope.launch {
-            updateDripList(DripListData(dripIrrigationTimerStatus = binding.ftSwitch.isItemChecked, list = adapter.data as? MutableList<DripListData.DripData>))
-        }
-        super.onDismiss()
     }
 
 

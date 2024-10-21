@@ -156,7 +156,7 @@
 
 
         <TextView
-            android:visibility="@{data.isProMode ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.isProMode &amp;&amp; !TextUtils.isEmpty(data.runningInfo) ? View.VISIBLE : View.GONE}"
             android:textStyle="bold"
             app:layout_goneMarginStart="20dp"
             android:layout_marginStart="10dp"

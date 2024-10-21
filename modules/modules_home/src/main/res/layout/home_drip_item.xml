@@ -73,6 +73,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_turn">
 
                 <EditText
+                    android:hint="5-30"
                     android:id="@+id/et_turn_time"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -140,6 +141,7 @@
                 app:layout_constraintStart_toEndOf="@+id/tv_every">
 
                 <EditText
+                    android:hint="10-120"
                     android:id="@+id/et_turn_min"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

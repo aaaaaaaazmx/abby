@@ -143,6 +143,9 @@ class HomeEnvlrPop(
                     )
                 )
             }
+            if (isChecked) {
+                binding?.rvList?.smoothScrollToPosition(adapter.data.size - 1)
+            }
         })
     }
 
@@ -299,7 +302,6 @@ class HomeEnvlrPop(
                                 DripHomePop(context, deviceId = currentDeviceInfo?.deviceId.toString())
                             ).show()
                         }
-
                     }
 
                     R.id.svt_fan_model -> {
@@ -331,7 +333,6 @@ class HomeEnvlrPop(
                                                     if (fanIndex != -1) {
                                                         val environment = adapter.data[fanIndex] as? EnvironmentInfoData.Environment
                                                         environment?.runningModelShow = text
-                                                        environment?.automation = if (text.equals("Manual", ignoreCase = true)) 1 else 0
                                                         adapter.notifyItemChanged(fanIndex)
                                                     }
 
@@ -358,7 +359,6 @@ class HomeEnvlrPop(
                                 if (fanIndex != -1) {
                                     val environment = adapter.data[fanIndex] as? EnvironmentInfoData.Environment
                                     environment?.runningModelShow = text
-                                    environment?.automation = if (text.equals("Manual", ignoreCase = true)) 1 else 0
                                     adapter.notifyItemChanged(fanIndex)
                                 }
 
@@ -367,6 +367,7 @@ class HomeEnvlrPop(
                                     lifecycleScope.launch {
                                         updateFanModel(
                                             UpdateFanModelReq(
+                                                durationTime = it.durationTime,
                                                 fanModel = it.fanModel,
                                                 fanModelShow = it.fanModelShow
                                             )
@@ -670,6 +671,8 @@ class HomeEnvlrPop(
                             binding?.cbLock?.isChecked = isChecked!!
                         }
                     }
+                    // 更新成功后刷新当前设备信息。
+                    getDeviceList()
                 }
 
                 is Resource.DataError -> {
@@ -813,6 +816,40 @@ class HomeEnvlrPop(
     private var muteOn: String? = null
     private var muteOff: String? = null
 
+    // 获取设备列表
+    private fun getDeviceList() = lifecycleScope.launch {
+        service.listDevice().map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch ${it.message}")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                when (it) {
+                    is Resource.Success -> {
+                       currentDeviceInfo = it.data?.firstOrNull { data -> data.currentDevice == 1 }
+                    }
+
+                    is Resource.DataError -> {
+                        ToastUtil.shortShow(it.errorMsg)
+                    }
+
+                    is Resource.Loading -> {
+                    }
+                }
+        }
+    }
 
     // 获取配置
     private fun getMessageConfig() = lifecycleScope.launch {

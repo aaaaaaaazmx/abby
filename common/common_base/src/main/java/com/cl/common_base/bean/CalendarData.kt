@@ -91,6 +91,8 @@ data class CalendarData(
         const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"
         const val TASK_TYPE_CHECK_CHECK_AUTOFLOWERING = "check_autoflowering"
         const val TASK_TYPE_TEST = "test" // 学院任务
+        // drying任务完成
+        const val TASK_TYPE_CHECK_CHECK_FLOWERING_DONE = "P016"
 
 
         // 富文本类型

@@ -11,5 +11,6 @@ data class Task(
     var taskTime: Long,
     var taskName: String? = null,
     var taskType: String? = null,
+    var taskdescription: String? = null,
     var week: String? = null
 ) : BaseBean()

@@ -6,5 +6,6 @@ data class Req(
     val periodId: Int,
     val step: String,
     val stepDay: Int,
-    val stepShow: String
+    val stepShow: String,
+    var currentStep: Boolean? = false
 ): BaseBean()

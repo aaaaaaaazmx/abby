@@ -56,6 +56,12 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         // 周期开始时间
         const val START_TIME = "start_time"
 
+        // 当前时间
+        const val CURRENT_TIME = "current_time"
+
+        // 循环的结束时间
+        const val END_CYCLE_TIME = "end_cycle_time"
+
         // 是否是当前周期
         const val IS_CURRENT_PERIOD = "is_current_period"
 

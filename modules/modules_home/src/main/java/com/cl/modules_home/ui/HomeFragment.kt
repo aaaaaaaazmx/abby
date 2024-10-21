@@ -4867,7 +4867,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
 
                                 // 显示是否展示夜间模式 不是手动模式
-                                if (isManual == false) {
+                                if (!isManual) {
+                                    if (null == binding) return@parseObjectInBackground
                                     // 根据灯光来显示植物是否在睡觉，是否需要显示zzz
                                     mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
                                         val isShowIvTwo = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == false && allDpBean.gl == "0"

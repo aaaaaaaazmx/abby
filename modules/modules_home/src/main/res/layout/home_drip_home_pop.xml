@@ -11,7 +11,7 @@
         android:background="@drawable/bg_round_tl_tr"
         tools:ignore="MissingConstraints"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
         <TextView
@@ -38,14 +38,14 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_marginTop="20dp"
-            app:layout_constraintBottom_toTopOf="@+id/ll_root"
             app:layout_constraintTop_toBottomOf="@+id/ft_switch"
             android:id="@+id/recyclview"
             android:layout_width="match_parent"
             android:layout_marginBottom="20dp"
-            android:layout_height="0dp"/>
+            android:layout_height="wrap_content"/>
 
         <LinearLayout
+            app:layout_constraintTop_toBottomOf="@+id/recyclview"
             android:id="@+id/ll_root"
             app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="vertical"
