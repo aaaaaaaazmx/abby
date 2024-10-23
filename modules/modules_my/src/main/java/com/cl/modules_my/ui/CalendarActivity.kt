@@ -94,6 +94,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     lateinit var mViewMode: CalendarViewModel
 
 
+    // 这是proModeTask界面传递过来的。
     //Constants.Global.KEY_IS_TEMPLATE_ID
     private val isTemplateId by lazy {
         intent.getStringExtra(Constants.Global.KEY_IS_TEMPLATE_ID)
@@ -993,7 +994,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 null == calendarData, binding.svtDayBg, binding.svtPeriodBg, binding.svtTaskListBg
             )
             // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
-            ViewUtils.setVisible(null != calendarData, binding.ivProModeAdd, binding.timeLine)
+            ViewUtils.setGone(binding.timeLine, null == calendarData)
+            // 不是空的，且为proMode那么就显示
+            ViewUtils.setVisible(null != calendarData && mViewMode.getCalendar.value?.data?.proMode == true, binding.ivProModeAdd)
             // 如果日历数据不为空，那么开始加载数据
             calendarData?.let {
                 // 设置下面卡片的数据
