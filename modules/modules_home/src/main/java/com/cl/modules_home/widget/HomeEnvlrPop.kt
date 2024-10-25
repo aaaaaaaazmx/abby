@@ -178,12 +178,12 @@ class HomeEnvlrPop(
                 ViewUtils.setVisible(currentDeviceInfo?.waterPump == true, cbDrain, tvDrain)
 
                 //  添加最后一个元素为Drip类型
-                if (currentDeviceInfo?.proMode?.equalsIgnoreCase("On") == true && currentDeviceInfo?.waterPump == true) {
+                if (currentDeviceInfo?.proMode?.equalsIgnoreCase(Constants.Global.KEY_NEW_PRO_MODE) == true && currentDeviceInfo?.waterPump == true) {
                     data?.add(EnvironmentInfoData.Environment(type = EnvironmentInfoData.KEY_TYPE_DRIP_TYPE, environmentType = EnvironmentInfoData.KEY_TYPE_DRIP_TYPE))
                 }
                 // 组装一下,
                 data?.forEach {
-                    it.isProMode = currentDeviceInfo?.proMode?.equalsIgnoreCase("On")
+                    it.isProMode = currentDeviceInfo?.proMode?.equalsIgnoreCase(Constants.Global.KEY_NEW_PRO_MODE)
                     it.waterPump = currentDeviceInfo?.waterPump
                     it.dripKit = currentDeviceInfo?.dripKit
                     it.step = currentDeviceInfo?.step

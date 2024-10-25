@@ -423,7 +423,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         // 打开手动模式
                         mViewMode.updateDeviceInfo(
                             UpDeviceInfoReq(
-                                proMode = "On",
+                                proMode = Constants.Global.KEY_OLD_PRO_MODE,
                                 deviceId = mViewMode.userInfo?.deviceId
                             )
                         )

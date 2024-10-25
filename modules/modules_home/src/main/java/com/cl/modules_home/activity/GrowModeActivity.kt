@@ -124,7 +124,7 @@ class GrowModeActivity : BaseActivity<HomeGrowModeActivityBinding>() {
             // 设置proMode模式
             mViewMode.updateDeviceInfo(UpDeviceInfoReq(
                 deviceId = userinfoBean?.deviceId ?: "",
-                proMode = if (binding.curingBox.isChecked) "Off" else "On"
+                proMode = if (binding.curingBox.isChecked) Constants.Global.KEY_CLOSE_PRO_MODE else Constants.Global.KEY_NEW_PRO_MODE
             ))
         }
 

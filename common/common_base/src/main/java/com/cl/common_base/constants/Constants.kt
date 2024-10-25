@@ -226,6 +226,12 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 旧的proMode开关表示 on
+        const val KEY_OLD_PRO_MODE = "On"
+        // 新的proMode模版开关表示 On_Template
+        const val KEY_NEW_PRO_MODE = "On_Template"
+        // 关闭proMode模式
+        const val KEY_CLOSE_PRO_MODE = "Off"
         // 配对设备Abby
         const val KEY_GLOBAL_PAIR_DEVICE_ABBY = "key_global_pair_device_abby"
         // 配对设备Camera

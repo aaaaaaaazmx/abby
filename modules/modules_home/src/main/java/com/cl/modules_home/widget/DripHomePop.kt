@@ -57,7 +57,7 @@ class DripHomePop(context: Context, val deviceId: String) : BottomPopupView(cont
             ivAdd.setSafeOnClickListener {
                 if (adapter.data.size == 2) return@setSafeOnClickListener
                 val lastData = adapter.data.lastOrNull() ?: return@setSafeOnClickListener
-                adapter.addData(lastData)
+                adapter.addData(lastData.copy(turnOnHour = null, turnOffHour = null))
                 recyclview.smoothScrollToPosition(adapter.data.size - 1)
                 if (adapter.data.size == 2) ivAdd.visibility = View.GONE else ivAdd.visibility = View.VISIBLE
             }

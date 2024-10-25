@@ -342,11 +342,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         } else {
                             // 是否显示防烧模式
                             ViewUtils.setVisible(
-                                deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode != "On",
+                                deviceInfo.isBurnOutProof == 1 && deviceInfo.proMode?.equalsIgnoreCase(Constants.Global.KEY_OLD_PRO_MODE) == false,
                                 binding.ftBurner
                             )
                             ViewUtils.setVisible(
-                                deviceInfo.burnOutProof == 1 && deviceInfo.proMode != "On",
+                                deviceInfo.burnOutProof == 1 && deviceInfo.proMode?.equalsIgnoreCase(Constants.Global.KEY_OLD_PRO_MODE) == false,
                                 binding.tvBurnerDesc
                             )
                         }
@@ -361,7 +361,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
 
                         // 显示当前的是否是手动模式
                         binding.itemTitle.text =
-                            if (deviceInfo.proMode == "On") "Pro Mode: ON" else "Pro Mode: Off"
+                            if (deviceInfo.proMode?.equalsIgnoreCase(Constants.Global.KEY_OLD_PRO_MODE) == true) "Pro Mode: ON" else "Pro Mode: Off"
                         binding.ftName.itemValue = deviceInfo.plantName
 
                         binding.ftChildLock.isItemChecked = deviceInfo.childLock == 1
@@ -731,7 +731,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             mViewModel.updateDeviceInfo(
                                 UpDeviceInfoReq(
                                     deviceId = mViewModel.saveDeviceId.value,
-                                    proMode = "Off"
+                                    proMode = Constants.Global.KEY_CLOSE_PRO_MODE
                                 )
                             )
                             tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }

@@ -154,7 +154,9 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     // 是否是手动模式
-    private var isManual = false
+    private val isManual by lazy {
+        arguments?.getBoolean(Constants.Global.KEY_MANUAL_MODE, false)
+    }
     private var isManuals = false
 
     // 导航气泡
@@ -2354,8 +2356,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // 寻找当前设备
                         dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
-                            isManuals = device.proMode == "On"
-                            binding.pplantNinth.svtProMode.visibility = if (device.proMode == "On") View.VISIBLE else View.GONE
+                            isManuals = device.proMode?.equalsIgnoreCase(Constants.Global.KEY_NEW_PRO_MODE) == true
+                            binding.pplantNinth.svtProMode.visibility = if (device.proMode?.equalsIgnoreCase(Constants.Global.KEY_NEW_PRO_MODE) == true) View.VISIBLE else View.GONE
                             // 是否显示摄像头
                             val isCameraVisible =
                                 device.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA } != null
@@ -4857,7 +4859,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 )
                                 // 更新环境信息， 灯光从黑变成亮，但是没获取环境信息，所以会造成还是为off
                                 // 不等于说明灯光刷新， 更新当前环境信息的数据
-                                if (!isManual && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
+                                if (isManual == false && mViewMode.getCurrentGrowLight.value != allDpBean.gl.safeToInt()) {
                                     mViewMode.getEnvData()
                                     mViewMode.listDevice()
                                     mViewMode.userDetail()
@@ -4867,7 +4869,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 mViewMode.setCurrentGrowLight(allDpBean.gl.toString())
 
                                 // 显示是否展示夜间模式 不是手动模式
-                                if (!isManual) {
+                                if (isManual == false) {
                                     if (null == binding) return@parseObjectInBackground
                                     // 根据灯光来显示植物是否在睡觉，是否需要显示zzz
                                     mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
