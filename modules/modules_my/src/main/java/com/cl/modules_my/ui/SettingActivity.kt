@@ -726,7 +726,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                             unLockText = "Slide to Turn Off",
                             titleText = "Notice",
                             context = this,
-                            contentText = "Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
+                            contentText = "Turning off Pro Mode (Legacy) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
                         ) {
                             mViewModel.updateDeviceInfo(
                                 UpDeviceInfoReq(
