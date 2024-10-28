@@ -66,9 +66,9 @@ class MergeAccountSureActivity : BaseActivity<MyMergrAccountBinding>() {
             4. Calendar
 
             5. Your trend post and replies*/
-            appendLine(getString(R.string.my_please, email))
+            appendLine(getString(R.string.my_please, "$email"))
             appendLine()
-            appendLine(getString(R.string.my_the_below, userinfoBean?.email))
+            appendLine(getString(R.string.my_the_below, "${userinfoBean?.email}"))
             appendLine()
             appendLine(getString(R.string.string_1725))
             appendLine()

@@ -324,7 +324,7 @@ class HomeEnvlrPop(
                                         asCustom(
                                             BaseCenterPop(
                                                 context = context,
-                                                content = context.getString(com.cl.common_base.R.string.home_the_will_last, currentFanModel.fanModelShow ?: "", currentFanModel.durationTime ?: ""),
+                                                content = context.getString(com.cl.common_base.R.string.home_the_will_last, "${currentFanModel.fanModelShow}", "${currentFanModel.durationTime}"),
                                                 isShowCancelButton = true,
                                                 onConfirmAction = {
                                                     // 查找并更新适配器中的风扇项

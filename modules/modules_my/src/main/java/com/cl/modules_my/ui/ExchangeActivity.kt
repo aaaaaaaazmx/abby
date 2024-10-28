@@ -103,7 +103,7 @@ class ExchangeActivity: BaseActivity<MyExchangeActivityBinding>() {
 
                     binding.tvDescription.text = data?.description
                     // *900 Oxygen Coins Available
-                    binding.tvAvailable.text = getString(com.cl.common_base.R.string.my_oxygen_coins_available, data?.oxygen)
+                    binding.tvAvailable.text = getString(com.cl.common_base.R.string.my_oxygen_coins_available, "${data?.oxygen}")
                 }
             })
 

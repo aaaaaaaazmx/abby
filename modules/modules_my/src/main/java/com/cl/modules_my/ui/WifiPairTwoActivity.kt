@@ -195,8 +195,8 @@ class WifiPairTwoActivity : BaseActivity<MyWifiPairTwoActivityBinding>() {
                     errorMsg: String?
                 ) {
                     hideProgressLoading()
-                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_activate_error, errorMsg))
-                    binding.tvSearch.text = getString(com.cl.common_base.R.string.my_activate_error, errorMsg)
+                    ToastUtil.shortShow(getString(com.cl.common_base.R.string.my_activate_error, "$errorMsg"))
+                    binding.tvSearch.text = getString(com.cl.common_base.R.string.my_activate_error, "$errorMsg")
                 }
             }
             )

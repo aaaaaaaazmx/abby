@@ -187,7 +187,7 @@ class PairOnePageActivity : BaseActivity<PairScanBleBinding>() {
             val myBleData = PairBleData.MyScanDeviceBean()
             // 拼接设备名字
             bleDats.subName =
-                getString(com.cl.common_base.R.string.pair_hey_abby, bean.uuid.substring(bean.uuid.length - 4, bean.uuid.length))
+                getString(com.cl.common_base.R.string.pair_hey_abby, "${bean.uuid.substring(bean.uuid.length - 4, bean.uuid.length)}")
             /**
              *   String id;
             String name;

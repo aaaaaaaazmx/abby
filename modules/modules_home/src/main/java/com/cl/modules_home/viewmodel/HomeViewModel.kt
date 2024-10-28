@@ -1983,19 +1983,19 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository, 
             kotlin.runCatching {
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
-                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, roomTemp) else ""}"
+                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, "$roomTemp") else ""}"
             }.getOrElse {
-                return "$text ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, roomTemp) else ""}"
+                return "$text ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, "$roomTemp") else ""}"
             }
         }
-        return "$text ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp_desc, roomTemp) else ""}"
+        return "$text ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp_desc, "$roomTemp") else ""}"
     }
 
     // 获取室内的湿度，在有数据的情况下
     fun getRoomHumidity(humidity: Int?): String {
         val data = _plantInfoLoop.value?.data ?: _plantInfo.value?.data
         val roomHumidity = data?.envirVO?.roomHumiture
-        return if (roomHumidity.isNullOrEmpty()) "$humidity" else context.getString(com.cl.common_base.R.string.home_room, humidity.toString(), roomHumidity.toString())
+        return if (roomHumidity.isNullOrEmpty()) "$humidity" else context.getString(com.cl.common_base.R.string.home_room, "$humidity", "$roomHumidity")
     }
 
     fun textCovert(): String {
@@ -2024,7 +2024,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository, 
                     return if (incPlant <= 20) {
                         context.getString(com.cl.common_base.R.string.home_tt_cm)
                     } else {
-                        context.getString(com.cl.common_base.R.string.home_cm, incPlant.safeToInt())
+                        context.getString(com.cl.common_base.R.string.home_cm, "$incPlant")
                     }
                 }
             }
@@ -2035,7 +2035,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository, 
                     return if (incPlant <= 8) {
                         context.getString(com.cl.common_base.R.string.home_eight_inch)
                     } else {
-                        context.getString(com.cl.common_base.R.string.home_inch, inc.toString())
+                        context.getString(com.cl.common_base.R.string.home_inch, "$inc")
                     }
                 }
             }

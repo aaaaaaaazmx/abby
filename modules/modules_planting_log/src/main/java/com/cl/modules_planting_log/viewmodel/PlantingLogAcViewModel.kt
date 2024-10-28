@@ -562,7 +562,7 @@ class PlantingLogAcViewModel @Inject constructor(private val repository: PlantRe
     ) {
         BleManager.get().readData(bleDevice, node.serviceUUID, node.characteristicUUID) {
             onReadFail {
-                addLogMsg(LogEntity(Level.OFF, context.getString(com.cl.common_base.R.string.my_failed_to_read_data, it.message)))
+                addLogMsg(LogEntity(Level.OFF, context.getString(com.cl.common_base.R.string.my_failed_to_read_data, "${it.message}")))
             }
             onReadSuccess {
                 // addLogMsg(LogEntity(Level.FINE, "${node.characteristicUUID} -> 读特征值数据成功：${BleUtil.bytesToHex(it)}"))

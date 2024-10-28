@@ -207,7 +207,7 @@ class PlantSetUpActivity : BaseActivity<MyPlantSetupActivityBinding>() {
                         DeviceDetailInfo(
                             attribute = "Photo",
                             plantWay = "Seed",
-                            plantName = getString(R.string.my_grow_space_name, existingSize + it)
+                            plantName = getString(R.string.my_grow_space_name, "${existingSize + it}")
                         )
                     }
                     list.addAll(toBeAdded)

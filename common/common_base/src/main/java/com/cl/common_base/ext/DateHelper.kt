@@ -628,19 +628,19 @@ object DateHelper {
         val timeDifference = endTime - startDate;
         val second = timeDifference / 1000;    //计算秒
         if (second < 60) {
-            return BaseApplication.getContext().getString(R.string.second_ago, second.toString()) //根据需要可以写成刚刚。
+            return BaseApplication.getContext().getString(R.string.second_ago, "$second") //根据需要可以写成刚刚。
         } else {
             val minute = second / 60
             if (minute < 60) {
-                return BaseApplication.getContext().getString(R.string.minutes_ago, minute.toString())
+                return BaseApplication.getContext().getString(R.string.minutes_ago, "$minute")
             } else {
                 val hour = minute / 60
                 if (hour < 24) {
-                    return BaseApplication.getContext().getString(R.string.hours_ago, hour.toString())
+                    return BaseApplication.getContext().getString(R.string.hours_ago, "$hour")
                 } else {
                     val day = hour / 24
                     if (day < 7) {
-                        return BaseApplication.getContext().getString(R.string.days_ago, day.toString())
+                        return BaseApplication.getContext().getString(R.string.days_ago, "$day")
                     } else {
                         return if (formatTime(startDate, "yyyy") == formatTime(endTime, "yyyy", Locale.US)) {
                             formatTime(startDate, "MMM dd", Locale.US)

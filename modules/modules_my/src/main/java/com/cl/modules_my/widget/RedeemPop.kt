@@ -25,9 +25,9 @@ class RedeemPop(context: Context, private val userInfo: UserinfoBean?, private v
             ivClose.setSafeOnClickListener { dismiss() }
 
             tvTitle.text =  if (userInfo?.email.isNullOrEmpty()) {
-                context.getString(com.cl.common_base.R.string.home_reedee_desc_ont, chooserOxygen, oxygen?.minus(chooserOxygen), '$', exchangeRate).trimIndent()
+                context.getString(com.cl.common_base.R.string.home_reedee_desc_ont, "$chooserOxygen", "${oxygen?.minus(chooserOxygen)}", '$', "$exchangeRate").trimIndent()
             } else {
-                context.getString(com.cl.common_base.R.string.home_reedee_desc_two, chooserOxygen, oxygen?.minus(chooserOxygen), '$', exchangeRate, userInfo?.email).trimIndent()
+                context.getString(com.cl.common_base.R.string.home_reedee_desc_two, "$chooserOxygen", "${oxygen?.minus(chooserOxygen)}", '$', "$exchangeRate", "${userInfo?.email}").trimIndent()
             }
 
             tvDescription.setSafeOnClickListener {

@@ -305,7 +305,7 @@ class PHSettingActivity : BaseActivity<MyPhSettingActivityBinding>() {
 
         // Last data synced on 08/22/2023 11:23AM.
         ViewUtils.setVisible(binding.tvSyncDesc)
-        binding.tvSyncDesc.text = getString(com.cl.common_base.R.string.my_last_data_synced_on, DateHelper.formatTime(time, "MM/dd/yyyy hh:mm a"))
+        binding.tvSyncDesc.text = getString(com.cl.common_base.R.string.my_last_data_synced_on, "${DateHelper.formatTime(time, "MM/dd/yyyy hh:mm a")}")
 
         // 背光状态
         binding.editText123.isChecked = getBacklightStatus(decrypted)

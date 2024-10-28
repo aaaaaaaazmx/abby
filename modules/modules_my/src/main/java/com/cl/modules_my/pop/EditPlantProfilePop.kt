@@ -65,7 +65,7 @@ class EditPlantProfilePop(
 
             ivClose.setOnClickListener { dismiss() }
 
-            tvDec.text = context.getString(com.cl.common_base.R.string.my_which_account, userInfoBean?.email)
+            tvDec.text = context.getString(com.cl.common_base.R.string.my_which_account, "${userInfoBean?.email}")
 
             etEmail.doAfterTextChanged {
                 (etEmail.text.toString().isNotEmpty()).also { btnSuccess.isEnabled = it }
