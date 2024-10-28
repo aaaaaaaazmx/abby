@@ -143,6 +143,21 @@ class MyRepository @Inject constructor(private var remoteRepository: MyRemoteRep
     }
 
     /**
+     *  获取日历任务
+     */
+    fun getCalendarTemplate(startDate: String, endDate: String, step: String? = null): Flow<HttpResult<CalendarNewData>> {
+        return remoteRepository.getCalendarTemplate(startDate, endDate, step)
+    }
+
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null): Flow<HttpResult<Boolean>> {
+        return remoteRepository.startRunning(botanyId, goon, templateId, step)
+    }
+
+    fun deleteTask(taskId: String): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.deleteTask(taskId)
+    }
+
+    /**
      * 更新日历任务
      */
     fun updateTask(body: UpdateReq): Flow<HttpResult<String>> {

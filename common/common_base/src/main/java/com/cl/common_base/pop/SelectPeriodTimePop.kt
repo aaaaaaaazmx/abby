@@ -19,7 +19,7 @@ import com.cl.common_base.widget.wheel.time.StringPicker
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.core.CenterPopupView
 
-class SelectPeriodTimePop(context: Context, private val timeString: String, private val selectAction: ((String, String) -> Unit)? = null) : CenterPopupView(context) {
+class SelectPeriodTimePop(context: Context, private val timeString: String, private var weekList: MutableList<String> ? = null,  private var dayList: MutableList<String>? = null, private val selectAction: ((String, String) -> Unit)? = null) : CenterPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.base_select_period_time_pop
     }
@@ -30,36 +30,6 @@ class SelectPeriodTimePop(context: Context, private val timeString: String, priv
 
     private val loadingPopup by lazy {
         XPopup.Builder(context).asLoading(BaseApplication.getContext().getString(R.string.string_216))
-    }
-    private val weekList by lazy {
-        // Week 1 - 217 -288
-        mutableListOf(
-            BaseApplication.getContext().getString(R.string.string_217),
-            BaseApplication.getContext().getString(R.string.string_218),
-            BaseApplication.getContext().getString(R.string.string_219),
-            BaseApplication.getContext().getString(R.string.string_220),
-            BaseApplication.getContext().getString(R.string.string_221),
-            BaseApplication.getContext().getString(R.string.string_222),
-            BaseApplication.getContext().getString(R.string.string_223),
-            BaseApplication.getContext().getString(R.string.string_224),
-            BaseApplication.getContext().getString(R.string.string_225),
-            BaseApplication.getContext().getString(R.string.string_226),
-            BaseApplication.getContext().getString(R.string.string_227),
-            BaseApplication.getContext().getString(R.string.string_228),
-        )
-    }
-
-    private val dayList by lazy {
-        // string_229 - string_235
-        mutableListOf(
-            BaseApplication.getContext().getString(R.string.string_229),
-            BaseApplication.getContext().getString(R.string.string_230),
-            BaseApplication.getContext().getString(R.string.string_231),
-            BaseApplication.getContext().getString(R.string.string_232),
-            BaseApplication.getContext().getString(R.string.string_233),
-            BaseApplication.getContext().getString(R.string.string_234),
-            BaseApplication.getContext().getString(R.string.string_235),
-        )
     }
 
     private var selectWeekString: String = ""
@@ -87,17 +57,47 @@ class SelectPeriodTimePop(context: Context, private val timeString: String, priv
             lifecycleOwner = this@SelectPeriodTimePop
             executePendingBindings()
 
+            // 设置默认值。
+            if (weekList.isNullOrEmpty()) {
+                weekList =  mutableListOf(
+                    context.getString(R.string.string_217),
+                    context.getString(R.string.string_218),
+                    context.getString(R.string.string_219),
+                    context.getString(R.string.string_220),
+                    context.getString(R.string.string_221),
+                    context.getString(R.string.string_222),
+                    context.getString(R.string.string_223),
+                    context.getString(R.string.string_224),
+                    context.getString(R.string.string_225),
+                    context.getString(R.string.string_226),
+                    context.getString(R.string.string_227),
+                    context.getString(R.string.string_228),
+                )
+            }
+
+            if (dayList.isNullOrEmpty()) {
+                dayList = mutableListOf(
+                    context.getString(R.string.string_229),
+                    context.getString(R.string.string_230),
+                    context.getString(R.string.string_231),
+                    context.getString(R.string.string_232),
+                    context.getString(R.string.string_233),
+                    context.getString(R.string.string_234),
+                    context.getString(R.string.string_235),
+                )
+            }
+
             tvCancel.setSafeOnClickListener { dismiss() }
             tvConfirm.setSafeOnClickListener {
                 if (!datePickerLayoutDate.dataList.isNullOrEmpty()) {
                     if (selectWeekString.isEmpty()) {
-                        selectWeekString = datePickerLayoutDate.dataList[0]
+                        selectWeekString = datePickerLayoutDate.dataList[datePickerLayoutDate.currentPosition]
                     }
                 }
 
                 if (!hourPickerLayoutTime.dataList.isNullOrEmpty()) {
                     if (selectDayString.isEmpty()) {
-                        selectDayString = hourPickerLayoutTime.dataList[0]
+                        selectDayString = hourPickerLayoutTime.dataList[hourPickerLayoutTime.currentPosition]
                     }
                 }
 

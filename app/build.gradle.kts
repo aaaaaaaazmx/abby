@@ -11,6 +11,8 @@ plugins {
     //    id("kotlin-parcelize")
         id("center.uploadpgy.plugin")
     // id("io.github.leavesczy.trace")
+
+    id("io.sentry.android.gradle") version "4.12.0"
 }
 apply("thingMapping.gradle")
 
@@ -122,6 +124,10 @@ android {
 
         // 报错的直接排除
         exclude("lib/*/liblog.so")
+
+        resources {
+            excludes += "META-INF/native-image/io.sentry/sentry/native-image.properties"
+        }
     }
 
     applicationVariants.all {
@@ -146,6 +152,7 @@ android {
             signingConfig = signingConfigs.getByName("abby")
         }
         debug {
+            // https://13b69bfd38f36a426e06f22889c727f5@o4508125722247168.ingest.us.sentry.io/4508131067363328
             isMinifyEnabled = false
             isShrinkResources = false // 移除无用的resource文件
             proguardFiles.clear() // 不混淆
@@ -207,15 +214,28 @@ dependencies {
     kapt(Deps.kaptHiltCompiler)
 }
 
-fun readProperties(key: String): String? {
-    val file = rootProject.file("local.properties")
+fun readProperties(key: String, properties: String? = "local.properties"): String {
+    val file = rootProject.file(properties ?: "local.properties")
     if (file.exists()) {
-        val inputStream = DataInputStream(FileInputStream(file))
-        val properties = Properties()
-        properties.load(inputStream)
-        if (properties.containsKey(key)) {
-            return properties.getProperty(key)
+        FileInputStream(file).use { inputStream -> // 使用 use 块确保流在完成后关闭
+            val properties = Properties()
+            properties.load(inputStream)
+            return properties.getProperty(key) ?: "" // 如果 key 不存在，则返回空字符串
         }
     }
-    return ""
+    return "" // 如果文件不存在或 key 不存在，返回空字符串
+}
+
+sentry {
+    debug.set(true)
+    org.set("mrli-g4")
+    projectName.set("abby")
+
+    // this will upload your source code to Sentry to show it as part of the stack traces
+    // disable if you don't want to expose your sources
+    includeSourceContext.set(true)
+    uploadNativeSymbols.set(true)
+    autoUploadProguardMapping.set(true)
+
+    authToken.set(readProperties("auth.token", "sentry.properties"))
 }

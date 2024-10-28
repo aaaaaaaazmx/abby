@@ -55,10 +55,7 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
         Prefs.getString(Constants.Global.KEY_PLANT_ID)
     }
 
-    val userinfoBean by lazy {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        GSON.parseObject(bean, UserinfoBean::class.java)
-    }
+
 
     private val pop by lazy {
         XPopup.Builder(this).isDestroyOnDismiss(false).dismissOnTouchOutside(false)
@@ -199,41 +196,11 @@ class HomePlantProfileActivity : BaseActivity<HomePlantProfileBinding>() {
                 success {
                     hideProgressLoading()
 
-                    // 看是否是选了clone、那么直接进入移植
-                    if (category == 100003 || category == 100004) {
-                        // 土培的种植之前的检查。
-                        if (userinfoBean?.deviceType?.equalsIgnoreCase(Constants.Device.KEY_DEVICE_TYPE_O1_SOIL) == true) {
-                            val intent = Intent(this@HomePlantProfileActivity, BasePopActivity::class.java)
-                            intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SOIL_TRANSPLANT_CLONE_CHECK)
-                            intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SOIL_TRANSPLANT_CLONE_CHECK)
-                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                            intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1368))
-                            intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, "$category")
-                            intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
-                            startActivity(intent)
-                            return@success
-                        }
-                        val intent = Intent(this@HomePlantProfileActivity, BasePopActivity::class.java)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK)
-                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                        intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1368))
-                        intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, "$category")
-                        intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
-                        startActivity(intent)
-                        return@success
-                    }
-
-                    // 跳转富文本界面
-                    val intent = Intent(this@HomePlantProfileActivity, KnowMoreActivity::class.java)
-                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED)
-                    intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED)
-                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                    intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1393))
-                    startActivity(intent)
+                    // 跳转一个新的界面
+                    startActivity(Intent(this@HomePlantProfileActivity, GrowModeActivity::class.java).apply {
+                        putExtra(GrowModeActivity.CATEGORY, category)
+                        putExtra(GrowModeActivity.PLANT_ID, plantId)
+                    })
                 }
             })
         }

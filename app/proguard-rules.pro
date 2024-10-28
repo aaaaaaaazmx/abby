@@ -387,4 +387,21 @@
 -keep class androidx.lifecycle.** { *; }
 -keep class androidx.lifecycle.lifecycle-livedata-core.** { *; }
 -keep interface androidx.lifecycle.** { *; }
+
+#sentry
+# 保留 Sentry SDK 的所有类及其成员，避免被混淆
+-keep class io.sentry.** { *; }
+# 保留 JetBrains 注解类，避免混淆
+-keep class org.jetbrains.annotations.** { *; }
+# 忽略 SLF4J 的警告，防止编译时出现未找到类的警告
+-dontwarn org.slf4j.**
+# 保留 Sentry 反射使用的类名，避免反射失败
+-keepnames class io.sentry.** { *; }
+# 保留调试信息以确保可以正确捕获堆栈信息，包括源文件和行号
+-keepattributes SourceFile, LineNumberTable
+# 保留异常和签名信息，以确保异常处理和反射操作正常
+-keepattributes Exceptions, Signature, InnerClasses
+
+
+
 ###########################第三方库end#########################################

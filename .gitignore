@@ -99,3 +99,6 @@ lint/tmp/
 /.idea/
 .idea
 app/proguardMapping.txt
+
+# Sentry Config File
+sentry.properties

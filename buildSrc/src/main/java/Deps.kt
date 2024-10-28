@@ -16,8 +16,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 34
-    val versionCode = 69
-    const val versionName = "3.9.4"
+    val versionCode = 70
+    const val versionName = "4.0.0"
 
     const val coreKtxVersion = "1.9.0"
     const val appCompatVersion = "1.6.0"
@@ -106,6 +106,8 @@ object Version {
     const val multiDex = "2.0.1"
 
     const val bugly = "4.1.9.3"
+
+    const val sentry = "7.15.0"
 }
 
 object Deps {
@@ -268,4 +270,7 @@ object Deps {
 
     // bugly
     const val bugly = "com.tencent.bugly:crashreport:${Version.bugly}"
+
+    // sentry
+    const val sentry = "io.sentry:sentry-android:${Version.sentry}"
 }

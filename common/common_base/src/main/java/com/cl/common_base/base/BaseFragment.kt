@@ -96,15 +96,14 @@ abstract class BaseFragment<VB : ViewDataBinding> : Fragment(), BaseBinding<VB> 
 
 
     fun hideProgressLoading() {
-
-        (context as? BaseActivity<*>)?.hideProgressLoading()
+        (activity as? BaseActivity<*>)?.hideProgressLoading()
     }
 
     fun showProgressLoading(
         text: String? = getString(R.string.loading),
         cancelable: Boolean = true
     ) {
-        (context as? BaseActivity<*>)?.showProgressLoading(text, cancelable)
+        (activity as? BaseActivity<*>)?.showProgressLoading(text, cancelable)
     }
 
     @RequiresApi(Build.VERSION_CODES.CUPCAKE)

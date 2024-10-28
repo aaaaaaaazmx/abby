@@ -1,6 +1,8 @@
 package com.cl.common_base.video;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Matrix;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 import com.cl.common_base.R;
 import com.cl.common_base.video.model.SwitchVideoModel;
 import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
+import com.shuyu.gsyvideoplayer.utils.NetworkUtils;
 import com.shuyu.gsyvideoplayer.video.StandardGSYVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYBaseVideoPlayer;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
@@ -315,6 +318,11 @@ public class SampleVideo extends StandardGSYVideoPlayer {
         mSwitchSize.setText(mTypeText);
     }
 
+    @Override
+    public boolean isNeedShowWifiTip() {
+        return false;
+    }
+
     /**
      * 弹出切换清晰度
      */
@@ -358,5 +366,23 @@ public class SampleVideo extends StandardGSYVideoPlayer {
         switchVideoTypeDialog.show();
     }*/
 
+
+
+    @Override
+    protected void showWifiDialog() {
+        if (!NetworkUtils.isAvailable(mContext)) {
+            //Toast.makeText(mContext, getResources().getString(R.string.no_net), Toast.LENGTH_LONG).show();
+            startPlayLogic();
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivityContext());
+        builder.setMessage(R.string.base_tips_not_wifi);
+        builder.setPositiveButton(R.string.base_keep_playing, (dialog, which) -> {
+            dialog.dismiss();
+            startPlayLogic();
+        });
+        builder.setNegativeButton(R.string.base_stop_playing, (dialog, which) -> dialog.dismiss());
+        builder.create().show();
+    }
 
 }

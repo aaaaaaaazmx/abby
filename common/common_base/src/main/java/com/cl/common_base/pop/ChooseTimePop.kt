@@ -218,8 +218,8 @@ class ChooseTimePop(
                     if (isTheSpacingHours) {
                         // 计算时间是否大于12个小时
                         val now = LocalDateTime.now()
-                        val turn = if (turnOnHour == 24) 0 else turnOnHour
-                        val turnOff = if (turnOffHour == 24) 0 else turnOffHour
+                        val turn =  if (turnOnHour == 24) 12 else if (turnOnHour == 12) 0 else turnOnHour
+                        val turnOff =  if (turnOffHour == 24) 12 else if (turnOffHour == 12) 0 else turnOffHour
                         val start = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turn ?: 0, 0) // 开始时间
                         var end = LocalDateTime.of(now.year, now.month, now.dayOfMonth, turnOff ?: 0, 0) // 结束时间
 

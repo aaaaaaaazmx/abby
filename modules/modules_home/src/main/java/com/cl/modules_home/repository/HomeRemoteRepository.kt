@@ -8,6 +8,21 @@ import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.GuideInfoData
 import com.cl.common_base.bean.PlantInfoData
 import com.cl.common_base.bean.UpdateInfoReq
+import com.cl.modules_home.request.CheckEnvData
+import com.cl.modules_home.request.CycleListBean
+import com.cl.modules_home.request.DeleteTaskReq
+import com.cl.modules_home.request.EnvData
+import com.cl.modules_home.request.EnvDeleteReq
+import com.cl.modules_home.request.EnvParamListBeanItem
+import com.cl.modules_home.request.EnvParamListReq
+import com.cl.modules_home.request.EnvSaveReq
+import com.cl.modules_home.request.PeriodListBody
+import com.cl.modules_home.request.PeriodListSaveReq
+import com.cl.modules_home.request.SaveTaskReq
+import com.cl.modules_home.request.Task
+import com.cl.modules_home.request.TaskConfigurationListData
+import com.cl.modules_home.request.TempData
+import com.cl.modules_home.request.UpdateFanModelReq
 import com.cl.modules_home.service.HttpHomeApiService
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.flow.Flow
@@ -36,8 +51,8 @@ class HomeRemoteRepository @Inject constructor() {
         return service.saveOrUpdate(body)
     }
 
-    fun startRunning(botanyId: String?, goon: Boolean): Flow<HttpResult<Boolean>> {
-        return service.startRunning(botanyId, goon)
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null,): Flow<HttpResult<Boolean>> {
+        return service.startRunning(botanyId, goon, templateId, step)
     }
 
     fun plantInfo(): Flow<HttpResult<PlantInfoData>> {
@@ -225,4 +240,58 @@ class HomeRemoteRepository @Inject constructor() {
     fun getPlantIdByDeviceId(deviceId: String): Flow<HttpResult<MutableList<PlantIdByDeviceIdData>>> {
         return service.getPlantIdByDeviceId(deviceId)
     }
+
+    fun getCycleList(plantId: PeriodListBody): Flow<HttpResult<MutableList<CycleListBean>>> {
+        return service.getCycleList(plantId)
+    }
+
+    fun createCalendar(plantId: PeriodListBody): Flow<HttpResult<TempData>> {
+        return service.createCalendar(plantId)
+    }
+
+    fun periodListSave(plantId: PeriodListSaveReq): Flow<HttpResult<Boolean>> {
+        return service.periodListSave(plantId)
+    }
+
+    fun getEnvParamList(plantId: EnvParamListReq): Flow<HttpResult<EnvData>> {
+        return service.getEnvParamList(plantId)
+    }
+
+    fun envParamDelete(plantId: EnvDeleteReq): Flow<HttpResult<BaseBean>> {
+        return service.envParamDelete(plantId)
+    }
+
+    fun envParamListCheck(plantId: EnvSaveReq): Flow<HttpResult<CheckEnvData>> {
+        return service.envParamListCheck(plantId)
+    }
+
+    fun envParamListSave(plantId: EnvSaveReq): Flow<HttpResult<BaseBean>> {
+        return service.envParamListSave(plantId)
+    }
+
+    fun taskConfigurationList(req: EnvSaveReq): Flow<HttpResult<TaskConfigurationListData>> {
+        return service.taskConfigurationList(req)
+    }
+
+    fun taskList(req: EnvSaveReq): Flow<HttpResult<MutableList<Task>>> {
+        return service.taskList(req)
+    }
+
+    fun taskListSave(req: SaveTaskReq): Flow<HttpResult<BaseBean>> {
+        return service.taskListSave(req)
+    }
+
+    fun taskDelete(req: DeleteTaskReq): Flow<HttpResult<Boolean>> {
+        return service.taskDelete(req)
+    }
+
+    fun getFanModel(): Flow<HttpResult<MutableList<UpdateFanModelReq>>> {
+        return service.getFanModel()
+    }
+
+        fun updateFanModel(req: UpdateFanModelReq): Flow<HttpResult<BaseBean>> {
+        return service.updateFanModel(req)
+    }
+
+
 }

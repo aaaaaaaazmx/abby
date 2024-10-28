@@ -40,7 +40,7 @@ object Constants {
         const val TEST_URL = "http://192.168.3.6:9997/"
 
         // 本地环境
-        const val BD_URL = "http://192.168.3.101:9330/"
+        const val BD_URL = "http://192.168.3.113:9330/"
 
         // 正式环境
 //        const val FORMAL_URL = "https://52.9.50.27:9330/"
@@ -226,6 +226,12 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 旧的proMode开关表示 on
+        const val KEY_OLD_PRO_MODE = "On"
+        // 新的proMode模版开关表示 On_Template
+        const val KEY_NEW_PRO_MODE = "On_Template"
+        // 关闭proMode模式
+        const val KEY_CLOSE_PRO_MODE = "Off"
         // 配对设备Abby
         const val KEY_GLOBAL_PAIR_DEVICE_ABBY = "key_global_pair_device_abby"
         // 配对设备Camera
@@ -342,6 +348,12 @@ object Constants {
 
         // 是否显示camera
         const val KEY_IS_SHOW_CAMERA = "key_is_show_camera"
+
+        // 带模板参数到日历界面去 templateId
+        const val KEY_IS_TEMPLATE_ID = "templateId"
+
+        const val KEY_STEP = " step"
+
     }
 
     // Fixed Id

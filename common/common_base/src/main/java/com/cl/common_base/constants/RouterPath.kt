@@ -81,6 +81,9 @@ class RouterPath {
         const val PAGE_CAMERA = "/camera/$HOME"
         // 新用户第一次进入的界面
         const val PAGE_FIRST_JOIN = "/firstJoin/$HOME"
+        const val PAGE_HOME_TASK_SET = "/taskSet/$HOME"
+        const val PAGE_HOME_PRO_MODE_START = "/proModeStart/$HOME"
+
     }
 
     /**

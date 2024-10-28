@@ -34,6 +34,7 @@ data class UpDeviceInfoReq(
     var spaceSize: String? = null,
     var numPlant: String? = null,
     var ledWattage: String? = null,
+    var dripKit: Boolean? = null,
 ) : BaseBean() {
 
     /*data class InfoList(

@@ -1,9 +1,12 @@
 package com.cl.modules_home.adapter
 
+import android.content.Intent
 import android.graphics.Color
 import android.widget.CompoundButton
 import android.widget.ImageView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cl.modules_home.R
@@ -16,43 +19,48 @@ import com.chad.library.adapter.base.BaseMultiItemQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseViewHolder
 import com.cl.common_base.bean.EnvironmentInfoData
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.ext.equalsIgnoreCase
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
+import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.widget.FeatureItemSwitch
+import com.cl.common_base.widget.SvTextView
 import com.cl.common_base.widget.SwitchButton
 import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.activity.ProModeEnvActivity
+import com.cl.modules_home.databinding.HomeGrowDripPopBinding
 import com.cl.modules_home.widget.HomeFanBottonPop
 import com.google.android.material.transition.Hold
 import com.luck.picture.lib.utils.DensityUtil
 import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
+import kotlinx.coroutines.launch
 
 /**
  * pop初始化数据
  *
  * @author 李志军 2022-08-06 18:44
  */
-class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
+class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?, val airPumpAction: ((HomeEnvirPopAdapter, EnvironmentInfoData.Environment, Int ,Boolean)->Unit)? = null, val dripKitAction : ((HomeEnvirPopAdapter, EnvironmentInfoData.Environment, Int ,Boolean)->Unit)? = null) :
     BaseMultiItemQuickAdapter<EnvironmentInfoData.Environment, BaseViewHolder>(data) {
 
-    // fan auto 关闭时 是否在弹出pop
-    private val isSHowRemindMe = {
-        // false表示展示，true表示不展示。
-        Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FAN_CLOSE_TIP, false)
-    }
     init {
         addItemType(EnvironmentInfoData.KEY_TYPE_GRID, R.layout.home_envir_grid)// recyclview
         addItemType(EnvironmentInfoData.KEY_TYPE_TEXT, R.layout.home_text_item)// 文字描述
         addItemType(EnvironmentInfoData.KEY_TYPE_NORMAL, R.layout.home_envir_item_pop)
         addItemType(EnvironmentInfoData.KEY_TYPE_FAN, R.layout.home_envir_item_fan_pop)
         addItemType(EnvironmentInfoData.KEY_TYPE_LIGHT, R.layout.home_grow_light_item_pop)
+        addItemType(EnvironmentInfoData.KEY_DRIP, R.layout.home_grow_drip_pop)
     }
 
     val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
@@ -82,6 +90,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                     binding.executePendingBindings()
                 }
             }
+
             EnvironmentInfoData.KEY_TYPE_NORMAL -> {
                 val binding = DataBindingUtil.bind<HomeEnvirItemPopBinding>(holder.itemView)
                 if (binding != null) {
@@ -93,6 +102,15 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
 
             EnvironmentInfoData.KEY_TYPE_LIGHT -> {
                 val binding = DataBindingUtil.bind<HomeGrowLightItemPopBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.executePendingBindings()
+                }
+            }
+
+            EnvironmentInfoData.KEY_DRIP -> {
+                val binding = DataBindingUtil.bind<HomeGrowDripPopBinding>(holder.itemView)
                 if (binding != null) {
                     // 设置数据
                     binding.data = data[position]
@@ -119,33 +137,8 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
             }
 
             EnvironmentInfoData.KEY_TYPE_FAN -> {
-                helper.getView<SwitchButton>(R.id.fis_item_switch).apply {
-                    isChecked = item.automation == 1
-                    ViewUtils.setVisible(item.automation != 1, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
-                    setOnCheckedChangeListener { button, isChecked ->
-                        /*helper.setText(R.id.tv_desc, if (isChecked) "Auto" else "Manual")*/
-                        if (isSHowRemindMe()) {
-                            // 已经展示过了，并且勾选了不再提示。
-                            listener?.onCheckedChanged(button, isChecked)
-                            ViewUtils.setVisible(!isChecked, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
-                            return@setOnCheckedChangeListener
-                        }
-                        if (!isChecked) {
-                            // 如果是关闭，那么就弹窗。
-                            xpopup(context) {
-                                isDestroyOnDismiss(false)
-                                dismissOnTouchOutside(false)
-                                asCustom(HomeFanBottonPop(context, title = context.getString(com.cl.common_base.R.string.string_1479), tag = HomeFanBottonPop.FAN_AUTO_TAG,
-                                    benOKAction = {
-                                        listener?.onCheckedChanged(button, isChecked)
-                                    })).show()
-                            }
-                        } else {
-                            listener?.onCheckedChanged(button, isChecked)
-                        }
-                        ViewUtils.setVisible(!isChecked, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
-                    }
-                }
+                ViewUtils.setVisible(item.runningModelShow?.equalsIgnoreCase("Manual") == true, helper.getView(R.id.rl_fan_intake), helper.getView(R.id.rl_fan_exhaust))
+
                 helper.setText(R.id.tv_fan_value, item.fanIntake.toString())
                 helper.setText(R.id.tv_fan_exhaust_value, item.fanExhaust.toString())
 
@@ -179,8 +172,15 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                                         xpopup(it) {
                                             isDestroyOnDismiss(false)
                                             dismissOnTouchOutside(false)
-                                            asCustom(HomeFanBottonPop(it, title = context.getString(com.cl.common_base.R.string.string_1354), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
-                                            }, benOKAction = {})).show()
+                                            asCustom(
+                                                HomeFanBottonPop(
+                                                    it,
+                                                    title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.",
+                                                    tag = HomeFanBottonPop.FAN_TAG,
+                                                    remindMeAction = {
+                                                    },
+                                                    benOKAction = {})
+                                            ).show()
                                         }
                                     }
                                 }
@@ -270,10 +270,22 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                 helper.setText(R.id.period, item.detectionValue)
                 helper.setText(R.id.period_status, item.explain)
                 helper.setText(R.id.tv_healthStatuss, item.healthStatus)
-                when(item.healthStatus) {
+                helper.getView<ImageView>(R.id.iv_light_status).apply {
+                    setSafeOnClickListener {
+                        // 跳转到灯光设置参数界面
+                        context.startActivity(Intent(context, ProModeEnvActivity::class.java).apply {
+                            putExtra(ProModeEnvActivity.STEP, item.step)
+                            putExtra(ProModeEnvActivity.STEP_NOW, item.stepShow)
+                            putExtra(ProModeEnvActivity.TEMPLATE_ID, item.templateId)
+                            putExtra(ProModeEnvActivity.IS_UPDATE_LIGHT, true)
+                        })
+                    }
+                }
+                when (item.healthStatus) {
                     "OK" -> {
                         helper.setTextColor(R.id.tv_healthStatuss, Color.BLACK)
                     }
+
                     "Error" -> {
                         helper.setTextColor(R.id.tv_healthStatuss, Color.parseColor("#D61744"))
                     }
@@ -283,6 +295,38 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                         setImageResource(com.cl.common_base.R.mipmap.base_gt)
                     } else {
                         setImageResource(com.cl.common_base.R.mipmap.base_error_gt)
+                    }
+                }
+            }
+
+            EnvironmentInfoData.KEY_DRIP -> {
+                helper.getView<FeatureItemSwitch>(R.id.fis_item_switchs).apply {
+                    isItemChecked = item.dripKit == true
+                    setSwitchCheckedChangeListener { compoundButton, b ->
+                        item.dripKit = b
+                        dripKitAction?.invoke(this@HomeEnvirPopAdapter, item, helper.layoutPosition, b)
+                        notifyItemChanged(helper.layoutPosition)
+                    }
+                }
+
+                helper.getView<FeatureItemSwitch>(R.id.air_pump).apply {
+                    setSwitchCheckedChangeListener { compoundButton, b ->
+                        airPumpAction?.invoke(this@HomeEnvirPopAdapter, item, helper.layoutPosition, b)
+                    }
+                }
+
+                helper.getView<ImageView>(R.id.tv_air_pump_desc).apply {
+                    setSafeOnClickListener {
+                        InterComeHelp.INSTANCE.openInterComeSpace(
+                            InterComeHelp.InterComeSpace.Article,
+                            Constants.InterCome.KEY_INTER_COME_AIR_PUMP
+                        )
+                    }
+                }
+
+                helper.getView<ImageView>(R.id.tv_drip_pump_desc).apply {
+                    setSafeOnClickListener {
+                        InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, Constants.InterCome.KEY_INTER_COME_DRIP)
                     }
                 }
             }
@@ -301,12 +345,14 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                     "#E3A00D"
                 )
             }
+
             "Ideal" -> Color.parseColor("#006241")
             "Low" -> {
                 if (type == EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE) Color.parseColor("#006241") else Color.parseColor(
                     "#E3A00D"
                 )
             }
+
             "Too Low" -> Color.parseColor("#D61744")
             "OK" -> Color.parseColor("#006241")
             "Error" -> Color.parseColor("#D61744")
@@ -314,7 +360,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
         }
     }
 
-    private  fun temperatureConversion(text: String?): String {
+    private fun temperatureConversion(text: String?): String {
         if (text.isNullOrEmpty()) return ""
         if (text.contains("℉")) {
             // 默认为false

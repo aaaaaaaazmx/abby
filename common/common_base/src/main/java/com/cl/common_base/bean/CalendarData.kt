@@ -14,12 +14,14 @@ data class CalendarData(
     var articleId: String? = null,
     var articleDetails: String? = null,
     var epochEndTime: String? = null,
+    var step: String? = null,
     var epochExplain: String? = null,
     var epochStartTime: String? = null,
     var plantId: String? = null,
     var taskList: MutableList<TaskList>? = null
 ) : BaseBean() {
     data class TaskList(
+        var deleted: Boolean? = null,
         var createTime: String? = null,
         var finishTime: String? = null,
         var isDeleted: String? = null,
@@ -89,6 +91,8 @@ data class CalendarData(
         const val TASK_TYPE_CHECK_CHECK_FINISH = "check_finish"
         const val TASK_TYPE_CHECK_CHECK_AUTOFLOWERING = "check_autoflowering"
         const val TASK_TYPE_TEST = "test" // 学院任务
+        // drying任务完成
+        const val TASK_TYPE_CHECK_CHECK_FLOWERING_DONE = "P016"
 
 
         // 富文本类型

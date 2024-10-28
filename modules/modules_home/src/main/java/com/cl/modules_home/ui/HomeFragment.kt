@@ -157,6 +157,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private val isManual by lazy {
         arguments?.getBoolean(Constants.Global.KEY_MANUAL_MODE, false)
     }
+    private var isManuals = false
 
     // 导航气泡
     private val bubblePopHor by lazy {
@@ -529,6 +530,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             //防止点击穿透问题
             this.root.setOnTouchListener { _, _ -> true }
 
+            // 点击种子阶段的感叹号
+            clGth.setSafeOnClickListener {
+                context?.let{
+                    com.cl.common_base.ext.xpopup(it) {
+                        isDestroyOnDismiss(false)
+                        dismissOnTouchOutside(false)
+                        asCustom(
+                            BaseCenterPop(context = it, content = "The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them", isShowCancelButton = false)
+                        ).show()
+                    }
+                }
+            }
+
             // 点击live直接打开直播
             ivLive.setSafeOnClickListener {
                 startToVideoPlay()
@@ -880,7 +894,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             clPeroid.setOnClickListener {
                 // 调用接口一次
                 mViewMode.plantInfo()
-                mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
+                mViewMode.periodData.value?.let { data -> periodPop?.setData(data, mViewMode.plantInfo.value?.data?.harvestTime, mViewMode.plantInfo.value?.data?.templateId) }
                 periodPopDelegate.show()
             }
 
@@ -2066,7 +2080,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     // 这是周期弹窗解锁周期的
     private val periodPop by lazy {
         context?.let {
-            HomePeriodPop(it, unLockAction = { guideType, taskId, lastOneGuideType, taskTime ->
+            HomePeriodPop(it, isManuals, unLockAction = { guideType, taskId, lastOneGuideType, taskTime ->
                 /*if (lastOneGuideType == UnReadConstants.PlantStatus.TASK_TYPE_CHECK_TRANSPLANT) {
                     // 表示是seed to veg
                     SeedGuideHelp(it).showGuidePop {
@@ -2208,7 +2222,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     override fun observe() {
         mViewMode.apply {
             // 获取当前设备的proMode下的预设灯光。
@@ -2342,6 +2356,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // 寻找当前设备
                         dataList.firstOrNull { it.currentDevice == 1 }?.let { device ->
+                            isManuals = device.proMode?.equalsIgnoreCase(Constants.Global.KEY_NEW_PRO_MODE) == true
+                            binding.pplantNinth.svtProMode.visibility = if (device.proMode?.equalsIgnoreCase(Constants.Global.KEY_NEW_PRO_MODE) == true) View.VISIBLE else View.GONE
                             // 是否显示摄像头
                             val isCameraVisible =
                                 device.accessoryList?.firstOrNull { it.accessoryType == AccessoryListBean.KEY_CAMERA } != null
@@ -2358,6 +2374,36 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                             // 只要rlInch植物高度不显示，那么就显示横向的周期选择
                             ViewUtils.setVisible(device.heightSensor == false, binding.plantManual.rlHorPeriod)
+
+
+                            // 更新涂鸦数据Bean、因为只有在登陆的时候才会更新，可能会导致数据错乱。
+                            ThingHomeSdk.newHomeInstance(mViewMode.homeId).getHomeDetail(object : IThingHomeResultCallback {
+                                override fun onSuccess(bean: HomeBean?) {
+                                    bean?.let { it ->
+                                        val arrayList = it.deviceList as ArrayList<DeviceBean>
+                                        arrayList.firstOrNull { dev -> dev.devId == device.deviceId.toString() }.let { data ->
+                                            GSON.toJsonInBackground(data) {
+                                                logI("1231231toJsonInBackground: $it")
+                                            }
+                                            // 在线的、数据为空、并且是abby机器
+                                            if (device.spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && device.onlineStatus != "Offline") {
+
+                                            } else {
+                                                // 保存Tuya数据Bean
+                                                GSON.toJsonInBackground(data) {
+                                                    Prefs.putStringAsync(
+                                                        Constants.Tuya.KEY_DEVICE_DATA, it
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                override fun onError(errorCode: String?, errorMsg: String?) {
+
+                                }
+                            })
                         }
 
                         if (dataList.isNotEmpty()) {
@@ -2472,7 +2518,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    hideProgressLoading()
                     // 更新InterCome用户信息
                     InterComeHelp.INSTANCE.updateInterComeUserInfo(
                         map = mapOf(), userDetail.value?.data, refreshToken.value?.data,
@@ -2736,6 +2781,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 }
 
                 success {
+                    hideProgressLoading()
                     // 删除未读消息
                     mViewMode.removeFirstUnreadMessage()
                     // 清空气泡状态
@@ -2751,6 +2797,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         )
                     }
                 }
+                loading { showProgressLoading() }
             })
             // 获取通用图文信息接口
             getDetailByLearnMoreId.observe(viewLifecycleOwner, resourceObserver {
@@ -3808,7 +3855,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     // 刷新数据
                     if (periodPopDelegate.isShow) {
-                        mViewMode.periodData.value?.let { data -> periodPop?.setData(data) }
+                        mViewMode.periodData.value?.let { data -> periodPop?.setData(data, mViewMode.plantInfo.value?.data?.harvestTime, mViewMode.plantInfo.value?.data?.templateId) }
                     }
                 }
                 error { errorMsg, code ->
@@ -3862,7 +3909,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // Update UI or data display
                         dataItem.environments?.let {
-                            envirPop?.setData(it, mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }, mViewMode.userDetail.value?.data)
+                            envirPop?.setData(it, mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }, mViewMode.userDetail.value?.data, mViewMode.getAirPump.value == true, mViewMode.getWaterLevel.value.toString())
                         }
                     }
 
@@ -4817,6 +4864,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                                 // 显示是否展示夜间模式 不是手动模式
                                 if (isManual == false) {
+                                    if (null == binding) return@parseObjectInBackground
                                     // 根据灯光来显示植物是否在睡觉，是否需要显示zzz
                                     mViewMode.getCameraFlag { isHave, isLoadCamera, cameraId, devId ->
                                         val isShowIvTwo = ((isHave && !isLoadCamera) || !isHave) && mViewMode.isZp.value == false && allDpBean.gl == "0"

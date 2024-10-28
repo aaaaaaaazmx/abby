@@ -10,6 +10,7 @@ import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.equalsIgnoreCase
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 
@@ -73,7 +74,7 @@ class PlantCheckHelp {
         }
 
         // 表示是自动模式 && 不是未种植状态
-        if (data.proMode == "On" && data.plantExistingStatus != KEY_NOT_PLANTED) {
+        if (data.proMode?.equalsIgnoreCase(Constants.Global.KEY_OLD_PRO_MODE) == true && data.plantExistingStatus != KEY_NOT_PLANTED) {
             // 跳转未种植引导页面
             // 附带引导flag过去
             ARouter.getInstance()
@@ -93,7 +94,7 @@ class PlantCheckHelp {
                 .withBoolean(
                     // 是否是第一次登录注册、并且是从未绑定过设备
                     Constants.Global.KEY_MANUAL_MODE,
-                    data.proMode == "On"
+                    data.proMode == Constants.Global.KEY_OLD_PRO_MODE
                 )
                 .withString(
                     Constants.Global.KEY_DEVICE_TYPE,

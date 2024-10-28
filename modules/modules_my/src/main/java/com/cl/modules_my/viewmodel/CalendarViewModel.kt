@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.*
 import com.cl.common_base.constants.Constants
@@ -17,12 +18,16 @@ import com.cl.common_base.util.json.GSON
 import com.cl.modules_my.repository.MyRepository
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.bean.ConversationsBean
+import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.widget.toast.ToastUtil
 import com.thingclips.smart.android.user.bean.User
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -106,6 +111,68 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         }
     }
 
+    /**
+     * 开始种植
+     */
+    private val _startRunning = MutableLiveData<Resource<Boolean>>()
+    val startRunning: LiveData<Resource<Boolean>> = _startRunning
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null,) {
+        viewModelScope.launch {
+            repository.startRunning(botanyId, goon, templateId, step).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _startRunning.value = it
+            }
+        }
+    }
+
+
+    /**
+     * 开始种植
+     */
+    private val _deleteTask = MutableLiveData<Resource<BaseBean>>()
+    val deleteTask: LiveData<Resource<BaseBean>> = _deleteTask
+    fun deleteTask(taskId: String) {
+        viewModelScope.launch {
+            repository.deleteTask(taskId).map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code, it.msg
+                    )
+                } else {
+                    refreshTask()
+                    Resource.Success(it.data)
+                }
+            }.flowOn(Dispatchers.IO).onStart {
+                emit(Resource.Loading())
+            }.catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1, "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _deleteTask.value = it
+            }
+        }
+    }
+
 
     // 会话ID
     private val _conversationId = MutableLiveData<Resource<ConversationsBean>>()
@@ -181,10 +248,13 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
     /**
      * 获取日历任务
      */
-    private val _getCalendar = MutableLiveData<Resource<MutableList<CalendarData>>>()
-    val getCalendar: LiveData<Resource<MutableList<CalendarData>>> = _getCalendar
-    fun getCalendar(startDate: String, endDate: String) = viewModelScope.launch {
-        repository.getCalendar(startDate, endDate)
+    private val _getCalendar = MutableLiveData<Resource<CalendarNewData>>()
+    val getCalendar: LiveData<Resource<CalendarNewData>> = _getCalendar
+    /**
+     * 获取日历任务模版
+     */
+     fun getCalendarTemplate(startDate: String, endDate: String, step: String? = null,) = viewModelScope.launch {
+        repository.getCalendarTemplate(startDate, endDate, step)
             .map {
                 if (it.code != Constants.APP_SUCCESS) {
                     Resource.DataError(
@@ -208,8 +278,25 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     )
                 )
             }.collectLatest {
-                if (it.data.isNullOrEmpty()) return@collectLatest
-                _getCalendar.value = it
+                if (it.data?.list.isNullOrEmpty()) return@collectLatest
+                // 判断当前的周期
+                val oldCalendar = _getCalendar.value?.data?.list
+                // 第一次进来是空的，不需要判断
+                if (oldCalendar.isNullOrEmpty())  {
+                    _getCalendar.value = it
+                    return@collectLatest
+                }
+
+                // 当家在了一个周期时
+                // 如果2个周期不相等，那么就是转周期任务。
+                if (oldCalendar[0].step != it.data?.list?.get(0)?.step) {
+                    // 需要清空之前的数据,也就是重新加载本地数据
+                    getLocalCalendar(year = CalendarUtil.getFormat("yyyy").format(Date().time).safeToInt())
+                    it.data?.list = mutableListOf()
+                    _getCalendar.value = it
+                } else {
+                    _getCalendar.value = it
+                }
             }
     }
 
@@ -249,14 +336,23 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             }
     }
 
-    fun refreshTask() {
+    private val _step = MutableLiveData<String>()
+    val step: LiveData<String> = _step
+    fun setSteps(step: String? = null) {
+        step?.let {
+            _step.value = it
+        }
+    }
+
+    fun refreshTask(onlyRefreshLoad: Boolean? = true) {
         _localCalendar.value?.firstOrNull { data -> data.isChooser }?.apply {
             _localCalendar.value?.let { list ->
-                setOnlyRefreshLoad(true)
+                setOnlyRefreshLoad(onlyRefreshLoad == true)
                 letMultiple(list.firstOrNull()?.ymd, list.lastOrNull()?.ymd) { first, last ->
-                    getCalendar(
+                    getCalendarTemplate(
                         first,
-                        last
+                        last,
+                        step.value
                     )
                 }
             }
@@ -349,17 +445,28 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
             repository.finishTask(body)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
+                        if (it.code == 1065) {
+                            ToastUtil.shortShow(it.msg)
+                            ARouter.getInstance().build(RouterPath.Home.PAGE_HOME_PRO_MODE_START)
+                                .withString("templateId", body.templateId)
+                                .withString("step", it.data)
+                                .withBoolean("is_current_period", false)
+                                .navigation()
+                            // 直接跳转到
+                            Resource.Success(it.data)
+                        } else {
+                            Resource.DataError(
+                                it.code,
+                                it.msg
+                            )
+                        }
                     } else {
-                        // 刷新任务
-                        refreshTask()
-                        if (guideInfoStatus.value == CalendarData.TASK_TYPE_CHECK_CHECK_CURING) {
+                        if (guideInfoStatus.value == CalendarData.TASK_TYPE_CHECK_CHECK_CURING || guideInfoStatus.value == CalendarData.TASK_TYPE_CHECK_CHECK_FLOWERING_DONE) {
                             // 直接跳转到完成界面
                             _showCompletePage.postValue(true)
                         }
+                        // 刷新任务
+                        refreshTask(false)
                         Resource.Success(it.data)
                     }
                 }
@@ -397,6 +504,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         }
 
         time?.let {
+            if (time == 0L) return ""
             val mm = CalendarUtil.getFormat("MMM").format(time)
             val date = Date()
             date.time = time
@@ -452,7 +560,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
         endMonth: Int? = 12,
         year: Int
     ) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val list = mutableListOf<com.cl.common_base.util.calendar.Calendar>()
             val yearNumber = year - 2022
             if (yearNumber < 0) return@launch // 后台说咩有2022年之前的植物
@@ -480,7 +588,9 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                     }
                 }
             }
-            _localCalendar.value = list
+            withContext(Dispatchers.Main) {
+             _localCalendar.value = list
+            }
         }
     }
 

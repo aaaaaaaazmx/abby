@@ -1,15 +1,20 @@
 package com.cl.common_base.ext
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.Size
 import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -673,4 +678,26 @@ object DateHelper {
     fun getMinute(date: Date) = getCalendar(date).get(Calendar.MINUTE)
     fun getSecond(date: Date) = getCalendar(date).get(Calendar.SECOND)
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun dateToEpochSeconds(dateStr: String, formatterPattern: String = "yyyy-MM-dd"): Long {
+        return try {
+            // 获取设备当前的时区 ID
+            val timeZoneId = TimeZone.getDefault().id
+
+            // 定义日期格式
+            val formatter = DateTimeFormatter.ofPattern(formatterPattern)
+
+            // 解析字符串为 LocalDate
+            val localDate = LocalDate.parse(dateStr, formatter)
+
+            // 将 LocalDate 转换为 ZonedDateTime，时间设为午夜
+            val zonedDateTime = localDate.atStartOfDay(ZoneId.of(timeZoneId))
+
+            // 获取 epoch 秒
+            zonedDateTime.toEpochSecond()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            0L
+        }
+    }
 }

@@ -131,6 +131,9 @@
     <string name="my_child_lock">Child Lock</string>
     <string name="my_night">Night Mode</string>
     <string name="my_time">Timer</string>
+    <string name="base_tips_not_wifi">You are currently using a mobile network. Continued playback consumes traffic.</string>
+    <string name="base_keep_playing">Keep playing.</string>
+    <string name="base_stop_playing">Stop playing</string>
     <plurals name="seconds">
         <item quantity="one">%d second</item>
         <item quantity="other">%d seconds</item>
