@@ -102,7 +102,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:text="Harvest"
+                    android:text="@string/home_harvest"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -114,7 +114,7 @@
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="50dp"
-                    android:text="ETA"
+                    android:text="@string/home_eta"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold" />

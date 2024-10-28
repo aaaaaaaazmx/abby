@@ -255,7 +255,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                     }
                     adapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(context, getString(R.string.contact_the_number, MAX_IMAGE_COUNT), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(com.cl.common_base.R.string.contact_the_number, "$MAX_IMAGE_COUNT"), Toast.LENGTH_SHORT).show()
                 }
             }
             recyclerView.adapter = adapter
@@ -314,7 +314,7 @@ class ChoosePicActivity : BaseActivity<ContactChooserPicActivityBinding>() {
                     }
                     adapter.notifyDataSetChanged()
                 } else {
-                    Toast.makeText(context, getString(R.string.contact_the_number, MAX_IMAGE_COUNT), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(com.cl.common_base.R.string.contact_the_number, "$MAX_IMAGE_COUNT"), Toast.LENGTH_SHORT).show()
                 }
             }
             recyclerView.adapter = adapter

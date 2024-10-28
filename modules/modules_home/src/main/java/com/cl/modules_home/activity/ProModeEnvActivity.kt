@@ -140,10 +140,10 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                                 asCustom(
                                     BaseCenterPop(
                                         this@ProModeEnvActivity,
-                                        content = getString(R.string.home_your_current_lighting_settings),
-                                        titleText = getString(R.string.home_incomplete_lighting_schedule),
-                                        cancelText = getString(R.string.home_back_to_editing),
-                                        confirmText = getString(R.string.home_proceed),
+                                        content = getString(com.cl.common_base.R.string.home_your_current_lighting_settings),
+                                        titleText = getString(com.cl.common_base.R.string.home_incomplete_lighting_schedule),
+                                        cancelText = getString(com.cl.common_base.R.string.home_back_to_editing),
+                                        confirmText = getString(com.cl.common_base.R.string.home_proceed),
                                         onConfirmAction = {
                                             saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
                                         })
@@ -271,7 +271,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             xpopup(this@ProModeEnvActivity) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
-                asCustom(BaseCenterPop(this@ProModeEnvActivity, content = getString(R.string.home_you_w), onConfirmAction = {
+                asCustom(BaseCenterPop(this@ProModeEnvActivity, content = getString(com.cl.common_base.R.string.home_you_w), onConfirmAction = {
                     viewModel.saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = true))
                 })).show()
             }
@@ -294,21 +294,21 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             // Check if the last data entry has the same week and day as the current entry
             if (lastData.week == weeks.safeToInt() && lastData.day == days.safeToInt()) {
                 // Show a message indicating the user needs to edit the end date if both are identical
-                ToastUtil.shortShow(getString(R.string.home_please_edit_enddate, lastData.envName ?: ""))
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.home_please_edit_enddate, "${lastData.envName}"))
                 return@setSafeOnClickListener
             }
 
             // Check if the last data entry is on the same week but occurs on a later day
             if (lastData.week == weeks.safeToInt() && lastData.day > days.safeToInt()) {
                 // Show a message indicating the user needs to edit the end date since the day is later
-                ToastUtil.shortShow(getString(R.string.home_please_edit_enddate, lastData.envName ?: ""))
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.home_please_edit_enddate, "${lastData.envName}"))
                 return@setSafeOnClickListener
             }
 
             // Optional: Check if the last data entry's week is greater than the current week (future week)
             if (lastData.week > weeks) {
                 // Show a message indicating the user needs to edit the end date since the week is in the future
-                ToastUtil.shortShow(getString(R.string.home_please_edit_enddate, lastData.envName ?: ""))
+                ToastUtil.shortShow(getString(com.cl.common_base.R.string.home_please_edit_enddate, "${lastData.envName}"))
                 return@setSafeOnClickListener
             }
 
@@ -318,7 +318,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             val newData = lastData.copy(
                 runningOn = false,
                 envId = null,
-                envName = getString(R.string.home_profilessss, "${(adapter.data.size + 1)}"),
+                envName = getString(com.cl.common_base.R.string.home_profilessss, "${(adapter.data.size + 1)}"),
                 week = weeks.safeToInt(),
                 day = days.safeToInt(),
                 sweek = beforeWeek,

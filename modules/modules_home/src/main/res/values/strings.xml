@@ -1,34 +1,3 @@
 <resources>
     <string name="app_name">modules_home</string>
-    <string name="home_g">%1$sg</string>
-    <string name="home_grow_chamber_temperature">Grow Chamber Temperature %1$s</string>
-    <string name="home_i_m_complete_grower">I’m #%1$s Complete grower</string>
-    <string name="home_room_four">Room %1$s%2$s %3$s%4$s</string>
-    <string name="home_rooms">Room %1$s%2$s</string>
-    <string name="home_room_one">Room %1$s%</string>
-    <string name="home_choose_grow_mode">Choose Grow Mode</string>
-    <string name="home_auto_mode_recommended">Auto Mode (Recommended)</string>
-    <string name="home_let_hey_abby">Let Hey abby handle the growing process with its classic automated algorithm</string>
-    <string name="home_pro_modes">Pro Mode</string>
-    <string name="home_customize_your_grow">Customize your grow with your own lighting schedule and calendar. Recommended for users who have harvested at least once with Hey abby.</string>
-    <string name="home_select_your_starting_point">Select Your Starting Point</string>
-    <string name="home_total_days_variable">*Total %1$s Days（variable）</string>
-    <string name="home_weekss">%1$s Weeks</string>
-    <string name="home_dayss">%1$s Day</string>
-    <string name="home_use_recommend_settings"><u>Use Recommend Settings</u></string>
-    <string name="home_use_official_calendar"><u>Use Official Calendar</u></string>
-    <string name="home_recommended_tasks">Recommended Tasks</string>
-    <string name="home_light_schedule_for">Light Schedule for</string>
-    <string name="home_setup_later"><u>Setup Later</u></string>
-    <string name="home_settings">Setting</string>
-    <string name="home_calendar_settings_for">Calendar Settings for</string>
-    <string name="home_period_for">Current Period for</string>
-    <string name="home_pro_modessss">Pro Mode</string>
-    <string name="home_your_current_lighting_settings">Your current lighting settings do not cover all the times in this cycle, leaving gaps. These gaps will be filled with the system\'s default settings if you would like to proceed.</string>
-    <string name="home_incomplete_lighting_schedule">Incomplete Lighting Schedule</string>
-    <string name="home_back_to_editing">Back to Editing</string>
-    <string name="home_proceed">Proceed</string>
-    <string name="home_you_w">You will proceed to next step with recommend settings</string>
-    <string name="home_please_edit_enddate">please edit endDate: %1$s</string>
-    <string name="home_profilessss">Profile %1$s</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.cl.modules_home.adapter
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.widget.CompoundButton
@@ -121,6 +122,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?, v
     }
 
 
+    @SuppressLint("StringFormatInvalid")
     override fun convert(helper: BaseViewHolder, item: EnvironmentInfoData.Environment) {
         when (helper.itemViewType) {
             EnvironmentInfoData.KEY_TYPE_GRID -> {
@@ -175,7 +177,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?, v
                                             asCustom(
                                                 HomeFanBottonPop(
                                                     it,
-                                                    title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.",
+                                                    title = context.getString(com.cl.common_base.R.string.home_you_re_about_to),
                                                     tag = HomeFanBottonPop.FAN_TAG,
                                                     remindMeAction = {
                                                     },
@@ -257,11 +259,11 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?, v
                 }
                 if (!item.roomData.isNullOrEmpty()) {
                     if (item.value?.contains("%") == true) {
-                        helper.setText(R.id.tv_going_unit, context.getString(R.string.home_room_one, item.roomData))
+                        helper.setText(R.id.tv_going_unit, context.getString(com.cl.common_base.R.string.home_room_one, "${item.roomData}"))
                     } else if (item.value?.contains("℉") == true) {
                         val temp = com.cl.common_base.ext.temperatureConversion(item.roomData.safeToFloat(), isMetric)
                         val tempUnit = if (isMetric) "℃" else "℉"
-                        helper.setText(R.id.tv_going_unit, context.getString(R.string.home_rooms, temp, tempUnit))
+                        helper.setText(R.id.tv_going_unit, context.getString(com.cl.common_base.R.string.home_rooms, "$temp", "$tempUnit"))
                     }
                 }
             }

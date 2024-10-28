@@ -100,7 +100,7 @@ class HomePeriodPop(
             ivClose.setOnClickListener { dismiss() }
             showView(LayoutType.RIGHT)
             ViewUtils.setVisible(!harvestTime.isNullOrEmpty(), binding?.llHarvest)
-            binding?.tvEta?.text = "ETA ${getYmdForEn(time = harvestTime.safeToLong() * 1000L)}"
+            binding?.tvEta?.text = "${context.getString(com.cl.common_base.R.string.home_eta)} ${getYmdForEn(time = harvestTime.safeToLong() * 1000L)}"
 
 
             ivChart.setOnClickListener {
@@ -116,7 +116,7 @@ class HomePeriodPop(
         showView(LayoutType.RIGHT)
         ViewUtils.setVisible(!harvestTime.isNullOrEmpty(), binding?.llHarvest)
         // ETA Jun （月份缩写） 20(日期）,2025 (年）
-        binding?.tvEta?.text = "ETA ${getYmdForEn(time = harvestTime.safeToLong() * 1000L)}"
+        binding?.tvEta?.text = "${context.getString(com.cl.common_base.R.string.home_eta)} ${getYmdForEn(time = harvestTime.safeToLong() * 1000L)}"
     }
 
     /**
@@ -233,7 +233,7 @@ class HomePeriodPop(
                         periodTime.text = if (journeyStatus == KEY_ON_GOING || journeyStatus == KEY_LOCK_COMPLETED || journeyStatus == KEY_UNLOCKING_COMPLETED) {
                             "${context.getString(com.cl.common_base.R.string.week)}${data?.get(position)?.week} ${context.getString(com.cl.common_base.R.string.day)}${data?.get(position)?.day}"
                         } else {
-                            "ETA ${getYmdForEn(time = data?.get(position)?.etaTime.safeToLong() * 1000L)}"
+                            "${context.getString(com.cl.common_base.R.string.home_eta)} ${getYmdForEn(time = data?.get(position)?.etaTime.safeToLong() * 1000L)}"
                         }
 
                         kotlin.runCatching {

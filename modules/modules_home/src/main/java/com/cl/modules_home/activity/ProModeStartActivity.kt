@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
@@ -59,13 +60,41 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
 
     private val weeksList by lazy {
         mutableListOf(
-            "1 Week", "2 Week", "3 Week", "4 Week", "5 Week", "6 Week", "7 Week", "8 Week", "9 Week", "10 Week", "11 Week", "12 Week",
-            "13 Week", "14 Week", "15 Week", "16 Week", "17 Week", "18 Week", "19 Week", "20 Week"
+            // string_2431 - string_2450
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2431),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2432),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2433),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2434),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2435),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2436),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2437),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2438),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2439),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2440),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2441),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2442),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2443),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2444),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2445),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2446),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2447),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2448),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2449),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2450)
+
         )
     }
 
     private val daysList by lazy {
-        mutableListOf("0 Day", "1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day")
+        mutableListOf(
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2451),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2424),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2425),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2426),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2427),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2428),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2429),
+        )
     }
 
     override fun initView() {
@@ -116,21 +145,21 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                             binding.recyclerView.isFocusable = false
                             // 是当前周期跳转过来修改的，那么就改为OK，改为时间就结束。
                             if (isCurrentPeriod == "true") {
-                                binding.btnSuccess.text = "OK"
+                                binding.btnSuccess.text = getString(com.cl.common_base.R.string.base_ok)
                             }
                         } // 从外面跳转过来进行比对
                     }
 
                     // 更新UI和适配器
                     selectedBean?.let {
-                        binding.tvTotalDay.text = getString(R.string.home_total_days_variable, it.stepDay.toString())
+                        binding.tvTotalDay.text = getString(com.cl.common_base.R.string.home_total_days_variable, "${it.stepDay}")
                     }
                     // 然后转化成week和Day
                     // 这个是传换成week,比如10/7=1,10%7=3,所以是1week3day
                     val week = selectedBean?.stepDay?.div(7)
                     val day = selectedBean?.stepDay?.rem(7)
-                    binding.tvStart.text = getString(R.string.home_weekss, week.toString())
-                    binding.tvDay.text = getString(R.string.home_dayss, day.toString())
+                    binding.tvStart.text = getString(com.cl.common_base.R.string.home_weekss, "$week")
+                    binding.tvDay.text = getString(com.cl.common_base.R.string.home_dayss, "$day")
 
                     adapter.setList(data)
                 }
@@ -201,13 +230,13 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                     item?.isSelect = !(item?.isSelect ?: false)
                     adapter.notifyItemChanged(position)
                     // 也需要获取当前的总天数
-                    binding.tvTotalDay.text = getString(R.string.home_total_days_variable, item?.stepDay.toString())
+                    binding.tvTotalDay.text = getString(com.cl.common_base.R.string.home_total_days_variable, "${item?.stepDay}")
                     // 然后转化成week和Day
                     // 这个是传换成week,比如10/7=1,10%7=3,所以是1week3day
                     val week = item?.stepDay?.div(7)
                     val day = item?.stepDay?.rem(7)
-                    binding.tvStart.text = getString(R.string.home_weekss, week.toString())
-                    binding.tvDay.text = getString(R.string.home_dayss, day.toString())
+                    binding.tvStart.text = getString(com.cl.common_base.R.string.home_weekss, "$week")
+                    binding.tvDay.text = getString(com.cl.common_base.R.string.home_dayss, "$day")
                 }
             }
         }
@@ -221,11 +250,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                 adapter.data.firstOrNull { it.isSelect }?.apply {
                     var week = stepDay.div(7)
                     val day = stepDay.rem(7)
-                    asCustom(BaseStringPickPop(this@ProModeStartActivity, title = "Week", selectIndex = week.minus(1), listString = weeksList.toMutableList(), confirmAction = {
+                    asCustom(BaseStringPickPop(this@ProModeStartActivity, title = getString(com.cl.common_base.R.string.week), selectIndex = week.minus(1), listString = weeksList.toMutableList(), confirmAction = {
                         week = it.plus(1)
-                        binding.tvStart.text = getString(R.string.home_weekss, week.toString())
+                        binding.tvStart.text = getString(com.cl.common_base.R.string.home_weekss, "$week")
                         // 如果更换了周，那么还需要计算总天数，week * 7 + day
-                        binding.tvTotalDay.text = getString(R.string.home_total_days_variable, (week.times(7).plus(day)).toString())
+                        binding.tvTotalDay.text = getString(com.cl.common_base.R.string.home_total_days_variable, "${(week.times(7).plus(day))}")
 
                         // 也需要同步修改adapter里面的总天数。
                         stepDay = week.times(7).plus(day)
@@ -243,11 +272,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                 adapter.data.firstOrNull { it.isSelect }?.apply {
                     val week = stepDay.div(7)
                     var day = stepDay.rem(7)
-                    asCustom(BaseStringPickPop(this@ProModeStartActivity, title = "Day", selectIndex = day, listString = daysList.toMutableList(), confirmAction = {
+                    asCustom(BaseStringPickPop(this@ProModeStartActivity, title = getString(com.cl.common_base.R.string.day), selectIndex = day, listString = daysList.toMutableList(), confirmAction = {
                         day = it
-                        binding.tvDay.text = getString(R.string.home_dayss, it.toString())
+                        binding.tvDay.text = getString(com.cl.common_base.R.string.home_dayss, "$it")
                         // 如果更换了周，那么还需要计算总天数，week * 7 + day
-                        binding.tvTotalDay.text = getString(R.string.home_total_days_variable, (week.times(7).plus(day)).toString())
+                        binding.tvTotalDay.text = getString(com.cl.common_base.R.string.home_total_days_variable, "${week.times(7).plus(day)}")
 
                         // 也需要同步修改adapter里面的总天数。
                         stepDay = week.times(7).plus(day)

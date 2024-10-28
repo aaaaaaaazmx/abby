@@ -186,7 +186,7 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                 asCustom(
                     CalendarPop(
                         this@ProModeTaskActivity,
-                        content = "By clicking 'Setup Later,' you will start your growing journey without a calendar. You can edit your growing calendar anytime later by clicking the calendar icon.",
+                        content = getString(com.cl.common_base.R.string.home_by_clicking_setup),
                         onConfirmAction = {
                             // 跳转到主页
                             intentflag = 1
@@ -210,7 +210,7 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                 asCustom(
                     CalendarPop(
                         this@ProModeTaskActivity,
-                        content = "By clicking “Use official Calendar”, you will start your growing journey with hey abby recommended calendar. You can edit your growing calendar anytime later by clicking the calendar icon.",
+                        content = getString(com.cl.common_base.R.string.home_by_clicking_use_official),
                         onConfirmAction = {
                             // 跳转到主页
                             intentflag = 1

@@ -40,12 +40,14 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
 
             //  这个开始时间就是从第一周第一天开始。第二个就是上一个的结束时间。
             if (holder.layoutPosition == 0) {
-                tvDateRang.text = "week1 day1-week${item.week} day${item.day}"
+                tvDateRang.text =
+                    context.getString(com.cl.common_base.R.string.home_week1_day1_week_day, "${item.week}", "${item.day}")
                 item.sweek = 1
                 item.sday = 1
             } else {
                 // 开始时间是上一个的结束时间
-                tvDateRang.text = "week${item.sweek} day${item.sday}-week${item.week} day${item.day}"
+                tvDateRang.text = "${context.getString(com.cl.common_base.R.string.weeks)}${item.sweek} ${context.getString(com.cl.common_base.R.string.days)}${item.sday}" +
+                        "-${context.getString(com.cl.common_base.R.string.weeks)}${item.week} ${context.getString(com.cl.common_base.R.string.days)}${item.day}"
             }
 
             ivGth.setSafeOnClickListener {
@@ -54,7 +56,7 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
                 intent.putExtra(Constants.Global.KEY_TXT_ID, item.ppfdTxtId)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, false)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Back")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, context.getString(com.cl.common_base.R.string.string_2251))
                 context.startActivity(intent)
             }
             tvFan.setSafeOnClickListener {
@@ -63,7 +65,7 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
                 intent.putExtra(Constants.Global.KEY_TXT_ID, item.ppfdTxtId)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, false)
                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Back")
+                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, context.getString(com.cl.common_base.R.string.string_2251))
                 context.startActivity(intent)
             }
 
@@ -106,7 +108,7 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
                                 xpopup(it) {
                                     isDestroyOnDismiss(false)
                                     dismissOnTouchOutside(false)
-                                    asCustom(HomeFanBottonPop(it, title = "You're about to set the intake fan to its maximum level. Be aware that this may cause 'wind burn,' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant's first four weeks.", tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
+                                    asCustom(HomeFanBottonPop(it, title = context.getString(com.cl.common_base.R.string.home_you_re_about_to_set_the), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
                                     }, benOKAction = {})).show()
                                 }
                             }

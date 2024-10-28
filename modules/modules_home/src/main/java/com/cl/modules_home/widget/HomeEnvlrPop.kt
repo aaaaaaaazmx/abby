@@ -421,7 +421,7 @@ class HomeEnvlrPop(
                                 BaseCenterPop(context,
                                     content = context.getString(com.cl.common_base.R.string.home_in_very_rare_case) + "\n" + context.getString(com.cl.common_base.R.string.home_note_you_can),
                                     isShowCancelButton = true,
-                                    cancelText = context.getString(com.cl.common_base.R.string.cancel),
+                                    cancelText = context.getString(com.cl.common_base.R.string.my_cancel),
                                     confirmText = context.getString(com.cl.common_base.R.string.string_1401),
                                     onConfirmAction = {
                                         // 刷新回调、并且记录当前时间。
@@ -438,7 +438,7 @@ class HomeEnvlrPop(
                                     context,
                                     content = context.getString(com.cl.common_base.R.string.string_1402),
                                     isShowCancelButton = false,
-                                    confirmText = context.getString(com.cl.common_base.R.string.confirm),
+                                    confirmText = context.getString(com.cl.common_base.R.string.my_confirm),
                                 )
                             ).show()
                         }

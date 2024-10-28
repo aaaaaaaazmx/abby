@@ -1,5 +1,6 @@
 package com.cl.modules_home.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -27,6 +28,7 @@ class EnvAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
         DataBindingUtil.bind<HomeEnvItemBinding>(viewHolder.itemView);
     }
 
+    @SuppressLint("StringFormatInvalid")
     override fun convert(helper: BaseViewHolder, item: EnvironmentInfoData.Environment) {
         // 获取 Binding
         val binding: HomeEnvItemBinding? = helper.getBinding()
@@ -54,11 +56,11 @@ class EnvAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
         }
         if (!item.roomData.isNullOrEmpty()) {
             if (item.value?.contains("%") == true) {
-                helper.setText(R.id.tv_going_unit, context.getString(R.string.home_room_one, item.roomData))
+                helper.setText(R.id.tv_going_unit, context.getString(com.cl.common_base.R.string.home_room_one, "${item.roomData}"))
             } else if (item.value?.contains("℉") == true) {
                 val temp = com.cl.common_base.ext.temperatureConversion(item.roomData.safeToFloat(), isMetric)
                 val tempUnit = if (isMetric) "℃" else "℉"
-                helper.setText(R.id.tv_going_unit, context.getString(R.string.home_rooms, temp, tempUnit))
+                helper.setText(R.id.tv_going_unit, context.getString(com.cl.common_base.R.string.home_rooms, "$temp", "$tempUnit"))
             }
         }
 

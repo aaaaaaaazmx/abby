@@ -561,7 +561,9 @@
     <string name="decs_two">\nFor the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. \n\n*Note: you must cut open the packets first\n</string>
     <string name="string_1956">\n For the first week, only pour half the fertilizer. Add the two on opposite sides of the tank to avoid chemical reaction. \n\n *Note: you must cut open the packets first\n</string>
     <string name="week">Week</string>
+    <string name="weeks">week</string>
     <string name="day">Day</string>
+    <string name="days">day</string>
     <string name="days_ago">%1$s days ago</string>
     <string name="hours_ago">%1$s hours ago</string>
     <string name="minutes_ago">%1$s minutes ago</string>
@@ -961,7 +963,8 @@
     <string name="calendar_step_by">Step by Step Guide</string>
     <string name="calendar_complete_now">Complete Now</string>
     <string name="my_snooze_24_hours">Snooze 24 Hours</string>
-   <!--"1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day", "7 Day"-->
+   <!--"0 Day"1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day", "7 Day"-->
+    <string name="string_2451">0 Day</string>
     <string name="string_2424">1 Day</string>
     <string name="string_2425">2 Day</string>
     <string name="string_2426">3 Day</string>
@@ -970,6 +973,76 @@
     <string name="string_2429">6 Day</string>
     <string name="string_2430">7 Day</string>
 
+    <string name="string_2431">1 Week</string>
+    <string name="string_2432">2 Week</string>
+    <string name="string_2433">3 Week</string>
+    <string name="string_2434">4 Week</string>
+    <string name="string_2435">5 Week</string>
+    <string name="string_2436">6 Week</string>
+    <string name="string_2437">7 Week</string>
+    <string name="string_2438">8 Week</string>
+    <string name="string_2439">9 Week</string>
+    <string name="string_2440">10 Week</string>
+    <string name="string_2441">11 Week</string>
+    <string name="string_2442">12 Week</string>
+    <string name="string_2443">13 Week</string>
+    <string name="string_2444">14 Week</string>
+    <string name="string_2445">15 Week</string>
+    <string name="string_2446">16 Week</string>
+    <string name="string_2447">17 Week</string>
+    <string name="string_2448">18 Week</string>
+    <string name="string_2449">19 Week</string>
+    <string name="string_2450">20 Week</string>
+    <string name="my_start_growingasd">Start Growing</string>
+    <string name="home_g">%1$sg</string>
+    <string name="home_grow_chamber_temperature">Grow Chamber Temperature %1$s</string>
+    <string name="home_i_m_complete_grower">I’m #%1$s Complete grower</string>
+    <string name="home_room_four">Room %1$s%2$s %3$s%4$s</string>
+    <string name="home_rooms">Room %1$s%2$s</string>
+    <string name="home_room_one">Room %1$s%</string>
+    <string name="home_choose_grow_mode">Choose Grow Mode</string>
+    <string name="home_auto_mode_recommended">Auto Mode (Recommended)</string>
+    <string name="home_let_hey_abby">Let Hey abby handle the growing process with its classic automated algorithm</string>
+    <string name="home_pro_modes">Pro Mode</string>
+    <string name="home_customize_your_grow">Customize your grow with your own lighting schedule and calendar. Recommended for users who have harvested at least once with Hey abby.</string>
+    <string name="home_select_your_starting_point">Select Your Starting Point</string>
+    <string name="home_total_days_variable">*Total %1$s Days（variable）</string>
+    <string name="home_weekss">%1$s Weeks</string>
+    <string name="home_dayss">%1$s Day</string>
+    <string name="home_use_recommend_settings"><u>Use Recommend Settings</u></string>
+    <string name="home_use_official_calendar"><u>Use Official Calendar</u></string>
+    <string name="home_recommended_tasks">Recommended Tasks</string>
+    <string name="home_light_schedule_for">Light Schedule for</string>
+    <string name="home_setup_later"><u>Setup Later</u></string>
+    <string name="home_settings">Setting</string>
+    <string name="home_calendar_settings_for">Calendar Settings for</string>
+    <string name="home_period_for">Current Period for</string>
+    <string name="home_pro_modessss">Pro Mode</string>
+    <string name="home_your_current_lighting_settings">Your current lighting settings do not cover all the times in this cycle, leaving gaps. These gaps will be filled with the system\'s default settings if you would like to proceed.</string>
+    <string name="home_incomplete_lighting_schedule">Incomplete Lighting Schedule</string>
+    <string name="home_back_to_editing">Back to Editing</string>
+    <string name="home_proceed">Proceed</string>
+    <string name="home_you_w">You will proceed to next step with recommend settings</string>
+    <string name="home_please_edit_enddate">please edit endDate: %1$s</string>
+    <string name="home_profilessss">Profile %1$s</string>
+    <string name="home_tasksss">Task</string>
+    <string name="home_you_re_about_to">You\'re about to set the intake fan to its maximum level. Be aware that this may cause \'wind burn,\' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant\'s first four weeks.</string>
+    <string name="home_durings">During</string>
+    <string name="home_task_date">Task Date</string>
+    <string name="home_recurring_task">Recurring Task</string>
+    <string name="home_recurring_every">Recurring Every</string>
+    <string name="home_until">Until</string>
+    <string name="home_harvest">Harvest</string>
+    <string name="home_eta">ETA</string>
+    <string name="home_period_length">Period Length</string>
+    <string name="home_by_clicking_setup">By clicking \'Setup Later,\' you will start your growing journey without a calendar. You can edit your growing calendar anytime later by clicking the calendar icon.</string>
+    <string name="home_by_clicking_use_official">By clicking “Use official Calendar”, you will start your growing journey with hey abby recommended calendar. You can edit your growing calendar anytime later by clicking the calendar icon.</string>
+    <string name="home_week1_day1_week_day">week1 day1-week%1$s day%2$s</string>
+    <string name="home_you_re_about_to_set_the">You\'re about to set the intake fan to its maximum level. Be aware that this may cause \'wind burn,\' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant\'s first four weeks.</string>
+    <string name="home_drip_kit">Drip Kit</string>
+    <string name="home_running_on">Running On</string>
+    <string name="home_date_range">Date Range</string>
+    <string name="contact_the_number">The number of selected photos cannot exceed %1$s.</string>
 
 
 

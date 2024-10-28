@@ -1446,7 +1446,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         .withString(Constants.Global.KEY_SHARE_TYPE, "plant_complete")
                         .withString(
                             Constants.Global.KEY_SHARE_TEXT,
-                            getString(R.string.home_i_m_complete_grower, mViewMode.getFinishPage.value?.data?.harvestComplete)
+                            getString(com.cl.common_base.R.string.home_i_m_complete_grower, "${mViewMode.getFinishPage.value?.data?.harvestComplete}")
                         )
                         .withString(Constants.Global.KEY_SHARE_CONTENT, filePath)
                         .navigation()
@@ -2971,7 +2971,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         if (data?.size == 0) return@success
                         data?.take(7)?.map {
                             Water(
-                                getString(R.string.home_g, it.oxygen),
+                                getString(com.cl.common_base.R.string.home_g, "${it.oxygen}"),
                                 it.tips,
                                 it.loseEfficacy.toString(),
                                 it.orderNo,
@@ -4163,7 +4163,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                 pplantNinth.tentHealthStatusSmall.text = buildSpannedString {
                     if (roomTemp.isNotEmpty() && roomHumidity.isNotEmpty()) {
-                        append(getString(R.string.home_room_four, roomTemp, tempUnit, roomHumidity, humidityUnit))
+                        append(getString(com.cl.common_base.R.string.home_room_four, "$roomTemp", "$tempUnit", "$roomHumidity", "$humidityUnit"))
                     }
                 }
 

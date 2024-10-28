@@ -22,7 +22,7 @@
             android:textStyle="bold"
             android:textColor="@color/mainColor"
             android:layout_marginStart="17dp"
-            android:text="Drip Irrigation Timer"
+            android:text="@string/home_drip_irrigation_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
        />
@@ -78,7 +78,7 @@
                     android:textColor="@color/mainColor"
                     android:id="@+id/tv_cancel"
                     android:textSize="18sp"
-                    android:text="Cancel"
+                    android:text="@string/my_cancel"
                     android:background="?android:attr/selectableItemBackground"
                     android:gravity="center"
                     android:paddingTop="10dp"

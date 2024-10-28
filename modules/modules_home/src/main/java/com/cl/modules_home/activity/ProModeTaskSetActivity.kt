@@ -19,6 +19,7 @@ import com.cl.common_base.pop.BaseStringPickPop
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_home.R
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP_NOW
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.TEMPLATE_ID
@@ -121,7 +122,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
 
         // 任务时间
         if (!copyTaskDataForUpload.week.isNullOrEmpty() && !copyTaskDataForUpload.day.isNullOrEmpty()) {
-            binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${copyTaskDataForUpload.week} Day ${copyTaskDataForUpload.day})"
+            binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (${getString(com.cl.common_base.R.string.week)} ${copyTaskDataForUpload.week} ${getString(com.cl.common_base.R.string.day)} ${copyTaskDataForUpload.day})"
         }
     }
 
@@ -155,7 +156,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                         // 周期任务
                         binding.etEmail.text = copyTaskDataForUpload.taskName
                         // task时间
-                        binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${copyTaskDataForUpload.week} Day ${copyTaskDataForUpload.day})"
+                        binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (${getString(com.cl.common_base.R.string.week)} ${copyTaskDataForUpload.week} ${getString(com.cl.common_base.R.string.day)} ${copyTaskDataForUpload.day})"
                     }
                 }
             })
@@ -195,7 +196,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                     isDestroyOnDismiss(false)
                     asCustom(
                         BaseStringPickPop(this@ProModeTaskSetActivity,
-                            "Day",
+                            getString(com.cl.common_base.R.string.day),
                             selectIndex = daysList.indexOf(copyTaskDataForUpload.recurringDay?.ifEmpty { "1" }),
                             listString = daysList.toMutableList(),
                             confirmAction = {
@@ -224,7 +225,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                     isDestroyOnDismiss(false)
                     asCustom(
                         BaseStringPickPop(this@ProModeTaskSetActivity,
-                            "Task",
+                            getString(com.cl.common_base.R.string.home_tasksss),
                             selectIndex = taskList?.indexOf(if (copyTaskDataForUpload.taskName.isNullOrEmpty()) 0 else copyTaskDataForUpload.taskName) ?: 0,
                             listString = taskList?.toMutableList(),
                             confirmAction = {
@@ -242,7 +243,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                                     // 周期名字
                                     binding.etEmail.text = copyTaskDataForUpload.taskName
                                     // task时间
-                                    binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (Week ${copyTaskDataForUpload.week} Day ${copyTaskDataForUpload.day})"
+                                    binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (${getString(com.cl.common_base.R.string.week)} ${copyTaskDataForUpload.week} ${getString(com.cl.common_base.R.string.day)} ${copyTaskDataForUpload.day})"
                                     // 周期任务描述
                                     binding.taskTextViews.text = copyTaskDataForUpload.taskdescription
                                     ViewUtils.setVisible(!copyTaskDataForUpload.taskdescription.isNullOrEmpty(), binding.taskTextViews)
@@ -261,7 +262,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
             showDatePickerDialog(this@ProModeTaskSetActivity, binding.etEmails, startTime * 1000L, endTime * 1000L) {
                 val ymd = getYmdForEn(time = it)
                 val (weeks, days) = calculateWeeksAndDaysIncludingStartDate(startTime, it / 1000L)
-                binding.etEmails.text = "$ymd (Week $weeks Day $days)"
+                binding.etEmails.text = "$ymd (${getString(com.cl.common_base.R.string.week)} $weeks ${getString(com.cl.common_base.R.string.day)} $days)"
                 copyTaskDataForUpload.taskTime = it / 1000L
                 copyTaskDataForUpload.week = weeks.toString()
                 copyTaskDataForUpload.day = days.toString()

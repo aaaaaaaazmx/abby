@@ -29,7 +29,8 @@ class DripAdapter(item: MutableList<DripListData.DripData>?) :
         holder.dataBinding?.apply {
             executePendingBindings()
 
-            tvTitle.text = "Profile ${holder.layoutPosition + 1}"
+
+            tvTitle.text = context.getString(com.cl.common_base.R.string.home_profilessss, "${holder.layoutPosition + 1}")
 
             ivClose.visibility = if (holder.layoutPosition > 0) View.VISIBLE else View.INVISIBLE
 
