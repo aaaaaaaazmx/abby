@@ -293,7 +293,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_centerInParent="true"
                                 android:layout_marginTop="10dp"
-                                android:text="@string/my_how_is"
+                                android:text=""
                                 android:textColor="@color/mainColor"
                                 android:textSize="13sp" />
                         </LinearLayout>

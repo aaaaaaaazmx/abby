@@ -698,41 +698,41 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 手动模式还是自动模式
         binding.ftManualRoot.setOnClickListener {
             mViewModel.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.let { deviceInfo ->
-            if (deviceInfo.proMode != Constants.Global.KEY_OLD_PRO_MODE) {
-                // 如果是关闭的
-                val intent = Intent(this@SettingActivity, KnowMoreActivity::class.java)
-                intent.putExtra(
-                    Constants.Global.KEY_TXT_ID,
-                    Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
-                )
-                intent.putExtra(
-                    BasePopActivity.KEY_FIXED_TASK_ID,
-                    Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
-                )
-                intent.putExtra(BasePopActivity.KEY_DEVICE_ID, mViewModel.userDetail.value?.data?.deviceId)
-                intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
-                startActivity(intent)
-            } else {
-                // 删除植物、弹出提示框
-                XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
-                    .dismissOnTouchOutside(true)
-                    .asCustom(
-                        MyDeleteDevicePop(
-                            isShowUnlockButton = true,
-                            unLockText = getString(com.cl.common_base.R.string.string_1753),
-                            titleText = getString(com.cl.common_base.R.string.string_1754),
-                            context = this,
-                            contentText = "Turning off Pro Mode (Legacy) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
-                        ) {
-                            mViewModel.updateDeviceInfo(
-                                UpDeviceInfoReq(
-                                    deviceId = mViewModel.saveDeviceId.value,
-                                    proMode = Constants.Global.KEY_CLOSE_PRO_MODE
+                if (deviceInfo.proMode != Constants.Global.KEY_OLD_PRO_MODE) {
+                    // 如果是关闭的
+                    val intent = Intent(this@SettingActivity, KnowMoreActivity::class.java)
+                    intent.putExtra(
+                        Constants.Global.KEY_TXT_ID,
+                        Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
+                    )
+                    intent.putExtra(
+                        BasePopActivity.KEY_FIXED_TASK_ID,
+                        Constants.Fixed.KEY_FIXED_ID_MANUAL_MODE
+                    )
+                    intent.putExtra(BasePopActivity.KEY_DEVICE_ID, mViewModel.userDetail.value?.data?.deviceId)
+                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
+                    startActivity(intent)
+                } else {
+                    // 删除植物、弹出提示框
+                    XPopup.Builder(this@SettingActivity).isDestroyOnDismiss(false)
+                        .dismissOnTouchOutside(true)
+                        .asCustom(
+                            MyDeleteDevicePop(
+                                isShowUnlockButton = true,
+                                unLockText = getString(com.cl.common_base.R.string.string_1753),
+                                titleText = getString(com.cl.common_base.R.string.string_1754),
+                                context = this,
+                                contentText = "Turning off Pro Mode (Legacy) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone"
+                            ) {
+                                mViewModel.updateDeviceInfo(
+                                    UpDeviceInfoReq(
+                                        deviceId = mViewModel.saveDeviceId.value,
+                                        proMode = Constants.Global.KEY_CLOSE_PRO_MODE
+                                    )
                                 )
-                            )
-                            tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
+                                tuYaUser?.uid?.let { uid -> mViewModel.plantDelete(uid) }
                         }).show()
 
             }
