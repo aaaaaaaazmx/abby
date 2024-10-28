@@ -68,20 +68,20 @@ class DripHomePop(context: Context, val deviceId: String) : BottomPopupView(cont
                         val turnOnSecond = it.turnOnSecond.toString().toIntOrNull()
                         if (turnOnSecond != null) {
                             if (turnOnSecond < 5) {
-                                ToastUtil.shortShow("5-30 seconds allowed")
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2421))
                                 return@setSafeOnClickListener
                             } else if (turnOnSecond > 30) {
-                                ToastUtil.shortShow("5-30 seconds allowed")
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2421))
                                 return@setSafeOnClickListener
                             }
                         }
                         val inputValue = it.everyMinute.toString().toIntOrNull()
                         if (inputValue != null) {
                             if (inputValue < 10) {
-                                ToastUtil.shortShow("10-120 minutes allowed")
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2422))
                                 return@setSafeOnClickListener
                             } else if (inputValue > 120) {
-                                ToastUtil.shortShow("10-120 minutes allowed")
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2422))
                                 return@setSafeOnClickListener
                             }
                         }

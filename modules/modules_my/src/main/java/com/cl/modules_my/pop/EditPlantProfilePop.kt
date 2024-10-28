@@ -143,7 +143,7 @@ class EditPlantProfilePop(
                                 """.trimIndent()
                             )
                         }
-                        .nightMode(context.getString(com.cl.common_base.R.string.my_lighton_lightoff, if (muteOn?.safeToInt() == 12) 24 else muteOn, if (muteOff?.safeToInt() == 24) 12 else muteOff))
+                        .nightMode("lightOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},lightOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
                 }
 
                 // 调用接口更新后台夜间模式
@@ -197,7 +197,7 @@ class EditPlantProfilePop(
                                             """.trimIndent()
                                         )
                                     }
-                                    .nightMode(context.getString(com.cl.common_base.R.string.my_lighton_lightoff_two, if (timeOn == 12) 24 else timeOn, if (timeOff == 24) 12 else timeOff), devId = beanData?.deviceId)
+                                    .nightMode("lightOn:${if (muteOn?.safeToInt() == 12) 24 else muteOn},lightOff:${if (muteOff?.safeToInt() == 24) 12 else muteOff}", devId = beanData?.deviceId)
                             })
                     ).show()
             }

@@ -414,7 +414,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                         intent.putExtra(
                             BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT,
-                            if (categoryCode == "100002" || categoryCode == "100004") "Unlock Autoflowering" else "Unlock Veg"
+                            if (categoryCode == "100002" || categoryCode == "100004") getString(R.string.string_271) else getString(R.string.string_272)
                         )
                         startActivity(intent)
                     }
@@ -869,7 +869,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         } else {
                             intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         }
-                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "hey abby")
+                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, getString(R.string.string_299))
                         context.startActivity(intent)
                     }
                     // 勾选框

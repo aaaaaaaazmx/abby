@@ -463,7 +463,7 @@
     <string name="string_1752">ON</string>
     <string name="string_1753">Slide to Turn Off</string>
     <string name="string_1754">Notice</string>
-    <string name="string_1755">Turning off Pro Mode (Beta) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone</string>
+    <string name="string_1755">Turning off Pro Mode (Legacy) will require you to start a new grow session. Please note your current progress will be lost; this action cannot be undone</string>
     <string name="string_1756">Off</string>
     <string name="string_1757">Clean up all the picture and video cache?</string>
     <string name="string_1758">Activate</string>
@@ -591,8 +591,6 @@
     <string name="my_the_below">the below items will be merged into %1$s</string>
     <string name="my_which_account">Which account would you like to merge with %1$s?</string>
     <string name="my_grow_space_name">grow space name%1$s</string>
-    <string name="my_lighton_lightoff">lightOn:%1$s,lightOff:%2$s</string>
-    <string name="my_lighton_lightoff_two">lightOn:%1$s,lightOff:%2$s</string>
     <string name="my_v">v%1$s</string>
     <string name="pair_device">Device: %1$s</string>
     <string name="pair_hey_abby">hey abby-%1$s</string>

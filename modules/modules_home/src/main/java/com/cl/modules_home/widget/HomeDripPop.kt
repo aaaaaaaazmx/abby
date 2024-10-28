@@ -125,10 +125,10 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                         if (inputValue != null) {
                             if (inputValue < 5) {
                                 etTurnTime.setText("5")
-                                ToastUtil.shortShow("5-30 seconds allowed")
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2421))
                             } else if (inputValue > 30) {
                                 etTurnTime.setText("30")
-                                ToastUtil.shortShow("5-30 seconds allowed")
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2421))
                             }
                         }
                     }
@@ -143,11 +143,10 @@ class HomeDripPop(context: Context) : CenterPopupView(context) {
                         if (inputValue != null) {
                             if (inputValue < 10) {
                                 etTurnMin.setText("10")
-                                ToastUtil.shortShow("10-120 minutes allowed")
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2422))
                             } else if (inputValue > 120) {
                                 etTurnMin.setText("120")
-                                ToastUtil.shortShow("10-120 minutes allowed")
-                            }
+                                ToastUtil.shortShow(context.getString(com.cl.common_base.R.string.string_2422))                            }
                         }
                     }
                 }

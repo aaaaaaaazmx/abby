@@ -131,7 +131,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         mViewMode.setSteps(step)
         binding.btnSuccess.setVisible(null != isTemplateId)
         // 设置标题颜色以及标题文案
-        binding.title.setTitle(if (null == isTemplateId) getString(com.cl.common_base.R.string.my_calendar) else "Calendar Preview").setTitleColor(com.cl.common_base.R.color.mainColor).setQuickClickListener {
+        binding.title.setTitle(if (null == isTemplateId) getString(com.cl.common_base.R.string.my_calendar) else getString(com.cl.common_base.R.string.calendar_preview)).setTitleColor(com.cl.common_base.R.color.mainColor).setQuickClickListener {
             // 会滚到当前日期
             val data = adapter.data
             if (data.isEmpty()) return@setQuickClickListener
@@ -521,7 +521,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         BasePopActivity.KEY_CATEGORYCODE, categoryCode
                                     )
                                     intent.putExtra(
-                                        BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready"
+                                        BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1368)
                                     )
                                     startActivity(intent)
                                 }
@@ -713,7 +713,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 // 跳转到InterCome文章详情里面去
                                 InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = calendarData.articleId)
                             },
-                            confirmText = "Detail",
+                            confirmText = getString(com.cl.common_base.R.string.string_1398),
                             content = calendarData.articleDetails,
                         )
                     ).show()
@@ -736,7 +736,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 // 跳转到InterCome文章详情里面去
                                 InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = calendarData.articleId)
                             },
-                            confirmText = "Detail",
+                            confirmText = getString(com.cl.common_base.R.string.string_1398),
                             content = calendarData.articleDetails,
                         )
                     ).show()
@@ -1178,7 +1178,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 // 跳转到InterCome文章详情里面去
                                 InterComeHelp.INSTANCE.openInterComeSpace(space = InterComeHelp.InterComeSpace.Article, id = listContent[position].articleId)
                             },
-                            confirmText = "Detail",
+                            confirmText = getString(com.cl.common_base.R.string.string_1398),
                             content = listContent[position].articleDetails,
                         )
                     ).show()
@@ -1191,7 +1191,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     xpopup(this@CalendarActivity) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
-                        asCustom(BaseCenterPop(this@CalendarActivity, isShowCancelButton = true, content = "Are you sure you want to delete this task?", onConfirmAction = {
+                        asCustom(BaseCenterPop(this@CalendarActivity, isShowCancelButton = true, content = getString(com.cl.common_base.R.string.delete_task_confirmation), onConfirmAction = {
                             mViewMode.deleteTask(listContent[position].taskId.toString())
                             data.removeAt(position - 1)
                         })).show()
@@ -1264,21 +1264,21 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         ViewUtils.setGone(svtUnlock)
                         ViewUtils.setGone(svtGrayUnlock)
                         ViewUtils.setVisible(svtWaitUnlock)
-                        svtWaitUnlock.text = "Done"
+                        svtWaitUnlock.text = getString(com.cl.common_base.R.string.home_done)
                     }
 
                     "0" -> {
                         ViewUtils.setVisible(svtUnlock)
                         ViewUtils.setGone(svtWaitUnlock)
                         ViewUtils.setGone(svtGrayUnlock)
-                        svtUnlock.text = "GO"
+                        svtUnlock.text = getString(com.cl.common_base.R.string.base_og)
                     }
 
                     "2" -> {
                         ViewUtils.setGone(svtWaitUnlock)
                         ViewUtils.setVisible(svtGrayUnlock)
                         ViewUtils.setGone(svtUnlock)
-                        svtGrayUnlock.text = "Go"
+                        svtGrayUnlock.text = getString(com.cl.common_base.R.string.base_og)
                     }
                 }
                 tvTaskName.text = listContent[position].taskName
@@ -1352,7 +1352,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
                                             intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                             intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.my_next))
                                             intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
                                             refreshActivityLauncher.launch(intent)
                                         }
@@ -1374,7 +1374,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                             intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
                                             intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                             intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.my_next))
                                             intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
                                             intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
                                             intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
@@ -1400,9 +1400,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     content = getString(
                                         com.cl.common_base.R.string.my_to_do, listContent[position].taskName
                                     ),
-                                    oneLineText = "Step by Step Guide",
-                                    twoLineText = "Complete Now",
-                                    threeLineText = "Snooze 24 Hours",
+                                    oneLineText = getString(com.cl.common_base.R.string.calendar_step_by),
+                                    twoLineText = getString(com.cl.common_base.R.string.calendar_complete_now),
+                                    threeLineText = getString(com.cl.common_base.R.string.my_snooze_24_hours),
                                     oneLineCLickEventAction = {
                                         // 如果不是转周期任务
                                         // 需要判断当前任务是换水任务还是其他任务
@@ -1420,7 +1420,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
                                         intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.my_next))
                                         intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
                                         refreshActivityLauncher.launch(intent)
                                     },
@@ -1465,8 +1465,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 asCustom(
                     BaseCenterPop(this@CalendarActivity,
                         content = if (isVip) parseObject?.onOnOne else parseObject?.pleaseSubscribe,
-                        cancelText = "No,thanks",
-                        confirmText = if (isVip) "Yes" else "Subscribe Now",
+                        cancelText = getString(com.cl.common_base.R.string.string_290),
+                        confirmText = if (isVip) getString(com.cl.common_base.R.string.string_174) else getString(com.cl.common_base.R.string.string_291),
                         onConfirmAction = {
                             if (isVip) {
                                 // 请求发起会话接口，然后跳转到InterCome

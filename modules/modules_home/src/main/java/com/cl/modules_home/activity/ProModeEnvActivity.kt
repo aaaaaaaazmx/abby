@@ -3,6 +3,7 @@ package com.cl.modules_home.activity
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -78,7 +79,15 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
     }
 
     private val daysList by lazy {
-        mutableListOf("1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day", "7 Day")
+        mutableListOf(
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2424),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2425),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2426),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2427),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2428),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2429),
+            BaseApplication.getContext().getString(com.cl.common_base.R.string.string_2430)
+        )
     }
 
     private val step by lazy {
@@ -107,7 +116,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
     override fun initView() {
         binding.tvPeriod.text = "$stepShow"
         if (isUpdateLight) {
-            binding.btnSuccess.text = "OK"
+            binding.btnSuccess.text = getString(com.cl.common_base.R.string.base_ok)
         }
     }
 
@@ -131,10 +140,10 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                                 asCustom(
                                     BaseCenterPop(
                                         this@ProModeEnvActivity,
-                                        content = "Your current lighting settings do not cover all the times in this cycle, leaving gaps. These gaps will be filled with the system's default settings if you would like to proceed.",
-                                        titleText = "Incomplete Lighting Schedule",
-                                        cancelText = "Back to Editing",
-                                        confirmText = "Proceed",
+                                        content = getString(R.string.home_your_current_lighting_settings),
+                                        titleText = getString(R.string.home_incomplete_lighting_schedule),
+                                        cancelText = getString(R.string.home_back_to_editing),
+                                        confirmText = getString(R.string.home_proceed),
                                         onConfirmAction = {
                                             saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
                                         })
@@ -239,7 +248,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
     private fun extractNumbers(input: String): Pair<Int, Int> {
         // 修改正则表达式，匹配 "Week X Y Day" 其中 X 为 week 数字，Y 为 day 数字，支持任意数量的空格
-        val regex = """Week\s*(\d+)\s*(\d*)\s*Day""".toRegex()
+        val regex = """${getString(com.cl.common_base.R.string.week)}\s*(\d+)\s*(\d*)\s*${getString(com.cl.common_base.R.string.day)}""".toRegex()
 
         // 在输入字符串中查找第一个匹配项
         val matchResult = regex.find(input.trim())
@@ -262,7 +271,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             xpopup(this@ProModeEnvActivity) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
-                asCustom(BaseCenterPop(this@ProModeEnvActivity, content = "You will proceed to next step with recommend settings", onConfirmAction = {
+                asCustom(BaseCenterPop(this@ProModeEnvActivity, content = getString(R.string.home_you_w), onConfirmAction = {
                     viewModel.saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = true))
                 })).show()
             }
@@ -285,21 +294,21 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             // Check if the last data entry has the same week and day as the current entry
             if (lastData.week == weeks.safeToInt() && lastData.day == days.safeToInt()) {
                 // Show a message indicating the user needs to edit the end date if both are identical
-                ToastUtil.shortShow("please edit endDate: ${lastData.envName}")
+                ToastUtil.shortShow(getString(R.string.home_please_edit_enddate, lastData.envName ?: ""))
                 return@setSafeOnClickListener
             }
 
             // Check if the last data entry is on the same week but occurs on a later day
             if (lastData.week == weeks.safeToInt() && lastData.day > days.safeToInt()) {
                 // Show a message indicating the user needs to edit the end date since the day is later
-                ToastUtil.shortShow("please edit endDate: ${lastData.envName}")
+                ToastUtil.shortShow(getString(R.string.home_please_edit_enddate, lastData.envName ?: ""))
                 return@setSafeOnClickListener
             }
 
             // Optional: Check if the last data entry's week is greater than the current week (future week)
             if (lastData.week > weeks) {
                 // Show a message indicating the user needs to edit the end date since the week is in the future
-                ToastUtil.shortShow("please edit endDate: ${lastData.envName}")
+                ToastUtil.shortShow(getString(R.string.home_please_edit_enddate, lastData.envName ?: ""))
                 return@setSafeOnClickListener
             }
 
@@ -309,7 +318,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             val newData = lastData.copy(
                 runningOn = false,
                 envId = null,
-                envName = "Profile ${adapter.data.size + 1}",
+                envName = getString(R.string.home_profilessss, "${(adapter.data.size + 1)}"),
                 week = weeks.safeToInt(),
                 day = days.safeToInt(),
                 sweek = beforeWeek,
@@ -353,13 +362,13 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                     logI("The difference is $weeks weeks and $days days.")
 
                     // 获取当前模板的结束时间 (WeekX DayY)
-                    val endWeekDay = "Week ${data?.week} Day ${data?.day}"
+                    val endWeekDay = "${getString(com.cl.common_base.R.string.week)} ${data?.week} ${getString(com.cl.common_base.R.string.day)} ${data?.day}"
 
                     // 生成从 Week1 到 WeekX 的列表
-                    val weekList = (1..weeks.coerceAtLeast(1)).map { "Week $it" }.toMutableList()
+                    val weekList = (1..weeks.coerceAtLeast(1)).map { "${getString(com.cl.common_base.R.string.week)} $it" }.toMutableList()
 
                     // 生成从 Day0 到 DaysX 的列表
-                    val dayList = (0..days.coerceAtLeast(0)).map { "Day $it" }.toMutableList()
+                    val dayList = (0..days.coerceAtLeast(0)).map { "${getString(com.cl.common_base.R.string.day)} $it" }.toMutableList()
 
                     // 弹出选择周期时间的窗口
                     xpopup(this@ProModeEnvActivity) {
@@ -440,8 +449,8 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         pop.asCustom(
             ChooseTimePop(
                 this@ProModeEnvActivity,
-                turnOnText = "Turn on Light",
-                turnOffText = "Turn off Light",
+                turnOnText = getString(com.cl.common_base.R.string.string_1359),
+                turnOffText = getString(com.cl.common_base.R.string.string_1360),
                 isShowNightMode = false,
                 isTheSpacingHours = false,
                 turnOnHour = viewModel.muteOn?.safeToInt(),

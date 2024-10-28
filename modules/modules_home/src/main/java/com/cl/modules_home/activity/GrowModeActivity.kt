@@ -67,7 +67,7 @@ class GrowModeActivity : BaseActivity<HomeGrowModeActivityBinding>() {
                                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_SOIL_TRANSPLANT_CLONE_CHECK)
                                 intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                                 intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1368))
                                 intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, "$category")
                                 intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                                 startActivity(intent)
@@ -78,7 +78,7 @@ class GrowModeActivity : BaseActivity<HomeGrowModeActivityBinding>() {
                             intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK)
                             intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                             intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "I am ready")
+                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1368))
                             intent.putExtra(BasePopActivity.KEY_CATEGORYCODE, "$category")
                             intent.putExtra(BasePopActivity.KEY_TITLE_COLOR, "#006241")
                             startActivity(intent)
@@ -91,7 +91,7 @@ class GrowModeActivity : BaseActivity<HomeGrowModeActivityBinding>() {
                         intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED)
                         intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
                         intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, "Done")
+                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.string_1393))
                         startActivity(intent)
                     } else {
                         //3. 点击Next，调用【创建日历模板】接口，拿到模板ID，templateId

@@ -47,6 +47,7 @@ import com.lxj.xpopup.interfaces.OnSelectListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import okhttp3.internal.cookieToString
 import java.io.Serializable
 import java.util.Calendar
 import java.util.regex.Matcher
@@ -81,9 +82,9 @@ class HomeEnvlrPop(
             if (!isChecked) {
                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(context?.let {
                     BaseCenterPop(it,
-                        content = "Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?",
-                        cancelText = "No",
-                        confirmText = "Yes",
+                        content = context.getString(com.cl.common_base.R.string.string_1355),
+                        cancelText = context.getString(com.cl.common_base.R.string.string_173),
+                        confirmText = context.getString(com.cl.common_base.R.string.string_174),
                         onCancelAction = {
                             // 需要恢复到之前到档位,也就是不生效。还是true
                             data.airPump = true
@@ -111,9 +112,9 @@ class HomeEnvlrPop(
             if (getWaterLevel?.equalsIgnoreCase("Low") == true) {
                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false).asCustom(context?.let {
                     BaseCenterPop(it,
-                        content = "The air pump cannot be turned on when the tank has no water. Please fill the tank with water before turning on the air pump.",
+                        content = context.getString(com.cl.common_base.R.string.string_1356),
                         isShowCancelButton = false,
-                        confirmText = "OK",
+                        confirmText = context.getString(com.cl.common_base.R.string.base_ok),
                         onCancelAction = {},
                         onConfirmAction = {
                             // 需要恢复到之前到档位, 改为false
@@ -323,7 +324,7 @@ class HomeEnvlrPop(
                                         asCustom(
                                             BaseCenterPop(
                                                 context = context,
-                                                content = "The ${currentFanModel.fanModelShow} will last for ${currentFanModel.durationTime} minutes for the best results then the fan will go back to Auto mode.",
+                                                content = context.getString(com.cl.common_base.R.string.home_the_will_last, currentFanModel.fanModelShow ?: "", currentFanModel.durationTime ?: ""),
                                                 isShowCancelButton = true,
                                                 onConfirmAction = {
                                                     // 查找并更新适配器中的风扇项
@@ -390,7 +391,7 @@ class HomeEnvlrPop(
                                         space = InterComeHelp.InterComeSpace.Article, id = item.articleId
                                     )
                                 },
-                                confirmText = "Detail",
+                                confirmText = context.getString(com.cl.common_base.R.string.string_1398),
                                 content = item.articleDetails,
                             )
                         ).show()
@@ -418,10 +419,10 @@ class HomeEnvlrPop(
                         ) {
                             XPopup.Builder(context).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(
                                 BaseCenterPop(context,
-                                    content = "In very rare case, the light is not running on schedule due to the connection issue, if you believe your lighting schedule is not correct, please click refresh.\n" + "\n" + "Note: you can only refresh once per day.",
+                                    content = context.getString(com.cl.common_base.R.string.home_in_very_rare_case) + "\n" + context.getString(com.cl.common_base.R.string.home_note_you_can),
                                     isShowCancelButton = true,
-                                    cancelText = "Cancel",
-                                    confirmText = "Refresh",
+                                    cancelText = context.getString(com.cl.common_base.R.string.cancel),
+                                    confirmText = context.getString(com.cl.common_base.R.string.string_1401),
                                     onConfirmAction = {
                                         // 刷新回调、并且记录当前时间。
                                         lifecycleScope.launch {
@@ -435,9 +436,9 @@ class HomeEnvlrPop(
                             XPopup.Builder(context).dismissOnTouchOutside(false).isDestroyOnDismiss(false).asCustom(
                                 BaseCenterPop(
                                     context,
-                                    content = "you can only refresh once per day.",
+                                    content = context.getString(com.cl.common_base.R.string.string_1402),
                                     isShowCancelButton = false,
-                                    confirmText = "Confirm",
+                                    confirmText = context.getString(com.cl.common_base.R.string.confirm),
                                 )
                             ).show()
                         }
@@ -483,7 +484,7 @@ class HomeEnvlrPop(
             xpopup(context) {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(true)
-                asCustom(BaseCenterPop(context, content = "Whether to disable night mode", cancelText = "No", confirmText = "Yes", isShowCancelButton = true, onConfirmAction = {
+                asCustom(BaseCenterPop(context, content = context.getString(com.cl.common_base.R.string.string_1403), cancelText = context.getString(com.cl.common_base.R.string.string_173), confirmText = context.getString(com.cl.common_base.R.string.string_174), isShowCancelButton = true, onConfirmAction = {
                     lifecycleScope.launch {
                         // 调用接口更新后台夜间模式
                         upDeviceInfo(
@@ -716,9 +717,9 @@ class HomeEnvlrPop(
                         asCustom(
                             BaseCenterPop(
                                 context,
-                                content = "Light schedule and intensity have been synced with the server. If you still believe there is an error, please contact 1-on-1 support.",
+                                content = context.getString(com.cl.common_base.R.string.string_1406),
                                 isShowCancelButton = false,
-                                confirmText = "OK"
+                                confirmText = context.getString(com.cl.common_base.R.string.base_ok),
                             )
                         ).show()
                     }

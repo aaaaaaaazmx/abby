@@ -24,4 +24,11 @@
     <string name="home_calendar_settings_for">Calendar Settings for</string>
     <string name="home_period_for">Current Period for</string>
     <string name="home_pro_modessss">Pro Mode</string>
+    <string name="home_your_current_lighting_settings">Your current lighting settings do not cover all the times in this cycle, leaving gaps. These gaps will be filled with the system\'s default settings if you would like to proceed.</string>
+    <string name="home_incomplete_lighting_schedule">Incomplete Lighting Schedule</string>
+    <string name="home_back_to_editing">Back to Editing</string>
+    <string name="home_proceed">Proceed</string>
+    <string name="home_you_w">You will proceed to next step with recommend settings</string>
+    <string name="home_please_edit_enddate">please edit endDate: %1$s</string>
+    <string name="home_profilessss">Profile %1$s</string>
 </resources>
