@@ -1271,14 +1271,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         ViewUtils.setVisible(svtUnlock)
                         ViewUtils.setGone(svtWaitUnlock)
                         ViewUtils.setGone(svtGrayUnlock)
-                        svtUnlock.text = getString(com.cl.common_base.R.string.base_og)
+                        svtUnlock.text = getString(com.cl.common_base.R.string.my_go)
                     }
 
                     "2" -> {
                         ViewUtils.setGone(svtWaitUnlock)
                         ViewUtils.setVisible(svtGrayUnlock)
                         ViewUtils.setGone(svtUnlock)
-                        svtGrayUnlock.text = getString(com.cl.common_base.R.string.base_og)
+                        svtGrayUnlock.text = getString(com.cl.common_base.R.string.my_go)
                     }
                 }
                 tvTaskName.text = listContent[position].taskName
