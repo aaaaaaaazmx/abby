@@ -47,6 +47,9 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         // m模板id
         const val TEMPLATE_ID = "template_id"
 
+        // taskId
+        const val TASK_ID = "task_id"
+
         // taskData
         const val TASK_DATA = "task_data"
 
@@ -79,6 +82,11 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
     private val daysList by lazy {
         mutableListOf("1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day", "7 Day")
+    }
+
+    // taskid
+    private val taskId by lazy {
+        intent.getStringExtra(TASK_ID)
     }
 
     private val step by lazy {
@@ -175,6 +183,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                         putExtra(STEP_NOW, stepShow)
                         putExtra(STEP, step)
                         putExtra(TEMPLATE_ID, templateId)
+                        putExtra(TASK_ID, taskId)
                         putExtra(END_TIME,  viewModel.cycleEnvList.value?.data?.stepEnd?.safeToLong() ?: 0L)
                         putExtra(START_TIME,  viewModel.cycleEnvList.value?.data?.stepStart?.safeToLong() ?: 0L)
                         putExtra(IS_CURRENT_PERIOD, isCurrentPeriod)
@@ -329,7 +338,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             binding.recyclerView.smoothScrollToPosition(adapter.data.size - 1)
         }
 
-        adapter.addChildClickViewIds(R.id.iv_close, R.id.tv_date_rang, R.id.ft_timer)
+        adapter.addChildClickViewIds(R.id.iv_close, R.id.tv_date_rang, R.id.ft_timer, R.id.home_constraintlayouts, R.id.home_constraintlayout_exhaust)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val data = (adapter.data[position] as? EnvParamListBeanItem)
             when (view.id) {
@@ -345,7 +354,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                     }
                 }
 
-                R.id.tv_date_rang -> {
+                R.id.tv_date_rang, R.id.home_constraintlayout_exhaust -> {
                     // 获取 stepEnd 和 stepStart 的时间戳，计算周和天的差异
                     val stepEnd = viewModel.cycleEnvList.value?.data?.stepEnd?.safeToLong() ?: 0L
                     val stepStart = viewModel.cycleEnvList.value?.data?.stepStart?.safeToLong() ?: 0L
@@ -375,7 +384,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                     }
                 }
 
-                R.id.ft_timer -> {
+                R.id.ft_timer, R.id.home_constraintlayouts -> {
                     // 获取当前开关灯的时间
                     // 0- 12, 12-24
                     val startTime = when (data?.turnOnLight) {

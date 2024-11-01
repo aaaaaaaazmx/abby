@@ -52,6 +52,11 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
         intent.getStringExtra(STEP_NOW)
     }
 
+    // taskId
+    private val taskId by lazy {
+        intent.getStringExtra(ProModeEnvActivity.TASK_ID)
+    }
+
     // 结束时间 Long 类型 没有x1000
     private val endTime by lazy {
         intent.getLongExtra(ProModeEnvActivity.END_TIME, 0L)
@@ -121,6 +126,7 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
                             ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR)
                                 .withString(Constants.Global.KEY_IS_TEMPLATE_ID, templateId)
                                 .withString(Constants.Global.KEY_STEP, step)
+                                .withString(Constants.Global.KEY_TASK_ID_FOR_CALENDAR, taskId)
                                 .navigation(this@ProModeTaskActivity)
                         }
 
@@ -230,6 +236,7 @@ class ProModeTaskActivity : BaseActivity<HomeProModeTaskActivityBinding>() {
             putExtra(STEP_NOW, stepShow)
             putExtra(STEP, step)
             putExtra(TEMPLATE_ID, templateId)
+            putExtra(ProModeEnvActivity.TASK_ID, taskId)
             putExtra(ProModeEnvActivity.END_TIME, endTime)
             putExtra(ProModeEnvActivity.START_TIME, startTime)
             // 带参数就是编辑，不带参数就是添加。

@@ -43,6 +43,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
         intent.getStringExtra(STEP)
     }
 
+    // TASK_ID
+    private val taskId by lazy {
+        intent.getStringExtra(TASK_ID)
+    }
+
     // 接受templateId
     private val templateId by lazy {
         intent.getStringExtra(TEMPLATE_ID)
@@ -170,6 +175,7 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                 putExtra(ProModeEnvActivity.STEP_NOW, selectedItem.stepShow)
                 putExtra(ProModeEnvActivity.STEP, selectedItem.step)
                 putExtra(ProModeEnvActivity.TEMPLATE_ID, templateId)
+                putExtra(ProModeEnvActivity.TASK_ID, taskId)
                 if (addIsCurrentPeriod) {
                     putExtra(ProModeEnvActivity.IS_CURRENT_PERIOD, isCurrentPeriod)
                 }
@@ -271,6 +277,9 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
     }
 
     companion object {
+        //taskId
+        const val TASK_ID = "taskId"
+
         // templateId
         const val TEMPLATE_ID = "templateId"
 

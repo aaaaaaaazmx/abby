@@ -102,6 +102,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     // 这是proModeTask界面传递过来的。
+    private val taskIdForCalendar by lazy {
+        intent.getStringExtra(Constants.Global.KEY_TASK_ID_FOR_CALENDAR)
+    }
+
+    // 这是proModeTask界面传递过来的。
     private val step by lazy {
         intent.getStringExtra(Constants.Global.KEY_STEP)
     }
@@ -221,7 +226,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    checkPlant()
+                    if (!taskIdForCalendar.isNullOrEmpty()) {
+                        // 立即完成,这是从proModeTask传进来的
+                        finishTask(FinishTaskReq(taskId = taskIdForCalendar, templateId = isTemplateId))
+                    } else {
+                        checkPlant()
+                    }
                 }
             })
 
@@ -676,7 +686,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-
+                    // 完成当前任务,然后再检查.在startRunning的时候再传进来.
+                    if (!taskIdForCalendar.isNullOrEmpty()) {
+                        checkPlant()
+                        return@success
+                    }
                     // 不为空就是返回了Step
                     if (!data.isNullOrEmpty()) finish()
                 }

@@ -451,6 +451,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                                 .withString("templateId", body.templateId)
                                 .withString("step", it.data)
                                 .withBoolean("is_current_period", false)
+                                .withString("taskId", body.taskId)
                                 .navigation()
                             // 直接跳转到
                             Resource.Success(it.data)
