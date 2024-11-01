@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AdvertisingData
 import com.cl.common_base.bean.AiCheckBean
@@ -14,12 +15,14 @@ import com.cl.common_base.bean.RichTextData
 import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.Resource
 import com.cl.common_base.ext.logD
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.service.BaseApiService
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.thingclips.smart.android.user.bean.User
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -204,10 +207,24 @@ class BaseViewModel @Inject constructor(): ViewModel() {
             service.finishTask(body)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
-                        Resource.DataError(
-                            it.code,
-                            it.msg
-                        )
+                        if (it.code == 1065) {
+                            ToastUtil.shortShow(it.msg)
+                            ARouter.getInstance().build(RouterPath.Home.PAGE_HOME_PRO_MODE_START)
+                                .withString("templateId", body.templateId)
+                                .withString("step", it.data)
+                                .withBoolean("is_current_period", false)
+                                .navigation()
+                            // 直接跳转到
+                            Resource.DataError(
+                                it.code,
+                                it.msg
+                            )
+                        } else {
+                            Resource.DataError(
+                                it.code,
+                                it.msg
+                            )
+                        }
                     } else {
                         Resource.Success(it.data)
                     }

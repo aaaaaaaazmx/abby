@@ -169,6 +169,9 @@ object Constants {
 
         // 开始种植了。
         const val KEY_IN_APP_START_RUNNING = "key_in_app_start_running"
+
+        // 1065 关闭calendar页面
+        const val KEY_IN_APP_CLOSE_CALENDAR = "key_in_app_close_calendar"
     }
 
     // 极光

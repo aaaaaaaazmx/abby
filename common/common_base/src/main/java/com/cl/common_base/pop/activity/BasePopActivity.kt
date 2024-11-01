@@ -54,6 +54,7 @@ import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.slidetoconfirmlib.ISlideListener
 import com.cl.common_base.widget.toast.ToastUtil
@@ -287,7 +288,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 if (taskIdList.any { it.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP } && taskIdList.size == 2) {
                     taskIdList.removeAt(0)
                     // 如果是倒数第二个任务，并且满足条件
-                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas))
+                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas, templateId = if (taskIdList.isEmpty()) null else taskIdList[0].templateId))
                 } else if (taskIdList.size - 1 > 0) { // 移除掉第一个
                     taskIdList.removeAt(0)
 
@@ -320,7 +321,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     startActivity(intent)
                 } else {
                     // 最后一个任务执行finishTask
-                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas))
+                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas, templateId = if (taskIdList.isEmpty()) null else taskIdList[0].templateId))
                 }
 
                 return
@@ -792,9 +793,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
             // 完成任务
             finishTask.observe(this@BasePopActivity, resourceObserver {
-                error { errorMsg, _ ->
+                error { errorMsg, code ->
                     hideProgressLoading()
                     ToastUtil.shortShow(errorMsg)
+                    if (code == 1065) {
+                        LiveEventBus.get().with(Constants.APP.KEY_IN_APP_CLOSE_CALENDAR, Int::class.java)
+                            .postEvent(1065)
+                        finish()
+                    }
                 }
 
                 success {

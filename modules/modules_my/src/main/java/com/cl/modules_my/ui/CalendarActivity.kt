@@ -65,6 +65,7 @@ import com.cl.common_base.bean.JumpTypeBean
 import com.cl.common_base.ext.setGone
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.setVisible
+import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.joketng.timelinestepview.LayoutType
@@ -128,6 +129,12 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
     override fun initView() {
+        // 主要是用来显示气泡
+        LiveEventBus.get().with(Constants.APP.KEY_IN_APP_CLOSE_CALENDAR, Int::class.java).observe(this@CalendarActivity) {
+                if (it == 1065) {
+                    finish()
+                }
+            }
         mViewMode.setSteps(step)
         binding.btnSuccess.setVisible(null != isTemplateId)
         // 设置标题颜色以及标题文案
@@ -1391,6 +1398,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             ).show()
                         } else {
                             val taskList = taskData.subTaskList
+                            // 给最后一个的templateId赋值
+                            // 要给后端传递一下当前的日历模板ID
+                            taskList?.getOrNull(taskList.size - 1)?.apply {
+                                templateId = mViewMode.getCalendar.value?.data?.templateId
+                            }
                             mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
 
                             XPopup.Builder(this@CalendarActivity).asCustom(
