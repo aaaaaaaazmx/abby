@@ -5,6 +5,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
+import com.cl.common_base.widget.toast.ToastUtil
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -51,7 +52,9 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                             // 捕获异常
                             // 如果是HostName异常、连接超时异常，那么不需要上报，也不需要提示
                             if (t.toString().contains("SocketTimeoutException") || t.toString().contains("UnknownHostException") || t.toString().contains("ConnectException") || t.toString().contains("Throwable")) {
-                                continuation.resumeWithException(Throwable("Server error, please contact support@heyabby.com"))
+                                ToastUtil.show("Server error, please contact support@heyabby.com")
+                                continuation.resumeWithException(Exception("Server error, please contact support@heyabby.com"))
+                                call.cancel()
                                 kotlin.runCatching {
                                     Reporter.reportCatchError(
                                         t.message,
@@ -62,7 +65,10 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                                 }
                             } else {
                                 Reporter.reportCatchError(t.message, t.localizedMessage, t.toString(), "enqueue onFailure")
-                                continuation.resumeWithException(t)
+                                // continuation.resumeWithException(t)
+                                ToastUtil.show("Server error, please contact support@heyabby.com")
+                                continuation.resumeWithException(Exception("Server error, please contact support@heyabby.com"))
+                                call.cancel()
                             }
 
                         }
@@ -72,6 +78,7 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                                 /* logE("${response}")
                                  logE("${response.body()}")*/
                                 if (response.body() == null && response.code() == Constants.APP_SERVER) {
+                                    ToastUtil.shortShow("Server error, please contact support@heyabby.com")
                                     continuation.resumeWithException(Exception("Server error, please contact support@heyabby.com"))
                                     call.cancel()
                                     return

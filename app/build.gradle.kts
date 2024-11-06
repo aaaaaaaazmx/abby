@@ -12,7 +12,7 @@ plugins {
         id("center.uploadpgy.plugin")
     // id("io.github.leavesczy.trace")
 
-    id("io.sentry.android.gradle") version "4.12.0"
+    id("io.sentry.android.gradle") version "4.13.0"
 }
 apply("thingMapping.gradle")
 
@@ -227,7 +227,6 @@ fun readProperties(key: String, properties: String? = "local.properties"): Strin
 }
 
 sentry {
-    debug.set(true)
     org.set("mrli-g4")
     projectName.set("abby")
 

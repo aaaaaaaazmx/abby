@@ -9,30 +9,43 @@ import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
 
 object StabilityOptimize {
+    // 记录上次异常时间，用于控制异常处理频率
+    private var lastHandleTime = 0L
+
+    // 最小异常处理间隔(毫秒)
+    private const val MIN_HANDLE_INTERVAL = 100L
+
     @RequiresApi(Build.VERSION_CODES.CUPCAKE)
     fun setUpJavaAirBag(configList: List<JavaAirBagConfig>) {
         logI("Java 安全气囊已开启")
-        val preDefaultExceptionHandler = Thread.getDefaultUncaughtExceptionHandler()
-        preDefaultExceptionHandler?.let {
+        Thread.getDefaultUncaughtExceptionHandler()?.let {
             Thread.setDefaultUncaughtExceptionHandler { thread, exception ->
-                handleException(it, configList, thread, exception)
+                val currentTime = System.currentTimeMillis()
+                // 如果距离上次异常处理时间太短，就不重复处理
+                if (currentTime - lastHandleTime >= MIN_HANDLE_INTERVAL) {
+                    // 记录和上报异常
+                    handleException(it, configList, thread, exception)
+                    lastHandleTime = currentTime
+                }
+
                 if (thread == Looper.getMainLooper().thread) {
                     while (true) {
                         try {
+                            // 给消息循环一个小的休眠时间，降低CPU占用
+                            Thread.sleep(1)
                             Looper.loop()
                         } catch (e: Throwable) {
-                            handleException(
-                                it,
-                                configList,
-                                Thread.currentThread(),
-                                e
-                            )
+                            val now = System.currentTimeMillis()
+                            // 控制异常处理频率
+                            if (now - lastHandleTime >= MIN_HANDLE_INTERVAL) {
+                                handleException(it, configList, Thread.currentThread(), e)
+                                lastHandleTime = now
+                            }
                         }
                     }
                 }
             }
         }
-
     }
 
     /*fun setUpNativeAirBag(signal: Int, soName: String, backtrace: String) {
@@ -49,12 +62,14 @@ object StabilityOptimize {
         val stackTraceElement = exception.stackTrace[0]
         // 通过Bugly上报异常
         logI("Java Crash 已捕获")
-        logI("""
+        logI(
+            """
                 FATAL EXCEPTION: ${thread.name}
                 ${exception.message ?: ""}
                 CrashBy: ${exception.javaClass.name}===>${exception.message}
                 crash:   ${stackTraceElement.className}===>${stackTraceElement.methodName}===>${stackTraceElement.lineNumber}===>${exception.message}
-            """.trimIndent())
+            """.trimIndent()
+        )
         val errorType = """
                 FATAL EXCEPTION: ${thread.name}
                 ${exception.message ?: ""}

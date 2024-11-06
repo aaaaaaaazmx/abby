@@ -83,6 +83,7 @@ import kotlinx.coroutines.withContext
 import java.io.Serializable
 import java.lang.reflect.Field
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 
@@ -590,7 +591,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 loading { }
                 error { errorMsg, code ->
                     hideProgressLoading()
-                    errorMsg?.let { ToastUtil.shortShow(it) }
+                    ToastUtil.shortShow(errorMsg)
                 }
                 success {
                     hideProgressLoading()
@@ -625,17 +626,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         showTaskList(adapter.data[index])
                                     }
                                 } else {
+                                    // 展示有任务的日子
                                     val getCalendarDate = mViewMode.getCalendar.value?.data?.list
-                                    // 展示为第一个有任务的日子。
-                                    getCalendarDate?.firstOrNull { it.taskList?.isNotEmpty() == true }?.let { data ->
-                                        adapter.data.indexOfFirst { it.ymd == data.date }.let { index ->
-                                            if (index != -1) {
-                                                // 滚动到当前有任务的一天。
-                                                binding.rvList.scrollToPosition(index + 7 * 2)
-                                                showTaskList(adapter.data[index])
-                                            }
-                                        }
-                                    }
+                                    checkAndLockNextDate(getCalendarDate, adapter, true)
                                 }
                             }
 
@@ -958,14 +951,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                         adapter.notifyItemChanged(this)
                     }*/
                     // 找到第一个有任务的日子作为选中转台
-                    getCalendarDate?.firstOrNull { it.taskList?.isNotEmpty() == true }?.let { data ->
-                        adapter.data.indexOfFirst { it.ymd == data.date }.let { index ->
-                            if (index != -1) {
-                                adapter.data[index].isChooser = true
-                                adapter.notifyItemChanged(index)
-                            }
-                        }
-                    }
+                    checkAndLockNextDate(getCalendarDate, adapter)
                 }
             }
             logI(
@@ -1045,6 +1031,61 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }
         }
     }
+
+    private fun checkAndLockNextDate(calendarDates: MutableList<CalendarData>?, adapter: MyCalendarAdapter, isScroll: Boolean? = false) {
+        val today = LocalDate.parse(mViewMode.mCurrentDate.ymd, DateTimeFormatter.ISO_DATE)
+
+        // 在入口处过滤掉所有小于当前日期的日期
+        val filteredCalendarDates = calendarDates?.filter {
+            LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isEqual(today) ||
+                    LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isAfter(today)
+        }?.toMutableList() ?: mutableListOf()
+
+        // 进入递归逻辑
+        filteredCalendarDates.firstOrNull { it.taskList?.isNotEmpty() == true }?.let { data ->
+            val currentDate = LocalDate.parse(data.date, DateTimeFormatter.ISO_DATE)
+
+            // 检查当前日期上的任务是否完成
+            // 1 表示任务已经完成
+            if (data.taskList?.any { it.taskStatus != "1" } == true) {
+                // 任务未完成，锁定当前日期
+                adapter.data.indexOfFirst { it.ymd == data.date }.let { index ->
+                    if (index != -1) {
+                        if (isScroll == true) {
+                            // 滚动到当前有任务的一天。
+                            binding.rvList.scrollToPosition(index + 7 * 2)
+                            showTaskList(adapter.data[index])
+                        } else {
+                            adapter.data[index].isChooser = true
+                            adapter.notifyItemChanged(index)
+                        }
+                    }
+                }
+            } else {
+                // 当前日期的任务已完成，继续查找下一个有任务的日期
+                checkAndLockNextDate(
+                    filteredCalendarDates.filter {
+                        LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isEqual(currentDate) ||
+                                LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isAfter(currentDate)
+                    }.toMutableList(),
+                    adapter
+                )
+            }
+        } ?: run {
+            // 兜底逻辑：如果没有找到任何符合条件的日期
+            // 找到当天作为第一个。
+            adapter.data.indexOfFirst { it.isCurrentDay }.apply {
+                if (isScroll == true) {
+                    showTaskList(mViewMode.mCurrentDate)
+                } else {
+                    adapter.data[this].isChooser = true
+                    adapter.notifyItemChanged(this)
+                }
+
+            }
+        }
+    }
+
 
     private fun clickEvent() {
         binding.rlCycle.setOnClickListener {
@@ -1339,127 +1380,55 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 it
                             )
                         }
-                        // 有子任务
-                        if (null != taskData.packetCondition) {
-                            XPopup.Builder(this@CalendarActivity).asCustom(
-                                BaseThreeTextPop(
-                                    this@CalendarActivity,
-                                    content = taskData.packetCondition?.content,
-                                    oneLineText = taskData.packetCondition?.taskPackes?.get(0)?.condition,
-                                    twoLineText = taskData.packetCondition?.taskPackes?.get(1)?.condition,
-                                    // oneLineText = getString(com.cl.common_base.R.string.my_go),
-                                    threeLineText = getString(com.cl.common_base.R.string.my_remind_me),
-                                    fourLineText = getString(com.cl.common_base.R.string.my_cancel),
-                                    oneLineCLickEventAction = {
-                                        taskData.packetCondition?.taskPackes?.get(0)?.apply {
-                                            val taskList = packetNo?.subTaskList
-                                            mViewMode.setPacketNo(packetNo?.packetNo)
-                                            mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
-                                            if (taskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
-                                                mViewMode.setSaveUnlockTask(taskList)
-                                                changWaterAddWaterAddpump()/*// 请求接口 换水
-                                                        mViewMode.advertising()*/
-                                                return@BaseThreeTextPop
-                                            }
 
-
-                                            val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
-                                            intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
-                                            intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
-                                            intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
-                                            intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
-                                            intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
-                                            intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
-                                            intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
-                                            intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
-                                            refreshActivityLauncher.launch(intent)
-                                        }
-                                    },
-                                    twoLineCLickEventAction = {
-                                        taskData.packetCondition?.taskPackes?.get(1)?.apply {
-                                            val taskList = packetNo?.subTaskList
-                                            mViewMode.setPacketNo(packetNo?.packetNo)
-                                            mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
-                                            if (taskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
-                                                mViewMode.setSaveUnlockTask(taskList)
-                                                changWaterAddWaterAddpump()/*// 请求接口 换水
-                                                        mViewMode.advertising()*/
-                                                return@BaseThreeTextPop
-                                            }
-
-                                            val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
-                                            intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
-                                            intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
-                                            intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                            intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
-                                            intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
-                                            intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
-                                            intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
-                                            intent.putExtra(BasePopActivity.KEY_PACK_NO, mViewMode.packetNo.value)
-                                            intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
-                                            refreshActivityLauncher.launch(intent)
-                                        }
-                                    },
-                                    threeLineCLickEventAction = {
-                                        // 推出的是整个任务包，并不是单个任务
-                                        if (remindTaskToCalendar(listContent, position)) return@BaseThreeTextPop
-                                    },
-                                    fourLineClickEventAction = {},
-                                )
-                            ).show()
-                        } else {
-                            val taskList = taskData.subTaskList
-                            // 给最后一个的templateId赋值
-                            // 要给后端传递一下当前的日历模板ID
-                            taskList?.getOrNull(taskList.size - 1)?.apply {
-                                templateId = mViewMode.getCalendar.value?.data?.templateId
-                            }
-                            mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
-
-                            XPopup.Builder(this@CalendarActivity).asCustom(
-                                BaseThreeTextPop(
-                                    this@CalendarActivity,
-                                    content = getString(
-                                        com.cl.common_base.R.string.my_to_do, listContent[position].taskName
-                                    ),
-                                    oneLineText = "Step by Step Guide",
-                                    twoLineText = "Complete Now",
-                                    threeLineText = "Snooze 24 Hours",
-                                    oneLineCLickEventAction = {
-                                        // 如果不是转周期任务
-                                        // 需要判断当前任务是换水任务还是其他任务
-                                        if (taskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
-                                            mViewMode.setSaveUnlockTask(taskList)
-                                            changWaterAddWaterAddpump()/*// 请求接口
-                                                    mViewMode.advertising()*/
-                                            return@BaseThreeTextPop
-                                        }
-                                        val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
-                                        intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
-                                        intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
-                                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
-                                        intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
-                                        intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
-                                        intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
-                                        intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
-                                        refreshActivityLauncher.launch(intent)
-                                    },
-                                    twoLineCLickEventAction = {
-                                        // 立即完成
-                                        mViewMode.finishTask(FinishTaskReq(taskId = taskData.taskId, templateId = mViewMode.getCalendar.value?.data?.templateId))
-                                    },
-                                    threeLineCLickEventAction = {
-                                        // 推出的是整个任务包，并不是单个任务
-                                        if (remindTaskToCalendar(listContent, position)) return@BaseThreeTextPop
-                                    },
-                                )
-                            ).show()
+                        val taskList = taskData.subTaskList
+                        // 给最后一个的templateId赋值
+                        // 要给后端传递一下当前的日历模板ID
+                        taskList?.getOrNull(taskList.size - 1)?.apply {
+                            templateId = mViewMode.getCalendar.value?.data?.templateId
                         }
+                        mViewMode.setTaskNo(taskList?.get(0)?.taskNo)
+
+                        XPopup.Builder(this@CalendarActivity).asCustom(
+                            BaseThreeTextPop(
+                                this@CalendarActivity,
+                                content = getString(
+                                    com.cl.common_base.R.string.my_to_do, listContent[position].taskName
+                                ),
+                                oneLineText = "Step by Step Guide",
+                                twoLineText = "Complete Now",
+                                threeLineText = "Snooze 24 Hours",
+                                oneLineCLickEventAction = {
+                                    // 如果不是转周期任务
+                                    // 需要判断当前任务是换水任务还是其他任务
+                                    if (taskList?.get(0)?.jumpType == CalendarData.KEY_JUMP_TYPE_TO_WATER) {
+                                        mViewMode.setSaveUnlockTask(taskList)
+                                        changWaterAddWaterAddpump()/*// 请求接口
+                                                    mViewMode.advertising()*/
+                                        return@BaseThreeTextPop
+                                    }
+                                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, taskList as? Serializable)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_ID, taskId)
+                                    intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskId)
+                                    intent.putExtra(Constants.Global.KEY_TXT_ID, taskList?.get(0)?.textId)
+                                    intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
+                                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, "Next")
+                                    intent.putExtra(BasePopActivity.KEY_TASK_NO, taskList?.get(0)?.taskNo)
+                                    refreshActivityLauncher.launch(intent)
+                                },
+                                twoLineCLickEventAction = {
+                                    // 立即完成
+                                    mViewMode.finishTask(FinishTaskReq(taskId = taskData.taskId, templateId = mViewMode.getCalendar.value?.data?.templateId))
+                                },
+                                threeLineCLickEventAction = {
+                                    // 推出的是整个任务包，并不是单个任务
+                                    if (remindTaskToCalendar(listContent, position)) return@BaseThreeTextPop
+                                },
+                            )
+                        ).show()
                     }
                 }
 
@@ -1516,77 +1485,14 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         return timestamp + oneDayMilliseconds
     }
     private fun remindTaskToCalendar(listContent: MutableList<CalendarData.TaskList>, position: Int): Boolean {
-        if (PermissionHelp().hasPermissions(
-                this@CalendarActivity, Manifest.permission.READ_CALENDAR, Manifest.permission.WRITE_CALENDAR
+        // 上报后台。
+        mViewMode.updateTask(
+            UpdateReq(
+                taskId = listContent[position].taskId, taskTime = calculateNextDayTimestamp(listContent[position].taskTime?.toLong() ?: 0L).toString()
             )
-        ) {
-            // 上报后台。
-            mViewMode.updateTask(
-                UpdateReq(
-                    taskId = listContent[position].taskId, taskTime = calculateNextDayTimestamp(listContent[position].taskTime?.toLong() ?: 0L).toString()
-                )
-            )
-            listContent.removeAt(position - 1)
-            /*pop.asCustom(
-                BaseTimeChoosePop(this@CalendarActivity, currentTime = listContent[position].taskTime?.toLong(), onConfirmAction = { time, timeMis ->
-                    // 时间
-                    // 传给后台 & 上报给手机本地日历
-                    // todo 传给后台
-                    mViewMode.updateTask(
-                        UpdateReq(
-                            taskId = listContent[position].taskId, taskTime = timeMis.toString()
-                        )
-                    )
-                    // todo 上报给手机本地日历
-                    CalendarEventUtil.addCalendarEvent(
-                        this@CalendarActivity, listContent[position].taskName, listContent[position].taskName, timeMis, 2
-                    )
-                })
-            ).show()*/
-            return true
-        }
-        // remind me
-        // 需要授权日历权限弹窗
-        XPopup.Builder(this@CalendarActivity).asCustom(
-            BaseCenterPop(isShowCancelButton = true,
-                context = this@CalendarActivity,
-                content = getString(com.cl.common_base.R.string.my_calendar_permisson),
-                confirmText = getString(com.cl.common_base.R.string.my_confirm),
-                onConfirmAction = {
-                    // 如果有权限那么就直接弹出
-                    // 授权日历弹窗
-                    PermissionHelp().applyPermissionHelp(
-                        this@CalendarActivity,
-                        getString(com.cl.common_base.R.string.my_calendar_permisson),
-                        object : PermissionHelp.OnCheckResultListener {
-                            override fun onResult(result: Boolean) {
-                                if (!result) return
-                                // 跳转选择事件弹窗
-                                pop.asCustom(
-                                    BaseTimeChoosePop(this@CalendarActivity, currentTime = listContent[position].taskTime?.toLong(), onConfirmAction = { time, timeMis ->
-                                        // 时间
-                                        // 传给后台 & 上报给手机本地日历
-                                        // todo 传给后台
-                                        mViewMode.updateTask(
-                                            UpdateReq(
-                                                taskId = listContent[position].taskId, taskTime = timeMis.toString()
-                                            )
-                                        )
-                                        // todo 上报给手机本地日历
-                                        CalendarEventUtil.addCalendarEvent(
-                                            this@CalendarActivity, listContent[position].taskName, listContent[position].taskName, timeMis, 2
-                                        )
-                                    })
-                                ).show()
-                            }
-                        },
-                        Manifest.permission.READ_CALENDAR,
-                        Manifest.permission.WRITE_CALENDAR,
-                    )
-
-                })
-        ).show()
-        return false
+        )
+        listContent.removeAt(position - 1)
+        return true
     }
 
     // 三合一流程

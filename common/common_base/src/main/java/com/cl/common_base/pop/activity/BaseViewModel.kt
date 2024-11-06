@@ -212,7 +212,7 @@ class BaseViewModel @Inject constructor(): ViewModel() {
                             ARouter.getInstance().build(RouterPath.Home.PAGE_HOME_PRO_MODE_START)
                                 .withString("templateId", body.templateId)
                                 .withString("step", it.data)
-                                .withBoolean("is_current_period", false)
+                                .withString("is_current_period", "false")
                                 .withString("taskId", body.taskId)
                                 .navigation()
                             // 直接跳转到

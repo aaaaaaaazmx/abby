@@ -190,10 +190,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
         // 请求获取周期列表接口
         mViewMode.getCycleList(PeriodListBody(templateId = templateId))
 
-        (if (!isCurrentPeriod.isNullOrEmpty()) null else R.id.container)?.let { adapter.addChildClickViewIds(it) }
+        adapter.addChildClickViewIds(R.id.container)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             when (view.id) {
                 R.id.container -> {
+                    if (!isCurrentPeriod.isNullOrEmpty()) return@setOnItemChildClickListener
                     // 需要把当前的isSelect改为false，然后把当前的改为true
                     (adapter.data as? MutableList<CycleListBean>)?.indexOfFirst { it.isSelect }?.let { index ->
                         if (index != -1) {

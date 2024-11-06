@@ -16,8 +16,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 34
-    val versionCode = 71
-    const val versionName = "4.0.0"
+    val versionCode = 73
+    const val versionName = "4.0.2"
 
     const val coreKtxVersion = "1.9.0"
     const val appCompatVersion = "1.6.0"
@@ -28,7 +28,7 @@ object Version {
     const val lifecycleVersion = "2.7.0"
     const val navigationVersion = "2.7.7"
     const val swipeRefreshLayoutVersion = "1.1.0"
-    const val recyclerViewVersion = "1.3.0-alpha02"
+    const val recyclerViewVersion = "1.3.2"
     const val preferenceVersion = "1.2.0"
 
     // paging3
@@ -58,19 +58,19 @@ object Version {
 
     const val loggerVersion = "2.2.0"
 
-    const val mmkv = "1.3.7"
+    const val mmkv = "2.0.0"
 
     const val rvHelp = "3.0.10"
 
     const val xpopup = "2.10.0"
 
-    const val web = "v5.0.0-alpha.1"
+    const val web = "v5.1.1"
 
-    const val appStartup = "1.1.1"
+    const val appStartup = "1.2.0"
 
     const val glide = "4.16.0"
 
-    const val permission = "1.8.0"
+    const val permission = "1.8.1"
 
     const val choosePhoto = "v3.11.2"
 
@@ -82,14 +82,14 @@ object Version {
 
     const val luban = "1.1.8"
 
-    const val tuya = "5.14.0"
+    const val tuya = "5.17.0"
 
-    const val tuyaIpc = "5.14.1"
+    const val tuyaIpc = "5.17.2"
 
-    const val jPushChina = "5.4.0"
-    const val push = "5.4.0"
-    const val fcm = "5.4.0"
-    const val firBaseMessgae = "23.1.2"
+    const val jPushChina = "5.5.0"
+    const val push = "5.5.0"
+    const val fcm = "5.5.0"
+    const val firBaseMessgae = "23.2.0"
     const val stepView = "1.0.1"
     const val cardSwip = "1.0.0"
 
@@ -107,7 +107,7 @@ object Version {
 
     const val bugly = "4.1.9.3"
 
-    const val sentry = "7.15.0"
+    const val sentry = "7.16.0"
 }
 
 object Deps {
@@ -206,7 +206,7 @@ object Deps {
     const val xpopUp = "com.github.li-xiaojun:XPopup:${Version.xpopup}"
 
     // web
-    const val web = "com.github.Justson.AgentWeb:agentweb-core:${Version.web}-androidx"
+    const val web = "io.github.justson:agentweb-core:${Version.web}-androidx"
 
     // startUp
     const val startUp = "androidx.startup:startup-runtime:${Version.appStartup}"
