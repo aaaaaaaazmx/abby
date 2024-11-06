@@ -619,6 +619,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             withContext(Dispatchers.Main) {
                                 // 设置数据
                                 adapter.setList(local)
+                                // 单点刷新
                                 if (mViewMode.onlyRefreshLoad.value == true) {
                                     // 修改选中的数据
                                     // 二次加载isChooser = true 的日期
@@ -626,6 +627,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                         showTaskList(adapter.data[index])
                                     }
                                 } else {
+                                    // 刷新全部,也就是第一次进来.
                                     // 展示有任务的日子
                                     val getCalendarDate = mViewMode.getCalendar.value?.data?.list
                                     checkAndLockNextDate(getCalendarDate, adapter, true)
@@ -1032,59 +1034,63 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
-    private fun checkAndLockNextDate(calendarDates: MutableList<CalendarData>?, adapter: MyCalendarAdapter, isScroll: Boolean? = false) {
+    private fun checkAndLockNextDate(
+        calendarDates: MutableList<CalendarData>?,
+        adapter: MyCalendarAdapter,
+        isScroll: Boolean? = false,
+        lastCheckedDate: LocalDate? = null // Add an additional parameter to track the last checked date
+    ) {
         val today = LocalDate.parse(mViewMode.mCurrentDate.ymd, DateTimeFormatter.ISO_DATE)
 
-        // 在入口处过滤掉所有小于当前日期的日期
-        val filteredCalendarDates = calendarDates?.filter {
-            LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isEqual(today) ||
-                    LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isAfter(today)
-        }?.toMutableList() ?: mutableListOf()
+        // 过滤掉所有小于当前日期的日期并按日期排序
+        val filteredCalendarDates = calendarDates?.asSequence()?.map {
+            val currentDate = LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE)
+            currentDate to it
+        }?.filter { (currentDate, _) ->
+            currentDate.isEqual(today) || currentDate.isAfter(today)
+        }?.filter { (currentDate, _) ->
+            lastCheckedDate == null || currentDate.isAfter(lastCheckedDate)
+        }?.sortedBy { it.first }?.map { it.second }?.toList() ?: mutableListOf()
 
-        // 进入递归逻辑
-        filteredCalendarDates.firstOrNull { it.taskList?.isNotEmpty() == true }?.let { data ->
-            val currentDate = LocalDate.parse(data.date, DateTimeFormatter.ISO_DATE)
-
-            // 检查当前日期上的任务是否完成
-            // 1 表示任务已经完成
-            if (data.taskList?.any { it.taskStatus != "1" } == true) {
-                // 任务未完成，锁定当前日期
-                adapter.data.indexOfFirst { it.ymd == data.date }.let { index ->
-                    if (index != -1) {
-                        if (isScroll == true) {
-                            // 滚动到当前有任务的一天。
-                            binding.rvList.scrollToPosition(index + 7 * 2)
-                            showTaskList(adapter.data[index])
-                        } else {
-                            adapter.data[index].isChooser = true
-                            adapter.notifyItemChanged(index)
-                        }
+        // 遍历过滤后的日期，寻找第一个有任务的日期
+        for (data in filteredCalendarDates) {
+            // 如果当前日期有任务且任务未完成
+            if (data.taskList?.isNotEmpty() == true && data.taskList?.any { it.taskStatus != "1" } == true) {
+                // 锁定当前日期
+                val index = adapter.data.indexOfFirst { it.ymd == data.date }
+                if (index != -1) {
+                    if (isScroll == true) {
+                        // 滚动到当前有任务的一天
+                        binding.rvList.scrollToPosition(index + 7 * 2)
+                        showTaskList(adapter.data[index])
+                    } else {
+                        adapter.data[index].isChooser = true
+                        adapter.notifyItemChanged(index)
                     }
+                    return // 处理完第一个符合条件的日期后立即返回
                 }
-            } else {
-                // 当前日期的任务已完成，继续查找下一个有任务的日期
-                checkAndLockNextDate(
-                    filteredCalendarDates.filter {
-                        LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isEqual(currentDate) ||
-                                LocalDate.parse(it.date, DateTimeFormatter.ISO_DATE).isAfter(currentDate)
-                    }.toMutableList(),
-                    adapter
-                )
+            } else if (data.taskList?.all { it.taskStatus == "1" } == true) {
+                // 当前日期的任务已完成，继续查找下一个日期
+                continue
             }
-        } ?: run {
-            // 兜底逻辑：如果没有找到任何符合条件的日期
-            // 找到当天作为第一个。
-            adapter.data.indexOfFirst { it.isCurrentDay }.apply {
-                if (isScroll == true) {
-                    showTaskList(mViewMode.mCurrentDate)
-                } else {
-                    adapter.data[this].isChooser = true
-                    adapter.notifyItemChanged(this)
-                }
+        }
 
+        // 如果没有找到任何符合条件的日期，则默认选择当天
+        val todayIndex = adapter.data.indexOfFirst { it.isCurrentDay }
+        if (todayIndex != -1) {
+            if (isScroll == true) {
+                showTaskList(mViewMode.mCurrentDate)
+            } else {
+                adapter.data[todayIndex].isChooser = true
+                adapter.notifyItemChanged(todayIndex)
             }
         }
     }
+
+
+
+
+
 
 
     private fun clickEvent() {

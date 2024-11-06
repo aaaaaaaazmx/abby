@@ -467,7 +467,7 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                             _showCompletePage.postValue(true)
                         }
                         // 刷新任务
-                        refreshTask(false)
+                        refreshTask()
                         Resource.Success(it.data)
                     }
                 }
