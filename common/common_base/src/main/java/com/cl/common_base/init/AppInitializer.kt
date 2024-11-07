@@ -47,7 +47,7 @@ class AppInitializer : Initializer<Unit> {
             "wxwdkkqchswudekgsrqv",
             "t77armdv4h7ncx97akumfkht7jtpm4xh"
         )
-        ThingHomeSdk.setDebugMode(true)
+        ThingHomeSdk.setDebugMode(BuildConfig.DEBUG)
 
         // bugly 初始化符合合规要求
         val strategy = UserStrategy(context.applicationContext as? Application)
