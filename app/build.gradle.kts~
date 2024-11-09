@@ -192,7 +192,7 @@ kapt {
 }
 
 dependencies {
-    implementation(fileTree("libs").include("*.jar", "*.aar"))
+    implementation(fileTree("dir" to "libs", "include" to listOf("*.jar", "*.aar")))
     implementation(project(mapOf("path" to ":common:common_base")))
 //    implementation(project(mapOf("path" to ":common:common_service")))
     implementation(project(mapOf("path" to ":modules:modules_home")))
