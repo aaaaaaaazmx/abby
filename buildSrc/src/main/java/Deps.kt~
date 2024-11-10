@@ -20,7 +20,7 @@ object Version {
     const val versionName = "4.0.0"
 
     const val coreKtxVersion = "1.9.0"
-    const val appCompatVersion = "1.6.1"
+    const val appCompatVersion = "1.6.0"
     const val fragment = "1.7.1"
     const val activity = "1.7.1"
     const val materialVersion = "1.12.0"

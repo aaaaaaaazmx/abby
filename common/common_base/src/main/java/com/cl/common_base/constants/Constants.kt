@@ -226,6 +226,9 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 保存的系统语言
+        const val KEY_GLOBAL_LANGUAGE = "key_global_language"
+
         // 旧的proMode开关表示 on
         const val KEY_OLD_PRO_MODE = "On"
         // 新的proMode模版开关表示 On_Template

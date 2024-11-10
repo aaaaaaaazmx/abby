@@ -84,11 +84,11 @@ abstract class BaseActivity<VB : ViewDataBinding> : AppCompatActivity(), BaseBin
             initData()
         }
         // 异常了。如设置界面权限切换
-        if (savedInstanceState != null) {
+        /*if (savedInstanceState != null) {
             ARouter.getInstance().build(RouterPath.Welcome.PAGE_SPLASH)
                 .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 .navigation()
-        }
+        }*/
     }
 
     override fun onStart() {

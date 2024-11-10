@@ -1,10 +1,17 @@
 package com.cl.modules_login.ui
 
+import android.app.LocaleManager
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
+import android.os.LocaleList
+import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import chip.setuppayload.SetupPayloadParser.InvalidEntryCodeFormatException
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
@@ -33,6 +40,7 @@ import com.cl.modules_login.viewmodel.LoginViewModel
 import com.cl.modules_login.widget.LoginSelectEnvPop
 import com.cl.modules_login.widget.PrivacyPop
 import com.cl.common_base.ext.letMultiple
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.net.ServiceCreators
 import com.cl.common_base.util.login.GoogleLoginHelper
 import com.cl.common_base.util.login.GoogleLoginHelper.Companion.REQ_ONE_TAP
@@ -45,6 +53,7 @@ import com.google.gson.Gson
 import com.luck.picture.lib.utils.ToastUtils
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -59,6 +68,11 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     private val googleHelp by lazy {
         GoogleLoginHelper(this@LoginActivity)
     }
+
+    private val availableLanguage = arrayOf("en", "es", "de")
+    private val availableLanguageDisplayName =
+        arrayOf("English", "Spanish", "Deutsch")
+    private var currentLanguage = "en"
 
     override fun initView() {
         ARouter.getInstance().inject(this) // 设置默认的账号
@@ -75,7 +89,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
         // 获取焦点才能弹出密码提示框
         binding.accountEditText.isFocusable = true;
-        binding.accountEditText.isFocusableInTouchMode = true;
+        binding.accountEditText.isFocusableInTouchMode = true
         binding.accountEditText.requestFocus();
 
         // 更新小组件
@@ -83,6 +97,30 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         // 判断是否有无token
         if (Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN, "").isNotEmpty()) {
             updateWidget(this@LoginActivity)
+        }
+        // 获取当前系统语言
+        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
+        } else {
+            // For lower Android versions, fallback to the legacy approach
+            resources.configuration.locales
+        }
+
+        // Only proceed if locales are available
+        if (!currentAppLocales.isEmpty) {
+            // Get the language from the first locale
+            val currentLanguage = currentAppLocales[0].language
+
+            // Try to find the index of the current language in the availableLanguage list
+            val languageIndex = availableLanguage.indexOf(currentLanguage)
+
+            if (languageIndex != -1) {
+                // Safely update the TextView if the language is available
+                binding.tvLocal.text = availableLanguageDisplayName[languageIndex]
+            } else {
+                // Handle the case where the language is not found in the list (optional fallback)
+                binding.tvLocal.text = "English" // Or any default message
+            }
         }
     }
 
@@ -275,6 +313,39 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             if (BuildConfig.DEBUG) {
                 plantSix.show()
             }
+        }
+
+        binding.local.setSafeOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Chose Language")
+                .setSingleChoiceItems(
+                    availableLanguageDisplayName,
+                    availableLanguageDisplayName.indexOf(currentLanguage)
+                ) { _, which ->
+                    currentLanguage = availableLanguage[which]
+                }
+                .setPositiveButton(getString(R.string.base_ok)) { dialog, _ ->
+                    // 切换语言
+                    AppCompatDelegate.setApplicationLocales(
+                        LocaleListCompat.forLanguageTags(
+                            currentLanguage
+                        )
+                    )
+                  /*  val locale = Locale(currentLanguage) // e.g., "en" for English, "de" for German
+                    Locale.setDefault(locale)
+                    Locale.setDefault(locale)
+                    val config: Configuration = resources.configuration
+                    config.setLocale(locale)
+                    baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+                    recreate()*/
+                    binding.tvLocal.text = availableLanguageDisplayName[availableLanguage.indexOf(currentLanguage)]
+                    dialog?.dismiss()
+                }
+                .setNegativeButton(getString(R.string.my_cancel)) { dialog, _ ->
+                    dialog?.dismiss()
+                }
+                .create()
+                .show()
         }
 
         binding.tvCreate.setOnClickListener { // 跳转到注册界面

@@ -14,13 +14,56 @@
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="64dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.LoginActivity"
             tools:ignore="MissingConstraints">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/local"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="24dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_marginEnd="5dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_local"
+                    app:layout_constraintTop_toTopOf="@+id/tv_local"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_local"
+                    android:id="@+id/iv_local"
+                    android:background="@mipmap/local"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    app:layout_constraintEnd_toStartOf="@+id/iv_localen"
+                    android:textStyle="bold"
+                    tools:text="English"
+                    android:id="@+id/tv_local"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+
+                <ImageView
+                    android:layout_marginStart="5dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_local"
+                    app:layout_constraintTop_toTopOf="@+id/tv_local"
+                    app:layout_constraintStart_toEndOf="@+id/tv_local"
+                    android:id="@+id/iv_localen"
+                    android:background="@mipmap/localen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
             <ImageView
+                android:layout_marginTop="64dp"
                 android:id="@+id/iv_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
