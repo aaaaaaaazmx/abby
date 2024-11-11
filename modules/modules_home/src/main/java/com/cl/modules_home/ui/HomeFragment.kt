@@ -2695,7 +2695,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     setZp(data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX)
 
                     // 如果是帐篷那么就不请求未读数量、包括日历、interCome、环信数量
-                    if (data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_BOX) {
+                    if (data?.spaceType != ListDeviceBean.KEY_SPACE_TYPE_TENT) {
                         // 从聊天退出来之后需要刷新消息环信数量
                         mViewMode.getHomePageNumber()
                         ViewUtils.setGone(binding.pplantNinth.ivDoorLockStatus)

@@ -62,6 +62,11 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         intent.getLongExtra(ProModeEnvActivity.END_TIME, 0L)
     }
 
+    // taskId
+    private val taskId by lazy {
+        intent.getStringExtra(ProModeEnvActivity.TASK_ID)
+    }
+
     // 周期开始时间
     private val startTime by lazy {
         intent.getLongExtra(ProModeEnvActivity.START_TIME, 0L)

@@ -132,30 +132,48 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     }
 
     private fun isSwitchDevice() {
+        // 获取适配器的数据列表
         val list = adapter.data
+
+        // 如果列表为空，则结束当前操作
         if (list.isEmpty()) {
             finish()
             return
         }
-        list.indexOfFirst { it.isChooser == true }.let {
-            if (it == isCurrentDeviceIndex) {
-                finish()
-            } else {
-                // 切换设备。
-                list.firstOrNull { data -> data.isChooser == true }?.apply {
-                    deviceId?.let { it1 -> mViewModel.switchDevice(it1) }
-                    // 删除原先的、或者切换了设备
-                    // 跳转到主页、加载。
-                    // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
-                    // 改用Eventbus吧。
-                    // 切换了设备，需要重新刷新主页。
-                    /*logI("123123123: $deviceId,,$spaceType")
-                    ARouter.getInstance()
-                        .build(RouterPath.Main.PAGE_MAIN).navigation()
-                    LiveEventBus.get()
-                        .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
-                        .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType, onlineStatus))*/
+
+        // 使用 indexOfFirst 查找符合条件的元素，返回值如果是 -1，表示未找到
+        val index = list.indexOfFirst { it.isChooser == true }
+
+        // 如果没有找到符合条件的元素，则不进行任何操作
+        if (index == -1) {
+            return
+        }
+
+        // 如果找到的设备索引与当前设备索引相同，结束操作
+        if (index == isCurrentDeviceIndex) {
+            finish()
+        } else {
+            // 查找符合条件的设备对象，避免空指针异常
+            val device = list.getOrNull(index)
+
+            // 如果找到了设备，进行设备切换逻辑
+            device?.apply {
+                // 确保设备ID不为空才进行切换
+                deviceId?.let {
+                    // 调用ViewModel进行设备切换
+                    mViewModel.switchDevice(it)
                 }
+                // 删除原先的、或者切换了设备
+                // 跳转到主页、加载。
+                // 切换了主页，应该直接回到首页、在合并界面也能跳转到这个地方。应该需要使用其他的方法。
+                // 改用Eventbus吧。
+                // 切换了设备，需要重新刷新主页。
+                /*logI("123123123: $deviceId,,$spaceType")
+                ARouter.getInstance()
+                    .build(RouterPath.Main.PAGE_MAIN).navigation()
+                LiveEventBus.get()
+                    .with(Constants.Global.KEY_IS_SWITCH_DEVICE, LiveDataDeviceInfoBean::class.java)
+                    .postEvent(LiveDataDeviceInfoBean(deviceId, spaceType, onlineStatus))*/
             }
         }
     }
@@ -217,25 +235,25 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                 adapter.data.firstOrNull { data -> data.isChooser == true }?.apply {
                                     deviceId?.let { id ->
                                         arrayList.firstOrNull { dev -> dev.devId == id }.apply {
-                                                logI("thingDeviceBean ID: $id")
-                                                // 在线的、数据为空、并且是abby机器
-                                                if (null == this && spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && onlineStatus != "Offline") {
-                                                    ToastUtil.shortShow("Connection error, try to delete device and pair again")
-                                                }
-                                                GSON.toJsonInBackground(this) {
-                                                    Prefs.putStringAsync(
-                                                        Constants.Tuya.KEY_DEVICE_DATA, it
-                                                    )
-                                                }
-                                                // 重新注册服务
-                                                // 开启服务
-                                                val intent = Intent(
-                                                    this@DeviceListActivity, TuYaDeviceUpdateReceiver::class.java
-                                                )
-                                                startService(intent)
-                                                // 切换之后需要重新刷新所有的东西
-                                                mViewModel.checkPlant()
+                                            logI("thingDeviceBean ID: $id")
+                                            // 在线的、数据为空、并且是abby机器
+                                            if (null == this && spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && onlineStatus != "Offline") {
+                                                ToastUtil.shortShow("Connection error, try to delete device and pair again")
                                             }
+                                            GSON.toJsonInBackground(this) {
+                                                Prefs.putStringAsync(
+                                                    Constants.Tuya.KEY_DEVICE_DATA, it
+                                                )
+                                            }
+                                            // 重新注册服务
+                                            // 开启服务
+                                            val intent = Intent(
+                                                this@DeviceListActivity, TuYaDeviceUpdateReceiver::class.java
+                                            )
+                                            startService(intent)
+                                            // 切换之后需要重新刷新所有的东西
+                                            mViewModel.checkPlant()
+                                        }
                                     }
                                 }
                             }

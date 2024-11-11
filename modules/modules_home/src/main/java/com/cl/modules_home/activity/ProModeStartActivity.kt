@@ -44,6 +44,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
         intent.getStringExtra(STEP)
     }
 
+    // TASK_ID
+    private val taskId by lazy {
+        intent.getStringExtra(TASK_ID)
+    }
+
     // 接受templateId
     private val templateId by lazy {
         intent.getStringExtra(TEMPLATE_ID)
@@ -199,6 +204,7 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                 putExtra(ProModeEnvActivity.STEP_NOW, selectedItem.stepShow)
                 putExtra(ProModeEnvActivity.STEP, selectedItem.step)
                 putExtra(ProModeEnvActivity.TEMPLATE_ID, templateId)
+                putExtra(ProModeEnvActivity.TASK_ID, taskId)
                 if (addIsCurrentPeriod) {
                     putExtra(ProModeEnvActivity.IS_CURRENT_PERIOD, isCurrentPeriod)
                 }
@@ -213,10 +219,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
         // 请求获取周期列表接口
         mViewMode.getCycleList(PeriodListBody(templateId = templateId))
 
-        (if (!isCurrentPeriod.isNullOrEmpty()) null else R.id.container)?.let { adapter.addChildClickViewIds(it) }
+        adapter.addChildClickViewIds(R.id.container)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             when (view.id) {
                 R.id.container -> {
+                    if (!isCurrentPeriod.isNullOrEmpty()) return@setOnItemChildClickListener
                     // 需要把当前的isSelect改为false，然后把当前的改为true
                     (adapter.data as? MutableList<CycleListBean>)?.indexOfFirst { it.isSelect }?.let { index ->
                         if (index != -1) {
@@ -300,6 +307,9 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
     }
 
     companion object {
+        //taskId
+        const val TASK_ID = "taskId"
+
         // templateId
         const val TEMPLATE_ID = "templateId"
 

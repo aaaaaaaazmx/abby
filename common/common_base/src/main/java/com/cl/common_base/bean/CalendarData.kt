@@ -46,6 +46,7 @@ data class CalendarData(
             var isDeleted: Boolean? = null,
             var jumpJson: String? = null,
             var id: Int? = null,
+            var templateId: String? = null,
         ) : BaseBean()
 
         data class PacketCondition(

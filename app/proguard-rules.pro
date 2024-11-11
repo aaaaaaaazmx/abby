@@ -258,6 +258,7 @@
 -keep class okio.** { *; }
 -dontwarn okio.**
 
+-keep class com.thingclips.smart.android.tangram.api.ThingConfig { *; }
 -keep class com.thingclips.**{*;}
 -dontwarn com.thingclips.**
 
