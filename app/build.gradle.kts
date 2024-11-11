@@ -87,9 +87,7 @@ android {
         // multiDexEnabled = true
 
         ndk {
-            "armeabi-v7a"
-            "arm64-v8a"
-            "armeabi"
+            abiFilters.addAll(listOf("armeabi-v7a", "arm64-v8a", "armeabi"))
         }
 
         // 极光配置
@@ -194,7 +192,7 @@ kapt {
 }
 
 dependencies {
-    implementation(fileTree("dir" to "libs", "include" to listOf("*.jar", "*.aar")))
+    implementation(fileTree("libs").include("*.jar", "*.aar"))
     implementation(project(mapOf("path" to ":common:common_base")))
 //    implementation(project(mapOf("path" to ":common:common_service")))
     implementation(project(mapOf("path" to ":modules:modules_home")))
