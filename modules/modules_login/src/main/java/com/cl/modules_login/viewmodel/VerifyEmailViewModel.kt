@@ -58,7 +58,8 @@ class VerifyEmailViewModel @Inject constructor(private val repository: RegisterL
     /**
      * 登录
      */
-    fun login() {
+    fun login(currentLanguage: String? = "en") {
+        _loginReq.value?.language = currentLanguage
         viewModelScope.launch {
             repository.loginAbby(_loginReq.value!!)
                 .map {
@@ -479,9 +480,9 @@ class VerifyEmailViewModel @Inject constructor(private val repository: RegisterL
     /**
      * 验证验证码
      */
-    fun verifyCode(code: String, email: String? = null, userName: String? = null, countryCode: String? = null) =
+    fun verifyCode(currentLanguage: String? = "en", code: String, email: String? = null, userName: String? = null, countryCode: String? = null) =
         viewModelScope.launch {
-            repository.verifyCode(code, email, userName, countryCode)
+            repository.verifyCode(currentLanguage, code, email, userName, countryCode)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -506,6 +507,8 @@ class VerifyEmailViewModel @Inject constructor(private val repository: RegisterL
                     )
                 }.collectLatest {
                     _isVerifySuccess.value = it
+                    // 1 +1
+
                 }
         }
 
@@ -514,9 +517,9 @@ class VerifyEmailViewModel @Inject constructor(private val repository: RegisterL
      */
     private val _updatePwds = MutableLiveData<Resource<Boolean>>()
     val updatePwds: LiveData<Resource<Boolean>> = _updatePwds
-    fun updatePwd(email: String, type: String) =
+    fun updatePwd(currentLanguage: String? = "en", email: String, type: String) =
         viewModelScope.launch {
-            repository.verifyEmail(email, type)
+            repository.verifyEmail(currentLanguage, email, type)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -549,9 +552,9 @@ class VerifyEmailViewModel @Inject constructor(private val repository: RegisterL
      */
     private val _sendStates = MutableLiveData<Resource<Boolean>>()
     val sendStates: LiveData<Resource<Boolean>> = _sendStates
-    fun verifyEmail(email: String? = null, type: String, userName: String? = null, countryCode: String? = null) =
+    fun verifyEmail(currentLanguage: String? = "en", email: String? = null, type: String, userName: String? = null, countryCode: String? = null) =
         viewModelScope.launch {
-            repository.verifyEmail(email, type, userName, countryCode)
+            repository.verifyEmail(currentLanguage, email, type, userName, countryCode)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

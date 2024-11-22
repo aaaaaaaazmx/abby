@@ -21,6 +21,8 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairPlantHomeBinding
 import com.cl.modules_pairing_connection.widget.PairLoginOutPop
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
 import com.thingclips.smart.android.user.api.ILogoutCallback
 import com.thingclips.smart.home.sdk.ThingHomeSdk
@@ -44,6 +46,8 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
                     override fun onSuccess() {
                         // 清除缓存数据
                         Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                        // 推出firbase账号
+                        Firebase.auth.signOut()
                         // 清除上面所有的Activity
                         // 跳转到Login页面
                         ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
@@ -61,6 +65,15 @@ class PlantActivity : BaseActivity<PairPlantHomeBinding>() {
                         )
                         ToastUtil.shortShow(error)
                         Reporter.reportTuYaError("getUserInstance", error, code)
+                        // 清除缓存数据
+                        Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                        // 推出firbase账号
+                        Firebase.auth.signOut()
+                        // 清除上面所有的Activity
+                        // 跳转到Login页面
+                        ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
+                            .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .navigation()
                     }
                 })
             })

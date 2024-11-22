@@ -4,6 +4,9 @@ import androidx.annotation.Keep
 import com.cl.common_base.bean.BaseBean
 
 
+// EN 英文
+// ES 西班牙语
+// DE 德文
 @Keep
 data class ModifyUserDetailReq(
     var abbyId: String? = null,
@@ -16,6 +19,7 @@ data class ModifyUserDetailReq(
     var nightTimer: String? = null,
     var personSign: String? = null,
     var openNotify: String? = null,
+    var language: String? = null,
     var userName: String? = null,
     var wallAddress: String? = null,
     var wallId: String? = null,

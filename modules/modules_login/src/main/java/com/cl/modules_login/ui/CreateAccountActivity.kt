@@ -1,6 +1,9 @@
 package com.cl.modules_login.ui
 
+import android.app.LocaleManager
 import android.content.Intent
+import android.os.Build
+import android.os.LocaleList
 import android.view.View
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
@@ -45,6 +48,24 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
         intent.getStringExtra(LoginActivity.KEY_THIRD_TOKEN)
     }
 
+    // 获取系统语言
+    private val currentLanguage by lazy {
+        var language = "en"
+        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
+        } else {
+            // For lower Android versions, fallback to the legacy approach
+            resources.configuration.locales
+        }
+
+        if (!currentAppLocales.isEmpty) {
+            // Get the language from the first locale
+            language = currentAppLocales[0].language
+            // Try to find the index of the current language in the availableLanguage list
+        }
+        language
+    }
+
     private val privacyPop by lazy {
         PrivacyPop(
             context = this@CreateAccountActivity,
@@ -59,17 +80,17 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                         "google" -> {
                             // 谷歌登录
                             // 发送验证码
-                            mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "5")
+                            mViewModel.verifyEmail(currentLanguage = currentLanguage, email = binding.etEmail.text.toString(), "5")
                         }
                         "sms" -> {
                             // sms登录或者注册发送验证码
-                            mViewModel.verifyEmail(userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
+                            mViewModel.verifyEmail(currentLanguage = currentLanguage, userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
                         }
                     }
                     return@PrivacyPop
                 }
                 // 发送验证码
-                mViewModel.verifyEmail(email = binding.etEmail.text.toString(), "1")
+                mViewModel.verifyEmail(currentLanguage = currentLanguage, email = binding.etEmail.text.toString(), "1")
             },
             onTermUsAction = {
                 // 跳转到使用条款H5

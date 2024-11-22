@@ -23,6 +23,12 @@ interface HttpLoginApiService {
     ): Flow<HttpResult<AutomaticLoginData>>
 
     /**
+     * 更新用户信息
+     */
+    @POST("abby/user/modifyUserDetail")
+    fun modifyUserDetail(@Body body: ModifyUserDetailReq): Flow<HttpResult<Boolean>>
+
+    /**
      * 登录
      * /abby/user/app/login
      */
@@ -51,14 +57,14 @@ interface HttpLoginApiService {
      * 发送验证码
      */
     @GET("abby/user/verify/email")
-    fun verifyEmail(@Query("email") email: String? = null, @Query("type") type: String, @Query("userName") userName: String? = null, @Query("countryCode") countryCode: String? = null): Flow<HttpResult<Boolean>>
+    fun verifyEmail(@Query("language") language: String? = "en", @Query("email") email: String? = null, @Query("type") type: String, @Query("userName") userName: String? = null, @Query("countryCode") countryCode: String? = null): Flow<HttpResult<Boolean>>
 
 
     /**
      * 邮箱验证码
      */
     @GET("abby/user/verify/code")
-    fun verifyCode(@Query("code") code: String, @Query("email") email: String? = null, @Query("userName") userName: String? = null, @Query("countryCode") countryCode: String? = null): Flow<HttpResult<Boolean>>
+    fun verifyCode(@Query("language") currentLanguage: String? = "en", @Query("code") code: String, @Query("email") email: String? = null, @Query("userName") userName: String? = null, @Query("countryCode") countryCode: String? = null): Flow<HttpResult<Boolean>>
 
     /**
      * 用户注册

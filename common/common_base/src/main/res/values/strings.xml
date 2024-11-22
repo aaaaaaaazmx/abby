@@ -1045,6 +1045,13 @@
     <string name="contact_the_number">The number of selected photos cannot exceed %1$s.</string>
 
 
+    <!--Choose Language-->
+    <string name="choose_language">Choose Language</string>
+    <string name="en">English</string>
+    <string name="es">Spanish</string>
+    <string name="de">Deutsch</string>
+
+
 
 
 

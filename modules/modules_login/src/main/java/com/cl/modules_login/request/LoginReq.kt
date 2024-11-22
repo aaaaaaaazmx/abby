@@ -20,6 +20,7 @@ data class LoginReq(
     var password: String? = null,
     var timeZone: String? = DateHelper.getTimeZOneNumber().toString(),
     var token: String? = null,
+    var language: String? = null,
     var userName: String? = null,
     var countryCode: String? = null,
     var version: String? = null,

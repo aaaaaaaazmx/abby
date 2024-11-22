@@ -132,7 +132,8 @@ class SetPassWordViewModel @Inject constructor(private val repository: RegisterL
     /**
      * 登录
      */
-    fun login() {
+    fun login(currentLanguage: String ?= "en") {
+        _loginReq.value?.language = currentLanguage
         viewModelScope.launch {
             repository.loginAbby(_loginReq.value!!)
                 .map {

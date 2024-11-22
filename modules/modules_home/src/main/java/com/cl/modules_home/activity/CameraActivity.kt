@@ -37,6 +37,7 @@ import com.cl.modules_home.R
 import com.cl.modules_home.databinding.HomeCameraBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -398,7 +399,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     }
 
 
-    var letters = arrayOf(getString(com.cl.common_base.R.string.string_1458), getString(com.cl.common_base.R.string.string_1459), getString(com.cl.common_base.R.string.string_1460), getString(com.cl.common_base.R.string.string_1461), getString(com.cl.common_base.R.string.string_1462))
+    var letters = arrayOf(BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1458), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1459), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1460), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1461), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1462))
 
     private val devId by lazy {
         intent.getStringExtra(Constants.Global.INTENT_DEV_ID)
@@ -1726,10 +1727,10 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     // 创建一个映射，将每个标签映射到对应的背景资源
     private val backgrounds = mapOf(
-        getString(com.cl.common_base.R.string.string_1458) to com.cl.common_base.R.drawable.create_camera_time_line,
-        getString(com.cl.common_base.R.string.string_1459) to com.cl.common_base.R.drawable.create_camera_video,
-        getString(com.cl.common_base.R.string.string_1460) to com.cl.common_base.R.drawable.create_camera_photo,
-        getString(com.cl.common_base.R.string.string_1461) to com.cl.common_base.R.drawable.create_camera_mic,
-        getString(com.cl.common_base.R.string.string_1462) to com.cl.common_base.R.drawable.create_camera_record
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1458) to com.cl.common_base.R.drawable.create_camera_time_line,
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1459) to com.cl.common_base.R.drawable.create_camera_video,
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1460) to com.cl.common_base.R.drawable.create_camera_photo,
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1461) to com.cl.common_base.R.drawable.create_camera_mic,
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1462) to com.cl.common_base.R.drawable.create_camera_record
     )
 }

@@ -13,4 +13,5 @@ data class UserRegisterReq(
     var countryCode: String? = null,
     var password: String? = null,
     var userName: String? = null,
+    var language: String? = null
 ) : BaseBean()

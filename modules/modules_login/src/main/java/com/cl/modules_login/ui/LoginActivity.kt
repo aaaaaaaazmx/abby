@@ -15,13 +15,16 @@ import androidx.core.os.LocaleListCompat
 import chip.setuppayload.SetupPayloadParser.InvalidEntryCodeFormatException
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.bean.TuYaInfo
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.Resource
+import com.cl.common_base.ext.equalsIgnoreCase
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.help.PlantCheckHelp
@@ -71,7 +74,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
     private val availableLanguage = arrayOf("en", "es", "de")
     private val availableLanguageDisplayName =
-        arrayOf("English", "Spanish", "Deutsch")
+        arrayOf(BaseApplication.getContext().getString(R.string.en), BaseApplication.getContext().getString(R.string.es), BaseApplication.getContext().getString(R.string.de))
     private var currentLanguage = "en"
 
     override fun initView() {
@@ -99,18 +102,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             updateWidget(this@LoginActivity)
         }
         // 获取当前系统语言
-        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
-        } else {
-            // For lower Android versions, fallback to the legacy approach
-            resources.configuration.locales
-        }
+        val currentAppLocales: LocaleList = getLocalLanguage()
 
         // Only proceed if locales are available
         if (!currentAppLocales.isEmpty) {
             // Get the language from the first locale
             val currentLanguage = currentAppLocales[0].language
-
             // Try to find the index of the current language in the availableLanguage list
             val languageIndex = availableLanguage.indexOf(currentLanguage)
 
@@ -119,9 +116,21 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 binding.tvLocal.text = availableLanguageDisplayName[languageIndex]
             } else {
                 // Handle the case where the language is not found in the list (optional fallback)
-                binding.tvLocal.text = "English" // Or any default message
+                binding.tvLocal.text = getString(R.string.en) // Or any default message
             }
+        } else {
+            binding.tvLocal.text = getString(R.string.en) // Or any default message
         }
+    }
+
+    private fun getLocalLanguage(): LocaleList {
+        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
+        } else {
+            // For lower Android versions, fallback to the legacy approach
+            resources.configuration.locales
+        }
+        return currentAppLocales
     }
 
     private val plantSix by lazy {
@@ -139,12 +148,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         }, onTermUsAction = { // 跳转到使用条款H5
             val intent = Intent(this@LoginActivity, WebActivity::class.java)
             intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PERSONAL_URL)
-            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Terms of Use")
+            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, getString(R.string.about_terms))
             startActivity(intent)
         }, onPrivacyAction = { // 跳转到隐私协议H5
             val intent = Intent(this@LoginActivity, WebActivity::class.java)
             intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PRIVACY_POLICY_URL)
-            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Privacy Policy")
+            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, getString(R.string.about_policy))
             startActivity(intent)
         })
     }
@@ -152,6 +161,33 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
     private lateinit var userInfoBean: LoginData
     override fun observe() {
+        mViewModel.modifyUserDetail.observe(this@LoginActivity, resourceObserver {
+            error { errorMsg, code ->
+                ToastUtil.shortShow(errorMsg)
+                hideProgressLoading()
+            }
+            success {
+                hideProgressLoading()
+                // 切换语言
+                AppCompatDelegate.setApplicationLocales(
+                    LocaleListCompat.forLanguageTags(
+                        currentLanguage
+                    )
+                )
+                /*  val locale = Locale(currentLanguage) // e.g., "en" for English, "de" for German
+                  Locale.setDefault(locale)
+                  Locale.setDefault(locale)
+                  val config: Configuration = resources.configuration
+                  config.setLocale(locale)
+                  baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+                  recreate()*/
+                binding.tvLocal.text = availableLanguageDisplayName[availableLanguage.indexOf(currentLanguage)]
+            }
+            loading {
+                showProgressLoading()
+            }
+        })
+
         mViewModel.noBindEmail.observe(this@LoginActivity) {
             if (it == false) return@observe
             when(mViewModel.thirdSource.value) {
@@ -249,7 +285,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 ToastUtil.shortShow(errorMsg)
             }
             success {
-                /**
+                /**sp
                  * 登录涂鸦
                  */
                 val it = mViewModel.registerLoginLiveData.value
@@ -317,7 +353,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
         binding.local.setSafeOnClickListener {
             AlertDialog.Builder(this)
-                .setTitle("Chose Language")
+                .setTitle(getString(R.string.choose_language))
                 .setSingleChoiceItems(
                     availableLanguageDisplayName,
                     availableLanguageDisplayName.indexOf(currentLanguage)
@@ -331,13 +367,13 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                             currentLanguage
                         )
                     )
-                  /*  val locale = Locale(currentLanguage) // e.g., "en" for English, "de" for German
-                    Locale.setDefault(locale)
-                    Locale.setDefault(locale)
-                    val config: Configuration = resources.configuration
-                    config.setLocale(locale)
-                    baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
-                    recreate()*/
+                    /*  val locale = Locale(currentLanguage) // e.g., "en" for English, "de" for German
+                      Locale.setDefault(locale)
+                      Locale.setDefault(locale)
+                      val config: Configuration = resources.configuration
+                      config.setLocale(locale)
+                      baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+                      recreate()*/
                     binding.tvLocal.text = availableLanguageDisplayName[availableLanguage.indexOf(currentLanguage)]
                     dialog?.dismiss()
                 }
@@ -510,7 +546,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                                         it.sourceUserId = AESCipher.aesEncryptString(
                                             user?.email, AESCipher.KEY
                                         )
-                                        mViewModel.login()
+                                        mViewModel.login(currentLanguage)
                                     }
 
                                 } else { // If sign in fails, display a message to the user.

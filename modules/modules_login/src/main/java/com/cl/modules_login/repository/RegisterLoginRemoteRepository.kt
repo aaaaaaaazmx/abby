@@ -22,6 +22,11 @@ class RegisterLoginRemoteRepository @Inject constructor() {
         return service.automaticLogin(body)
     }
 
+    fun modifyUserDetail(body: ModifyUserDetailReq): Flow<HttpResult<Boolean>> {
+        return service.modifyUserDetail(body)
+    }
+
+
     fun loginAbby(body: LoginReq): Flow<HttpResult<LoginData>> {
         return service.loginAbby(body)
     }
@@ -35,12 +40,12 @@ class RegisterLoginRemoteRepository @Inject constructor() {
         return service.getCountList()
     }
 
-    fun verifyEmail(email: String? = null, type: String, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
-        return service.verifyEmail(email, type, userName, countryCode)
+    fun verifyEmail(currentLanguage: String? = "en", email: String? = null, type: String, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
+        return service.verifyEmail(currentLanguage, email, type, userName, countryCode)
     }
 
-    fun verifyCode(code: String, email: String? = null, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
-        return service.verifyCode(code, email, userName, countryCode)
+    fun verifyCode(currentLanguage: String? = "en", code: String, email: String? = null, userName: String? = null, countryCode: String? = null): Flow<HttpResult<Boolean>> {
+        return service.verifyCode(currentLanguage, code, email, userName, countryCode)
     }
 
     fun registerAccount(body: UserRegisterReq): Flow<HttpResult<Boolean>> {

@@ -4,13 +4,20 @@ import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
 import android.app.Activity
+import android.app.LocaleManager
 import android.content.*
 import android.content.Intent.*
 import android.net.Uri
+import android.os.Build
+import android.os.LocaleList
 import android.view.animation.LinearInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.BuildConfig
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
@@ -84,6 +91,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
          val bean = Prefs.getString(Constants.Login.KEY_REFRESH_LOGIN_DATA)
          GSON.parseObject(bean, AutomaticLoginData::class.java)
      }*/
+
+    private val availableLanguage = arrayOf("en", "es", "de")
+    private val availableLanguageDisplayName =
+        arrayOf(BaseApplication.getContext().getString(com.cl.common_base.R.string.en), BaseApplication.getContext().getString(com.cl.common_base.R.string.es), BaseApplication.getContext().getString(com.cl.common_base.R.string.de))
+    private var currentLanguage = ""
 
     /**
      * 是否滚动到burner
@@ -290,6 +302,31 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             }
         }
 
+        // 获取当前系统语言
+        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
+        } else {
+            // For lower Android versions, fallback to the legacy approach
+            resources.configuration.locales
+        }
+        // Only proceed if locales are available
+        if (!currentAppLocales.isEmpty) {
+            // Get the language from the first locale
+            val currentLanguage = currentAppLocales[0].language
+
+            // Try to find the index of the current language in the availableLanguage list
+            val languageIndex = availableLanguage.indexOf(currentLanguage)
+
+            if (languageIndex != -1) {
+                // Safely update the TextView if the language is available
+                binding.ftLanguage.itemValue = availableLanguageDisplayName[languageIndex]
+            } else {
+                // Handle the case where the language is not found in the list (optional fallback)
+                binding.ftLanguage.itemValue = getString(com.cl.common_base.R.string.en) // Or any default message
+            }
+        } else {
+            binding.ftLanguage.itemValue = getString(com.cl.common_base.R.string.en) // Or any default message
+        }
     }
 
     override fun observe() {
@@ -577,6 +614,24 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }
                 loading {
                     hideProgressLoading()
+                    if (currentLanguage.isNotEmpty()) {
+                        // 切换语言
+                        AppCompatDelegate.setApplicationLocales(
+                            LocaleListCompat.forLanguageTags(
+                                currentLanguage
+                            )
+                        )
+                        /*  val locale = Locale(currentLanguage) // e.g., "en" for English, "de" for German
+                          Locale.setDefault(locale)
+                          Locale.setDefault(locale)
+                          val config: Configuration = resources.configuration
+                          config.setLocale(locale)
+                          baseContext.resources.updateConfiguration(config, baseContext.resources.displayMetrics)
+                          recreate()*/
+                        binding.ftLanguage.itemValue = availableLanguageDisplayName[availableLanguage.indexOf(currentLanguage)]
+                        mViewModel.checkPlant()
+                        return@loading
+                    }
                 }
             })
         }
@@ -615,6 +670,15 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                         )
                         ToastUtil.shortShow(error)
                         Reporter.reportTuYaError("getUserInstance", error, code)
+                        // 清除缓存数据
+                        Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                        // 推出firbase账号
+                        Firebase.auth.signOut()
+                        // 清除上面所有的Activity
+                        // 跳转到Login页面
+                        ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
+                            .withFlags(FLAG_ACTIVITY_CLEAR_TASK or FLAG_ACTIVITY_NEW_TASK)
+                            .navigation()
                     }
                 })
             })
@@ -837,6 +901,26 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
         // 重量单位
         binding.ftWeight.setOnClickListener {
             startActivity(Intent(this@SettingActivity, WeightActivity::class.java))
+        }
+
+        binding.ftLanguage.setSafeOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle(getString(com.cl.common_base.R.string.choose_language))
+                .setSingleChoiceItems(
+                    availableLanguageDisplayName,
+                    availableLanguageDisplayName.indexOf(currentLanguage)
+                ) { _, which ->
+                    currentLanguage = availableLanguage[which]
+                }
+                .setPositiveButton(getString(com.cl.common_base.R.string.base_ok)) { dialog, _ ->
+                    mViewModel.modifyUserDetail(ModifyUserDetailReq(language = currentLanguage))
+                    dialog?.dismiss()
+                }
+                .setNegativeButton(getString(com.cl.common_base.R.string.my_cancel)) { dialog, _ ->
+                    dialog?.dismiss()
+                }
+                .create()
+                .show()
         }
 
         // 1v1

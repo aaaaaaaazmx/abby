@@ -1,7 +1,9 @@
 package com.cl.modules_login.ui
 
+import android.app.LocaleManager
 import android.content.Intent
 import android.os.Build
+import android.os.LocaleList
 import android.text.InputType
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -210,7 +212,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                                 it.sourceUserId = AESCipher.aesEncryptString(
                                     Firebase.auth.currentUser?.email, AESCipher.KEY
                                 )
-                                mViewModel.login()
+                                mViewModel.login(currentLanguage = currentLanguage)
                             }
                         }
                     }
@@ -277,6 +279,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                         binding.etPassword.text.toString(),
                         AESCipher.KEY
                     )
+                    userRegisterBean?.language = currentLanguage
                     userRegisterBean?.let { bean -> mViewModel.registerAccount(bean) }
                 } else {
                     // 修改密码
@@ -286,6 +289,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                     )
                     updatePwdReq.autoCode = emailCode
                     updatePwdReq.userEmail = emailName
+                    updatePwdReq.language = currentLanguage
                     mViewModel.updatePwd(updatePwdReq)
                 }
             }.onFailure {
@@ -384,6 +388,24 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
             }
 
         }
+    }
+
+    // 获取系统语言
+    private val currentLanguage by lazy {
+        var language = "en"
+        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
+        } else {
+            // For lower Android versions, fallback to the legacy approach
+            resources.configuration.locales
+        }
+
+        if (!currentAppLocales.isEmpty) {
+            // Get the language from the first locale
+            language = currentAppLocales[0].language
+            // Try to find the index of the current language in the availableLanguage list
+        }
+        language
     }
 
     companion object {

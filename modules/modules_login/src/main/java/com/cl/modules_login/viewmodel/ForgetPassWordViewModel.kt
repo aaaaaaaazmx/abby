@@ -29,9 +29,9 @@ class ForgetPassWordViewModel @Inject constructor(private val repository: Regist
      */
     private val _updatePwds = MutableLiveData<Resource<Boolean>>()
     val updatePwds: LiveData<Resource<Boolean>> = _updatePwds
-    fun updatePwd(email: String, type: String) =
+    fun updatePwd(currentLanguage: String? = "en", mail: String, type: String) =
         viewModelScope.launch {
-            repository.verifyEmail(email, type)
+            repository.verifyEmail(currentLanguage, mail, type)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

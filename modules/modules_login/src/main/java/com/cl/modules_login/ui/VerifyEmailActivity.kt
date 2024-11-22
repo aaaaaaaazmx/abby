@@ -1,11 +1,15 @@
 package com.cl.modules_login.ui
 
+import android.app.LocaleManager
 import android.content.Intent
+import android.os.Build
+import android.os.LocaleList
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.alibaba.android.arouter.launcher.ARouter
+import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
@@ -95,26 +99,26 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                     "google" -> {
                         // 谷歌登录
                         // 发送验证码
-                        emailName?.let { mViewModel.verifyEmail(it, "5") }
+                        emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, it, "5") }
                     }
                     "sms" -> {
                         // 重新发送验证码
-                        emailName?.let { mViewModel.verifyEmail(userName = it, countryCode = userRegisterBean?.countryCode, type = "6") }
+                        emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, userName = it, countryCode = userRegisterBean?.countryCode, type = "6") }
                     }
                 }
                 return@RetransmissionPop
             }
             // 邮箱验证码登录
             if (isEmailLogin) {
-                emailName?.let { mViewModel.verifyEmail(it, "6") }
+                emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, it, "6") }
                 return@RetransmissionPop
             }
             // 重新发送验证,
             // 需要判断当前是注册还是忘记密码
             if (isRegister) {
-                emailName?.let { mViewModel.verifyEmail(it, "1") }
+                emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, it, "1") }
             } else {
-                emailName?.let { mViewModel.updatePwd(it, "2") }
+                emailName?.let { mViewModel.updatePwd(currentLanguage = currentLanguage, it, "2") }
             }
         })
     }
@@ -364,7 +368,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                                     it.sourceUserId = AESCipher.aesEncryptString(
                                         Firebase.auth.currentUser?.email, AESCipher.KEY
                                     )
-                                    mViewModel.login()
+                                    mViewModel.login(currentLanguage = currentLanguage)
                                 }
                             }
                         }
@@ -456,11 +460,11 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                     it.countryCode = userRegisterBean?.countryCode
                     it.autoCode = binding.codeView.code
                     it.country = if (thirdSource == "sms") userRegisterBean?.country else null
-                    mViewModel.login()
+                    mViewModel.login(currentLanguage = currentLanguage)
                 }
                 return@setOnClickListener
             }
-            emailName?.let { name -> mViewModel.verifyCode(binding.codeView.code, name) }
+            emailName?.let { name -> mViewModel.verifyCode(currentLanguage = currentLanguage, binding.codeView.code, name) }
         }
 
         // 重新发送验证
@@ -479,6 +483,24 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
             // 验证码邮箱是否正确
             // emailName?.let { name -> mViewModel.verifyCode(it, name) }
         }
+    }
+
+    // 获取系统语言
+    private val currentLanguage by lazy {
+        var language = "en"
+        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
+        } else {
+            // For lower Android versions, fallback to the legacy approach
+            resources.configuration.locales
+        }
+
+        if (!currentAppLocales.isEmpty) {
+            // Get the language from the first locale
+            language = currentAppLocales[0].language
+            // Try to find the index of the current language in the availableLanguage list
+        }
+        language
     }
 
     override fun onInput() {

@@ -1,6 +1,9 @@
 package com.cl.modules_login.ui
 
+import android.app.LocaleManager
 import android.content.Intent
+import android.os.Build
+import android.os.LocaleList
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
@@ -62,11 +65,29 @@ class ForgetPasswordActivity : BaseActivity<ActivityForgetPasswordBinding>() {
         }
     }
 
+    // 获取系统语言
+    private val currentLanguage by lazy {
+        var language = "en"
+        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
+        } else {
+            // For lower Android versions, fallback to the legacy approach
+            resources.configuration.locales
+        }
+
+        if (!currentAppLocales.isEmpty) {
+            // Get the language from the first locale
+            language = currentAppLocales[0].language
+            // Try to find the index of the current language in the availableLanguage list
+        }
+        language
+    }
+
     override fun initData() {
         binding.btnSuccess.setOnClickListener {
             // 点击发送验证
             // 2 忘记密码
-            mViewModel.updatePwd(binding.etName.text.toString(), "2")
+            mViewModel.updatePwd(currentLanguage = currentLanguage, binding.etName.text.toString(), "2")
         }
 
         // 输入监听

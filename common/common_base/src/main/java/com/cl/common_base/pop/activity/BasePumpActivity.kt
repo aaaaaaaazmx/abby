@@ -435,6 +435,8 @@ class BasePumpActivity : BaseActivity<BasePopPumpActivityBinding>() {
         val mReItemTouchHelper = ReItemTouchHelper(helperCallback)
         val layoutManager = CardLayoutManager(mReItemTouchHelper, setting)*/
 
+        // Clear any existing OnFlingListener
+        binding.waterPop.rvAdd.onFlingListener = null
         binding.waterPop.rvAdd.layoutManager = LinearLayoutManager(this)
         val snapHelper: SnapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.waterPop.rvAdd)

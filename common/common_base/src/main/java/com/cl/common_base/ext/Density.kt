@@ -71,3 +71,4 @@ fun screenPixel(): String {
         return "${widthPixels}X${heightPixels}"
     }
 }
+

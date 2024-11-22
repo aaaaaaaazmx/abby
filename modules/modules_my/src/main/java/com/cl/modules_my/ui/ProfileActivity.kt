@@ -113,6 +113,15 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                         )
                         ToastUtil.shortShow(error)
                         Reporter.reportTuYaError("getUserInstance", error, code)
+                        // 清除缓存数据
+                        Prefs.removeKey(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+                        // 推出firbase账号
+                        Firebase.auth.signOut()
+                        // 清除上面所有的Activity
+                        // 跳转到Login页面
+                        ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN)
+                            .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .navigation()
                     }
                 })
             })

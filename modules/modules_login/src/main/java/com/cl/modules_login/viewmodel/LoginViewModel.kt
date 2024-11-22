@@ -7,6 +7,7 @@ import com.cl.common_base.bean.AutomaticLoginData
 import com.cl.common_base.bean.AutomaticLoginReq
 import com.cl.common_base.bean.CheckPlantData
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -70,6 +71,39 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
     val thirdSource: LiveData<String> = _thirdSource
     fun setThirdSource(source: String) {
         _thirdSource.value = source
+    }
+
+    /**
+     * 更新用户信息
+     */
+    private val _modifyUserDetail = MutableLiveData<Resource<Boolean>>()
+    val modifyUserDetail: LiveData<Resource<Boolean>> = _modifyUserDetail
+    fun modifyUserDetail(body: ModifyUserDetailReq) = viewModelScope.launch {
+        repository.modifyUserDetail(body)
+            .map {
+                if (it.code != Constants.APP_SUCCESS) {
+                    Resource.DataError(
+                        it.code,
+                        it.msg
+                    )
+                } else {
+                    Resource.Success(it.data)
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onStart {
+            }
+            .catch {
+                logD("catch $it")
+                emit(
+                    Resource.DataError(
+                        -1,
+                        "${it.message}"
+                    )
+                )
+            }.collectLatest {
+                _modifyUserDetail.value = it
+            }
     }
 
     /**
@@ -150,8 +184,9 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
     /**
      * 登录
      */
-    fun login() {
+    fun login(currentLanguage: String? = "en") {
         viewModelScope.launch {
+            _loginReq.value?.language = currentLanguage
             repository.loginAbby(_loginReq.value!!)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
