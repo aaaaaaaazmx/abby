@@ -1,10 +1,10 @@
 package com.cl.modules_home.ui
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
 import android.view.MotionEvent
-import com.cl.modules_home.databinding.HomePeriodChartActivityBinding
+import androidx.appcompat.app.AppCompatDelegate
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.resourceObserver
@@ -16,7 +16,7 @@ import com.cl.common_base.ext.temperatureConversionTwo
 import com.cl.common_base.pop.PlantIdListPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_home.R
+import com.cl.modules_home.databinding.HomePeriodChartActivityBinding
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartLineDashStyleType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
@@ -37,6 +37,7 @@ import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.enums.PopupPosition
 import com.lxj.xpopup.util.XPopupUtils
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -182,12 +183,12 @@ class PeriodActivity : BaseActivity<HomePeriodChartActivityBinding>() {
     }
 
     private fun Long.toDateString(): String {
-        val sdf = java.text.SimpleDateFormat("MM/dd HH:mm", java.util.Locale.getDefault())
+        val sdf = java.text.SimpleDateFormat("MM/dd HH:mm", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
         return sdf.format(java.util.Date(this * 1000))
     }
 
     private fun Long.toDateStringPh(): String {
-        val sdf = java.text.SimpleDateFormat("MM/dd", java.util.Locale.getDefault())
+        val sdf = java.text.SimpleDateFormat("MM/dd", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
         return sdf.format(java.util.Date(this * 1000))
     }
 

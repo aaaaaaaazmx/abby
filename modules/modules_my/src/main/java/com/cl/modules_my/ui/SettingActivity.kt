@@ -7,6 +7,7 @@ import android.app.Activity
 import android.app.LocaleManager
 import android.content.*
 import android.content.Intent.*
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.LocaleList
@@ -301,7 +302,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                 }.start()
             }
         }
-
         // 获取当前系统语言
         val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
@@ -607,13 +607,6 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             modifyUserDetail.observe(this@SettingActivity, resourceObserver {
                 success {
                     hideProgressLoading()
-                }
-                error { errorMsg, code ->
-                    hideProgressLoading()
-                    errorMsg?.let { it1 -> ToastUtil.shortShow(it1) }
-                }
-                loading {
-                    hideProgressLoading()
                     if (currentLanguage.isNotEmpty()) {
                         // 切换语言
                         AppCompatDelegate.setApplicationLocales(
@@ -630,8 +623,15 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                           recreate()*/
                         binding.ftLanguage.itemValue = availableLanguageDisplayName[availableLanguage.indexOf(currentLanguage)]
                         mViewModel.checkPlant()
-                        return@loading
+                        return@success
                     }
+                }
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    errorMsg?.let { it1 -> ToastUtil.shortShow(it1) }
+                }
+                loading {
+                    hideProgressLoading()
                 }
             })
         }

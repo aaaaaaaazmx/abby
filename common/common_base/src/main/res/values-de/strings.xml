@@ -789,8 +789,8 @@
     <string name="string_2205">Wenn der Privatmodus aktiviert ist, wird die Kamerafunktion deaktiviert, wenn Sie die Tür öffnen. Die Kamera nimmt keine Bilder oder Videos von Personen auf, um Ihre persönliche Privatsphäre zu schützen.</string>
     <string name="string_2206">S</string>
     <string name="string_2207">M</string>
-    <string name="string_2208">D</string>
-    <string name="string_2209">M</string>
+    <string name="string_2208">T</string>
+    <string name="string_2209">W</string>
     <string name="string_2210">F</string>
     <string name="string_2213">Sorte synchronisieren</string>
     <string name="string_2214">Typ synchronisieren</string>
@@ -951,7 +951,7 @@
     <string name="home_i_m_complete_grower">Ich bin #%1$s kompletter Züchter</string>
     <string name="home_room_four">Zimmer %1$s%2$s %3$s%4$s</string>
     <string name="home_rooms">Zimmer %1$s%2$s</string>
-    <string name="home_room_one">Zimmer %1$s%</string>
+    <string name="home_room_one">Zimmer %1$s%%</string>
     <string name="home_choose_grow_mode">Wählen Sie den Wachstumsmodus</string>
     <string name="home_auto_mode_recommended">Auto-Modus (empfohlen)</string>
     <string name="home_let_hey_abby">Lassen Sie Hey abby den Wachstumsprozess mit seinem klassischen automatischen Algorithmus durchführen</string>

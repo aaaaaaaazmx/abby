@@ -462,6 +462,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                     it.country = if (thirdSource == "sms") userRegisterBean?.country else null
                     mViewModel.login(currentLanguage = currentLanguage)
                 }
+
                 return@setOnClickListener
             }
             emailName?.let { name -> mViewModel.verifyCode(currentLanguage = currentLanguage, binding.codeView.code, name) }

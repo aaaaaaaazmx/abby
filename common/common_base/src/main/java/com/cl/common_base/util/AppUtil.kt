@@ -16,12 +16,14 @@ import android.provider.Settings
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
 import com.cl.common_base.BaseApplication
 import com.cl.common_base.ext.logD
 import com.cl.common_base.ext.logE
 import java.io.File
-import java.util.*
+import java.util.Locale
+import java.util.UUID
 
 
 /**
@@ -85,7 +87,7 @@ object AppUtil {
             if (TextUtils.isEmpty(deviceBrand)) {
                 deviceBrand = "unknown"
             }
-            return deviceBrand.toLowerCase(Locale.getDefault())
+            return deviceBrand.toLowerCase(AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
         }
 
     private var deviceSerial: String? = null
@@ -104,7 +106,7 @@ object AppUtil {
                 deviceSerial = uuid
                 return deviceSerial.toString()
             }
-            uuid = UUID.randomUUID().toString().replace("-", "").uppercase(Locale.getDefault())
+            uuid = UUID.randomUUID().toString().replace("-", "").uppercase(AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
             Prefs.putString("uuid", uuid)
             deviceSerial = uuid
             return deviceSerial.toString()

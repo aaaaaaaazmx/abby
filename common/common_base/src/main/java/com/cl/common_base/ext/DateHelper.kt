@@ -1,14 +1,15 @@
 package com.cl.common_base.ext
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.annotation.Size
+import androidx.appcompat.app.AppCompatDelegate
 import com.cl.common_base.BaseApplication
 import com.cl.common_base.R
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -93,7 +94,7 @@ object DateHelper {
     )
     fun getTimestamp(dateStr: String, pattern: String, timeZone: String): Long {
         try {
-            val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+            val sdf = SimpleDateFormat(pattern, AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
             sdf.timeZone = TimeZone.getTimeZone(timeZone)
             val date: Date? = sdf.parse(dateStr)
             date?.run { return time }
@@ -139,7 +140,7 @@ object DateHelper {
      */
     @JvmStatic
     fun formatTime(timestamp: Long): String {
-        return formatTime(timestamp, DATE_PATTERN, Locale.getDefault())
+        return formatTime(timestamp, DATE_PATTERN, AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
     }
 
     /**
@@ -151,7 +152,7 @@ object DateHelper {
      */
     @JvmStatic
     fun formatTime(timestamp: Long, pattern: String): String {
-        return formatTime(timestamp, pattern, Locale.getDefault())
+        return formatTime(timestamp, pattern, AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
     }
 
     /**
@@ -196,10 +197,10 @@ object DateHelper {
     @JvmStatic
     fun formatTime(date: String, patternOld: String, patternNew: String): String {
         try {
-            var formatter = SimpleDateFormat(patternOld, Locale.getDefault())
+            var formatter = SimpleDateFormat(patternOld, AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
             formatter.isLenient = false
             val newDate: Date? = formatter.parse(date)
-            formatter = SimpleDateFormat(patternNew, Locale.getDefault())
+            formatter = SimpleDateFormat(patternNew, AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
             newDate?.let {
                 return formatter.format(it)
             }
@@ -276,7 +277,7 @@ object DateHelper {
         if (dateTime == null) {
             cal.time = Date(System.currentTimeMillis())
         } else {
-            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val sdf = SimpleDateFormat("yyyy-MM-dd", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
             var date: Date?
             try {
                 date = sdf.parse(dateTime)
@@ -343,15 +344,15 @@ object DateHelper {
 
     private fun getDateFormat(patter: String): SimpleDateFormat {
         if (sdf == null)
-            sdf = SimpleDateFormat(patter, Locale.getDefault())
+            sdf = SimpleDateFormat(patter, AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
         sdf!!.applyPattern(patter)
         return sdf!!
     }
 
-    private fun getCalendar() = Calendar.getInstance(Locale.getDefault())
+    private fun getCalendar() = Calendar.getInstance(AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
 
     private fun getCalendar(date: Date): Calendar {
-        val calendar = Calendar.getInstance(Locale.getDefault())
+        val calendar = Calendar.getInstance(AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
         calendar.time = date
         return calendar
     }
@@ -642,10 +643,10 @@ object DateHelper {
                     if (day < 7) {
                         return BaseApplication.getContext().getString(R.string.days_ago, "$day")
                     } else {
-                        return if (formatTime(startDate, "yyyy") == formatTime(endTime, "yyyy", Locale.US)) {
-                            formatTime(startDate, "MMM dd", Locale.US)
+                        return if (formatTime(startDate, "yyyy") == formatTime(endTime, "yyyy", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)) {
+                            formatTime(startDate, "MMM dd", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
                         } else {
-                            formatTime(startDate, "MMMdd,yyyy", Locale.US)
+                            formatTime(startDate, "MMMdd,yyyy", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
                         }
                         /*  var month = day / 30
                         if (month < 12) {

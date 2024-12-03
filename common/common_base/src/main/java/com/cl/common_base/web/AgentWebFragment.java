@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -597,13 +598,13 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
         if (byteNum < 0) {
             return "shouldn't be less than zero!";
         } else if (byteNum < 1024) {
-            return String.format(Locale.getDefault(), "%.1fB", (double) byteNum);
+            return String.format(Resources.getSystem().getConfiguration().locale, "%.1fB", (double) byteNum);
         } else if (byteNum < 1048576) {
-            return String.format(Locale.getDefault(), "%.1fKB", (double) byteNum / 1024);
+            return String.format(Resources.getSystem().getConfiguration().locale, "%.1fKB", (double) byteNum / 1024);
         } else if (byteNum < 1073741824) {
-            return String.format(Locale.getDefault(), "%.1fMB", (double) byteNum / 1048576);
+            return String.format(Resources.getSystem().getConfiguration().locale, "%.1fMB", (double) byteNum / 1048576);
         } else {
-            return String.format(Locale.getDefault(), "%.1fGB", (double) byteNum / 1073741824);
+            return String.format(Resources.getSystem().getConfiguration().locale, "%.1fGB", (double) byteNum / 1073741824);
         }
     }
 }

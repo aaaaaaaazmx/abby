@@ -1,10 +1,9 @@
 package com.cl.modules_my.ui
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.os.Build
+import android.content.res.Resources
 import android.text.TextUtils
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -19,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -29,6 +29,7 @@ import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
+import com.cl.common_base.bean.JumpTypeBean
 import com.cl.common_base.bean.UpdateReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
@@ -39,20 +40,29 @@ import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.setSafeOnClickListener
+import com.cl.common_base.ext.setVisible
 import com.cl.common_base.ext.xpopup
-import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.help.SeedGuideHelp
 import com.cl.common_base.intercome.InterComeHelp
-import com.cl.common_base.pop.*
+import com.cl.common_base.pop.BaseCenterPop
+import com.cl.common_base.pop.BasePlantUsuallyGuidePop
+import com.cl.common_base.pop.BasePumpWaterFinishedPop
+import com.cl.common_base.pop.BaseThreeTextPop
+import com.cl.common_base.pop.HomePlantDrainPop
+import com.cl.common_base.pop.HomePlantFivePop
+import com.cl.common_base.pop.HomePlantFourPop
+import com.cl.common_base.pop.HomePlantSixPop
+import com.cl.common_base.pop.HomeSkipWaterPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.Calendar
-import com.cl.common_base.util.calendar.CalendarEventUtil
 import com.cl.common_base.util.calendar.CalendarUtil
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
+import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.AbTextViewCalendar
 import com.cl.common_base.widget.SvTextView
@@ -61,11 +71,6 @@ import com.cl.modules_my.R
 import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.adapter.TaskListAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
-import com.cl.common_base.bean.JumpTypeBean
-import com.cl.common_base.ext.setGone
-import com.cl.common_base.ext.setSafeOnClickListener
-import com.cl.common_base.ext.setVisible
-import com.cl.common_base.util.livedatabus.LiveEventBus
 import com.cl.modules_my.viewmodel.CalendarViewModel
 import com.github.rubensousa.gravitysnaphelper.GravitySnapHelper
 import com.joketng.timelinestepview.LayoutType
@@ -73,7 +78,6 @@ import com.joketng.timelinestepview.OrientationShowType
 import com.joketng.timelinestepview.adapter.TimeLineStepAdapter
 import com.joketng.timelinestepview.view.TimeLineStepView
 import com.lxj.xpopup.XPopup
-import com.thingclips.smart.camera.middleware.p2p.ThingSmartNvrP2P
 import dagger.hilt.android.AndroidEntryPoint
 import io.intercom.android.sdk.Intercom
 import io.intercom.android.sdk.IntercomContent
@@ -84,7 +88,8 @@ import java.io.Serializable
 import java.lang.reflect.Field
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -1233,7 +1238,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     """.trimIndent()
                 )
                 val tvTaskTime = holder.leftLayout.findViewById<TextView>(R.id.tv_task_time)
-                tvTaskTime.text = listContent[position].taskTime?.toLong()?.let { DateHelper.formatTime(it, "HH:mm", Locale.US) }
+                tvTaskTime.text = listContent[position].taskTime?.toLong()?.let { DateHelper.formatTime(it, "HH:mm", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US) }
 
                 val tvTaskName = holder.rightLayout.findViewById<TextView>(R.id.tv_task_name)
                 val ivGt = holder.rightLayout.findViewById<FrameLayout>(R.id.rl_edit)

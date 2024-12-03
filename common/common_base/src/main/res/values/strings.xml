@@ -999,7 +999,7 @@
     <string name="home_i_m_complete_grower">I’m #%1$s Complete grower</string>
     <string name="home_room_four">Room %1$s%2$s %3$s%4$s</string>
     <string name="home_rooms">Room %1$s%2$s</string>
-    <string name="home_room_one">Room %1$s%</string>
+    <string name="home_room_one">Room %1$s%%</string>
     <string name="home_choose_grow_mode">Choose Grow Mode</string>
     <string name="home_auto_mode_recommended">Auto Mode (Recommended)</string>
     <string name="home_let_hey_abby">Let Hey abby handle the growing process with its classic automated algorithm</string>

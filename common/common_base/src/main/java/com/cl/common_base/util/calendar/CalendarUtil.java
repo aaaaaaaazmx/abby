@@ -18,6 +18,7 @@ package com.cl.common_base.util.calendar;
 import static com.cl.common_base.ext.LogKt.logI;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.net.vcn.VcnManager;
 
 import androidx.exifinterface.media.ExifInterface;
@@ -47,7 +48,7 @@ public final class CalendarUtil {
     @SuppressLint("SimpleDateFormat")
     @JvmStatic
     public static int getDate(String formatStr, Date date) {
-        SimpleDateFormat format = new SimpleDateFormat(formatStr, Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat(formatStr, Resources.getSystem().getConfiguration().locale);
         return Integer.parseInt(format.format(date));
     }
 
@@ -308,7 +309,7 @@ public final class CalendarUtil {
      * 格式化月份，根据地区
      */
     public static String getMonthFromLocation(long time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", Resources.getSystem().getConfiguration().locale);
         return sdf.format(time);
     }
 
@@ -316,7 +317,7 @@ public final class CalendarUtil {
      * 格式化年月日
      */
     public static String getYMDFromLocation(long time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd yyyy", Resources.getSystem().getConfiguration().locale);
         return sdf.format(time);
     }
 
@@ -332,7 +333,7 @@ public final class CalendarUtil {
         Calendar instance = Calendar.getInstance();
         instance.setTime(currentTime);
         instance.add(Calendar.DATE, num);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Resources.getSystem().getConfiguration().locale);
         String format = simpleDateFormat.format(instance.getTime());
         return instance.getTime();
     }
@@ -352,7 +353,7 @@ public final class CalendarUtil {
      * 31st,Thirty-first
      */
     public static String getDaySuffix(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd", Locale.US);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd", Resources.getSystem().getConfiguration().locale);
         try {
             int format = Integer.parseInt(simpleDateFormat.format(date.getTime()));
             switch (format) {
@@ -443,7 +444,7 @@ public final class CalendarUtil {
      * @return
      */
     public static SimpleDateFormat getFormat(String format) {
-        return new SimpleDateFormat(format, Locale.US);
+        return new SimpleDateFormat(format, Resources.getSystem().getConfiguration().locale);
     }
 
 

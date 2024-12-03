@@ -1,8 +1,11 @@
 package com.tuya.smart.android.demo.camera.utils
 
+import android.content.res.Resources
 import android.icu.util.TimeZone
 import android.os.Build
-import java.util.*
+import androidx.appcompat.app.AppCompatDelegate
+import java.util.Locale
+import java.util.SimpleTimeZone
 
 /**
 
@@ -33,7 +36,7 @@ class TimeZoneUtils {
             var timeDisplay = if (rawOffset >= 0) "+" else ""
             val hour = rawOffset / 1000 / 3600
             val minute = (rawOffset - hour * 1000 * 3600) / 1000 / 60
-            timeDisplay += String.format(Locale.getDefault(), "%02d:%02d", hour, minute)
+            timeDisplay += String.format(AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US, "%02d:%02d", hour, minute)
             return timeDisplay
         }
     }

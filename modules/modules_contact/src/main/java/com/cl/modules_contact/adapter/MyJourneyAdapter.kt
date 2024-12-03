@@ -1,25 +1,18 @@
 package com.cl.modules_contact.adapter
 
+import android.content.res.Resources
 import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.SpannedString
 import android.text.style.ForegroundColorSpan
-import android.view.ViewGroup
-import androidx.core.text.buildSpannedString
-import androidx.core.text.color
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LifecycleOwner
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.cl.common_base.ext.DateHelper
-import com.cl.common_base.ext.logI
 import com.cl.modules_contact.R
 import com.cl.modules_contact.databinding.ContactItemMyJourneyBinding
-import com.cl.modules_contact.databinding.ItemCircleBinding
 import com.cl.modules_contact.response.NewPageData
-import com.cl.modules_contact.widget.nineview.GlideNineGridImageLoader
-import com.cl.modules_contact.widget.nineview.NineGridImageView
-import com.cl.modules_contact.widget.nineview.OnImageItemClickListener
 import com.youth.banner.Banner
 import com.youth.banner.indicator.CircleIndicator
 import java.util.Locale
@@ -71,7 +64,7 @@ class MyJourneyAdapter(
         time.let {
             // 2023-04-20 10:04:52
             DateHelper.getTimestamp(it, "yyyy-MM-dd HH:mm:ss").apply {
-                text = DateHelper.formatTime(this, "ddMMM", Locale.US)
+                text = DateHelper.formatTime(this, "ddMMM", AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
             }
         }
         return text

@@ -815,6 +815,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                         if (current == 1) {
                             // 刷新数据
                             adapter.setList(it.records)
+                            binding.rvWxCircle.scrollToPosition(0)
                         } else {
                             // 追加数据
                             it.records?.let { it1 -> adapter.addData(adapter.data.size, it1) }

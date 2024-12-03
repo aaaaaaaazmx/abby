@@ -840,10 +840,10 @@
                     android:layout_alignParentRight="true"
                     android:padding="5dp"
                     android:src="@mipmap/home_exclamation_mark"
-                    app:layout_constraintCircle="@+id/tv_drip"
-                    app:layout_constraintCircleAngle="84"
-                    app:layout_constraintCircleRadius="85dp"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/tv_drip"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_drip"
+                    app:layout_constraintStart_toEndOf="@+id/tv_drip" />
 
                 <ImageView
                     android:id="@+id/iv_drip_status"
@@ -894,10 +894,11 @@
                     android:layout_alignParentRight="true"
                     android:padding="5dp"
                     android:src="@mipmap/home_exclamation_mark"
-                    app:layout_constraintCircle="@+id/tv_air_pump"
-                    app:layout_constraintCircleAngle="84"
-                    app:layout_constraintCircleRadius="45dp"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@+id/tv_air_pump"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_air_pump"
+                    app:layout_constraintStart_toEndOf="@+id/tv_air_pump"
+                     />
 
                 <com.cl.common_base.widget.FeatureItemSwitch
                     android:id="@+id/ft_air_pump"

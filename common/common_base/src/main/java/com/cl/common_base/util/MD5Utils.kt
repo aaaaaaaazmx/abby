@@ -1,8 +1,10 @@
 package com.cl.common_base.util
 
+import android.content.res.Resources
+import androidx.appcompat.app.AppCompatDelegate
 import com.cl.common_base.ext.safeToInt
 import java.security.MessageDigest
-import java.util.*
+import java.util.Locale
 
 /**
  * @Description:
@@ -40,7 +42,7 @@ class MD5Utils {
                 }
                 hexStr.append(Integer.toHexString(num))
             }
-            return hexStr.toString().uppercase(Locale.getDefault())
+            return hexStr.toString().uppercase(AppCompatDelegate.getApplicationLocales().get(0) ?: Locale.US)
         }
     }
 }
