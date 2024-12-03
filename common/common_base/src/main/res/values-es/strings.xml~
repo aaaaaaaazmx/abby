@@ -200,6 +200,7 @@
     <string name="string_256">No más data</string>
     <string name="string_257">Carga completa</string>
     <string name="string_258">Error de carga</string>
+    <string name="string_260">Si aún queda agua, haga clic en &quot;Continuar drenando&quot; para continuar. De lo contrario, haga clic en &quot;Siguiente&quot;;</string>
     <string name="string_260">Si aún queda agua, haz clic en &quot;Seguir drenando&quot;. De lo contrario, haz clic en &quot;Próximo&quot;.</string>
     <string name="string_261">Seguir drenando</string>
     <string name="string_262">Próximo</string>

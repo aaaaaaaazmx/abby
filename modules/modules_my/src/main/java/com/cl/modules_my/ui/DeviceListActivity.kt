@@ -238,7 +238,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                             logI("thingDeviceBean ID: $id")
                                             // 在线的、数据为空、并且是abby机器
                                             if (null == this && spaceType == ListDeviceBean.KEY_SPACE_TYPE_BOX && onlineStatus != "Offline") {
-                                                ToastUtil.shortShow("Connection error, try to delete device and pair again")
+                                                ToastUtil.shortShow(getString(com.cl.common_base.R.string.string_631))
                                             }
                                             GSON.toJsonInBackground(this) {
                                                 Prefs.putStringAsync(

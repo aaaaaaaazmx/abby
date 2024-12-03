@@ -270,6 +270,16 @@ public class SlideToConfirm extends RelativeLayout {
             mEngagedTextView.setTypeface(mEngagedTextTypeFace);
         }
         mEngagedTextView.setPadding(0,0,0,0);
+        //        // 启用自动缩放文本
+//        mEngagedTextView.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
+//
+//        // 设置自动缩小的最小和最大文本大小（以像素为单位）1
+//        mEngagedTextView.setAutoSizeTextTypeUniformWithConfiguration(
+//                5,  // 最小文本大小（12px）
+//                30,  // 最大文本大小（30px）
+//                1,   // 文字大小增量（每次调整1px）
+//                TypedValue.COMPLEX_UNIT_PX
+//        );
         this.addView(mEngagedTextView);
     }
 

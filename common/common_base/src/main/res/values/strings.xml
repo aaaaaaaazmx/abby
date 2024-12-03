@@ -1046,6 +1046,11 @@
     <string name="profile">Profile</string>
     <string name="journey">My Journey</string>
     <string name="shopnow">Shop Now</string>
+    <string name="income">Income </string>
+    <string name="expense">Expense  </string>
+    <string name="renew_subscription">Renew Subscription</string>
+    <string name="renew_subscription_info">Please click the purchase button to go to our website to complete purchase of the subscription.</string>
+    <string name="renew_subscription_infos">After purchase, you will receive a 8 digit code via email, please enter the code below to activate your subscription.</string>
 
     <!--Choose Language-->
     <string name="choose_language">Language</string>
