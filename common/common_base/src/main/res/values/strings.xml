@@ -1043,10 +1043,12 @@
     <string name="home_running_on">Running On</string>
     <string name="home_date_range">Date Range</string>
     <string name="contact_the_number">The number of selected photos cannot exceed %1$s.</string>
-
+    <string name="profile">Profile</string>
+    <string name="journey">My Journey</string>
+    <string name="shopnow">Shop Now</string>
 
     <!--Choose Language-->
-    <string name="choose_language">Choose Language</string>
+    <string name="choose_language">Language</string>
     <string name="en">English</string>
     <string name="es">Spanish</string>
     <string name="de">Deutsch</string>

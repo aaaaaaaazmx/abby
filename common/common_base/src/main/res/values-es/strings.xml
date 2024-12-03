@@ -202,7 +202,7 @@
     <string name="string_258">Error de carga</string>
     <string name="string_260">Si aún queda agua, haga clic en &quot;Continuar drenando&quot; para continuar. De lo contrario, haga clic en &quot;Siguiente&quot;;</string>
     <string name="string_261">Seguir drenando</string>
-    <string name="string_262">Siguiente</string>
+    <string name="string_262">Próximo</string>
     <string name="string_263">Deslizar para desbloquear</string>
     <string name="string_268">Deslizar al siguiente</string>
     <string name="string_271">Desbloquear el florecimiento automático</string>
@@ -384,7 +384,7 @@
     <string name="string_1659">Restablecer contraseña</string>
     <string name="string_1660">Inicio de sesión</string>
     <string name="string_1661">¿No has recibido la OTP?</string>
-    <string name="term_of_use_privacy_policy">Condiciones de uso &amp; Política de privacidad</string>
+    <string name="term_of_use_privacy_policy">《Condiciones de uso》 &amp; 《Política de privacidad》</string>
     <string name="string_1666">Condiciones de uso</string>
     <string name="string_1667">Política de privacidad</string>
     <string name="string_1668">Vincular correo electrónico</string>
@@ -401,7 +401,7 @@
     <string name="string_1701">éxito</string>
     <string name="string_1703">Suscripción caducada</string>
     <string name="string_1704">Suscripción activa</string>
-    <string name="string_1705">Suscripción válida hasta</string>
+    <string name="string_1705">Suscripción válida hasta </string>
     <string name="string_1710">Si deseas ampliar tu servicio de cultivo, visita nuestro sitio web oficial</string>
     <string name="string_1711">El horario y la intensidad de las luces se han sincronizado con el servidor. Si continuara un error, ponte en contacto con el servicio de asistencia.</string>
     <string name="string_1712">Tras la compra, recibirás un código de verificación por correo electrónico. Introduce el código para ampliar la validez de tu servicio.</string>
@@ -995,6 +995,10 @@
     <string name="home_running_on">Funcionando</string>
     <string name="home_date_range">Rango de fechas</string>
     <string name="contact_the_number">El número de fotos seleccionadas no puede superar %1$s.</string>
+    <string name="journey">Mi travesía</string>
+    <string name="shopnow">Comprar ahora</string>
 
+    <string name="choose_language">Sprache</string>
+    <string name="profile">Profil</string>
 
 </resources>

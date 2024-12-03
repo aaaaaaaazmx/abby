@@ -53,7 +53,7 @@
     <string name="profile_sign_out">Vom Konto abmelden</string>
     <string name="profile_nickname_tips">Muss zwischen 4 und 24 Zeichen lang sein</string>
     <string name="curing_plant_weight">Geben Sie das Gesamtgewicht (g) ein.</string>
-    <string name="password_tips">Ihr Passwort muss folgendes enthalten:</string>
+    <string name="password_tips">Ihr Passwort muss folgendes enthalten</string>
     <string name="turn_on_bluetooth">Bluetooth einschalten</string>
     <string name="my_nickname">Spitzname</string>
     <string name="pair_select_wi_fi_network">Wi-Fi-Netzwerk auswählen</string>
@@ -383,8 +383,8 @@
     <string name="string_1658">E-Mail verifizieren</string>
     <string name="string_1659">Passwort zurücksetzen</string>
     <string name="string_1660">Anmelden</string>
-    <string name="string_1661">Haben Sie kein Einmalkennwort erhalten?</string>
-    <string name="term_of_use_privacy_policy">Nutzungsbedingungen &amp; Datenschutzrichtlinien</string>
+    <string name="string_1661">Sie haben kein OTP erhalten?</string>
+    <string name="term_of_use_privacy_policy">《Nutzungsbedingungen》 &amp; 《Datenschutzrichtliniez》</string>
     <string name="string_1666">Nutzungsbedingungen</string>
     <string name="string_1667">Datenschutzbestimmungen</string>
     <string name="string_1668">E-Mail-Adresse merken</string>
@@ -401,7 +401,7 @@
     <string name="string_1701">Erfolg</string>
     <string name="string_1703">Abonnement Abgelaufen</string>
     <string name="string_1704">Abonnement Aktiv</string>
-    <string name="string_1705">Abonnement gültig bis</string>
+    <string name="string_1705">Abonnement gültig bis </string>
     <string name="string_1710">Wenn Sie Ihre Anbau-Services erweitern möchten, besuchen Sie bitte unsere offizielle Website</string>
     <string name="string_1711">um die für Sie am besten geeignete Option zu erwerben. Dieser Service umfasst unsere persönliche Unterstützung, das Anbaupaket (Dünger, Korb, Kohlefilter usw.) und die Verbindung des Geräts mit unserem Server.</string>
     <string name="string_1712">Nach dem Kauf erhalten Sie einen Verifizierungscode per E-Mail. Geben Sie den Code unten ein, um die Gültigkeit Ihres Dienstes entsprechend zu verlängern.</string>
@@ -721,9 +721,9 @@
     <string name="string_2083">E-Mail Adresse</string>
     <string name="string_2087">Zustimmen</string>
     <string name="string_2089">Passwort</string>
-    <string name="string_2090">Passwort vergessen ？</string>
+    <string name="string_2090">Haben Sie Ihr Passwort vergessen?</string>
     <string name="string_2091">Anmeldung mit Einmalkennwort</string>
-    <string name="string_2092">oder Einloggen mit</string>
+    <string name="string_2092">Oder Anmeldung mit</string>
     <string name="string_2093">Neues Konto erstellen</string>
     <string name="string_2094">Passwort vergessen</string>
     <string name="string_2095">Benutzernamen eingeben</string>
@@ -995,5 +995,9 @@
     <string name="home_running_on">Läuft weiter</string>
     <string name="home_date_range">Datumsbereich</string>
     <string name="contact_the_number">Die Anzahl der ausgewählten Fotos kann %1$s nicht überschreiten.</string>
+    <string name="choose_language">Idioma</string>
+    <string name="profile">Profil</string>
+    <string name="journey">Meine Erfahrung</string>
+    <string name="shopnow">Jetzt einkaufen</string>
 
 </resources>

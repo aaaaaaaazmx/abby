@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:title="Profile" />
+                app:title="@string/profile" />
 
             <LinearLayout
                 android:id="@+id/ll_root"
