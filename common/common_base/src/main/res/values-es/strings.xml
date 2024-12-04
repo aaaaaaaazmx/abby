@@ -150,7 +150,7 @@
     <string name="string_190">Siguiendo</string>
     <string name="string_192">Eliminar</string>
     <string name="string_194">Utilice</string>
-    <string name="string_195">Preselecciona</string>
+    <string name="string_195">Seleccione la preselección</string>
     <string name="string_196">¿Seguro que quieres borrar esta preconfiguración?</string>
     <string name="string_197">Sin preajuste</string>
     <string name="string_198">Preestablecido</string>
@@ -1000,5 +1000,19 @@
 
     <string name="choose_language">Sprache</string>
     <string name="profile">Profil</string>
+    <string name="planting_purified">Purificado</string>
+    <string name="planting_distilled">Destilado</string>
+    <string name="planting_tap_water">Agua del grifo</string>
+    <string name="planting_others">Otros</string>
+    <string name="planting_liquid">Líquido</string>
+    <string name="planting_solid">Sólido</string>
+    <string name="planting_spray">Spray</string>
+    <string name="planting_transplant_shock">Choque por trasplante</string>
+    <string name="planting_environmental_factors">Factores ambientales</string>
+    <string name="planting_underwatering">Falta de riego</string>
+    <string name="planting_pest_and_diseases">Plagas y enfermedades</string>
+    <string name="planting_nutritent_imbalance">Desequilibrio nutricional</string>
+    <string name="planting_chemical_contaminants">Contaminantes químicos</string>
+    <string name="growspace">Espacios de cultivo</string>
 
 </resources>

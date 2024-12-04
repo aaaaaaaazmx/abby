@@ -15,6 +15,7 @@ import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.TimePickerPop
 import com.cl.common_base.util.Prefs
+import com.cl.modules_planting_log.R
 import com.cl.modules_planting_log.databinding.PlantingCustomViewGroupItemBinding
 import com.cl.modules_planting_log.request.FieldAttributes
 import com.cl.modules_planting_log.request.LogSaveOrUpdateReq
@@ -75,33 +76,33 @@ class CustomViewGroupAdapter(
     // key 是对应 后台返回LogTypeListDataItem类里面的showUiText字段
     private val chooseTypedData = mapOf(
         LogSaveOrUpdateReq.KEY_LOG_TYPE_WATER_TYPE to mutableListOf(
-            LogTypeListDataItem("Purified", "Purified", false),
-            LogTypeListDataItem("Distilled", "Distilled", false),
-            LogTypeListDataItem("Tap Water", "Tap Water", false),
-            LogTypeListDataItem("Others", "Others", false),
+            LogTypeListDataItem("Purified", context.getString(com.cl.common_base.R.string.planting_purified), false),
+            LogTypeListDataItem("Distilled", context.getString(com.cl.common_base.R.string.planting_distilled), false),
+            LogTypeListDataItem("Tap Water", context.getString(com.cl.common_base.R.string.planting_tap_water), false),
+            LogTypeListDataItem("Others", context.getString(com.cl.common_base.R.string.planting_others), false),
         ),
 
         LogSaveOrUpdateReq.KEY_LOG_TYPE_FEEDING to mutableListOf(
-            LogTypeListDataItem("Liquid", "Liquid", false),
-            LogTypeListDataItem("Solid", "Solid", false),
-            LogTypeListDataItem("Spray", "Spray", false),
+            LogTypeListDataItem("Liquid", context.getString(com.cl.common_base.R.string.planting_liquid), false),
+            LogTypeListDataItem("Solid", context.getString(com.cl.common_base.R.string.planting_solid), false),
+            LogTypeListDataItem("Spray", context.getString(com.cl.common_base.R.string.planting_spray), false),
         ),
 
         LogSaveOrUpdateReq.KEY_LOG_TYPE_REPELLENT to mutableListOf(
-            LogTypeListDataItem("Liquid", "Liquid", false),
-            LogTypeListDataItem("Solid", "Solid", false),
-            LogTypeListDataItem("Spray", "Spray", false),
+            LogTypeListDataItem("Liquid", context.getString(com.cl.common_base.R.string.planting_liquid), false),
+            LogTypeListDataItem("Solid", context.getString(com.cl.common_base.R.string.planting_solid), false),
+            LogTypeListDataItem("Spray", context.getString(com.cl.common_base.R.string.planting_spray), false),
         ),
 
 
         LogSaveOrUpdateReq.KEY_LOG_TYPE_DECLARE_DEATH to mutableSetOf(
-            LogTypeListDataItem("Transplant shock", "Transplant shock", false),
-            LogTypeListDataItem("Environmental factors", "Environmental factors", false),
-            LogTypeListDataItem("Underwatering", "Underwatering", false),
-            LogTypeListDataItem("Pest and Diseases", "Pest and Diseases", false),
-            LogTypeListDataItem("Nutritent Imbalance", "Nutritent Imbalance", false),
-            LogTypeListDataItem("Chemical Contaminants", "Chemical Contaminants", false),
-            LogTypeListDataItem("Others", "Others", false),
+            LogTypeListDataItem("Transplant shock", context.getString(com.cl.common_base.R.string.planting_transplant_shock), false),
+            LogTypeListDataItem("Environmental factors", context.getString(com.cl.common_base.R.string.planting_environmental_factors), false),
+            LogTypeListDataItem("Underwatering", context.getString(com.cl.common_base.R.string.planting_underwatering), false),
+            LogTypeListDataItem("Pest and Diseases", context.getString(com.cl.common_base.R.string.planting_pest_and_diseases), false),
+            LogTypeListDataItem("Nutritent Imbalance", context.getString(com.cl.common_base.R.string.planting_nutritent_imbalance), false),
+            LogTypeListDataItem("Chemical Contaminants", context.getString(com.cl.common_base.R.string.planting_chemical_contaminants), false),
+            LogTypeListDataItem("Others", context.getString(com.cl.common_base.R.string.planting_others), false),
         ),
     )
 

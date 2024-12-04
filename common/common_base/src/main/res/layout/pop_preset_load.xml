@@ -46,6 +46,10 @@
             android:background="@drawable/background_gray_r5">
 
             <TextView
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="21sp"
+                android:lines="1"
                 android:textStyle="bold"
                 android:gravity="center_vertical"
                 android:id="@+id/et_email"

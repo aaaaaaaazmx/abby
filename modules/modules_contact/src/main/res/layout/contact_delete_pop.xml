@@ -21,14 +21,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:text="@string/my_delete"
+            tools:text="@string/my_delete"
+            android:autoSizeTextType="uniform"
             android:id="@+id/tv_delete"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:lines="2"
+            android:gravity="center"
+            android:ellipsize="end"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:textColor="@color/white"
             android:layout_marginEnd="5dp"
             android:textSize="15sp"
-            tools:text="@string/my_delete" />
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="15sp"
+            />
         <View
             android:id="@+id/vv"
             android:layout_marginEnd="5dp"
@@ -53,11 +60,17 @@
             app:layout_constraintTop_toTopOf="parent"
             android:text="@string/string_2350"
             android:id="@+id/tv_copy"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:lines="2"
+            android:gravity="center"
+            android:ellipsize="end"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:textColor="@color/white"
             android:textSize="15sp"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="15sp"
             tools:text="@string/string_2350" />
 
 

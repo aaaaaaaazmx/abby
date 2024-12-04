@@ -303,12 +303,16 @@
                     app:layout_constraintTop_toBottomOf="@+id/cl_quan">
 
                     <TextView
+                        android:lines="1"
+                        android:autoSizeMaxTextSize="8sp"
+                        android:autoSizeMinTextSize="6sp"
+                        android:autoSizeTextType="uniform"
                         android:id="@+id/tv_inc"
-                        android:layout_width="wrap_content"
+                        android:layout_width="35dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:layout_marginTop="5dp"
-                        tools:text="@string/string_1328"
+                        tools:text="12312312312312313"
                         android:layout_centerHorizontal="true"
                         android:text='@{viewModel.incCovert()}'
                         android:textColor="#FDD875"
@@ -409,6 +413,12 @@
                     app:layout_constraintTop_toBottomOf="@+id/cl_quan">
 
                     <TextView
+                        android:layout_marginEnd="3dp"
+                        android:layout_marginStart="3dp"
+                        android:lines="1"
+                        android:autoSizeMaxTextSize="8sp"
+                        android:autoSizeMinTextSize="6sp"
+                        android:autoSizeTextType="uniform"
                         android:gravity="center"
                         android:layout_marginTop="5dp"
                         android:layout_centerHorizontal="true"
@@ -747,8 +757,12 @@
                         app:layout_constraintTop_toBottomOf="@+id/vv_view_vv_vv">
 
                         <TextView
+                            android:lines="1"
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="7sp"
+                            android:autoSizeMaxTextSize="12sp"
                             android:id="@+id/tv_fan"
-                            android:layout_width="wrap_content"
+                            android:layout_width="80dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginTop="13dp"
@@ -763,7 +777,7 @@
                             android:id="@+id/tv_fan_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="33dp"
+                            android:layout_marginStart="25dp"
                             android:text="@{String.valueOf(viewModel.getFanIntake)}"
                             android:textColor="#FDD875"
                             android:textSize="15sp"
@@ -825,8 +839,12 @@
 
 
                         <TextView
+                            android:lines="1"
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="7sp"
+                            android:autoSizeMaxTextSize="12sp"
                             android:id="@+id/tv_fan_exhaust"
-                            android:layout_width="wrap_content"
+                            android:layout_width="80dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginTop="27dp"
@@ -915,8 +933,11 @@
 
 
                         <TextView
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="7sp"
+                            android:autoSizeMaxTextSize="12sp"
                             android:id="@+id/tv_light_schedule"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginTop="16dp"
@@ -925,15 +946,20 @@
                             android:textColor="#FDD875"
                             android:textSize="12sp"
                             android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/ft_timer"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/vv_view_vv" />
 
 
                         <TextView
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="7sp"
+                            android:autoSizeMaxTextSize="11sp"
                             android:id="@+id/ft_timer"
                             text="@{viewModel.getTimeText}"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
+                            android:lines="1"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:textColor="@color/white"
@@ -942,12 +968,16 @@
                             app:hideArrow="false"
                             app:itemTitle="@string/my_time"
                             app:itemValueSize="4sp"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_light_intensity_title"
                             app:layout_constraintBottom_toBottomOf="@id/tv_light_schedule"
                             app:layout_constraintStart_toEndOf="@+id/tv_light_schedule"
                             app:layout_constraintTop_toTopOf="@id/tv_light_schedule"
                             tools:text="10:00 AM-7:00 PM" />
 
                         <TextView
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="7sp"
+                            android:autoSizeMaxTextSize="11sp"
                             android:id="@+id/tv_light_intensity_title"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"

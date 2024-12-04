@@ -38,13 +38,10 @@ import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
-import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.util.Gif
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.ImageUtil
-import com.cl.common_base.util.glide.GlideEngine
-import com.cl.common_base.util.mesanbox.MeSandboxFileEngine
 import com.cl.common_base.video.GSYPlayVideoActivity
 import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
 import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
@@ -58,17 +55,12 @@ import com.cl.common_base.bean.ImageUrl
 import com.cl.modules_contact.request.Mention
 import com.cl.common_base.bean.ChoosePicBean
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.util.ImagePickerUtils
 import com.cl.modules_contact.ui.pic.ChoosePicActivity
 import com.cl.modules_contact.util.DeviceConstants
 import com.cl.modules_contact.viewmodel.PostViewModel
-import com.luck.picture.lib.basic.PictureSelector
-import com.luck.picture.lib.config.SelectMimeType
-import com.luck.picture.lib.engine.CompressFileEngine
 import com.luck.picture.lib.entity.LocalMedia
 import com.luck.picture.lib.interfaces.OnResultCallbackListener
-import com.luck.picture.lib.language.LanguageConfig
-import com.luck.picture.lib.style.BottomNavBarStyle
-import com.luck.picture.lib.style.PictureSelectorStyle
 import com.luck.picture.lib.utils.DensityUtil
 import com.lxj.xpopup.XPopup
 import com.lxj.xpopup.interfaces.OnSrcViewUpdateListener
@@ -81,7 +73,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import top.zibin.luban.Luban
-import top.zibin.luban.OnNewCompressListener
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -89,6 +80,7 @@ import java.io.Serializable
 import java.lang.Float.min
 import java.security.MessageDigest
 import java.util.Collections
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.concurrent.thread
 
@@ -287,32 +279,27 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     // 添加图片
                     //  跳转到选中图片界面
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        PermissionHelp().applyPermissionHelp(
-                            this@ReelPostActivity,
-                            getString(com.cl.common_base.R.string.profile_request_photo),
-                            object : PermissionHelp.OnCheckResultListener {
-                                override fun onResult(result: Boolean) {
-                                    if (!result) return
-                                    // 判断是否是从camera界面跳转过来的
-                                    goToActivity()
-                                }
-                            },
-                            Manifest.permission.READ_MEDIA_IMAGES,
-                            Manifest.permission.READ_MEDIA_VIDEO,
-                            Manifest.permission.READ_MEDIA_AUDIO,
-                        )
+                        ImagePickerUtils().apply {
+                            requestPermissionAndOpenPicker(
+                                this@ReelPostActivity, getString(com.cl.common_base.R.string.profile_request_photo),
+                                onPermissionGranted = {
+                                    goToActivity(this)
+                                },
+                                Manifest.permission.READ_MEDIA_IMAGES,
+                                Manifest.permission.READ_MEDIA_VIDEO,
+                                Manifest.permission.READ_MEDIA_AUDIO,
+                            )
+                        }
                     } else {
-                        PermissionHelp().applyPermissionHelp(
-                            this@ReelPostActivity,
-                            getString(com.cl.common_base.R.string.profile_request_photo),
-                            object : PermissionHelp.OnCheckResultListener {
-                                override fun onResult(result: Boolean) {
-                                    if (!result) return
-                                    goToActivity()
-                                }
-                            },
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                        )
+                        ImagePickerUtils().apply {
+                            requestPermissionAndOpenPicker(
+                                this@ReelPostActivity, getString(com.cl.common_base.R.string.profile_request_photo),
+                                onPermissionGranted = {
+                                    goToActivity(this)
+                                },
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                            )
+                        }
                     }
                 }
 
@@ -352,7 +339,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
     /**
      * 跳转相对应的界面
      */
-    private fun goToActivity() {
+    private fun goToActivity(imagePickerUtils: ImagePickerUtils) {
         if (cameraId.isNullOrEmpty()) {
             val intent = Intent(this@ReelPostActivity, ChoosePicActivity::class.java)
             intent.putExtra(KEY_PIC_LIST_RESULT, picList.filter { it.type == ChoosePicBean.KEY_TYPE_PIC } as? Serializable)
@@ -367,66 +354,33 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
 
         logI("131231: localMedia: ${localMedia.size}")
 
-        // 从camera界面跳转过来的
-        val style = PictureSelectorStyle()
-        val ss = BottomNavBarStyle()
-        ss.isCompleteCountTips = false
-        style.bottomBarStyle = ss
-        PictureSelector.create(this@ReelPostActivity)
-            .openGallery(SelectMimeType.ofImage())
-            .setImageEngine(GlideEngine.createGlideEngine())
-
-            .isOnlyObtainSandboxDir(true)
-            .setQuerySandboxDir(if (isExistLocal) sdCardPath else albumPath)
-            .setCompressEngine(CompressFileEngine { context, source, call ->
-                Luban.with(context).load(source).ignoreBy(100)
-                    .setCompressListener(object : OnNewCompressListener {
-                        override fun onSuccess(source: String?, compressFile: File?) {
-                            call?.onCallback(source, compressFile?.absolutePath)
-                        }
-
-                        override fun onError(source: String?, e: Throwable?) {
-                            call?.onCallback(source, null)
-                        }
-
-                        override fun onStart() {
-
-                        }
-                    }).launch();
-            })
-            .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
-            .isOriginalControl(false) // 原图功能
-            .isDisplayTimeAxis(true) // 资源轴
-            .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
-            .isMaxSelectEnabledMask(true) // 是否显示蒙层
-            .isDisplayCamera(false) //是否显示摄像
-            .setLanguage(LanguageConfig.ENGLISH) //显示英语
-            .setMaxSelectNum(MAX_SELECT_COUNT) // 最大选择数量
-            .setSelectorUIStyle(style)
-            .setSelectedData(localMedia)
-            .forResult(object : OnResultCallbackListener<LocalMedia> {
-                override fun onResult(result: java.util.ArrayList<LocalMedia>?) {
-                    // Map the result into ChoosePicBean and add them into picList
-                    lifecycleScope.launch {
-                        picList.clear()
-                        val listPic = withContext(Dispatchers.IO) {
-                            result?.map { listData ->
-                                ChoosePicBean(
-                                    type = ChoosePicBean.KEY_TYPE_PIC,
-                                    picAddress = listData.availablePath?.toString(),
-                                    compressPicAddress = listData.compressPath ?: listData.availablePath,
-                                    localMedia = listData
-                                )
-                            }?.plus(ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD)) ?: mutableListOf()
-                        }.take(MAX_SELECT_COUNT)
-                        picList.addAll(listPic)
-                        chooserAdapter.setList(picList)
-                    }
+        imagePickerUtils.openImagePicker(this@ReelPostActivity, MAX_SELECT_COUNT, call = object : OnResultCallbackListener<LocalMedia> {
+            override fun onResult(result: java.util.ArrayList<LocalMedia>?) {
+                // Map the result into ChoosePicBean and add them into picList
+                lifecycleScope.launch {
+                    picList.clear()
+                    val listPic = withContext(Dispatchers.IO) {
+                        result?.map { listData ->
+                            ChoosePicBean(
+                                type = ChoosePicBean.KEY_TYPE_PIC,
+                                picAddress = listData.availablePath?.toString(),
+                                compressPicAddress = listData.compressPath ?: listData.availablePath,
+                                localMedia = listData
+                            )
+                        }?.plus(ChoosePicBean(type = ChoosePicBean.KEY_TYPE_ADD)) ?: mutableListOf()
+                    }.take(MAX_SELECT_COUNT)
+                    picList.addAll(listPic)
+                    chooserAdapter.setList(picList)
                 }
+            }
 
-                override fun onCancel() {
-                }
-            })
+            override fun onCancel() {
+            }
+        }).apply {
+            isOnlyObtainSandboxDir(true)
+            setQuerySandboxDir(if (isExistLocal) sdCardPath else albumPath)
+            setSelectedData(localMedia)
+        }
     }
 
     /**
@@ -627,7 +581,15 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                                 it.forEach { mentionData ->
                                     val index: Int = binding.etConnect.selectionStart
                                     binding.etConnect.editableText.insert(index, "@")
-                                    binding.etConnect.insert(MentionUser(mentionData.userId ?: "", mentionData.nickName ?: "", mentionData.abbyId ?: "", mentionData.nickName ?: "", mentionData.picture ?: ""))
+                                    binding.etConnect.insert(
+                                        MentionUser(
+                                            mentionData.userId ?: "",
+                                            mentionData.nickName ?: "",
+                                            mentionData.abbyId ?: "",
+                                            mentionData.nickName ?: "",
+                                            mentionData.picture ?: ""
+                                        )
+                                    )
                                 }
                             } else {
                                 // 在第二次插入时，需要判断是插入还是删除
@@ -643,7 +605,15 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                                     viewModel.findDifferentItems(it, binding.etConnect.formatResult?.userList).forEach { mentionData ->
                                         val index: Int = binding.etConnect.selectionStart
                                         binding.etConnect.editableText.insert(index, "@")
-                                        binding.etConnect.insert(MentionUser(mentionData.userId ?: "", mentionData.nickName ?: "", mentionData.abbyId ?: "", mentionData.nickName ?: "", mentionData.picture ?: ""))
+                                        binding.etConnect.insert(
+                                            MentionUser(
+                                                mentionData.userId ?: "",
+                                                mentionData.nickName ?: "",
+                                                mentionData.abbyId ?: "",
+                                                mentionData.nickName ?: "",
+                                                mentionData.picture ?: ""
+                                            )
+                                        )
                                     }
                                 }
                             }
@@ -710,9 +680,10 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
             }
             logI("123123123: delayTime: $delayTime")
             val num = delayTime
-            val formatted = String.format("%.2f", num) // 将浮点数格式化为字符串，保留两位小数
+            val formatted = String.format(Locale.US, "%.2f", num) // 将浮点数格式化为字符串，保留两位小数
             logI("123123123: delayTime: $formatted,,,, ${(formatted.toFloat() * 100).safeToInt()}")
-            Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif).setDelay((formatted.toFloat() * 100).safeToInt()).setIsVideo(isVideo).start(object : Gif.ResultCallback {
+            Gif.Builder().setSources(sources).setNickName(if (binding.typeBox.isChecked) viewModel.userinfoBean?.nickName else null).setDestPath(dialCustomGif)
+                .setDelay((formatted.toFloat() * 100).safeToInt()).setIsVideo(isVideo).start(object : Gif.ResultCallback {
                 override fun onSuccess(destPath: String?) {
                     parm?.invoke(true)
                     if (isVideo) {
@@ -912,7 +883,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
             // ffmpeg -y -loop 1 -r 25 -i /storage/emulated/0/1/input.png -vf zoompan=z=1.1:x='if(eq(x,0),100,x-1)':s='960*540' -t 10 -pix_fmt yuv420p /storage/emulated/0/1/result.mp4
             val name = "${System.currentTimeMillis()}.mp4"
             val cmdList = CmdList()
-            val path = if (viewModel.uploadImageFlag.value == true) sdCardPath + File.separator + name  else sdCardPath + File.separator + "preview" + File.separator + name
+            val path = if (viewModel.uploadImageFlag.value == true) sdCardPath + File.separator + name else sdCardPath + File.separator + "preview" + File.separator + name
             cmdList.append("-y")
                 .append("-i")
                 .append(url)

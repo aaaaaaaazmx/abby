@@ -19,6 +19,7 @@ import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
 import com.lxj.xpopup.XPopup
+import java.util.Locale
 
 class EnvAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
     BaseQuickAdapter<EnvironmentInfoData.Environment, BaseViewHolder>(R.layout.home_env_item, data) {
@@ -96,7 +97,7 @@ class EnvAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
                     val te = replace.safeToInt()
                     // (1°F − 32) × 5/9
                     // String result1 = String.format("%.2f", d);
-                    return "${String.format("%.1f", (te - 32).times(5f).div(9f))}℃"
+                    return "${String.format(Locale.US, "%.1f", (te - 32).times(5f).div(9f))}℃"
                 }.getOrElse {
                     return text
                 }

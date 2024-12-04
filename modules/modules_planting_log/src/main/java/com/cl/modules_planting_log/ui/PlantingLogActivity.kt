@@ -44,6 +44,7 @@ import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.ChooserOptionPop
+import com.cl.common_base.util.ImagePickerUtils
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.file.FileUtil
 import com.cl.common_base.util.file.SDCard
@@ -707,99 +708,27 @@ class PlantingLogActivity : BaseActivity<PlantingLogActivityBinding>(), EditText
                                 },
                                 onLibraryAction = {
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        PermissionHelp().applyPermissionHelp(
-                                            this@PlantingLogActivity,
-                                            getString(R.string.profile_request_photo),
-                                            object : PermissionHelp.OnCheckResultListener {
-                                                override fun onResult(result: Boolean) {
-                                                    if (!result) return
-                                                    // 选择照片
-                                                    // 选择照片，不显示角标
-                                                    val style = PictureSelectorStyle()
-                                                    val ss = BottomNavBarStyle()
-                                                    ss.isCompleteCountTips = false
-                                                    style.bottomBarStyle = ss
-                                                    PictureSelector.create(this@PlantingLogActivity)
-                                                        .openGallery(SelectMimeType.ofImage())
-                                                        .setImageEngine(GlideEngine.createGlideEngine())
-                                                        .setCompressEngine(CompressFileEngine { context, source, call ->
-                                                            Luban.with(context).load(source).ignoreBy(100)
-                                                                .setCompressListener(object : OnNewCompressListener {
-                                                                    override fun onSuccess(source: String?, compressFile: File?) {
-                                                                        call?.onCallback(source, compressFile?.absolutePath)
-                                                                    }
-
-                                                                    override fun onError(source: String?, e: Throwable?) {
-                                                                        call?.onCallback(source, null)
-                                                                    }
-
-                                                                    override fun onStart() {
-
-                                                                    }
-                                                                }).launch();
-                                                        })
-                                                        .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
-                                                        .isOriginalControl(false) // 原图功能
-                                                        .isDisplayTimeAxis(true) // 资源轴
-                                                        .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
-                                                        .isMaxSelectEnabledMask(true) // 是否显示蒙层
-                                                        .isDisplayCamera(false) //是否显示摄像
-                                                        .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                                        .setMaxSelectNum(1)
-                                                        .setSelectorUIStyle(style)
-                                                        .forResult(PictureConfig.CHOOSE_REQUEST)
-                                                }
-                                            },
-                                            Manifest.permission.READ_MEDIA_IMAGES,
-                                            Manifest.permission.READ_MEDIA_VIDEO,
-                                            Manifest.permission.READ_MEDIA_AUDIO,
-                                        )
+                                        ImagePickerUtils().apply {
+                                            requestPermissionAndOpenPicker(
+                                                this@PlantingLogActivity, getString(com.cl.common_base.R.string.profile_request_photo),
+                                                onPermissionGranted = {
+                                                    openImagePicker(this@PlantingLogActivity)
+                                                },
+                                                Manifest.permission.READ_MEDIA_IMAGES,
+                                                Manifest.permission.READ_MEDIA_VIDEO,
+                                                Manifest.permission.READ_MEDIA_AUDIO,
+                                            )
+                                        }
                                     } else {
-                                        PermissionHelp().applyPermissionHelp(
-                                            this@PlantingLogActivity,
-                                            getString(R.string.profile_request_photo),
-                                            object : PermissionHelp.OnCheckResultListener {
-                                                override fun onResult(result: Boolean) {
-                                                    if (!result) return
-                                                    // 选择照片
-                                                    // 选择照片，不显示角标
-                                                    val style = PictureSelectorStyle()
-                                                    val ss = BottomNavBarStyle()
-                                                    ss.isCompleteCountTips = false
-                                                    style.bottomBarStyle = ss
-                                                    PictureSelector.create(this@PlantingLogActivity)
-                                                        .openGallery(SelectMimeType.ofImage())
-                                                        .setImageEngine(GlideEngine.createGlideEngine())
-                                                        .setCompressEngine(CompressFileEngine { context, source, call ->
-                                                            Luban.with(context).load(source).ignoreBy(100)
-                                                                .setCompressListener(object : OnNewCompressListener {
-                                                                    override fun onSuccess(source: String?, compressFile: File?) {
-                                                                        call?.onCallback(source, compressFile?.absolutePath)
-                                                                    }
-
-                                                                    override fun onError(source: String?, e: Throwable?) {
-                                                                        call?.onCallback(source, null)
-                                                                    }
-
-                                                                    override fun onStart() {
-
-                                                                    }
-                                                                }).launch();
-                                                        })
-                                                        .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
-                                                        .isOriginalControl(false) // 原图功能
-                                                        .isDisplayTimeAxis(true) // 资源轴
-                                                        .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
-                                                        .isMaxSelectEnabledMask(true) // 是否显示蒙层
-                                                        .isDisplayCamera(false) //是否显示摄像
-                                                        .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                                        .setMaxSelectNum(1)
-                                                        .setSelectorUIStyle(style)
-                                                        .forResult(PictureConfig.CHOOSE_REQUEST)
-                                                }
-                                            },
-                                            Manifest.permission.READ_EXTERNAL_STORAGE,
-                                        )
+                                        ImagePickerUtils().apply {
+                                            requestPermissionAndOpenPicker(
+                                                this@PlantingLogActivity, getString(com.cl.common_base.R.string.profile_request_photo),
+                                                onPermissionGranted = {
+                                                    openImagePicker(this@PlantingLogActivity)
+                                                },
+                                                Manifest.permission.READ_EXTERNAL_STORAGE,
+                                            )
+                                        }
                                     }
                                 })
                         ).show()

@@ -37,6 +37,7 @@ import com.cl.common_base.bean.ModifyUserDetailReq
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.modules_my.viewmodel.ProfileViewModel
 import com.cl.common_base.pop.ChooserOptionPop
+import com.cl.common_base.util.ImagePickerUtils
 import com.cl.modules_my.widget.LoginOutPop
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -157,83 +158,27 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
                     },
                     onLibraryAction = {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            PermissionHelp().applyPermissionHelp(
-                                this@ProfileActivity,
-                                getString(com.cl.common_base.R.string.profile_request_photo),
-                                object : PermissionHelp.OnCheckResultListener {
-                                    override fun onResult(result: Boolean) {
-                                        if (!result) return
-                                        // 选择照片
-                                        // 选择照片，不显示角标
-                                        val style = PictureSelectorStyle()
-                                        val ss = BottomNavBarStyle()
-                                        ss.isCompleteCountTips = false
-                                        style.bottomBarStyle = ss
-                                        PictureSelector.create(this@ProfileActivity)
-                                            .openGallery(SelectMimeType.ofImage())
-                                            .setImageEngine(GlideEngine.createGlideEngine())
-                                            .setCompressEngine(CompressFileEngine { context, source, call ->
-                                                Luban.with(context).load(source).ignoreBy(100)
-                                                    .setCompressListener(object : OnNewCompressListener {
-                                                        override fun onSuccess(source: String?, compressFile: File?) {
-                                                            call?.onCallback(source, compressFile?.absolutePath)
-                                                        }
-
-                                                        override fun onError(source: String?, e: Throwable?) {
-                                                            call?.onCallback(source, null)
-                                                        }
-
-                                                        override fun onStart() {
-
-                                                        }
-                                                    }).launch();
-                                            })
-                                            .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
-                                            .isOriginalControl(false) // 原图功能
-                                            .isDisplayTimeAxis(true) // 资源轴
-                                            .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
-                                            .isMaxSelectEnabledMask(true) // 是否显示蒙层
-                                            .isDisplayCamera(false) //是否显示摄像
-                                            .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                            .setMaxSelectNum(1)
-                                            .setSelectorUIStyle(style)
-                                            .forResult(PictureConfig.CHOOSE_REQUEST)
-                                    }
-                                },
-                                Manifest.permission.READ_MEDIA_IMAGES,
-                                Manifest.permission.READ_MEDIA_VIDEO,
-                                Manifest.permission.READ_MEDIA_AUDIO,
-                            )
+                            ImagePickerUtils().apply {
+                                requestPermissionAndOpenPicker(
+                                    this@ProfileActivity, getString(com.cl.common_base.R.string.profile_request_photo),
+                                    onPermissionGranted = {
+                                        openImagePicker(this@ProfileActivity)
+                                    },
+                                    Manifest.permission.READ_MEDIA_IMAGES,
+                                    Manifest.permission.READ_MEDIA_VIDEO,
+                                    Manifest.permission.READ_MEDIA_AUDIO,
+                                )
+                            }
                         } else {
-                            PermissionHelp().applyPermissionHelp(
-                                this@ProfileActivity,
-                                getString(com.cl.common_base.R.string.profile_request_photo),
-                                object : PermissionHelp.OnCheckResultListener {
-                                    override fun onResult(result: Boolean) {
-                                        if (!result) return
-                                        // 选择照片
-                                        // 选择照片，不显示角标
-                                        val style = PictureSelectorStyle()
-                                        val ss = BottomNavBarStyle()
-                                        ss.isCompleteCountTips = false
-                                        style.bottomBarStyle = ss
-                                        PictureSelector.create(this@ProfileActivity)
-                                            .openGallery(SelectMimeType.ofImage())
-                                            .setImageEngine(GlideEngine.createGlideEngine())
-                                            //                            .setCompressEngine(ImageFileCompressEngine()) //是否压缩
-                                            .setSandboxFileEngine(MeSandboxFileEngine()) // Android10 沙盒文件
-                                            .isOriginalControl(false) // 原图功能
-                                            .isDisplayTimeAxis(true) // 资源轴
-                                            .setEditMediaInterceptListener(null) // 是否开启图片编辑功能
-                                            .isMaxSelectEnabledMask(true) // 是否显示蒙层
-                                            .isDisplayCamera(false) //是否显示摄像
-                                            .setLanguage(LanguageConfig.ENGLISH) //显示英语
-                                            .setMaxSelectNum(1)
-                                            .setSelectorUIStyle(style)
-                                            .forResult(PictureConfig.CHOOSE_REQUEST)
-                                    }
-                                }, Manifest.permission.READ_EXTERNAL_STORAGE,
-                            )
+                            ImagePickerUtils().apply {
+                                requestPermissionAndOpenPicker(
+                                    this@ProfileActivity, getString(com.cl.common_base.R.string.profile_request_photo),
+                                    onPermissionGranted = {
+                                        openImagePicker(this@ProfileActivity)
+                                    },
+                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                                )
+                            }
                         }
                     })
             )
@@ -616,9 +561,9 @@ class ProfileActivity : BaseActivity<MyProfileActivityBinding>() {
         super.onDestroy()
         // 刷新缓存
         GSON.toJsonInBackground(userInfo) {
-                logI("refreshData: $it")
-                Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
-            }
+            logI("refreshData: $it")
+            Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it)
+        }
     }
 
     companion object {

@@ -164,6 +164,10 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
+            android:lines="1"
+            android:autoSizeMaxTextSize="11sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
             app:layout_constraintHorizontal_chainStyle="spread"
             android:id="@+id/btn_chang"
             android:layout_width="0dp"
@@ -181,6 +185,10 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_root" />
 
         <Button
+            android:lines="1"
+            android:autoSizeMaxTextSize="11sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
             app:layout_constraintHorizontal_chainStyle="spread"
             android:textSize="11sp"
             android:id="@+id/btn_add_accessory"
@@ -198,6 +206,10 @@
 
 
         <Button
+            android:lines="1"
+            android:autoSizeMaxTextSize="11sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
             android:visibility="@{data.isChooser ? View.VISIBLE : View.GONE}"
             app:layout_constraintHorizontal_chainStyle="spread"
             android:textSize="11sp"

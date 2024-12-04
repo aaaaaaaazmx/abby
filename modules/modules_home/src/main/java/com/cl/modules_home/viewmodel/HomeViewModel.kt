@@ -42,6 +42,7 @@ import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.LinkedList
+import java.util.Locale
 import java.util.Queue
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -1714,6 +1715,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository, 
     fun getPlantHeight() {
         kotlin.runCatching {
             _getPlantHeight.value = String.format(
+                Locale.US,
                 "%.1f",
                 thingDeviceBean()?.dps?.filter { status -> status.key == TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT }
                     ?.get(TuYaDeviceConstants.KEY_DEVICE_PLANT_HEIGHT).toString().toFloat()
@@ -1962,7 +1964,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository, 
             kotlin.runCatching {
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
-                return String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble()
+                return String.format(Locale.US, "%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble()
                     .safeToInt()
             }.getOrElse {
                 return text
@@ -1983,7 +1985,7 @@ class HomeViewModel @Inject constructor(private val repository: HomeRepository, 
             kotlin.runCatching {
                 // (1°F − 32) × 5/9
                 // String result1 = String.format("%.2f", d);
-                return "${String.format("%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, "$roomTemp") else ""}"
+                return "${String.format(Locale.US, "%.1f", (text?.minus(32))?.times(5f)?.div(9f)).safeToDouble().safeToInt()} ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, "$roomTemp") else ""}"
             }.getOrElse {
                 return "$text ${if (roomTemp.isNotEmpty()) context.getString(com.cl.common_base.R.string.home_room_temp, "$roomTemp") else ""}"
             }

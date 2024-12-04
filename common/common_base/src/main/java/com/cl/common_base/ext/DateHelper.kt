@@ -326,7 +326,7 @@ object DateHelper {
         val zone: ZoneId = ZoneId.systemDefault()
         val zdt: ZonedDateTime = dt.atZone(zone)
         val offset: ZoneOffset = zdt.offset
-        val out = java.lang.String.format("%s offset(seconds) %s", zone, offset.totalSeconds)
+        val out = java.lang.String.format(Locale.US, "%s offset(seconds) %s", zone, offset.totalSeconds)
         return offset.totalSeconds
     }
 
@@ -592,9 +592,9 @@ object DateHelper {
             val tempMillisecond = if (millisecond in 0..9) "00$millisecond" else if (millisecond in 10..99) "0$millisecond" else millisecond.toString()
 
             return when {
-                day > 0 -> String.format("%s %s:%s:%s,%s", tempDay, tempHours, tempMinute, tempSecond, tempMillisecond)
-                hours > 0 -> String.format("%s:%s:%s,%s", tempHours, tempMinute, tempSecond, tempMillisecond)
-                else -> String.format("%s:%s,%s", tempMinute, tempSecond, tempMillisecond)
+                day > 0 -> String.format(Locale.US, "%s %s:%s:%s,%s", tempDay, tempHours, tempMinute, tempSecond, tempMillisecond)
+                hours > 0 -> String.format(Locale.US, "%s:%s:%s,%s", tempHours, tempMinute, tempSecond, tempMillisecond)
+                else -> String.format(Locale.US, "%s:%s,%s", tempMinute, tempSecond, tempMillisecond)
             }
         } else "00:00,00"
     }

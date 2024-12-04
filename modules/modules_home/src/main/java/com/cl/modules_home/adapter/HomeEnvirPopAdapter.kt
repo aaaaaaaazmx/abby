@@ -46,6 +46,7 @@ import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 /**
  * pop初始化数据
@@ -373,7 +374,7 @@ class HomeEnvirPopAdapter(data: MutableList<EnvironmentInfoData.Environment>?, v
                     val te = replace.safeToInt()
                     // (1°F − 32) × 5/9
                     // String result1 = String.format("%.2f", d);
-                    return "${String.format("%.1f", (te - 32).times(5f).div(9f))}℃"
+                    return "${String.format(Locale.US, "%.1f", (te - 32).times(5f).div(9f))}℃"
                 }.getOrElse {
                     return text
                 }

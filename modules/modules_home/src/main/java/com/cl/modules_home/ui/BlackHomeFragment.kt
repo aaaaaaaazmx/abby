@@ -671,7 +671,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
 
                     // 植物信息数据显示
                     binding.tvWeekDay.text = """
-                                Week ${data?.week ?: "-"} Day ${data?.day ?: "-"}
+                                ${context?.getString(R.string.week)} ${data?.week ?: "-"} ${context?.getString(R.string.day)} ${data?.day ?: "-"}
                             """.trimIndent()
 
                     binding.tvPeriod.text = data?.period

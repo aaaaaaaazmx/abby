@@ -1053,8 +1053,20 @@
     <string name="es">Spanish</string>
     <string name="de">Deutsch</string>
 
+    <string name="planting_purified">Purified</string>
+    <string name="planting_distilled">Distilled</string>
+    <string name="planting_tap_water">Tap Water</string>
+    <string name="planting_others">Others</string>
+    <string name="planting_liquid">Liquid</string>
+    <string name="planting_solid">Solid</string>
+    <string name="planting_spray">Spray</string>
+    <string name="planting_transplant_shock">Transplant shock</string>
+    <string name="planting_environmental_factors">Environmental factors</string>
+    <string name="planting_underwatering">Underwatering</string>
+    <string name="planting_pest_and_diseases">Pest and Diseases</string>
+    <string name="planting_nutritent_imbalance">Nutritent Imbalance</string>
+    <string name="planting_chemical_contaminants">Chemical Contaminants</string>
 
-
-
+    <string name="growspace">Grow Spaces</string>
 
 </resources>

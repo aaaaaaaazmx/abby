@@ -41,7 +41,7 @@ public class DefaultTaskExecutor {
         @Override
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
-            t.setName(String.format(Locale.CHINA, THREAD_NAME_STEM, mThreadId.getAndIncrement()));
+            t.setName(String.format(Locale.US, THREAD_NAME_STEM, mThreadId.getAndIncrement()));
             return t;
         }
     });

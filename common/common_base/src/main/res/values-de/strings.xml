@@ -159,7 +159,7 @@
     <string name="string_201">Klicken Sie, um die Entwässerung zu starten.</string>
     <string name="string_203">Das Programm macht alle 2 Minuten eine Pause, um ein Überlaufen zu verhindern. Wir empfehlen, für den Wasserwechsel einen Behälter von mindestens 11 l zu verwenden.</string>
     <string name="string_210">Bitte geben Sie den Namen ein</string>
-    <string name="string_211">1. Aktuelle Voreinstellung speichern 2. Max. 5 Benutzer 3. Nutzer-Voreinstellung kann gespeichert werden</string>
+    <string name="string_211">Speichern der aktuellen Voreinstellung Maximal 5 Benutzervoreinstellungen können gespeichert werden.</string>
     <string name="string_212">Um ein optimales Nutzererlebnis zu gewährleisten, müssen Sie Ihre App auf die neueste Version aktualisieren.</string>
     <string name="string_216">Lade...</string>
     <string name="string_217">Woche 1</string>
@@ -999,5 +999,20 @@
     <string name="profile">Profil</string>
     <string name="journey">Meine Erfahrung</string>
     <string name="shopnow">Jetzt einkaufen</string>
+
+    <string name="planting_purified">Gereinigt</string>
+    <string name="planting_distilled">Destilliert</string>
+    <string name="planting_tap_water">Leitungswasser</string>
+    <string name="planting_others">Andere</string>
+    <string name="planting_liquid">Flüssigkeit</string>
+    <string name="planting_solid">Fest</string>
+    <string name="planting_spray">Spray</string>
+    <string name="planting_transplant_shock">Transplantationsschock</string>
+    <string name="planting_environmental_factors">Umweltfaktoren</string>
+    <string name="planting_underwatering">Unterwasserwelt</string>
+    <string name="planting_pest_and_diseases">Schädlinge und Krankheiten</string>
+    <string name="planting_nutritent_imbalance">Ungleichgewicht der Nährstoffe</string>
+    <string name="planting_chemical_contaminants">Chemische Verunreinigungen</string>
+    <string name="growspace">Wachstumskammern</string>
 
 </resources>
