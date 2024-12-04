@@ -2,6 +2,8 @@ package com.cl.common_base.util.device
 
 import android.os.Handler
 import android.os.Looper
+import com.cl.common_base.BaseApplication
+import com.cl.common_base.R
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI

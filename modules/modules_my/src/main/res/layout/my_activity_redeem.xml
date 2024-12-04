@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                app:title="Renew Subscription" />
+                app:title="@string/renew_subscription" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -45,9 +45,7 @@
 
                 <TextView
                     android:layout_marginTop="6dp"
-                    android:text="Please click the purchase button
-to go to our website to complete purchase
-of the subscription."
+                    android:text="@string/renew_subscription_info"
                     android:id="@+id/tv_html"
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
@@ -94,9 +92,7 @@ of the subscription."
                     android:layout_marginTop="6dp"
                     android:layout_marginEnd="20dp"
                     android:layout_marginStart="20dp"
-                    android:text="After purchase, you will receive a 8 digit code
-via email, please enter the code below to activate
-your subscription."
+                    android:text="@string/renew_subscription_infos"
                     android:textColor="@color/black"
                     android:textSize="15sp"
                     android:layout_width="wrap_content"

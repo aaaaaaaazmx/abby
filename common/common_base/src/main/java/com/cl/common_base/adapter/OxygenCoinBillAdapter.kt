@@ -58,7 +58,7 @@ class OxygenCoinBillAdapter(
     private fun spanText(inCome: String?): SpannedString {
         return inCome?.let {
             buildSpannedString {
-                append("Income ")
+                append(context.getString(R.string.income))
                 bold {
                     color(Color.parseColor("#B22234")) {
                         if (it.startsWith("-")) {
@@ -75,7 +75,7 @@ class OxygenCoinBillAdapter(
     private fun spanExpenseText(expense: String?): SpannedString {
         return expense?.let {
             buildSpannedString {
-                append("Expense ")
+                append(context.getString(R.string.expense))
                 bold {
                     color(Color.parseColor("#006241")) {
                         if (it.startsWith("-")) {
