@@ -22,7 +22,7 @@
                 android:id="@+id/ftb_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title="@string/add_an_accessory"
+                app:title="Add an Accessory"
                 tools:ignore="MissingConstraints" />
 
             <TextView

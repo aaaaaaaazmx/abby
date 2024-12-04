@@ -129,7 +129,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                 }°C"
                                             } else {
                                                 // 华氏度
-                                                "≥  70F"
+                                                "≥  70℉"
                                             }
                                             return@apply
                                         }
@@ -140,7 +140,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                             }°C"
                                         } else {
                                             // 华氏度
-                                            "${if (operator == ">=") "≥" else "≤"} ${value}F"
+                                            "${if (operator == ">=") "≥" else "≤"} ${value}℉"
                                         }
                                     }
 
@@ -161,7 +161,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                 }°C"
                                             } else {
                                                 // 华氏度
-                                                "≥  70F"
+                                                "≥  70℉"
                                             }
                                             return@apply
                                         }
@@ -172,7 +172,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                             }°C"
                                         } else {
                                             // 华氏度
-                                            "${if (operator == ">=") "≥" else "≤"} ${value}F"
+                                            "${if (operator == ">=") "≥" else "≤"} ${value}℉"
                                         }
                                     }
 
@@ -300,7 +300,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                     ((mViewModel.setRoomTemperature.value?.safeToInt()
                                                         ?.minus(32))?.times(5f)
                                                         ?.div(9f))?.roundToInt()
-                                                }°C" else "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} ${mViewModel.setRoomTemperature.value}F"
+                                                }°C" else "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} ${mViewModel.setRoomTemperature.value}℉"
                                         } else {
                                             binding.tvIfText.text = if (mViewModel.isMetricSystem) {
                                                 // 摄氏度
@@ -310,7 +310,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                 }°C"
                                             } else {
                                                 // 华氏度
-                                                "${if (operator == ">=") "≥" else "≤"} ${value}F"
+                                                "${if (operator == ">=") "≥" else "≤"} ${value}℉"
                                             }
                                             mViewModel.setRoomTemperature("$value")
                                             mViewModel.setTemperatureType(if (operator == ">=") 0 else 1)
@@ -334,7 +334,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                     ((mViewModel.setTemperature.value?.safeToInt()
                                                         ?.minus(32))?.times(5f)
                                                         ?.div(9f))?.roundToInt()
-                                                }°C" else "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} ${mViewModel.setTemperature.value}F"
+                                                }°C" else "${if (mViewModel.setTemperatureType.value == 0) "≥" else "≤"} ${mViewModel.setTemperature.value}℉"
                                         } else {
                                             binding.tvIfText.text = if (mViewModel.isMetricSystem) {
                                                 // 摄氏度
@@ -344,7 +344,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                 }°C"
                                             } else {
                                                 // 华氏度
-                                                "${if (operator == ">=") "≥" else "≤"} ${value}F"
+                                                "${if (operator == ">=") "≥" else "≤"} ${value}℉"
                                             }
                                             mViewModel.setTemperature("$value")
                                             mViewModel.setTemperatureType(if (operator == ">=") 0 else 1)
@@ -482,7 +482,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                     }°C"
                                                 } else {
                                                     // 华氏度
-                                                    "≥ ${value}F"
+                                                    "≥ ${value}℉"
                                                 }
                                         }
 
@@ -496,7 +496,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                     }°C"
                                                 } else {
                                                     // 华氏度
-                                                    "≤ ${value}F"
+                                                    "≤ ${value}℉"
                                                 }
                                         }
                                     }
@@ -555,7 +555,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                     }°C"
                                                 } else {
                                                     // 华氏度
-                                                    "≥ ${value}F"
+                                                    "≥ ${value}℉"
                                                 }
                                         }
 
@@ -569,7 +569,7 @@ class AddAutomationActivity : BaseActivity<MyAddAutomationBinding>() {
                                                     }°C"
                                                 } else {
                                                     // 华氏度
-                                                    "≤ ${value}F"
+                                                    "≤ ${value}℉"
                                                 }
                                         }
                                     }

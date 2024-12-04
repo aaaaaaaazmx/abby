@@ -304,6 +304,10 @@
                 tools:ignore="MissingConstraints">
 
                 <TextView
+                    android:lines="1"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeMinTextSize="10sp"
+                    android:autoSizeTextType="uniform"
                     android:labelFor="@+id/editText12"
                     android:text="@string/string_2331"
                     android:id="@+id/textView123"
@@ -357,6 +361,13 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
+                android:lines="1"
+                android:paddingEnd="5dp"
+                android:paddingStart="5dp"
+                android:autoSizeMaxTextSize="15sp"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeTextType="uniform"
+                tools:text="string_2332string_2332string_2332"
                 android:contentDescription="@string/string_2332"
                 android:id="@+id/tv_sync"
                 android:gravity="center"

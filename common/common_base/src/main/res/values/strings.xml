@@ -1073,5 +1073,9 @@
     <string name="planting_chemical_contaminants">Chemical Contaminants</string>
 
     <string name="growspace">Grow Spaces</string>
+    <string name="add_an_accessory">Add an Accessory</string>
+    <string name="pair_the_ph_meter">Pair the PH Meter</string>
+    <string name="add_automation">Add Automation</string>
+    <string name="string_16167">Searching for the device...\nPlease press the on/off button for 3-5 seconds till you see the Bluetooth icon.</string>
 
 </resources>

@@ -353,10 +353,10 @@
     <string name="string_1612">45294</string>
     <string name="string_1613">Können Sie Ihren Abby derzeit nicht finden?</string>
     <string name="string_1614">Neu verbinden</string>
-    <string name="string_1615">Suche nach dem Gerät...</string>
+    <string name="string_1615">Suche nach dem Gerät...\n</string>
     <string name="string_1616">Halten Sie die Reset-Taste mit einem Werkzeug 3-5 Sekunden lang gedrückt, bis die blaue Anzeige zu blinken beginnt.</string>
     <string name="string_1617">Halten Sie die Taste \"+\" auf dem Gerät 3-5 Sekunden lang gedrückt, bis das Wi-Fi-Symbol zu blinken beginnt.</string>
-    <string name="string_1619">45325</string>
+    <string name="string_1619">2/3</string>
     <string name="string_1621">1. Vergewissern Sie sich, dass die eingegebene Wi-Fi-Adresse und das Passwort korrekt sind.</string>
     <string name="string_1622">2. Überprüfen Sie Ihr Wi-Fi-Netzwerk. Derzeit kann abby nur 2.4G Wi-Fi unterstützen.</string>
     <string name="string_1623">3</string>
@@ -368,7 +368,7 @@
     <string name="string_1630">2.4GHz Wi-Fi.</string>
     <string name="string_1631">\nWi-Fi unterstützt nur alphanumerische Zeichen</string>
     <string name="string_1632">2. Ihr Telefon muss mit demselben 2.4G-WLAN wie die Smart-Kamera verbunden sein.</string>
-    <string name="string_1633">1. Hey abby unterstützt nur</string>
+    <string name="string_1633">1. Hey abby unterstützt nur </string>
     <string name="string_1634">2.4GHz Wi-Fi Netzwerke.</string>
     <string name="string_1635">2. Die Netzwerknamen dürfen nur aus alphanumerischen Zeichen bestehen.</string>
     <string name="string_1636">3. Ihr Telefon muss mit demselben 2.4G-Wi-Fi wie abby verbunden sein.</string>
@@ -1021,5 +1021,9 @@
     <string name="planting_nutritent_imbalance">Ungleichgewicht der Nährstoffe</string>
     <string name="planting_chemical_contaminants">Chemische Verunreinigungen</string>
     <string name="growspace">Wachstumskammern</string>
+    <string name="add_an_accessory">Ein Zubehörteil hinzufügen</string>
+    <string name="pair_the_ph_meter">Das PH-Messgerät koppeln</string>
+    <string name="string_16167">Suche nach dem Gerät...\nBitte drücken Sie die Ein-/Ausschalttaste für 3-5 Sekunden, bis Sie dasBluetooth-Symbol sehen.</string>
+    <string name="add_automation">Automatisierung hinzufügen</string>
 
 </resources>

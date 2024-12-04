@@ -17,7 +17,7 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="Add Automation" />
+            app:title="@string/add_automation" />
 
         <androidx.core.widget.NestedScrollView
             android:fillViewport="true"

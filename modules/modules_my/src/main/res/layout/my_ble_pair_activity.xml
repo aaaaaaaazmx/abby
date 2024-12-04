@@ -19,7 +19,7 @@
 
             <com.cl.common_base.widget.FeatureTitleBar
                 android:id="@+id/title"
-                app:title="Pair the PH Meter"
+                app:title="@string/pair_the_ph_meter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white" />
@@ -41,8 +41,7 @@
                     android:layout_marginTop="23dp"
                     android:layout_marginEnd="24dp"
                     android:lineSpacingExtra="5dp"
-                    android:text="Searching for the device...
-Please press the on/off button for 3-5 seconds till you see the Bluetooth icon."
+                    android:text="@string/string_16167"
                     android:textColor="#161B19"
                     android:textSize="15sp"
                     app:layout_constraintEnd_toEndOf="parent"

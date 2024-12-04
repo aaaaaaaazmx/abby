@@ -92,7 +92,7 @@ class PairWifiOnePageActivity : BaseActivity<PairWifiScanBleBinding>() {
 
     override fun initView() {
         // 标题设置
-        binding.title.setLeftText(getString(com.cl.common_base.R.string.my_cache))
+        binding.title.setLeftText(getString(com.cl.common_base.R.string.my_cancel))
             .setTitle(getString(com.cl.common_base.R.string.pair_one_three))
             .setLeftClickListener { finish() }
 

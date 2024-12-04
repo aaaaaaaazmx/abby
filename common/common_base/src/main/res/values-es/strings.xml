@@ -356,7 +356,7 @@
     <string name="string_1615">Buscando el dispositivo...\n</string>
     <string name="string_1616">Mantén pulsado el botón de reinicio durante 3-5 segundos hasta que el indicador azul comience a titilar</string>
     <string name="string_1617">Mantén pulsado el botón \"+\" del dispositivo durante 3-5 segundos hasta que el ícono Wi-Fi empiece a titilar.</string>
-    <string name="string_1619">45325</string>
+    <string name="string_1619">2/3</string>
     <string name="string_1621">1. Confirma que la dirección Wi-Fi y la contraseña estén correctas.</string>
     <string name="string_1622">2. Verifica tu red Wi-Fi. Actualmente, abby solo admite Wi-Fi de 2,4 G.</string>
     <string name="string_1623">3</string>
@@ -368,7 +368,7 @@
     <string name="string_1630">Wi-Fi de 2,4 GHz.</string>
     <string name="string_1631">\nWi-Fi sólo admite caracteres alfanuméricos</string>
     <string name="string_1632">2. Tu teléfono debe estar conectado a la misma red wifi 2.4G que la cámara inteligente</string>
-    <string name="string_1633">1. Hey abby sólo admite</string>
+    <string name="string_1633">1. Hey abby sólo admite </string>
     <string name="string_1634">Redes Wi-Fi de 2,4 GHz.</string>
     <string name="string_1635">2. Los nombres de red deben estar compuestos únicamente por caracteres alfanuméricos.</string>
     <string name="string_1636">3. Tu teléfono debe estar conectado a la misma red Wi-Fi 2.4G que abby.</string>
@@ -1019,5 +1019,9 @@
     <string name="planting_nutritent_imbalance">Desequilibrio nutricional</string>
     <string name="planting_chemical_contaminants">Contaminantes químicos</string>
     <string name="growspace">Espacios de cultivo</string>
+    <string name="add_an_accessory">Añadir un accesorio</string>
+    <string name="pair_the_ph_meter">Emparejar el medidor de PH</string>
+    <string name="string_16167">Buscando el dispositivo...\nPor favor, pulsa el botón de encendido/apagado durante 3-5 segundos hasta que veas el icono de Bluetooth.</string>
+    <string name="add_automation">Añadir automatización</string>
 
 </resources>

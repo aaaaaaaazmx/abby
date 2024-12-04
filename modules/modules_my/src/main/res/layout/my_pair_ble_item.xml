@@ -30,6 +30,10 @@
             />
 
         <com.cl.common_base.widget.SvTextView
+            android:lines="1"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeTextType="uniform"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="15dp"
@@ -38,7 +42,7 @@
             app:svSolidColor="@color/mainColor"
             app:svRadius="100dp"
             android:text="@string/string_2057"
-            android:textSize="15sp"
+            android:textSize="10sp"
             android:gravity="center"
             android:textColor="@color/white"
             android:layout_width="70dp"
