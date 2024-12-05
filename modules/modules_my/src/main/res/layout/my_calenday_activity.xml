@@ -216,7 +216,7 @@
 
                         <com.cl.common_base.widget.SvTextView
                             android:id="@+id/svt_day_bg"
-                            android:layout_width="80dp"
+                            android:layout_width="100dp"
                             android:layout_height="15dp"
                             android:layout_alignParentRight="true"
                             android:layout_marginTop="5dp"

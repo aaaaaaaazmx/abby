@@ -21,7 +21,7 @@
     <string name="setting_sub_time">Kein digitaler Dienst</string>
     <string name="setting_sub_charge_time">Gültigkeit des digitalen Dienstes verlängern</string>
     <string name="home_great_tips">Großartig! Jetzt, da Sie vorbereitet sind, setzen wir den Klon in die Growbox.</string>
-    <string name="home_start">Start</string>
+    <string name="home_start">Beginnen</string>
     <string name="setting_delete_device">Nach dem Löschen dieses Geräts wird es auf die Werkseinstellungen zurückgesetzt und ist nicht mehr mit Ihrem Konto verbunden. Ihre Anpflanzungsaufzeichnungen werden jedoch nicht gelöscht.</string>
     <string name="setting_replant_tips">Nachdem Sie auf \'Replant\' geklickt haben, wechselt das Gerät in den Pflanzmodus für die erste Woche.</string>
     <string name="firmware_update_compulsion">Bitte aktualisieren Sie Ihre Firmware, um ein optimales Benutzererlebnis zu gewährleisten.</string>
@@ -213,7 +213,7 @@
     <string name="string_288">Verlassen</string>
     <string name="string_290">Nein, danke</string>
     <string name="string_291">Jetzt abonnieren</string>
-    <string name="string_299">Hallo Abby</string>
+    <string name="string_299">Hey Abby</string>
     <string name="string_631">Verbindungsfehler, versuchen Sie, das Gerät zu löschen und erneut zu koppeln</string>
     <string name="string_1142">Sind Sie sicher, dass Sie das Gerät löschen wollen?</string>
     <string name="string_1144">Kein USB ausgewählt</string>
@@ -520,7 +520,9 @@
     <string name="decs_two">\Gießen Sie in der ersten Woche nur die Hälfte des Düngers. Geben Sie die beiden auf gegenüberliegenden Seiten des Tanks hinzu, um eine chemische Reaktion zu vermeiden. \n\n*Hinweis: Sie müssen die Pakete zuerst aufschneiden\n</string>
     <string name="string_1956">\Gießen Sie in der ersten Woche nur die Hälfte des Düngers. Geben Sie die beiden auf gegenüberliegenden Seiten des Tanks hinzu, um eine chemische Reaktion zu vermeiden. \n\n *Hinweis: Sie müssen die Pakete zuerst aufschneiden\n</string>
     <string name="week">Woche</string>
+    <string name="weeks">Woche</string>
     <string name="day">Tag</string>
+    <string name="days">Tag</string>
     <string name="days_ago">vor %1$s Tagen</string>
     <string name="hours_ago">vor %1$s Stunden</string>
     <string name="minutes_ago">vor %1$s Minuten</string>
@@ -692,7 +694,7 @@
     <string name="string_2023">Prüfen</string>
     <string name="string_2028">Düngemittel</string>
     <string name="string_2030">Herzlichen Glückwunsch - alles ist startklar. Fangen wir an!</string>
-    <string name="string_2031">Anbau starten</string>
+    <string name="string_2031">Anbau Beginnen</string>
     <string name="string_2032">Woche-\nTag-</string>
     <string name="string_2034">ENVIR</string>
     <string name="string_2043">Beitrag zum Trend</string>
@@ -1050,5 +1052,7 @@
     <string name="seed_check">Saatgutkontrolle</string>
     <string name="change_seed">Ändern Sie das Saatgut</string>
     <string name="chart">Tabelle</string>
+    <string name="task">Aufgaben-Einstellungen</string>
+    <string name="plant_profile">Pflanzenprofil</string>
 
 </resources>

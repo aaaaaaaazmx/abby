@@ -21,7 +21,7 @@
     <string name="setting_sub_time">Sin servicio digital</string>
     <string name="setting_sub_charge_time">Ampliar la validez del servicio digital</string>
     <string name="home_great_tips">Estupendo. Ahora que estás preparado, vamos a poner el clon en la caja de cultivo.</string>
-    <string name="home_start">Inicio</string>
+    <string name="home_start">Comienza</string>
     <string name="setting_delete_device">Al eliminar la data del dispositivo, se restablecerán los ajustes de fábrica y ya no estará asociado a tu cuenta. Sin embargo, tus registros de plantación no serán eliminados.</string>
     <string name="setting_replant_tips">Tras hacer clic en "Replant", el dispositivo pasará al modo de plantación de la primera semana.</string>
     <string name="firmware_update_compulsion">Actualice su firmware para garantizar la mejor experiencia de usuario.</string>
@@ -520,7 +520,9 @@
     <string name="decs_two">\nDurante la primera semana, vierte sólo la mitad del abono. Añade los dos en los lados opuestos del tanque para evitar una reacción química. \Nota: primero debes abrir los paquetes.</string>
     <string name="string_1956">\n Durante la primera semana, vierte sólo la mitad del abono. Añade los dos en los lados opuestos del tanque para evitar una reacción química. \n *Nota: primero debes abrir los paquetes.</string>
     <string name="week">Semana</string>
+    <string name="weeks">Semana</string>
     <string name="day">Día</string>
+    <string name="days">Día</string>
     <string name="days_ago">Hace %1$s días</string>
     <string name="hours_ago">Hace %1$s horas</string>
     <string name="minutes_ago">Hace %1$s minutos</string>
@@ -908,7 +910,7 @@
     <string name="string_2420">Generar vista previa</string>
     <string name="string_2421">5-30 segundos permitidos</string>
     <string name="string_2422">10-120 minutos permitidos</string>
-    <string name="home_the_will_last">Toca la pantalla de marcación 3 veces para que vuelvas a conectarte.</string>
+    <string name="home_the_will_last">The Deshumidificación will last for 1 minutes for the best reuslts then the fan will go back to Auto mode</string>
     <string name="home_in_very_rare_case">En muy raras ocasiones, la luz no funciona en la fecha prevista debido a un problema de conexión. Si crees que el horario de iluminación no está correcto, haz clic en refrescar.\n</string>
     <string name="home_note_you_can">Nota: sólo se puede actualizar una vez al día.</string>
     <string name="string_2423">Legado</string>
@@ -1048,5 +1050,7 @@
     <string name="seed_check">Control de semillas</string>
     <string name="change_seed">Cambiar la semilla</string>
     <string name="chart">Tabla</string>
+    <string name="task">Configuración de tareas</string>
+    <string name="plant_profile">Perfil de la planta</string>
 
 </resources>

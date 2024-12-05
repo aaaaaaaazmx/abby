@@ -28,7 +28,7 @@
                 <com.cl.common_base.widget.FeatureTitleBar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:title="Plant Profile" />
+                    app:title="@string/plant_profile" />
 
                 <TextView
                     android:layout_width="wrap_content"

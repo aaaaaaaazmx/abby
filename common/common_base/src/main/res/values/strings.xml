@@ -1103,6 +1103,8 @@
     <string name="seed_check">Seed Check</string>
     <string name="change_seed">Change the seed</string>
     <string name="chart">Chart</string>
+    <string name="task">Task Settings</string>
+    <string name="plant_profile">Plant Profile</string>
     <string name="light_info">The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them</string>
 
 </resources>

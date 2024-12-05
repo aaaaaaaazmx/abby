@@ -809,12 +809,12 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:lines="1"
                     android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeMinTextSize="8sp"
                     android:autoSizeMaxTextSize="9sp"
-                    tools:text="Digtal Assetsasdasasdasd"
+                    tools:text="Digtal"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="13dp"
                     android:id="@+id/tv_ox"

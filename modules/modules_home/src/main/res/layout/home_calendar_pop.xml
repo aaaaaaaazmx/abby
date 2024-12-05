@@ -65,6 +65,12 @@
             android:orientation="horizontal">
 
             <TextView
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeTextType="uniform"
+                android:lines="1"
                 android:textColor="#F72E47"
                 android:id="@+id/tv_cancel"
                 android:textSize="18sp"
@@ -84,6 +90,12 @@
                 android:layout_height="match_parent" />
 
             <TextView
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:autoSizeMaxTextSize="18sp"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeTextType="uniform"
+                android:lines="1"
                 android:textColor="@color/mainColor"
                 android:textSize="18sp"
                 android:id="@+id/tv_confirm"
