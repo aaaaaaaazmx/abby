@@ -40,6 +40,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:lines="1"
+            android:autoSizeMaxTextSize="17sp"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeTextType="uniform"
             android:gravity="center"
             android:ellipsize="end"
             android:maxLines="1"

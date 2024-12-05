@@ -88,12 +88,12 @@ class NotifyPop(context: Context, val activity: FragmentActivity, private val ge
 
             // Recommended: Turn on Calendar and Alert notifications to stay informed about important updates.
             tvDesc.text = buildSpannedString {
-                bold { append(context.getString(R.string.string_247)) }
-                append(context.getString(R.string.string_248))
-                bold { append(context.getString(R.string.string_249)) }
-                append(context.getString(R.string.string_250))
-                bold { append(context.getString(R.string.string_251)) }
-                append(context.getString(R.string.string_252))
+                bold { append("${context.getString(R.string.string_247)} ") }
+                append("${context.getString(R.string.string_248)} ")
+                bold { append("${context.getString(R.string.string_249)} ") }
+                append("${context.getString(R.string.string_250)} ")
+                bold { append("${context.getString(R.string.string_251)} ") }
+                append("${context.getString(R.string.string_252)} ")
             }
 
             switchNotify.setSafeOnClickListener {

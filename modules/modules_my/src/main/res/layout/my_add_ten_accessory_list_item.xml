@@ -86,6 +86,10 @@
             android:layout_height="25dp"/>
 
         <TextView
+            android:lines="1"
+            android:autoSizeMaxTextSize="10sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
             android:id="@+id/tv_buy"
             android:textColor="@color/mainColor"
             android:textSize="10sp"

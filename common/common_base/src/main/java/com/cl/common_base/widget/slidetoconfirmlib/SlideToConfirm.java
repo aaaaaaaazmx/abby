@@ -3,6 +3,7 @@ package com.cl.common_base.widget.slidetoconfirmlib;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,13 +17,16 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.ScrollingMovementMethod;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -257,11 +261,12 @@ public class SlideToConfirm extends RelativeLayout {
 
     private void addEngagedTextView() {
         mEngagedTextView = new TextView(mContext);
-        int width = getMeasuredWidth() - mSliderWidth;
-        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layoutParams.addRule(RelativeLayout.TEXT_ALIGNMENT_CENTER);
+        int width = getMeasuredWidth() - mSliderWidth * 2; // 左右各减去一个滑块宽度
+        LayoutParams layoutParams = new LayoutParams(width, LayoutParams.MATCH_PARENT);
+        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT); // 居中放置
         mEngagedTextView.setLayoutParams(layoutParams);
 
+        // 设置文本居中对齐
         mEngagedTextView.setGravity(Gravity.CENTER);
         mEngagedTextView.setText(mEngagedText);
         mEngagedTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mEngagedTextSize);
@@ -269,19 +274,42 @@ public class SlideToConfirm extends RelativeLayout {
         if (mEngagedTextTypeFace != null) {
             mEngagedTextView.setTypeface(mEngagedTextTypeFace);
         }
-        mEngagedTextView.setPadding(0,0,0,0);
-        //        // 启用自动缩放文本
-//        mEngagedTextView.setAutoSizeTextTypeWithDefaults(TextView.AUTO_SIZE_TEXT_TYPE_UNIFORM);
-//
-//        // 设置自动缩小的最小和最大文本大小（以像素为单位）1
-//        mEngagedTextView.setAutoSizeTextTypeUniformWithConfiguration(
-//                5,  // 最小文本大小（12px）
-//                30,  // 最大文本大小（30px）
-//                1,   // 文字大小增量（每次调整1px）
-//                TypedValue.COMPLEX_UNIT_PX
-//        );
+
+        // 设置为单行显示
+        mEngagedTextView.setSingleLine(true);
+        // 禁用省略号
+        mEngagedTextView.setEllipsize(null);
+
         this.addView(mEngagedTextView);
+
+        // 在文本设置完成后，确保文本适应宽度
+        mEngagedTextView.post(new Runnable() {
+            @Override
+            public void run() {
+                adjustTextSize();
+            }
+        });
     }
+
+    private void adjustTextSize() {
+        int availableWidth = mEngagedTextView.getWidth();
+        TextPaint paint = mEngagedTextView.getPaint();
+        float textWidth = paint.measureText(mEngagedText);
+
+        if (textWidth > availableWidth) {
+            float scaleFactor = availableWidth / textWidth;
+            float newTextSize = mEngagedTextView.getTextSize() * scaleFactor;
+            mEngagedTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, newTextSize);
+        }
+    }
+
+
+
+
+
+
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private void init() {

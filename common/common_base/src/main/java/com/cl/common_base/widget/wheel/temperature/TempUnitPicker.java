@@ -52,7 +52,7 @@ public class TempUnitPicker extends WheelPicker<String> {
         boolean isMetric = Prefs.INSTANCE.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false);
         List<String> list = new ArrayList<>();
         if (!isMetric) {
-            list.add("F");
+            list.add("℉");
         } else {
             list.add("°C");
         }
@@ -63,7 +63,7 @@ public class TempUnitPicker extends WheelPicker<String> {
         boolean isMetric = Prefs.INSTANCE.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false);
         List<String> list = new ArrayList<>();
         if (!isMetric) {
-            list.add("F");
+            list.add("℉");
         } else {
             list.add("°C");
         }

@@ -18,7 +18,7 @@
             android:layout_height="match_parent">
 
             <com.cl.common_base.widget.FeatureTitleBar
-                app:title="Seed Check"
+                app:title="@string/seed_check"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 

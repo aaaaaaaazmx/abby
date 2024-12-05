@@ -72,7 +72,7 @@
 
                     <TextView
                         android:id="@+id/tv_space"
-                        android:layout_width="120dp"
+                        android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="18dp"
@@ -118,7 +118,7 @@
 
                     <TextView
                         android:id="@+id/tv_type"
-                        android:layout_width="120dp"
+                        android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="18dp"
@@ -189,7 +189,7 @@
 
                     <TextView
                         android:id="@+id/tv_number_plant"
-                        android:layout_width="120dp"
+                        android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="18dp"
@@ -235,7 +235,7 @@
 
                     <TextView
                         android:id="@+id/tv_led"
-                        android:layout_width="120dp"
+                        android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="18dp"

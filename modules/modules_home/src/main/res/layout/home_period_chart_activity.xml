@@ -24,7 +24,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:title="Chart" />
+                app:title="@string/chart" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_marginTop="17dp"

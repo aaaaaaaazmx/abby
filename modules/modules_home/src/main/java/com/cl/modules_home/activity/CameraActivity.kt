@@ -172,7 +172,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     private fun showErrorToast() {
         runOnUiThread {
-            com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.no_data))
+            com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.cl.common_base.R.string.no_data))
         }
     }
 
@@ -316,12 +316,12 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             /*ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + "Pairing Successful"
+                getString(com.cl.common_base.R.string.ipc_stop_talk) + "Pairing Successful"
             )*/
         } else {
             ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_stop_talk) + getString(com.cl.common_base.R.string.string_1453)
+                getString(com.cl.common_base.R.string.ipc_stop_talk) + getString(com.cl.common_base.R.string.string_1453)
             )
         }
     }
@@ -330,12 +330,12 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             /*ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + "Pairing Successful"
+                getString(com.cl.common_base.R.string.ipc_start_talk) + "Pairing Successful"
             )*/
         } else {
             ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.ipc_start_talk) + getString(com.cl.common_base.R.string.string_1453)
+                getString(com.cl.common_base.R.string.ipc_start_talk) + getString(com.cl.common_base.R.string.string_1453)
             )
         }
     }
@@ -367,7 +367,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private fun handleClarity(msg: Message) {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             binding.cameraQuality.text =
-                if (videoClarity == ICameraP2P.HD) getString(com.tuya.smart.android.demo.camera.R.string.hd) else getString(com.tuya.smart.android.demo.camera.R.string.sd)
+                if (videoClarity == ICameraP2P.HD) getString(com.cl.common_base.R.string.hd) else getString(com.cl.common_base.R.string.sd)
         } else {
             ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.string_1453))
         }
@@ -377,21 +377,21 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS) {
             preview();
         } else {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
+            ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.connect_failed))
         }
     }
 
     private fun handleGetVideoClarity(msg: Message) {
         if (msg.arg1 == com.tuya.smart.android.demo.camera.utils.Constants.ARG1_OPERATE_SUCCESS && !TextUtils.isEmpty(currVideoClarity)) {
-            var info = getString(com.tuya.smart.android.demo.camera.R.string.other)
+            var info = getString(com.cl.common_base.R.string.othesr)
             if (currVideoClarity == ICameraP2P.HD.toString()) {
-                info = getString(com.tuya.smart.android.demo.camera.R.string.hd)
+                info = getString(com.cl.common_base.R.string.hd)
             } else if (currVideoClarity == ICameraP2P.STANDEND.toString()) {
-                info = getString(com.tuya.smart.android.demo.camera.R.string.sd)
+                info = getString(com.cl.common_base.R.string.sd)
             }
             /*ToastUtil.shortToast(
                 this@CameraActivity,
-                getString(com.tuya.smart.android.demo.camera.R.string.get_current_clarity) + info
+                getString(com.cl.common_base.R.string.get_current_clarity) + info
             )*/
         } else {
             ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.string_1453))
@@ -835,7 +835,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         // 默认加载为今天的。
         logI("queryDayByMonthClick currentDate = $currentDate")
         if (mCameraP2P?.isConnecting == false) {
-            ToastUtil.shortToast(this@CameraActivity, getString(com.tuya.smart.android.demo.camera.R.string.connect_first))
+            ToastUtil.shortToast(this@CameraActivity, getString(com.cl.common_base.R.string.connect_first))
             return
         }
         val substring = currentDate.split("/".toRegex()).toTypedArray()
@@ -869,7 +869,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                         }
                     })
             } catch (e: Exception) {
-                com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.input_err))
+                com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.cl.common_base.R.string.input_err))
             }
         }
 
@@ -906,7 +906,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     }
 
     private fun showNotSupportToast() {
-        com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.not_support_device))
+        com.cl.common_base.widget.toast.ToastUtil.shortShow(getString(com.cl.common_base.R.string.not_support_device))
     }
 
 

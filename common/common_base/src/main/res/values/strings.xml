@@ -1073,9 +1073,36 @@
     <string name="planting_chemical_contaminants">Chemical Contaminants</string>
 
     <string name="growspace">Grow Spaces</string>
+    <string name="pairthecamera">Pair the Camera</string>
     <string name="add_an_accessory">Add an Accessory</string>
     <string name="pair_the_ph_meter">Pair the PH Meter</string>
     <string name="add_automation">Add Automation</string>
     <string name="string_16167">Searching for the device...\nPlease press the on/off button for 3-5 seconds till you see the Bluetooth icon.</string>
+    <string name="camera_decs">Plug the BudCam in via the Hey abby smart USB port. Use the camera to scan the QR code shown in the Hey abby app. \n\n1、Confirm that the indicator light is blinking rapidly or that you hear a beep
+\n\n2、Place the QR code in front of the camera, keeping a distance of 15-20cm
+\n\n3、Wait 5-30 seconds after hearing 3 consecutive beeps</string>
+    <string name="storangoptions">Storage Options</string>
+    <string name="gen">Generate</string>
+    <string name="watermark">Watermark</string>
+    <string name="connect_failed">Connect failed</string>
+    <string name="no_data">No data for query date</string>
+    <string name="ipc_stop_talk">Stop talk</string>
+    <string name="ipc_start_talk">Start talk</string>
+    <string name="sd">SD</string>
+    <string name="hd">HD</string>
+    <string name="othesr">Other</string>
+    <string name="connect_first">Please connect device first</string>
+    <string name="input_err">Input error</string>
+    <string name="not_support_device">The device is not supported</string>
+    <string name="smartsss">Smart Outlets Settings</string>
+    <string name="grow_space_setup">Grow space setup</string>
+    <string name="plant_setup">plant setup</string>
+    <string name="off_line_help">Off-Line help</string>
+    <string name="digital_assets">Digital Assets</string>
+    <string name="light">Lighting</string>
+    <string name="seed_check">Seed Check</string>
+    <string name="change_seed">Change the seed</string>
+    <string name="chart">Chart</string>
+    <string name="light_info">The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them</string>
 
 </resources>

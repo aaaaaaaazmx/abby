@@ -21,7 +21,7 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title="Pair the Camera" />
+                app:title="@string/pairthecamera" />
 
             <TextView
                 android:id="@+id/tv_desc"
@@ -30,9 +30,7 @@
                 android:layout_marginStart="25dp"
                 android:layout_marginTop="35dp"
                 android:layout_marginEnd="25dp"
-                android:text="Plug the BudCam in via the Hey abby smart USB port. Use the camera to scan the QR code shown in the Hey abby app. \n\n1、Confirm that the indicator light is blinking rapidly or that you hear a beep
-\n\n2、Place the QR code in front of the camera, keeping a distance of 15-20cm
-\n\n3、Wait 5-30 seconds after hearing 3 consecutive beeps"
+                android:text="@string/camera_decs"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -35,8 +35,14 @@
                     app:layout_constraintTop_toTopOf="@+id/iv_close" />
 
                 <TextView
+                    android:gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:autoSizeMaxTextSize="19sp"
+                    android:autoSizeMinTextSize="10sp"
+                    android:autoSizeTextType="uniform"
                     android:id="@+id/tv_plant_name"
-                    android:layout_width="wrap_content"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
                     android:text="@string/string_2008"

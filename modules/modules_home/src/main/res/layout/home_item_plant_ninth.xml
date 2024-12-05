@@ -536,6 +536,12 @@
                     app:layout_constraintTop_toBottomOf="@+id/cl_gth" />
 
                 <Button
+                    android:paddingEnd="3dp"
+                    android:paddingStart="3dp"
+                    android:autoSizeMaxTextSize="15sp"
+                    android:autoSizeMinTextSize="10sp"
+                    android:lines="1"
+                    android:autoSizeTextType="uniform"
                     android:id="@+id/btn_skip"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
@@ -552,6 +558,12 @@
                     app:layout_constraintTop_toBottomOf="@+id/iv_seed" />
 
                 <Button
+                    android:paddingEnd="3dp"
+                    android:paddingStart="3dp"
+                    android:autoSizeMaxTextSize="15sp"
+                    android:autoSizeMinTextSize="10sp"
+                    android:lines="1"
+                    android:autoSizeTextType="uniform"
                     android:id="@+id/btn_check"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
@@ -797,14 +809,19 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    tools:text="Digtal Assets"
+                    android:gravity="center_vertical"
+                    android:lines="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeMaxTextSize="9sp"
+                    tools:text="Digtal Assetsasdasasdasd"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginEnd="13dp"
                     android:id="@+id/tv_ox"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
-                    android:text='@{viewModel.userDetail.data.spaceType.equals("box") ? "Digtal Assets" : "Lighting"}'
+                    android:text='@{viewModel.userDetail.data.spaceType.equals("box") ? @string/digital_assets : @string/light }'
                     android:textColor="@color/mainColor"
                     android:textSize="9sp"
                     android:textStyle="bold"
@@ -881,6 +898,11 @@ Day1" />
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:gravity="center_vertical"
+                    android:lines="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeMaxTextSize="12sp"
                     android:id="@+id/tv_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

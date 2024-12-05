@@ -537,7 +537,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
                         asCustom(
-                            BaseCenterPop(context = it, content = "The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them", isShowCancelButton = false)
+                            BaseCenterPop(context = it, content = context?.getString(com.cl.common_base.R.string.light_info), isShowCancelButton = false)
                         ).show()
                     }
                 }
@@ -4298,7 +4298,6 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                     override fun onFailure(i: Int, i1: Int, i2: Int) {
                         activity?.runOnUiThread {
-                            //ToastUtil.shortShow(getString(com.tuya.smart.android.demo.camera.R.string.connect_failed))
                             mViewMode.tuYaUtils.queryValueByDPID("", DPConstants.PRIVATE_MODE)
                         }
                     }
