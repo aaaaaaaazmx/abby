@@ -21,7 +21,7 @@
                 android:id="@+id/featureTitleBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title="Redeem your Oxygen Coins" />
+                app:title="@string/redeem" />
 
             <TextView
                 android:id="@+id/tv_description"

@@ -433,7 +433,7 @@
 
     <string name="string_1703">Subscription Expired</string>
     <string name="string_1704">Subscription Active</string>
-    <string name="string_1705">Subscription valid till </string>
+    <string name="string_1705">Subscription valid till\u00A0</string>
 
     <string name="string_1710">If you would like to extend your growing service, please go to our official website </string>
     <string name="string_1711"> to purchase the option most suitable for you. This service includes our one-on-one support, growing pack (fertilizers, basket, carbon filters, etc), and device connectivity to our server.</string>
@@ -523,7 +523,7 @@
     <string name="string_1863">Send now</string>
     <string name="string_1864">Not in the discord community yet? Click </string>
     <string name="string_1865">here</string>
-    <string name="string_1866"> to join.</string>
+    <string name="string_1866">\u00A0to join.</string>
     <string name="string_1867">Binding successful.</string>
     <string name="string_1869">The account you entered does not exist</string>
     <string name="string_1870">Send successfully</string>
@@ -533,7 +533,7 @@
     <string name="string_1876">Slide to unlock</string>
 
     <string name="string_1879">Your coupon code has been copied!</string>
-    <string name="string_1880">  Free</string>
+    <string name="string_1880">\u00A0Free</string>
     <string name="string_1881">Connected</string>
     <string name="string_1882">Disconnected</string>
 
@@ -568,8 +568,8 @@
     <string name="hours_ago">%1$s hours ago</string>
     <string name="minutes_ago">%1$s minutes ago</string>
     <string name="second_ago">%1$s second ago</string>
-    <string name="string_oxy_g">%1$s g</string>
-    <string name="string_add_g">+%1$s g</string>
+    <string name="string_oxy_g">%1$sg</string>
+    <string name="string_add_g">+%1$sg</string>
 
     <string name="home_reedee_desc_ont">\nRedeemed Oxygen Coins：%1$s\nAccount Balance: %2$s\nE-Gift Value:%3$s%4$s\n</string>
     <string name="home_reedee_desc_two">\nRedeemed Oxygen Coins：%1$s\nAccount Balance: %2$s\nE-Gift Value:%3$s%4$s\n\nA e-gift card secrect code will send to your email %5$s\n</string>
@@ -1046,8 +1046,8 @@
     <string name="profile">Profile</string>
     <string name="journey">My Journey</string>
     <string name="shopnow">Shop Now</string>
-    <string name="income">Income </string>
-    <string name="expense">Expense  </string>
+    <string name="income">Income\u00A0</string>
+    <string name="expense">Expense\u00A0</string>
     <string name="renew_subscription">Renew Subscription</string>
     <string name="renew_subscription_info">Please click the purchase button to go to our website to complete purchase of the subscription.</string>
     <string name="renew_subscription_infos">After purchase, you will receive a 8 digit code via email, please enter the code below to activate your subscription.</string>
@@ -1105,6 +1105,7 @@
     <string name="chart">Chart</string>
     <string name="task">Task Settings</string>
     <string name="plant_profile">Plant Profile</string>
+    <string name="redeem">Redeem your Oxygen Coins</string>
     <string name="light_info">The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them</string>
 
 </resources>

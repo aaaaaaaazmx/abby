@@ -401,7 +401,7 @@
     <string name="string_1701">Erfolg</string>
     <string name="string_1703">Abonnement Abgelaufen</string>
     <string name="string_1704">Abonnement Aktiv</string>
-    <string name="string_1705">Abonnement gültig bis </string>
+    <string name="string_1705">Abonnement gültig bis\u00A0</string>
     <string name="string_1710">Wenn Sie Ihre Anbau-Services erweitern möchten, besuchen Sie bitte unsere offizielle Website</string>
     <string name="string_1711">um die für Sie am besten geeignete Option zu erwerben. Dieser Service umfasst unsere persönliche Unterstützung, das Anbaupaket (Dünger, Korb, Kohlefilter usw.) und die Verbindung des Geräts mit unserem Server.</string>
     <string name="string_1712">Nach dem Kauf erhalten Sie einen Verifizierungscode per E-Mail. Geben Sie den Code unten ein, um die Gültigkeit Ihres Dienstes entsprechend zu verlängern.</string>
@@ -488,7 +488,7 @@
     <string name="string_1863">Jetzt abschicken</string>
     <string name="string_1864">Noch nicht in der Discord-Community? Klicken Sie hier, umbeizutreten.</string>
     <string name="string_1865">hier</string>
-    <string name="string_1866">um beizutreten.</string>
+    <string name="string_1866">\u00A0um beizutreten.</string>
     <string name="string_1867">Erfolgreich verbunden.</string>
     <string name="string_1869">Das von Ihnen eingegebene Konto existiert nicht</string>
     <string name="string_1870">Erfolgreich versendet.</string>
@@ -496,7 +496,7 @@
     <string name="string_1875">Ich verstehe</string>
     <string name="string_1876">Schieben zum Entriegeln</string>
     <string name="string_1879">Ihr Gutscheincode wurde kopiert!</string>
-    <string name="string_1880">  Kostenlos</string>
+    <string name="string_1880">\u00A0Kostenlos</string>
     <string name="string_1881">Verbunden</string>
     <string name="string_1882">Getrennt</string>
     <string name="string_1888">Digital</string>
@@ -527,8 +527,8 @@
     <string name="hours_ago">vor %1$s Stunden</string>
     <string name="minutes_ago">vor %1$s Minuten</string>
     <string name="second_ago">vor %1$s Sekunden</string>
-    <string name="string_oxy_g">%1$s g</string>
-    <string name="string_add_g">#ERROR!</string>
+    <string name="string_oxy_g">%1$sg</string>
+    <string name="string_add_g">+%1$sg</string>
     <string name="home_reedee_desc_ont">\nEingelöste Oxygen Coins：%1$s\nKontostand: %2$s\nE-Geschenkwert:%3$s%4$s\n</string>
     <string name="home_reedee_desc_two">\nEingelöste Oxygen Coins：%1$s\nKontostand: %2$s\nE-Geschenkwert:%3$s%4$s\n\nEin Geheimcode für eine elektronische Geschenkkarte wird an Ihre E-Mail geschickt %5$s\n</string>
     <string name="home_usb_desc">\nDiese Option wurde entwickelt, um die Leistung von Zubehör von Drittanbietern zu steuern.\nSie sind derzeit mit einem hey abby smart Zubehör verbunden, bitte entfernen Sie es zuerst aus dem Gerätemanager.\n</string>
@@ -1001,8 +1001,8 @@
     <string name="profile">Profil</string>
     <string name="journey">Meine Erfahrung</string>
     <string name="shopnow">Jetzt einkaufen</string>
-    <string name="income">Einkommen </string>
-    <string name="expense">Ausgaben  </string>
+    <string name="income">Einkommen\u00A0</string>
+    <string name="expense">Ausgaben\u00A0</string>
     <string name="renew_subscription">Abonnement verlängern</string>
     <string name="renew_subscription_info">Bitte klicken Sie auf die Schaltfläche "Kaufen", um zu unserer Website zu gelangen und den Kauf des Abonnements abzuschließen.</string>
     <string name="renew_subscription_infos">Nach dem Kauf erhalten Sie einen 8-stelligen codeper E-Mail. Bitte geben Sie den Code unten ein, um lhrAbonnement zu aktivieren.</string>
@@ -1054,5 +1054,6 @@
     <string name="chart">Tabelle</string>
     <string name="task">Aufgaben-Einstellungen</string>
     <string name="plant_profile">Pflanzenprofil</string>
+    <string name="redeem">Lösen Sie Ihre Oxygen Coins ein</string>
 
 </resources>
