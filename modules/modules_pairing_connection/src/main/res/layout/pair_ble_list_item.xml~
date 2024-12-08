@@ -7,7 +7,7 @@
     <data>
         <variable
             name="data"
-            type="com.bhm.ble.device.BleDevice" />
+            type="com.cl.modules_pairing_connection.request.PairBleData" />
 
     </data>
 
@@ -16,26 +16,19 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:maxLines="2"
             android:textStyle="bold"
-            android:text='@{data.deviceName + "," + data.deviceAddress }'
+            android:text="@{data.subName}"
             app:layout_constraintBottom_toBottomOf="@+id/svt_add"
             app:layout_constraintTop_toTopOf="@+id/svt_add"
-            tools:text="adasdasdasda,asdad123123123asdad123123123"
+            tools:text="hey abby i need wifi"
             android:id="@+id/tv_ble_nane"
             android:textColor="#161B19"
             android:textSize="15sp"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             />
 
         <com.cl.common_base.widget.SvTextView
-            android:paddingEnd="3dp"
-            android:paddingStart="3dp"
-            android:lines="1"
-            android:autoSizeMinTextSize="10sp"
-            android:autoSizeMaxTextSize="15sp"
-            android:autoSizeTextType="uniform"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="15dp"
@@ -44,7 +37,7 @@
             app:svSolidColor="@color/mainColor"
             app:svRadius="100dp"
             android:text="@string/string_2057"
-            android:textSize="10sp"
+            android:textSize="15sp"
             android:gravity="center"
             android:textColor="@color/white"
             android:layout_width="70dp"

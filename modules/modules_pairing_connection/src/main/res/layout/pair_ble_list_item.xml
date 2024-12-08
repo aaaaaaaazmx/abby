@@ -29,6 +29,12 @@
             />
 
         <com.cl.common_base.widget.SvTextView
+            android:paddingEnd="3dp"
+            android:paddingStart="3dp"
+            android:lines="1"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="15sp"
+            android:autoSizeTextType="uniform"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="15dp"

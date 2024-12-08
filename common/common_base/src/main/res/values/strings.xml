@@ -6,7 +6,7 @@
     <string name="pair_please_confirm_your_selection">Please confirm your selection</string>
     <string name="my_solo">1 on 1 Support</string>
     <string name="curing_unlock_tips">During the drying period, we can use the wet weight as a reference to help us determine when we\'ve satisfied the drying requirements.</string>
-    <string name="unlock_curing">You\'re about to unlock curing </string>
+    <string name="unlock_curing">You\'re about to unlock curing\u00A0</string>
     <string name="start_growing">Start your next growing journey</string>
     <string name="complete_desc">Harvest #%s Complete</string>
     <string name="profile_photo">Profile Photo</string>
@@ -22,9 +22,9 @@
     <string name="about_policy">Privacy Policy</string>
     <string name="setting_sub_time">No Digital Service</string>
     <string name="setting_sub_charge_time">Extend Digital Service Validity</string>
-    <string name="home_great_tips">Great! Now that you\'re prepared, let‘s put the clone in the grow box. </string>
+    <string name="home_great_tips">Great! Now that you\'re prepared, let‘s put the clone in the grow box.\u00A0</string>
     <string name="home_start">Start</string>
-    <string name="setting_delete_device">After deleting this device, it will be restored to factory settings and will no longer be associated with your account. Your planting records, however, will not be deleted. </string>
+    <string name="setting_delete_device">After deleting this device, it will be restored to factory settings and will no longer be associated with your account. Your planting records, however, will not be deleted.\u00A0</string>
     <string name="setting_replant_tips">After clicking \'Replant\', the device will switch to first week planting mode.</string>
     <string name="firmware_update_compulsion">Please update your firmware to ensure the best user experience</string>
     <string name="setting_update_success">Update Successful</string>
@@ -35,11 +35,11 @@
     <string name="private_policy">Your privacy is important to us. By continuing to use our product and services, you are confirming that you have read and accepted our</string>
     <string name="terms_us">Terms of Use</string>
     <string name="policy">Privacy Policy</string>
-    <string name="send_email">We sent an email to </string>
-    <string name="send_phone">We sent an OTP to </string>
-    <string name="send_email_register"> Enter the verification code sent to your email address.</string>
-    <string name="send_email_for_sms_register"> Enter the verification code sent to your telephone.</string>
-    <string name="register_email_tips"> Enter the verification code sent to your email address. Then reset your password. </string>
+    <string name="send_email">We sent an email to\u00A0</string>
+    <string name="send_phone">We sent an OTP to\u00A0</string>
+    <string name="send_email_register">\u00A0Enter the verification code sent to your email address.</string>
+    <string name="send_email_for_sms_register">\u00A0Enter the verification code sent to your telephone.</string>
+    <string name="register_email_tips">\u00A0Enter the verification code sent to your email address. Then reset your password.\u00A0</string>
     <string name="register_email_dont_tips">Didn‘t receive email?</string>
     <string name="login_account_empty">Please enter username</string>
     <string name="login_password_empty">Please enter password</string>
@@ -190,19 +190,19 @@
     <string name="string_234">Day 6</string>
     <string name="string_235">Day 7</string>
     <string name="string_237">Please email us at growsupport@heyabby.com. The email is already copied to your clipboard.</string>
-    <string name="string_238">Fill the tank with three gallons of water. Make sure the water level is between the second and third sensor. </string>
-    <string name="string_239">Fill the tank with 12L of water. Make sure the water level is between the second and third sensor. </string>
+    <string name="string_238">Fill the tank with three gallons of water. Make sure the water level is between the second and third sensor.\u00A0</string>
+    <string name="string_239">Fill the tank with 12L of water. Make sure the water level is between the second and third sensor.\u00A0</string>
     <string name="string_240">Searching...</string>
     <string name="string_241">I don’t know</string>
     <string name="string_242">To ensure a good user experience, please upgrade your device firmware in time.</string>
     <string name="string_244">This app requires notification permission to keep you updated with the latest information. Please enable notification permissions in the settings.</string>
     <string name="string_245">Notification permission granted</string>
     <string name="string_246">Notification permission denied</string>
-    <string name="string_247">Recommended: </string>
-    <string name="string_248">Turn on </string>
-    <string name="string_249">Calendar </string>
-    <string name="string_250">and </string>
-    <string name="string_251">Alert </string>
+    <string name="string_247">Recommended:\u00A0</string>
+    <string name="string_248">Turn on\u00A0</string>
+    <string name="string_249">Calendar\u00A0</string>
+    <string name="string_250">and\u00A0</string>
+    <string name="string_251">Alert\u00A0</string>
     <string name="string_252">notifications to stay informed about important updates.</string>
 
     <string name="string_255">Updating</string>
@@ -261,7 +261,7 @@
     <string name="string_1348">1.Check if abby is plugged in and turned on</string>
     <string name="string_1349">2.Check your Wi-Fi network connection</string>
     <string name="string_1350">3.Try to power off and restart your abby</string>
-    <string name="string_1351">4.If the problem persists, try to </string>
+    <string name="string_1351">4.If the problem persists, try to\u00A0</string>
     <string name="string_1352">Reconnect abby</string>
     <string name="string_1354">You\'re about to set the intake fan to its maximum level. Be aware that this may cause \'wind burn,\' leading to rapid water loss in the leaves. We recommend keeping the intake fan level below 7 during the plant\'s first four weeks.</string>
     <string name="string_1355">Caution! Turning off the air pump may result in the plant roots experiencing a lack of oxygen. Are you sure you want to continue?</string>
@@ -273,7 +273,7 @@
     <string name="string_1368">I am ready</string>
     <string name="string_1369">Private Mode</string>
     <string name="string_1370">The camera is offline</string>
-    <string name="string_1371">To ensure your first grow runs smoothly, we will be extending your subscription until </string>
+    <string name="string_1371">To ensure your first grow runs smoothly, we will be extending your subscription until\u00A0</string>
     <string name="string_1375">Check the seed status in</string>
     <string name="string_1380">Thr grow light is off during this stage.</string>
     <string name="string_1381">Do you want to skip the germination wait?</string>
@@ -319,7 +319,7 @@
     <string name="string_1435">Photoperiod strains are more common. Unless you’ve confirmed with your retailer that it is autoflower, please select “photoperiod” here.\n</string>
     <string name="string_1436">Hey abby can generate an algorithm to tailor for either type.</string>
     <string name="string_1437">Not Sure?</string>
-    <string name="string_1438">Please check with your local retailer or seed bank. You can also usually find this information in your order invoice. \n\n Note: choosing the wrong setting can delay flowering. We strongly encourage you to confirm with your provider first. </string>
+    <string name="string_1438">Please check with your local retailer or seed bank. You can also usually find this information in your order invoice. \n\n Note: choosing the wrong setting can delay flowering. We strongly encourage you to confirm with your provider first.\u00A0</string>
     <string name="string_1443">Photos</string>
     <string name="string_1941">Trends</string>
     <string name="string_1444">Videos</string>
@@ -382,21 +382,21 @@
     <string name="string_1613">Can\'t find your abby currently？</string>
     <string name="string_1614">Reconnect</string>
     <string name="string_1615">Searching for the device...\n</string>
-    <string name="string_1616">Press and hold the reset button for 3-5 seconds using a tool until the blue indicator begins flashing. </string>
+    <string name="string_1616">Press and hold the reset button for 3-5 seconds using a tool until the blue indicator begins flashing.\u00A0</string>
     <string name="string_1617">Press and hold the \"+\" button on the device for 3-5 seconds until the Wi-Fi icon starts flashing.</string>
     <string name="string_1619">2/3</string>
     <string name="string_1621">1. Confirm that the Wi-Fi address and password you entered are correct.</string>
     <string name="string_1622">2. Check your Wi-Fi network. Currently, abby can only support 2.4G Wi-Fi.</string>
     <string name="string_1623">3.</string>
-    <string name="string_1624">Reboot abby, then try </string>
+    <string name="string_1624">Reboot abby, then try\u00A0</string>
     <string name="string_1625">reconnecting</string>
     <string name="string_1626">4. Try to unplug abby, then plug it back in</string>
-    <string name="string_1627">5. Try restarting the iOS/Android device that needs to be paired with abby. Then try pairing again. </string>
-    <string name="string_1629">1. smart camera only supports </string>
+    <string name="string_1627">5. Try restarting the iOS/Android device that needs to be paired with abby. Then try pairing again.\u00A0</string>
+    <string name="string_1629">1. smart camera only supports\u00A0</string>
     <string name="string_1630">2.4GHz Wi-Fi.</string>
     <string name="string_1631">\nWi-Fi only supports alphanumeric character</string>
     <string name="string_1632">2. Your phone must be connected to the same 2.4G wifi as smart camera</string>
-    <string name="string_1633">1. Hey abby only supports </string>
+    <string name="string_1633">1. Hey abby only supports\u00A0</string>
     <string name="string_1634">2.4GHz Wi-Fi networks.</string>
     <string name="string_1635">2. Network names must be comprised of alpahnumeric characters only</string>
     <string name="string_1636">3. Your phone must be connected to the same 2.4G Wi-Fi as abby.</string>
@@ -405,8 +405,8 @@
     <string name="string_1642">Granting Hey abby access to your phone\'s location will be used to generate a Wi-Fi network list.</string>
     <string name="string_1647">1. Make sure your phone\'s Bluetooth is on</string>
     <string name="string_1648">2. Place the phone close to the device and try to pair again</string>
-    <string name="string_1649">3. </string>
-    <string name="string_1650"> the device</string>
+    <string name="string_1649">3.\u00A0</string>
+    <string name="string_1650">\u00A0the device</string>
 
 
     <string name="string_1657">Enter the OTP</string>
@@ -427,7 +427,7 @@
     <string name="string_1697">The email address cannot be empty.</string>
     <string name="string_1698">Please enter the correct email address.</string>
 
-    <string name="string_1699"> and </string>
+    <string name="string_1699">\u00A0and\u00A0</string>
     <string name="string_1700">Resend</string>
     <string name="string_1701">success</string>
 
@@ -435,8 +435,8 @@
     <string name="string_1704">Subscription Active</string>
     <string name="string_1705">Subscription valid till\u00A0</string>
 
-    <string name="string_1710">If you would like to extend your growing service, please go to our official website </string>
-    <string name="string_1711"> to purchase the option most suitable for you. This service includes our one-on-one support, growing pack (fertilizers, basket, carbon filters, etc), and device connectivity to our server.</string>
+    <string name="string_1710">If you would like to extend your growing service, please go to our official website\u00A0</string>
+    <string name="string_1711">\u00A0to purchase the option most suitable for you. This service includes our one-on-one support, growing pack (fertilizers, basket, carbon filters, etc), and device connectivity to our server.</string>
     <string name="string_1712">After purchase, you’ll receive a verification code via email. Enter the code below to extend your service validity accordingly.</string>
     <string name="string_1714">Purchase</string>
     <string name="string_1717">Are you certain you wish to delete</string>
@@ -484,7 +484,7 @@
     <string name="string_1781">I\'m loving my grow box so far– my plant\'s growing great! You should check out Hey abby for yourself: [https://heyabby.com/pages/which-hey-abby-is-right-for-you](https://heyabby.com/pages/which-hey-abby-is-right-for-you)</string>
     <string name="string_1782">Loving the grow journey? Tell your friends about Hey abby!</string>
     <string name="string_1783">SMS</string>
-    <string name="string_1785">Your redemption is complete! </string>
+    <string name="string_1785">Your redemption is complete!\u00A0</string>
     <string name="string_1786">Your redemption is complete! Please check your email for the e-gift card details.</string>
     <string name="string_1787">Please select Oxygen Coins</string>
     <string name="string_1788">Please note that the merged device needs to be re-paired.</string>
@@ -521,7 +521,7 @@
     <string name="string_1862">Switch</string>
 
     <string name="string_1863">Send now</string>
-    <string name="string_1864">Not in the discord community yet? Click </string>
+    <string name="string_1864">Not in the discord community yet? Click\u00A0</string>
     <string name="string_1865">here</string>
     <string name="string_1866">\u00A0to join.</string>
     <string name="string_1867">Binding successful.</string>
@@ -574,8 +574,8 @@
     <string name="home_reedee_desc_ont">\nRedeemed Oxygen Coins：%1$s\nAccount Balance: %2$s\nE-Gift Value:%3$s%4$s\n</string>
     <string name="home_reedee_desc_two">\nRedeemed Oxygen Coins：%1$s\nAccount Balance: %2$s\nE-Gift Value:%3$s%4$s\n\nA e-gift card secrect code will send to your email %5$s\n</string>
     <string name="home_usb_desc">\nThis option is designed to control the power of 3rd party accessories.\nYou are currently connect to a hey abby smart accessory, please remove it first from device manager.\n</string>
-    <string name="string_month">%1$s month will be added to your account </string>
-    <string name="string_months">%1$s months will be added to your account </string>
+    <string name="string_month">%1$s month will be added to your account\u00A0</string>
+    <string name="string_months">%1$s months will be added to your account\u00A0</string>
 
     <string name="home_on_off">\n%1$s\nON  %2$s\nOFF %3$s\n</string>
     <string name="home_room">%1$s (Room %2$s)</string>
@@ -737,7 +737,7 @@
     <string name="string_2022">Skip</string>
     <string name="string_2023">Check</string>
     <string name="string_2028">Feed</string>
-    <string name="string_2030">Congrats—everything is ready to go. Let’s get started! </string>
+    <string name="string_2030">Congrats—everything is ready to go. Let’s get started!\u00A0</string>
     <string name="string_2031">Start Journey</string>
     <string name="string_2032">Week-\nDay-</string>
     <string name="string_2034">ENVIR</string>
@@ -830,7 +830,7 @@
     <string name="string_2193">Merge</string>
     <string name="string_2197">ADD</string>
     <string name="string_2198">BUY NOW</string>
-    <string name="string_2201">Optional </string>
+    <string name="string_2201">Optional\u00A0</string>
     <string name="string_2203">Automations</string>
     <string name="string_2205">When Private Mode is activated, the camera function will be disabled when you open the door. The camera will not take pictures or videos of people, safeguarding your personal privacy.</string>
     <string name="string_2206">S</string>
@@ -1106,6 +1106,12 @@
     <string name="task">Task Settings</string>
     <string name="plant_profile">Plant Profile</string>
     <string name="redeem">Redeem your Oxygen Coins</string>
+    <string name="germination">Germination</string>
+    <string name="vegetation">Vegetation</string>
+    <string name="flowering">Flowering</string>
+    <string name="flushing">Flushing</string>
+    <string name="drying">Drying</string>
+
     <string name="light_info">The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them</string>
 
 </resources>

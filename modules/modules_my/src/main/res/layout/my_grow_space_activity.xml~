@@ -27,7 +27,7 @@
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title="@string/grow_space_setup" />
+                app:title="Grow space setup" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ll_root"

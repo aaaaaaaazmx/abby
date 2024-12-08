@@ -3,6 +3,7 @@ package com.cl.modules_contact.pop
 import android.content.Context
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cl.common_base.BaseApplication
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_contact.R
 import com.cl.modules_contact.adapter.ContactPeriodAdapter
@@ -29,11 +30,11 @@ class ContactPeriodPop(
 
     private val list by lazy {
         val list = mutableListOf<ContactPeriodBean>()
-        list.add(ContactPeriodBean("Germination", false))
-        list.add(ContactPeriodBean("Vegetation", false))
-        list.add(ContactPeriodBean("Flowering", false))
-        list.add(ContactPeriodBean("Flushing", false))
-        list.add(ContactPeriodBean("Drying", false))
+        list.add(ContactPeriodBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.germination), false))
+        list.add(ContactPeriodBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.vegetation), false))
+        list.add(ContactPeriodBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.flowering), false))
+        list.add(ContactPeriodBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.flushing), false))
+        list.add(ContactPeriodBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.drying), false))
         // list.add(ContactPeriodBean("Auto", false))
         list
     }

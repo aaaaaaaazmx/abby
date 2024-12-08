@@ -708,12 +708,6 @@
                         app:layout_constraintTop_toTopOf="@+id/tv_load" />
 
                     <com.cl.common_base.widget.SvTextView
-                        android:lines="1"
-                        android:paddingEnd="3dp"
-                        android:paddingStart="3dp"
-                        android:autoSizeMinTextSize="9sp"
-                        android:autoSizeMaxTextSize="12sp"
-                        android:autoSizeTextType="uniform"
                         android:id="@+id/tv_save"
                         android:layout_width="50dp"
                         android:layout_height="24dp"

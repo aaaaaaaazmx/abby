@@ -44,7 +44,7 @@
                 android:id="@+id/fis_item_switch"
                 android:layout_width="52dp"
                 android:layout_height="35dp"
-                android:layout_marginStart="19dp"
+                android:layout_marginStart="39dp"
                 android:checked="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
