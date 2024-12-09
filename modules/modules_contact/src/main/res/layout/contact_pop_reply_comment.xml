@@ -136,7 +136,7 @@
                     android:focusable="false"
                     android:hint="@string/string_2354"
                     android:maxEms="140"
-                    android:maxLines="1"
+                    android:maxLength="140"
                     android:paddingStart="12dp"
                     android:textColor="@color/black"
                     android:textColorHint="#D0C7C7"

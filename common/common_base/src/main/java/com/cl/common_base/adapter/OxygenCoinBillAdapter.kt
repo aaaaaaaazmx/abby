@@ -61,11 +61,7 @@ class OxygenCoinBillAdapter(
                 append(context.getString(R.string.income))
                 bold {
                     color(Color.parseColor("#B22234")) {
-                        if (it.startsWith("-")) {
-                            append(context.getString(R.string.string_oxy_g, "$it"))
-                        } else {
-                            append(context.getString(R.string.string_add_g, "$it"))
-                        }
+                        append(context.getString(R.string.string_oxy_g, "$it"))
                     }
                 }
             }
@@ -78,11 +74,7 @@ class OxygenCoinBillAdapter(
                 append(context.getString(R.string.expense))
                 bold {
                     color(Color.parseColor("#006241")) {
-                        if (it.startsWith("-")) {
-                            append(context.getString(R.string.string_oxy_g, "$it"))
-                        } else {
-                            append(context.getString(R.string.string_add_g, "$it"))
-                        }
+                        append(context.getString(R.string.string_oxy_g, "$it"))
                     }
                 }
             }
