@@ -898,13 +898,15 @@ Day1" />
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:layout_marginEnd="5dp"
+                    tools:text="DigtalDigtalDigtalDigtalDigtal"
                     android:gravity="center_vertical"
                     android:lines="1"
                     android:autoSizeTextType="uniform"
                     android:autoSizeMinTextSize="6sp"
                     android:autoSizeMaxTextSize="12sp"
                     android:id="@+id/tv_temperature"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
                     android:text="@string/string_2034"
@@ -913,7 +915,7 @@ Day1" />
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@id/iv_temperature_bg"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iv_temperature_bg"
                     app:layout_constraintTop_toTopOf="@+id/iv_temperature_bg" />
 
                 <ImageView
