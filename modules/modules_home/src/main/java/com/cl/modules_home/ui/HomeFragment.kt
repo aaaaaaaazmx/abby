@@ -3318,7 +3318,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                             isShowCancelButton = true,
                                             confirmText = getString(com.cl.common_base.R.string.string_1382),
                                             onConfirmAction = {
-                                                it.startActivity(Intent(it, SeedCheckActivity::class.java))
+                                                mViewMode.plantInfo.value?.data?.plantId?.let { it1 ->
+                                                    it.startActivity(Intent(it, NewSeedCheckActivity::class.java).apply {
+                                                        putExtra("plantId", it1)
+                                                    })
+                                                }
                                             })
                                     ).show()
                             }
@@ -3330,7 +3334,11 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 return@setOnClickListener
                             }
                             context?.let {
-                                it.startActivity(Intent(it, SeedCheckActivity::class.java))
+                                mViewMode.plantInfo.value?.data?.plantId?.let { it1 ->
+                                    it.startActivity(Intent(it, NewSeedCheckActivity::class.java).apply {
+                                        putExtra("plantId", it1)
+                                    })
+                                }
                             }
                             /*context?.let {
                                 pop.isDestroyOnDismiss(false).dismissOnTouchOutside(false)

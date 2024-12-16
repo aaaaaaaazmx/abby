@@ -19,6 +19,7 @@ import com.cl.modules_home.request.EnvSaveReq
 import com.cl.modules_home.request.PeriodListBody
 import com.cl.modules_home.request.PeriodListSaveReq
 import com.cl.modules_home.request.SaveTaskReq
+import com.cl.modules_home.request.SeedCheckNoTaprootData
 import com.cl.modules_home.request.Task
 import com.cl.modules_home.request.TaskConfigurationListData
 import com.cl.modules_home.request.TempData
@@ -51,7 +52,7 @@ class HomeRemoteRepository @Inject constructor() {
         return service.saveOrUpdate(body)
     }
 
-    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null,): Flow<HttpResult<Boolean>> {
+    fun startRunning(botanyId: String?, goon: Boolean, templateId: String? = null, step: String? = null): Flow<HttpResult<Boolean>> {
         return service.startRunning(botanyId, goon, templateId, step)
     }
 
@@ -95,7 +96,7 @@ class HomeRemoteRepository @Inject constructor() {
         return service.deviceOperateStart(businessId, type)
     }
 
-    fun deviceOperateFinish(type:String): Flow<HttpResult<BaseBean>> {
+    fun deviceOperateFinish(type: String): Flow<HttpResult<BaseBean>> {
         return service.deviceOperateFinish(type)
     }
 
@@ -178,6 +179,7 @@ class HomeRemoteRepository @Inject constructor() {
     fun updatePlantInfo(body: UpPlantInfoReq): Flow<HttpResult<BaseBean>> {
         return service.updatePlantInfo(body)
     }
+
     fun skipGerminate(): Flow<HttpResult<BaseBean>> {
         return service.skipGerminate()
     }
@@ -217,6 +219,7 @@ class HomeRemoteRepository @Inject constructor() {
     fun addProModeRecord(req: ProModeInfoBean): Flow<HttpResult<BaseBean>> {
         return service.addProModeRecord(req)
     }
+
     fun updateProModeRecord(req: ProModeInfoBean): Flow<HttpResult<BaseBean>> {
         return service.updateProModeRecord(req)
     }
@@ -289,8 +292,12 @@ class HomeRemoteRepository @Inject constructor() {
         return service.getFanModel()
     }
 
-        fun updateFanModel(req: UpdateFanModelReq): Flow<HttpResult<BaseBean>> {
+    fun updateFanModel(req: UpdateFanModelReq): Flow<HttpResult<BaseBean>> {
         return service.updateFanModel(req)
+    }
+
+    fun seedCheckNoTaproot(plantId: String): Flow<HttpResult<SeedCheckNoTaprootData>> {
+        return service.seedCheckNoTaproot(plantId)
     }
 
 

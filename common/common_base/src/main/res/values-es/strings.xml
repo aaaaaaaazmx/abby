@@ -1061,5 +1061,11 @@
     <string name="flowering">Florecimiento</string>
     <string name="flushing">Lavado</string>
     <string name="drying">Secado</string>
+    <string name="taproot">Taproot ha sido producido.</string>
+    <string name="no_taproot">Sin taproot.</string>
+    <string name="organic_grow_block">Bloque de Crecimiento Orgánico</string>
+    <string name="foam_cube">Cubo de Espuma</string>
+    <string name="grow_block_check">Verificación del Bloque de Crecimiento</string>
+    <string name="insert_seed">Inserte la semilla en el bloque de crecimiento. Por favor, elija el bloque de crecimiento que está utilizando.</string>
 
 </resources>

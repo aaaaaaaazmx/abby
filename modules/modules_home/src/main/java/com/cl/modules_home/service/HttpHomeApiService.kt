@@ -19,6 +19,7 @@ import com.cl.modules_home.request.EnvSaveReq
 import com.cl.modules_home.request.PeriodListBody
 import com.cl.modules_home.request.PeriodListSaveReq
 import com.cl.modules_home.request.SaveTaskReq
+import com.cl.modules_home.request.SeedCheckNoTaprootData
 import com.cl.modules_home.request.Task
 import com.cl.modules_home.request.TaskConfigurationListData
 import com.cl.modules_home.request.TempData
@@ -502,5 +503,11 @@ interface HttpHomeApiService {
     @POST("abby/accessory/trickleIrrigationConfigList")
     fun trickleIrrigationConfigList(@Body req: DripListData): Flow<HttpResult<BaseBean>>
 
+    /**
+     * 育种检查
+     */
+    @FormUrlEncoded
+    @POST("abby/plant/seedCheckNoTaproot")
+    fun seedCheckNoTaproot(@Field("plantId") plantId: String): Flow<HttpResult<SeedCheckNoTaprootData>>
 
 }

@@ -151,7 +151,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                                         cancelText = getString(com.cl.common_base.R.string.home_back_to_editing),
                                         confirmText = getString(com.cl.common_base.R.string.home_proceed),
                                         onConfirmAction = {
-                                            saveEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = false))
+                                            saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
                                         })
                                 ).show()
                             }
@@ -159,7 +159,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
                         1 -> {
                             // 正确
-                            saveEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = false))
+                            saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
                         }
 
                         2 -> {
@@ -281,14 +281,14 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(BaseCenterPop(this@ProModeEnvActivity, content = getString(com.cl.common_base.R.string.home_you_w), onConfirmAction = {
-                    viewModel.saveEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = true))
+                    viewModel.saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = true))
                 })).show()
             }
         }
 
         binding.btnSuccess.setSafeOnClickListener {
             // 先检查
-            viewModel.checkEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = false))
+            viewModel.checkEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
         }
 
         binding.ivAdd.setSafeOnClickListener {
@@ -448,13 +448,11 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         // 后台都是24小时制，但是12点就需要变成0，24点需要变成12点。
         val updatedData = adapter.data.map { item ->
             val updatedTurnOnLight = when (item.turnOnLight) {
-                12 -> 0
                 24 -> 12
                 else -> item.turnOnLight
             }
 
             val updatedTurnOffLight = when (item.turnOffLight) {
-                12 -> 0
                 24 -> 12
                 else -> item.turnOffLight
             }
@@ -488,10 +486,18 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 isProMode = false,
                 proModeAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour, lightIntensity ->
                     timeOn?.let {
-                        adapter.data[position].turnOnLight = it
+                        adapter.data[position].turnOnLight = when(it) {
+                            12 -> 0
+                            24 -> 12
+                            else -> it
+                        }
                     }
                     timeOff?.let {
-                        adapter.data[position].turnOffLight = it
+                        adapter.data[position].turnOffLight = when(it) {
+                            12 -> 0
+                            24 -> 12
+                            else -> it
+                        }
                     }
                     adapter.notifyItemChanged(position)
                 })

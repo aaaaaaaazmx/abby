@@ -1063,5 +1063,11 @@
     <string name="flowering">Blühend</string>
     <string name="flushing">Spülend</string>
     <string name="drying">Trocknet</string>
+    <string name="taproot">Taproot wurde produziert.</string>
+    <string name="no_taproot">Kein Taproot.</string>
+    <string name="organic_grow_block">Organischer Wachstumsblock</string>
+    <string name="foam_cube">Schaumwürfel</string>
+    <string name="grow_block_check">Wachstumsblockprüfung</string>
+    <string name="insert_seed">Setzen Sie den Samen in den Wachstumsblock ein. Bitte wählen Sie den Wachstumsblock aus, den Sie verwenden.</string>
 
 </resources>

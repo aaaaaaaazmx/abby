@@ -1114,6 +1114,12 @@
     <string name="flowering">Flowering</string>
     <string name="flushing">Flushing</string>
     <string name="drying">Drying</string>
+    <string name="taproot">Taproot has been produced.</string>
+    <string name="no_taproot">No taproot.</string>
+    <string name="organic_grow_block">Organic Grow Block</string>
+    <string name="foam_cube">Foam Cube</string>
+    <string name="grow_block_check">Grow Block Check</string>
+    <string name="insert_seed">Insert the seed into the grow block. Please choose the grow block that you are using.</string>
 
     <string name="light_info">The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them</string>
 

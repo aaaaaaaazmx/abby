@@ -95,5 +95,7 @@
         <activity android:name=".activity.ProModeEnvActivity" />
         <activity android:name=".activity.ProModeTaskActivity" />
         <activity android:name=".activity.ProModeTaskSetActivity" />
+        <activity android:name=".ui.NewSeedCheckActivity" />
+        <activity android:name=".ui.GrowCheckActivity" />
     </application>
 </manifest>

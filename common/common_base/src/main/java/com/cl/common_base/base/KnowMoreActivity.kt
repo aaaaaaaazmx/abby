@@ -289,7 +289,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                         startActivity(intent)
                     }
 
-                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED -> {
+                    Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED, Constants.Fixed.KEY_FIXED_ID_ACTION_GROW_NEEDED -> {
                         // 这是是直接调用接口
                         mViewMode.intoPlantBasket()
                     }
