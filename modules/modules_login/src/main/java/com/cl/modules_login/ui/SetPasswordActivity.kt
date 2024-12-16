@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.LocaleList
 import android.text.InputType
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.doAfterTextChanged
@@ -212,7 +213,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                                 it.sourceUserId = AESCipher.aesEncryptString(
                                     Firebase.auth.currentUser?.email, AESCipher.KEY
                                 )
-                                mViewModel.login(currentLanguage = currentLanguage)
+                                mViewModel.login(currentLanguage = currentLanguage.uppercase())
                             }
                         }
                     }
@@ -279,7 +280,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                         binding.etPassword.text.toString(),
                         AESCipher.KEY
                     )
-                    userRegisterBean?.language = currentLanguage
+                    userRegisterBean?.language = currentLanguage.uppercase()
                     userRegisterBean?.let { bean -> mViewModel.registerAccount(bean) }
                 } else {
                     // 修改密码
@@ -289,7 +290,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
                     )
                     updatePwdReq.autoCode = emailCode
                     updatePwdReq.userEmail = emailName
-                    updatePwdReq.language = currentLanguage
+                    updatePwdReq.language = currentLanguage.uppercase()
                     mViewModel.updatePwd(updatePwdReq)
                 }
             }.onFailure {
@@ -392,20 +393,7 @@ class SetPasswordActivity : BaseActivity<ActivitySetPasswordBinding>() {
 
     // 获取系统语言
     private val currentLanguage by lazy {
-        var language = "en"
-        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
-        } else {
-            // For lower Android versions, fallback to the legacy approach
-            resources.configuration.locales
-        }
-
-        if (!currentAppLocales.isEmpty) {
-            // Get the language from the first locale
-            language = currentAppLocales[0].language
-            // Try to find the index of the current language in the availableLanguage list
-        }
-        language
+        AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
     }
 
     companion object {

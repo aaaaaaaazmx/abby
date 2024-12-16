@@ -63,6 +63,12 @@
 
 
         <com.cl.common_base.widget.SvTextView
+            android:paddingEnd="3dp"
+            android:paddingStart="3dp"
+            android:lines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="13sp"
             android:textStyle="bold"
             android:id="@+id/svt_unlock"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,6 +88,10 @@
         <com.cl.common_base.widget.SvTextView
             android:paddingEnd="3dp"
             android:paddingStart="3dp"
+            android:lines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="13sp"
             android:textStyle="bold"
             android:id="@+id/svt_wait_unlock"
             app:layout_constraintEnd_toEndOf="parent"
@@ -89,10 +99,6 @@
             app:layout_constraintTop_toTopOf="@+id/ll_title"
             android:gravity="center"
             android:textSize="13sp"
-            android:lines="1"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="10sp"
-            android:autoSizeMaxTextSize="13sp"
             android:textColor="@color/white"
             app:svSolidType="solid"
             app:svSolidColor="#C4C4C4"
@@ -117,6 +123,12 @@
             android:layout_height="wrap_content"/>
 
         <com.cl.common_base.widget.SvTextView
+            android:paddingEnd="3dp"
+            android:paddingStart="3dp"
+            android:lines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="13sp"
             android:visibility="gone"
             android:textStyle="bold"
             android:id="@+id/svt_pro_edit"

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.LocaleList
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
@@ -27,6 +28,7 @@ import com.cl.modules_login.widget.PrivacyPop
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
+import java.util.Locale
 import javax.inject.Inject
 
 
@@ -50,20 +52,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
 
     // 获取系统语言
     private val currentLanguage by lazy {
-        var language = "en"
-        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
-        } else {
-            // For lower Android versions, fallback to the legacy approach
-            resources.configuration.locales
-        }
-
-        if (!currentAppLocales.isEmpty) {
-            // Get the language from the first locale
-            language = currentAppLocales[0].language
-            // Try to find the index of the current language in the availableLanguage list
-        }
-        language
+        AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
     }
 
     private val privacyPop by lazy {
@@ -80,30 +69,32 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                         "google" -> {
                             // 谷歌登录
                             // 发送验证码
-                            mViewModel.verifyEmail(currentLanguage = currentLanguage, email = binding.etEmail.text.toString(), "5")
+                            mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "5")
                         }
                         "sms" -> {
                             // sms登录或者注册发送验证码
-                            mViewModel.verifyEmail(currentLanguage = currentLanguage, userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
+                            mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
                         }
                     }
                     return@PrivacyPop
                 }
                 // 发送验证码
-                mViewModel.verifyEmail(currentLanguage = currentLanguage, email = binding.etEmail.text.toString(), "1")
+                mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "1")
             },
             onTermUsAction = {
                 // 跳转到使用条款H5
+                val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
                 val intent = Intent(this@CreateAccountActivity, WebActivity::class.java)
-                intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PERSONAL_URL)
-                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Terms of Use")
+                intent.putExtra(WebActivity.KEY_WEB_URL,  String.format(Constants.H5.PERSONAL_URL, localLanguage))
+                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                 startActivity(intent)
             },
             onPrivacyAction = {
+                val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
                 // 跳转到隐私协议H5
                 val intent = Intent(this@CreateAccountActivity, WebActivity::class.java)
-                intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PRIVACY_POLICY_URL)
-                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Privacy Policy")
+                intent.putExtra(WebActivity.KEY_WEB_URL, String.format(Constants.H5.PRIVACY_POLICY_URL, localLanguage))
+                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                 startActivity(intent)
             }
         )

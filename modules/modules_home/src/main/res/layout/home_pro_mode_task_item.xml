@@ -45,6 +45,12 @@
 
 
         <com.cl.common_base.widget.SvTextView
+            android:lines="1"
+            android:paddingEnd="3dp"
+            android:paddingStart="3dp"
+            android:autoSizeMinTextSize="10sp"
+            android:autoSizeMaxTextSize="13sp"
+            android:autoSizeTextType="uniform"
             android:textSize="13sp"
             android:textColor="@color/white"
             android:gravity="center"

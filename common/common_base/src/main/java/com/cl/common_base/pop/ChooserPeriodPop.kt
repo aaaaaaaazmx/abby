@@ -104,7 +104,7 @@ class ChooserPeriodPop(
 
     private fun extractNumbers(input: String): Pair<Int, Int> {
         // 定义正则表达式，匹配 "Week X Day Y" 其中 X 和 Y 为数字，周围可能有多余的空格
-        val regex = """${context.getString(R.string.week)}\s+(\d+)\s+${context.getString(R.string.day)}\s+(\d+)""".toRegex()
+        val regex = """(?i)${context.getString(R.string.week)}\s*(\d+)\s*${context.getString(R.string.day)}\s*(\d+)""".toRegex()
         // 在输入字符串中查找第一个匹配项
         val matchResult = regex.find(input.trim())  // 使用 trim() 移除输入字符串两端的空白字符
 

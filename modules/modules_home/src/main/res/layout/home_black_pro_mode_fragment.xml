@@ -308,7 +308,7 @@
                         android:autoSizeMinTextSize="6sp"
                         android:autoSizeTextType="uniform"
                         android:id="@+id/tv_inc"
-                        android:layout_width="35dp"
+                        android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:layout_marginTop="5dp"

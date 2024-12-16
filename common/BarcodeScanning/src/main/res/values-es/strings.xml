@@ -1,0 +1,11 @@
+<resources>
+    <string name="low_light_tip">Entorno con poca luz, por favor encienda la iluminación</string>
+    <string name="qr_bar_code">Código QR / Código de barras</string>
+    <string name="file_scan_code_nofile">La imagen a reconocer no se detectó \n toque la pantalla para continuar escaneando</string>
+    <string name="file_scan_code_nodata">QR code/código de barras no reconocido \n toque la pantalla para continuar escaneando</string>
+
+    <string-array name="scan_type">
+        <item>Código QR</item>
+        <item>Código de barras</item>
+    </string-array>
+</resources>

@@ -4,6 +4,7 @@ import android.app.LocaleManager
 import android.content.Intent
 import android.os.Build
 import android.os.LocaleList
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -37,6 +38,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import javax.inject.Inject
 
 /**
@@ -99,26 +101,26 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                     "google" -> {
                         // 谷歌登录
                         // 发送验证码
-                        emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, it, "5") }
+                        emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), it, "5") }
                     }
                     "sms" -> {
                         // 重新发送验证码
-                        emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, userName = it, countryCode = userRegisterBean?.countryCode, type = "6") }
+                        emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), userName = it, countryCode = userRegisterBean?.countryCode, type = "6") }
                     }
                 }
                 return@RetransmissionPop
             }
             // 邮箱验证码登录
             if (isEmailLogin) {
-                emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, it, "6") }
+                emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), it, "6") }
                 return@RetransmissionPop
             }
             // 重新发送验证,
             // 需要判断当前是注册还是忘记密码
             if (isRegister) {
-                emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage, it, "1") }
+                emailName?.let { mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), it, "1") }
             } else {
-                emailName?.let { mViewModel.updatePwd(currentLanguage = currentLanguage, it, "2") }
+                emailName?.let { mViewModel.updatePwd(currentLanguage = currentLanguage.uppercase(), it, "2") }
             }
         })
     }
@@ -368,7 +370,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                                     it.sourceUserId = AESCipher.aesEncryptString(
                                         Firebase.auth.currentUser?.email, AESCipher.KEY
                                     )
-                                    mViewModel.login(currentLanguage = currentLanguage)
+                                    mViewModel.login(currentLanguage = currentLanguage.uppercase())
                                 }
                             }
                         }
@@ -460,12 +462,12 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
                     it.countryCode = userRegisterBean?.countryCode
                     it.autoCode = binding.codeView.code
                     it.country = if (thirdSource == "sms") userRegisterBean?.country else null
-                    mViewModel.login(currentLanguage = currentLanguage)
+                    mViewModel.login(currentLanguage = currentLanguage.uppercase())
                 }
 
                 return@setOnClickListener
             }
-            emailName?.let { name -> mViewModel.verifyCode(currentLanguage = currentLanguage, binding.codeView.code, name) }
+            emailName?.let { name -> mViewModel.verifyCode(currentLanguage = currentLanguage.uppercase(), binding.codeView.code, name) }
         }
 
         // 重新发送验证
@@ -488,20 +490,7 @@ class VerifyEmailActivity : BaseActivity<ActivityVerifyEmailBinding>(),
 
     // 获取系统语言
     private val currentLanguage by lazy {
-        var language = "en"
-        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
-        } else {
-            // For lower Android versions, fallback to the legacy approach
-            resources.configuration.locales
-        }
-
-        if (!currentAppLocales.isEmpty) {
-            // Get the language from the first locale
-            language = currentAppLocales[0].language
-            // Try to find the index of the current language in the availableLanguage list
-        }
-        language
+        AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
     }
 
     override fun onInput() {

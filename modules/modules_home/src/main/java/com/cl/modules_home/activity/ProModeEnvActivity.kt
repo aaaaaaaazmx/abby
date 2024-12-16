@@ -16,7 +16,6 @@ import com.cl.common_base.pop.ChooseTimePop
 import com.cl.common_base.pop.SelectPeriodTimePop
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.R
-import com.cl.modules_home.activity.ProModeStartActivity.Companion.IS_CURRENT_PERIOD
 import com.cl.modules_home.adapter.ProModeEnvAdapter
 import com.cl.modules_home.databinding.HomeProModeEnvActivityBinding
 import com.cl.modules_home.request.EnvDeleteReq
@@ -26,7 +25,6 @@ import com.cl.modules_home.request.EnvSaveReq
 import com.cl.modules_home.viewmodel.ProModeViewModel
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.internal.isSensitiveHeader
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
@@ -153,7 +151,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                                         cancelText = getString(com.cl.common_base.R.string.home_back_to_editing),
                                         confirmText = getString(com.cl.common_base.R.string.home_proceed),
                                         onConfirmAction = {
-                                            saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
+                                            saveEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = false))
                                         })
                                 ).show()
                             }
@@ -161,7 +159,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
                         1 -> {
                             // 正确
-                            saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
+                            saveEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = false))
                         }
 
                         2 -> {
@@ -256,8 +254,8 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
     }
 
     private fun extractNumbers(input: String): Pair<Int, Int> {
-        // 修改正则表达式，匹配 "Week X Y Day" 其中 X 为 week 数字，Y 为 day 数字，支持任意数量的空格
-        val regex = """${getString(com.cl.common_base.R.string.week)}\s*(\d+)\s*(\d*)\s*${getString(com.cl.common_base.R.string.day)}""".toRegex()
+        // 修改正则表达式：使用 \s* 匹配任意数量的空白字符，添加忽略大小写标志
+        val regex = """(?i)${getString(com.cl.common_base.R.string.week)}\s*(\d+)\s*(\d*)\s*${getString(com.cl.common_base.R.string.day)}""".toRegex()
 
         // 在输入字符串中查找第一个匹配项
         val matchResult = regex.find(input.trim())
@@ -272,6 +270,8 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         }
     }
 
+
+
     override fun initData() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this@ProModeEnvActivity)
         binding.recyclerView.adapter = adapter
@@ -281,14 +281,14 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 isDestroyOnDismiss(false)
                 dismissOnTouchOutside(false)
                 asCustom(BaseCenterPop(this@ProModeEnvActivity, content = getString(com.cl.common_base.R.string.home_you_w), onConfirmAction = {
-                    viewModel.saveEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = true))
+                    viewModel.saveEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = true))
                 })).show()
             }
         }
 
         binding.btnSuccess.setSafeOnClickListener {
             // 先检查
-            viewModel.checkEnvParam(EnvSaveReq(list = adapter.data, step = step, templateId = templateId, useRecommend = false))
+            viewModel.checkEnvParam(EnvSaveReq(list = updateDates().toMutableList(), step = step, templateId = templateId, useRecommend = false))
         }
 
         binding.ivAdd.setSafeOnClickListener {
@@ -444,6 +444,27 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
         }
     }
 
+    private fun updateDates(): List<EnvParamListBeanItem> {
+        // 后台都是24小时制，但是12点就需要变成0，24点需要变成12点。
+        val updatedData = adapter.data.map { item ->
+            val updatedTurnOnLight = when (item.turnOnLight) {
+                12 -> 0
+                24 -> 12
+                else -> item.turnOnLight
+            }
+
+            val updatedTurnOffLight = when (item.turnOffLight) {
+                12 -> 0
+                24 -> 12
+                else -> item.turnOffLight
+            }
+
+            // 创建一个新的对象，包含更新后的值
+            item.copy(turnOnLight = updatedTurnOnLight, turnOffLight = updatedTurnOffLight)
+        }
+        return updatedData
+    }
+
     override fun onResume() {
         super.onResume()
         // 获取环境列表
@@ -467,10 +488,10 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
                 isProMode = false,
                 proModeAction = { onTime, offMinute, timeOn, timeOff, timeOpenHour, timeCloseHour, lightIntensity ->
                     timeOn?.let {
-                        adapter.data[position].turnOnLight = if (it >= 12) it - 12 else it
+                        adapter.data[position].turnOnLight = it
                     }
                     timeOff?.let {
-                        adapter.data[position].turnOffLight = if (it >= 12) it - 12 else it
+                        adapter.data[position].turnOffLight = it
                     }
                     adapter.notifyItemChanged(position)
                 })

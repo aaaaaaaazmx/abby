@@ -29,7 +29,7 @@ class TdsPop(
             tvBuy.setOnClickListener {
                 val intent = Intent(context, WebActivity::class.java)
                 intent.putExtra(WebActivity.KEY_WEB_URL, "https://www.heyabby.com/products/4-in-1-digital-ph-meter?utm_source=app&utm_medium=heyabby")
-                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Abby")
+                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                 context.startActivity(intent)
             }
             tvCommentTxt.setText(txt)

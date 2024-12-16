@@ -32,7 +32,9 @@ import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.bean.UpdateInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.constants.UnReadConstants
 import com.cl.common_base.databinding.HomeKnowMoreLayoutBinding
+import com.cl.common_base.ext.equalsIgnoreCase
 import com.cl.common_base.video.videoUiHelp
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
@@ -47,6 +49,7 @@ import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.UsbDetailPop
 import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.pop.activity.BasePopActivity.Companion.KEY_CURRENT_PERIOD
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.TuyaCameraUtils
@@ -148,6 +151,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      * 删除配件时，关联IdrelationId
      */
     private val relationId by lazy { intent.getStringExtra(BasePopActivity.KEY_RELATION_ID) }
+
+    // 当前周期
+    private val currentCycle by lazy { intent.getStringExtra(KEY_CURRENT_PERIOD) }
 
     @Inject
     lateinit var mViewMode: KnowMoreViewModel
@@ -290,7 +296,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
                     // 种植前检查
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_CLONE_CHECK,
-                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK -> {
+                    Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_SEED_CHECK,
+                    -> {
                         val intent = Intent(this@KnowMoreActivity, BasePopActivity::class.java)
                         intent.putExtra(
                             Constants.Global.KEY_TXT_ID,
@@ -314,7 +321,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
                     // 解锁Veg\auto这个周期\或者重新开始
                     Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW,
-                    Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW -> {
+                    Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW,
+                    -> {
                         if (unLockId.isNullOrEmpty()) {
                             // startRunning 接口
                             mViewMode.startRunning(botanyId = "", goon = false)
@@ -547,7 +555,15 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                     ToastUtil.shortShow(errorMsg)
                 }
                 success {
-                    acFinish()
+                    // 主要是首页周期界面的提前解锁curing。
+                    if (currentCycle?.equalsIgnoreCase(UnReadConstants.PeriodStatus.KEY_CURING) == true) {
+                        setResult(
+                            RESULT_OK, Intent().putExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, true)
+                        )
+                        finish()
+                    } else {
+                        acFinish()
+                    }
                 }
             })
 
@@ -834,7 +850,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
                     // 跳转HTML
                     R.id.cl_go_url,
-                    com.cl.common_base.R.id.tv_html -> {
+                    com.cl.common_base.R.id.tv_html,
+                    -> {
                         val intent = Intent(context, WebActivity::class.java)
                         intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, bean.value?.title)
@@ -843,7 +860,8 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
                     // 阅读更多
                     R.id.cl_learn,
-                    R.id.tv_learn -> {
+                    R.id.tv_learn,
+                    -> {
                         // todo 请求id
                         bean.value?.txtId?.let {
                             // 继续请求弹窗

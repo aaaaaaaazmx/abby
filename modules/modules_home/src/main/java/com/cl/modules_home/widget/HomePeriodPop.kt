@@ -45,7 +45,7 @@ class HomePeriodPop(
     private var harvestTime: String? = null,
     private var data: MutableList<PlantInfoData.InfoList>? = null,
     val unLockAction: ((guideType: String?, taskId: String?, lastOneType: String?, taskTime: String?) -> Unit)? = null,
-    val unLockNow: ((pop: HomePeriodPop) -> Unit)? = null,
+    val unLockNow: ((pop: HomePeriodPop, step: String) -> Unit)? = null,
 ) : BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.home_period_pop
@@ -200,7 +200,7 @@ class HomePeriodPop(
 
                         // 提前解锁
                         isLock.setOnClickListener {
-                            unLockNow?.invoke(this@HomePeriodPop)
+                            unLockNow?.invoke(this@HomePeriodPop,this@HomePeriodPop.data?.get(position)?.step.toString())
                         }
 
                         // 解锁

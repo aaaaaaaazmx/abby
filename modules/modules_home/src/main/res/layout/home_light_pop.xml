@@ -24,6 +24,12 @@
             android:layout_marginTop="18dp">
 
             <TextView
+                android:gravity="center_vertical"
+                tools:text="123123123123123123123123"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMaxTextSize="15sp"
+                android:autoSizeMinTextSize="10sp"
+                android:lines="1"
                 android:textStyle="bold"
                 android:id="@+id/tv_dur"
                 android:layout_width="58dp"
@@ -36,6 +42,7 @@
 
 
             <RelativeLayout
+                android:layout_marginStart="5dp"
                 android:id="@+id/rl_turn_start"
                 android:layout_width="160dp"
                 android:layout_height="37dp"
@@ -79,6 +86,12 @@
             android:layout_marginTop="18dp">
 
             <TextView
+                android:gravity="center_vertical"
+                tools:text="123123123123123123123123"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMaxTextSize="15sp"
+                android:autoSizeMinTextSize="10sp"
+                android:lines="1"
                 android:textStyle="bold"
                 android:id="@+id/tv_off"
                 android:layout_width="58dp"
@@ -91,6 +104,7 @@
 
 
             <RelativeLayout
+                android:layout_marginStart="5dp"
                 android:id="@+id/rl_turn_end"
                 android:layout_width="160dp"
                 android:layout_height="37dp"

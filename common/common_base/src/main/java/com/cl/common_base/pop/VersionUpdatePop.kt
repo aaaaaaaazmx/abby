@@ -47,7 +47,7 @@ class VersionUpdatePop(
                     // 跳转到下载界面
                     val intent = Intent(context, WebActivity::class.java)
                     intent.putExtra(WebActivity.KEY_WEB_URL, appVersionData?.downloadAddress)
-                    intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Download")
+                    intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                     context.startActivity(intent)
                 }
 

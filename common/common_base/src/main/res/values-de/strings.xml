@@ -486,7 +486,7 @@
     <string name="string_1861">Die Einstellungen sind derzeit nicht für den Growzeltbereich verfügbar. Bitte wechseln Sie zur hey abby grow box, um auf die Einstellungen zuzugreifen</string>
     <string name="string_1862">Phase wechseln</string>
     <string name="string_1863">Jetzt abschicken</string>
-    <string name="string_1864">Noch nicht in der Discord-Community? Klicken Sie hier, umbeizutreten.\u00A0</string>
+    <string name="string_1864">Noch nicht in der Discord-Community? Klicken Sie \u00A0</string>
     <string name="string_1865">hier</string>
     <string name="string_1866">\u00A0um beizutreten.</string>
     <string name="string_1867">Erfolgreich verbunden.</string>
@@ -510,8 +510,8 @@
     <string name="string_1899">Nicht mehr anzeigen</string>
     <string name="string_1900">Neu</string>
     <string name="string_1901">Heiß</string>
-    <string name="string_1902">Sync</string>
-    <string name="string_1903">Ernten</string>
+    <string name="string_1902">Synchronisieren</string>
+    <string name="string_1903">Ernte</string>
     <string name="string_1905">Sie benötigen mindestens zwei Bilder.</string>
     <string name="string_1921">Erfolgreich gespeichert</string>
     <string name="string_1949">Bitte geben Sie den Inhalt des Berichts ein</string>
@@ -523,6 +523,9 @@
     <string name="weeks">Woche</string>
     <string name="day">Tag</string>
     <string name="days">Tag</string>
+    <string name="min">Minute</string>
+    <string name="minute">minute</string>
+    <string name="hr">Stunde</string>
     <string name="days_ago">vor %1$s Tagen</string>
     <string name="hours_ago">vor %1$s Stunden</string>
     <string name="minutes_ago">vor %1$s Minuten</string>
@@ -1057,8 +1060,8 @@
     <string name="redeem">Lösen Sie Ihre Oxygen Coins ein</string>
     <string name="germination">Keimung</string>
     <string name="vegetation">Vegetation</string>
-    <string name="flowering">Blüte</string>
-    <string name="flushing">Spülen</string>
-    <string name="drying">Trocknung</string>
+    <string name="flowering">Blühend</string>
+    <string name="flushing">Spülend</string>
+    <string name="drying">Trocknet</string>
 
 </resources>

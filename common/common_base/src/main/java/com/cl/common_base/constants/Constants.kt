@@ -1,5 +1,6 @@
 package com.cl.common_base.constants
 
+import com.cl.common_base.BuildConfig
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
@@ -23,9 +24,9 @@ object Constants {
 
     // H5相关
     object H5 {
-        private const val WEB_URL_MAIN = HttpUrl.WEB_PRODUCTION_URL
-        const val PRIVACY_POLICY_URL = "${WEB_URL_MAIN}/protocol/privacyPolicy.html"
-        const val PERSONAL_URL = "${WEB_URL_MAIN}/protocol/licenseAgreement.html"
+        private val WEB_URL_MAIN = if (BuildConfig.DEBUG) HttpUrl.WEB_TEST_URL else HttpUrl.WEB_PRODUCTION_URL
+        val PRIVACY_POLICY_URL = "${WEB_URL_MAIN}protocol/%s/privacyPolicy.html"
+        val PERSONAL_URL = "${WEB_URL_MAIN}protocol/%s/licenseAgreement.html"
 
         // APP官网
         const val ABBY_OFFICIAL_WEBSITE = "https://heyabby.com/"
@@ -33,6 +34,9 @@ object Constants {
 
     // 服务器地址
     object HttpUrl {
+        // WebView 测试服务器
+        const val WEB_TEST_URL = "http://192.168.3.6:9998/"
+
         // WebView 生产服务器
         const val WEB_PRODUCTION_URL = "https://www.beheyabby.com:9998/"
 
@@ -90,8 +94,10 @@ object Constants {
     object Contact {
         const val KEY_SHARE_TO_PUBLIC = "key_share_to_public"
         const val KEY_PLANT_DATA_IS_VISIBLE = "key_plant_data_is_visible"
+
         // timelapse提示是否只展示一次
         const val KEY_TIMELAPSE_TIP_IS_SHOW = "key_timelapse_tip_is_show"
+
         // 关注提醒是否只展示一次
         const val KEY_FOLLOW_TIP_IS_SHOW = "key_follow_tip_is_show"
     }
@@ -187,11 +193,14 @@ object Constants {
         const val KEY_BLE_STATE = "key_ble_state"
         const val KEY_BLE_OFF = "key_ble_off"
         const val KEY_BLE_ON = "key_ble_on"
+
         // 蓝牙类型
         const val KEY_BLE_TYPE = "key_ble_type"
         const val TYPE_PH = "type_ph"
+
         // 蓝牙最大连接数量
         const val KEY_BLE_MAX_CONNECT = 2
+
         // 是否是第一次绑定
         const val KEY_BLE_IS_FIRST_BIND = "key_ble_is_first_bind"
 
@@ -234,25 +243,34 @@ object Constants {
 
         // 旧的proMode开关表示 on
         const val KEY_OLD_PRO_MODE = "On"
+
         // 新的proMode模版开关表示 On_Template
         const val KEY_NEW_PRO_MODE = "On_Template"
+
         // 关闭proMode模式
         const val KEY_CLOSE_PRO_MODE = "Off"
+
         // 配对设备Abby
         const val KEY_GLOBAL_PAIR_DEVICE_ABBY = "key_global_pair_device_abby"
+
         // 配对设备Camera
         const val KEY_GLOBAL_PAIR_DEVICE_CAMERA = "key_global_pair_device_camera"
+
         // 配对设备排插
         const val KEY_GLOBAL_PAIR_DEVICE_OUTLETS = "key_global_pair_device_outlets"
+
         // 不带显示器的温湿度传感器
         const val KEY_GLOBAL_PAIR_DEVICE_BOX = "key_global_pair_device_box"
+
         // 带显示器的温湿度传感器
         const val KEY_GLOBAL_PAIR_DEVICE_VIEW = "key_global_pair_device_view"
 
         // pro_model 配置
         const val KEY_GLOBAL_PRO_MODEL = "key_global_pro_model"
+
         // 是否Load了配置
         const val KEY_LOAD_CONFIGURED = "key_load_configured"
+
         // 灯光的预设值
         const val KEY_LIGHT_PRESET_VALUE = "key_light_preset_value"
 
@@ -343,7 +361,7 @@ object Constants {
         // 分享Trend的类型
         const val KEY_SHARE_TYPE = "key_share_type"
         const val KEY_SHARE_CONTENT = "key_share_content"
-        const val KEY_SHARE_TEXT  = "key_share_text"
+        const val KEY_SHARE_TEXT = "key_share_text"
 
         // 是否开启了延时摄影模式
         /*const val KEY_TIME_LAPSE = "key_time_lapse"*/
@@ -411,6 +429,7 @@ object Constants {
         const val KEY_FIXED_ID_TRANSPLANT_3 = "6b05ffbadee746e6979a314613df75b2"
         const val KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW = "98c5c81ab5d142f8a6e439628c9c9f39"
         const val KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW = "d966091a08c048db962b710212eb223d"
+
         // soil_transplant_clone_check
         const val KEY_FIXED_ID_SOIL_TRANSPLANT_CLONE_CHECK = "soil_transplant_clone_check"
 

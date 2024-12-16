@@ -25,6 +25,7 @@ import android.view.animation.Animation
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
@@ -492,6 +493,19 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     override fun lazyLoad() {
         // 跳转到种植引导界面
         binding.plantFirst.apply {
+            if (ivStart.isVisible) {
+                when(AppCompatDelegate.getApplicationLocales().get(0)?.language) {
+                    "en" -> {
+                        ivStart.setBackgroundResource(R.mipmap.home_start)
+                    }
+                    "es" -> {
+                        ivStart.setBackgroundResource(R.mipmap.home_start_es)
+                    }
+                    "de" -> {
+                        ivStart.setBackgroundResource(R.mipmap.home_start_de)
+                    }
+                }
+            }
             // 跳跳转plant2
             ivStart.setOnClickListener {
                 mViewMode.whetherSubCompensation()
@@ -2105,7 +2119,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                      guideId = guideType, taskId = taskId, taskTime = taskTime
                  )*/
             },
-                unLockNow = { pop ->
+                unLockNow = { pop, step ->
                     xpopup {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
@@ -2121,6 +2135,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                         BasePopActivity.KEY_FIXED_TASK_ID,
                                         Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD
                                     )
+                                    // 当前周期
+                                    intent.putExtra(BasePopActivity.KEY_CURRENT_PERIOD, step)
                                     intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
                                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, context?.getString(com.cl.common_base.R.string.string_263))
@@ -3224,7 +3240,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 // 植物信息数据显示
                                 binding.pplantNinth.tvWeekDay.text = """
                                 ${
-                                    if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
+                                    if (info.step == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
                                         com.cl.common_base.R.string.base_autoflowering_abbreviations
                                     ) else info.journeyName
                                 }
@@ -3268,14 +3284,16 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     logI("1231231: ${System.currentTimeMillis()}")
                                     bold {
                                         append(
-                                            DateHelper.getDistanceTime(
-                                                System.currentTimeMillis(),
-                                                backTime,
-                                                "day",
-                                                "hr",
-                                                "min",
-                                                "minute"
-                                            )
+                                            context?.let { it1 ->
+                                                DateHelper.getDistanceTime(
+                                                    System.currentTimeMillis(),
+                                                    backTime,
+                                                    it1.getString(com.cl.common_base.R.string.days),
+                                                    it1.getString(com.cl.common_base.R.string.hr),
+                                                    it1.getString(com.cl.common_base.R.string.min),
+                                                    it1.getString(com.cl.common_base.R.string.minute)
+                                                )
+                                            }
                                         )
                                     }
                                 }
@@ -3430,7 +3448,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 植物信息数据显示
                             binding.pplantNinth.tvWeekDay.text = """
                                 ${
-                                if (info.journeyName == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
+                                if (info.step == UnReadConstants.PeriodStatus.KEY_AUTOFLOWERING) getString(
                                     com.cl.common_base.R.string.base_autoflowering_abbreviations
                                 ) else info.journeyName
                             }
@@ -3439,7 +3457,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             """.trimIndent()
 
                             ViewUtils.setVisible(
-                                info.journeyName != HomePeriodPop.KEY_SEED,
+                                info.step != HomePeriodPop.KEY_SEED,
                                 binding.pplantNinth.ivWaterStatus
                             )
                             // 显示碗or植物
@@ -3465,7 +3483,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                     ViewUtils.setVisible(shouldShowIvZpBg, binding.pplantNinth.ivZpBg)
                                 }
                             }
-                            if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) {
+                            if (info.step == UnReadConstants.PeriodStatus.KEY_SEED || info.step == UnReadConstants.PeriodStatus.KEY_GERMINATION) {
                                 // 显示种子背景图
                                 // 根据总天数判断
                                 binding.pplantNinth.ivBowl.background = when (info.totalDay) {
@@ -3596,7 +3614,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                 var number: Int = 1
 
                                 // 植物周期状态
-                                when (info.journeyName) {
+                                when (info.step) {
                                     UnReadConstants.PeriodStatus.KEY_VEGETATION -> {
                                         number = if ((info.totalDay ?: 0) in 1..7) {
                                             1
@@ -3797,7 +3815,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             binding.pplantNinth.ivBowl.setQuickClickListener {
                                 // 在种子阶段，是不能点击的。
                                  if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
-                                if (info.journeyName == UnReadConstants.PeriodStatus.KEY_SEED || info.journeyName == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
+                                if (info.step == UnReadConstants.PeriodStatus.KEY_SEED || info.step == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
                                 val currentDevice = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
                                 // 是否显示高度
                                 if (currentDevice?.heightSensor == true) {
@@ -5155,15 +5173,18 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     /**
      * 点击Check跳转到富文本\然后需要刷新植物信息
      */
-    private val startActivityLauncherCheck =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
-            if (activityResult.resultCode == Activity.RESULT_OK) {
-                // 更新小组件
-                context?.let { updateWidget(it) }
-                // 刷新植物信息
-                mViewMode.plantInfo()
-            }
+    private val startActivityLauncherCheck = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+        if (activityResult.resultCode == Activity.RESULT_OK) {
+            // 更新小组件
+            context?.let { updateWidget(it) }
+            val isShowCompletePage = activityResult?.data?.getBooleanExtra(Constants.Global.KEY_IS_SHOW_COMPLETE, false)
+            if (isShowCompletePage == true) {
+                showCompletePage()
+                return@registerForActivityResult
+            } // 刷新植物信息
+            mViewMode.plantInfo()
         }
+    }
 
 
     /**
@@ -5394,7 +5415,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     private fun startToVideoPlay() {
         val intent = Intent(context, VideoPLayActivity::class.java)
         intent.putExtra(WebActivity.KEY_WEB_URL, mViewMode.userDetail.value?.data?.liveLink)
-        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Live")
+        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
         startActivity(intent)
     }
 

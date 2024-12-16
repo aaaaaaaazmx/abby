@@ -312,7 +312,7 @@ class ContactFragment : BaseFragment<FragmentContactBinding>() {
                 R.id.tv_live_link -> {
                     val intent = Intent(context, VideoPLayActivity::class.java)
                     intent.putExtra(WebActivity.KEY_WEB_URL, item?.liveLink)
-                    intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Live")
+                    intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                     startActivity(intent)
                 }
 

@@ -152,6 +152,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         val inputData = intent.getSerializableExtra(KEY_INPUT_BOX) as? MutableList<FinishTaskReq.ViewData>
         inputData ?: mutableListOf()
     }
+
+    // 当前周期
+    private val currentCycle by lazy { intent.getStringExtra(KEY_CURRENT_PERIOD) }
+
     override fun initView() { // 添加状态蓝高度
         //        ViewCompat.setOnApplyWindowInsetsListener(binding.smart) { v, insets ->
         //            binding.smart.updateLayoutParams<ViewGroup.MarginLayoutParams> {
@@ -956,7 +960,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         } else {
                             intent.putExtra(WebActivity.KEY_WEB_URL, bean.value?.url)
                         }
-                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "hey abby")
+                        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                         context.startActivity(intent)
                     }
                     // 勾选框
@@ -1117,6 +1121,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         // 意图
         const val KEY_INTENT_JUMP_PAGE = "key_intent_jump_page"
         const val KEY_INTENT_UNLOCK_TASK = "key_intent_unlock_task"
+
+        // 当前周期
+        const val KEY_CURRENT_PERIOD = "key_current_period"
 
         // 用于固定的跳转
         const val KEY_FIXED_TASK_ID = "key_fixed_task_id"

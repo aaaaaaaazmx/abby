@@ -173,7 +173,7 @@ class ReDeemActivity : BaseActivity<MyActivityRedeemBinding>(),
             // 跳转到下载界面
             val intent = Intent(this@ReDeemActivity, WebActivity::class.java)
             intent.putExtra(WebActivity.KEY_WEB_URL, url)
-            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Purchase")
+            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
             startActivity(intent)
         }
     }

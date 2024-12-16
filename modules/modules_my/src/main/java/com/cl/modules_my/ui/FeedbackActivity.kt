@@ -2,6 +2,7 @@ package com.cl.modules_my.ui
 
 import android.content.Intent
 import android.net.Uri
+import androidx.appcompat.app.AppCompatDelegate
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.pop.BaseCenterPop
@@ -48,16 +49,18 @@ class FeedbackActivity: BaseActivity<MyFeedbackActivityBinding>() {
         }
         binding.ftTerms.setOnClickListener {
             // 跳转到使用条款H5
+            val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
             val intent = Intent(this@FeedbackActivity, WebActivity::class.java)
-            intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PERSONAL_URL)
-            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Terms of Use")
+            intent.putExtra(WebActivity.KEY_WEB_URL, String.format(Constants.H5.PERSONAL_URL, localLanguage))
+            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
             startActivity(intent)
         }
         binding.ftPrivacy.setOnClickListener {
             // 跳转到隐私协议H5
+            val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
             val intent = Intent(this@FeedbackActivity, WebActivity::class.java)
-            intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PRIVACY_POLICY_URL)
-            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Privacy Policy")
+            intent.putExtra(WebActivity.KEY_WEB_URL, String.format(Constants.H5.PRIVACY_POLICY_URL, localLanguage))
+            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
             startActivity(intent)
         }
         binding.ftBecome.setOnClickListener {

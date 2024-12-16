@@ -140,7 +140,7 @@ class FirstJoinInFragment : BaseFragment<HomeFirstJoinFragmentBinding>() {
             //intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/app-og-edition-grow-box")
             intent.putExtra(WebActivity.KEY_WEB_URL, "https://heyabby.com/pages/app-store")
             intent.putExtra(WebActivity.KEY_IS_SHOW_CAR, true)
-            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Hey abby")
+            intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
             context?.startActivity(intent)
         }
 

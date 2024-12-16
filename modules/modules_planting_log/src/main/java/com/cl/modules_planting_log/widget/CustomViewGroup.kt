@@ -98,11 +98,11 @@ class CustomViewGroup : LinearLayout {
                 val data = adapter.data as? MutableList<LogTypeListDataItem>
                     ?: return@setOnItemChildClickListener
                 val previousSelectedIndex = data.indexOfFirst { it.isSelected }
-                var beforeShowUiText: String? = null
+                var beforeShowLogType: String? = null
 
                 // 如果找到上一个选中的项，则取消选中
                 if (previousSelectedIndex != -1 && previousSelectedIndex != position) {
-                    beforeShowUiText = data[previousSelectedIndex].showUiText
+                    beforeShowLogType = data[previousSelectedIndex].logType
                     data[previousSelectedIndex].isSelected = false
                     adapter.notifyItemChanged(previousSelectedIndex)
                 }
@@ -125,8 +125,8 @@ class CustomViewGroup : LinearLayout {
                 showOrHideListener?.showOrHide(
                     previousSelectedIndex,
                     position,
-                    beforeShowUiText,
-                    data[position].showUiText,
+                    beforeShowLogType,
+                    data[position].logType,
                     this@CustomViewGroup
                 )
             }

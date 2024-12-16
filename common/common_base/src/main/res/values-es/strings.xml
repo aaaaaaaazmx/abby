@@ -213,7 +213,7 @@
     <string name="string_288">Salida</string>
     <string name="string_290">No, gracias.</string>
     <string name="string_291">Suscríbete ahora</string>
-    <string name="string_299">Hola abby</string>
+    <string name="string_299">hey abby</string>
     <string name="string_631">Error de conexión, borra el dispositivo del app y emparéjalo de nuevo</string>
     <string name="string_1142">¿Seguro que quieres borrarlo?</string>
     <string name="string_1144">Sin USB seleccionado</string>
@@ -486,7 +486,7 @@
     <string name="string_1861">Al eliminar la data del dispositivo, se restablecerán las configuraciones de fábrica y ya no estará asociado a tu cuenta. Sin embargo, tus registros de plantación no serán eliminados.</string>
     <string name="string_1862">Interruptor</string>
     <string name="string_1863">Enviar ahora</string>
-    <string name="string_1864">¿Aún no estás en la comunidad Discord? Haz clic aquí para unirte.\u00A0</string>
+    <string name="string_1864">¿Aún no estás en la comunidad Discord? Haz clic\u00A0</string>
     <string name="string_1865">aquí</string>
     <string name="string_1866">\u00A0para unirse.</string>
     <string name="string_1867">Encuadernación correcta.</string>
@@ -523,6 +523,9 @@
     <string name="weeks">Semana</string>
     <string name="day">Día</string>
     <string name="days">Día</string>
+    <string name="hr">hora</string>
+    <string name="min">minuto</string>
+    <string name="minute">minuto</string>
     <string name="days_ago">Hace %1$s días</string>
     <string name="hours_ago">Hace %1$s horas</string>
     <string name="minutes_ago">Hace %1$s minutos</string>
@@ -624,12 +627,12 @@
     <string name="home_date">Fecha</string>
     <string name="home_select_the_plant_type">Seleccione el tipo de planta</string>
     <string name="home_what_s_the_difference">¿Cuál es la diferencia?</string>
-    <string name="home_photoperiod_recommended">Recomendable: Activa las notificaciones de Calendario y Alertas para mantenerte informado de las actualizaciones importantes</string>
+    <string name="home_photoperiod_recommended">Fotoperíodo (recomendado)</string>
     <string name="home_autoflower">Autoflorestación</string>
     <string name="home_enter_your_strain_name">Introduce el nombre de tu cepa</string>
     <string name="home_not_sure">¿No estás seguro?</string>
     <string name="home_eg_og_kush_optional">ejemplo. OG Kush .. (Opcional)</string>
-    <string name="home_hey_abby">Hola abby</string>
+    <string name="home_hey_abby">hey abby</string>
     <string name="home_grow_chamber">Cámara de cultivo</string>
     <string name="home_water_tank">Depósito de agua</string>
     <string name="home_period">Periodo</string>
@@ -1040,7 +1043,7 @@
     <string name="connect_first">Conecte primero el dispositivo</string>
     <string name="input_err">Error de entrada</string>
     <string name="not_support_device">El dispositivo no es compatible</string>
-    <string name="smartsss">Configuración de Smart Outlets</string>
+    <string name="smartsss">Configuración de las salidas inteligentes</string>
     <string name="grow_space_setup">Configuración del espacio de cultivo</string>
     <string name="plant_setup">configuración de la planta</string>
     <string name="off_line_help">Asistencia en modo offline</string>
@@ -1055,8 +1058,8 @@
     <string name="redeem">Canjea tus Oxygen Coins</string>
     <string name="germination">Germinación</string>
     <string name="vegetation">Vegetación</string>
-    <string name="flowering">Floración</string>
-    <string name="flushing">Enjuague</string>
+    <string name="flowering">Florecimiento</string>
+    <string name="flushing">Lavado</string>
     <string name="drying">Secado</string>
 
 </resources>

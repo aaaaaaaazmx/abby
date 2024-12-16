@@ -64,7 +64,7 @@ class MyDiscordPop(
                 // 跳转绑定页面
                 val intent = Intent(context, WebActivity::class.java)
                 intent.putExtra(WebActivity.KEY_WEB_URL, discordLink)
-                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Discord")
+                intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                 context.startActivity(intent)
             }
 

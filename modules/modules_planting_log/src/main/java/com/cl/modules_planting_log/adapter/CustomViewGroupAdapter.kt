@@ -60,11 +60,11 @@ class CustomViewGroupAdapter(
         LogSaveOrUpdateReq.KEY_LOG_TYPE_DECLARE_DEATH to mutableListOf("declareDeathType"),
         LogSaveOrUpdateReq.KEY_LOG_TYPE_HARVEST to mutableListOf("driedWeight", "wetWeight")*/
 
-        "Change water" to mutableListOf("waterType", "volume"),
-        "Feeding" to mutableListOf("feedingType"),
-        "Repellent" to mutableListOf("repellentType"),
-        "Declare Death" to mutableListOf("declareDeathType"),
-        "Harvest" to mutableListOf("driedWeight", "wetWeight")
+        "change_water" to mutableListOf("waterType", "volume"),
+        "feeding" to mutableListOf("feedingType"),
+        "repellent" to mutableListOf("repellentType"),
+        "declare_death" to mutableListOf("declareDeathType"),
+        "harvest" to mutableListOf("driedWeight", "wetWeight")
     )
 
     // 显示和隐藏的条目
@@ -373,15 +373,15 @@ class CustomViewGroupAdapter(
     /**
      * 用于显示和隐藏的条目回调
      */
-    override fun showOrHide(previousSelectedIndex: Int, currentIndex: Int, beforeShowUiText: String?, showUiText: String, customViewGroup: CustomViewGroup) {
+    override fun showOrHide(previousSelectedIndex: Int, currentIndex: Int, beforeShowLogType: String?, logType: String, customViewGroup: CustomViewGroup) {
         // 2、显示当前的type
-        logTypeMap[showUiText]?.forEach { value ->
+        logTypeMap[logType]?.forEach { value ->
             fieldsAttributes[value]?.isVisible = true
             notifyItemChanged(fields.indexOf(value), "payLoads")
         }
 
         // 1、先隐藏上个的type
-        beforeShowUiText?.let {
+        beforeShowLogType?.let {
             logTypeMap[it]?.forEach { value ->
                 // 隐藏
                 fieldsAttributes[value]?.isVisible = false

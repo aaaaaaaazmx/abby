@@ -303,16 +303,11 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
             }
         }
         // 获取当前系统语言
-        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
-        } else {
-            // For lower Android versions, fallback to the legacy approach
-            resources.configuration.locales
-        }
+        val currentAppLocales: LocaleListCompat = AppCompatDelegate.getApplicationLocales()
         // Only proceed if locales are available
         if (!currentAppLocales.isEmpty) {
             // Get the language from the first locale
-            val currentLanguage = currentAppLocales[0].language
+            val currentLanguage = currentAppLocales[0]?.language
 
             // Try to find the index of the current language in the availableLanguage list
             val languageIndex = availableLanguage.indexOf(currentLanguage)
@@ -913,7 +908,7 @@ class SettingActivity : BaseActivity<MySettingBinding>() {
                     currentLanguage = availableLanguage[which]
                 }
                 .setPositiveButton(getString(com.cl.common_base.R.string.base_ok)) { dialog, _ ->
-                    mViewModel.modifyUserDetail(ModifyUserDetailReq(language = currentLanguage))
+                    mViewModel.modifyUserDetail(ModifyUserDetailReq(language = currentLanguage.uppercase()))
                     dialog?.dismiss()
                 }
                 .setNegativeButton(getString(com.cl.common_base.R.string.my_cancel)) { dialog, _ ->

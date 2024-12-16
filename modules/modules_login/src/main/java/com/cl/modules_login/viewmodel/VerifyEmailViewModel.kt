@@ -59,7 +59,7 @@ class VerifyEmailViewModel @Inject constructor(private val repository: RegisterL
      * 登录
      */
     fun login(currentLanguage: String? = "en") {
-        _loginReq.value?.language = currentLanguage
+        _loginReq.value?.language = currentLanguage?.uppercase()
         viewModelScope.launch {
             repository.loginAbby(_loginReq.value!!)
                 .map {

@@ -1,0 +1,11 @@
+<resources>
+    <string name="low_light_tip">Geringe Beleuchtung, bitte schalten Sie das Licht ein</string>
+    <string name="qr_bar_code">QR-Code / Strichcode</string>
+    <string name="file_scan_code_nofile">Das zu erkennende Bild wurde nicht erkannt \n Berühren Sie den Bildschirm, um mit dem Scannen fortzufahren</string>
+    <string name="file_scan_code_nodata">QR-Code/Strichcode nicht erkannt \n Berühren Sie den Bildschirm, um mit dem Scannen fortzufahren</string>
+
+    <string-array name="scan_type">
+        <item>QR-Code</item>
+        <item>Strichcode</item>
+    </string-array>
+</resources>

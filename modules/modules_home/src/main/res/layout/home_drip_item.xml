@@ -59,7 +59,7 @@
                 android:id="@+id/tv_turn"
                 android:layout_width="65dp"
                 android:layout_height="wrap_content"
-                android:text="@string/string_248"
+                android:text="@string/home_turn_on"
                 android:textColor="@color/black"
                 android:textSize="13sp"
                 android:textStyle="bold"

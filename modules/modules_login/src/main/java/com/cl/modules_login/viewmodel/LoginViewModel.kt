@@ -188,7 +188,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
      */
     fun login(currentLanguage: String? = "en") {
         viewModelScope.launch {
-            _loginReq.value?.language = currentLanguage
+            _loginReq.value?.language = currentLanguage?.uppercase()
             repository.loginAbby(_loginReq.value!!)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {

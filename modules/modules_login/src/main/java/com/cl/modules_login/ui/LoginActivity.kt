@@ -101,13 +101,17 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         if (Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN, "").isNotEmpty()) {
             updateWidget(this@LoginActivity)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
         // 获取当前系统语言
-        val currentAppLocales: LocaleList = getLocalLanguage()
+        val currentAppLocales: LocaleListCompat = AppCompatDelegate.getApplicationLocales()
 
         // Only proceed if locales are available
         if (!currentAppLocales.isEmpty) {
             // Get the language from the first locale
-            val currentLanguage = currentAppLocales[0].language
+            currentLanguage = currentAppLocales[0]?.language ?: "en"
             // Try to find the index of the current language in the availableLanguage list
             val languageIndex = availableLanguage.indexOf(currentLanguage)
 
@@ -123,16 +127,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         }
     }
 
-    private fun getLocalLanguage(): LocaleList {
-        val currentAppLocales: LocaleList = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            applicationContext.getSystemService(LocaleManager::class.java).getApplicationLocales("com.cl.abby")
-        } else {
-            // For lower Android versions, fallback to the legacy approach
-            resources.configuration.locales
-        }
-        return currentAppLocales
-    }
-
     private val plantSix by lazy {
         XPopup.Builder(this@LoginActivity).isDestroyOnDismiss(false).enableDrag(false).dismissOnTouchOutside(false).asCustom(LoginSelectEnvPop(this@LoginActivity))
     }
@@ -146,13 +140,15 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
             Prefs.putBooleanAsync(Constants.PrivacyPolicy.KEY_PRIVACY_POLICY_IS_AGREE, true)
             checkLogin()
         }, onTermUsAction = { // 跳转到使用条款H5
+            val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
             val intent = Intent(this@LoginActivity, WebActivity::class.java)
-            intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PERSONAL_URL)
+            intent.putExtra(WebActivity.KEY_WEB_URL,  String.format(Constants.H5.PERSONAL_URL, localLanguage))
             intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, getString(R.string.about_terms))
             startActivity(intent)
         }, onPrivacyAction = { // 跳转到隐私协议H5
+            val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
             val intent = Intent(this@LoginActivity, WebActivity::class.java)
-            intent.putExtra(WebActivity.KEY_WEB_URL, Constants.H5.PRIVACY_POLICY_URL)
+            intent.putExtra(WebActivity.KEY_WEB_URL, String.format(Constants.H5.PRIVACY_POLICY_URL, localLanguage))
             intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, getString(R.string.about_policy))
             startActivity(intent)
         })
@@ -503,7 +499,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
                 it.source = null
                 it.autoToken = null
                 it.sourceUserId = null
-                mViewModel.login()
+                mViewModel.login(currentLanguage)
             }
         }
     }

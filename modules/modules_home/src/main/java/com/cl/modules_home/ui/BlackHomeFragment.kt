@@ -1433,7 +1433,7 @@ class BlackHomeFragment:BaseFragment<HomeBlackProModeFragmentBinding>() {
     private fun startToVideoPlay() {
         val intent = Intent(context, VideoPLayActivity::class.java)
         intent.putExtra(WebActivity.KEY_WEB_URL, mViewMode.userDetail.value?.data?.liveLink)
-        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "Live")
+        intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
         startActivity(intent)
     }
 
