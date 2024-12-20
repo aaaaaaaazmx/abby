@@ -103,6 +103,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -494,13 +495,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 跳转到种植引导界面
         binding.plantFirst.apply {
             if (ivStart.isVisible) {
-                when(AppCompatDelegate.getApplicationLocales().get(0)?.language) {
+                when (AppCompatDelegate.getApplicationLocales().get(0)?.language) {
                     "en" -> {
                         ivStart.setBackgroundResource(R.mipmap.home_start)
                     }
+
                     "es" -> {
                         ivStart.setBackgroundResource(R.mipmap.home_start_es)
                     }
+
                     "de" -> {
                         ivStart.setBackgroundResource(R.mipmap.home_start_de)
                     }
@@ -546,7 +549,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
             // 点击种子阶段的感叹号
             clGth.setSafeOnClickListener {
-                context?.let{
+                context?.let {
                     com.cl.common_base.ext.xpopup(it) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(false)
@@ -605,7 +608,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             UnReadConstants.JumpType.KEY_LEARN_MORE -> {
                                 // 单独处理， 弹窗
                                 // mViewMode.getMessageDetail("$messageId")
-                                mViewMode.getUnreadMessageList().firstOrNull()?.articleId?.let {articleId ->
+                                mViewMode.getUnreadMessageList().firstOrNull()?.articleId?.let { articleId ->
                                     InterComeHelp.INSTANCE.openInterComeSpace(InterComeHelp.InterComeSpace.Article, articleId)
                                 }
                                 mViewMode.getRead("$messageId")
@@ -624,12 +627,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     mViewMode.getUnreadMessageList().firstOrNull()?.type?.let { type ->
                         val messageId = mViewMode.getUnreadMessageList().firstOrNull()?.messageId
                         when (type) {
-                            UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING, UnReadConstants.JumpType.KEY_CLOSE_DOOR
+                            UnReadConstants.JumpType.KEY_PREVENT_DRY_BURNING, UnReadConstants.JumpType.KEY_CLOSE_DOOR,
                             -> {
                                 mViewMode.getRead("$messageId")
                                 return@setOnClickListener
                             }
-                             else -> {}
+
+                            else -> {}
                         }
                     }
 
@@ -766,7 +770,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                 // 没有显示摄像头，注意注意，不能取反
                 // 夜间模式下的植物, 不是帐篷的情况下才显示abby的夜间模式
                 ViewUtils.setVisible(
-                    (!isSHowCamera && mViewMode.getCurrentGrowLight.value == 0 && mViewMode.isZp.value == false) ,
+                    (!isSHowCamera && mViewMode.getCurrentGrowLight.value == 0 && mViewMode.isZp.value == false),
                     binding.pplantNinth.ivThree,
                     binding.pplantNinth.ivTwo
                 )
@@ -1049,7 +1053,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         autoFocusEditText(false)
                         moveUpToKeyboard(true)
                         autoOpenSoftInput(false)
-                        asCustom(PresetPop(it, bean, mViewMode.getPreset.value?.data) {  presetData ->
+                        asCustom(PresetPop(it, bean, mViewMode.getPreset.value?.data) { presetData ->
                             // 调用保存预设模版接口
                             mViewMode.addProModeRecord(
                                 ProModeInfoBean(
@@ -1135,7 +1139,8 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             mViewMode.setmuteOff(muteOff.toString())
                             mViewMode.setmuteOn(muteOn.toString())
 
-                            val dpBean = AllDpBean(cmd = "6", gl = lightIntensity.toString(), gls = muteOn.toString(), gle = muteOff.toString(), ex = fanExhaust.toString(), `in` = fanIntake.toString())
+                            val dpBean =
+                                AllDpBean(cmd = "6", gl = lightIntensity.toString(), gls = muteOn.toString(), gle = muteOff.toString(), ex = fanExhaust.toString(), `in` = fanIntake.toString())
 
                             // 开灯时间
                             dpBean.gls = muteOn.toString()
@@ -2125,25 +2130,32 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         dismissOnTouchOutside(false)
                         asCustom(
                             context?.let {
-                                BaseCenterPop(it, titleText = getString(com.cl.common_base.R.string.string_1367), isShowCancelButton = true, cancelText = getString(com.cl.common_base.R.string.my_cancel), confirmText = context?.getString(com.cl.common_base.R.string.string_284), onConfirmAction = {
-                                    pop.dismiss()
-                                    // 跳转副本界面
-                                    // 跳转到富文本界面
-                                    val intent = Intent(context, KnowMoreActivity::class.java)
-                                    intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD)
-                                    intent.putExtra(
-                                        BasePopActivity.KEY_FIXED_TASK_ID,
-                                        Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD
-                                    )
-                                    // 当前周期
-                                    intent.putExtra(BasePopActivity.KEY_CURRENT_PERIOD, step)
-                                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
-                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
-                                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, context?.getString(com.cl.common_base.R.string.string_263))
-                                    intent.putExtra(BasePopActivity.KEY_PLANT_ID, mViewMode.plantInfo.value?.data?.plantId.toString())
-                                    startActivityLauncherCheck.launch(intent)
-                                }, onCancelAction = {
-                                })
+                                BaseCenterPop(
+                                    it,
+                                    titleText = getString(com.cl.common_base.R.string.string_1367),
+                                    isShowCancelButton = true,
+                                    cancelText = getString(com.cl.common_base.R.string.my_cancel),
+                                    confirmText = context?.getString(com.cl.common_base.R.string.string_284),
+                                    onConfirmAction = {
+                                        pop.dismiss()
+                                        // 跳转副本界面
+                                        // 跳转到富文本界面
+                                        val intent = Intent(context, KnowMoreActivity::class.java)
+                                        intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD)
+                                        intent.putExtra(
+                                            BasePopActivity.KEY_FIXED_TASK_ID,
+                                            Constants.Fixed.KEY_FIXED_ID_PREPARE_UNLOCK_PERIOD
+                                        )
+                                        // 当前周期
+                                        intent.putExtra(BasePopActivity.KEY_CURRENT_PERIOD, step)
+                                        intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                                        intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, context?.getString(com.cl.common_base.R.string.string_263))
+                                        intent.putExtra(BasePopActivity.KEY_PLANT_ID, mViewMode.plantInfo.value?.data?.plantId.toString())
+                                        startActivityLauncherCheck.launch(intent)
+                                    },
+                                    onCancelAction = {
+                                    })
                             }
                         ).show()
                     }
@@ -3432,7 +3444,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                         // 检查是否拥有权限
                         runCatching {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            val hasPermissions = PermissionHelp().hasPermissions(context, Manifest.permission.POST_NOTIFICATIONS)
+                                val hasPermissions = PermissionHelp().hasPermissions(context, Manifest.permission.POST_NOTIFICATIONS)
                                 if (!hasPermissions) {
                                     activity?.let {
                                         PermissionHelp().applyPermissionHelp(it, it.getString(com.cl.common_base.R.string.string_244), object : PermissionHelp.OnCheckResultListener {
@@ -3822,7 +3834,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                             // 植物的点击弹出植物高度。
                             binding.pplantNinth.ivBowl.setQuickClickListener {
                                 // 在种子阶段，是不能点击的。
-                                 if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
+                                if (binding.pplantNinth.clPlantHeight.isVisible) return@setQuickClickListener
                                 if (info.step == UnReadConstants.PeriodStatus.KEY_SEED || info.step == UnReadConstants.PeriodStatus.KEY_GERMINATION) return@setQuickClickListener
                                 val currentDevice = listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }
                                 // 是否显示高度
@@ -3902,14 +3914,26 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     data?.let { dataItem ->
                         val originalSize = dataItem.environments?.size ?: 0
                         val filteredList = mutableListOf<EnvironmentInfoData.Environment>()
-                        val list = listOf(EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE, EnvironmentInfoData.KEY_TYPE_WATER_LEVEL_TYPE, EnvironmentInfoData.KEY_TYPE_HUMIDITY_TYPE, EnvironmentInfoData.KEY_TYPE_TEMPERATURE_TYPE)
+                        val list = listOf(
+                            EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE,
+                            EnvironmentInfoData.KEY_TYPE_WATER_LEVEL_TYPE,
+                            EnvironmentInfoData.KEY_TYPE_HUMIDITY_TYPE,
+                            EnvironmentInfoData.KEY_TYPE_TEMPERATURE_TYPE
+                        )
                         // Add new data and modify original data
                         for (j in 0 until originalSize) {
                             val insertIndex = j * 2
                             val newTextDesc = dataItem.environments?.get(insertIndex)?.detectionValue  // Use j to get the original item
 
                             // Insert new data
-                            dataItem.environments?.add(insertIndex, EnvironmentInfoData.Environment(environmentType = EnvironmentInfoData.KEY_SPACE_TYPE_TEXT, textDesc = newTextDesc, type = dataItem.environments?.get(insertIndex)?.environmentType))
+                            dataItem.environments?.add(
+                                insertIndex,
+                                EnvironmentInfoData.Environment(
+                                    environmentType = EnvironmentInfoData.KEY_SPACE_TYPE_TEXT,
+                                    textDesc = newTextDesc,
+                                    type = dataItem.environments?.get(insertIndex)?.environmentType
+                                )
+                            )
 
                             // Modify original data
                             dataItem.environments?.get(insertIndex + 1)?.apply {
@@ -3935,7 +3959,13 @@ class HomeFragment : BaseFragment<HomeBinding>() {
 
                         // Update UI or data display
                         dataItem.environments?.let {
-                            envirPop?.setData(it, mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }, mViewMode.userDetail.value?.data, mViewMode.getAirPump.value == true, mViewMode.getWaterLevel.value.toString())
+                            envirPop?.setData(
+                                it,
+                                mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 },
+                                mViewMode.userDetail.value?.data,
+                                mViewMode.getAirPump.value == true,
+                                mViewMode.getWaterLevel.value.toString()
+                            )
                         }
                     }
 
@@ -4283,7 +4313,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             binding.pplantNinth.cameraVideoView.createVideoView(cameraId)
             if (mCameraP2P == null) {
                 // ToastUtil.shortShow("Camera initialization failed")
-                 return
+                return
             }
         }
 
@@ -4494,8 +4524,12 @@ class HomeFragment : BaseFragment<HomeBinding>() {
     }
 
     private fun queryAllDp() {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            GSON.toJson(AllDpBean(cmd = "2")).apply {
+                DeviceControl.get().success { }.error { code, error -> }.sendDps(this, mViewMode.thingDeviceBean()?.devId)
+            }
+        }
         // GSON.toJson(AllDpBean(cmd = "2"))?.let { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
-        GSON.toJsonInBackground(AllDpBean(cmd = "2")) { DeviceControl.get().success { }.error { code, error -> }.sendDps(it, mViewMode.thingDeviceBean()?.devId) }
     }
 
     override fun onPause() {
@@ -4585,7 +4619,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         // 按钮
         binding.pplantNinth.tvBtnDesc.text =
             if (UnReadConstants.Device.KEY_CHANGE_CUP_WATER == unRead?.type || UnReadConstants.Device.KEY_BURN_OUT_PROOF == unRead?.type) {
-                 getString(com.cl.common_base.R.string.string_1388)
+                getString(com.cl.common_base.R.string.string_1388)
             } else if (UnReadConstants.plantStatus.contains(unRead?.type)) {
                 context?.getString(com.cl.common_base.R.string.string_284)
             } else if (unRead?.jumpType == UnReadConstants.JumpType.KEY_TREND) {
@@ -4620,7 +4654,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
             } else {
                 ViewUtils.setGone(binding.pplantNinth.tvBtnDesc)
             }
-        }  else {
+        } else {
             ViewUtils.setVisible(binding.pplantNinth.tvBtnDesc)
         }
 
@@ -5293,7 +5327,7 @@ class HomeFragment : BaseFragment<HomeBinding>() {
         filePath: String,
         title: String,
         mimeType: String,
-        albumName: String
+        albumName: String,
     ): Uri? {
         val file = File(filePath)
         if (!file.exists()) return null

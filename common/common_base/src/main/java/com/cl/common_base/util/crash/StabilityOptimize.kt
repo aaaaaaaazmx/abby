@@ -32,7 +32,7 @@ object StabilityOptimize {
                     while (true) {
                         try {
                             // 给消息循环一个小的休眠时间，降低CPU占用
-                            Thread.sleep(1)
+                            Thread.sleep(16)
                             Looper.loop()
                         } catch (e: Throwable) {
                             val now = System.currentTimeMillis()
