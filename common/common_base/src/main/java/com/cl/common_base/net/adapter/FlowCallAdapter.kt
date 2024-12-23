@@ -77,7 +77,7 @@ class BodyCallAdapter<T>(private val responseType: Type) :
                             try {
                                 /* logE("${response}")
                                  logE("${response.body()}")*/
-                                if (response.body() == null && response.code() == Constants.APP_SERVER) {
+                                if (response.body() == null || response.code() == Constants.APP_SERVER || response.code() == Constants.APP_SERVER_502) {
                                     ToastUtil.shortShow("Server error, please contact support@heyabby.com")
                                     continuation.resumeWithException(Exception("Server error, please contact support@heyabby.com"))
                                     call.cancel()

@@ -21,6 +21,8 @@ object Constants {
 
     // 服务器错误
     const val APP_SERVER = 500
+    // 服务器错误
+    const val APP_SERVER_502 = 502
 
     // H5相关
     object H5 {
