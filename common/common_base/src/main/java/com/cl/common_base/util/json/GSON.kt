@@ -7,6 +7,10 @@ import com.google.gson.JsonSyntaxException
 import java.lang.reflect.Type
 import android.os.Handler
 import android.os.Looper
+import com.cl.common_base.ext.logI
+import com.cl.common_base.util.CoroutineFlowUtils
+import kotlinx.coroutines.flow.flow
+import kotlin.concurrent.thread
 
 object GSON {
 
@@ -105,12 +109,14 @@ object GSON {
      * @param callback
      */
     fun toJsonInBackground(t: Any?, callback: (String) -> Unit) {
-        Thread {
-            val result = toJson(t)
-            Handler(Looper.getMainLooper()).post {
-                callback(result)
+        CoroutineFlowUtils.executeInBackground(
+            task = {
+                toJson(t)
+            },
+            onSuccess = {
+                callback(it)
             }
-        }.start()
+        )
     }
 
     /**
@@ -121,12 +127,12 @@ object GSON {
      * @param callback
      */
     fun <T> parseObjectInBackground(json: String?, clazz: Class<T>?, callback: (T?) -> Unit) {
-        Thread {
-            val result = parseObject(json, clazz)
-            Handler(Looper.getMainLooper()).post {
-                callback(result)
+        CoroutineFlowUtils.executeInBackground(
+            task = { parseObject(json, clazz) },
+            onSuccess = {
+                callback(it)
             }
-        }.start()
+        )
     }
 
     /**
@@ -137,11 +143,13 @@ object GSON {
      * @param callback
      */
     fun <T> parseObjectListInBackground(json: String?, cls: Class<T>?, callback: (List<T>) -> Unit) {
-        Thread {
-            val result = parseObjectList(json, cls)
-            Handler(Looper.getMainLooper()).post {
-                callback(result)
+        CoroutineFlowUtils.executeInBackground(
+            task = {
+                parseObjectList(json, cls)
+            },
+            onSuccess = {
+                callback(it)
             }
-        }.start()
+        )
     }
 }

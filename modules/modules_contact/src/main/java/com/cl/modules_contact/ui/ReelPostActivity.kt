@@ -55,6 +55,7 @@ import com.cl.common_base.bean.ImageUrl
 import com.cl.modules_contact.request.Mention
 import com.cl.common_base.bean.ChoosePicBean
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.util.CoroutineFlowUtils
 import com.cl.common_base.util.ImagePickerUtils
 import com.cl.modules_contact.ui.pic.ChoosePicActivity
 import com.cl.modules_contact.util.DeviceConstants
@@ -875,7 +876,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
      * 选择Gif之后转Mp4
      */
     private fun gifToMp4(url: String, parm: ((status: Boolean) -> Unit)?, delayCheck: Boolean? = false) {
-        thread {
+        CoroutineFlowUtils.executeInBackground(scope = this@ReelPostActivity.lifecycleScope, task = {
             // ffmpeg -i input.gif -vf "crop=trunc(iw/2)*2:trunc(ih/2)*2" output.mp4
             // ffmpeg -i input.gif -vf scale=420:-2,format=yuv420p out.mp4
             // ffmpeg -f gif -i  -y -pix_fmt yuv420p -vf "crop=in_w:in_h"
@@ -934,7 +935,7 @@ class ReelPostActivity : BaseActivity<ContactReelPostActivityBinding>() {
                     logI("gifTMp4: $progress")
                 }
             })
-        }
+        })
     }
 
     private fun saveFileToGallery(context: Context, filePath: String, title: String, mimeType: String, albumName: String): Uri? {

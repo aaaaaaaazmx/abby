@@ -8,6 +8,7 @@ import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.report.Reporter
+import com.cl.common_base.util.CoroutineFlowUtils
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.thingclips.smart.home.sdk.ThingHomeSdk
@@ -132,16 +133,17 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
     override fun sendDps(dpsJson: String, devId: String?): DeviceControlImpl {
         map[TuYaDeviceConstants.KEY_DEVICE_MULTIPLE_DP] = dpsJson
         // logI("sendDPs: $dpsJson,,,\n --> ${GSON.toJson(map)}")
-        Thread {
+        CoroutineFlowUtils.executeInBackground(task = {
             publishDpsSync(map, devId)
-        }.start()
+        })
         return this@DeviceControlImpl
     }
 
     private fun publishDpsAsync(dataMap: HashMap<String, Any>, devId: String? = null) {
-        Thread {
+        CoroutineFlowUtils.executeInBackground(task = {
+            logI("parseObjectInBackground onSuccess $dataMap")
             publishDpsSync(dataMap, devId)
-        }.start()
+        })
     }
 
     private fun publishDpsSync(dataMap: HashMap<String, Any>, devId: String? = null) {

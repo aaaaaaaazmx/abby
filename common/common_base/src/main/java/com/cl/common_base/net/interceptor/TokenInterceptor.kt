@@ -9,6 +9,7 @@ import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
 import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.report.Reporter
+import com.cl.common_base.util.CoroutineFlowUtils
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import okhttp3.Interceptor
@@ -60,9 +61,9 @@ class TokenInterceptor : Interceptor {
         """.trimIndent()
             )
             kotlin.runCatching {
-                thread {
+                CoroutineFlowUtils.executeInMainThread(task = {
                     Reporter.reportApiError(url = request.url.toString(), query = "", -1, "", it.message)
-                }
+                })
             }
         }.onSuccess {
             kotlin.runCatching {

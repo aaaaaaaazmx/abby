@@ -31,6 +31,7 @@ import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.listener.TuYaDeviceUpdateReceiver
 import com.cl.common_base.pop.GuideBlePop
 import com.cl.common_base.report.Reporter
+import com.cl.common_base.util.CoroutineFlowUtils
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.json.GSON
@@ -229,7 +230,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                     // 缓存信息
                     GSON.toJsonInBackground(data) { it1 -> Prefs.putStringAsync(Constants.Login.KEY_LOGIN_DATA, it1) }
                     // 绑定设备JPUSH的别名
-                    thread {
+                    CoroutineFlowUtils.executeInBackground(scope = this@PairDistributionWifiActivity.lifecycleScope, task = {
                         logI(
                             """
                             setAliasAndTags:
@@ -244,7 +245,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 it
                             )
                         }
-                    }
+                    })
                     // 种植检查
                     mViewModel.checkPlant()
                 }
