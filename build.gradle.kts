@@ -1,17 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
-        google()
-        jcenter()
-        mavenCentral()
+        maven { setUrl("https://maven-other.tuya.com/repository/maven-releases/") }
+        maven { setUrl("https://maven-other.tuya.com/repository/maven-commercial-releases/") }
+        maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
+        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        maven {
+            setUrl("https://maven.google.com")
+        }
         maven {
             setUrl("https://jitpack.io")
         }
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
-        maven { setUrl("https://maven.aliyun.com/repository/public") }
-        maven { setUrl("https://maven.aliyun.com/repository/google") }
+        gradlePluginPortal()
+        google()
+        mavenCentral()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.4.2")
