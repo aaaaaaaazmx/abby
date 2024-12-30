@@ -330,6 +330,7 @@
                         android:src="@mipmap/home_exclamation_mark_black" />
 
                     <TextView
+                        android:gravity="center_horizontal"
                         android:id="@+id/tv_plant_height"
                         android:layout_centerHorizontal="true"
                         android:layout_width="wrap_content"
@@ -430,6 +431,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:gravity="center_horizontal"
                         android:text="@{String.valueOf(viewModel.getWaterLevel)}"
                         android:layout_centerHorizontal="true"
                         android:layout_width="wrap_content"
@@ -464,6 +466,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:gravity="center_horizontal"
                         android:text='@{viewModel.doorStatus == "true" ? "DIM(Door Open)" : viewModel.getCurrentGrowLight == 0 ? "OFF" : "ON" }'
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
