@@ -56,6 +56,8 @@ import com.cl.common_base.pop.HomePlantFourPop
 import com.cl.common_base.pop.HomePlantSixPop
 import com.cl.common_base.pop.HomeSkipWaterPop
 import com.cl.common_base.pop.activity.BasePopActivity
+import com.cl.common_base.pop.activity.BasePopActivity.Companion.KEY_IS_SHOW_BUTTON
+import com.cl.common_base.pop.activity.BasePopActivity.Companion.KEY_PREVIEW_PACKAGE_ID
 import com.cl.common_base.pop.activity.BasePumpActivity
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.Calendar
@@ -68,6 +70,7 @@ import com.cl.common_base.widget.AbTextViewCalendar
 import com.cl.common_base.widget.SvTextView
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_my.R
+import com.cl.modules_my.adapter.CalendarTaskAdapter
 import com.cl.modules_my.adapter.MyCalendarAdapter
 import com.cl.modules_my.adapter.TaskListAdapter
 import com.cl.modules_my.databinding.MyCalendayActivityBinding
@@ -121,6 +124,70 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         MyCalendarAdapter(mutableListOf())
     }
 
+    private val taskListAdapter by lazy {
+        CalendarTaskAdapter(mutableListOf(), onDeleteClick = { subPlantList, taskLise, position, subAdapter ->
+            // 如果是预览模式下，不允许点击
+            if (!isTemplateId.isNullOrEmpty()) return@CalendarTaskAdapter
+            xpopup(this@CalendarActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@CalendarActivity, isShowCancelButton = true, content = getString(com.cl.common_base.R.string.delete_task_confirmation), onConfirmAction = {
+                    //  调用删除任务接口
+                    subPlantList?.taskId?.let { mViewMode.deleteTask(it) }
+                    taskLise.subPlantList?.removeAt(position)
+                    subAdapter.notifyItemRemoved(position)
+                })).show()
+            }
+        }, onDelayClick = { subPlantList, taskLise, position, subAdapter ->
+            // 如果是预览模式下，不允许点击
+            if (!isTemplateId.isNullOrEmpty()) return@CalendarTaskAdapter
+            // 调用延时接口
+            xpopup(this@CalendarActivity) {
+                isDestroyOnDismiss(false)
+                dismissOnTouchOutside(false)
+                asCustom(BaseCenterPop(this@CalendarActivity, isShowCancelButton = true, content = getString(com.cl.common_base.R.string.task_snooze), onConfirmAction = {
+                    //  调用延时任务接口
+                    mViewMode.updateTask(
+                        UpdateReq(
+                            taskId = subPlantList?.taskId, taskTime = calculateNextDayTimestamp(taskLise.taskTime?.toLong() ?: 0L).toString()
+                        )
+                    )
+                    taskLise.subPlantList?.removeAt(position)
+                    subAdapter.notifyItemRemoved(position)
+                })).show()
+            }
+        }, onCompleteClick = { subPlantList, taskLise, position, subAdapter ->
+            // 如果是预览模式下，不允许点击
+            if (!isTemplateId.isNullOrEmpty()) return@CalendarTaskAdapter
+            // 先要判断是勾选还是反勾选。
+            val currentSelect = subPlantList?.select
+            if (currentSelect == true) {
+                //  调用完成任务接口
+                mViewMode.finishTask(FinishTaskReq(taskId = taskLise.taskId, subPlantList = mutableListOf(subPlantList)))
+            } else {
+                // todo 调用取消任务接口
+            }
+            taskLise.subPlantList?.get(position)?.select = !taskLise.subPlantList?.get(position)?.select!!
+            adapter.notifyItemChanged(position)
+        }, onPreViewClick = { subTaskList, taskLise ->
+            // 浏览任务包。
+            val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+            intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, subTaskList as? Serializable)
+            intent.putExtra(BasePopActivity.KEY_TASK_ID, taskLise.taskId)
+            intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskLise.taskId)
+            intent.putExtra(Constants.Global.KEY_TXT_ID, subTaskList?.textId)
+            intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+            intent.putExtra(KEY_PREVIEW_PACKAGE_ID, true)
+            intent.putExtra(KEY_IS_SHOW_BUTTON, true)
+            intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, getString(com.cl.common_base.R.string.my_next))
+            intent.putExtra(BasePopActivity.KEY_TASK_NO, subTaskList?.taskNo)
+            startActivity(intent)
+        }, onJumpClick = { subTaskList, taskLise ->
+            // 任务按钮点击，判断是这是什么任务。目前单独提出2个问题，排水、解锁周期。需要单独显示按钮和处理
+            // todo 判断当前任务是什么类型，然后进行跳转
+        })
+    }
+
     private val pop by lazy {
         XPopup.Builder(this@CalendarActivity).isDestroyOnDismiss(false).dismissOnTouchOutside(false)
     }
@@ -142,14 +209,15 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     override fun initView() {
         // 主要是用来显示气泡
         LiveEventBus.get().with(Constants.APP.KEY_IN_APP_CLOSE_CALENDAR, Int::class.java).observe(this@CalendarActivity) {
-                if (it == 1065) {
-                    finish()
-                }
+            if (it == 1065) {
+                finish()
             }
+        }
         mViewMode.setSteps(step)
         binding.btnSuccess.setVisible(null != isTemplateId)
         // 设置标题颜色以及标题文案
-        binding.title.setTitle(if (null == isTemplateId) getString(com.cl.common_base.R.string.my_calendar) else getString(com.cl.common_base.R.string.calendar_preview)).setTitleColor(com.cl.common_base.R.color.mainColor).setQuickClickListener {
+        binding.title.setTitle(if (null == isTemplateId) getString(com.cl.common_base.R.string.my_calendar) else getString(com.cl.common_base.R.string.calendar_preview))
+            .setTitleColor(com.cl.common_base.R.color.mainColor).setQuickClickListener {
             // 会滚到当前日期
             val data = adapter.data
             if (data.isEmpty()) return@setQuickClickListener
@@ -175,6 +243,10 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         // 适配器
         binding.rvList.layoutManager = GridLayoutManager(this@CalendarActivity, 7)
         binding.rvList.adapter = adapter
+
+        // 任务列表适配器
+        binding.rvTaskList.layoutManager = LinearLayoutManager(this@CalendarActivity)
+        binding.rvTaskList.adapter = taskListAdapter
 
         // help
         val snapHelper = GravitySnapHelper(Gravity.TOP)
@@ -698,6 +770,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun initData() {
         // startGrowing点击时间
         binding.btnSuccess.setSafeOnClickListener {
@@ -741,8 +814,23 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 }
             }
         }
-        binding.tvCycle.setOnClickListener {
+        binding.svtUnlockAll.setSafeOnClickListener {
+            // 完成全部任务。
+            val subPlantList = taskListAdapter.data.flatMap { it.subPlantList ?: mutableListOf() }.toMutableList()
+            mViewMode.finishTask(FinishTaskReq(subPlantList = subPlantList))
 
+            // 1. 遍历并修改数据
+            val updatedData = taskListAdapter.data.map { task ->
+                task.copy(
+                    subPlantList = task.subPlantList?.map { subPlant ->
+                        subPlant.copy(select = true)  // 更新 select 字段为 true
+                    }?.toMutableList()
+                )
+            }
+            // 2. 更新适配器，通知数据已更改
+            taskListAdapter.setList(updatedData)
+        }
+        binding.tvCycle.setOnClickListener {
             // 需要小问号
             adapter.data.firstOrNull { it.isChooser }?.apply {
                 this.calendarData?.let { calendarData ->
@@ -930,7 +1018,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
     @SuppressLint("SetTextI18n")
     private fun showTaskList(
-        data: Calendar?, isExecutionAlphaAni: Boolean? = false
+        data: Calendar?, isExecutionAlphaAni: Boolean? = false,
     ) {
         runCatching {
             val getCalendarDate = mViewMode.getCalendar.value?.data?.list
@@ -1008,6 +1096,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             ViewUtils.setVisible(
                 null == calendarData, binding.svtDayBg, binding.svtPeriodBg, binding.svtTaskListBg
             )
+            // 如果日历的数据为空，那么直接隐藏
+            ViewUtils.setGone(binding.svtUnlockAll, null == calendarData)
             // 如果日历的数据为空，那么直接隐藏时间轴、显示其他的背景
             ViewUtils.setGone(binding.timeLine, null == calendarData)
             // 不是空的，且为proMode那么就显示
@@ -1025,7 +1115,8 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 // 判断当前周期有无任务, 显示空布局 or 展示时间轴
                 ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
                 ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
-                initTime(it.taskList ?: mutableListOf())
+                // initTime(it.taskList ?: mutableListOf())
+                initTaskList(it.taskList ?: mutableListOf())
 
                 // 判断当前日期的第一个任务是否是pop_up类型，如果是就弹窗
                 // 只要是每次进来的第一个任务，和后面的完成最后一个任务时刷新时，pop任务就变成了第一个。
@@ -1040,11 +1131,18 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         }
     }
 
+    /**
+     * 初始化任务列表
+     */
+    private fun initTaskList(taskLists: MutableList<CalendarData.TaskList>) {
+        taskListAdapter.setList(taskLists)
+    }
+
     private fun checkAndLockNextDate(
         calendarDates: MutableList<CalendarData>?,
         adapter: MyCalendarAdapter,
         isScroll: Boolean? = false,
-        lastCheckedDate: LocalDate? = null // Add an additional parameter to track the last checked date
+        lastCheckedDate: LocalDate? = null, // Add an additional parameter to track the last checked date
     ) {
         val today = LocalDate.parse(mViewMode.mCurrentDate.ymd, DateTimeFormatter.ISO_DATE)
 
@@ -1094,11 +1192,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
     }
 
 
-
-
-
-
-
     private fun clickEvent() {
         binding.rlCycle.setOnClickListener {
 
@@ -1126,7 +1219,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         listContent.add(0, CalendarData.TaskList())
         binding.timeLine.initData(listContent, OrientationShowType.TIMELINE, object : TimeLineStepView.OnInitDataCallBack {
             override fun onBindDataViewHolder(
-                holder: TimeLineStepAdapter.CustomViewHolder, position: Int
+                holder: TimeLineStepAdapter.CustomViewHolder, position: Int,
             ) {
                 if (position == 0) {
                     holder.rightLayout.visibility = View.GONE
@@ -1315,9 +1408,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                     intent.putExtra(BasePopActivity.KEY_TASK_NO, mViewMode.taskNo.value)
                                     refreshActivityLauncher.launch(intent)
                                 }
+
                                 CalendarData.KEY_JUMP_TYPE_POP_UP -> {
                                     jumpToPop(taskData)
                                 }
+
                                 else -> {
                                     val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
                                     intent.putExtra(Constants.Global.KEY_TXT_ID, taskData?.get(subPosition)?.textId)
@@ -1447,7 +1542,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }
 
             override fun createCustomView(
-                leftLayout: ViewGroup, rightLayout: ViewGroup, holder: TimeLineStepAdapter.CustomViewHolder
+                leftLayout: ViewGroup, rightLayout: ViewGroup, holder: TimeLineStepAdapter.CustomViewHolder,
             ) {
                 LayoutInflater.from(this@CalendarActivity).inflate(R.layout.my_item_custom, rightLayout, true)
 
@@ -1496,6 +1591,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
         val oneDayMilliseconds = 24 * 60 * 60 * 1000  // 一天的毫秒数
         return timestamp + oneDayMilliseconds
     }
+
     private fun remindTaskToCalendar(listContent: MutableList<CalendarData.TaskList>, position: Int): Boolean {
         // 上报后台。
         mViewMode.updateTask(

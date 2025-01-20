@@ -1122,5 +1122,9 @@
     <string name="insert_seed">Insert the seed into the grow block. Please choose the grow block that you are using.</string>
 
     <string name="light_info">The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them</string>
-
+    <!--This task will be snooze for 24 hours.-->
+    <string name="task_snooze">This task will be snooze for 24 hours.</string>
+    <!--Complete All-->
+    <string name="complete_all">Complete All</string>
+    <string name="home_applies_to">Applies to</string>
 </resources>

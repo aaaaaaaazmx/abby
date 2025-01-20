@@ -120,6 +120,11 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private val isContinueUnlock by lazy { intent.getBooleanExtra(KEY_TASK_PACKAGE_ID, false) }
 
     /**
+     * 连续预览任务包Id
+     */
+    private val isPreviewPackage by lazy { intent.getBooleanExtra(KEY_PREVIEW_PACKAGE_ID, false) }
+
+    /**
      * 解锁ID
      */
     private val unLockId by lazy { intent.getStringExtra(KEY_UNLOCK_TASK_ID) }
@@ -275,6 +280,43 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         }
 
         if (isUnlockTask) {
+            // 如果是连续预览任务包ID
+            if (isPreviewPackage) {
+                // 不要执行finishTask，只是一步步的预览即可。
+                // 判断当前任务是否包含input_box类型
+                val dataArray = adapter.data
+                    .filter { it.itemType == RichTextData.KEY_TYPE_INPUT_BOX }
+                    .mapNotNull { adapter.getViewByPosition(adapter.data.indexOf(it), R.id.input_weight) as? EditText }
+                    .map { it.text.toString() }
+                    .toMutableList()
+
+                // 一个任务一个FinishTaskReq.ViewData， 多个任务多个FinishTaskReq.ViewData，但是都保存在viewDatas里面
+                if (dataArray.isNotEmpty()) {
+                    viewDatas.add(FinishTaskReq.ViewData(textId = taskIdList[0].textId, dataArray = dataArray.toMutableList()))
+                }
+                if (taskIdList.size - 1 > 0) { // 移除掉第一个
+                    taskIdList.removeAt(0)
+                    // 继续是富文本任务
+                    val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
+                    intent.putExtra(KEY_TASK_ID, taskId)
+                    intent.putExtra(KEY_TASK_NO, taskIdList[0].taskNo)
+                    intent.putExtra(KEY_TASK_ID_LIST, taskIdList as? Serializable)
+                    intent.putExtra(KEY_INTENT_UNLOCK_TASK, true)
+                    intent.putExtra(KEY_FIXED_TASK_ID, fixedId)
+                    intent.putExtra(KEY_PREVIEW_PACKAGE_ID, true)
+                    intent.putExtra(KEY_IS_SHOW_BUTTON, true)
+                    intent.putExtra(Constants.Global.KEY_TXT_ID, taskIdList[0].textId)
+                    intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
+                    intent.putExtra(KEY_IS_SHOW_BUTTON_TEXT, getString(R.string.string_262))
+                    intent.putExtra(KEY_PACK_NO, packetNo)
+                    startActivity(intent)
+                } else {
+                    // 最后一个任务执行finish
+                    finish()
+                }
+                return
+            }
+
             // 如果是连续解锁任务包的ID
             if (isContinueUnlock) { // 如果还存在连续多个任务，每次完成之后需要减去1
                 // 判断当前任务是否包含input_box类型
@@ -320,14 +362,13 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     intent.putExtra(KEY_INPUT_BOX, viewDatas as? Serializable)
                     intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON, true)
                     intent.putExtra(KEY_TASK_PACKAGE_ID, true)
-                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.string_263))
+                    intent.putExtra(KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(R.string.string_263))
                     intent.putExtra(KEY_PACK_NO, packetNo)
                     startActivity(intent)
                 } else {
                     // 最后一个任务执行finishTask
                     mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas, templateId = if (taskIdList.isEmpty()) null else taskIdList[0].templateId))
                 }
-
                 return
             }
 
@@ -1160,6 +1201,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 连续解锁任务包ID
         const val KEY_TASK_PACKAGE_ID = "key_task_package_id"
+
+        // 连续预览任务包ID
+        const val KEY_PREVIEW_PACKAGE_ID = "key_preview_package_id"
 
         // packNo的id
         const val KEY_PACK_NO = "key_pack_no"

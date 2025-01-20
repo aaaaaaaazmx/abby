@@ -8,4 +8,5 @@ data class SaveTaskReq(
     val useOfficialCalendar: Boolean? = null,
     val setupLater: Boolean? = false,
     val taskContent: MutableList<Task>? = null,
+    val multiplants: MutableList<Task.PlantList>? = null,
 ): BaseBean()

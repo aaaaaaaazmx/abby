@@ -6,6 +6,7 @@ import android.content.Context
 import android.view.View
 import android.widget.TextView
 import androidx.databinding.BindingConversion
+import androidx.recyclerview.widget.GridLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
@@ -18,16 +19,20 @@ import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseStringPickPop
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.calendar.CalendarUtil
+import com.cl.common_base.widget.decoraion.FullyGridLayoutManager
+import com.cl.common_base.widget.decoraion.GridSpaceItemDecoration
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_home.R
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP_NOW
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.TEMPLATE_ID
+import com.cl.modules_home.adapter.PlantListAdapter
 import com.cl.modules_home.databinding.HomeTaskSetActivityBinding
 import com.cl.modules_home.request.EnvSaveReq
 import com.cl.modules_home.request.SaveTaskReq
 import com.cl.modules_home.request.Task
 import com.cl.modules_home.viewmodel.ProModeViewModel
+import com.luck.picture.lib.utils.DensityUtil
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
 import java.time.ZoneId
@@ -93,6 +98,10 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
     // 延迟初始化 copyTaskDataForUpload，在需要时才进行赋值
     private lateinit var copyTaskDataForUpload: Task
 
+    private val adapter by lazy {
+        PlantListAdapter(mutableListOf())
+    }
+
 
     @SuppressLint("SetTextI18n")
     override fun initView() {
@@ -106,9 +115,10 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
 
         // 是否循环任务
         binding.recurringTaskSwitch.isItemChecked = copyTaskDataForUpload.recurringTask
-        binding.clRoot.setVisible(copyTaskDataForUpload.recurringTask)
+        logI("1231231: ${copyTaskDataForUpload.recurringTask}")
         // 顺序不能乱
         ViewUtils.setVisible(!isCalendarPage, binding.recurringTaskTextView, binding.recurringTaskSwitch, binding.clRoot)
+        binding.clRoot.setVisible(copyTaskDataForUpload.recurringTask)
 
         // 循环天数
         if (copyTaskDataForUpload.recurringDay.isNullOrBlank()) {
@@ -129,6 +139,20 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         if (!copyTaskDataForUpload.week.isNullOrEmpty() && !copyTaskDataForUpload.day.isNullOrEmpty()) {
             binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (${getString(com.cl.common_base.R.string.week)} ${copyTaskDataForUpload.week} ${getString(com.cl.common_base.R.string.day)} ${copyTaskDataForUpload.day})"
         }
+
+        binding.recyclerView.apply {
+            layoutManager = FullyGridLayoutManager(
+                this@ProModeTaskSetActivity,
+                4, GridLayoutManager.VERTICAL, false
+            )
+            addItemDecoration(
+                GridSpaceItemDecoration(
+                    4,
+                    DensityUtil.dip2px(this@ProModeTaskSetActivity, 1f), DensityUtil.dip2px(this@ProModeTaskSetActivity, 1f)
+                )
+            )
+            adapter = this@ProModeTaskSetActivity.adapter
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -142,6 +166,8 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                 }
                 success {
                     hideProgressLoading()
+                    // 显示植物。
+                    ViewUtils.setVisible(!data?.get(0)?.multiplants.isNullOrEmpty(), binding.recyclerView, binding.appliesToTextView)
                     if (data.isNullOrEmpty()) return@success
                     val task = data?.get(0) ?: return@success
                     // 说明是空的，是新增的
@@ -163,6 +189,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                         // task时间
                         binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (${getString(com.cl.common_base.R.string.week)} ${copyTaskDataForUpload.week} ${getString(com.cl.common_base.R.string.day)} ${copyTaskDataForUpload.day})"
                     }
+                    adapter.setList(data?.get(0)?.multiplants)
                 }
             })
 
@@ -276,8 +303,7 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
 
         binding.svtCancel.setSafeOnClickListener { finish() }
         binding.svtConfirm.setSafeOnClickListener {
-            // 调用保存接口
-            viewModel.saveTask(SaveTaskReq(step = step, templateId = templateId, taskContent = mutableListOf(copyTaskDataForUpload)))
+            viewModel.saveTask(SaveTaskReq(step = step, templateId = templateId, taskContent = mutableListOf(copyTaskDataForUpload), multiplants =  adapter.data.filter { it.isSelect == true }.toMutableList()))
         }
     }
 

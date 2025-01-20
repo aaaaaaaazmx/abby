@@ -9,7 +9,8 @@ data class FinishTaskReq(
     val weight: String? = null,
     val packetNo: String? = null,
     var templateId: String? = null,
-    val viewDatas: MutableList<ViewData>? = null
+    val viewDatas: MutableList<ViewData>? = null,
+    var subPlantList: MutableList<CalendarData.TaskList.SubPlantList>? = null
 ) : com.cl.common_base.BaseBean() {
     /**
      * 应该是为了称重，如果输入狂不输入时，那么默认为""空字符串

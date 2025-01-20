@@ -12,5 +12,15 @@ data class Task(
     var taskName: String? = null,
     var taskType: String? = null,
     var taskdescription: String? = null,
-    var week: String? = null
-) : BaseBean()
+    var week: String? = null,
+    var multiplants: MutableList<PlantList>? = null
+) : BaseBean() {
+    data class PlantList(
+        var growSpaceName: String? = null,
+        var multiplantId: Int,
+        var isSelect: Boolean? = false,
+        var number: Int,
+        var plantId: Int,
+        var strainName: String? = null
+    )
+}

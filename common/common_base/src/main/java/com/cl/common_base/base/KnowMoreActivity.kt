@@ -488,9 +488,10 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
     }
 
     private fun isHaveCheckBoxViewType(): Boolean {
-        /*logI("123123:::: ${adapter.data.filter { data -> data.value?.isCheck == false }.size}")*/
+        /*logI("123123:::: ${adapter.data.filter { data -> data.value?.select == false }.size}，，，，${adapter.data.forEach { logI("123123: ${it.value?.select}") }}")*/
+        // null == data.value?.select 因为后台没返回 true or false 造孽啊。
         val size =
-            adapter.data.filter { data -> data.value?.select == false && data.type == "option" }.size
+            adapter.data.filter { data -> (data.value?.select == false || null == data.value?.select) && data.type == "option" }.size
         size.let { checkCount ->
             if (checkCount != 0) {
                 ToastUtil.shortShow(getString(R.string.string_279))

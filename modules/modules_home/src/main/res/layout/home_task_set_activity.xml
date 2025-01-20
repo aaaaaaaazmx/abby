@@ -264,6 +264,26 @@
                    android:layout_width="78dp"
                    android:layout_height="34dp"/>
            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="27dp"
+                android:layout_marginStart="19dp"
+                app:layout_constraintTop_toBottomOf="@+id/cl_root"
+                android:id="@+id/appliesToTextView"
+                android:text="@string/home_applies_to"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/appliesToTextView"
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             
             
             <com.cl.common_base.widget.SvTextView

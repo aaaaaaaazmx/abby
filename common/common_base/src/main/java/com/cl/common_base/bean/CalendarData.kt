@@ -35,6 +35,7 @@ data class CalendarData(
         var articleId: String? = null,
         var articleDetails: String? = null,
         var subTaskList: MutableList<SubTaskList>? = null,
+        var subPlantList: MutableList<SubPlantList>? = null,
         var packetCondition: PacketCondition? = null,
     ) : com.joketng.timelinestepview.bean.BaseBean(timeLineState = TimeLineState.INACTIVE) {
         data class SubTaskList(
@@ -48,6 +49,15 @@ data class CalendarData(
             var id: Int? = null,
             var templateId: String? = null,
         ) : BaseBean()
+
+        data class SubPlantList(
+            val subPlantId: String? = null,
+            val plantName: String? = null,
+            val number: String? = null,
+            val taskId: String? = null,
+            val taskStatus: String? = null,
+            var select: Boolean? = false, // 是否选中
+        ): BaseBean()
 
         data class PacketCondition(
             var taskPackes: MutableList<TaskPackes>? = null,
