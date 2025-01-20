@@ -240,6 +240,9 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 设备列表选择排序的key
+        const val KEY_SORT_PERIOD = "key_device_list_sort"
+
         // 保存的系统语言
         const val KEY_GLOBAL_LANGUAGE = "key_global_language"
 
