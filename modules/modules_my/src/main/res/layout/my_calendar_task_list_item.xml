@@ -8,6 +8,8 @@
             name="taskData"
             type="com.cl.common_base.bean.CalendarData.TaskList" />
 
+        <import type="android.view.View"/>
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -51,6 +53,7 @@
             android:layout_height="wrap_content"/>
 
         <com.cl.common_base.widget.SvTextView
+            android:visibility='@{taskData.taskAction.equals("none") ? View.GONE: View.VISIBLE}'
             android:layout_marginTop="2dp"
             android:layout_marginEnd="21dp"
             app:layout_constraintBottom_toBottomOf="@+id/tvTaskName"
@@ -66,6 +69,7 @@
             app:svRadius="100dp"
             app:svSolidColor="#C4C4C4"
             app:svSolidType="solid"
+            android:text='@{taskData.taskAction.equals("drain") ? @string/my_drain : taskData.taskAction.equals("unlock_period") ? @string/string_284 : ""}'
             tools:text="@string/string_284" />
 
         <androidx.recyclerview.widget.RecyclerView

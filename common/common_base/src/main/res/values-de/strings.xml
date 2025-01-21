@@ -1072,4 +1072,10 @@
     <string name="task_snooze">Diese Aufgabe wird für 24 Stunden verschoben.</string>
     <string name="complete_all">Alles abschließen</string>
     <string name="home_applies_to">Gilt für</string>
+    <string name="my_sort_by_name">Nach Name sortieren</string>
+    <string name="my_sort_name">Nach Name sortieren</string>
+    <string name="my_sort_strain">Nach Stamm sortieren</string>
+    <string name="my_sort_status">Nach Status sortieren</string>
+    <string name="my_sort_subscription">Nach Abonnement sortieren</string>
+
 </resources>

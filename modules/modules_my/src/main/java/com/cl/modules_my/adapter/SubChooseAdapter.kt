@@ -8,11 +8,12 @@ import com.cl.modules_my.R
 import com.cl.modules_my.databinding.MyCalendarSubPlantListItemBinding
 import com.cl.modules_my.databinding.MyCalendarTaskListItemBinding
 
-class SubChooseAdapter(data: MutableList<CalendarData.TaskList.SubPlantList>?) :
+class SubChooseAdapter(data: MutableList<CalendarData.TaskList.SubPlantList>?, var proMode:Boolean? = false,) :
     BaseQuickAdapter<CalendarData.TaskList.SubPlantList, BaseDataBindingHolder<MyCalendarSubPlantListItemBinding>>(R.layout.my_calendar_sub_plant_list_item, data) {
     override fun convert(holder: BaseDataBindingHolder<MyCalendarSubPlantListItemBinding>, item: CalendarData.TaskList.SubPlantList) {
         holder.dataBinding?.apply {
             taskData = item
+            proModes = proMode
             position = holder.layoutPosition
             executePendingBindings()
         }

@@ -31,10 +31,10 @@ class DeviceShortPop(
         // Sort by Strain
         // Sort by Status
         // Sort by Subscription
-        list.add(DeviceShortBean(BaseApplication.getContext().getString(R.string.my_sort_name), false))
-        list.add(DeviceShortBean(BaseApplication.getContext().getString(R.string.my_sort_strain), false))
-        list.add(DeviceShortBean(BaseApplication.getContext().getString(R.string.my_sort_status), false))
-        list.add(DeviceShortBean(BaseApplication.getContext().getString(R.string.my_sort_subscription), false))
+        list.add(DeviceShortBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.my_sort_name), false))
+        list.add(DeviceShortBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.my_sort_strain), false))
+        list.add(DeviceShortBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.my_sort_status), false))
+        list.add(DeviceShortBean(BaseApplication.getContext().getString(com.cl.common_base.R.string.my_sort_subscription), false))
         // list.add(DeviceShortBean("Auto", false))
         list
     }

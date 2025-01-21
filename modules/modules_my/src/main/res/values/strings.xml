@@ -1,9 +1,4 @@
 <resources>
     <string name="app_name">modules_my</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="my_sort_by_name">Sort By Name</string>
-    <string name="my_sort_name">Sort by Name</string>
-    <string name="my_sort_strain">Sort by Strain</string>
-    <string name="my_sort_status">Sort by Status</string>
-    <string name="my_sort_subscription">Sort by Subscription</string>
 </resources>

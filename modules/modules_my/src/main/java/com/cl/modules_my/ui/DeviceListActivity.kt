@@ -313,7 +313,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 }
                 // 初次进来默认选择的排序方式
                 val shortNumber = Prefs.getInt(Constants.Global.KEY_SORT_PERIOD, 1)
-                var shortName = getString(R.string.my_sort_name)
+                var shortName = getString(com.cl.common_base.R.string.my_sort_name)
 
                 //  根据isShared 来分为2组，并且在每组的第一个添加新类型类型
                 // 1. 先找到isShared为true的设备
@@ -339,11 +339,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 // 根据不同的排序类型，对unSharedList进行排序
                 val comparator = when(shortNumber) {
                     1 -> {
-                        shortName = getString(R.string.my_sort_name)
+                        shortName = getString(com.cl.common_base.R.string.my_sort_name)
                         deviceNameComparator
                     }
                     2 -> {
-                        shortName = getString(R.string.my_sort_strain)
+                        shortName = getString(com.cl.common_base.R.string.my_sort_strain)
                         compareBy<ListDeviceBean> {
                             it.strainName.isNullOrEmpty()
                         }.thenBy {
@@ -351,14 +351,14 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         }
                     }
                     3 -> {
-                        shortName = getString(R.string.my_sort_status)
+                        shortName = getString(com.cl.common_base.R.string.my_sort_status)
                         compareBy<ListDeviceBean> {
                             // 在线状态排序（在线优先）
                             if (it.onlineStatus == "Offline") 1 else 0
                         }.then(deviceNameComparator)
                     }
                     4 -> {
-                        shortName = getString(R.string.my_sort_subscription)
+                        shortName = getString(com.cl.common_base.R.string.my_sort_subscription)
                         compareBy<ListDeviceBean> { device ->
                             // 第一优先级：是否有订阅服务
                             val subscription = device.subscription
@@ -558,11 +558,11 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
                                 // 根据不同的排序类型，对unSharedList进行排序
                                 val comparator = when(period) {
-                                    getString(R.string.my_sort_name) -> {
+                                    getString(com.cl.common_base.R.string.my_sort_name) -> {
                                         Prefs.putIntAsync(Constants.Global.KEY_SORT_PERIOD, 1)
                                         deviceNameComparator
                                     }
-                                    getString(R.string.my_sort_strain) -> {
+                                    getString(com.cl.common_base.R.string.my_sort_strain) -> {
                                         Prefs.putIntAsync(Constants.Global.KEY_SORT_PERIOD, 2)
                                         compareBy<ListDeviceBean> {
                                             it.strainName.isNullOrEmpty() 
@@ -570,14 +570,14 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                             it.strainName?.lowercase() ?: ""
                                         }
                                     }
-                                    getString(R.string.my_sort_status) -> {
+                                    getString(com.cl.common_base.R.string.my_sort_status) -> {
                                         Prefs.putIntAsync(Constants.Global.KEY_SORT_PERIOD, 3)
                                         compareBy<ListDeviceBean> {
                                             // 在线状态排序（在线优先）
                                             if (it.onlineStatus == "Offline") 1 else 0 
                                         }.then(deviceNameComparator)
                                     }
-                                    getString(R.string.my_sort_subscription) -> {
+                                    getString(com.cl.common_base.R.string.my_sort_subscription) -> {
                                         Prefs.putIntAsync(Constants.Global.KEY_SORT_PERIOD, 4)
                                         compareBy<ListDeviceBean> { device ->
                                             // 第一优先级：是否有订阅服务

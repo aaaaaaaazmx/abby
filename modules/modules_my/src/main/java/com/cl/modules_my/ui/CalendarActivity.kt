@@ -133,7 +133,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 dismissOnTouchOutside(false)
                 asCustom(BaseCenterPop(this@CalendarActivity, isShowCancelButton = true, content = getString(com.cl.common_base.R.string.delete_task_confirmation), onConfirmAction = {
                     //  调用删除任务接口
-                    subPlantList?.taskId?.let { mViewMode.deleteTask(it) }
+                    subPlantList.taskId?.let { mViewMode.deleteTask(it) }
                     taskLise.subPlantList?.removeAt(position)
                     subAdapter.notifyItemRemoved(position)
                 })).show()
@@ -149,7 +149,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     //  调用延时任务接口
                     mViewMode.updateTask(
                         UpdateReq(
-                            taskId = subPlantList?.taskId, taskTime = calculateNextDayTimestamp(taskLise.taskTime?.toLong() ?: 0L).toString()
+                            taskId = subPlantList.taskId, taskTime = calculateNextDayTimestamp(taskLise.taskTime?.toLong() ?: 0L).toString()
                         )
                     )
                     taskLise.subPlantList?.removeAt(position)
@@ -158,16 +158,23 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }
         }, onCompleteClick = { subPlantList, taskLise, position, subAdapter ->
             // 如果是预览模式下，不允许点击
+            // 0是取消，1是完成，2是不能操作
             if (!isTemplateId.isNullOrEmpty()) return@CalendarTaskAdapter
+            if (subPlantList.taskStatus == "2") return@CalendarTaskAdapter
             // 先要判断是勾选还是反勾选。
-            val currentSelect = subPlantList?.select
-            if (currentSelect == true) {
-                //  调用完成任务接口
+            subPlantList.taskStatus = if (subPlantList.taskStatus == "0") "1" else "0"
+            if (subPlantList.taskStatus == "1") {
+                // 完成任务
                 mViewMode.finishTask(FinishTaskReq(taskId = taskLise.taskId, subPlantList = mutableListOf(subPlantList)))
             } else {
-                // todo 调用取消任务接口
+                // 取消任务
+                mViewMode.updateTask(
+                    UpdateReq(
+                        taskId = subPlantList.taskId, taskStatus = subPlantList.taskStatus
+                    )
+                )
             }
-            taskLise.subPlantList?.get(position)?.select = !taskLise.subPlantList?.get(position)?.select!!
+            // 更新布局
             adapter.notifyItemChanged(position)
         }, onPreViewClick = { subTaskList, taskLise ->
             // 浏览任务包。
@@ -184,7 +191,54 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             startActivity(intent)
         }, onJumpClick = { subTaskList, taskLise ->
             // 任务按钮点击，判断是这是什么任务。目前单独提出2个问题，排水、解锁周期。需要单独显示按钮和处理
-            // todo 判断当前任务是什么类型，然后进行跳转
+            // 判断当前任务是什么类型，然后进行跳转
+            when(taskLise.taskAction) {
+                "drain" -> {
+                    // 传递的数据为空
+                    // 记录taskId
+                    // 首先是换水
+                    pop.isDestroyOnDismiss(false).enableDrag(false).maxHeight(dp2px(600f)).asCustom(HomePlantDrainPop(context = this@CalendarActivity, onNextAction = {
+                        // 请求接口
+                        // 传递的数据为空
+                        val intent = Intent(this@CalendarActivity, BasePumpActivity::class.java)
+                        intent.putExtra(BasePopActivity.KEY_TASK_ID, taskLise.taskId)
+                        intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, subTaskList as? Serializable)
+                        intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskLise.taskId)
+                        intent.putExtra(BasePopActivity.KEY_PACK_NO, taskLise.packetNo)
+                        intent.putExtra(BasePopActivity.KEY_TASK_NO, subTaskList?.taskNo)
+                        refreshActivityLauncher.launch(intent)
+                    }, onCancelAction = {
+
+                    }, onTvSkipAddWaterAction = {
+                        pop.isDestroyOnDismiss(false).enableDrag(false).maxHeight(dp2px(600f)).dismissOnTouchOutside(false).asCustom(
+                            HomeSkipWaterPop(this@CalendarActivity, onConfirmAction = {
+                                taskLise.taskId?.let {
+                                    // 跳过换水
+                                    mViewMode.deviceOperateStart(
+                                        it, UnReadConstants.StatusManager.VALUE_STATUS_SKIP_CHANGING_WATERE
+                                    )
+                                    // 跳过换水之后、就是排水成功、然后在调用加水
+                                    mViewMode.deviceOperateFinish(UnReadConstants.StatusManager.VALUE_STATUS_PUMP_WATER)
+
+                                }
+                            })
+                        ).show()
+                    }).setData(false)).show()
+                }
+                "unlock_period" -> {
+                    val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
+                    intent.putExtra(BasePopActivity.KEY_TASK_ID_LIST, subTaskList as? Serializable)
+                    intent.putExtra(BasePopActivity.KEY_TASK_ID, taskLise.taskId)
+                    intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, taskLise.taskId)
+                    intent.putExtra(Constants.Global.KEY_TXT_ID, subTaskList?.textId)
+                    intent.putExtra(BasePopActivity.KEY_TASK_PACKAGE_ID, true)
+                    intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON, true)
+                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_UNLOCK_BUTTON_ENGAGE, getString(com.cl.common_base.R.string.my_next))
+                    intent.putExtra(BasePopActivity.KEY_TASK_NO, subTaskList?.taskNo)
+                    refreshActivityLauncher.launch(intent)
+                }
+            }
         })
     }
 
@@ -577,9 +631,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                                 }
 
                                 CalendarData.TASK_TYPE_CHECK_TRANSPLANT -> {
-                                    // todo 这个应该是转周期了，调用图文、然后解锁花期
-                                    // todo 这个需要单独处理逻辑。
-                                    // todo 判断当前是的植物属性
+                                    //  这个应该是转周期了，调用图文、然后解锁花期
+                                    //  这个需要单独处理逻辑。
+                                    //  判断当前是的植物属性
                                     // seed to veg
                                     SeedGuideHelp(this@CalendarActivity).showGuidePop {
                                         mViewMode.taskId.value?.let { taskId ->
@@ -633,7 +687,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                             // 推迟时间
                             // 时间
                             // 传给后台 & 上报给手机本地日历
-                            // todo 传给后台
+                            //  传给后台
                             // 1667864539000 + 172800000
                             mViewMode.updateTask(
                                 UpdateReq(
@@ -651,9 +705,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 adapter.setList(it)
                 // 滚动
                 // 滚到到当前日期到上一行
-                // todo 但是后续添加不需要滚到到现在这一行
+                //  但是后续添加不需要滚到到现在这一行
                 binding.rvList.scrollToPosition(it.indexOf(mViewMode.mCurrentDate) - 7)
-                // todo  初始化当月,, 固定写法只加7，会出现时间差错问题
+                //   初始化当月,, 固定写法只加7，会出现时间差错问题
                 /*binding.abMonth.text =
                     CalendarUtil.getMonthFromLocation(adapter.data[it.indexOf(mViewMode.mCurrentDate) + 7].timeInMillis)*/
                 binding.abMonth.text = getYmForEn(Date())
@@ -676,7 +730,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     ViewUtils.setVisible(data?.proMode == true, binding.ivProModeAdd)
 
                     // 添加数据。``
-                    // todo 是个数组
+                    //  是个数组
                     if (netWorkList.isNullOrEmpty()) return@success
                     if (mViewMode.localCalendar.value.isNullOrEmpty()) return@success
                     lifecycleScope.launch(Dispatchers.IO) {
@@ -713,7 +767,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
 
                         }
 
-                        // todo 解锁周期后弹出图文广告, 现在这个预告直接是做成了任务
+                        //  解锁周期后弹出图文广告, 现在这个预告直接是做成了任务
                         /*val status = mViewMode.guideInfoStatus.value
                         if (status.isNullOrEmpty()) return@launch
                         val intent = Intent(this@CalendarActivity, BasePopActivity::class.java)
@@ -815,6 +869,9 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             }
         }
         binding.svtUnlockAll.setSafeOnClickListener {
+            // 需要判断当前是否是可以点击。
+            if (taskListAdapter.data.isEmpty()) return@setSafeOnClickListener
+            if (taskListAdapter.data[0].taskStatus == "2") return@setSafeOnClickListener
             // 完成全部任务。
             val subPlantList = taskListAdapter.data.flatMap { it.subPlantList ?: mutableListOf() }.toMutableList()
             mViewMode.finishTask(FinishTaskReq(subPlantList = subPlantList))
@@ -823,10 +880,11 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
             val updatedData = taskListAdapter.data.map { task ->
                 task.copy(
                     subPlantList = task.subPlantList?.map { subPlant ->
-                        subPlant.copy(select = true)  // 更新 select 字段为 true
+                        subPlant.copy(taskStatus = "1")  // 更新 select 字段为 true
                     }?.toMutableList()
                 )
             }
+            taskListAdapter.proMode = mViewMode.getCalendar.value?.data?.proMode == true
             // 2. 更新适配器，通知数据已更改
             taskListAdapter.setList(updatedData)
         }
@@ -885,7 +943,6 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                     animation.repeatCount = 0 //重复执行动画
                     rlDay.startAnimation(animation) //使用View启动动画
 
-                    // todo 时间转换，并且需要请求接口
                     data?.timeInMillis?.let {
                         binding.tvTodayDate.text = mViewMode.getYmdForEn(time = it)
                         binding.abMonth.text = mViewMode.getYmForEn(time = it)
@@ -983,7 +1040,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
              */
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                // todo 这样加载太暴力了。
+                //  这样加载太暴力了。
                 // val layoutManager = recyclerView.layoutManager as GridLayoutManager
                 //                logI(
                 //                    """
@@ -1114,7 +1171,7 @@ class CalendarActivity : BaseActivity<MyCalendayActivityBinding>() {
                 binding.tvDay.text = "${getString(com.cl.common_base.R.string.week)} ${it.week} ${getString(com.cl.common_base.R.string.day)} ${it.day}"
                 // 判断当前周期有无任务, 显示空布局 or 展示时间轴
                 ViewUtils.setVisible(it.taskList.isNullOrEmpty(), binding.rlEmpty)
-                ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine)
+                ViewUtils.setVisible(!it.taskList.isNullOrEmpty(), binding.timeLine, binding.svtUnlockAll)
                 // initTime(it.taskList ?: mutableListOf())
                 initTaskList(it.taskList ?: mutableListOf())
 

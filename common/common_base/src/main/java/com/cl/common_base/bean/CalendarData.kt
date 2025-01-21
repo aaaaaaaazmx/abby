@@ -23,6 +23,7 @@ data class CalendarData(
     data class TaskList(
         var deleted: Boolean? = null,
         var createTime: String? = null,
+        var packetNo: String? = null,
         var finishTime: String? = null,
         var isDeleted: String? = null,
         var taskId: String? = null,
@@ -34,6 +35,7 @@ data class CalendarData(
         var taskCategory: String? = null,
         var articleId: String? = null,
         var articleDetails: String? = null,
+        var taskAction: String? = null, // （drain-排水，unlock_period-解锁周期，none-无）
         var subTaskList: MutableList<SubTaskList>? = null,
         var subPlantList: MutableList<SubPlantList>? = null,
         var packetCondition: PacketCondition? = null,
@@ -55,8 +57,7 @@ data class CalendarData(
             val plantName: String? = null,
             val number: String? = null,
             val taskId: String? = null,
-            val taskStatus: String? = null,
-            var select: Boolean? = false, // 是否选中
+            var taskStatus: String? = null,
         ): BaseBean()
 
         data class PacketCondition(

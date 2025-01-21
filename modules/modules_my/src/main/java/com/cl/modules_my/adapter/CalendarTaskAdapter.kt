@@ -20,9 +20,10 @@ import java.io.Serializable
 
 class CalendarTaskAdapter(
     data: MutableList<CalendarData.TaskList>?,
-    var onDeleteClick: ((CalendarData.TaskList.SubPlantList?, CalendarData.TaskList, Int, SubChooseAdapter) -> Unit)? = null,
-    var onDelayClick: ((CalendarData.TaskList.SubPlantList?, CalendarData.TaskList, Int, SubChooseAdapter) -> Unit)? = null,
-    var onCompleteClick: ((CalendarData.TaskList.SubPlantList?, CalendarData.TaskList, Int, SubChooseAdapter) -> Unit)? = null,
+    var proMode:Boolean? = false,
+    var onDeleteClick: ((CalendarData.TaskList.SubPlantList, CalendarData.TaskList, Int, SubChooseAdapter) -> Unit)? = null,
+    var onDelayClick: ((CalendarData.TaskList.SubPlantList, CalendarData.TaskList, Int, SubChooseAdapter) -> Unit)? = null,
+    var onCompleteClick: ((CalendarData.TaskList.SubPlantList, CalendarData.TaskList, Int, SubChooseAdapter) -> Unit)? = null,
     var onPreViewClick: ((CalendarData.TaskList.SubTaskList?, CalendarData.TaskList) -> Unit)? = null,
     var onJumpClick: ((CalendarData.TaskList.SubTaskList?, CalendarData.TaskList) -> Unit)? = null
 ) :
@@ -74,7 +75,7 @@ class CalendarTaskAdapter(
             // 初始化rv
             rvSubTaskList.apply {
                 layoutManager = LinearLayoutManager(context)
-                val suPlantAdapter = SubChooseAdapter(item.subPlantList)
+                val suPlantAdapter = SubChooseAdapter(item.subPlantList, proMode)
                 adapter =  suPlantAdapter
                 suPlantAdapter.setList(item.subPlantList)
                 suPlantAdapter.addChildClickViewIds(R.id.curing_box, R.id.ivTaskDelete, R.id.ivTaskDelay)
@@ -82,17 +83,17 @@ class CalendarTaskAdapter(
                     when (view.id) {
                         R.id.curing_box -> {
                             // 调用完成任务
-                            onCompleteClick?.invoke(item.subPlantList?.get(position), item, position, adapter as SubChooseAdapter)
+                            onCompleteClick?.invoke((item.subPlantList?.get(position) ?: mutableListOf<CalendarData.TaskList.SubPlantList>()) as CalendarData.TaskList.SubPlantList, item, position, adapter as SubChooseAdapter)
                         }
 
                         R.id.ivTaskDelete -> {
                             // 调用删除接口
-                            onDeleteClick?.invoke(item.subPlantList?.get(position), item, position, adapter as SubChooseAdapter)
+                            onDeleteClick?.invoke((item.subPlantList?.get(position) ?: mutableListOf<CalendarData.TaskList.SubPlantList>()) as CalendarData.TaskList.SubPlantList, item, position, adapter as SubChooseAdapter)
                         }
 
                         R.id.ivTaskDelay -> {
                             // 调用延时接口
-                            onDelayClick?.invoke(item.subPlantList?.get(position), item, position, adapter as SubChooseAdapter)
+                            onDelayClick?.invoke((item.subPlantList?.get(position) ?: mutableListOf<CalendarData.TaskList.SubPlantList>()) as CalendarData.TaskList.SubPlantList, item, position, adapter as SubChooseAdapter)
                         }
                     }
                 }

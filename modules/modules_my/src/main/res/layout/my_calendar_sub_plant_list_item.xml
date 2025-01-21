@@ -9,8 +9,12 @@
             name="taskData"
             type="com.cl.common_base.bean.CalendarData.TaskList.SubPlantList" />
         <variable
+            name="proModes"
+            type="java.lang.Boolean" />
+        <variable
             name="position"
             type="java.lang.Integer" />
+        <import type="android.view.View"/>
 
     </data>
 
@@ -21,6 +25,8 @@
         tools:ignore="MissingConstraints">
 
         <CheckBox
+            android:enabled='@{taskData.taskStatus.equals("2") ? false : true}'
+            android:clickable='@{taskData.taskStatus.equals("2") ? false : true}'
             android:id="@+id/curing_box"
             android:layout_width="18dp"
             android:layout_height="18dp"
@@ -30,7 +36,7 @@
             android:layout_marginBottom="9dp"
             android:background="@drawable/create_calendar_state_checkbox"
             android:button="@null"
-            android:checked="@{taskData.select}"
+            android:checked='@{taskData.taskStatus.equals("1")}'
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,6 +59,7 @@
             android:textSize="11sp" />
 
         <ImageView
+            android:visibility="@{proModes ? View.VISIBLE : View.GONE}"
             android:id="@+id/ivTaskDelete"
             android:background="@mipmap/iv_close"
             android:layout_marginEnd="19dp"

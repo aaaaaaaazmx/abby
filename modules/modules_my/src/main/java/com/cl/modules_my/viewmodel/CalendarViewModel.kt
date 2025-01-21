@@ -466,8 +466,11 @@ class CalendarViewModel @Inject constructor(private val repository: MyRepository
                             // 直接跳转到完成界面
                             _showCompletePage.postValue(true)
                         }
-                        // 刷新任务
-                        refreshTask()
+                        // 单个完成任务或者批量完成任务不需要一直刷新，不然会很频繁。
+                        if (body.subPlantList.isNullOrEmpty()) {
+                            // 刷新任务
+                            refreshTask()
+                        }
                         Resource.Success(it.data)
                     }
                 }

@@ -51,7 +51,7 @@
             <TextView
                 android:layout_marginEnd="2dp"
                 android:layout_marginStart="2dp"
-                android:gravity="center_vertical"
+                android:gravity="center"
                 android:ellipsize="end"
                 android:lines="1"
                 android:autoSizeMaxTextSize="11sp"
@@ -62,7 +62,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/iv_down"
                 app:layout_constraintStart_toStartOf="parent"
                 android:textStyle="bold"
-                tools:text="1231231231231231231231233123123123"
+                tools:text="123"
                 android:textColor="@color/mainColor"
                 android:text="@{data.shortText}"
                 android:textSize="11sp"
