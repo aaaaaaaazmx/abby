@@ -664,17 +664,18 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         .dismissOnTouchOutside(false)
                         .autoOpenSoftInput(false)
                         .autoFocusEditText(false)
+                        .moveUpToKeyboard(false)
                         .asCustom(EditPlantProfilePop(this@DeviceListActivity,
                             beanData = deviceBean,
-                            plantName = deviceBean?.plantName,
-                            strainName = deviceBean?.strainName,
+                            plantName = deviceBean.plantName,
+                            strainName = deviceBean.strainName,
                             onConfirmAction = { plantName, strainName ->
                                 // 修改属性名
                                 if (strainName.isNullOrEmpty() && plantName?.isNotEmpty() == true) {
                                     mViewModel.updatePlantInfo(
                                         UpPlantInfoReq(
                                             plantName = plantName,
-                                            plantId = deviceBean?.plantId
+                                            plantId = deviceBean.plantId
                                         )
                                     )
                                 }
@@ -682,7 +683,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                     mViewModel.updatePlantInfo(
                                         UpPlantInfoReq(
                                             strainName = strainName,
-                                            plantId = deviceBean?.plantId
+                                            plantId = deviceBean.plantId
                                         )
                                     )
                                 } else {
@@ -690,7 +691,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                         UpPlantInfoReq(
                                             strainName = strainName,
                                             plantName = plantName,
-                                            plantId = deviceBean?.plantId
+                                            plantId = deviceBean.plantId
                                         )
                                     )
                                 }
