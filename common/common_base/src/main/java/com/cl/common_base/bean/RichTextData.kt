@@ -47,6 +47,7 @@ data class RichTextData(
                 "usb_port" -> KEY_TYPE_USB_PORT
                 "aiCheck" -> KEY_TYPE_AI_CHECK
                 "oneOnOne" -> KEY_TYPE_ONE_ON_ONE
+                "delete" -> KEY_TYPE_DELETE
                 else -> KEY_TYPE_BAR
             }
     }
@@ -154,6 +155,9 @@ data class RichTextData(
 
         // oneOnOne
         const val KEY_TYPE_ONE_ON_ONE = 23
+
+        // delete标签
+        const val KEY_TYPE_DELETE = 24
 
         // 自己创建的类型
         // 与商民的无关

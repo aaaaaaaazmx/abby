@@ -966,7 +966,7 @@
     <string name="calendar_step_by">Step by Step Guide</string>
     <string name="calendar_complete_now">Complete Now</string>
     <string name="my_snooze_24_hours">Snooze 24 Hours</string>
-   <!--"0 Day"1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day", "7 Day"-->
+    <!--"0 Day"1 Day", "2 Day", "3 Day", "4 Day", "5 Day", "6 Day", "7 Day"-->
     <string name="string_2451">0 Day</string>
     <string name="string_2424">1 Day</string>
     <string name="string_2425">2 Day</string>
@@ -1122,5 +1122,14 @@
     <string name="insert_seed">Insert the seed into the grow block. Please choose the grow block that you are using.</string>
 
     <string name="light_info">The dark environment helps to maintain the hormone balance in seeds, promoting their successful germination by utilizing the nutrients stored within them</string>
-
+    <!--This task will be snooze for 24 hours.-->
+    <string name="task_snooze">This task will be snooze for 24 hours.</string>
+    <!--Complete All-->
+    <string name="complete_all">Complete All</string>
+    <string name="home_applies_to">Applies to</string>
+    <string name="my_sort_by_name">Sort By Name</string>
+    <string name="my_sort_name">Sort by Name</string>
+    <string name="my_sort_strain">Sort by Strain</string>
+    <string name="my_sort_status">Sort by Status</string>
+    <string name="my_sort_subscription">Sort by Subscription</string>
 </resources>

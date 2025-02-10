@@ -12,6 +12,8 @@ data class ListDeviceBean(
     var plantName: String? = null,
     var onlineStatus: String? = null,
     var period: String? = null,
+    var isOnline: Boolean? = null,
+    var isSubscript: Boolean? = null,
     var subscription: String? = null,
     var isChooser: Boolean? = null,
     var plantId: Int? = null,
@@ -31,6 +33,7 @@ data class ListDeviceBean(
     var smartUsbPowder: Int? = null, // USB开关：1-开启、0-关闭
     var spaceType: String? = KEY_SPACE_TYPE_BOX, // 判断是abby还是帐篷
     var textDesc: String? = null, // 文字描述
+    var shortText: String? = null, // 排序
     var heightSensor: Boolean? = null,
     var imageUrl: String? = null,
     var waterLevelSensor: Boolean? = null,
@@ -56,6 +59,7 @@ data class ListDeviceBean(
         val temperature: String? = null,
         val humidity: String? = null,
         val usbPort: String? = null,
+        val needAutoSet: Boolean? = null,
     ) : BaseBean()
 
     override val itemType: Int
@@ -70,7 +74,9 @@ data class ListDeviceBean(
         }
 
     companion object {
+        // 设备类型。
         const val KEY_SPACE_TYPE_BOX = "box"
+        const val KEY_SPACE_TYPE_TENT_KIT = "tent_kit"
         const val KEY_SPACE_TYPE_TENT = "tent"
         const val KEY_SPACE_TYPE_PH = "phb"
 

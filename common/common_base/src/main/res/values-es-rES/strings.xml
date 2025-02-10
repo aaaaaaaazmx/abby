@@ -1067,5 +1067,14 @@
     <string name="foam_cube">Cubo de Espuma</string>
     <string name="grow_block_check">Verificación del Bloque de Crecimiento</string>
     <string name="insert_seed">Inserte la semilla en el bloque de crecimiento. Por favor, elija el bloque de crecimiento que está utilizando.</string>
+    <!-- 西班牙语翻译 -->
+    <string name="task_snooze">Esta tarea se pospondrá durante 24 horas.</string>
+    <string name="complete_all">Completar todo</string>
+    <string name="home_applies_to">Se aplica a</string>
+    <string name="my_sort_by_name">Ordenar por nombre</string>
+    <string name="my_sort_name">Ordenar por nombre</string>
+    <string name="my_sort_strain">Ordenar por cepa</string>
+    <string name="my_sort_status">Ordenar por estado</string>
+    <string name="my_sort_subscription">Ordenar por suscripción</string>
 
 </resources>

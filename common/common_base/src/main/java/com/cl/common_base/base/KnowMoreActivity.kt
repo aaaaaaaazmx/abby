@@ -73,7 +73,7 @@ import javax.inject.Inject
 
 
 /**
- * 统一图文接口
+ * 统一图文接口,用于全屏界面展示
  */
 @Route(path = RouterPath.Home.PAGE_KNOW)
 @AndroidEntryPoint
@@ -828,10 +828,37 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 R.id.tv_usb_detail,
                 R.id.iv_usb_what,
                 R.id.rl_ono_on_one,
+                R.id.tv_delete_pair_txt,
             )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
+                    R.id.tv_delete_pair_txt -> {
+                        // 富文本界面点击delete按钮、删除配件。
+                        // 解绑设备
+                        xpopup(this@KnowMoreActivity) {
+                            isDestroyOnDismiss(false)
+                            dismissOnTouchOutside(false)
+                            asCustom(
+                                BaseCenterPop(
+                                    this@KnowMoreActivity,
+                                    content = getString(R.string.string_1142),
+                                    isShowCancelButton = true,
+                                    cancelText = getString(com.cl.common_base.R.string.string_173),
+                                    confirmText = getString(com.cl.common_base.R.string.string_174),
+                                    onConfirmAction = {
+                                        if (!relationId.isNullOrEmpty()) {
+                                            // 删除当前设备的配件
+                                            mViewMode.cameraSetting(UpdateInfoReq(binding = false, deviceId = deviceId, relationId = relationId))
+                                        } else {
+                                            // 删除共享设备
+                                            mViewMode.deleteDevice(deviceId.toString())
+                                        }
+                                    })
+                            ).show()
+                        }
+                    }
+
                     R.id.rl_ono_on_one -> {
                         // 发起会话
                         mViewMode.conversations(textId = mViewMode.richText.value?.data?.txtId)

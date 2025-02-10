@@ -240,6 +240,9 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 设备列表选择排序的key
+        const val KEY_SORT_PERIOD = "key_device_list_sort"
+
         // 保存的系统语言
         const val KEY_GLOBAL_LANGUAGE = "key_global_language"
 
@@ -452,6 +455,9 @@ object Constants {
 
         // 手动模式自动模式
         const val KEY_FIXED_ID_MANUAL_MODE = "6f5c5f54f3515fe9c744980e39583e95"
+
+        // 补光灯 fill_light_view
+        const val KEY_FIXED_ID_FILL_LIGHT_VIEW = "fill_light_view"
     }
 
     object FragmentIndex {

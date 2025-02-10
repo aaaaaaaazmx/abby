@@ -22,6 +22,9 @@ data class AccessoryListBean(
         const val KEY_CAMERA = "camera"
         const val KEY_PHB = "phb"
 
+        // 补光灯 fill_light
+        const val KEY_FILL_LIGHT = "fill_light"
+
         // - smart_outlets  智能插座
         const val KEY_OUTLETS = "smart_outlets"
 
