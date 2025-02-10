@@ -1,11 +1,13 @@
 package com.cl.modules_home.ui
 
 import android.content.Intent
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.modules_home.databinding.HomeSeekCheckActivityBinding
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
 import com.cl.common_base.bean.UpPlantInfoReq
 import com.cl.common_base.constants.Constants
+import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PlantCheckHelp
@@ -34,6 +36,11 @@ class GrowCheckActivity : BaseActivity<HomeGrowCheckActivityBinding>() {
         intent.getIntExtra("plantId", -1)
     }
 
+    // 是否是自家的帐篷， 只要是不为空，那么就是 tent_kit
+    private val plantType by lazy {
+        intent.getStringExtra(Constants.Global.KEY_PLANT_TYPE)
+    }
+
     override fun initView() {
 
     }
@@ -43,7 +50,8 @@ class GrowCheckActivity : BaseActivity<HomeGrowCheckActivityBinding>() {
             updatePlantInfo.observe(this@GrowCheckActivity, resourceObserver {
                 error { errorMsg, code ->
                     hideProgressLoading()
-                    ToastUtil.shortShow(errorMsg) }
+                    ToastUtil.shortShow(errorMsg)
+                }
                 success {
                     hideProgressLoading()
                     // 跳转到下一个界面
@@ -133,7 +141,15 @@ class GrowCheckActivity : BaseActivity<HomeGrowCheckActivityBinding>() {
         }
 
         binding.nextBtn.setOnClickListener {
-            viewModel.updatePlantInfo(UpPlantInfoReq(plantId = plantId, growBlock = if (binding.curingBox.isChecked) 0 else 1))
+            if (plantType.isNullOrEmpty()) {
+                viewModel.updatePlantInfo(UpPlantInfoReq(plantId = plantId, growBlock = if (binding.curingBox.isChecked) 0 else 1))
+            } else {
+                // tent_kit帐篷种植
+                ARouter.getInstance().build(RouterPath.Home.PAGE_TENT_KIT_PLANT_SETUP)
+                    .withString(Constants.Global.KEY_PLANT_TYPE, plantType)
+                    .withString(Constants.Global.KEY_PLANT_ID, plantId.toString())
+                    .navigation(this@GrowCheckActivity)
+            }
         }
     }
 }

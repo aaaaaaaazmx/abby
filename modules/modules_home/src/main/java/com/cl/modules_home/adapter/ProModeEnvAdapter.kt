@@ -15,6 +15,7 @@ import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.setVisible
 import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.pop.activity.BasePopActivity
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
@@ -27,27 +28,28 @@ import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 
-class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
-    BaseQuickAdapter<EnvParamListBeanItem, BaseDataBindingHolder<HomeProModeEnvItemBinding>>(R.layout.home_pro_mode_env_item, data) {
+class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?, val plantType: String? = null) : BaseQuickAdapter<EnvParamListBeanItem, BaseDataBindingHolder<HomeProModeEnvItemBinding>>(R.layout.home_pro_mode_env_item, data) {
 
 
     @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
     override fun convert(holder: BaseDataBindingHolder<HomeProModeEnvItemBinding>, item: EnvParamListBeanItem) {
         holder.dataBinding?.apply {
             data = item
+            plantType = this@ProModeEnvAdapter.plantType
             executePendingBindings()
             // 还有个灰色状态。
 
             //  这个开始时间就是从第一周第一天开始。第二个就是上一个的结束时间。
             if (holder.layoutPosition == 0) {
-                tvDateRang.text =
-                    context.getString(com.cl.common_base.R.string.home_week1_day1_week_day, "${item.week}", "${item.day}")
+                tvDateRang.text = context.getString(com.cl.common_base.R.string.home_week1_day1_week_day, "${item.week}", "${item.day}")
                 item.sweek = 1
                 item.sday = 1
             } else {
                 // 开始时间是上一个的结束时间
-                tvDateRang.text = "${context.getString(com.cl.common_base.R.string.weeks)}${item.sweek} ${context.getString(com.cl.common_base.R.string.days)}${item.sday}" +
-                        "-${context.getString(com.cl.common_base.R.string.weeks)}${item.week} ${context.getString(com.cl.common_base.R.string.days)}${item.day}"
+                tvDateRang.text =
+                    "${context.getString(com.cl.common_base.R.string.weeks)}${item.sweek} ${context.getString(com.cl.common_base.R.string.days)}${item.sday}" + "-${context.getString(com.cl.common_base.R.string.weeks)}${item.week} ${
+                        context.getString(com.cl.common_base.R.string.days)
+                    }${item.day}"
             }
 
             ivGth.setSafeOnClickListener {
@@ -76,50 +78,6 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
                 View.INVISIBLE
             }
 
-            // 风扇
-            fanIntakeSeekbar.customSectionTrackColor { colorIntArr ->
-                //the length of colorIntArray equals section count
-                //                colorIntArr[0] = Color.parseColor("#008961");
-                //                colorIntArr[1] = Color.parseColor("#008961");
-                // 当刻度为最后4段时才显示红色
-                // colorIntArr[6] = Color.parseColor("#F72E47")
-                colorIntArr[7] = Color.parseColor("#F72E47")
-                colorIntArr[8] = Color.parseColor("#F72E47")
-                colorIntArr[9] = Color.parseColor("#F72E47")
-                true //true if apply color , otherwise no change
-            }
-
-            // 风扇滑块
-            fanIntakeSeekbar.setProgress(item.brightValue.safeToFloat())
-            fanIntakeSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
-                override fun onSeeking(p0: SeekParams?) {
-
-                }
-
-                override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
-                }
-
-                override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
-                    val progress = seekbar?.progress ?: 0
-                    if (progress >= 7) {
-                        val boolean = Prefs.getBoolean(Constants.Global.KEY_IS_SHOW_FAN_SEVEN_TIP, false)
-                        if (!boolean) {
-                            context.let {
-                                xpopup(it) {
-                                    isDestroyOnDismiss(false)
-                                    dismissOnTouchOutside(false)
-                                    asCustom(HomeFanBottonPop(it, title = context.getString(com.cl.common_base.R.string.home_you_re_about_to_set_the), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
-                                    }, benOKAction = {})).show()
-                                }
-                            }
-                        }
-                    }
-                    tvFanValue.text = seekbar?.progress.toString()
-                    // 把当前的数据也设置到data数据中。
-                    this@ProModeEnvAdapter.data[holder.layoutPosition].brightValue = seekbar?.progress ?: 0
-                }
-            }
-            
             // 显示时间
             // 获取当前开关灯的时间
             // 0- 12, 12-24

@@ -15,6 +15,7 @@ import com.cl.modules_home.request.EnvDeleteReq
 import com.cl.modules_home.request.EnvParamListBeanItem
 import com.cl.modules_home.request.EnvParamListReq
 import com.cl.modules_home.request.EnvSaveReq
+import com.cl.modules_home.request.MultiPlantListData
 import com.cl.modules_home.request.PeriodListBody
 import com.cl.modules_home.request.PeriodListSaveReq
 import com.cl.modules_home.request.SaveTaskReq
@@ -370,5 +371,13 @@ class HomeRepository @Inject constructor(private var remoteRepository: HomeRemot
 
     fun seedCheckNoTaproot(plantId: String): Flow<HttpResult<SeedCheckNoTaprootData>> {
         return remoteRepository.seedCheckNoTaproot(plantId)
+    }
+
+    fun multiplantList (plantId: String): Flow<HttpResult<MutableList<MultiPlantListData>>> {
+        return remoteRepository.multiplantList(plantId)
+    }
+
+    fun updateMultiplant (req: MutableList<MultiPlantListData>): Flow<HttpResult<BaseBean>> {
+        return remoteRepository.updateMultiplant(req)
     }
 }

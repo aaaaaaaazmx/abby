@@ -264,6 +264,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
             fixedId?.let {
                 // 这是个动态界面，我也不知道为什么不做成动态按钮
                 when (it) {
+                    // tentKit机器种植方式
+                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING -> {
+                        mViewMode.startRunning(botanyId = "", goon = false)
+                    }
+
                     Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS -> {
                         ARouter.getInstance().build(RouterPath.Home.PAGE_PLANT_NAME)
                             .navigation(this@KnowMoreActivity)
@@ -624,6 +629,15 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
             startRunning.observe(this@KnowMoreActivity, resourceObserver {
                 error { errorMsg, _ -> ToastUtil.shortShow(errorMsg) }
+                success {
+                    hideProgressLoading()
+                    when (fixedId) {
+                        // tent_kit机器种植方式
+                        Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING -> {
+                            mViewMode.checkPlant()
+                        }
+                    }
+                }
             })
 
             // 新增配件

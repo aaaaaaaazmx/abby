@@ -83,7 +83,10 @@ class RouterPath {
         const val PAGE_FIRST_JOIN = "/firstJoin/$HOME"
         const val PAGE_HOME_TASK_SET = "/taskSet/$HOME"
         const val PAGE_HOME_PRO_MODE_START = "/proModeStart/$HOME"
-
+        // tentKitPlantSetup
+        const val PAGE_TENT_KIT_PLANT_SETUP = "/tentKitPlantSetup/$HOME"
+        // PAGE_GROW_MODE
+        const val PAGE_GROW_MODE = "/growMode/$HOME"
     }
 
     /**

@@ -14,7 +14,12 @@
             name="data"
             type="com.cl.modules_home.request.EnvParamListBeanItem" />
 
+        <variable
+            name="plantType"
+            type="java.lang.String" />
+
         <import type="android.view.View"/>
+        <import type="android.text.TextUtils"/>
 
     </data>
 
@@ -136,69 +141,44 @@
                         app:layout_constraintTop_toTopOf="@+id/tv_fan"
                         tools:ignore="MissingConstraints" />
 
-                    <TextView
-                        android:id="@+id/tv_fan_value"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="33dp"
-                        android:text="@{String.valueOf(data.brightValue)}"
-                        android:textColor="@color/mainColor"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="@id/tv_fan"
-                        app:layout_constraintStart_toEndOf="@+id/tv_fan"
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_marginStart="10dp"
+                        android:id="@+id/home_light"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_fan"
                         app:layout_constraintTop_toTopOf="@+id/tv_fan"
-                        tools:text="20" />
-
-                    <TextView
-                        android:id="@+id/tv_fan_value_unit_one"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:text="0"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_fan_value"
-                        app:layout_constraintStart_toEndOf="@+id/tv_fan_value"
-                        app:layout_constraintTop_toTopOf="@+id/tv_fan_value" />
-
-                    <com.warkiz.widget.IndicatorSeekBar
-                        android:id="@+id/fan_intake_seekbar"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        app:isb_indicator_color="@color/mainColor"
-                        app:isb_max="10"
-                        app:isb_progress="0"
-                        app:isb_show_indicator="rounded_rectangle"
-                        app:isb_thumb_adjust_auto="true"
-                        app:isb_thumb_drawable="@mipmap/bbbbb"
-                        app:isb_thumb_size="27dp"
-                        app:isb_ticks_count="11"
-                        app:isb_track_background_color="#99006241"
-                        app:isb_track_background_size="5dp"
-                        app:isb_track_progress_color="#008961"
-                        app:isb_track_progress_size="5dp"
-                        app:isb_track_rounded_corners="true"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_fan_value_unit_one"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_fan_value_unit_two"
-                        app:layout_constraintStart_toEndOf="@+id/tv_fan_value_unit_one"
-                        app:layout_constraintStart_toStartOf="@+id/tv_fan_value_unit_one"
-                        app:layout_constraintTop_toTopOf="@+id/tv_fan_value_unit_one" />
-
-                    <TextView
-                        android:id="@+id/tv_fan_value_unit_two"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:text="10"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/fan_intake_seekbar"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/fan_intake_seekbar" />
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        >
+
+                        <TextView
+                            android:id="@+id/tv_fan_value"
+                            android:text='@{TextUtils.isEmpty(plantType) ? String.valueOf(data.brightValue): String.valueOf(data.brightValue) + "%"}'
+                            app:layout_constraintBottom_toBottomOf="@+id/iv_rightss"
+                            app:layout_constraintTop_toTopOf="@+id/iv_rightss"
+                            app:layout_constraintEnd_toStartOf="@+id/iv_rightss"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:ellipsize="end"
+                            colorText='@{TextUtils.isEmpty(plantType) ? data.brightValue > 7 ? "#F72E47" : "#000000" : "#000000"}'
+                            android:textColor="@color/black"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            tools:text="10:00 AM-7:00 PM" />
+
+                        <ImageView
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:id="@+id/iv_rightss"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="15dp"
+                            android:background="@mipmap/iv_right"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                     <TextView

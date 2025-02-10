@@ -97,5 +97,9 @@
         <activity android:name=".activity.ProModeTaskSetActivity" />
         <activity android:name=".ui.NewSeedCheckActivity" />
         <activity android:name=".ui.GrowCheckActivity" />
+        <activity android:name=".ui.TentKitActivity" />
+        <activity android:name=".ui.TentKitPlanSetActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="adjustPan" />
     </application>
 </manifest>

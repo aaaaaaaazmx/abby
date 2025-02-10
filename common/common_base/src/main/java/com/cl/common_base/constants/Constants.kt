@@ -46,7 +46,7 @@ object Constants {
         const val TEST_URL = "http://192.168.3.6:9997/"
 
         // 本地环境
-        const val BD_URL = "http://192.168.3.113:9330/"
+        const val BD_URL = "http://192.168.3.125:9330/"
 
         // 正式环境
 //        const val FORMAL_URL = "https://52.9.50.27:9330/"
@@ -240,6 +240,9 @@ object Constants {
      * 全局相关
      */
     object Global {
+        // 是什么类型的植物
+        const val KEY_PLANT_TYPE = "key_plant_type"
+
         // 设备列表选择排序的key
         const val KEY_SORT_PERIOD = "key_device_list_sort"
 
@@ -455,6 +458,24 @@ object Constants {
 
         // 手动模式自动模式
         const val KEY_FIXED_ID_MANUAL_MODE = "6f5c5f54f3515fe9c744980e39583e95"
+
+        // 帐篷且Photo Seed，跳转 发芽流程，富文本ID：PHOTO_SEED_GERMINATE
+        //帐篷且Photo Clone，跳转 移植流程，富文本ID：PHOTO_CLONE_GERMINATE
+        //帐篷且Auto Seed，跳转 发芽流程，富文本ID：AUTO_SEED_TRANSPLANT
+        //帐篷且Auto  Seeding，跳转 移植流程，富文本ID：AUTO_SEEDING_TRANSPLANT
+        const val KEY_FIXED_ID_TENT_KIT_SEED = "PHOTO_SEED_GERMINATE"
+        const val KEY_FIXED_ID_TENT_KIT_CLONE = "PHOTO_CLONE_GERMINATE"
+        const val KEY_FIXED_ID_TENT_KIT_AUTO_SEED = "AUTO_SEED_TRANSPLANT"
+        const val KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING = "AUTO_SEEDING_TRANSPLANT"
+
+        // 帐篷且Photo Seed，跳转 标记植物，富文本ID：PHOTO_SEED_LABEL
+        //帐篷且Photo Clone，跳转 标记植物，富文本ID：PHOTO_CLONE_LABEL
+        //帐篷且Auto Seed，跳转 标记植物，富文本ID：AUTO_SEED_LABEL
+        //帐篷且Auto  Seeding，跳转 标记植物，富文本ID：AUTO_SEEDING_LABEL
+        const val KEY_FIXED_ID_TENT_KIT_SEED_LABEL = "PHOTO_SEED_LABEL"
+        const val KEY_FIXED_ID_TENT_KIT_CLONE_LABEL = "PHOTO_CLONE_LABEL"
+        const val KEY_FIXED_ID_TENT_KIT_AUTO_SEED_LABEL = "AUTO_SEED_LABEL"
+        const val KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING_LABEL = "AUTO_SEEDING_LABEL"
     }
 
     object FragmentIndex {

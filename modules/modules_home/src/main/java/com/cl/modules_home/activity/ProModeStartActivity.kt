@@ -8,6 +8,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.BaseApplication
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -42,6 +43,11 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
     // 当前接受的step，用来区分从首页进来具体当前是什么周期
     private val step by lazy {
         intent.getStringExtra(STEP)
+    }
+
+    // 是否是自家的帐篷， 只要是不为空，那么就是 tent_kit
+    private val plantType by lazy {
+        intent.getStringExtra(Constants.Global.KEY_PLANT_TYPE)
     }
 
     // TASK_ID
@@ -205,6 +211,7 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
                 putExtra(ProModeEnvActivity.STEP, selectedItem.step)
                 putExtra(ProModeEnvActivity.TEMPLATE_ID, templateId)
                 putExtra(ProModeEnvActivity.TASK_ID, taskId)
+                putExtra(Constants.Global.KEY_PLANT_TYPE, plantType)
                 if (addIsCurrentPeriod) {
                     putExtra(ProModeEnvActivity.IS_CURRENT_PERIOD, isCurrentPeriod)
                 }
@@ -297,7 +304,7 @@ class ProModeStartActivity : BaseActivity<HomeProModeStartActivityBinding>() {
             mViewMode.updateCycle(PeriodListSaveReq(templateId = templateId.toString(), list = adapter.data.map {
                 com.cl.modules_home.request.Req(
                     currentStep = step == it.step,
-                    periodId = it.periodId,
+                    periodId = if (plantType.isNullOrEmpty()) it.periodId.toString() else null,
                     step = it.step,
                     stepDay = it.stepDay,
                     stepShow = it.stepShow,

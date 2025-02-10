@@ -57,7 +57,7 @@
             android:layout_margin="10dp"
             android:background="@color/lineBg"
             android:gravity="center"
-            android:text="本地环境-https://192.168.3.113:9330/"
+            android:text="本地环境-https://192.168.3.125:9330/"
             app:svRadius="16dp"
             app:svSolidType="solid" />
 

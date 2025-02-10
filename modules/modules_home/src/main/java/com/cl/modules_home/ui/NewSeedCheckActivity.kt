@@ -32,6 +32,11 @@ class NewSeedCheckActivity : BaseActivity<HomeNewSeekCheckActivityBinding>() {
         intent.getIntExtra("plantId", -1)
     }
 
+    // 是否是自家的帐篷， 只要是不为空，那么就是 tent_kit
+    private val plantType by lazy {
+        intent.getStringExtra(Constants.Global.KEY_PLANT_TYPE)
+    }
+
     override fun initView() {
 
     }
@@ -113,6 +118,7 @@ class NewSeedCheckActivity : BaseActivity<HomeNewSeekCheckActivityBinding>() {
                 // 跳转到套种子泡馍的界面
                 startActivity(Intent(this@NewSeedCheckActivity, GrowCheckActivity::class.java).apply {
                     putExtra("plantId", plantId)
+                    putExtra(Constants.Global.KEY_PLANT_TYPE, plantType)
                 })
                 return@setOnClickListener
             }

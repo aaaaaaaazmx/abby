@@ -211,6 +211,35 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
         if (isJumpPage) {
             fixedId?.let { // 这是个动态界面，我也不知道为什么不做成动态按钮
                 when (it) {
+                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED -> {
+                        mViewModel.checkPlant()
+                    }
+
+                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING -> {
+                        // 看完移植流程视频，直接跳转到plantSetUp界面
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_TENT_KIT_PLANT_SETUP)
+                            .withString(Constants.Global.KEY_PLANT_TYPE, it)
+                            .navigation(this@BasePopActivity)
+                    }
+
+                    // tent_kit
+                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE_LABEL, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING_LABEL -> {
+                        // 跳转到种植模式选择界面
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_GROW_MODE)
+                            .withString(Constants.Global.KEY_PLANT_TYPE, it)
+                            .withString(Constants.Global.KEY_PLANT_ID, mViewModel.userInfo?.plantId)
+                            .navigation(this@BasePopActivity)
+                    }
+
+                    // tent_kit
+                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED_LABEL, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED_LABEL -> {
+                        // 跳转到种植模式选择界面
+                        ARouter.getInstance().build(RouterPath.Home.PAGE_GROW_MODE)
+                            .withString(Constants.Global.KEY_PLANT_TYPE, it)
+                            .withString(Constants.Global.KEY_PLANT_ID, mViewModel.userInfo?.plantId)
+                            .navigation(this@BasePopActivity)
+                    }
+
                     Constants.Fixed.KEY_FIXED_ID_GO_TO_CAMERA -> {
                         // 去拍照。
                         PermissionHelp().applyPermissionHelp(
@@ -226,6 +255,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             Manifest.permission.CAMERA
                         )
                     }
+
                     Constants.Fixed.KEY_FIXED_ID_PREPARE_THE_SEED -> { // 如果是准备种子、那么直接跳转到种子界面
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(Constants.Global.KEY_TXT_ID, Constants.Fixed.KEY_FIXED_ID_SEED_GERMINATION_PREVIEW)
@@ -334,7 +364,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                 if (taskIdList.any { it.jumpType == CalendarData.KEY_JUMP_TYPE_POP_UP } && taskIdList.size == 2) {
                     taskIdList.removeAt(0)
                     // 如果是倒数第二个任务，并且满足条件
-                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas, templateId = if (taskIdList.isEmpty()) null else taskIdList[0].templateId))
+                    mViewModel.finishTask(
+                        FinishTaskReq(
+                            taskId = fixedId,
+                            packetNo = packetNo,
+                            viewDatas = if (viewDatas.isEmpty()) null else viewDatas,
+                            templateId = if (taskIdList.isEmpty()) null else taskIdList[0].templateId
+                        )
+                    )
                 } else if (taskIdList.size - 1 > 0) { // 移除掉第一个
                     taskIdList.removeAt(0)
 
@@ -367,7 +404,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     startActivity(intent)
                 } else {
                     // 最后一个任务执行finishTask
-                    mViewModel.finishTask(FinishTaskReq(taskId = fixedId, packetNo = packetNo, viewDatas = if (viewDatas.isEmpty()) null else viewDatas, templateId = if (taskIdList.isEmpty()) null else taskIdList[0].templateId))
+                    mViewModel.finishTask(
+                        FinishTaskReq(
+                            taskId = fixedId,
+                            packetNo = packetNo,
+                            viewDatas = if (viewDatas.isEmpty()) null else viewDatas,
+                            templateId = if (taskIdList.isEmpty()) null else taskIdList[0].templateId
+                        )
+                    )
                 }
                 return
             }
@@ -412,8 +456,14 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     Constants.Fixed.KEY_FIXED_ID_TRANSPLANT_3 -> {
                         val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                         intent.putExtra(KEY_UNLOCK_TASK_ID, unLockId)
-                        intent.putExtra(Constants.Global.KEY_TXT_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
-                        intent.putExtra(KEY_FIXED_TASK_ID, if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW)
+                        intent.putExtra(
+                            Constants.Global.KEY_TXT_ID,
+                            if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW
+                        )
+                        intent.putExtra(
+                            KEY_FIXED_TASK_ID,
+                            if (categoryCode == "100002" || categoryCode == "100004") Constants.Fixed.KEY_FIXED_ID_AUTOFLOWERING_STAGE_PREVIEW else Constants.Fixed.KEY_FIXED_ID_VEGETATIVE_STAGE_PREVIEW
+                        )
                         intent.putExtra(KEY_IS_SHOW_BUTTON, true)
                         intent.putExtra(KEY_INTENT_JUMP_PAGE, true)
                         intent.putExtra(KEY_TITLE_COLOR, "#006241")
@@ -438,10 +488,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     private var imageUri: Uri? = null
     private fun gotoCamera() {
         imageUri = createImageUri()
-         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
-             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-             startActivityForResult(intent, REQUEST_CAPTURE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.CUPCAKE) {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            startActivityForResult(intent, REQUEST_CAPTURE)
         }
     }
 
@@ -503,7 +553,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                                 }
 
                                 override fun onError(source: String?, e: Throwable?) {
-                                   logI(e.toString())
+                                    logI(e.toString())
                                 }
 
                                 override fun onStart() {
@@ -669,7 +719,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     //USED_UP_SUBSCRIPTION: 调用次数已用完（会员）
                     //UNKNOWN:其它情况，弹出提示
                     val code = data?.resultCode ?: ""
-                    when(code) {
+                    when (code) {
                         "YES" -> {
                             val intent = Intent(this@BasePopActivity, BasePopActivity::class.java)
                             intent.putExtra(Constants.Global.KEY_TXT_ID, data?.textId)
@@ -693,13 +743,20 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             xpopup(this@BasePopActivity) {
                                 isDestroyOnDismiss(false)
                                 dismissOnTouchOutside(false)
-                                asCustom(BaseCenterPop(this@BasePopActivity, cancelText = getString(R.string.string_290), content = data?.content, confirmText = getString(R.string.string_291), onConfirmAction =  {
-                                    // 跳转到购买地址
-                                    //  跳转订阅网站
-                                    val intent = Intent(this@BasePopActivity, WebActivity::class.java)
-                                    intent.putExtra(WebActivity.KEY_WEB_URL, data?.subscribeNow)
-                                    startActivity(intent)
-                                })).show()
+                                asCustom(
+                                    BaseCenterPop(
+                                        this@BasePopActivity,
+                                        cancelText = getString(R.string.string_290),
+                                        content = data?.content,
+                                        confirmText = getString(R.string.string_291),
+                                        onConfirmAction = {
+                                            // 跳转到购买地址
+                                            //  跳转订阅网站
+                                            val intent = Intent(this@BasePopActivity, WebActivity::class.java)
+                                            intent.putExtra(WebActivity.KEY_WEB_URL, data?.subscribeNow)
+                                            startActivity(intent)
+                                        })
+                                ).show()
                             }
                         }
 
@@ -707,7 +764,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                             xpopup(this@BasePopActivity) {
                                 isDestroyOnDismiss(false)
                                 dismissOnTouchOutside(false)
-                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = getString(R.string.string_10), onConfirmAction =  {
+                                asCustom(BaseCenterPop(this@BasePopActivity, isShowCancelButton = false, content = data?.content, confirmText = getString(R.string.string_10), onConfirmAction = {
                                     // 跳转到购买地址
                                     //  跳转订阅网站
                                     val intent = Intent(this@BasePopActivity, WebActivity::class.java)
@@ -791,17 +848,17 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     list?.forEachIndexed { _, topPage ->
                         if (!isPreview) {
                             // 参考KnowMoreActivity
-                          /*  val tv = TextView(this@BasePopActivity)
-                            tv.setBackgroundResource(R.drawable.create_state_button)
-                            tv.isEnabled = true
-                            tv.text = topPage.value?.txt
-                            val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(60))
-                            lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
-                            tv.layoutParams = lp
-                            tv.gravity = Gravity.CENTER
-                            tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
-                            tv.setTextColor(Color.WHITE)
-                            binding.flRoot.addView(tv)*/
+                            /*  val tv = TextView(this@BasePopActivity)
+                              tv.setBackgroundResource(R.drawable.create_state_button)
+                              tv.isEnabled = true
+                              tv.text = topPage.value?.txt
+                              val lp = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp2px(60))
+                              lp.setMargins(dp2px(20), dp2px(10), dp2px(20), dp2px(0))
+                              tv.layoutParams = lp
+                              tv.gravity = Gravity.CENTER
+                              tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, sp2px(18f).toFloat())
+                              tv.setTextColor(Color.WHITE)
+                              binding.flRoot.addView(tv)*/
                         }
                     }
                     binding.flRoot.children.forEach {
@@ -832,7 +889,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                     }
 
                     // 适配器设置数据
-                   data.page?.map { it.copy(isPreview = isPreview) }?.let { adapter.setList(it) }
+                    data.page?.map { it.copy(isPreview = isPreview) }?.let { adapter.setList(it) }
                 }
             })
 
@@ -924,8 +981,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
     private fun adapterClickEvent() {
         adapter.apply {
-            addChildClickViewIds(R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt,
-                R.id.input_delete, R.id.tv_delay_task, R.id.rl_ono_on_one, R.id.rl_ai_check)
+            addChildClickViewIds(
+                R.id.iv_pic, R.id.tv_html, R.id.tv_learn, R.id.cl_go_url, R.id.cl_support, R.id.cl_discord, R.id.cl_learn, R.id.cl_check, R.id.tv_page_txt, R.id.tv_txt,
+                R.id.input_delete, R.id.tv_delay_task, R.id.rl_ono_on_one, R.id.rl_ai_check
+            )
             setOnItemChildClickListener { _, view, position ->
                 val bean = data[position]
                 when (view.id) {
@@ -1089,6 +1148,10 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             ARouter.getInstance().build(RouterPath.My.PAGE_MY_CALENDAR).navigation(this@BasePopActivity)
             finish()
             return
+        } else if (fixedId == Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE || fixedId == Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING) {
+            ARouter.getInstance().build(RouterPath.Home.PAGE_TENT_KIT_PLANT_SETUP).navigation(this@BasePopActivity)
+        } else if (fixedId == Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED || fixedId == Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED) {
+            mViewModel.checkPlant()
         }
         finish()
     }

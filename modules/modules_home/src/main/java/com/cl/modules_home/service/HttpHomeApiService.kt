@@ -16,6 +16,7 @@ import com.cl.modules_home.request.EnvDeleteReq
 import com.cl.modules_home.request.EnvParamListBeanItem
 import com.cl.modules_home.request.EnvParamListReq
 import com.cl.modules_home.request.EnvSaveReq
+import com.cl.modules_home.request.MultiPlantListData
 import com.cl.modules_home.request.PeriodListBody
 import com.cl.modules_home.request.PeriodListSaveReq
 import com.cl.modules_home.request.SaveTaskReq
@@ -509,5 +510,15 @@ interface HttpHomeApiService {
     @FormUrlEncoded
     @POST("abby/plant/seedCheckNoTaproot")
     fun seedCheckNoTaproot(@Field("plantId") plantId: String): Flow<HttpResult<SeedCheckNoTaprootData>>
+
+
+    // 获取多植物
+    @FormUrlEncoded
+    @POST("abby/plant/multiplantList")
+    fun multiplantList(@Field("plantId") deviceId: String): Flow<HttpResult<MutableList<MultiPlantListData>>>
+
+    // 修改多植物
+    @POST("abby/plant/updateMultiplant")
+    fun updateMultiplant(@Body req: MutableList<MultiPlantListData>): Flow<HttpResult<BaseBean>>
 
 }

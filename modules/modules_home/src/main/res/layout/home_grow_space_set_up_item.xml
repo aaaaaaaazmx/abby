@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.cl.modules_home.request.MultiPlantListData" />
+
+        <variable
+            name="position"
+            type="java.lang.Integer" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+    </data>
+
+
+    <top.limuyang2.shadowlayoutlib.ShadowConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/background_white_r10"
+        app:l_radius="10dp"
+        app:l_shadowAlpha="1"
+        app:l_shadowElevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            app:layout_constraintEnd_toStartOf="@+id/tv_number_decs"
+            android:id="@+id/tv_number_decs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="14dp"
+            android:text='@{"No." + String.valueOf(position + 1)}'
+            android:textColor="@color/mainColor"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="No.1" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            tools:ignore="MissingConstraints"
+            android:layout_marginStart="10dp"
+            android:gravity="end"
+            app:layout_constraintStart_toEndOf="@+id/tv_number_decs"
+            android:id="@+id/rl_sync_strain"
+            android:layout_width="0dp"
+            android:layout_marginEnd="10dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_number_decs"
+            app:layout_constraintEnd_toStartOf="@+id/rl_syne_type"
+            app:layout_constraintTop_toTopOf="@+id/tv_number_decs">
+
+            <TextView
+                app:layout_constraintEnd_toStartOf="@+id/cb_sync"
+                android:ellipsize="end"
+                android:autoSizeMaxTextSize="10sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:lines="1"
+                android:id="@+id/tv_snyc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="@string/string_2213"
+                android:textColor="@color/mainColor"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
+
+            <CheckBox
+                app:layout_constraintEnd_toEndOf="parent"
+                android:clickable="false"
+                android:checked="@{data.isSyncStrainCheck}"
+                android:id="@+id/cb_sync"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_toRightOf="@+id/tv_snyc"
+                android:background="@drawable/my_checkbox_selector"
+                android:button="@null"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            tools:ignore="MissingConstraints"
+            app:layout_constraintStart_toEndOf="@+id/rl_sync_strain"
+            android:layout_marginEnd="25dp"
+            android:id="@+id/rl_syne_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_number_decs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_number_decs">
+
+            <!--<TextView
+                app:layout_constraintEnd_toStartOf="@+id/cb_sync_type"
+                android:ellipsize="end"
+                android:autoSizeMaxTextSize="10sp"
+                android:autoSizeMinTextSize="7sp"
+                android:autoSizeTextType="uniform"
+                android:lines="1"
+                android:id="@+id/tv_snyc_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:text="@string/string_2214"
+                android:textColor="@color/mainColor"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}"
+                />
+
+            <CheckBox
+                app:layout_constraintEnd_toEndOf="parent"
+                android:clickable="false"
+                android:checked="@{data.isSyncTypeCheck}"
+                android:id="@+id/cb_sync_type"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="@drawable/my_checkbox_selector"
+                android:button="@null"
+                android:visibility="@{position == 0 ? View.VISIBLE : View.GONE}" />-->
+
+            <ImageView
+                android:id="@+id/iv_close"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@mipmap/iv_close"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_space_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_button_maincolor"
+            app:layout_constraintTop_toBottomOf="@+id/tv_number_decs">
+
+            <EditText
+                android:id="@+id/et_space_plant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@null"
+                android:ellipsize="end"
+                android:maxEms="10"
+                android:maxLength="10"
+                android:hint="@string/home_grow_space_namessss"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@={data.growSpaceName}"
+                android:textColor="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/cl_strain_name"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/create_button_maincolor"
+            app:layout_constraintTop_toBottomOf="@+id/cl_space_name">
+
+            <EditText
+                android:id="@+id/et_strain_plant"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@null"
+                android:ellipsize="end"
+                android:hint="@string/home_strain_namesss"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text='@={data.strainName}'
+                android:textColor="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </top.limuyang2.shadowlayoutlib.ShadowConstraintLayout>
+</layout>

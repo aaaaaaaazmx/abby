@@ -14,6 +14,7 @@ data class PlantInfoData(
     var strainName: String? = null, // 种植名字
     var plantWay: String? = null, // 种植方式
     var spaceName: String? = null,// 帐篷名字
+    var spaceType: String? = null,// 帐篷名字
     var day: Int? = null,
     var flushingWeight: Int? = 0, // 称重重量
     var healthStatus: String? = null,

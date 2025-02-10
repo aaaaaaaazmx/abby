@@ -3177,21 +3177,49 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                     // 保存植物ID
                     Prefs.putStringAsync(Constants.Global.KEY_PLANT_ID, data.toString())
 
+                    startActivity(Intent(context, TentKitActivity::class.java))
                     // 跳转富文本
-                    val intent = Intent(context, KnowMoreActivity::class.java)
-                    intent.putExtra(
-                        Constants.Global.KEY_TXT_ID,
-                        Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
-                    )
-                    intent.putExtra(
-                        BasePopActivity.KEY_FIXED_TASK_ID,
-                        Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
-                    )
-                    intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
-                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
-                    intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, context?.getString(com.cl.common_base.R.string.string_262))
-                    context?.startActivity(intent)
+                    /* val intent = Intent(context, KnowMoreActivity::class.java)
+                     intent.putExtra(
+                         Constants.Global.KEY_TXT_ID,
+                         Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
+                     )
+                     intent.putExtra(
+                         BasePopActivity.KEY_FIXED_TASK_ID,
+                         Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
+                     )
+                     intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                     intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, context?.getString(com.cl.common_base.R.string.string_262))
+                     context?.startActivity(intent)*/
+                    // 找到当前的设备型号
+                    /*mViewMode.listDevice.value?.data?.firstOrNull { it.currentDevice == 1 }?.let {
+                        when(it.spaceType) {
+                            ListDeviceBean.KEY_SPACE_TYPE_TENT_KIT -> {
+                                // 如果是帐篷，那么就走这个x
+                                startActivity(Intent(context, TentKitActivity::class.java))
+                            }
 
+                            ListDeviceBean.KEY_SPACE_TYPE_BOX -> {
+                                // 如果是growbox 那么就走这个
+                                // 跳转富文本
+                                val intent = Intent(context, KnowMoreActivity::class.java)
+                                intent.putExtra(
+                                    Constants.Global.KEY_TXT_ID,
+                                    Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
+                                )
+                                intent.putExtra(
+                                    BasePopActivity.KEY_FIXED_TASK_ID,
+                                    Constants.Fixed.KEY_FIXED_ID_A_FEW_TIPS
+                                )
+                                intent.putExtra(BasePopActivity.KEY_INTENT_JUMP_PAGE, true)
+                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON, true)
+                                intent.putExtra(BasePopActivity.KEY_IS_SHOW_BUTTON_TEXT, context?.getString(com.cl.common_base.R.string.string_262))
+                                context?.startActivity(intent)
+
+                            }
+                        }
+                    } */
                     // 优先跳转选择种子还是继承界面
                     // seed or clone
                     /*  ARouter.getInstance().build(RouterPath.My.PAGE_MT_CLONE_SEED)
@@ -3333,6 +3361,15 @@ class HomeFragment : BaseFragment<HomeBinding>() {
                                                 mViewMode.plantInfo.value?.data?.plantId?.let { it1 ->
                                                     it.startActivity(Intent(it, NewSeedCheckActivity::class.java).apply {
                                                         putExtra("plantId", it1)
+                                                        val way = mViewMode.plantInfo.value?.data?.plantWay
+                                                        val attribute = mViewMode.plantInfo.value?.data?.attribute
+                                                        val fixId =
+                                                            if (way?.equalsIgnoreCase("seed") == true && attribute?.equalsIgnoreCase("Photo") == true) {
+                                                                Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED
+                                                            } else if (way?.equalsIgnoreCase("seed") == true && attribute?.equalsIgnoreCase("auto") == true) {
+                                                                Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED
+                                                            } else ""
+                                                        putExtra(Constants.Global.KEY_PLANT_TYPE, fixId)
                                                     })
                                                 }
                                             })

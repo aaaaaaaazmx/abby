@@ -12,6 +12,8 @@ data class ListDeviceBean(
     var plantName: String? = null,
     var onlineStatus: String? = null,
     var period: String? = null,
+    var isOnline: Boolean? = null,
+    var isSubscript: Boolean? = null,
     var subscription: String? = null,
     var isChooser: Boolean? = null,
     var plantId: Int? = null,
@@ -71,7 +73,9 @@ data class ListDeviceBean(
         }
 
     companion object {
+        // 设备类型。
         const val KEY_SPACE_TYPE_BOX = "box"
+        const val KEY_SPACE_TYPE_TENT_KIT = "tent_kit"
         const val KEY_SPACE_TYPE_TENT = "tent"
         const val KEY_SPACE_TYPE_PH = "phb"
 

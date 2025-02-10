@@ -5,8 +5,10 @@ import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cl.common_base.BaseApplication
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.safeToLong
 import com.cl.common_base.ext.setSafeOnClickListener
@@ -23,6 +25,8 @@ import com.cl.modules_home.request.EnvParamListBeanItem
 import com.cl.modules_home.request.EnvParamListReq
 import com.cl.modules_home.request.EnvSaveReq
 import com.cl.modules_home.viewmodel.ProModeViewModel
+import com.cl.modules_home.widget.LightIntensityPop
+import com.cl.modules_home.widget.LightIntensityTentPop
 import com.lxj.xpopup.XPopup
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
@@ -35,6 +39,11 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
 
     @Inject
     lateinit var viewModel: ProModeViewModel
+
+    // 是否是自家的帐篷， 只要是不为空，那么就是 tent_kit
+    private val plantType by lazy {
+        intent.getStringExtra(Constants.Global.KEY_PLANT_TYPE)
+    }
 
     companion object {
         // step 当前周期标识
@@ -110,7 +119,7 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
     }
 
     private val adapter by lazy {
-        ProModeEnvAdapter(mutableListOf())
+        ProModeEnvAdapter(mutableListOf(), plantType)
     }
 
     // 从环境卡片界面跳转过来修改灯光的，只需要更改这一个界面。
@@ -347,10 +356,32 @@ class ProModeEnvActivity : BaseActivity<HomeProModeEnvActivityBinding>() {
             binding.recyclerView.smoothScrollToPosition(adapter.data.size - 1)
         }
 
-        adapter.addChildClickViewIds(R.id.iv_close, R.id.tv_date_rang, R.id.ft_timer, R.id.home_constraintlayouts, R.id.home_constraintlayout_exhaust)
+        adapter.addChildClickViewIds(R.id.iv_close, R.id.tv_date_rang, R.id.ft_timer, R.id.home_constraintlayouts, R.id.home_constraintlayout_exhaust, R.id.home_light)
         adapter.setOnItemChildClickListener { adapter, view, position ->
             val data = (adapter.data[position] as? EnvParamListBeanItem)
             when (view.id) {
+                R.id.home_light -> {
+                    if (plantType.isNullOrEmpty()) {
+                        // abby
+                        xpopup(this@ProModeEnvActivity) {
+                            isDestroyOnDismiss(false)
+                            asCustom(LightIntensityPop(this@ProModeEnvActivity, brightValue = data?.brightValue.safeToFloat(), onSeekAction = {
+                                data?.brightValue = it.toInt()
+                                adapter.notifyItemChanged(position)
+                            })).show()
+                        }
+                    } else {
+                        // tent_kit
+                        xpopup(this@ProModeEnvActivity) {
+                            isDestroyOnDismiss(false)
+                            asCustom(LightIntensityTentPop(this@ProModeEnvActivity, brightValue = data?.brightValue.safeToFloat(), onSeekAction = {
+                                data?.brightValue = it.toInt()
+                                adapter.notifyItemChanged(position)
+                            })).show()
+                        }
+                    }
+                }
+
                 R.id.iv_close -> {
                     if (data?.envId.isNullOrEmpty()) {
                         adapter.removeAt(position)

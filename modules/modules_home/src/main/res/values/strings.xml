@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">modules_home</string>
+    <string name="home_strain_namesss">strain name</string>
+    <string name="home_grow_space_namessss">grow space name</string>
 </resources>

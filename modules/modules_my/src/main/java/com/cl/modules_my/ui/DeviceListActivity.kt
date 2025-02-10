@@ -574,21 +574,23 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                         Prefs.putIntAsync(Constants.Global.KEY_SORT_PERIOD, 3)
                                         compareBy<ListDeviceBean> {
                                             // 在线状态排序（在线优先）
-                                            if (it.onlineStatus == "Offline") 1 else 0 
+                                            if (it.isOnline == false) 1 else 0
                                         }.then(deviceNameComparator)
                                     }
                                     getString(com.cl.common_base.R.string.my_sort_subscription) -> {
                                         Prefs.putIntAsync(Constants.Global.KEY_SORT_PERIOD, 4)
                                         compareBy<ListDeviceBean> { device ->
                                             // 第一优先级：是否有订阅服务
-                                            val subscription = device.subscription
-                                            when {
-                                                // 没有subscription字段，排最后
-                                                subscription.isNullOrEmpty() -> 2
+                                            val subscription = device.isSubscript
+                                            when (// 没有subscription字段，排最后
+                                                subscription) {
+                                                false -> 1
+
                                                 // 有subscription但不包含数字(已过期)，排中间
-                                                !subscription.any { it.isDigit() } -> 1
+                                                true -> 0
+
                                                 // 有subscription且包含数字(未过期)，排最前
-                                                else -> 0
+                                                else -> 2
                                             }
                                         }.then(deviceNameComparator) // 第二优先级：设备名称排序
                                     }
