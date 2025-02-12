@@ -27,6 +27,7 @@ import com.cl.common_base.adapter.HomeKnowMoreAdapter
 import com.cl.common_base.bean.CalendarData
 import com.cl.common_base.bean.FinishTaskReq
 import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.OpenUsbReq
 import com.cl.common_base.bean.SnoozeReq
 import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.bean.UpdateInfoReq
@@ -152,6 +153,11 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
      */
     private val relationId by lazy { intent.getStringExtra(BasePopActivity.KEY_RELATION_ID) }
 
+    /**
+     * 设备有几个usb口
+     */
+    private val usbNum by lazy { intent.getIntExtra(BasePopActivity.KEY_USB_COUNT, 0) }
+
     // 当前周期
     private val currentCycle by lazy { intent.getStringExtra(KEY_CURRENT_PERIOD) }
 
@@ -160,7 +166,9 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
 
     // 富文本适配器
     private val adapter by lazy {
-        HomeKnowMoreAdapter(mutableListOf())
+        HomeKnowMoreAdapter(mutableListOf(), openUsbAction = { selectedUsbId ->
+            mViewMode.openUsbPort(OpenUsbReq(usbPort = selectedUsbId, deviceId = deviceId, accessoryId = accessoryId))
+        })
     }
     private val linearLayoutManager by lazy {
         LinearLayoutManager(this@KnowMoreActivity)
@@ -216,7 +224,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
         binding.rvKnow.layoutManager = linearLayoutManager
         binding.rvKnow.adapter = adapter
         logI("txtId = $txtId, type = $txtType")
-        mViewMode.getRichText(txtId = txtId, type = txtType, taskId = null)
+        mViewMode.getRichText(txtId = txtId, type = txtType, taskId = null, deviceId)
         // 学院任务一进来就已读。
         when (txtType) {
             CalendarData.TASK_TYPE_TEST -> {
@@ -252,6 +260,16 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 fixedProcessingLogic()
             }
 
+        }
+
+        when(fixedId) {
+            // 新增配件
+            Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES -> {
+                if (usbNum <= 1) {
+                    // 打开usbPort
+                    mViewMode.openUsbPort(OpenUsbReq(usbPort = null, deviceId = deviceId, accessoryId = accessoryId))
+                }
+            }
         }
     }
 
@@ -467,7 +485,7 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                             }
                         } else {
                             letMultiple(accessoryId, deviceId) { a, b ->
-                                // 新增配件接口
+                                // Add accessory API call
                                 mViewMode.addAccessory(a, b)
                             }
                         }

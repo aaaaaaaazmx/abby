@@ -92,9 +92,9 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
      */
     private val _richText = MutableLiveData<Resource<RichTextData>>()
     val richText: LiveData<Resource<RichTextData>> = _richText
-    fun getRichText(txtId: String? = null, type: String? = null, taskId: String? = null) {
+    fun getRichText(txtId: String? = null, type: String? = null, taskId: String? = null, deviceId: String? = null) {
         viewModelScope.launch {
-            service.getRichText(taskId, txtId, type)
+            service.getRichText(taskId, txtId, type, deviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(
@@ -119,6 +119,42 @@ class KnowMoreViewModel  @Inject constructor() : ViewModel() {
                     )
                 }.collectLatest {
                     _richText.value = it
+                }
+        }
+    }
+
+    /**
+     * 开启USB端口
+     */
+    private val _openUsbPort = MutableLiveData<Resource<BaseBean>>()
+    val openUsbPort: LiveData<Resource<BaseBean>> = _openUsbPort
+    fun openUsbPort(usbPort: OpenUsbReq) {
+        viewModelScope.launch {
+            service.openUsb(usbPort)
+                .map {
+                    if (it.code != Constants.APP_SUCCESS) {
+                        Resource.DataError(
+                            it.code,
+                            it.msg
+                        )
+                    } else {
+                        Resource.Success(it.data)
+                    }
+                }
+                .flowOn(Dispatchers.IO)
+                .onStart {
+                    emit(Resource.Loading())
+                }
+                .catch {
+                    logD("catch $it")
+                    emit(
+                        Resource.DataError(
+                            -1,
+                            "$it"
+                        )
+                    )
+                }.collectLatest {
+                    _openUsbPort.value = it
                 }
         }
     }

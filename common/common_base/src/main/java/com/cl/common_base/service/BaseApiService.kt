@@ -30,7 +30,8 @@ interface BaseApiService {
     fun getRichText(
         @Query("taskId") taskId: String? = null,
         @Query("txtId") txtId: String? = null,
-        @Query("txtType") txtType: String? = null
+        @Query("txtType") txtType: String? = null,
+        @Query("deviceId") deviceId: String? = null
     ): Flow<HttpResult<RichTextData>>
 
     /**
@@ -227,4 +228,10 @@ interface BaseApiService {
     @POST("abby/plant/checkPeriod")
     fun aiCheckPeriod(@Field("plantId") plantId: String, @Field("url")url: String): Flow<HttpResult<AiCheckBean>>
 
+
+    /**
+     * 开启USB端口
+     */
+    @POST("abby/accessory/openUsb")
+    fun openUsb(@Body body: OpenUsbReq): Flow<HttpResult<BaseBean>>
 }

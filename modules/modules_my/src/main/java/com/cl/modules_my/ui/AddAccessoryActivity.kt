@@ -154,7 +154,7 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                         ToastUtil.shortShow(itemData.cannotMsg)
                         return@OnItemChildClickListener
                     }*/
-                    val usbNumber = (deviceList.firstOrNull { it.currentDevice == 1 }?.usbNum?.safeToInt() ?: 0) > 1
+                    val usbNumber = (deviceList.firstOrNull { it.deviceId == deviceId }?.usbNum?.safeToInt() ?: 0) > 1
                     xpopup(this@AddAccessoryActivity) {
                         isDestroyOnDismiss(false)
                         dismissOnTouchOutside(true)
@@ -243,7 +243,9 @@ class AddAccessoryActivity : BaseActivity<MyAddAccessoryBinding>() {
                 // 判断是否包含了camera\因为camera需要自己手动解绑
                 // 跳转到富文本界面
                 // 目前只有1个USB口，所以每次添加后台执行的是覆盖上一个USB口配件的操作，由于Camera是需要手动本地解绑的。所以这里需要判断是否包含了CameraId
+                val usbNumber = (deviceList.firstOrNull { it.deviceId == deviceId }?.usbNum?.safeToInt() ?: 0)
                 val intent = Intent(this, KnowMoreActivity::class.java)
+                intent.putExtra(BasePopActivity.KEY_USB_COUNT, usbNumber)
                 intent.putExtra(Constants.Global.KEY_TXT_ID, itemData?.textId)
                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, Constants.Fixed.KEY_FIXED_ID_NEW_ACCESSORIES)
                 intent.putExtra(BasePopActivity.KEY_INTENT_UNLOCK_TASK, true)

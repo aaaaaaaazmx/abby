@@ -108,7 +108,7 @@ class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?) :
                                 xpopup(it) {
                                     isDestroyOnDismiss(false)
                                     dismissOnTouchOutside(false)
-                                    asCustom(HomeFanBottonPop(it, title = context.getString(com.cl.common_base.R.string.home_you_re_about_to_set_the), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
+                                    asCustom(HomeFanBottonPop(it, title = context.getString(com.cl.common_base.R.string.string_172), tag = HomeFanBottonPop.FAN_TAG, remindMeAction = {
                                     }, benOKAction = {})).show()
                                 }
                             }

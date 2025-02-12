@@ -166,9 +166,9 @@ class BaseViewModel @Inject constructor(): ViewModel() {
      */
     private val _richText = MutableLiveData<Resource<RichTextData>>()
     val richText: LiveData<Resource<RichTextData>> = _richText
-    fun getRichText(taskId: String? = null, txtId: String? = null, type: String? = null) {
+    fun getRichText(taskId: String? = null, txtId: String? = null, type: String? = null, deviceId: String? = null) {
         viewModelScope.launch {
-            service.getRichText(taskId, txtId, type)
+            service.getRichText(taskId, txtId, type, deviceId)
                 .map {
                     if (it.code != Constants.APP_SUCCESS) {
                         Resource.DataError(

@@ -30,7 +30,7 @@ import java.util.regex.Pattern
  * 富文本
  * @author 李志军 2022-08-06 18:44
  */
-class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
+class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?, val openUsbAction: ((String) -> Unit)? = null) :
     BaseMultiItemQuickAdapter<RichTextData.Page, BaseViewHolder>(data) {
 
     // 选中的usbId
@@ -523,7 +523,8 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
             }
 
             Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()*/
-
+            // 调用打开USBPort
+            openUsbAction?.invoke(selectedUsbId ?: "1")
             if (clickedData.bind) {
                 xpopup(context) {
                     dismissOnTouchOutside(true)
