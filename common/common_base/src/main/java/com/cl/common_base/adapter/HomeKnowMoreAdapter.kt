@@ -30,7 +30,7 @@ import java.util.regex.Pattern
  * 富文本
  * @author 李志军 2022-08-06 18:44
  */
-class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
+class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?, val openUsbAction: ((String) -> Unit)? = null) :
     BaseMultiItemQuickAdapter<RichTextData.Page, BaseViewHolder>(data) {
 
     // 选中的usbId
@@ -65,11 +65,22 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
         /*addItemType(RichTextData.KEY_TYPE_PAGE_TXT, R.layout.home_itme_page_txt)*/
         addItemType(RichTextData.KEY_TYPE_AI_CHECK, R.layout.home_item_ai_check)
         addItemType(RichTextData.KEY_TYPE_ONE_ON_ONE, R.layout.home_item_one_on_one)
+        addItemType(RichTextData.KEY_TYPE_DELETE, R.layout.home_delete_txt_item) // 配件的删除标签
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         super.onBindViewHolder(holder, position)
         when (holder.itemViewType) {
+            RichTextData.KEY_TYPE_DELETE -> {
+                val binding = DataBindingUtil.bind<HomeDeleteTxtItemBinding>(holder.itemView)
+                if (binding != null) {
+                    // 设置数据
+                    binding.data = data[position]
+                    binding.adapter = this@HomeKnowMoreAdapter
+                    binding.executePendingBindings()
+                }
+            }
+
             RichTextData.KEY_TYPE_AI_CHECK -> {
                 val binding = DataBindingUtil.bind<HomeItemAiCheckBinding>(holder.itemView)
                 if (binding != null) {
@@ -512,7 +523,8 @@ class HomeKnowMoreAdapter(data: MutableList<RichTextData.Page>?) :
             }
 
             Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()*/
-
+            // 调用打开USBPort
+            openUsbAction?.invoke(selectedUsbId ?: "1")
             if (clickedData.bind) {
                 xpopup(context) {
                     dismissOnTouchOutside(true)

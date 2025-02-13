@@ -93,7 +93,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
             // 内部的温湿度传感器，只有帐篷才会有。Abby内部内置了温湿度传感器
             if (accessoryData.accessoryType == AccessoryListBean.KEY_MONITOR_IN || accessListBean.spaceType == AccessoryListBean.KEY_MONITOR_VIEW_IN) {
                 // 跳转到KnowMoreActivity
-                val id = accessoryData.textId
+                val id = accessoryData.afterTextId
                 val intent = Intent(this@DeviceListActivity, KnowMoreActivity::class.java)
                 intent.putExtra(Constants.Global.KEY_TXT_ID, id)
                 intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, id)
@@ -103,16 +103,32 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 startActivityLauncher.launch(intent)
                 return@DeviceListAdapter
             }
-            val intent =
-                Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
-            intent.putExtra("relationId", accessoryData.relationId)
-            intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
-            intent.putExtra(KEY_USB_PORT, accessoryData.usbPort)
-            intent.putExtra(
-                BasePopActivity.KEY_PART_ID,
-                "${accessoryData.accessoryId}"
-            )
-            startActivityLauncher.launch(intent)
+            // 配件属性加一个。needAutoSet
+            // 为true的话，以后没配置过的未知设备就直接进自动化配置
+            // false的话，就进富文本的配置页面
+            if (accessoryData.needAutoSet == true) {
+                val intent = Intent(this@DeviceListActivity, DeviceAutomationActivity::class.java)
+                intent.putExtra("relationId", accessoryData.relationId)
+                intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
+                intent.putExtra(KEY_USB_PORT, accessoryData.usbPort)
+                intent.putExtra(
+                    BasePopActivity.KEY_PART_ID,
+                    "${accessoryData.accessoryId}"
+                )
+                startActivityLauncher.launch(intent)
+            } else {
+                // 跳转富文本
+                val id = accessoryData.afterTextId
+                val intent = Intent(this@DeviceListActivity, KnowMoreActivity::class.java)
+                intent.putExtra(Constants.Global.KEY_TXT_ID, id)
+                intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, id)
+                intent.putExtra(BasePopActivity.KEY_DEVICE_ID, accessListBean.deviceId)
+                intent.putExtra(BasePopActivity.KEY_SHARE_TYPE, accessoryData.accessoryType)
+                intent.putExtra(BasePopActivity.KEY_RELATION_ID, accessoryData.relationId)
+                startActivityLauncher.launch(intent)
+            }
+
+
         })
     }
 
@@ -328,8 +344,9 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                 // 排序
                 // 提取通用的设备名称排序比较器
                 val deviceNameComparator = compareBy<ListDeviceBean> { device ->
-                    // 检查是否包含特殊字符
-                    if (device.deviceName?.matches(Regex("^[a-zA-Z0-9\\s]+$")) == true) 0 else 1
+                    // 清理所有特殊字符，包括换行符、管道符等
+                    val cleanedName = device.deviceName?.replace("[^a-zA-Z0-9\\s]".toRegex(), "")?.trim() ?: ""
+                    cleanedName
                 }.thenBy { device ->
                     device.deviceName?.replace("\\s".toRegex(), "")?.lowercase() ?: ""
                 }.thenBy { device ->
@@ -354,21 +371,23 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         shortName = getString(com.cl.common_base.R.string.my_sort_status)
                         compareBy<ListDeviceBean> {
                             // 在线状态排序（在线优先）
-                            if (it.onlineStatus == "Offline") 1 else 0
+                            if (it.isOnline == false) 1 else 0
                         }.then(deviceNameComparator)
                     }
                     4 -> {
                         shortName = getString(com.cl.common_base.R.string.my_sort_subscription)
                         compareBy<ListDeviceBean> { device ->
                             // 第一优先级：是否有订阅服务
-                            val subscription = device.subscription
-                            when {
-                                // 没有subscription字段，排最后
-                                subscription.isNullOrEmpty() -> 2
+                            val subscription = device.isSubscript
+                            when (// 没有subscription字段，排最后
+                                subscription) {
+                                false -> 1
+
                                 // 有subscription但不包含数字(已过期)，排中间
-                                !subscription.any { it.isDigit() } -> 1
+                                true -> 0
+
                                 // 有subscription且包含数字(未过期)，排最前
-                                else -> 0
+                                else -> 2
                             }
                         }.then(deviceNameComparator) // 第二优先级：设备名称排序
                     }
@@ -548,8 +567,9 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
 
                                 // 提取通用的设备名称排序比较器
                                 val deviceNameComparator = compareBy<ListDeviceBean> { device ->
-                                    // 检查是否包含特殊字符
-                                    if (device.deviceName?.matches(Regex("^[a-zA-Z0-9\\s]+$")) == true) 0 else 1
+                                    // 清理所有特殊字符，包括换行符、管道符等
+                                    val cleanedName = device.deviceName?.replace("[^a-zA-Z0-9\\s]".toRegex(), "")?.trim() ?: ""
+                                    cleanedName
                                 }.thenBy { device ->
                                     device.deviceName?.replace("\\s".toRegex(), "")?.lowercase() ?: ""
                                 }.thenBy { device ->
@@ -565,7 +585,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                                     getString(com.cl.common_base.R.string.my_sort_strain) -> {
                                         Prefs.putIntAsync(Constants.Global.KEY_SORT_PERIOD, 2)
                                         compareBy<ListDeviceBean> {
-                                            it.strainName.isNullOrEmpty() 
+                                            it.strainName.isNullOrEmpty()
                                         }.thenBy {
                                             it.strainName?.lowercase() ?: ""
                                         }
@@ -633,7 +653,7 @@ class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
                         // 温湿度传感器
                         ListDeviceBean.KEY_MONITOR_OUT, ListDeviceBean.MONITOR_VIEW_OUT -> {
                             // 跳转到KnowMoreActivity
-                            val id = deviceBean?.textId
+                            val id = deviceBean?.afterTextId
                             val intent = Intent(this@DeviceListActivity, KnowMoreActivity::class.java)
                             intent.putExtra(Constants.Global.KEY_TXT_ID, id)
                             intent.putExtra(BasePopActivity.KEY_FIXED_TASK_ID, id)

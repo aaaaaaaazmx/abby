@@ -476,6 +476,9 @@ object Constants {
         const val KEY_FIXED_ID_TENT_KIT_CLONE_LABEL = "PHOTO_CLONE_LABEL"
         const val KEY_FIXED_ID_TENT_KIT_AUTO_SEED_LABEL = "AUTO_SEED_LABEL"
         const val KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING_LABEL = "AUTO_SEEDING_LABEL"
+
+        // 补光灯 fill_light_view
+        const val KEY_FIXED_ID_FILL_LIGHT_VIEW = "fill_light_view"
     }
 
     object FragmentIndex {

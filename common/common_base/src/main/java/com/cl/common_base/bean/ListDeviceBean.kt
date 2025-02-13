@@ -27,6 +27,7 @@ data class ListDeviceBean(
     var proMode: String? = null, // 是否是手动、自动模式
     var fanAuto: Int? = null,
     var textId: String? = null,
+    val afterTextId: String? = null,
     val burnOutProof: Int? = null, // 是否开启防烧模式
     val isBurnOutProof: Int? = null, // 是否显示防烧模式
     var deviceType: String? = null, // 判断设备是OG还是O1
@@ -55,10 +56,12 @@ data class ListDeviceBean(
         val accessoryType: String? = null,
         val image: String? = null,
         val textId: String? = null,
+        val afterTextId: String? = null,
         val status: Int? = null,
         val temperature: String? = null,
         val humidity: String? = null,
         val usbPort: String? = null,
+        val needAutoSet: Boolean? = null,
     ) : BaseBean()
 
     override val itemType: Int

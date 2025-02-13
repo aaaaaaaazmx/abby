@@ -944,7 +944,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
     }
 
     override fun initData() {
-        mViewModel.getRichText(taskId = taskId, txtId = txtId, type = txtType)
+        mViewModel.getRichText(taskId = taskId, txtId = txtId, type = txtType, deviceId = null)
 
         binding.rvList.layoutManager = linearLayoutManager
         binding.rvList.adapter = adapter
@@ -1228,6 +1228,9 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
 
         // 当前周期
         const val KEY_CURRENT_PERIOD = "key_current_period"
+
+        // 有几个USB口
+        const val KEY_USB_COUNT = "key_usb_count"
 
         // 用于固定的跳转
         const val KEY_FIXED_TASK_ID = "key_fixed_task_id"

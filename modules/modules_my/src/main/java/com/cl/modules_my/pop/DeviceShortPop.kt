@@ -62,7 +62,7 @@ class DeviceShortPop(
                     }
                     item.isSelected = !(item.isSelected ?: false)
                     this@DeviceShortPop.adapter.notifyItemChanged(position)
-                    
+
                     onConfirmAction?.invoke(item.period)
                     dismiss()
                 }
