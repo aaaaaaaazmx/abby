@@ -96,7 +96,7 @@ object Version {
 
     const val lottieVersion = "6.4.1"
 
-    const val videoPlayer = "v8.6.0"
+    const val videoPlayer = "v10.0.0"
 
     const val interCome = "15.7.1"
 
@@ -255,7 +255,7 @@ object Deps {
     const val lottie = "com.airbnb.android:lottie:${Version.lottieVersion}"
 
     // VideoPlay
-    const val videoPlayer = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:${Version.videoPlayer}-release-jitpack"
+    const val videoPlayer = "com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer:${Version.videoPlayer}"
 
     // interCome
     const val interCome = "io.intercom.android:intercom-sdk:${Version.interCome}"

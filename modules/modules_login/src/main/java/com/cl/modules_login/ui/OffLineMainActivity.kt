@@ -1,5 +1,6 @@
 package com.cl.modules_login.ui
 
+import android.content.Intent
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
@@ -7,6 +8,7 @@ import com.cl.common_base.bean.EnvironmentInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.modules_login.databinding.LoginOfflineMainBinding
@@ -40,6 +42,10 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
     }
 
     override fun initData() {
+        binding.ivLightStatus.setSafeOnClickListener {
+            // 跳转到灯光设置页面
+            startActivity(Intent(this, OffLineHardSetActivity::class.java))
+        }
     }
 
     // 获取当前设备的ID
@@ -51,6 +57,13 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
             override fun onSuccess(bean: HomeBean?) {
                 // 当前设备
                 val currentDevice = bean?.deviceList?.get(currentIndex)
+                if (currentDevice?.isOnline == false) {
+                    // 跳转到设备离线页面
+                    startActivity(Intent(this@OffLineMainActivity, OffLineActivity::class.java))
+                    finish()
+                    return
+                }
+                // 获取环境信息
                 getEnvData(currentDevice)
             }
 

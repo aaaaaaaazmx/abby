@@ -101,7 +101,7 @@ class OffLineLoginActivity : BaseActivity<ActivityLoginBinding>() {
                 }
 
                 "22" -> {
-                    binding.accountEditText.setText("m17680319466@163.com")
+                    binding.accountEditText.setText("17680319466")
                     binding.passwordEditText.setText("zxl123456")
                     login()
                     return

@@ -203,6 +203,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/tv_health"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -252,6 +253,7 @@
                                 tools:text="Temp" />
 
                             <TextView
+                                android:visibility="gone"
                                 android:id="@+id/tv_going_unit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -307,6 +309,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/tv_health_chamber"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -356,6 +359,7 @@
                                 tools:text="Temp" />
 
                             <TextView
+                                android:visibility="gone"
                                 android:id="@+id/tv_going_unit_chamber"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -413,6 +417,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/tv_health_tank"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -462,6 +467,7 @@
                                 tools:text="Temp" />
 
                             <TextView
+                                android:visibility="gone"
                                 android:id="@+id/tv_going_unit_tank"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -519,6 +525,7 @@
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <TextView
+                            android:visibility="gone"
                             android:id="@+id/tv_health_water"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -568,6 +575,7 @@
                                 tools:text="Temp" />
 
                             <TextView
+                                android:visibility="gone"
                                 android:id="@+id/tv_going_unit_water"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -590,7 +598,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="18dp"
-                android:text="Environment Setting"
+                android:text="Hardware Settings"
                 android:textColor="#979797"
                 android:textSize="10sp" />
 
@@ -734,12 +742,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
-                        android:visibility="gone"
                         app:layout_constraintTop_toBottomOf="@+id/fis_item_switch"
                         tools:visibility="visible">
 
                         <TextView
-
                             android:id="@+id/tv_fan"
                             android:layout_width="100dp"
                             android:layout_height="wrap_content"
@@ -821,12 +827,12 @@
 
 
                     <androidx.constraintlayout.widget.ConstraintLayout
+                        android:paddingBottom="10dp"
                         android:id="@+id/rl_fan_exhaust"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="17dp"
-                        android:visibility="gone"
                         app:layout_constraintTop_toBottomOf="@+id/rl_fan_intake"
                         tools:visibility="visible">
 
@@ -892,13 +898,11 @@
                             app:isb_track_progress_color="#008961"
                             app:isb_track_progress_size="5dp"
                             app:isb_track_rounded_corners="true"
-                            app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust_value_unit_one"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_fan_exhaust_value_unit_one"
                             app:layout_constraintEnd_toEndOf="@+id/tv_fan_exhaust_value_unit_two"
-                            app:layout_constraintHorizontal_bias="1.0"
                             app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value_unit_one"
                             app:layout_constraintStart_toStartOf="@+id/tv_fan_exhaust_value_unit_one"
-                            app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one"
-                            app:layout_constraintVertical_bias="1.0" />
+                            app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one" />
 
                         <TextView
 

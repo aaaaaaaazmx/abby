@@ -1,15 +1,15 @@
 pluginManagement {
     repositories {
+        maven {
+            setUrl("https://jitpack.io")
+        }
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
         maven { setUrl("https://maven-other.tuya.com/repository/maven-releases/") }
         maven { setUrl("https://maven-other.tuya.com/repository/maven-commercial-releases/") }
         maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
-        maven { setUrl("https://maven.aliyun.com/repository/public") }
         maven { setUrl("https://maven.aliyun.com/repository/google") }
         maven {
             setUrl("https://maven.google.com")
-        }
-        maven {
-            setUrl("https://jitpack.io")
         }
         gradlePluginPortal()
         google()
@@ -25,16 +25,16 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven {
+            setUrl("https://jitpack.io")
+        }
+        maven { setUrl("https://maven.aliyun.com/repository/public") }
         maven { setUrl("https://maven-other.tuya.com/repository/maven-releases/") }
         maven { setUrl("https://maven-other.tuya.com/repository/maven-commercial-releases/") }
         maven { setUrl("https://oss.sonatype.org/content/repositories/snapshots/") }
-        maven { setUrl("https://maven.aliyun.com/repository/public") }
         maven { setUrl("https://maven.aliyun.com/repository/google") }
         maven {
             setUrl("https://maven.google.com")
-        }
-        maven {
-            setUrl("https://jitpack.io")
         }
         gradlePluginPortal()
         google()
