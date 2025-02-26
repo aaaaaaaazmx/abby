@@ -1,5 +1,6 @@
 package com.cl.modules_home.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import androidx.databinding.DataBindingUtil
@@ -56,7 +57,9 @@ class LightIntensityPop(context: Context, var brightValue: Float? = 0f, val onSe
                 override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
                 }
 
+                @SuppressLint("SetTextI18n")
                 override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                    tvValue.text = "${seekbar?.progress ?: 0f}"
                     onSeekAction?.invoke(seekbar?.progress.toString().safeToFloat())
                 }
             }

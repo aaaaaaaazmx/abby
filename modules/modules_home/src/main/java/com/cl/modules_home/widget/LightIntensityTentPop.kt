@@ -1,5 +1,6 @@
 package com.cl.modules_home.widget
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.ext.safeToFloat
@@ -31,7 +32,7 @@ class LightIntensityTentPop(context: Context, var brightValue: Float? = 0f, val 
             }
 
             // 风扇滑块
-            fanIntakeSeekbar.setProgress(brightValue.safeToFloat())
+            fanIntakeSeekbar.setProgress(brightValue ?: 0f)
             fanIntakeSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
                 override fun onSeeking(p0: SeekParams?) {
 
@@ -40,7 +41,9 @@ class LightIntensityTentPop(context: Context, var brightValue: Float? = 0f, val 
                 override fun onStartTrackingTouch(p0: IndicatorSeekBar?) {
                 }
 
+                @SuppressLint("SetTextI18n")
                 override fun onStopTrackingTouch(seekbar: IndicatorSeekBar?) {
+                    tvValue.text = "${seekbar?.progress ?: 0f}%"
                     onSeekAction?.invoke(seekbar?.progress.toString().safeToFloat())
                 }
             }

@@ -24,8 +24,8 @@ class PlantListAdapter(item: MutableList<PlantList>?) :
         holder.dataBinding?.apply {
             executePendingBindings()
 
-            container.background = if (item.isSelect == true) context.getDrawable(com.cl.common_base.R.drawable.background_button_main_color_r100) else context.getDrawable(com.cl.common_base.R.drawable.background_button_white_r100)
-            textView.text = item.growSpaceName
+            container.background = if (item.isSelect == true) context.getDrawable(com.cl.common_base.R.drawable.background_button_main_color_r6) else context.getDrawable(com.cl.common_base.R.drawable.background_button_white_r6)
+            textView.text = "No." + item.number
             textView.setTextColor(if(item.isSelect == true) context.getColor(com.cl.common_base.R.color.white) else context.getColor(com.cl.common_base.R.color.mainColor))
         }
     }

@@ -129,6 +129,8 @@ class TentKitPlanSetActivity: BaseActivity<HomeTentPlantSetBinding>() {
             } else {
                 adapter.addData(MultiPlantListData())
             }
+            // 滚动到添加的那个
+            binding.rvPlantSet.scrollToPosition(adapter.data.size - 1)
         }
 
         adapter.addChildClickViewIds(R.id.iv_close, R.id.rl_sync_strain)

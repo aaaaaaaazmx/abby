@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.databinding.BindingConversion
 import androidx.recyclerview.widget.GridLayoutManager
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.listener.OnItemChildClickListener
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
@@ -28,9 +30,11 @@ import com.cl.modules_home.activity.ProModeEnvActivity.Companion.STEP_NOW
 import com.cl.modules_home.activity.ProModeEnvActivity.Companion.TEMPLATE_ID
 import com.cl.modules_home.adapter.PlantListAdapter
 import com.cl.modules_home.databinding.HomeTaskSetActivityBinding
+import com.cl.modules_home.request.CycleListBean
 import com.cl.modules_home.request.EnvSaveReq
 import com.cl.modules_home.request.SaveTaskReq
 import com.cl.modules_home.request.Task
+import com.cl.modules_home.request.Task.PlantList
 import com.cl.modules_home.viewmodel.ProModeViewModel
 import com.luck.picture.lib.utils.DensityUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -189,7 +193,10 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
                         // task时间
                         binding.etEmails.text = "${getYmdForEn(time = copyTaskDataForUpload.taskTime * 1000L)} (${getString(com.cl.common_base.R.string.week)} ${copyTaskDataForUpload.week} ${getString(com.cl.common_base.R.string.day)} ${copyTaskDataForUpload.day})"
                     }
-                    adapter.setList(data?.get(0)?.multiplants)
+                    // 对data?.get(0)?.multiplants的iseleect编辑
+                    data?.get(0)?.multiplants?.onEach { it.isSelect = true }?.let {
+                        adapter.setList(it)
+                    } ?: adapter.setList(emptyList())
                 }
             })
 
@@ -304,6 +311,21 @@ class ProModeTaskSetActivity : BaseActivity<HomeTaskSetActivityBinding>() {
         binding.svtCancel.setSafeOnClickListener { finish() }
         binding.svtConfirm.setSafeOnClickListener {
             viewModel.saveTask(SaveTaskReq(step = step, templateId = templateId, taskContent = mutableListOf(copyTaskDataForUpload), multiplants =  adapter.data.filter { it.isSelect == true }.toMutableList()))
+        }
+
+        adapter.addChildClickViewIds(R.id.container)
+        adapter.setOnItemChildClickListener { adapter, view, position ->
+            when(view.id) {
+                R.id.container -> {
+                    // 需要判断当前的是否是true，如果是true，就改为false，但是需要判断选中的是最后一个选中的状态，如果是那就不更改状态
+                    (adapter.data as? MutableList<PlantList>)?.get(position)?.let { datas ->
+                        //  如果选中的就只有1个了。说明此时选中的就是当前这个,因为这个操作是取反的操作
+                        if (datas.isSelect == true && (adapter.data as? MutableList<PlantList>)?.filter { it.isSelect == true }?.size == 1)   return@setOnItemChildClickListener
+                        datas.isSelect = !(datas.isSelect ?: false)
+                        adapter.notifyItemChanged(position)
+                    }
+                }
+            }
         }
     }
 

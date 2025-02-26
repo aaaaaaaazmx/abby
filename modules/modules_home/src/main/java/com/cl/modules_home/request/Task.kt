@@ -18,7 +18,7 @@ data class Task(
     data class PlantList(
         var growSpaceName: String? = null,
         var multiplantId: Int,
-        var isSelect: Boolean? = false,
+        var isSelect: Boolean? = true,
         var number: Int,
         var plantId: Int,
         var strainName: String? = null

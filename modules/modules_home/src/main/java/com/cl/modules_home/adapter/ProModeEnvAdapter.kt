@@ -28,7 +28,7 @@ import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 
-class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?, val plantType: String? = null) : BaseQuickAdapter<EnvParamListBeanItem, BaseDataBindingHolder<HomeProModeEnvItemBinding>>(R.layout.home_pro_mode_env_item, data) {
+class ProModeEnvAdapter(data: MutableList<EnvParamListBeanItem>?, private val plantType: String? = null) : BaseQuickAdapter<EnvParamListBeanItem, BaseDataBindingHolder<HomeProModeEnvItemBinding>>(R.layout.home_pro_mode_env_item, data) {
 
 
     @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")

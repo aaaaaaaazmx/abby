@@ -144,6 +144,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_marginStart="10dp"
                         android:id="@+id/home_light"
+                        app:layout_constraintStart_toEndOf="@+id/iv_gth"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_fan"
                         app:layout_constraintTop_toTopOf="@+id/tv_fan"
                         app:layout_constraintEnd_toEndOf="parent"

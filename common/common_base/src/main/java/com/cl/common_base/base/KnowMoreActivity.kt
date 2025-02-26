@@ -283,7 +283,14 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 // 这是个动态界面，我也不知道为什么不做成动态按钮
                 when (it) {
                     // tentKit机器种植方式
-                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING -> {
+                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED -> {
+                        // 先把种子放在篮子里
+                        // 这是是直接调用接口
+                        mViewMode.intoPlantBasket()
+                    }
+
+                    Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING -> {
+                        // 直接种植。
                         mViewMode.startRunning(botanyId = "", goon = false)
                     }
 
@@ -694,8 +701,16 @@ class KnowMoreActivity : BaseActivity<HomeKnowMoreLayoutBinding>() {
                 }
                 success {
                     hideProgressLoading()
-                    ARouter.getInstance().build(RouterPath.Main.PAGE_MAIN).navigation()
-                    acFinish()
+                    when(fixedId) {
+                        Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED -> {
+                            // 直接种植。
+                            mViewMode.startRunning(botanyId = "", goon = false)
+                        }
+                        Constants.Fixed.KEY_FIXED_ID_ACTION_NEEDED, Constants.Fixed.KEY_FIXED_ID_ACTION_GROW_NEEDED -> {
+                            ARouter.getInstance().build(RouterPath.Main.PAGE_MAIN).navigation()
+                            acFinish()
+                        }
+                    }
                 }
             })
             // 完成任务

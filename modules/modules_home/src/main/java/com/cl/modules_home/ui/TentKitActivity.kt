@@ -42,18 +42,7 @@ class TentKitActivity: BaseActivity<HomeActivityTentkitBinding>() {
                 loading { showProgressLoading() }
                 success {
                     hideProgressLoading()
-                    startRunning(botanyId = "", goon = false)
-                }
-            })
-
-            startRunning.observe(this@TentKitActivity, resourceObserver {
-                error { errorMsg, code ->
-                    hideProgressLoading()
-                    ToastUtil.shortShow(errorMsg)
-                }
-                loading { showProgressLoading() }
-                success {
-                    hideProgressLoading()
+                    // startRunning(botanyId = "", goon = false)
                     val intent = Intent(this@TentKitActivity, BasePopActivity::class.java)
                     // 跳转到富文本 或者 首页
                     if (binding.checkSeed.isChecked) {
@@ -79,6 +68,17 @@ class TentKitActivity: BaseActivity<HomeActivityTentkitBinding>() {
                     startActivity(intent)
                 }
             })
+
+            /*startRunning.observe(this@TentKitActivity, resourceObserver {
+                error { errorMsg, code ->
+                    hideProgressLoading()
+                    ToastUtil.shortShow(errorMsg)
+                }
+                loading { showProgressLoading() }
+                success {
+                    hideProgressLoading()
+                }
+            })*/
         }
     }
 

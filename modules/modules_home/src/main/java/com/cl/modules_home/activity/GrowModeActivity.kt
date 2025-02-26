@@ -69,7 +69,7 @@ class GrowModeActivity : BaseActivity<HomeGrowModeActivityBinding>() {
                     // 点击跳转下一步。
                     // 如果是常规的跳转，
                     if (binding.curingBox.isChecked) {
-                        // 这是tent——kit机器
+                        // 这是tent——kit机器,不为空就是tent_kit
                         if (!plantType.isNullOrEmpty()) {
                             // 跳转富文本界面
                             val intent = Intent(this@GrowModeActivity, KnowMoreActivity::class.java)

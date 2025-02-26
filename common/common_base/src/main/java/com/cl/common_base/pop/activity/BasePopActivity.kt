@@ -212,7 +212,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
             fixedId?.let { // 这是个动态界面，我也不知道为什么不做成动态按钮
                 when (it) {
                     Constants.Fixed.KEY_FIXED_ID_TENT_KIT_SEED, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEED -> {
-                        mViewModel.checkPlant()
+                        mViewModel.startRunning(botanyId = "", goon = false)
                     }
 
                     Constants.Fixed.KEY_FIXED_ID_TENT_KIT_CLONE, Constants.Fixed.KEY_FIXED_ID_TENT_KIT_AUTO_SEEDING -> {
@@ -227,7 +227,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         // 跳转到种植模式选择界面
                         ARouter.getInstance().build(RouterPath.Home.PAGE_GROW_MODE)
                             .withString(Constants.Global.KEY_PLANT_TYPE, it)
-                            .withString(Constants.Global.KEY_PLANT_ID, mViewModel.userInfo?.plantId)
+                            .withString(Constants.Global.KEY_PLANT_ID, mViewModel.userInfo?.plantId ?: mViewModel.plantId)
                             .navigation(this@BasePopActivity)
                     }
 
@@ -236,7 +236,7 @@ class BasePopActivity : BaseActivity<BasePopActivityBinding>() {
                         // 跳转到种植模式选择界面
                         ARouter.getInstance().build(RouterPath.Home.PAGE_GROW_MODE)
                             .withString(Constants.Global.KEY_PLANT_TYPE, it)
-                            .withString(Constants.Global.KEY_PLANT_ID, mViewModel.userInfo?.plantId)
+                            .withString(Constants.Global.KEY_PLANT_ID, mViewModel.userInfo?.plantId ?: mViewModel.plantId)
                             .navigation(this@BasePopActivity)
                     }
 

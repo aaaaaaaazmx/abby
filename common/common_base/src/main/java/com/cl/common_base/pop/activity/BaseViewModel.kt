@@ -43,6 +43,11 @@ class BaseViewModel @Inject constructor(): ViewModel() {
         GSON.parseObject(bean, User::class.java)
     }
 
+    // 获取植物ID
+    val plantId by lazy {
+        Prefs.getString(Constants.Global.KEY_PLANT_ID)
+    }
+
     // 用户信息
     val userInfo by lazy {
         val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
