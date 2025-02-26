@@ -17,6 +17,10 @@ class RouterPath {
         const val SERVICE_LOGOUT = "/logout/$LOGIN_REGISTER"
         // 修改密码页面
         const val PAGE_CHANGE_PASSWORD = "/changePassword/$LOGIN_REGISTER"
+        // 新的未种植界面
+        const val PAGE_PLANT_ONE = "/plantOne/$LOGIN_REGISTER"
+        // 新的主页
+        const val PAGE_NEW_MAIN = "/newMain/$LOGIN_REGISTER"
     }
 
     /**

@@ -1,0 +1,980 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:id="@+id/tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="50dp"
+                android:text="Space Name"
+                android:textColor="@color/mainColor"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="17dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <CheckBox
+                        android:id="@+id/cb_notify"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@mipmap/base_setting_select_bg"
+                        android:button="@null"
+                        app:layout_constraintEnd_toStartOf="@+id/cb_night"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_notify"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="Setting"
+                        android:textColor="@color/mainColor"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/cb_notify"
+                        app:layout_constraintStart_toStartOf="@+id/cb_notify"
+                        app:layout_constraintTop_toBottomOf="@+id/cb_notify" />
+
+                    <CheckBox
+                        android:id="@+id/cb_night"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@mipmap/base_device_select_bg"
+                        android:button="@null"
+                        app:layout_constraintEnd_toStartOf="@+id/cb_drain"
+                        app:layout_constraintStart_toEndOf="@+id/cb_notify" />
+
+                    <TextView
+                        android:id="@+id/tv_night"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="Device Listing"
+                        android:textColor="@color/mainColor"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/cb_night"
+                        app:layout_constraintStart_toStartOf="@+id/cb_night"
+                        app:layout_constraintTop_toBottomOf="@+id/cb_night" />
+
+                    <CheckBox
+                        android:id="@+id/cb_drain"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/planting_checkbox_drain_selector"
+                        android:button="@null"
+                        app:layout_constraintEnd_toStartOf="@+id/cb_lock"
+                        app:layout_constraintStart_toEndOf="@+id/cb_night" />
+
+                    <TextView
+                        android:id="@+id/tv_drain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="@string/my_drain"
+                        android:textColor="@color/mainColor"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/cb_drain"
+                        app:layout_constraintStart_toStartOf="@+id/cb_drain"
+                        app:layout_constraintTop_toBottomOf="@+id/cb_drain" />
+
+                    <CheckBox
+                        android:id="@+id/cb_lock"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        android:background="@drawable/planting_checkbox_lock_selector"
+                        android:button="@null"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/cb_drain" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:text="@string/home_child_lock"
+                        android:textColor="@color/mainColor"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toEndOf="@+id/cb_lock"
+                        app:layout_constraintStart_toStartOf="@+id/cb_lock"
+                        app:layout_constraintTop_toBottomOf="@+id/cb_lock" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:paddingTop="23dp"
+                android:paddingBottom="16dp">
+
+                <ImageView
+                    android:id="@+id/iv_time"
+                    android:layout_width="10dp"
+                    android:layout_height="17dp"
+                    android:background="@mipmap/home_plant_temperature_bg" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/home_environment"
+                    android:textColor="@color/mainColor"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_time"
+                    app:layout_constraintStart_toEndOf="@+id/iv_time"
+                    app:layout_constraintTop_toTopOf="@+id/iv_time" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_temperature"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    app:layout_constraintEnd_toStartOf="@+id/cl_temperature_chamber"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:ignore="MissingConstraints">
+
+                    <TextView
+                        android:id="@+id/tv_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Grow Chamber Humidity"
+                        android:textColor="#979797"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="4.5dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/background_gray_r10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_name">
+
+                        <ImageView
+                            android:id="@+id/iv_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@mipmap/home_humidity"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_health"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:textColor="@color/mainColor"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_edit"
+                            app:layout_constraintTop_toTopOf="@+id/iv_icon"
+                            tools:text="Good" />
+
+                        <FrameLayout
+                            android:id="@+id/rl_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_health"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/tv_health">
+
+                            <ImageView
+                                android:id="@+id/iv_gt"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@mipmap/base_gt" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="19dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/iv_icon"
+                            app:layout_constraintTop_toBottomOf="@+id/iv_icon">
+
+                            <TextView
+                                android:id="@+id/tv_going"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="15dp"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="Temp" />
+
+                            <TextView
+                                android:id="@+id/tv_going_unit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/tv_going"
+                                app:layout_constraintStart_toStartOf="@+id/tv_going"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_going"
+                                tools:text="Room 75 °F" />
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_temperature_chamber"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="19dp"
+                    android:layout_marginEnd="24dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cl_temperature"
+                    tools:ignore="MissingConstraints">
+
+                    <TextView
+                        android:id="@+id/tv_name_chamber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Grow Chamber Temperture"
+                        android:textColor="#979797"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="4.5dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/background_gray_r10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_name_chamber">
+
+                        <ImageView
+                            android:id="@+id/iv_icon_chamber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@mipmap/home_temperature"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_health_chamber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:textColor="@color/mainColor"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_edit_chamber"
+                            app:layout_constraintTop_toTopOf="@+id/iv_icon_chamber"
+                            tools:text="Good" />
+
+                        <FrameLayout
+                            android:id="@+id/rl_edit_chamber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_health_chamber"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/tv_health_chamber">
+
+                            <ImageView
+                                android:id="@+id/iv_gt_chamber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@mipmap/base_gt" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="19dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/iv_icon_chamber"
+                            app:layout_constraintTop_toBottomOf="@+id/iv_icon_chamber">
+
+                            <TextView
+                                android:id="@+id/tv_going_chamber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="15dp"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="Temp" />
+
+                            <TextView
+                                android:id="@+id/tv_going_unit_chamber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/tv_going"
+                                app:layout_constraintStart_toStartOf="@+id/tv_going"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_going"
+                                tools:text="Room 75 °F" />
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_temperature_tank"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    app:layout_constraintEnd_toStartOf="@+id/cl_temperature_water"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/cl_temperature"
+                    tools:ignore="MissingConstraints">
+
+                    <TextView
+                        android:id="@+id/tv_name_tank"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Water Tank Temperture"
+                        android:textColor="#979797"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="4.5dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/background_gray_r10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_name_tank">
+
+                        <ImageView
+                            android:id="@+id/iv_icon_tank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@mipmap/home_water_temperature"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_health_tank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:textColor="@color/mainColor"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_edit_tank"
+                            app:layout_constraintTop_toTopOf="@+id/iv_icon_tank"
+                            tools:text="Good" />
+
+                        <FrameLayout
+                            android:id="@+id/rl_edit_tank"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_health_tank"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/tv_health_tank">
+
+                            <ImageView
+                                android:id="@+id/iv_gt_tank"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@mipmap/base_gt" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="19dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/iv_icon_tank"
+                            app:layout_constraintTop_toBottomOf="@+id/iv_icon_tank">
+
+                            <TextView
+                                android:id="@+id/tv_going_tank"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="15dp"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="Temp" />
+
+                            <TextView
+                                android:id="@+id/tv_going_unit_tank"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/tv_going"
+                                app:layout_constraintStart_toStartOf="@+id/tv_going"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_going"
+                                tools:text="Room 75 °F" />
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_temperature_water"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="19dp"
+                    android:layout_marginEnd="24dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/cl_temperature_tank"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/cl_temperature_tank"
+                    app:layout_constraintTop_toTopOf="@+id/cl_temperature_tank"
+                    tools:ignore="MissingConstraints">
+
+                    <TextView
+                        android:id="@+id/tv_name_water"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Water level"
+                        android:textColor="#979797"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="4.5dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/background_gray_r10"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_name_water">
+
+                        <ImageView
+                            android:id="@+id/iv_icon_water"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@mipmap/home_water_level"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_health_water"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:textColor="@color/mainColor"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_edit_water"
+                            app:layout_constraintTop_toTopOf="@+id/iv_icon_water"
+                            tools:text="Good" />
+
+                        <FrameLayout
+                            android:id="@+id/rl_edit_water"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="12dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_health_water"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/tv_health_water">
+
+                            <ImageView
+                                android:id="@+id/iv_gt_water"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@mipmap/base_gt" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="19dp"
+                            android:layout_marginBottom="8dp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/iv_icon_water"
+                            app:layout_constraintTop_toBottomOf="@+id/iv_icon_water">
+
+                            <TextView
+                                android:id="@+id/tv_going_water"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="15dp"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold"
+                                tools:text="Temp" />
+
+                            <TextView
+                                android:id="@+id/tv_going_unit_water"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/black"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="@+id/tv_going"
+                                app:layout_constraintStart_toStartOf="@+id/tv_going"
+                                app:layout_constraintTop_toBottomOf="@+id/tv_going"
+                                tools:text="Room 75 °F" />
+                        </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="18dp"
+                android:text="Environment Setting"
+                android:textColor="#979797"
+                android:textSize="10sp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/background_gray_r10">
+
+                <ImageView
+                    android:id="@+id/iv_sun"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginTop="13dp"
+                    android:background="@mipmap/home_sun_bg"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_light"
+                    android:layout_width="35dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/background_main_color_r2"
+                    android:gravity="center"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
+                    android:textColor="@color/white"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_sun"
+                    app:layout_constraintStart_toEndOf="@+id/iv_sun"
+                    app:layout_constraintTop_toTopOf="@+id/iv_sun"
+                    tools:text="On" />
+
+                <ImageView
+                    android:id="@+id/iv_light_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="11dp"
+                    android:background="@mipmap/home_chilun_bg"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_sun"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_sun" />
+
+                <TextView
+                    android:id="@+id/period_status"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginTop="11dp"
+                    android:layout_marginBottom="13dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_sun"
+                    tools:text="will turn off at 10PM today" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_root"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="19dp"
+                    android:layout_marginBottom="17dp"
+                    android:background="@drawable/background_gray_r10"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/iv_sun"
+                    app:layout_constraintTop_toBottomOf="@+id/period_status"
+                    tools:ignore="MissingConstraints">
+
+                    <ImageView
+                        android:id="@+id/iv_fan"
+                        android:layout_width="21dp"
+                        android:layout_height="21dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="13dp"
+                        android:background="@mipmap/home_fan_bg"
+                        android:paddingBottom="13dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_fan"
+                        android:textColor="@color/mainColor"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_fan"
+                        app:layout_constraintStart_toEndOf="@+id/iv_fan"
+                        app:layout_constraintTop_toTopOf="@+id/iv_fan"
+                        tools:text="@string/home_fan" />
+
+                    <com.cl.common_base.widget.SwitchButton
+                        android:id="@+id/fis_item_switch"
+                        android:layout_width="52dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="13dp"
+                        android:background="@color/transparent"
+                        android:checked="false"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:paddingBottom="13dp"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_fan"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/iv_fan" />
+
+
+                    <com.cl.common_base.widget.SvTextView
+                        android:id="@+id/svt_fan_model"
+                        android:layout_width="104dp"
+                        android:layout_height="28dp"
+                        android:layout_marginEnd="13dp"
+                        android:gravity="center"
+                        android:paddingStart="5dp"
+                        android:textColor="@color/mainColor"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/iv_fan"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/iv_fan"
+                        app:svRadius="5dp"
+                        app:svStrokeColor="@color/mainColor"
+                        app:svStrokeWidth="1dp"
+                        tools:text="Auto" />
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/rl_fan_intake"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="10dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@+id/fis_item_switch"
+                        tools:visibility="visible">
+
+                        <TextView
+
+                            android:id="@+id/tv_fan"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/home_intake"
+                            android:textColor="@color/mainColor"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_fan_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:autoSizeMaxTextSize="15sp"
+                            android:autoSizeMinTextSize="10sp"
+                            android:autoSizeTextType="uniform"
+                            android:lines="1"
+                            android:textColor="@color/mainColor"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_fan"
+                            app:layout_constraintStart_toEndOf="@+id/tv_fan"
+                            app:layout_constraintTop_toTopOf="@+id/tv_fan"
+                            tools:text="20" />
+
+                        <TextView
+                            android:id="@+id/tv_fan_value_unit_one"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:text="0"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_fan_value"
+                            app:layout_constraintStart_toEndOf="@+id/tv_fan_value"
+                            app:layout_constraintTop_toTopOf="@+id/tv_fan_value" />
+
+                        <com.warkiz.widget.IndicatorSeekBar
+                            android:id="@+id/fan_intake_seekbar"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="10dp"
+                            app:isb_indicator_color="@color/mainColor"
+                            app:isb_max="10"
+                            app:isb_progress="0"
+                            app:isb_show_indicator="rounded_rectangle"
+                            app:isb_thumb_adjust_auto="true"
+                            app:isb_thumb_drawable="@mipmap/bbbbb"
+                            app:isb_thumb_size="27dp"
+                            app:isb_ticks_count="11"
+                            app:isb_track_background_color="#99006241"
+                            app:isb_track_background_size="5dp"
+                            app:isb_track_progress_color="#008961"
+                            app:isb_track_progress_size="5dp"
+                            app:isb_track_rounded_corners="true"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_fan_value_unit_one"
+                            app:layout_constraintEnd_toEndOf="@+id/tv_fan_value_unit_two"
+                            app:layout_constraintStart_toEndOf="@+id/tv_fan_value_unit_one"
+                            app:layout_constraintStart_toStartOf="@+id/tv_fan_value_unit_one"
+                            app:layout_constraintTop_toTopOf="@+id/tv_fan_value_unit_one" />
+
+                        <TextView
+
+                            android:id="@+id/tv_fan_value_unit_two"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="10"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/fan_intake_seekbar"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/fan_intake_seekbar" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/rl_fan_exhaust"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="17dp"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@+id/rl_fan_intake"
+                        tools:visibility="visible">
+
+                        <TextView
+                            android:id="@+id/tv_fan_exhaust"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:autoSizeMaxTextSize="15sp"
+                            android:autoSizeMinTextSize="10sp"
+                            android:autoSizeTextType="uniform"
+                            android:lines="1"
+                            android:text="@string/home_exhaust"
+                            android:textColor="@color/mainColor"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent" />
+
+                        <TextView
+
+                            android:id="@+id/tv_fan_exhaust_value"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:textColor="@color/mainColor"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust"
+                            app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust"
+                            app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust"
+                            tools:text="20" />
+
+                        <TextView
+
+                            android:id="@+id/tv_fan_exhaust_value_unit_one"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:text="0"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_fan_exhaust_value"
+                            app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value"
+                            app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value" />
+
+                        <com.warkiz.widget.IndicatorSeekBar
+                            android:id="@+id/fan_exhaust_seekbar"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            app:isb_indicator_color="@color/mainColor"
+                            app:isb_max="10"
+                            app:isb_progress="0"
+                            app:isb_show_indicator="rounded_rectangle"
+                            app:isb_thumb_adjust_auto="true"
+                            app:isb_thumb_drawable="@mipmap/bbbbb"
+                            app:isb_thumb_size="27dp"
+                            app:isb_ticks_count="11"
+                            app:isb_track_background_color="#99006241"
+                            app:isb_track_background_size="5dp"
+                            app:isb_track_progress_color="#008961"
+                            app:isb_track_progress_size="5dp"
+                            app:isb_track_rounded_corners="true"
+                            app:layout_constraintBottom_toBottomOf="@id/tv_fan_exhaust_value_unit_one"
+                            app:layout_constraintEnd_toEndOf="@+id/tv_fan_exhaust_value_unit_two"
+                            app:layout_constraintHorizontal_bias="1.0"
+                            app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value_unit_one"
+                            app:layout_constraintStart_toStartOf="@+id/tv_fan_exhaust_value_unit_one"
+                            app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one"
+                            app:layout_constraintVertical_bias="1.0" />
+
+                        <TextView
+
+                            android:id="@+id/tv_fan_exhaust_value_unit_two"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:text="10"
+                            android:textColor="@color/black"
+                            android:textSize="15sp"
+                            app:layout_constraintBottom_toBottomOf="@+id/fan_exhaust_seekbar"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/fan_exhaust_seekbar" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_air_pump"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="17dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="40dp"
+                android:background="@drawable/background_half_gray_r8"
+                android:paddingStart="11dp"
+                android:paddingTop="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cl_drip">
+
+                <TextView
+                    android:id="@+id/tv_air_pump"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/home_air_pump"
+                    android:textColor="@color/mainColor"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/tv_air_pump_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="10dp"
+                    android:padding="5dp"
+                    android:src="@mipmap/home_exclamation_mark"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_air_pump"
+                    app:layout_constraintStart_toEndOf="@+id/tv_air_pump"
+                    app:layout_constraintTop_toTopOf="@+id/tv_air_pump" />
+
+                <com.cl.common_base.widget.FeatureItemSwitch
+                    android:id="@+id/air_pump"
+                    switchItemBackground='@{"#F7F7F7"}'
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="#f7f7f7"
+                    app:hideArrow="true"
+                    app:itemChecked="false"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_air_pump"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_air_pump" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

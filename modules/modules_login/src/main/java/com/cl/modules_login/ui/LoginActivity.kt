@@ -61,7 +61,6 @@ import javax.inject.Inject
 /**
  * 登录界面
  */
-@Route(path = RouterPath.LoginRegister.PAGE_LOGIN)
 @AndroidEntryPoint
 class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     @Inject

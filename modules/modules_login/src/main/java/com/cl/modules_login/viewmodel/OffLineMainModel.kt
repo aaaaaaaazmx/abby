@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ActivityRetainedScoped
-class LoginViewModel @Inject constructor(private val repository: RegisterLoginRepository, @ApplicationContext private val context: Context) :
+class OffLineMainModel @Inject constructor(private val repository: RegisterLoginRepository, @ApplicationContext private val context: Context) :
     ViewModel() {
     private val _registerLoginLiveData = MutableLiveData<Resource<LoginData>>()
     val registerLoginLiveData: LiveData<Resource<LoginData>> = _registerLoginLiveData

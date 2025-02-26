@@ -1,7 +1,5 @@
 package com.cl.modules_pairing_connection.viewmodel
 
-import android.Manifest
-import android.os.Build
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.cl.common_base.BaseBean
 import com.cl.common_base.bean.AccessoryAddData
 import com.cl.common_base.bean.CheckPlantData
-import com.cl.common_base.bean.EnvironmentInfoReq
 import com.cl.common_base.bean.SyncDeviceInfoReq
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
@@ -20,6 +17,7 @@ import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.modules_pairing_connection.repository.PairRepository
+import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.*
@@ -217,7 +215,7 @@ class PairDistributionWifiViewModel @Inject constructor(private val repository: 
     var bean: DeviceBean? = null
 
     // 数据同步
-    fun getDps(bean: DeviceBean?) {
+    fun getDps(bean: DeviceBean?, homeBean: HomeBean) {
         bean?.let {
             // 设置Bean
             this@PairDistributionWifiViewModel.bean = it
@@ -274,8 +272,6 @@ class PairDistributionWifiViewModel @Inject constructor(private val repository: 
                     }
                 }
             }
-            // 请求环境信息
-            syncDeviceInfo(envReq)
         }
     }
 

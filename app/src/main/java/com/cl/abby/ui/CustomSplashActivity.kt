@@ -23,6 +23,7 @@ import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
+import com.cl.common_base.help.PermissionHelp
 import com.cl.common_base.help.PlantCheckHelp
 import com.cl.common_base.init.InitSdk
 import com.cl.common_base.listener.BluetoothMonitorReceiver
@@ -32,6 +33,9 @@ import com.cl.common_base.salt.AESCipher
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
+import com.cl.modules_login.ui.BindDeviceActivity
+import com.cl.modules_login.ui.OffLineLoginActivity
+import com.cl.modules_login.ui.OffLineMainActivity
 import com.cl.modules_login.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -95,7 +99,39 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
     }
 
     private fun restrictTo() {
-        val data = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
+        // 账号密码为空，那么久直接跳转登录
+        if (account.isEmpty() || psd.isEmpty()) {
+            ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
+            finish()
+            return
+        }
+        // 登陆涂鸦
+        // 直接登录
+        mViewModel.tuYaLoginForOffLine(code = "86", email = account, password = psd, onSuccess = { user ->
+            // 检查权限
+            PermissionHelp().checkConnectForTuYaBle(this@CustomSplashActivity, object : PermissionHelp.OnCheckResultListener {
+                override fun onResult(result: Boolean) {
+                    if (!result) return
+                    // 判断当前设备只有一个，
+                    if ((user?.deviceList?.size ?:0 ) >= 1) {
+                        val intent = Intent(this@CustomSplashActivity, OffLineMainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    } else {
+                        // 跳转到添加设备界面
+                        val intent = Intent(this@CustomSplashActivity, BindDeviceActivity::class.java)
+                        startActivity(intent)
+                    }
+                    finish()
+                }
+            })
+        }, onRegisterReceiver = { devId ->
+            val intent = Intent(this@CustomSplashActivity, TuYaDeviceUpdateReceiver::class.java)
+            startService(intent)
+        }, onError = { code, error ->
+            error?.let { ToastUtil.shortShow(it) }
+        })
+        /*val data = Prefs.getString(Constants.Login.KEY_LOGIN_DATA_TOKEN)
         if (data.isEmpty()) {
             // 直接跳转登录界面
             ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_LOGIN).navigation()
@@ -117,7 +153,7 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                     )
                 )
             }
-        }
+        }*/
     }
 
     override fun observe() {

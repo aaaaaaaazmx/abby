@@ -39,11 +39,11 @@ class EnvAdapter(data: MutableList<EnvironmentInfoData.Environment>?) :
             binding.executePendingBindings()
         }
         helper.getView<ImageView>(R.id.iv_icon).background = when(item.environmentType) {
-            EnvironmentInfoData.KEY_TYPE_HUMIDITY_TYPE -> ContextCompat.getDrawable(context, R.mipmap.home_humidity)
-            EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE -> ContextCompat.getDrawable(context, R.mipmap.home_water_temperature)
-            EnvironmentInfoData.KEY_TYPE_WATER_LEVEL_TYPE -> ContextCompat.getDrawable(context, R.mipmap.home_water_level)
-            EnvironmentInfoData.KEY_TYPE_TEMPERATURE_TYPE -> ContextCompat.getDrawable(context, R.mipmap.home_temperature)
-            else -> ContextCompat.getDrawable(context, R.mipmap.home_humidity)
+            EnvironmentInfoData.KEY_TYPE_HUMIDITY_TYPE -> ContextCompat.getDrawable(context, com.cl.common_base.R.mipmap.home_humidity)
+            EnvironmentInfoData.KEY_TYPE_WATER_TEMPERATURE_TYPE -> ContextCompat.getDrawable(context, com.cl.common_base.R.mipmap.home_water_temperature)
+            EnvironmentInfoData.KEY_TYPE_WATER_LEVEL_TYPE -> ContextCompat.getDrawable(context, com.cl.common_base.R.mipmap.home_water_level)
+            EnvironmentInfoData.KEY_TYPE_TEMPERATURE_TYPE -> ContextCompat.getDrawable(context, com.cl.common_base.R.mipmap.home_temperature)
+            else -> ContextCompat.getDrawable(context, com.cl.common_base.R.mipmap.home_humidity)
         }
         helper.setText(R.id.tv_health, if (item.environmentType == EnvironmentInfoData.KEY_TYPE_WATER_LEVEL_TYPE) "" else item.healthStatus)
         helper.setTextColor(R.id.tv_health, getColor(item.environmentType, item.detectionValue, item.healthStatus))

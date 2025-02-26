@@ -2,7 +2,6 @@ package com.cl.modules_pairing_connection.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
@@ -41,7 +40,6 @@ import com.cl.modules_pairing_connection.R
 import com.cl.modules_pairing_connection.databinding.PairConnectNetworkBinding
 import com.cl.modules_pairing_connection.request.PairBleData
 import com.cl.modules_pairing_connection.viewmodel.PairDistributionWifiViewModel
-import com.google.android.material.tooltip.TooltipDrawable
 import com.google.zxing.WriterException
 import com.lxj.xpopup.XPopup
 import com.thingclips.smart.android.ble.api.ConfigErrorBean
@@ -57,7 +55,6 @@ import com.thingclips.smart.sdk.bean.DeviceBean
 import com.thingclips.smart.sdk.bean.MultiModeActivatorBean
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlin.concurrent.thread
 import kotlin.random.Random
 
 
@@ -592,7 +589,18 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                     binding.etWifiPwd.text.toString()
                                                 )
                                                 // 先进行数据同步、后绑定
-                                                mViewModel.getDps(deviceBean)
+                                                // 直接跳转到主页
+                                                // 判断当前的机器是否只有一台，或者说当前的机器是否是选中的这一台
+                                                if (homeBean.deviceList.size >= 1) {
+                                                    // 跳转主页
+                                                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_NEW_MAIN)
+                                                        .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                        .navigation()
+                                                } else {
+                                                    // 说明只有一台，那么就跳转到开始界面,也就刚添加的这台。
+                                                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_PLANT_ONE)
+                                                        .navigation()
+                                                }
 
                                             }.onFailure { hideProgressLoading() }
                                         }
@@ -713,6 +721,7 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
 
                                 // 添加设备
                                 letMultiple(accessoryId, deviceId) { a, b ->
+                                    // todo 跳转到设备列表界面
                                     mViewModel.accessoryAdd(a, b, deviceBean?.devId)
                                 }
                             }

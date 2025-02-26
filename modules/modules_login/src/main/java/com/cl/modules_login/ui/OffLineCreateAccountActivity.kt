@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.LocaleList
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
@@ -27,8 +26,6 @@ import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_IS_REGISTER
 import com.cl.modules_login.viewmodel.CreateAccountViewModel
 import com.cl.modules_login.widget.PrivacyPop
 import com.lxj.xpopup.XPopup
-import com.thingclips.smart.home.sdk.ThingHomeSdk
-import com.thingclips.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import java.util.Locale
@@ -40,7 +37,7 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
+class OffLineCreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
     @Inject
     lateinit var mViewModel: CreateAccountViewModel
 
@@ -57,11 +54,10 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
     private val currentLanguage by lazy {
         AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
     }
-    private val mRegisterType = 1
 
     private val privacyPop by lazy {
         PrivacyPop(
-            context = this@CreateAccountActivity,
+            context = this@OffLineCreateAccountActivity,
             onCancelAction = {
             },
             onConfirmAction = {
@@ -83,43 +79,12 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                     return@PrivacyPop
                 }
                 // 发送验证码
-                //mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "1")
-                // Get verification code code
-                ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(
-                    binding.etEmail.text.toString(),
-                    "",
-                    "86",
-                    mRegisterType,
-                    object : IResultCallback {
-                        override fun onSuccess() {
-                            Toast.makeText(
-                                this@CreateAccountActivity,
-                                "Got validateCode",
-                                Toast.LENGTH_LONG
-                            ).show()
-
-                            // 跳转到验证界面
-                            // 跳转到发邮箱界面,表示是注册。
-                            val intent = Intent(this@CreateAccountActivity, VerifyEmailActivity::class.java)
-                            intent.putExtra(KEY_EMAIL_NAME, binding.etEmail.text.toString())
-                            intent.putExtra(KEY_IS_REGISTER, true)
-                            startActivity(intent)
-                        }
-
-                        override fun onError(code: String?, error: String?) {
-                            Toast.makeText(
-                                this@CreateAccountActivity,
-                                "getValidateCode error->$error",
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-
-                    })
+                mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "1")
             },
             onTermUsAction = {
                 // 跳转到使用条款H5
                 val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
-                val intent = Intent(this@CreateAccountActivity, WebActivity::class.java)
+                val intent = Intent(this@OffLineCreateAccountActivity, WebActivity::class.java)
                 intent.putExtra(WebActivity.KEY_WEB_URL,  String.format(Constants.H5.PERSONAL_URL, localLanguage))
                 intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                 startActivity(intent)
@@ -127,7 +92,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
             onPrivacyAction = {
                 val localLanguage = AppCompatDelegate.getApplicationLocales().get(0)?.language ?: "en"
                 // 跳转到隐私协议H5
-                val intent = Intent(this@CreateAccountActivity, WebActivity::class.java)
+                val intent = Intent(this@OffLineCreateAccountActivity, WebActivity::class.java)
                 intent.putExtra(WebActivity.KEY_WEB_URL, String.format(Constants.H5.PRIVACY_POLICY_URL, localLanguage))
                 intent.putExtra(WebActivity.KEY_WEB_TITLE_NAME, "")
                 startActivity(intent)
@@ -135,7 +100,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
         )
     }
     private val pop by lazy {
-        XPopup.Builder(this@CreateAccountActivity)
+        XPopup.Builder(this@OffLineCreateAccountActivity)
             .hasStatusBar(false)
             .isDestroyOnDismiss(false)
             .asCustom(privacyPop)
@@ -152,7 +117,9 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
         ARouter.getInstance().inject(this)
 
         // 获取列表
-        mViewModel.getCountList()
+        // mViewModel.getCountList()
+
+        binding.rlChoose.visibility = View.GONE
 
         // 第三方登录，直接显示绑定邮箱
         if (!thirdSource.isNullOrEmpty()) {
@@ -181,7 +148,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
             /**
              * 获取国家列表
              */
-            countList.observe(this@CreateAccountActivity) {
+            countList.observe(this@OffLineCreateAccountActivity) {
                 when (it) {
                     is Resource.DataError -> {
                         hideProgressLoading()
@@ -208,7 +175,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
             /**
              * 发送验证码
              */
-            sendStates.observe(this@CreateAccountActivity) {
+            sendStates.observe(this@OffLineCreateAccountActivity) {
                 when (it) {
                     is Resource.DataError -> {
                         hideProgressLoading()
@@ -221,7 +188,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
                         userRegisterBean.userName = binding.etEmail.text.toString()
                         // 跳转到发邮箱界面
                         val intent =
-                            Intent(this@CreateAccountActivity, VerifyEmailActivity::class.java)
+                            Intent(this@OffLineCreateAccountActivity, VerifyEmailActivity::class.java)
                         intent.putExtra(KEY_EMAIL_NAME, binding.etEmail.text.toString())
                         intent.putExtra(KEY_IS_REGISTER, true)
                         intent.putExtra(KEY_USER_REGISTER_BEAN, userRegisterBean)
@@ -244,7 +211,7 @@ class CreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>() {
             logD("country: ${mViewModel.countList.value}")
             // 跳转选择国家列表
             val intent =
-                Intent(this@CreateAccountActivity, SelectCountryActivity::class.java)
+                Intent(this@OffLineCreateAccountActivity, SelectCountryActivity::class.java)
             intent.putExtra(
                 COUNT_LIST,
                 (mViewModel.countList.value?.data ?: mutableListOf()) as? Serializable

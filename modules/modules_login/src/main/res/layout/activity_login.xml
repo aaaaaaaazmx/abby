@@ -20,6 +20,7 @@
             tools:ignore="MissingConstraints">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="gone"
                 android:id="@+id/local"
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="24dp"
@@ -188,6 +189,7 @@
 
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/tv_email_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -223,6 +225,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:visibility="gone"
                 android:layout_marginBottom="27dp"
                 android:id="@+id/ll_with_login"
                 app:layout_constraintEnd_toEndOf="parent"
