@@ -17,6 +17,7 @@ import com.cl.common_base.intercome.InterComeHelp
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.AppUtil
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.repository.RegisterLoginRepository
@@ -28,6 +29,7 @@ import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.home.sdk.bean.HomeBean
 import com.thingclips.smart.home.sdk.callback.IThingGetHomeListCallback
 import com.thingclips.smart.home.sdk.callback.IThingHomeResultCallback
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
@@ -60,6 +62,43 @@ class OffLineMainModel @Inject constructor(private val repository: RegisterLogin
     // 账号
     val account by lazy {
         Prefs.getString(Constants.Login.KEY_LOGIN_ACCOUNT)
+    }
+
+    // 设置当前数据设备
+    private val _currentDeviceData = MutableLiveData<DeviceBean>()
+    val currentDeviceData: LiveData<DeviceBean> = _currentDeviceData
+    fun setCurrentDeviceData(source: DeviceBean) {
+        _currentDeviceData.value = source
+    }
+
+    var muteOn: String? = null
+    fun setmuteOn(muteOn: String?) {
+        this.muteOn = muteOn
+    }
+
+    var muteOff: String? = null
+    fun setmuteOff(muteOff: String?) {
+        this.muteOff = muteOff
+    }
+
+    // 植物预设灯光
+    private val _getGrowLight = MutableLiveData<Int>(-1)
+    val getGrowLight: LiveData<Int> = _getGrowLight
+
+    fun setGrowLight(gear: String) {
+        _getGrowLight.value = gear.safeToDouble().safeToInt()
+    }
+
+    private val _getFanIntake = MutableLiveData<Int>()
+    val getFanIntake: LiveData<Int> = _getFanIntake
+    fun setFanIntake(gear: String) {
+        _getFanIntake.value = gear.safeToDouble().safeToInt()
+    }
+
+    private val _getFanExhaust = MutableLiveData<Int>()
+    val getFanExhaust: LiveData<Int> = _getFanExhaust
+    fun setFanExhaust(gear: String) {
+        _getFanExhaust.value = gear.safeToDouble().safeToInt()
     }
 
     // 第三方登录未绑定邮箱

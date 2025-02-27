@@ -27,8 +27,8 @@ object Constants {
     // H5相关
     object H5 {
         private val WEB_URL_MAIN = if (BuildConfig.DEBUG) HttpUrl.WEB_TEST_URL else HttpUrl.WEB_PRODUCTION_URL
-        val PRIVACY_POLICY_URL = "${WEB_URL_MAIN}protocol/%s/privacyPolicy.html"
-        val PERSONAL_URL = "${WEB_URL_MAIN}protocol/%s/licenseAgreement.html"
+        val PRIVACY_POLICY_URL = "file:///android_asset/privacyPolicy.html"
+        val PERSONAL_URL = "file:///android_asset/licenseAgreement.html"
 
         // APP官网
         const val ABBY_OFFICIAL_WEBSITE = "https://heyabby.com/"

@@ -1,5 +1,7 @@
 package com.cl.common_base.constants
 
+import com.alibaba.android.arouter.facade.annotation.Route
+
 /**
  * @Description: Arouter路由表
  * 不同的module，一级目录必须不能相同
@@ -131,6 +133,8 @@ class RouterPath {
         const val PAGE_MY_JOURNEY = "/journey/$MY"
         // WIFI_PAIR
         const val WIFI_PAIR = "/wifiPair/$MY"
+        // PAGE_WEIGHT
+        const val PAGE_WEIGHT = "/weight/$MY"
     }
 
     /**

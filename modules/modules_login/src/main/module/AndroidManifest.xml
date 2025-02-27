@@ -88,5 +88,7 @@
         <activity android:name=".ui.OffLineCreateAccountActivity" />
         <activity android:name=".ui.OffLineMainActivity" />
         <activity android:name=".ui.OffLineHardSetActivity" />
+        <activity android:name=".ui.OffLineActivity" />
+        <activity android:name=".ui.OffLineSettingActivity" />
     </application>
 </manifest>

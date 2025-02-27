@@ -9,9 +9,9 @@
 
 
     <androidx.core.widget.NestedScrollView
-        android:fillViewport="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -22,10 +22,10 @@
                 android:id="@+id/feature_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:title="Hardware Settings"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:title="Hardware Settings" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_manipulation"
@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="11dp"
-                    android:text="Grow light"
+                    android:text="Grow Light"
                     android:textColor="@color/mainColor"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -101,6 +101,7 @@
                         android:layout_height="12dp"
                         android:layout_marginStart="2dp"
                         android:background="@mipmap/mt_gth"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/tv_fans"
                         app:layout_constraintStart_toEndOf="@+id/tv_fans"
                         app:layout_constraintTop_toTopOf="@+id/tv_fans"
@@ -334,8 +335,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:layout_marginEnd="24dp">
+                    android:layout_marginTop="6dp">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/cl_root"
@@ -500,21 +500,20 @@
 
 
                         <androidx.constraintlayout.widget.ConstraintLayout
-                            android:paddingBottom="10dp"
                             android:id="@+id/rl_fan_exhaust"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:layout_marginTop="17dp"
+                            android:paddingBottom="10dp"
                             app:layout_constraintTop_toBottomOf="@+id/rl_fan_intake"
                             tools:visibility="visible">
 
                             <TextView
-                                app:layout_constraintTop_toTopOf="parent"
-                                android:layout_marginTop="20dp"
                                 android:id="@+id/tv_fan_exhaust"
                                 android:layout_width="100dp"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="20dp"
                                 android:layout_marginBottom="10dp"
                                 android:autoSizeMaxTextSize="15sp"
                                 android:autoSizeMinTextSize="10sp"
@@ -525,7 +524,8 @@
                                 android:textSize="12sp"
                                 android:textStyle="bold"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent" />
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
                             <TextView
 
@@ -577,6 +577,7 @@
                                 app:layout_constraintStart_toEndOf="@+id/tv_fan_exhaust_value_unit_one"
                                 app:layout_constraintStart_toStartOf="@+id/tv_fan_exhaust_value_unit_one"
                                 app:layout_constraintTop_toTopOf="@+id/tv_fan_exhaust_value_unit_one" />
+
                             <TextView
 
                                 android:id="@+id/tv_fan_exhaust_value_unit_two"
@@ -628,321 +629,334 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_preset"
                 app:layout_constraintTop_toBottomOf="@+id/tv_preset" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <HorizontalScrollView
+                android:scrollbars="none"
                 android:id="@+id/cl_photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_photo"
                 app:layout_constraintTop_toBottomOf="@+id/tv_photo">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    tools:ignore="MissingConstraints">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                    <RelativeLayout
-                        android:id="@+id/rl_one"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/rl_two"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        tools:ignore="MissingConstraints">
 
-                        <FrameLayout
-                            android:id="@+id/usb_one_frame"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_one"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_two"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/textView"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Vegetation"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Vegetation" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_one_frame"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
 
-                    <RelativeLayout
-                        android:id="@+id/rl_two"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/rl_three"
-                        app:layout_constraintStart_toEndOf="@+id/rl_one"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                            <TextView
+                                android:id="@+id/textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Vegetation"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Vegetation" />
+                        </RelativeLayout>
 
-                        <FrameLayout
-                            android:id="@+id/usb_two_frame"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_two"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_three"
+                            app:layout_constraintStart_toEndOf="@+id/rl_one"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/textView2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Flowering"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Flowering" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_two_frame"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
 
-                    <RelativeLayout
-                        android:id="@+id/rl_three"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/rl_four"
-                        app:layout_constraintStart_toEndOf="@+id/rl_two"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                            <TextView
+                                android:id="@+id/textView2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Flowering"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Flowering" />
+                        </RelativeLayout>
 
-                        <FrameLayout
-                            android:id="@+id/usb_three_frame"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_three"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/rl_four"
+                            app:layout_constraintStart_toEndOf="@+id/rl_two"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/textView3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Flushing"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Flushing" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_three_frame"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
 
-                    <RelativeLayout
-                        android:id="@+id/rl_four"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/rl_three"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                            <TextView
+                                android:id="@+id/textView3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Flushing"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Flushing" />
+                        </RelativeLayout>
 
-                        <FrameLayout
-                            android:id="@+id/usb_four_frame"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_four"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/rl_three"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/textView4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Drying"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Drying" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_four_frame"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
 
+                            <TextView
+                                android:id="@+id/textView4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Drying"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Drying" />
+                        </RelativeLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </HorizontalScrollView>
 
 
-        <TextView
-            android:id="@+id/tv_auto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="[ AUTO ]"
-            android:textColor="@color/mainColor"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/tv_photo"
-            app:layout_constraintTop_toBottomOf="@+id/tv_photo" />
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_auto"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tv_auto"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="[ AUTO ]"
+                android:textColor="@color/mainColor"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/tv_photo"
+                app:layout_constraintTop_toBottomOf="@+id/cl_photo" />
+
+            <HorizontalScrollView
+                android:scrollbars="none"
+                android:id="@+id/cl_auto"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_auto"
-                app:layout_constraintTop_toBottomOf="@+id/tv_auto">
-
+                app:layout_constraintTop_toBottomOf="@+id/tv_auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/container1"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    tools:ignore="MissingConstraints">
+                    >
 
-                    <RelativeLayout
-                        android:id="@+id/rl_auto_one"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/rl_auto_two"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/container1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        tools:ignore="MissingConstraints">
 
-                        <FrameLayout
-                            android:id="@+id/usb_one_frame_auto"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_auto_one"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_auto_two"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/auto1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Vegetation"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Vegetation" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_one_frame_auto"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
 
-                    <RelativeLayout
-                        android:id="@+id/rl_auto_two"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/rl_auto_three"
-                        app:layout_constraintStart_toEndOf="@+id/rl_auto_one"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                            <TextView
+                                android:id="@+id/auto1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Vegetation"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Vegetation" />
+                        </RelativeLayout>
 
-                        <FrameLayout
-                            android:id="@+id/usb_two_frame_auto"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_auto_two"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/rl_auto_three"
+                            app:layout_constraintStart_toEndOf="@+id/rl_auto_one"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/auto2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Flowering"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Flowering" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_two_frame_auto"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
 
-                    <RelativeLayout
-                        android:id="@+id/rl_auto_three"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/rl_auto_four"
-                        app:layout_constraintStart_toEndOf="@+id/rl_auto_two"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                            <TextView
+                                android:id="@+id/auto2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Flowering"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Flowering" />
+                        </RelativeLayout>
 
-                        <FrameLayout
-                            android:id="@+id/usb_three_frame_auto"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_auto_three"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/rl_auto_four"
+                            app:layout_constraintStart_toEndOf="@+id/rl_auto_two"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/auto3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Flushing"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Flushing" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_three_frame_auto"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
 
-                    <RelativeLayout
-                        android:id="@+id/rl_auto_four"
-                        android:layout_width="80dp"
-                        android:layout_height="34dp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="5dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/rl_auto_three"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:background="@drawable/background_button_white_r100">
+                            <TextView
+                                android:id="@+id/auto3"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Flushing"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Flushing" />
+                        </RelativeLayout>
 
-                        <FrameLayout
-                            android:id="@+id/usb_four_frame_auto"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_centerInParent="true" />
+                        <RelativeLayout
+                            android:id="@+id/rl_auto_four"
+                            android:layout_width="80dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/background_button_white_r100"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/rl_auto_three"
+                            app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
-                            android:id="@+id/auto4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerInParent="true"
-                            android:gravity="center"
-                            android:text="Drying"
-                            android:textColor="@color/mainColor"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            tools:text="Drying" />
-                    </RelativeLayout>
+                            <FrameLayout
+                                android:id="@+id/usb_four_frame_auto"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_centerInParent="true" />
+
+                            <TextView
+                                android:id="@+id/auto4"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
+                                android:gravity="center"
+                                android:text="Drying"
+                                android:textColor="@color/mainColor"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                tools:text="Drying" />
+                        </RelativeLayout>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </HorizontalScrollView>
 
             <RelativeLayout
-                app:layout_constraintTop_toBottomOf="@+id/cl_auto"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginTop="63dp"
                 android:id="@+id/rl_btn"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginStart="24dp"
+                android:layout_marginTop="63dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginBottom="18dp"
                 android:background="@drawable/login_button"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cl_auto">
 
                 <TextView
                     android:layout_width="wrap_content"

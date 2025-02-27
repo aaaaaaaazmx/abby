@@ -14,15 +14,15 @@ import com.cl.common_base.util.json.GSON
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.sdk.api.IResultCallback
 import com.thingclips.smart.sdk.api.IThingDevice
+import com.thingclips.smart.sdk.bean.DeviceBean
 import com.thingclips.smart.sdk.enums.ThingDevicePublishModeEnum
 
 // 设备控制类
 class DeviceControlImpl : DeviceControl, IResultCallback {
     // 用户信息
     val userInfo = {
-        val bean = Prefs.getString(Constants.Login.KEY_LOGIN_DATA)
-        val parseObject = GSON.parseObject(bean, UserinfoBean::class.java)
-        parseObject
+        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
+        GSON.parseObject(homeData, DeviceBean::class.java)
     }
 
     private val map by lazy {
@@ -50,7 +50,7 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      */
     override fun getCurrentDevice(devId: String?): IThingDevice? {
         logI("12312313123L:${Prefs.getString(Constants.Login.KEY_LOGIN_DATA)}")
-        return ThingHomeSdk.newDeviceInstance(devId ?: userInfo()?.deviceId)
+        return ThingHomeSdk.newDeviceInstance(devId ?: userInfo()?.devId)
     }
 
     /**
