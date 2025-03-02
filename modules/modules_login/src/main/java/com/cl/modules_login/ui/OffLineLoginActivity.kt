@@ -10,6 +10,7 @@ import com.cl.common_base.R
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.containsIgnoreCase
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
@@ -25,6 +26,7 @@ import com.cl.common_base.web.WebActivity
 import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.BuildConfig
 import com.cl.modules_login.databinding.ActivityLoginBinding
+import com.cl.modules_login.response.OffLineDeviceBean
 import com.cl.modules_login.ui.CreateAccountActivity.Companion.KEY_USER_REGISTER_BEAN
 import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_EMAIL_NAME
 import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_IS_REGISTER
@@ -49,6 +51,9 @@ class OffLineLoginActivity : BaseActivity<ActivityLoginBinding>() {
     @Inject
     lateinit var mViewModel: LoginViewModel
 
+    private val devId by lazy {
+        Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
+    }
 
     override fun initView() {
         binding.accountEditText.setText(mViewModel.account)
@@ -208,17 +213,43 @@ class OffLineLoginActivity : BaseActivity<ActivityLoginBinding>() {
                             // 保存账号密码。
                             Prefs.putStringAsync(Constants.Login.KEY_LOGIN_ACCOUNT, binding.accountEditText.text.toString())
                             Prefs.putStringAsync(Constants.Login.KEY_LOGIN_PSD, binding.passwordEditText.text.toString())
+                            val devList = user?.deviceList?.filter {
+                                it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                                    OffLineDeviceBean.DEVICE_VERSION_OG
+                                ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                                    OffLineDeviceBean.DEVICE_VERSION_OG_PRO
+                                ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                                    OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
+                                )
+                            }
                             // 判断当前设备只有一个，
                             if (null == user) {
                                 // 跳转到添加设备界面
                                 val intent = Intent(this@OffLineLoginActivity, BindDeviceActivity::class.java)
                                 startActivity(intent)
-                            } else if (user.deviceList.size >= 1) {
-                                // 跳转到主页
-                                val intent = Intent(this@OffLineLoginActivity, OffLineMainActivity::class.java)
+                            } else if ((devList?.size ?: 0) >= 1) {
+                                // 如果当前设备失效了.就选择机器, 反之就直接跳转
+                                if (null == devList?.firstOrNull { it.devId == devId }) {
+                                    val currentDevice = user.deviceList?.firstOrNull {
+                                        it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                                            OffLineDeviceBean.DEVICE_VERSION_OG
+                                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                                            OffLineDeviceBean.DEVICE_VERSION_OG_PRO
+                                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                                            OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
+                                        )
+                                    }
+                                    Prefs.putStringAsync(
+                                        Constants.Tuya.KEY_DEVICE_ID,
+                                        currentDevice?.devId.toString()
+                                    )
+                                }
+                                val intent = Intent(
+                                    this@OffLineLoginActivity, OffLineMainActivity::class.java
+                                )
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
-                            } else {
+                            }  else {
                                 // 跳转到添加设备界面
                                 val intent = Intent(this@OffLineLoginActivity, BindDeviceActivity::class.java)
                                 startActivity(intent)

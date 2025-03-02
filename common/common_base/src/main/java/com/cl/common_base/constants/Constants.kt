@@ -132,6 +132,9 @@ object Constants {
 
         // 设备端给APP端下发的信息
         const val KEY_THING_DEVICE_TO_APP = "key_tuya_device_to_app"
+
+        // 设备ID
+        const val KEY_DEVICE_ID = "key_device_id"
     }
 
     /**

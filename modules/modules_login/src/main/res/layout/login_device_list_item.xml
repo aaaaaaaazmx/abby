@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+
+        <variable
+            name="data"
+            type="com.cl.modules_login.response.OffLineDeviceBean" />
+
+        <import type="android.text.TextUtils" />
+
+        <import type="android.view.View" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_root"
+            android:background="@{data.isChoose ? @drawable/background_mian_color_r8 : @drawable/background_white_r6}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="19dp"
+            tools:ignore="MissingConstraints">
+
+            <TextView
+                android:text='@{TextUtils.isEmpty(data.strainName) ? data.name : data.strainName}'
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="#006241"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="hey abby#1 | OG Kushhey " />
+
+            <LinearLayout
+                android:id="@+id/ll_time"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="@+id/iv_jiqi"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title">
+
+                <ImageView
+                    android:id="@+id/iv_time"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="#000000" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/ll_wendu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/ll_time">
+
+                <ImageView
+                    android:id="@+id/iv_wendu"
+                    android:layout_width="8.4dp"
+                    android:layout_height="14dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="#000000" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_sub"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="@+id/iv_jiqi"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ll_wendu">
+
+                <ImageView
+                    android:id="@+id/iv_sub"
+                    android:layout_width="12dp"
+                    android:layout_height="13dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:textColor="#000000"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    tools:text="#000000" />
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="21dp"
+                app:layout_constraintTop_toBottomOf="@+id/ll_sub">
+
+                <ImageView
+                    android:id="@+id/iv_child"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp" />
+
+                <ImageView
+                    android:id="@+id/iv_night"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/iv_child" />
+            </RelativeLayout>
+
+            <!--
+                android:background='@{data.spaceType.equals("box") ? data.deviceType.equals("OG") ? @drawable/my_jiqi_oi : data.deviceType.equals("OG_black") ? @drawable/my_og_black : @drawable/my_jiqi : @drawable/my_jiqi_zp}'
+            -->
+            <ImageView
+                android:id="@+id/iv_jiqi"
+                android:layout_width="116dp"
+                android:layout_height="127dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/btn_chang"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:autoSizeMaxTextSize="11sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/background_main_color_r6"
+            android:lines="1"
+            android:text="@string/string_2230"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_add_accessory"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_root" />
+
+        <Button
+            android:id="@+id/btn_add_accessory"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:autoSizeMaxTextSize="11sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/background_main_color_r6"
+            android:lines="1"
+            android:text="@string/string_2231"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_jump_to_device"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toEndOf="@+id/btn_chang"
+            app:layout_constraintTop_toTopOf="@+id/btn_chang" />
+
+
+        <Button
+            android:id="@+id/btn_jump_to_device"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:autoSizeMaxTextSize="11sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/background_main_color_r6"
+            android:lines="1"
+            android:text="@string/string_2232"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toEndOf="@+id/btn_add_accessory"
+            app:layout_constraintTop_toTopOf="@+id/btn_add_accessory" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_accessory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="13dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/btn_chang" />
+
+        <!--<androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="@{data.isChooser &amp;&amp; data.accessoryList.size() > 0 ? View.VISIBLE : View.GONE}"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:id="@+id/cl_device"
+            android:layout_marginTop="13dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_chang"
+            android:background="@drawable/background_white_r6"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <ImageView
+                url='@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).image : ""}'
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@mipmap/my_night_model"
+                android:id="@+id/iv_icon"
+                android:layout_width="32dp"
+                android:layout_height="35dp"/>
+
+            <TextView
+                android:textStyle="bold"
+                android:text='@{data.accessoryList.size() > 0 ? data.accessoryList.get(0).accessoryName : ""}'
+                android:layout_marginStart="17.8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/iv_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textColor="@color/mainColor"
+                android:textSize="11sp"
+                tools:text="Smart humidifier"
+                android:id="@+id/tv_device_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+
+
+            <RelativeLayout
+                app:layout_constraintEnd_toStartOf="@+id/iv_luosi"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <com.cl.common_base.widget.FeatureItemSwitch
+                    android:visibility="gone"
+                    android:id="@+id/ft_check"
+                    android:layout_width="wrap_content"
+                    app:hideArrow="true"
+                    android:layout_height="40dp"
+                    />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tv_auto_desc"
+                    android:layout_marginEnd="10dp"
+                    tools:text="Auto\non"
+                    android:textColor="@color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:layout_marginEnd="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/iv_luosi"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:background="@mipmap/my_luosi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+        <!--<Button
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_start"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Start Journey"
+            android:textAllCaps="false"
+            android:visibility='@{(data.period.equals("No plant") &amp;&amp; data.isChooser &amp;&amp; !data.onlineStatus.equals("Offline")) ? View.VISIBLE : View.GONE}'
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_reconnect"
+            app:layout_constraintStart_toEndOf="@+id/btn_delete"
+            app:layout_constraintTop_toTopOf="@+id/btn_delete" />
+
+        <Button
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            android:textSize="11sp"
+            android:id="@+id/btn_reconnect"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="17dp"
+            android:background="@drawable/background_main_color_r6"
+            android:text="Reconnect"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:visibility='@{(data.onlineStatus.equals("Offline") &amp;&amp; data.isChooser) ? View.VISIBLE : View.GONE}'
+            app:layout_constraintStart_toEndOf="@+id/btn_start"
+            app:layout_constraintTop_toTopOf="@+id/btn_start" />-->
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

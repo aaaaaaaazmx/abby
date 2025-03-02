@@ -93,5 +93,26 @@ data class ListDeviceBean(
         const val MONITOR_VIEW_OUT = 4
         //- monitor_out 不带屏外部温湿度传感器
         const val KEY_MONITOR_OUT = 5
+
+
+        const val DEVICE_VERSION_O1 = "O1"
+
+        // 设备是OG
+        const val DEVICE_VERSION_OG = "OG"
+
+        // 设备是OG_black
+        const val DEVICE_VERSION_OG_BLACK = "OG_black"
+
+        // 设备是OG_Pro
+        const val DEVICE_VERSION_OG_PRO = "OG_Pro"
+
+        // 设备是O1_Pro
+        const val DEVICE_VERSION_O1_PRO = "O1_Pro"
+
+        // 设备是O1_Soil
+        const val DEVICE_VERSION_O1_SOIL = "O1_Soil"
+
+        // 设备是O1-SE
+        const val DEVICE_VERSION_O1_SE = "O1_SE"
     }
 }

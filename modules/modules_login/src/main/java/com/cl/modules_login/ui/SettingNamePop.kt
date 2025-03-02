@@ -6,7 +6,7 @@ import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginEditProfilePopBinding
 import com.lxj.xpopup.core.BottomPopupView
 
-class SettingNamePop(context: Context): BottomPopupView(context) {
+class SettingNamePop(context: Context,private val doneAction: ((String) -> Unit) ? = null): BottomPopupView(context) {
     override fun getImplLayoutId(): Int {
         return R.layout.login_edit_profile_pop
     }
@@ -19,6 +19,7 @@ class SettingNamePop(context: Context): BottomPopupView(context) {
             // 然后跳转到主页
             btnSuccess.setOnClickListener {
                 // todo 保存 strainName
+                doneAction?.invoke(etEmail.text.toString())
                 dismiss()
             }
         }

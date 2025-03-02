@@ -90,5 +90,6 @@
         <activity android:name=".ui.OffLineHardSetActivity" />
         <activity android:name=".ui.OffLineActivity" />
         <activity android:name=".ui.OffLineSettingActivity" />
+        <activity android:name=".ui.OffLineDeviceActivity" />
     </application>
 </manifest>

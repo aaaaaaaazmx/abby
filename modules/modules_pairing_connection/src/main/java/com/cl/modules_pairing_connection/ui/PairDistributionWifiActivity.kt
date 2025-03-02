@@ -17,9 +17,11 @@ import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreActivity
+import com.cl.common_base.bean.ListDeviceBean
 import com.cl.common_base.bean.UserinfoBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.containsIgnoreCase
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logE
 import com.cl.common_base.ext.logI
@@ -66,6 +68,10 @@ import kotlin.random.Random
 @AndroidEntryPoint
 @Route(path = RouterPath.PairConnect.PAGE_WIFI_CONNECT)
 class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
+
+    private val devId by lazy {
+        Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
+    }
 
     // 传过来设备数据
     private val bleData by lazy {
@@ -591,16 +597,12 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                 // 先进行数据同步、后绑定
                                                 // 直接跳转到主页
                                                 // 判断当前的机器是否只有一台，或者说当前的机器是否是选中的这一台
-                                                if (homeBean.deviceList.size >= 1) {
-                                                    // 跳转主页
-                                                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_NEW_MAIN)
-                                                        .withFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                        .navigation()
-                                                } else {
-                                                    // 说明只有一台，那么就跳转到开始界面,也就刚添加的这台。
-                                                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_PLANT_ONE)
-                                                        .navigation()
-                                                }
+                                                // 最后一台总是新添加的
+                                                Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_ID, homeBean.deviceList[homeBean.deviceList.size - 1]?.devId.toString())
+                                                // 说明只有一台，那么就跳转到开始界面,也就刚添加的这台。
+                                                ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_PLANT_ONE)
+                                                    .navigation()
+                                                finish()
 
                                             }.onFailure { hideProgressLoading() }
                                         }

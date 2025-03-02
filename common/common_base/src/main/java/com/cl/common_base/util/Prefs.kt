@@ -88,12 +88,19 @@ object Prefs {
     fun removeKey(key: String) {
         mmkv.removeValueForKey(key)
     }
-    fun addObject(newObj: PresetData) {
+
+    // 添加然后删除别名
+    fun addObject(devId: String, newObj: PresetData) {
         val objects = getObjects()?.toMutableList()
-        if ((objects?.size ?: 0) >= 5) {
-            objects?.removeAt(0) // 移除最旧的对象
+        //如果他们相等 那么就是修改
+        val currentDevice = objects?.firstOrNull { it.id == devId }
+        if (null == currentDevice) {
+            // 新添加的strainName
+            objects?.add(newObj) // 添加新对象到末尾
+        } else {
+            removeObject(currentDevice)
+            objects.add(newObj)
         }
-        objects?.add(newObj) // 添加新对象到末尾
         saveObjects(objects)
     }
 

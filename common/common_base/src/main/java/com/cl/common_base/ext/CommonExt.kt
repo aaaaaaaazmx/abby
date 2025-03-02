@@ -156,3 +156,6 @@ inline fun <T1 : Any, T2 : Any, T3 : Any, T4 : Any, R : Any> Any?.let(p1: T1?, p
 }
 
 fun String.equalsIgnoreCase(other: String) = this.lowercase() == other.lowercase()
+
+// 自定义扩展方法，忽略大小写进行 contains 判断
+fun String.containsIgnoreCase(other: String) =  this.lowercase().contains(other.lowercase())

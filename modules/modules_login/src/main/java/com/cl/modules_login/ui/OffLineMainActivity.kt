@@ -2,30 +2,25 @@ package com.cl.modules_login.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AllDpBean
 import com.cl.common_base.bean.EnvironmentInfoReq
-import com.cl.common_base.bean.UpDeviceInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
-import com.cl.common_base.constants.UnReadConstants
+import com.cl.common_base.ext.containsIgnoreCase
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.temperatureConversionTwo
 import com.cl.common_base.util.Prefs
-import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
 import com.cl.common_base.widget.toast.ToastUtil
-import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginOfflineMainBinding
+import com.cl.modules_login.response.OffLineDeviceBean
 import com.cl.modules_login.viewmodel.OffLineMainModel
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import com.thingclips.smart.home.sdk.bean.HomeBean
@@ -35,9 +30,6 @@ import com.warkiz.widget.IndicatorSeekBar
 import com.warkiz.widget.OnSeekChangeListener
 import com.warkiz.widget.SeekParams
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import okhttp3.internal.wait
-import java.io.Serializable
 import javax.inject.Inject
 
 
@@ -50,14 +42,25 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
     @Inject
     lateinit var viewModel: OffLineMainModel
 
+    private val devId = {
+        Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
+    }
+
     // 涂鸦家庭ID
     private val homeId by lazy {
         Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
     }
 
+    @SuppressLint("MissingSuperCall")
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val devId = intent?.getStringExtra(Constants.Tuya.KEY_DEVICE_ID)
+        getCurrentDeviceData(devId)
+    }
+
     override fun initView() {
         // 获取当前设备
-        getCurrentDeviceData()
+        getCurrentDeviceData(devId())
     }
 
     override fun observe() {
@@ -119,16 +122,16 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
 
             override fun onStopTrackingTouch(seekBar: IndicatorSeekBar?) {
                 DeviceControl.get().success {
-                        binding.tvFanValue.text = seekBar?.progress.safeToInt().toString()
-                    }.error { code, error ->
-                        ToastUtil.shortShow(
-                            """
+                    binding.tvFanValue.text = seekBar?.progress.safeToInt().toString()
+                }.error { code, error ->
+                    ToastUtil.shortShow(
+                        """
                               fanIntake: 
                               code-> $code
                               errorMsg-> $error
                                 """.trimIndent()
-                        )
-                    }.fanIntake(seekBar?.progress ?: 0)
+                    )
+                }.fanIntake(seekBar?.progress ?: 0)
             }
         }
 
@@ -167,18 +170,37 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                 )
             }.airPump(b)
         }
+
+        binding.cbNight.setSafeOnClickListener {
+            startActivity(Intent(this@OffLineMainActivity, OffLineDeviceActivity::class.java).apply {
+                putExtra("devId", devId())
+            })
+        }
     }
 
     // 获取当前设备的ID
     // 当前选中的是第几台设备
     // 每次只需要更改这个数字即可。
-    private fun getCurrentDeviceData(currentIndex: Int = 0) {
+    private fun getCurrentDeviceData(devId: String?) {
         // 通过涂鸦读取当前选中的台数数据
         ThingHomeSdk.newHomeInstance(homeId).getHomeDetail(object : IThingHomeResultCallback {
             override fun onSuccess(bean: HomeBean?) {
                 // 当前设备
-                val currentDevice = bean?.deviceList?.get(currentIndex)
+                var currentDevice = bean?.deviceList?.firstOrNull { it.devId == devId }
+                if (null == currentDevice) {
+                    // 默认选择第一个机器
+                    currentDevice = bean?.deviceList?.firstOrNull {
+                        it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                            OffLineDeviceBean.DEVICE_VERSION_OG
+                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                            OffLineDeviceBean.DEVICE_VERSION_OG_PRO
+                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                            OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
+                        )
+                    }
+                }
                 currentDevice?.let { viewModel.setCurrentDeviceData(it) }
+                Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_ID, currentDevice?.devId.toString())
                 // 获取环境信息
                 getEnvData(currentDevice)
                 if (currentDevice?.isOnline == false) {
@@ -273,6 +295,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
         }
     }
 
+
     // 广播监听
     /**
      * 设备指令监听
@@ -346,7 +369,10 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                     // 140 dp点
                     TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_TIME_STAMP -> {
                         // val allDpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
-                        GSON.parseObjectInBackground(value.toString(), AllDpBean::class.java) { allDpBean ->
+                        GSON.parseObjectInBackground(
+                            value.toString(),
+                            AllDpBean::class.java
+                        ) { allDpBean ->
                             // cmd == 3 返回实际灯光配置参数
                             // cmd == 1 返回实际全部配置参数
                         }
@@ -418,7 +444,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
     }
 
 
-    private fun pair(openTime:Int, closeTime:Int): Pair<Int, Int> {
+    private fun pair(openTime: Int, closeTime: Int): Pair<Int, Int> {
         // 0- 12, 12-24
         val startTime = when (openTime) {
             0 -> 12
@@ -434,7 +460,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
         return Pair(startTime, endTime)
     }
 
-    private fun pairTwo(startTime:Int, endTime:Int): Pair<String, String> {
+    private fun pairTwo(startTime: Int, endTime: Int): Pair<String, String> {
         // 0- 12, 12-24
         val ftTurnOn = startTime.let {
             if (it > 12) {
