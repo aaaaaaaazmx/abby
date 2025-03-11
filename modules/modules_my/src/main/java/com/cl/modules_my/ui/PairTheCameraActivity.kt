@@ -2,10 +2,15 @@ package com.cl.modules_my.ui
 
 import android.content.Intent
 import com.alibaba.android.arouter.facade.annotation.Route
+import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.base.KnowMoreViewModel
+import com.cl.common_base.bean.AccessoryListBean
+import com.cl.common_base.bean.ListDeviceBean
+import com.cl.common_base.bean.PresetData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.ext.isCanToBigDecimal
 import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
@@ -128,10 +133,9 @@ class PairTheCameraActivity : BaseActivity<MyPairTheCameraBinding>() {
                     // 设置摄像头为连续摄像模式
                     // 设备设置页面-存储卡设置 SD卡录像模式选择，1为事件录像（检测到移动再录像到SD卡），2为连续录像
                     TuyaCameraUtils().publishDps(cameraId, DPConstants.SD_CARD_RECORD_MODE, "2")
-                    letMultiple(accessoryId, deviceId) { a, b ->
-                        // 新增配件接口
-                        mViewMode.addAccessory(a, b, cameraId)
-                    }
+                    /*CameraUtils.ipcProcess(this@PairTheCameraActivity, cameraId)*/
+                    ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_ADD_ACCESSORY).withString(Constants.Global.KEY_IS_CAMERA_ID, cameraId).navigation()
+                    finish()
                 }
             })
 

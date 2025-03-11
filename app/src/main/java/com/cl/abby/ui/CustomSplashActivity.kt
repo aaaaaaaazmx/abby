@@ -117,6 +117,15 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
             email = account,
             password = psd,
             onSuccess = { user ->
+                if (user?.deviceList?.size == 0) {
+                    // 跳转到添加设备界面
+                    val intent = Intent(
+                        this@CustomSplashActivity, BindDeviceActivity::class.java
+                    )
+                    startActivity(intent)
+                    finish()
+                    return@tuYaLoginForOffLine
+                }
                 // 检查权限
                 PermissionHelp().checkConnectForTuYaBle(
                     this@CustomSplashActivity,
@@ -129,11 +138,11 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                             // 判断当前设备只有一个，
                             // 默认选择第一个机器
                             val devList = user?.deviceList?.filter {
-                                it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                                it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.productId.containsIgnoreCase(
                                     OffLineDeviceBean.DEVICE_VERSION_OG
-                                ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                                ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.productId.containsIgnoreCase(
                                     OffLineDeviceBean.DEVICE_VERSION_OG_PRO
-                                ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                                ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.productId.containsIgnoreCase(
                                     OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
                                 )
                             }
@@ -141,11 +150,11 @@ class CustomSplashActivity : BaseActivity<CustomSplashActivityBinding>() {
                                 // 如果当前设备失效了.就选择机器, 反之就直接跳转
                                 if (null == devList?.firstOrNull { it.devId == devId }) {
                                     val currentDevice = user?.deviceList?.firstOrNull {
-                                        it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                                        it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.productId.containsIgnoreCase(
                                             OffLineDeviceBean.DEVICE_VERSION_OG
-                                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                                        ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.productId.containsIgnoreCase(
                                             OffLineDeviceBean.DEVICE_VERSION_OG_PRO
-                                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                                        ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.productId.containsIgnoreCase(
                                             OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
                                         )
                                     }

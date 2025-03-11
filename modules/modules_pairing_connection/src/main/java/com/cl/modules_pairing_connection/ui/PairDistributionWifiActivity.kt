@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.text.InputType
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -68,10 +70,6 @@ import kotlin.random.Random
 @AndroidEntryPoint
 @Route(path = RouterPath.PairConnect.PAGE_WIFI_CONNECT)
 class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
-
-    private val devId by lazy {
-        Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
-    }
 
     // 传过来设备数据
     private val bleData by lazy {
@@ -598,11 +596,35 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                                 // 直接跳转到主页
                                                 // 判断当前的机器是否只有一台，或者说当前的机器是否是选中的这一台
                                                 // 最后一台总是新添加的
-                                                Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_ID, homeBean.deviceList[homeBean.deviceList.size - 1]?.devId.toString())
-                                                // 说明只有一台，那么就跳转到开始界面,也就刚添加的这台。
-                                                ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_PLANT_ONE)
-                                                    .navigation()
-                                                finish()
+
+                                                // 需要判断添加的是否是机器，有可能只是配件
+                                                when (homeBean.deviceList[homeBean.deviceList.size - 1]?.productId) {
+                                                    ListDeviceBean.DEVICE_VERSION_O1,
+                                                    ListDeviceBean.DEVICE_VERSION_OG,
+                                                    ListDeviceBean.DEVICE_VERSION_OG_PRO,
+                                                    ListDeviceBean.DEVICE_VERSION_OG_BLACK,
+                                                    ListDeviceBean.DEVICE_VERSION_O1_PRO,
+                                                    ListDeviceBean.DEVICE_VERSION_O1_SOIL,
+                                                    ListDeviceBean.DEVICE_VERSION_O1_SE,
+                                                    -> {
+                                                        // 跳转开始界面
+                                                        Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_ID, homeBean.deviceList[homeBean.deviceList.size - 1]?.devId.toString())
+                                                        // 说明只有一台，那么就跳转到开始界面,也就刚添加的这台。
+                                                        ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_PLANT_ONE)
+                                                            .withString(Constants.Tuya.KEY_DEVICE_ID, homeBean.deviceList[homeBean.deviceList.size - 1]?.devId.toString())
+                                                            .withFlags(FLAG_ACTIVITY_CLEAR_TASK or FLAG_ACTIVITY_NEW_TASK)
+                                                            .navigation()
+                                                        finish()
+                                                    }
+
+                                                    else -> {
+                                                        // 跳转到绑定界面
+                                                        ARouter.getInstance().build(RouterPath.LoginRegister.PAGE_BIND)
+                                                            .withFlags(FLAG_ACTIVITY_CLEAR_TASK or FLAG_ACTIVITY_NEW_TASK)
+                                                            .navigation()
+                                                        finish()
+                                                    }
+                                                }
 
                                             }.onFailure { hideProgressLoading() }
                                         }
@@ -722,9 +744,25 @@ class PairDistributionWifiActivity : BaseActivity<PairConnectNetworkBinding>() {
                                 )
 
                                 // 添加设备
-                                letMultiple(accessoryId, deviceId) { a, b ->
-                                    // todo 跳转到设备列表界面
-                                    mViewModel.accessoryAdd(a, b, deviceBean?.devId)
+                                // 跳转到设备列表界面
+                                when (pairingEquipment) {
+                                    Constants.Global.KEY_GLOBAL_PAIR_DEVICE_BOX -> {
+                                        //  帐篷内部温湿度传感器， 不带显示器的温度传感器
+                                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                            .navigation(this@PairDistributionWifiActivity)
+                                    }
+
+                                    Constants.Global.KEY_GLOBAL_PAIR_DEVICE_VIEW -> {
+                                        //  帐篷内部温湿度传感器, 带显示器的温度传感器
+                                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                            .navigation(this@PairDistributionWifiActivity)
+                                    }
+
+                                    else -> {
+                                        //  帐篷内部温湿度传感器, 带显示器的温度传感器
+                                        ARouter.getInstance().build(RouterPath.My.PAGE_MY_DEVICE_LIST)
+                                            .navigation(this@PairDistributionWifiActivity)
+                                    }
                                 }
                             }
 

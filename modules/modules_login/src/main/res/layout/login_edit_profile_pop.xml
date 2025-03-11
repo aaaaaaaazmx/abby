@@ -238,6 +238,26 @@
             android:textSize="18sp"
             tools:text="@string/string_1393" />
 
+        <com.cl.common_base.widget.SvTextView
+            android:visibility="gone"
+            android:id="@+id/btn_delete"
+            app:svRadius="100dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            app:svSolidColor="#F72E47"
+            app:svSolidType="solid"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/btn_success"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:text="@string/my_delete"
+            android:layout_marginTop="20dp"
+            tools:text="@string/my_delete" />
+
         <TextView
             android:id="@+id/tv_show_again"
             android:layout_width="match_parent"

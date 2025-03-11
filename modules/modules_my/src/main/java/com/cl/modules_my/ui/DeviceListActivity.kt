@@ -54,7 +54,6 @@ import javax.inject.Inject
 /**
  * 设备列表界面
  */
-@Route(path = RouterPath.My.PAGE_MY_DEVICE_LIST)
 @AndroidEntryPoint
 class DeviceListActivity : BaseActivity<MyDeviceListActivityBinding>() {
     // 当前设备的ID

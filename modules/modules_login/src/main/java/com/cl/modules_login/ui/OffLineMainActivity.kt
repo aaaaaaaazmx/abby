@@ -190,17 +190,22 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                 if (null == currentDevice) {
                     // 默认选择第一个机器
                     currentDevice = bean?.deviceList?.firstOrNull {
-                        it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                        it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.productId.containsIgnoreCase(
                             OffLineDeviceBean.DEVICE_VERSION_OG
-                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                        ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.productId.containsIgnoreCase(
                             OffLineDeviceBean.DEVICE_VERSION_OG_PRO
-                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                        ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.productId.containsIgnoreCase(
                             OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
                         )
                     }
                 }
                 currentDevice?.let { viewModel.setCurrentDeviceData(it) }
                 Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_ID, currentDevice?.devId.toString())
+
+                // 获取植物名字
+                binding.tv.text = Prefs.getObjects()?.firstOrNull { it.id == currentDevice?.devId }?.strainName ?: currentDevice?.name
+
+
                 // 获取环境信息
                 getEnvData(currentDevice)
                 if (currentDevice?.isOnline == false) {
@@ -438,7 +443,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
             }
 
             Constants.Device.KEY_DEVICE_REMOVE -> {
-                startActivity(Intent(this@OffLineMainActivity, OffLineActivity::class.java))
+                // startActivity(Intent(this@OffLineMainActivity, OffLineActivity::class.java))
             }
         }
     }

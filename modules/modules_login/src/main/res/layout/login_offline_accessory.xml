@@ -1,0 +1,620 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <com.cl.common_base.widget.FeatureTitleBar
+                android:id="@+id/ftb_login_offline_accessory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="@string/add_an_accessory" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/string_1789"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/string_2241"
+                android:textColor="#979797"
+                android:textSize="13sp" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_root"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/background_white_r10"
+                tools:ignore="MissingConstraints">
+
+
+                <ImageView
+                    android:id="@+id/iv_add_accessory"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    android:background="@mipmap/ic_smart_sensor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@mipmap/ic_smart_sensor" />
+
+                <TextView
+                    android:id="@+id/tv_add_accessory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_vertical"
+                    android:text="Smart Sensor"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory"
+                    tools:text="Smart Fan" />
+
+                <TextView
+                    android:id="@+id/tv_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="Room Temperature"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory"
+                    tools:text="Room Temperature" />
+
+
+                <TextView
+                    android:id="@+id/tv_add"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/background_circle_main_color_r20"
+                    android:gravity="center"
+                    android:text="@string/string_2197"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory"
+                    tools:background="@drawable/background_circle_main_color_r20" />
+
+                <TextView
+                    android:id="@+id/tv_buy"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/background_circle_stroke_main_color_r20"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="@string/string_2198"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--smart monitor-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_root_monitor"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/background_white_r10"
+                tools:ignore="MissingConstraints">
+
+
+                <ImageView
+                    android:id="@+id/iv_add_accessory_monitor"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    android:background="@mipmap/ic_smart_monitor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@mipmap/ic_smart_monitor" />
+
+                <TextView
+                    android:id="@+id/tv_add_accessory_monitor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_vertical"
+                    android:text="Smart Monitor"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_monitor"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_monitor"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_monitor"
+                    tools:text="Smart Monitor" />
+
+                <TextView
+                    android:id="@+id/tv_desc_monitor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="Room Temperature"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_monitor"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_monitor"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory_monitor"
+                    tools:text="Room Temperature" />
+
+
+                <TextView
+                    android:id="@+id/tv_add_monitor"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/background_circle_main_color_r20"
+                    android:gravity="center"
+                    android:text="@string/string_2197"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_monitor"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_monitor"
+                    tools:background="@drawable/background_circle_main_color_r20" />
+
+                <TextView
+                    android:id="@+id/tv_buy_monitor"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/background_circle_stroke_main_color_r20"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="@string/string_2198"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_monitor" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="15dp"
+                android:text="@string/string_2242"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="13dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/string_2243"
+                android:textColor="#979797"
+                android:textSize="13sp" />
+
+            <!--补光灯-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_root_light"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/background_white_r10"
+                tools:ignore="MissingConstraints">
+
+
+                <FrameLayout
+                    android:id="@+id/fl_root_light"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/iv_add_accessory_light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@mipmap/ic_smart_light"
+                        android:scaleType="fitCenter"
+                        tools:background="@mipmap/ic_smart_light" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tv_add_accessory_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_vertical"
+                    android:text="Supplemental Light Bars"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_light"
+                    app:layout_constraintStart_toEndOf="@+id/fl_root_light"
+                    app:layout_constraintTop_toTopOf="@+id/fl_root_light"
+                    tools:text="Supplemental Light Bars" />
+
+                <TextView
+                    android:id="@+id/tv_desc_light"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="Room Temperature"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/fl_root_light"
+                    app:layout_constraintStart_toEndOf="@+id/fl_root_light"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory_light"
+                    tools:text="Room Temperature" />
+
+
+                <TextView
+                    android:id="@+id/tv_add_light"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/background_circle_main_color_r20"
+                    android:gravity="center"
+                    android:text="@string/string_2197"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/fl_root_light"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/fl_root_light"
+                    tools:background="@drawable/background_circle_main_color_r20" />
+
+                <TextView
+                    android:id="@+id/tv_buy_light"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/background_circle_stroke_main_color_r20"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="@string/string_2198"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_light" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <!--风扇-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_root_fan"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/background_white_r10"
+                tools:ignore="MissingConstraints">
+
+
+                <ImageView
+                    android:id="@+id/iv_add_accessory_fan"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    android:background="@mipmap/ic_smart_fan"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@mipmap/ic_smart_fan" />
+
+                <TextView
+                    android:id="@+id/tv_add_accessory_fan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_vertical"
+                    android:text="Smart Sensor"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_fan"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_fan"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_fan"
+                    tools:text="Smart Fan" />
+
+                <TextView
+                    android:id="@+id/tv_desc_fan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="Room Temperature"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_fan"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_fan"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory_fan"
+                    tools:text="Room Temperature" />
+
+
+                <TextView
+                    android:id="@+id/tv_add_fan"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/background_circle_main_color_r20"
+                    android:gravity="center"
+                    android:text="@string/string_2197"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_fan"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_fan"
+                    tools:background="@drawable/background_circle_main_color_r20" />
+
+                <TextView
+                    android:id="@+id/tv_buy_fan"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/background_circle_stroke_main_color_r20"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="@string/string_2198"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_fan" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <!--摄像头-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_root_camera"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/background_white_r10"
+                tools:ignore="MissingConstraints">
+
+
+                <ImageView
+                    android:id="@+id/iv_add_accessory_camera"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    android:background="@mipmap/ic_smart_camera"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@mipmap/ic_smart_camera" />
+
+                <TextView
+                    android:id="@+id/tv_add_accessory_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_vertical"
+                    android:text="Smart camera"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_camera"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_camera"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_camera"
+                    tools:text="Smart camera" />
+
+                <TextView
+                    android:id="@+id/tv_desc_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="Room Temperature"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_camera"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_camera"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory_camera"
+                    tools:text="Room Temperature" />
+
+
+                <TextView
+                    android:id="@+id/tv_add_camera"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/background_circle_main_color_r20"
+                    android:gravity="center"
+                    android:text="@string/string_2197"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_camera"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_camera"
+                    tools:background="@drawable/background_circle_main_color_r20" />
+
+                <TextView
+                    android:id="@+id/tv_buy_camera"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/background_circle_stroke_main_color_r20"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="@string/string_2198"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_camera" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--加湿器-->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_root_hum"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/background_white_r10"
+                tools:ignore="MissingConstraints">
+
+
+                <FrameLayout
+                    android:id="@+id/iv_add_accessory_hum"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@mipmap/ic_smart_hum"
+                        android:scaleType="fitCenter"
+                        tools:background="@mipmap/ic_smart_hum" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tv_add_accessory_hum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_marginStart="14dp"
+                    android:gravity="center_vertical"
+                    android:text="Smart Humidifier"
+                    android:textColor="@color/mainColor"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/tv_desc_hum"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_hum"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_hum"
+                    tools:text="Smart Humidifier" />
+
+                <TextView
+                    android:id="@+id/tv_desc_hum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:text="Room Temperature"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_hum"
+                    app:layout_constraintStart_toEndOf="@+id/iv_add_accessory_hum"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_accessory_hum"
+                    tools:text="Room Temperature" />
+
+
+                <TextView
+                    android:id="@+id/tv_add_hum"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="20dp"
+                    android:background="@drawable/background_circle_main_color_r20"
+                    android:gravity="center"
+                    android:text="@string/string_2197"
+                    android:textColor="@color/white"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_add_accessory_hum"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_add_accessory_hum"
+                    tools:background="@drawable/background_circle_main_color_r20" />
+
+                <TextView
+                    android:id="@+id/tv_buy_hum"
+                    android:layout_width="77dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="20dp"
+                    android:autoSizeMaxTextSize="10sp"
+                    android:autoSizeMinTextSize="8sp"
+                    android:autoSizeTextType="uniform"
+                    android:background="@drawable/background_circle_stroke_main_color_r20"
+                    android:gravity="center"
+                    android:lines="1"
+                    android:text="@string/string_2198"
+                    android:textColor="@color/mainColor"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_add_hum" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>

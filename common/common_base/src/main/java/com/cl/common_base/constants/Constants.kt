@@ -360,6 +360,9 @@ object Constants {
         // wifi配对链接界面的返回key
         const val KEY_WIFI_PAIRING_BACK = 20
 
+        // camera配对成功之后的返回
+        const val KEY_WIFI_PAIRING_CAMERA = 21
+
         // wifi配对链接界面的携带参数key
         const val KEY_WIFI_PAIRING_PARAMS = "key_wifi_pairing_params"
 
@@ -388,6 +391,9 @@ object Constants {
 
         // taskId
         const val KEY_TASK_ID_FOR_CALENDAR = "key_task_id"
+
+        // cameraId
+        const val KEY_IS_CAMERA_ID = "camera_id"
 
     }
 

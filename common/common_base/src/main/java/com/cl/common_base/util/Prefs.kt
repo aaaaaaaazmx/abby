@@ -2,6 +2,7 @@ package com.cl.common_base.util
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.cl.common_base.bean.AccessoryListBean
 import com.cl.common_base.bean.PresetData
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.util.json.GSON
@@ -93,21 +94,41 @@ object Prefs {
     fun addObject(devId: String, newObj: PresetData) {
         val objects = getObjects()?.toMutableList()
         //如果他们相等 那么就是修改
-        val currentDevice = objects?.firstOrNull { it.id == devId }
-        if (null == currentDevice) {
+        val currentDevice = objects?.indexOfFirst { it.id == devId }
+        if (-1 == currentDevice) {
             // 新添加的strainName
-            objects?.add(newObj) // 添加新对象到末尾
+            objects.add(newObj) // 添加新对象到末尾
         } else {
-            removeObject(currentDevice)
-            objects.add(newObj)
+            currentDevice?.let { removeObject(it, objects) }
+            objects?.add(newObj)
         }
         saveObjects(objects)
     }
 
-    fun removeObject(obj: PresetData) {
-        val objects = getObjects()?.toMutableList()
-        objects?.remove(obj) // 删除指定对象
-        saveObjects(objects)
+    // 删除配件、删除别名使用。
+    fun removeObject(obj: Int, objects: MutableList<PresetData>? = null) {
+        val objs = objects ?: getObjects()?.toMutableList()
+        if (objs?.isEmpty() == true) return
+        objs?.removeAt(obj) // 删除指定对象
+    }
+
+    // 删除设备
+    fun removeObjectForDevice(obj: Int) {
+        val objs = getObjects()?.toMutableList()
+        if (objs?.isEmpty() == true) return
+        objs?.removeAt(obj) // 删除指定对象
+        saveObjects(objs)
+    }
+
+    // 删除配件
+    fun removeObjectAccessory(obj: PresetData, b: AccessoryListBean) {
+        obj.accessoryList?.indexOfFirst { it.accessoryType == b.accessoryType }?.let {
+            if (it != -1) {
+                obj.accessoryList?.removeAt(it)
+            }
+        }
+        // 更新当前
+        addObject(obj.id.toString(), obj)
     }
 
     private fun saveObjects(objects: List<PresetData>?) {

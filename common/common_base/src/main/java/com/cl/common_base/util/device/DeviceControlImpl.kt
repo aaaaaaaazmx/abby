@@ -21,8 +21,7 @@ import com.thingclips.smart.sdk.enums.ThingDevicePublishModeEnum
 class DeviceControlImpl : DeviceControl, IResultCallback {
     // 用户信息
     val userInfo = {
-        val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-        GSON.parseObject(homeData, DeviceBean::class.java)
+       Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
     }
 
     private val map by lazy {
@@ -49,8 +48,8 @@ class DeviceControlImpl : DeviceControl, IResultCallback {
      * 获取当前设备
      */
     override fun getCurrentDevice(devId: String?): IThingDevice? {
-        logI("12312313123L:${Prefs.getString(Constants.Login.KEY_LOGIN_DATA)}")
-        return ThingHomeSdk.newDeviceInstance(devId ?: userInfo()?.devId)
+        logI("12312313123L:${devId ?: userInfo()}")
+        return ThingHomeSdk.newDeviceInstance(devId ?: userInfo())
     }
 
     /**

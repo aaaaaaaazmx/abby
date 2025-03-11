@@ -78,3 +78,15 @@ fun temperatureConversionTwo(value: Float, isMetric: Boolean): String {
     val result =  if (isMetric) (value.minus(32)).times(5f).div(9f) else value
     return if (result == 0f) "0" else String.format("%.1f", result)
 }
+
+/**
+ * value 摄氏度
+ * isMetric true是摄氏度、false是华氏度
+ * 摄氏度转华氏度
+ */
+fun temperatureConversionThree(value: Float, isMetric: Boolean): String {
+    if (value == 0f) return "0"
+    // 默认传入摄氏度，若 isMetric 为 false 则转换为华氏度
+    val result = if (isMetric) value else value * 9f / 5f + 32f
+    return if (result == 0f) "0" else String.format("%.1f", result)
+}

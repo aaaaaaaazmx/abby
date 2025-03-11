@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.LocaleList
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.widget.doAfterTextChanged
 import com.alibaba.android.arouter.launcher.ARouter
@@ -26,6 +27,8 @@ import com.cl.modules_login.ui.VerifyEmailActivity.Companion.KEY_IS_REGISTER
 import com.cl.modules_login.viewmodel.CreateAccountViewModel
 import com.cl.modules_login.widget.PrivacyPop
 import com.lxj.xpopup.XPopup
+import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.api.IResultCallback
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 import java.util.Locale
@@ -69,17 +72,20 @@ class OffLineCreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>(
                         "google" -> {
                             // 谷歌登录
                             // 发送验证码
-                            mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "5")
+                            // mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "5")
+                            satrts()
                         }
                         "sms" -> {
                             // sms登录或者注册发送验证码
-                            mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
+                            // mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), userName = binding.etEmail.text.toString(), countryCode = userRegisterBean.countryCode, type = "6")
+                            satrts()
                         }
                     }
                     return@PrivacyPop
                 }
                 // 发送验证码
-                mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "1")
+                // mViewModel.verifyEmail(currentLanguage = currentLanguage.uppercase(), email = binding.etEmail.text.toString(), "1")
+                satrts()
             },
             onTermUsAction = {
                 // 跳转到使用条款H5
@@ -98,6 +104,58 @@ class OffLineCreateAccountActivity : BaseActivity<ActivityCreateAccountBinding>(
                 startActivity(intent)
             }
         )
+    }
+    private val mRegisterType = 1
+    private fun satrts() {
+        // 发送注册验证码
+        /*ThingHomeSdk.getUserInstance().registerAccountWithEmail(
+            "1",
+            binding.etEmail.text.toString(),
+            strPassword,
+            strCode,
+            callback
+        )*/
+
+        ThingHomeSdk.getUserInstance().sendVerifyCodeWithUserName(
+            binding.etEmail.text.toString(),
+            "",
+            "86",
+            mRegisterType,
+            object : IResultCallback {
+                override fun onSuccess() {
+                    Toast.makeText(
+                        this@OffLineCreateAccountActivity,
+                        "Got validateCode",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    // 跳转到验证界面
+                    // 跳转到发邮箱界面,表示是注册。
+                   /* val intent = Intent(this@OffLineCreateAccountActivity, OffLineVerifyEmailActivity::class.java)
+                    intent.putExtra(KEY_EMAIL_NAME, binding.etEmail.text.toString())
+                    intent.putExtra(KEY_IS_REGISTER, true)
+                    startActivity(intent)*/
+                    userRegisterBean.userName = binding.etEmail.text.toString()
+                    // 跳转到发邮箱界面
+                    val intent =
+                        Intent(this@OffLineCreateAccountActivity, OffLineVerifyEmailActivity::class.java)
+                    intent.putExtra(KEY_EMAIL_NAME, binding.etEmail.text.toString())
+                    intent.putExtra(KEY_IS_REGISTER, true)
+                    intent.putExtra(KEY_USER_REGISTER_BEAN, userRegisterBean)
+                    intent.putExtra(LoginActivity.KEY_SOURCE, thirdSource)
+                    intent.putExtra(LoginActivity.KEY_THIRD_TOKEN, thirdToken)
+                    startActivity(intent)
+                }
+
+                override fun onError(code: String?, error: String?) {
+                    Toast.makeText(
+                        this@OffLineCreateAccountActivity,
+                        "getValidateCode error->$error",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+
+            })
+
     }
     private val pop by lazy {
         XPopup.Builder(this@OffLineCreateAccountActivity)

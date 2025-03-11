@@ -1,6 +1,7 @@
 package com.cl.modules_login.ui
 
 import android.content.Intent
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.constants.RouterPath
@@ -12,7 +13,7 @@ import com.thingclips.smart.android.user.api.ILogoutCallback
 import com.thingclips.smart.home.sdk.ThingHomeSdk
 import dagger.hilt.android.AndroidEntryPoint
 
-
+@Route(path = RouterPath.LoginRegister.PAGE_BIND)
 @AndroidEntryPoint
 class BindDeviceActivity : BaseActivity<HomeBindDevicesBinding>() {
     override fun initView() {

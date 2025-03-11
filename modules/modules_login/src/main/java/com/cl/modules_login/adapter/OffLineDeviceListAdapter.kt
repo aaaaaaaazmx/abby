@@ -24,9 +24,8 @@ import com.cl.modules_login.response.OffLineDeviceBean
 class OffLineDeviceListAdapter(
     data: MutableList<OffLineDeviceBean>?,
     private val switchListener: ((accessoryId: String, deviceId: String, isCheck: Boolean, usbPort: String?) -> Unit)? = null,
-   /* private val luoSiListener: ((accessoryData: ListDeviceBean.AccessoryList, bean: OffLineDeviceBean) -> Unit)? = null,*/
-) :
-    BaseMultiItemQuickAdapter<OffLineDeviceBean, BaseViewHolder>(data) {
+    /* private val luoSiListener: ((accessoryData: ListDeviceBean.AccessoryList, bean: OffLineDeviceBean) -> Unit)? = null,*/
+) : BaseMultiItemQuickAdapter<OffLineDeviceBean, BaseViewHolder>(data) {
 
     // 是否是公制
     val isMetric = Prefs.getBoolean(Constants.My.KEY_MY_WEIGHT_UNIT, false)
@@ -93,22 +92,18 @@ class OffLineDeviceListAdapter(
     override fun convert(holder: BaseViewHolder, item: OffLineDeviceBean) {
         when (holder.itemViewType) {
             ListDeviceBean.KEY_TYPE_BOX -> {
-              /*  val accList = item.accessoryList ?: mutableListOf()
+                val accList = item.accessoryList ?: mutableListOf()
                 runCatching {
                     //  底部的配件、会有多个、改为Recyclview了。
                     holder.getView<RecyclerView>(R.id.rv_accessory).apply {
                         layoutManager = LinearLayoutManager(context)
-                        val accessAdapters = AccessAdapter(accList, item.isChooser ?: false, switchListener = { accessoryId, isCheck, usbPort ->
-                            switchListener?.invoke(accessoryId, item.deviceId.toString(), isCheck, usbPort)
-                        }, item.deviceType, item.usbNum)
+                        val accessAdapters = OffLineAccessAdapter(accList, item.type)
                         adapter = accessAdapters
                         accessAdapters.addChildClickViewIds(R.id.iv_luosi, R.id.cl_pair)
                         accessAdapters.setOnItemChildClickListener { adapter, view, position ->
-                            luoSiListener?.invoke(adapter.data[position] as ListDeviceBean.AccessoryList, item)
                         }
                     }
                 }
-                holder.setText(R.id.tv_title, showName(item.deviceName, item.plantName, item.strainName))*/
             }
 
             ListDeviceBean.KEY_TYPE_PH -> {

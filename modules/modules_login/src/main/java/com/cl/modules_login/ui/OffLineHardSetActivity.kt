@@ -144,7 +144,7 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
                 binding.fanIntakeSeekbar.setProgress(it.toFloat())
             }
 
-            getFanIntake.observe(this@OffLineHardSetActivity) {
+            getFanExhaust.observe(this@OffLineHardSetActivity) {
                 binding.tvFanExhaustValue.text = it.toString()
                 binding.fanIntakeSeekbarsss.setProgress(it.toFloat())
             }

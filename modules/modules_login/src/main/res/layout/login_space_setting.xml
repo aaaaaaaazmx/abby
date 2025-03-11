@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.cl.common_base.widget.FeatureTitleBar
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Settings" />
+
+        <com.cl.common_base.widget.FeatureItemView
+            android:id="@+id/ft_SN"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:hideArrow="true"
+            app:itemTitle="@string/string_2272" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/lineBg" />
+
+        <com.cl.common_base.widget.FeatureItemView
+            app:hideArrow="true"
+            android:id="@+id/ft_current_fir"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:itemTitle="@string/string_2274" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/lineBg" />
+
+        <!--删除设备隐藏、因为现在合并设备了。-->
+        <com.cl.common_base.widget.FeatureItemView
+            app:hideArrow="true"
+            android:id="@+id/dt_delete_device"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:itemTitle="@string/string_2270"
+            app:itemTitleColor="#D61744" />
+
+    </LinearLayout>
+</layout>

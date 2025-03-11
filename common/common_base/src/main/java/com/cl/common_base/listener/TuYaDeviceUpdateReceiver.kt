@@ -28,11 +28,10 @@ class TuYaDeviceUpdateReceiver : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // 用户信息
-        val userInfo by lazy {
-            val homeData = Prefs.getString(Constants.Tuya.KEY_DEVICE_DATA)
-            GSON.parseObject(homeData, DeviceBean::class.java)
+        val userInfo = {
+            Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
         }
-        val devId = userInfo?.devId
+        val devId = userInfo()
         logI("TuYaDeviceUpdateReceiver devId : $devId")
         ThingHomeSdk.newDeviceInstance(devId).registerDeviceListener(object : IDeviceListener {
             /**

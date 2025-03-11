@@ -3,6 +3,7 @@ package com.cl.modules_my.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.alibaba.android.arouter.facade.annotation.Route
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.UpdateInfoReq
@@ -24,6 +25,7 @@ import javax.inject.Inject
 /**
  * 照片存储选项界面
  */
+@Route(path = RouterPath.My.PAGE_CAMERA_SETTING)
 @AndroidEntryPoint
 class CameraSettingActivity : BaseActivity<MyCameraSettingBinding>() {
 

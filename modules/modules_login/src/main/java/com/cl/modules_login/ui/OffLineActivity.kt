@@ -1,5 +1,6 @@
 package com.cl.modules_login.ui
 
+import android.content.Intent
 import android.text.method.LinkMovementMethod
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
@@ -7,7 +8,9 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.span.appendClickable
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginOfflineActivityBinding
@@ -16,6 +19,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class OffLineActivity: BaseActivity<LoginOfflineActivityBinding>() {
+    private val devId = {
+        Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
+    }
+
     override fun initView() {
         // 设置当前span文字
         binding.tvSpan.movementMethod = LinkMovementMethod.getInstance() // 设置了才能点击
@@ -45,7 +52,10 @@ class OffLineActivity: BaseActivity<LoginOfflineActivityBinding>() {
         }
 
         binding.title.setRightButtonImg(R.mipmap.login_device_list).setRightClickListener {
-            // todo 跳转到设备列表
+            // 跳转到设备列表
+            startActivity(Intent(this@OffLineActivity, OffLineDeviceActivity::class.java).apply {
+                putExtra("devId", devId())
+            })
         }
     }
 

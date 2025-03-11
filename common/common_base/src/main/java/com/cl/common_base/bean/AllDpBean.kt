@@ -24,5 +24,8 @@ data class AllDpBean(
     var wc: String? = null,
     var wl: String? = null,
     var ws: String? = null,
-    var wt: String? = null
-): BaseBean()
+    var wt: String? = null,
+    var usb: Int? = null,
+    var usb2: Int? = null,
+    var usb3: Int? = null,
+) : BaseBean()

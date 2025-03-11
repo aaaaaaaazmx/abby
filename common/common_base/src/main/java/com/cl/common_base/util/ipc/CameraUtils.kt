@@ -15,13 +15,14 @@ class CameraUtils {
             FrescoManager.initFresco(application)
         }
 
-        fun ipcProcess(context: Context, devId: String?): Boolean {
+        fun ipcProcess(context: Context, devId: String?, devIds: String? = null): Boolean {
             val cameraInstance = ThingIPCSdk.getCameraInstance()
             if (cameraInstance?.isIPCDevice(devId) == true) {
                 ARouter
                     .getInstance()
                     .build(RouterPath.Home.PAGE_CAMERA)
                     .withString(Constants.Global.INTENT_DEV_ID, devId)
+                    .withString(Constants.Tuya.KEY_DEVICE_ID, devIds)
                     .navigation(context)
                 return true
             }

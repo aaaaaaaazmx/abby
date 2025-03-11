@@ -46,7 +46,10 @@ import com.cl.common_base.ext.letMultiple
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.resourceObserver
 import com.cl.common_base.ext.safeToInt
+import com.cl.common_base.ext.setSafeOnClickListener
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.help.PermissionHelp
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.TuYaDeviceConstants
@@ -120,6 +123,10 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     private var currVideoClarity: String? = null
     private lateinit var viewBinding: ActivityCameraPanelBinding
     private var mCameraP2P: IThingSmartCameraP2P<Any>? = null
+
+    private val deviceId by lazy {
+        intent.getStringExtra(Constants.Tuya.KEY_DEVICE_ID)
+    }
 
     @SuppressLint("HandlerLeak")
     private val mHandler: Handler = object : Handler() {
@@ -399,7 +406,21 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
     }
 
 
-    var letters = arrayOf(BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1458), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1459), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1460), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1461), BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1462))
+    /*var letters = arrayOf(
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1458),
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1459),
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1460),
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1461),
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1462)
+    ) */
+
+    var letters = arrayOf(
+        //BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1458),
+        //BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1459),
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1460),
+        //BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1461),
+        BaseApplication.getContext().getString(com.cl.common_base.R.string.string_1462)
+    )
 
     private val devId by lazy {
         intent.getStringExtra(Constants.Global.INTENT_DEV_ID)
@@ -441,7 +462,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
         }
 
         // 获取配件信息
-        letMultiple(mViewModel.userInfo?.deviceId, devId) {a,b ->
+        letMultiple(mViewModel.userInfo?.deviceId, devId) { a, b ->
             mViewModel.getAccessoryInfo(a, b)
         }
 
@@ -500,6 +521,32 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
             datePickerDialog.show()
         }
 
+        // 删除摄像头
+        binding.ivDelete.setSafeOnClickListener {
+            xpopup(this@CameraActivity) {
+                asCustom(
+                    BaseCenterPop(this@CameraActivity, content = "Are you sure you want to delete this add-on?",
+                        confirmText = "Yes",
+                        cancelText = "No",
+                        onConfirmAction = {
+                            // 移除摄像头
+                            tuYaUtils.unBindCamera(devId.toString(), onSuccessAction = {
+                                // 移除当前设备。
+                                Prefs.getObjects()?.firstOrNull { it.id == deviceId }?.let { a ->
+                                    a.accessoryList?.firstOrNull { it.accessoryType == "Camera" }?.let {
+                                        Prefs.removeObjectAccessory(a, it)
+                                        this@CameraActivity.finish()
+                                    }
+                                }
+                            }, onErrorAction = {
+                                com.cl.common_base.widget.toast.ToastUtil.shortShow(it)
+                            })
+                        })
+                ).show()
+            }
+
+        }
+
         binding.recyclerView.apply {
             layoutManager = layoutMangers
 
@@ -555,14 +602,18 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                 getString(com.cl.common_base.R.string.string_1458) -> {
                                     binding.ivCameraButton.isChecked = isOpen
                                     ViewUtils.setVisible(binding.ivGetImage)
+                                    ViewUtils.setVisible(binding.ivDelete)
                                 }
+
                                 getString(com.cl.common_base.R.string.string_1462) -> {
                                     ViewUtils.setVisible(binding.tvPlayBack)
+                                    ViewUtils.setGone(binding.ivDelete)
                                 }
                             }
 
                             // 在其他情况下，将两个视图设置为隐藏
                             if (mode != getString(com.cl.common_base.R.string.string_1458) && mode != getString(com.cl.common_base.R.string.string_1462)) {
+                                ViewUtils.setVisible(binding.ivDelete)
                                 ViewUtils.setGone(binding.ivGetImage, binding.tvPlayBack)
                             }
                         }
@@ -619,7 +670,7 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
     override fun initData() {
         // 获取配件信息
-        letMultiple(mViewModel.userInfo?.deviceId, devId) {a,b ->
+        letMultiple(mViewModel.userInfo?.deviceId, devId) { a, b ->
             mViewModel.getAccessoryInfo(a, b)
         }
 
@@ -896,7 +947,10 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                 }
 
                 // 判断今天是否已经截图
-                if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(Calendar.DAY_OF_YEAR)) {
+                if (lastSnapshotTime == 0L || currentCalendar.get(Calendar.YEAR) != lastSnapshotCalendar.get(Calendar.YEAR) || currentCalendar.get(Calendar.DAY_OF_YEAR) != lastSnapshotCalendar.get(
+                        Calendar.DAY_OF_YEAR
+                    )
+                ) {
                     // 如果今天还没截图，就执行截图操作并更新截图时间
                     snapShotClick()
                     Prefs.putLong(key, time)
@@ -973,7 +1027,13 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                         if (!isExistInSdCard()) {
                             // 保存到相册
-                            saveFileToGallery(this@CameraActivity, filePath = data, title = System.currentTimeMillis().toString() + ".mp4", mimeType = "video/mp4", albumName = mViewModel.sn.value.toString())
+                            saveFileToGallery(
+                                this@CameraActivity,
+                                filePath = data,
+                                title = System.currentTimeMillis().toString() + ".mp4",
+                                mimeType = "video/mp4",
+                                albumName = mViewModel.sn.value.toString()
+                            )
                         }
                     }
 
@@ -1023,7 +1083,13 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
 
                         if (!isExistInSdCard()) {
                             // 保存到相册
-                            saveFileToGallery(this@CameraActivity, filePath = data, title = System.currentTimeMillis().toString() + ".jpg", mimeType = "image/jpeg", albumName = mViewModel.sn.value.toString())
+                            saveFileToGallery(
+                                this@CameraActivity,
+                                filePath = data,
+                                title = System.currentTimeMillis().toString() + ".jpg",
+                                mimeType = "image/jpeg",
+                                albumName = mViewModel.sn.value.toString()
+                            )
                         }
                     }
 
@@ -1447,15 +1513,19 @@ class CameraActivity : BaseActivity<HomeCameraBinding>(), View.OnClickListener {
                                 getString(com.cl.common_base.R.string.string_1458) -> {
                                     binding.ivCameraButton.isChecked = isOpen
                                     ViewUtils.setVisible(binding.ivGetImage)
+                                    ViewUtils.setVisible(binding.ivDelete)
                                 }
+
                                 getString(com.cl.common_base.R.string.string_1462) -> {
                                     ViewUtils.setVisible(binding.tvPlayBack)
+                                    ViewUtils.setGone(binding.ivDelete)
                                 }
                             }
 
                             // 在其他情况下，将两个视图设置为隐藏
                             if (mode != getString(com.cl.common_base.R.string.string_1458) && mode != getString(com.cl.common_base.R.string.string_1462)) {
                                 ViewUtils.setGone(binding.ivGetImage, binding.tvPlayBack)
+                                ViewUtils.setVisible(binding.ivDelete)
                             }
 
 

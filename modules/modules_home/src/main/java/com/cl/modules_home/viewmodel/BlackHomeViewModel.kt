@@ -2361,7 +2361,7 @@ class BlackHomeViewModel @Inject constructor(private val repository: HomeReposit
                 // 如果不是空的，那么就遍历然后上传到后台模版。
                 pres.forEachIndexed { index, it ->
                     val asdasd = ProModeInfoBean(bright = it.lightIntensity.safeToInt(), deviceId = userDetail.value?.data?.deviceId,
-                        fanIn = it.fanIntake.safeToInt(), fanOut = it.fanExhaust.safeToInt(), id = it.id?.plus(index), lightOn = it.muteOn.safeToInt(), lightOff = it.muteOff.safeToInt(), name = it.name,
+                        fanIn = it.fanIntake.safeToInt(), fanOut = it.fanExhaust.safeToInt(), id = it.id.safeToInt().plus(index), lightOn = it.muteOn.safeToInt(), lightOff = it.muteOff.safeToInt(), name = it.name,
                         notes = it.note
                     )
                     logI("1231231231#: $asdasd")

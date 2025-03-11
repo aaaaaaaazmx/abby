@@ -30,6 +30,7 @@
             android:layout_height="50dp">
 
             <ImageView
+                url="@{data.background}"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
@@ -55,7 +56,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
-                android:text="----"
+                android:text='@{data.wendu + " " + data.unit + " " + data.shidu + " %" + " RH"}'
                 android:id="@+id/tv_device_status"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_icon"
                 android:textColor="@color/black"

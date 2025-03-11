@@ -128,7 +128,7 @@ class OffLineLoginActivity : BaseActivity<ActivityLoginBinding>() {
 
                 "4" -> {
                     binding.accountEditText.setText("2192292392@qq.com")
-                    binding.passwordEditText.setText("lll000000")
+                    binding.passwordEditText.setText("lll111111")
                     login()
                     return
                 }
@@ -213,12 +213,19 @@ class OffLineLoginActivity : BaseActivity<ActivityLoginBinding>() {
                             // 保存账号密码。
                             Prefs.putStringAsync(Constants.Login.KEY_LOGIN_ACCOUNT, binding.accountEditText.text.toString())
                             Prefs.putStringAsync(Constants.Login.KEY_LOGIN_PSD, binding.passwordEditText.text.toString())
+                            if (user?.deviceList?.size == 0) {
+                                // 跳转到添加设备界面
+                                val intent = Intent(this@OffLineLoginActivity, BindDeviceActivity::class.java)
+                                startActivity(intent)
+                                finish()
+                                return
+                            }
                             val devList = user?.deviceList?.filter {
-                                it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                                it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.productId.containsIgnoreCase(
                                     OffLineDeviceBean.DEVICE_VERSION_OG
-                                ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                                ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.productId.containsIgnoreCase(
                                     OffLineDeviceBean.DEVICE_VERSION_OG_PRO
-                                ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                                ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.productId.containsIgnoreCase(
                                     OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
                                 )
                             }
@@ -231,11 +238,11 @@ class OffLineLoginActivity : BaseActivity<ActivityLoginBinding>() {
                                 // 如果当前设备失效了.就选择机器, 反之就直接跳转
                                 if (null == devList?.firstOrNull { it.devId == devId }) {
                                     val currentDevice = user.deviceList?.firstOrNull {
-                                        it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.name.containsIgnoreCase(
+                                        it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1) || it.productId.containsIgnoreCase(
                                             OffLineDeviceBean.DEVICE_VERSION_OG
-                                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.name.containsIgnoreCase(
+                                        ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_OG_BLACK) || it.productId.containsIgnoreCase(
                                             OffLineDeviceBean.DEVICE_VERSION_OG_PRO
-                                        ) || it.name.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.name.containsIgnoreCase(
+                                        ) || it.productId.containsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_PRO) || it.productId.containsIgnoreCase(
                                             OffLineDeviceBean.DEVICE_VERSION_O1_SOIL
                                         )
                                     }

@@ -1,6 +1,7 @@
 package com.cl.modules_login.viewmodel
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.*
 import com.alibaba.android.arouter.launcher.ARouter
 import com.cl.common_base.BaseBean
@@ -182,7 +183,6 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
     }
 
 
-
     /**
      * 登录
      */
@@ -303,7 +303,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
     /**
      * 涂鸦登录forPhone
      */
-  private  fun tuYaLoginForPhone(
+    private fun tuYaLoginForPhone(
         map: Map<String, Any>? = null,
         interComeUserId: String?,
         userInfo: UserinfoBean.BasicUserBean?,
@@ -313,7 +313,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
         password: String?,
         onSuccess: ((user: User?) -> Unit)? = null,
         onError: ((code: String?, error: String?) -> Unit)? = null,
-        onRegisterReceiver: ((homeId: String?) -> Unit)? = null
+        onRegisterReceiver: ((homeId: String?) -> Unit)? = null,
     ) {
 
         // 登录InterCome
@@ -428,7 +428,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
 
                                                 override fun onError(
                                                     errorCode: String,
-                                                    errorMsg: String?
+                                                    errorMsg: String?,
                                                 ) {
                                                     logE(
                                                         """
@@ -487,7 +487,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
         password: String?,
         onSuccess: ((home: HomeBean?) -> Unit)? = null,
         onError: ((code: String?, error: String?) -> Unit)? = null,
-        onRegisterReceiver: ((homeId: String?) -> Unit)? = null
+        onRegisterReceiver: ((homeId: String?) -> Unit)? = null,
     ) {
         ThingHomeSdk.getUserInstance()
             .loginWithEmail(
@@ -503,70 +503,36 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
                             IThingGetHomeListCallback {
                             override fun onSuccess(homeBeans: MutableList<HomeBean>?) {
                                 logI("homeBeansList: ${homeBeans?.size}")
+                                // 家庭，需要创建家庭
+                                // zhongguo ip
+                                //  120.52,
+                                //  30.40,
+                                //  上海
 
-                                /**
-                                 * getHomeDetail
-                                 * 此方法必须调用，不然下发指令可能不成功
-                                 */
-                                homeBeans?.get(0)?.homeId?.let { homeId ->
-                                    Prefs.putLongAsync(Constants.Tuya.KEY_HOME_ID, homeId)
-                                    ThingHomeSdk.newHomeInstance(homeId)
-                                        .getHomeDetail(object : IThingHomeResultCallback {
+                                // 美国ip
+                                //	经度（Longitude）：-74.0060°
+                                //	•	纬度（Latitude）：40.7128°
+                                // "New York"
+                                if (homeBeans?.size == 0) {
+                                    ThingHomeSdk.getHomeManagerInstance().createHome(
+                                        "myHome",
+                                        // Get location by yourself, here just sample as Shanghai's location
+                                        120.52,
+                                        30.40,
+                                        "上海",
+                                        arrayListOf(),
+                                        object : IThingHomeResultCallback {
                                             override fun onSuccess(bean: HomeBean?) {
-                                                // 取数据
-                                                bean?.let { homeBean ->
-                                                    if (homeBean.deviceList.size == 0) {
-                                                        // todo  跳转扫描界面
-                                                        onSuccess?.invoke(bean)
-                                                        return@let
-                                                    }
-                                                    kotlin.runCatching {
-                                                        // 目前只允许绑定一个，那么只取第一个
-                                                        val deviceBean = homeBean.deviceList[0]
-                                                        // 缓存用户第一个设备数据
-                                                        // 只取第一个
-                                                        // 缓存的目的是为了下一次接口报错做准备
-                                                        GSON.toJson(deviceBean)?.let {
-                                                            Prefs.putStringAsync(
-                                                                Constants.Tuya.KEY_DEVICE_DATA,
-                                                                it
-                                                            )
-                                                        }
-                                                        // 注册广播
-                                                        onRegisterReceiver?.invoke(deviceBean.devId)
-                                                        logI(
-                                                            """
-                                                            login:
-                                                            DEVICE_BEAN_DPS: ${
-                                                                GSON.toJson(
-                                                                    deviceBean.dps
-                                                                )
-                                                            }
-                                                        """.trimIndent()
-                                                        )
-
-                                                        // 种植检查
-                                                        user?.uid?.let { uid ->
-                                                            // todo  跳转扫描界面
-                                                            onSuccess?.invoke(bean)
-                                                        }
-                                                    }.onFailure { }
-                                                }
+                                                homeDetail(mutableListOf(bean!!), onSuccess, onRegisterReceiver, user)
                                             }
 
-                                            override fun onError(
-                                                errorCode: String,
-                                                errorMsg: String?
-                                            ) {
-                                                logE(
-                                                    """
-                                                    getHomeDetail:
-                                                    errorCode -> $errorCode
-                                                    errorMsg -> $errorMsg
-                                                """.trimIndent()
-                                                )
+                                            override fun onError(errorCode: String?, errorMsg: String?) {
                                             }
-                                        })
+
+                                        }
+                                    )
+                                } else {
+                                    homeDetail(homeBeans, onSuccess, onRegisterReceiver, user)
                                 }
                             }
 
@@ -591,6 +557,54 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
             )
     }
 
+    private fun homeDetail(homeBeans: MutableList<HomeBean>?, onSuccess: ((home: HomeBean?) -> Unit)? = null, onRegisterReceiver: ((homeId: String?) -> Unit)? = null, user: User?) {
+        /**
+         * getHomeDetail
+         * 此方法必须调用，不然下发指令可能不成功
+         */
+        homeBeans?.get(0)?.homeId?.let { homeId ->
+            Prefs.putLongAsync(Constants.Tuya.KEY_HOME_ID, homeId)
+            ThingHomeSdk.newHomeInstance(homeId)
+                .getHomeDetail(object : IThingHomeResultCallback {
+                    override fun onSuccess(bean: HomeBean?) {
+                        // 取数据
+                        bean?.let { homeBean ->
+                            if (homeBean.deviceList.size == 0) {
+                                //  跳转添加机器界面
+                                onSuccess?.invoke(bean)
+                                return
+                            }
+                            kotlin.runCatching {
+                                // 目前只允许绑定一个，那么只取第一个
+                                val deviceBean = homeBean.deviceList[0]
+                                // 缓存用户第一个设备数据
+                                // 只取第一个
+                                // 缓存的目的是为了下一次接口报错做准备
+                                GSON.toJson(deviceBean).let {
+                                    Prefs.putStringAsync(
+                                        Constants.Tuya.KEY_DEVICE_DATA,
+                                        it
+                                    )
+                                }
+                                // 注册广播
+                                onRegisterReceiver?.invoke(deviceBean.devId)
+
+                                // 种植检查
+                                user?.uid?.let { uid ->
+                                    onSuccess?.invoke(bean)
+                                }
+                            }.onFailure { }
+                        }
+                    }
+
+                    override fun onError(
+                        errorCode: String,
+                        errorMsg: String?,
+                    ) {
+                    }
+                })
+        }
+    }
 
     /**
      * 涂鸦登录
@@ -605,7 +619,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
         password: String?,
         onSuccess: ((user: User?) -> Unit)? = null,
         onError: ((code: String?, error: String?) -> Unit)? = null,
-        onRegisterReceiver: ((homeId: String?) -> Unit)? = null
+        onRegisterReceiver: ((homeId: String?) -> Unit)? = null,
     ) {
         // 手机号登录。
         if (email.isNullOrEmpty()) {
@@ -726,7 +740,7 @@ class LoginViewModel @Inject constructor(private val repository: RegisterLoginRe
 
                                                 override fun onError(
                                                     errorCode: String,
-                                                    errorMsg: String?
+                                                    errorMsg: String?,
                                                 ) {
                                                     logE(
                                                         """

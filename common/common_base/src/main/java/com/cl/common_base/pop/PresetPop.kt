@@ -45,7 +45,7 @@ class PresetPop(
                 }
                 // save 之后是保存在本地。
                 // 这是保存在本地时的需要添加的数据
-                presetDataBean?.id = 0
+                presetDataBean?.id = "0"
                 presetDataBean?.name = etEmail.text.toString()
                 presetDataBean?.note = etNote.text.toString()
                 // 保存在本地。

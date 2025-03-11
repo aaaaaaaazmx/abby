@@ -23,6 +23,10 @@ class RouterPath {
         const val PAGE_PLANT_ONE = "/plantOne/$LOGIN_REGISTER"
         // 新的主页
         const val PAGE_NEW_MAIN = "/newMain/$LOGIN_REGISTER"
+        // 离线版本配件添加页面
+        const val PAGE_ADD_ACCESSORY = "/addAccessory/$LOGIN_REGISTER"
+        // 绑定界面
+        const val PAGE_BIND = "/bindDevice/$LOGIN_REGISTER"
     }
 
     /**
@@ -135,6 +139,8 @@ class RouterPath {
         const val WIFI_PAIR = "/wifiPair/$MY"
         // PAGE_WEIGHT
         const val PAGE_WEIGHT = "/weight/$MY"
+        // cameraUI
+        const val PAGE_CAMERA_SETTING = "/cameraSetting/$MY"
     }
 
     /**

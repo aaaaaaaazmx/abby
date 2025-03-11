@@ -13,4 +13,5 @@ data class PresetData(
     var muteOn: String? = null,
     var muteOff: String? = null,
     var strainName: String? = null,
+    var accessoryList: MutableList<AccessoryListBean>? = mutableListOf(),
 ): BaseBean()

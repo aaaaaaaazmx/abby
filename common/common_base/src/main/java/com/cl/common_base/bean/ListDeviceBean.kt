@@ -95,24 +95,33 @@ data class ListDeviceBean(
         const val KEY_MONITOR_OUT = 5
 
 
-        const val DEVICE_VERSION_O1 = "O1"
+        // WiFi Temperature & Humidity
+        const val DEVICE_VERSION_O1_TH = "ijfxt5wvgjoze4xr"
+
+        // WIFI温湿度传感器
+        const val DEVICE_VERSION_O1_TH_CN = "kerdtowolkik1r6m"
+
+        const val DEVICE_VERSION_O1 = "wvyxyxi1f9sb4hai"
 
         // 设备是OG
-        const val DEVICE_VERSION_OG = "OG"
+        const val DEVICE_VERSION_OG = "wya36i5mrtrgsgtj"
 
         // 设备是OG_black
-        const val DEVICE_VERSION_OG_BLACK = "OG_black"
+        const val DEVICE_VERSION_OG_BLACK = "gfcowzvoda19f1cy"
 
         // 设备是OG_Pro
-        const val DEVICE_VERSION_OG_PRO = "OG_Pro"
+        const val DEVICE_VERSION_OG_PRO = "5hbrveeiys7w7de8"
 
         // 设备是O1_Pro
-        const val DEVICE_VERSION_O1_PRO = "O1_Pro"
+        const val DEVICE_VERSION_O1_PRO = "x7ujyj9ua97aotao"
 
         // 设备是O1_Soil
-        const val DEVICE_VERSION_O1_SOIL = "O1_Soil"
+        const val DEVICE_VERSION_O1_SOIL = "uzdrnfk2rmuy2xjy"
 
         // 设备是O1-SE
-        const val DEVICE_VERSION_O1_SE = "O1_SE"
+        const val DEVICE_VERSION_O1_SE = "gtes0hlvuixt5mu1"
+
+        // 智能摄像机
+        const val DEVICE_VERSION_CAMERA = "usop44mvrvrbirme"
     }
 }
