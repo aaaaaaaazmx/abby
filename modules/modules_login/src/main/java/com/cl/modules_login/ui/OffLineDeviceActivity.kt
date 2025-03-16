@@ -125,6 +125,7 @@ class OffLineDeviceActivity : BaseActivity<LoginOfflineDeviceBinding>() {
                                                 code: String?, error: String?,
                                             ) {
                                                 Log.i("12312313", "resetFactory  error")
+                                                adapter.removeAt(position)
                                             }
                                         })
                                     }
@@ -160,18 +161,31 @@ class OffLineDeviceActivity : BaseActivity<LoginOfflineDeviceBinding>() {
                     // 赋值新的，或者对老的赋值strainName
                     // 赋值就是每台设备下的子配件 需要添加进去 ,比如风扇,摄摄像头,补光灯.啥的.
                     deviceInfoBean.forEach { a ->
+                        val deviceName = when (a.productId) {
+                            OffLineDeviceBean.DEVICE_VERSION_O1_TH -> "Smart Sensor"
+                            OffLineDeviceBean.DEVICE_VERSION_O1_TH_CN -> "Smart Monitor"
+                            OffLineDeviceBean.DEVICE_VERSION_O1 -> "O1"
+                            OffLineDeviceBean.DEVICE_VERSION_OG -> "OG"
+                            OffLineDeviceBean.DEVICE_VERSION_OG_BLACK -> "OG_BLACK"
+                            OffLineDeviceBean.DEVICE_VERSION_OG_PRO -> "OG_PRO"
+                            OffLineDeviceBean.DEVICE_VERSION_O1_PRO -> "O1_PRO"
+                            OffLineDeviceBean.DEVICE_VERSION_O1_SOIL -> "O1_SOIL"
+                            OffLineDeviceBean.DEVICE_VERSION_O1_SE -> "O1_SE"
+                            OffLineDeviceBean.DEVICE_VERSION_CAMERA -> "Smart Camera"
+                            else -> "abby"
+                        }
                         if (a.productId == OffLineDeviceBean.DEVICE_VERSION_CAMERA) return@forEach
                         if (saveList?.isEmpty() == true) {
-                            offLineDeviceBean.add(OffLineDeviceBean(name = a.name, devId = a.devId, productId = a.productId, dps = a.dps))
+                            offLineDeviceBean.add(OffLineDeviceBean(name = deviceName, devId = a.devId, productId = a.productId, dps = a.dps))
                         } else {
                             // 从旧的里面找到devId想通的，然后找出来。
                             val list = saveList?.firstOrNull { it.id == a.devId }
                             if (null == list) {
-                                offLineDeviceBean.add(OffLineDeviceBean(name = a.name, devId = a.devId, productId = a.productId, dps = a.dps))
+                                offLineDeviceBean.add(OffLineDeviceBean(name = deviceName, devId = a.devId, productId = a.productId, dps = a.dps))
                             } else {
                                 offLineDeviceBean.add(
                                     OffLineDeviceBean(
-                                        name = a.name,
+                                        name = deviceName,
                                         devId = a.devId,
                                         strainName = list.strainName,
                                         productId = a.productId,

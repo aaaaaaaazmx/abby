@@ -9,11 +9,14 @@ import com.cl.common_base.bean.EnvironmentInfoReq
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.containsIgnoreCase
+import com.cl.common_base.ext.equalsIgnoreCase
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToFloat
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.temperatureConversionTwo
+import com.cl.common_base.ext.xpopup
+import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
@@ -94,7 +97,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                                 """.trimIndent()
                         )
                     }
-                    .pumpWater(!binding.cbDrain.isChecked)
+                    .pumpWater(binding.cbDrain.isChecked)
             }
         }
 
@@ -109,7 +112,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                               errorMsg-> $error
                              """.trimIndent()
                 )
-            }.childLock(!binding.cbLock.isChecked)
+            }.childLock(binding.cbLock.isChecked)
         }
 
         binding.fanIntakeSeekbar.onSeekChangeListener = object : OnSeekChangeListener {
@@ -159,7 +162,38 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
         }
 
         // air_pump
-        binding.airPump.setSwitchCheckedChangeListener { compoundButton, b ->
+        binding.airPump.setSwitchClickListener {
+            val b = binding.airPump.isItemChecked
+            logI("1231231: $b")
+            // 打开的时候需要提示当前水箱是否有水。
+            if (binding.tvGoingWater.text.toString().equalsIgnoreCase("0l")) {
+                xpopup(this@OffLineMainActivity) {
+                    isDestroyOnDismiss(false)
+                    dismissOnTouchOutside(false)
+                    asCustom(
+                        BaseCenterPop(
+                            this@OffLineMainActivity,
+                            content = getString(com.cl.common_base.R.string.string_1356),
+                            isShowCancelButton = false,
+                            confirmText = getString(com.cl.common_base.R.string.string_10),
+                            onCancelAction = {
+                            },
+                            onConfirmAction = {
+                                // 需要恢复到之前到档位
+                                DeviceControl.get().success {}.error { code, error ->
+                                    ToastUtil.shortShow(
+                                        """
+                              airPump: 
+                              code-> $code
+                              errorMsg-> $error
+                                """.trimIndent()
+                                    )
+                                }.airPump(false)
+                            })
+                    ).show()
+                }
+                return@setSwitchClickListener
+            }
             DeviceControl.get().success {}.error { code, error ->
                 ToastUtil.shortShow(
                     """
@@ -168,7 +202,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                               errorMsg-> $error
                                 """.trimIndent()
                 )
-            }.airPump(b)
+            }.airPump(!b)
         }
 
         binding.cbNight.setSafeOnClickListener {
@@ -218,6 +252,11 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
             override fun onError(errorCode: String?, errorMsg: String?) {
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getCurrentDeviceData(devId())
     }
 
     // 获取当前设备环境信息
@@ -422,7 +461,6 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                     // 气泵
                     TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_AIR_PUMP_INSTRUCTION -> {
                         binding.airPump.setItemChecked(value.toString() == "true")
-
                     }
                 }
             }

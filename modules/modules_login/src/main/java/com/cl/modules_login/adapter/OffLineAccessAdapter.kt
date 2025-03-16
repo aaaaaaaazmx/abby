@@ -70,7 +70,8 @@ class OffLineAccessAdapter(
                 }
             }
 
-            ftCheck.setSwitchCheckedChangeListener { compoundButton, b ->
+            ftCheck.setSwitchClickListener {
+                val b = ftCheck.isItemChecked
                 val usbPort = when (type) {
                     // 一个usb口的
                     OffLineDeviceBean.DEVICE_VERSION_OG_BLACK, OffLineDeviceBean.DEVICE_VERSION_OG_PRO, OffLineDeviceBean.DEVICE_VERSION_O1_PRO -> {

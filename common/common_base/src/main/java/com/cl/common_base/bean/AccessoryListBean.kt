@@ -1,6 +1,7 @@
 package com.cl.common_base.bean
 
 import com.cl.common_base.BaseBean
+import com.google.firebase.annotations.concurrent.Background
 
 data class AccessoryListBean(
     val accessoryId: Int? = null,
@@ -13,6 +14,7 @@ data class AccessoryListBean(
     val buyLink: String? = null,
     val isShared: Boolean? = null,
     val desString: String? = null,
+    val background: Int? = null,
     val canAdd: Boolean? = null,
     val usbPort: Int? = null,
     var isCheck: Boolean? = true,

@@ -50,6 +50,7 @@
 
             <!--troubleshooting-->
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:id="@+id/unbind_camera"
                 app:layout_constraintStart_toStartOf="parent"

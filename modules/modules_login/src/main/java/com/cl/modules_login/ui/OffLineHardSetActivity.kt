@@ -162,7 +162,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         // photo
         // 点击事件1：设置index为1
         binding.rlOne.setSafeOnClickListener {
-            index = 1
+            index = if (index == 1) {
+                0
+            } else {
+                1
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(6, 0)
@@ -170,7 +174,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
         // 点击事件2：设置index为2
         binding.rlTwo.setSafeOnClickListener {
-            index = 2
+            index = if (index == 2) {
+                0
+            } else {
+                2
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(6, 18)
@@ -178,7 +186,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
 
         binding.rlThree.setSafeOnClickListener {
-            index = 3
+            index = if (index == 3) {
+                0
+            } else {
+                3
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(6, 18)
@@ -186,7 +198,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
 
         binding.rlFour.setSafeOnClickListener {
-            index = 4
+            index = if (index == 4) {
+                0
+            } else {
+                4
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(0, 0)
@@ -194,7 +210,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
 
         binding.rlAutoOne.setSafeOnClickListener {
-            index = 5
+            index = if (index == 5) {
+                0
+            } else {
+                5
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(6, 0)
@@ -202,7 +222,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
 
         binding.rlAutoTwo.setSafeOnClickListener {
-            index = 6
+            index = if (index == 6) {
+                0
+            } else {
+                6
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(6, 0)
@@ -210,7 +234,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
 
         binding.rlAutoThree.setSafeOnClickListener {
-            index = 7
+            index = if (index == 7) {
+                0
+            } else {
+                7
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(6, 0)
@@ -218,7 +246,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
 
         binding.rlAutoFour.setSafeOnClickListener {
-            index = 8
+            index = if (index == 8) {
+                0
+            } else {
+                8
+            }
             updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
 
             val (startTime, endTime) = pair(0, 0)
@@ -236,6 +268,14 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
 
             override fun onStopTrackingTouch(seekBar: IndicatorSeekBar?) {
                 mViewMode.setGrowLight(seekBar?.progress.safeToInt().toString())
+                // 发送dp点
+                val dpBean = AllDpBean(
+                    cmd = "6",  gl = seekBar?.progress.safeToInt().toString()
+                )
+                GSON.toJsonInBackground(dpBean) { it1 ->
+                    DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }
+                        .sendDps(it1)
+                }
             }
         }
 
@@ -250,6 +290,14 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
 
             override fun onStopTrackingTouch(seekBar: IndicatorSeekBar?) {
                 mViewMode.setFanIntake(seekBar?.progress.safeToInt().toString())
+                // 发送dp点
+                val dpBean = AllDpBean(
+                    cmd = "6",  `in` = seekBar?.progress.safeToInt().toString()
+                )
+                GSON.toJsonInBackground(dpBean) { it1 ->
+                    DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }
+                        .sendDps(it1)
+                }
             }
         }
 
@@ -263,6 +311,14 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
 
             override fun onStopTrackingTouch(seekBar: IndicatorSeekBar?) {
                 mViewMode.setFanExhaust(seekBar?.progress.safeToInt().toString())
+                // 发送dp点
+                val dpBean = AllDpBean(
+                    cmd = "6", ex = seekBar?.progress.safeToInt().toString()
+                )
+                GSON.toJsonInBackground(dpBean) { it1 ->
+                    DeviceControl.get().success { logI("dp to success") }.error { code, error -> ToastUtil.shortShow(error) }
+                        .sendDps(it1)
+                }
             }
         }
     }

@@ -40,6 +40,7 @@
             >
 
             <ImageView
+                url="@{datas.background}"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"

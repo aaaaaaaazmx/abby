@@ -8,10 +8,14 @@ import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import androidx.databinding.DataBindingUtil
 import com.cl.common_base.adapter.HomeKnowMoreAdapter.ButtonState
+import com.cl.common_base.bean.AllDpBean
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.ViewUtils
+import com.cl.common_base.util.device.DeviceControl
+import com.cl.common_base.util.json.GSON
+import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginItemUsbPortBinding
 import com.lxj.xpopup.core.CenterPopupView
@@ -41,9 +45,7 @@ class OffLineUsbPop(context: Context, private val usbNumber: MutableList<Int?>? 
             // 建立 USB 端口与对应视图的映射关系
             // 请根据实际布局将 rlOne 与 flOne 替换为对应的 RelativeLayout 与 FrameLayout
             usbMapping = mapOf(
-                1 to Pair(rlOne, usbOneFrame),
-                2 to Pair(rlTwo, usbTwoFrame),
-                3 to Pair(rlThree, usbThFrame)
+                1 to Pair(rlOne, usbOneFrame), 2 to Pair(rlTwo, usbTwoFrame), 3 to Pair(rlThree, usbThFrame)
             )
             // 初始化时刷新一次按钮状态
             refreshUsbButtons()
@@ -53,6 +55,7 @@ class OffLineUsbPop(context: Context, private val usbNumber: MutableList<Int?>? 
                 val (relativeLayout, _) = pair
                 relativeLayout.setSafeOnClickListener {
                     usbPort = num
+                    openUsb()
                     refreshUsbButtons()
                 }
             }
@@ -71,6 +74,32 @@ class OffLineUsbPop(context: Context, private val usbNumber: MutableList<Int?>? 
         }
     }
 
+    private fun openUsb() {
+        var dpBean: AllDpBean? = null
+        if (usbPort == 1) {
+            dpBean = AllDpBean(cmd = "6", usb = 1)
+        } else {
+            when (usbPort) {
+                1 -> {
+                    dpBean = AllDpBean(cmd = "6", usb = 1)
+                }
+
+                2 -> {
+                    dpBean = AllDpBean(cmd = "6", usb2 = 1)
+                }
+
+                3 -> {
+                    dpBean = AllDpBean(cmd = "6", usb3 = 1)
+                }
+            }
+        }
+        GSON.toJsonInBackground(dpBean) { it1 ->
+            DeviceControl.get().success {
+                logI("dp to success")
+            }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1)
+        }
+    }
+
     // 定义一个方法，用于根据当前状态刷新所有按钮的 UI
     private fun refreshUsbButtons() {
         usbMapping.forEach { (num, pair) ->
@@ -80,10 +109,7 @@ class OffLineUsbPop(context: Context, private val usbNumber: MutableList<Int?>? 
             // - bind：表示该端口是否已存在（usbNumber 包含该数字）
             // - select：表示是否当前选中
             val state = ButtonState(
-                disable = false,
-                bind = usbNumber?.contains(num) == true,
-                select = (usbPort == num),
-                usbId = ""
+                disable = false, bind = usbNumber?.contains(num) == true, select = (usbPort == num), usbId = ""
             )
             applyBackground(state, relativeLayout, frameLayout)
         }

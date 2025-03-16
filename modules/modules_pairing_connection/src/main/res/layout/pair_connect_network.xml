@@ -60,6 +60,7 @@
                     tools:ignore="MissingConstraints" />
 
                 <TextView
+                    android:visibility="gone"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:id="@+id/tv_router"

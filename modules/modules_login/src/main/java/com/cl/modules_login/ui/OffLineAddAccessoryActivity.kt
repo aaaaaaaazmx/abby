@@ -14,10 +14,12 @@ import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.xpopup
 import com.cl.common_base.util.Prefs
+import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginOfflineAccessoryBinding
 import com.cl.modules_login.response.OffLineDeviceBean
 import com.cl.modules_login.widget.OffLineUsbPop
 import com.facebook.imagepipeline.producers.PriorityNetworkFetcher.PriorityFetchState
+import com.google.firebase.annotations.concurrent.Background
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.contracts.Returns
 import kotlin.math.sign
@@ -54,12 +56,12 @@ class OffLineAddAccessoryActivity : BaseActivity<LoginOfflineAccessoryBinding>()
 
         // 补光灯
         binding.tvAddLight.setSafeOnClickListener {
-            handleAccessoryAdd("Light", "Smart Light")
+            handleAccessoryAdd("Light", "Smart Light", background = R.mipmap.ic_smart_light)
         }
 
         // 风扇
         binding.tvAddFan.setSafeOnClickListener {
-            handleAccessoryAdd("Fan", "Smart Fan")
+            handleAccessoryAdd("Fan", "Smart Fan", background = R.mipmap.ic_smart_fan)
         }
 
         // 摄像头
@@ -131,7 +133,7 @@ class OffLineAddAccessoryActivity : BaseActivity<LoginOfflineAccessoryBinding>()
 
         // 加湿器
         binding.tvAddHum.setSafeOnClickListener {
-            handleAccessoryAdd("Hum", "Smart Humidifier")
+            handleAccessoryAdd("Hum", "Smart Humidifier",  background = R.mipmap.ic_smart_hum)
         }
     }
 
@@ -142,7 +144,7 @@ class OffLineAddAccessoryActivity : BaseActivity<LoginOfflineAccessoryBinding>()
      * @param accessoryType 动态传入的配件类型
      * @param accessoryName 动态传入的配件名称
      */
-    private fun handleAccessoryAdd(accessoryType: String, accessoryName: String, cameraId: String? = null) {
+    private fun handleAccessoryAdd(accessoryType: String, accessoryName: String, background: Int? = null, cameraId: String? = null) {
         // 获取当前保存的设备对象列表，并查找与当前设备对应的对象
         val objects = Prefs.getObjects()?.toMutableList()
         val currentDevId = currentDevice?.devId.toString()
@@ -161,7 +163,7 @@ class OffLineAddAccessoryActivity : BaseActivity<LoginOfflineAccessoryBinding>()
         // 直接添加配件的方法：创建一个新的 PresetData，并保存单个配件信息
         fun directAdd(usbPort: Int) {
             val bean = AccessoryListBean(
-                accessoryType = accessoryType, accessoryName = accessoryName, usbPort = usbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId
+                accessoryType = accessoryType, accessoryName = accessoryName, usbPort = usbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId, background = background
             )
             val list = mutableListOf(bean)
             Prefs.addObject(devId = currentDevId, PresetData(id = currentDevId, accessoryList = list))
@@ -173,7 +175,7 @@ class OffLineAddAccessoryActivity : BaseActivity<LoginOfflineAccessoryBinding>()
             xpopup(this@OffLineAddAccessoryActivity) {
                 asCustom(OffLineUsbPop(this@OffLineAddAccessoryActivity, existingUsbPortList, usbChooseAction = { selectedUsbPort ->
                     val bean = AccessoryListBean(
-                        accessoryType = accessoryType, accessoryName = accessoryName, usbPort = selectedUsbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId
+                        accessoryType = accessoryType, accessoryName = accessoryName, usbPort = selectedUsbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId, background = background
                     )
                     // 如果已存在对象则直接追加配件，否则创建新的 PresetData
                     if (objData != null) {
@@ -272,7 +274,7 @@ class OffLineAddAccessoryActivity : BaseActivity<LoginOfflineAccessoryBinding>()
 
         fun popupAdd(existingUsbPortList: MutableList<Int?>?) {
             val bean = AccessoryListBean(
-                accessoryType = "Camera", accessoryName = "Smart Camera", usbPort = cameraUsbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId
+                accessoryType = "Camera", accessoryName = "Smart Camera", usbPort = cameraUsbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId, background = R.mipmap.ic_smart_camera
             )
             // 如果已存在对象则直接追加配件，否则创建新的 PresetData
             if (objData != null) {
@@ -296,7 +298,7 @@ class OffLineAddAccessoryActivity : BaseActivity<LoginOfflineAccessoryBinding>()
         // 直接添加配件的方法：创建一个新的 PresetData，并保存单个配件信息
         fun directAdd(usbPort: Int) {
             val bean = AccessoryListBean(
-                accessoryType = "Camera", accessoryName = "Smart Camera", usbPort = cameraUsbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId
+                accessoryType = "Camera", accessoryName = "Smart Camera", usbPort = cameraUsbPort, deviceId = currentDevId, isCheck = true, cameraId = cameraId, background = R.mipmap.ic_smart_camera
             )
             val list = mutableListOf(bean)
             Prefs.addObject(devId = currentDevId, PresetData(id = currentDevId, accessoryList = list))

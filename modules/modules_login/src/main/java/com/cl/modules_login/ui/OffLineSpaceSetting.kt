@@ -2,12 +2,15 @@ package com.cl.modules_login.ui
 
 import android.content.Intent
 import com.cl.common_base.base.BaseActivity
+import com.cl.common_base.bean.AllDpBean
 import com.cl.common_base.constants.Constants
 import com.cl.common_base.ext.containsIgnoreCase
 import com.cl.common_base.ext.logI
+import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
+import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.device.TuyaCameraUtils
 import com.cl.common_base.util.json.GSON
@@ -53,29 +56,40 @@ class OffLineSpaceSetting : BaseActivity<LoginSpaceSettingBinding>() {
 
     override fun initData() {
         binding.dtDeleteDevice.setSafeOnClickListener {
-            val deviceInstance = ThingHomeSdk.newDeviceInstance(deviceId)
-            deviceInstance.removeDevice(object : IResultCallback {
-                override fun onError(code: String?, error: String?) {
-                    ToastUtil.shortShow(error)
-                }
 
-                override fun onSuccess() {
-                    //   如果当前设备绑定了摄像头，那么就需要把摄像头一并解绑。
-                    val accessoryList = device?.accessoryList?.firstOrNull { it.accessoryType == "Camera" }
-                    if (null != accessoryList) {
-                        // 移除摄像头
-                        tuyaUtils.unBindCamera(accessoryList.cameraId.toString(), onSuccessAction = {
+            // 发送dp点
+            val dpBean = AllDpBean(
+                cmd = "6",  gl = "0", `in` = "0", ex = "0", ap = "false", al = "false", gls = "0", gle = "0"
+            )
+            GSON.toJsonInBackground(dpBean) { it1 ->
+                DeviceControl.get().success {
+                    logI("dp to success")
+
+                    // 关闭设备。
+                    val deviceInstance = ThingHomeSdk.newDeviceInstance(deviceId)
+                    deviceInstance.removeDevice(object : IResultCallback {
+                        override fun onError(code: String?, error: String?) {
+                            ToastUtil.shortShow(error)
+                        }
+
+                        override fun onSuccess() {
+                            //   如果当前设备绑定了摄像头，那么就需要把摄像头一并解绑。
+                            val accessoryList = device?.accessoryList?.firstOrNull { it.accessoryType == "Camera" }
+                            if (null != accessoryList) {
+                                // 移除摄像头
+                                tuyaUtils.unBindCamera(accessoryList.cameraId.toString(), onSuccessAction = {
+                                    queryDevice()
+                                }, onErrorAction = {
+                                    ToastUtil.shortShow(it)
+                                })
+                                return
+                            }
                             queryDevice()
-                        }, onErrorAction = {
-                            ToastUtil.shortShow(it)
-                        })
-                        return
-                    }
-                    queryDevice()
-                }
-            })
-
-
+                        }
+                    })
+                }.error { code, error -> ToastUtil.shortShow(error) }
+                    .sendDps(it1)
+            }
         }
         checkFirmwareUpdateInfo { bean, isShow ->
             bean?.firstOrNull { it.type == 9 }?.let { data ->
