@@ -54,6 +54,11 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
         Prefs.getLong(Constants.Tuya.KEY_HOME_ID, -1L)
     }
 
+
+    private val strainName by lazy {
+        intent.getStringExtra("strainName")
+    }
+
     @SuppressLint("MissingSuperCall")
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -64,6 +69,9 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
     override fun initView() {
         // 获取当前设备
         getCurrentDeviceData(devId())
+        if (!strainName.isNullOrBlank()) {
+            binding.tv.text = strainName
+        }
     }
 
     override fun observe() {
@@ -179,6 +187,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                             onCancelAction = {
                             },
                             onConfirmAction = {
+                                binding.airPump.setItemChecked(false)
                                 // 需要恢复到之前到档位
                                 DeviceControl.get().success {}.error { code, error ->
                                     ToastUtil.shortShow(
@@ -202,7 +211,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                               errorMsg-> $error
                                 """.trimIndent()
                 )
-            }.airPump(!b)
+            }.airPump(b)
         }
 
         binding.cbNight.setSafeOnClickListener {
@@ -256,7 +265,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
 
     override fun onResume() {
         super.onResume()
-        getCurrentDeviceData(devId())
+         getCurrentDeviceData(devId())
     }
 
     // 获取当前设备环境信息
@@ -301,7 +310,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                         envReq.humidityCurrent = value.safeToInt()
                         // 湿度
                         val temp = temperatureConversionTwo(value.safeToFloat(), isMetric())
-                        binding.tvGoing.text = "$temp$tempUnit"
+                        binding.tvGoing.text = "$temp%"
                     }
 
                     TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE -> {
@@ -344,7 +353,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
     /**
      * 设备指令监听
      */
-    @SuppressLint("UseCompatLoadingForDrawables")
+    @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
     override fun onTuYaToAppDataChange(status: String) {
         val tempUnit = if (isMetric()) "℃" else "℉"
         // val map = GSON.parseObject(status, Map::class.java)
@@ -425,7 +434,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                     TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
                         // 湿度
                         val temp = temperatureConversionTwo(value.safeToFloat(), isMetric())
-                        binding.tvGoing.text = "$temp$tempUnit"
+                        binding.tvGoing.text = "$temp%"
                     }
 
                     TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_INPUT_AIR_FLOW_INSTRUCTION -> {

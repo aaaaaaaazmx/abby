@@ -21,6 +21,7 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginAccessItemBinding
 import com.cl.modules_login.response.OffLineDeviceBean
+import kotlin.math.log
 
 class OffLineAccessAdapter(
     data: MutableList<AccessoryListBean>?,
@@ -38,6 +39,8 @@ class OffLineAccessAdapter(
 
             ivDelete.setVisible(item.accessoryType == "Hum" || item.accessoryType == "Light" || item.accessoryType == "Fan")
             ivLuosi.setVisible(item.accessoryType == "Camera")
+
+            ftCheck.isItemChecked = item.isCheck == true
 
             ivLuosi.setSafeOnClickListener {
                 if (item.accessoryType == "Camera") {
@@ -72,6 +75,7 @@ class OffLineAccessAdapter(
 
             ftCheck.setSwitchClickListener {
                 val b = ftCheck.isItemChecked
+                logI("1231231$b")
                 val usbPort = when (type) {
                     // 一个usb口的
                     OffLineDeviceBean.DEVICE_VERSION_OG_BLACK, OffLineDeviceBean.DEVICE_VERSION_OG_PRO, OffLineDeviceBean.DEVICE_VERSION_O1_PRO -> {
@@ -84,26 +88,26 @@ class OffLineAccessAdapter(
                 }
                 var dpBean: AllDpBean? = null
                 if (usbPort == 1) {
-                    dpBean = AllDpBean(cmd = "6", usb = if (!b) 1 else 0)
+                    dpBean = AllDpBean(cmd = "6", usb = if (b) 1 else 0)
                 } else {
                     when (item.usbPort) {
                         1 -> {
-                            dpBean = AllDpBean(cmd = "6", usb = if (!b) 1 else 0)
+                            dpBean = AllDpBean(cmd = "6", usb = if (b) 1 else 0)
                         }
 
                         2 -> {
-                            dpBean = AllDpBean(cmd = "6", usb2 = if (!b) 1 else 0)
+                            dpBean = AllDpBean(cmd = "6", usb2 = if (b) 1 else 0)
                         }
 
                         3 -> {
-                            dpBean = AllDpBean(cmd = "6", usb3 = if (!b) 1 else 0)
+                            dpBean = AllDpBean(cmd = "6", usb3 = if (b) 1 else 0)
                         }
                     }
                 }
                 GSON.toJsonInBackground(dpBean) { it1 ->
                     DeviceControl.get().success {
                         logI("dp to success")
-                        item.isCheck = !b
+                        item.isCheck = b
                     }.error { code, error -> ToastUtil.shortShow(error) }.sendDps(it1)
                 }
             }

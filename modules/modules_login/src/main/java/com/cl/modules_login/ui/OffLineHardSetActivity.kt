@@ -129,6 +129,9 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
             }
         }
 
+        binding.rlBtn.setSafeOnClickListener {
+            finish()
+        }
 
     }
 

@@ -162,7 +162,7 @@ class OffLineDeviceActivity : BaseActivity<LoginOfflineDeviceBinding>() {
                     // 赋值就是每台设备下的子配件 需要添加进去 ,比如风扇,摄摄像头,补光灯.啥的.
                     deviceInfoBean.forEach { a ->
                         val deviceName = when (a.productId) {
-                            OffLineDeviceBean.DEVICE_VERSION_O1_TH -> "Smart Sensor"
+                            OffLineDeviceBean.DEVICE_VERSION_O1_TH, OffLineDeviceBean.DEVICE_VERSION_O1_TH_TWO -> "Smart Sensor"
                             OffLineDeviceBean.DEVICE_VERSION_O1_TH_CN -> "Smart Monitor"
                             OffLineDeviceBean.DEVICE_VERSION_O1 -> "O1"
                             OffLineDeviceBean.DEVICE_VERSION_OG -> "OG"
@@ -176,12 +176,12 @@ class OffLineDeviceActivity : BaseActivity<LoginOfflineDeviceBinding>() {
                         }
                         if (a.productId == OffLineDeviceBean.DEVICE_VERSION_CAMERA) return@forEach
                         if (saveList?.isEmpty() == true) {
-                            offLineDeviceBean.add(OffLineDeviceBean(name = deviceName, devId = a.devId, productId = a.productId, dps = a.dps))
+                            offLineDeviceBean.add(OffLineDeviceBean(name = deviceName, devId = a.devId, productId = a.productId, dps = a.dps, isOnline = a.isOnline))
                         } else {
                             // 从旧的里面找到devId想通的，然后找出来。
                             val list = saveList?.firstOrNull { it.id == a.devId }
                             if (null == list) {
-                                offLineDeviceBean.add(OffLineDeviceBean(name = deviceName, devId = a.devId, productId = a.productId, dps = a.dps))
+                                offLineDeviceBean.add(OffLineDeviceBean(name = deviceName, devId = a.devId, productId = a.productId, dps = a.dps, isOnline = a.isOnline))
                             } else {
                                 offLineDeviceBean.add(
                                     OffLineDeviceBean(
@@ -190,7 +190,8 @@ class OffLineDeviceActivity : BaseActivity<LoginOfflineDeviceBinding>() {
                                         strainName = list.strainName,
                                         productId = a.productId,
                                         accessoryList = list.accessoryList,
-                                        dps = a.dps
+                                        dps = a.dps,
+                                        isOnline = a.isOnline
                                     )
                                 )
                             }
@@ -198,7 +199,7 @@ class OffLineDeviceActivity : BaseActivity<LoginOfflineDeviceBinding>() {
                     }
                     // 为所有配件命名
                     offLineDeviceBean.forEach {
-                        if (it.productId?.equalsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_TH) == true) {
+                        if (it.productId?.equalsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_TH) == true || it.productId?.equalsIgnoreCase(OffLineDeviceBean.DEVICE_VERSION_O1_TH_TWO) == true) {
                             it.spaceType = KEY_MONITOR_VIEW_OUT
                             it.type = OffLineDeviceBean.DEVICE_VERSION_O1_TH
                             it.background = R.mipmap.ic_smart_sensor

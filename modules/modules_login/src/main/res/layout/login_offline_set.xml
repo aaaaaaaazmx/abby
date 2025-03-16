@@ -21,6 +21,20 @@
 
         <com.cl.common_base.widget.FeatureItemView
             android:layout_marginTop="4dp"
+            android:id="@+id/ft_device"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:hideArrow="true"
+            app:itemTitle="@string/string_2271" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/lineBg" />
+
+        <com.cl.common_base.widget.FeatureItemView
             android:id="@+id/featureItemView"
             android:layout_width="match_parent"
             android:layout_height="60dp"

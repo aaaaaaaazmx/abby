@@ -15,6 +15,10 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class OffLineSettingActivity: BaseActivity<LoginOfflineSetBinding>() {
+    private val devId = {
+        Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
+    }
+
     override fun initView() {
     }
 
@@ -57,6 +61,12 @@ class OffLineSettingActivity: BaseActivity<LoginOfflineSetBinding>() {
             val intent = Intent(this, OffLineForgetPasswordActivity::class.java)
             intent.putExtra(ForgetPasswordActivity.KEY_FORGET_NAME, account)
             startActivity(intent)
+        }
+
+        binding.ftDevice.setSafeOnClickListener {
+            startActivity(Intent(this@OffLineSettingActivity, OffLineDeviceActivity::class.java).apply {
+                putExtra("devId", devId())
+            })
         }
     }
 }

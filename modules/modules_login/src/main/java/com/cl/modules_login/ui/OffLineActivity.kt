@@ -51,11 +51,9 @@ class OffLineActivity: BaseActivity<LoginOfflineActivityBinding>() {
             }
         }
 
-        binding.title.setRightButtonImg(R.mipmap.login_device_list).setRightClickListener {
+        binding.title.setRightButtonImg(com.cl.common_base.R.mipmap.base_setting_select_bg).setRightClickListener {
             // 跳转到设备列表
-            startActivity(Intent(this@OffLineActivity, OffLineDeviceActivity::class.java).apply {
-                putExtra("devId", devId())
-            })
+            startActivity(Intent(this, OffLineSettingActivity::class.java))
         }
     }
 

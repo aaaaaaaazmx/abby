@@ -11,6 +11,7 @@ import com.cl.common_base.adapter.HomeKnowMoreAdapter.ButtonState
 import com.cl.common_base.bean.AllDpBean
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.setSafeOnClickListener
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.pop.BaseCenterPop
 import com.cl.common_base.util.ViewUtils
 import com.cl.common_base.util.device.DeviceControl
@@ -41,6 +42,14 @@ class OffLineUsbPop(context: Context, private val usbNumber: MutableList<Int?>? 
             val allNumbers = setOf(1, 2, 3)
             val remainingNumbers = allNumbers - (usbNumber?.toSet() ?: emptySet()).toSet()
             logI("剩余数字: $remainingNumbers")
+
+            if (remainingNumbers.isEmpty()) {
+                xpopup(context) {
+                    asCustom(BaseCenterPop(context, content = "All USB ports are currently occupied. Please remove an accessory before proceeding with the selection", onConfirmAction = {
+                        this@OffLineUsbPop.dismiss()
+                    })).show()
+                }
+            }
 
             // 建立 USB 端口与对应视图的映射关系
             // 请根据实际布局将 rlOne 与 flOne 替换为对应的 RelativeLayout 与 FrameLayout

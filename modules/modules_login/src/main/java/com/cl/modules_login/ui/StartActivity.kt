@@ -33,6 +33,7 @@ class StartActivity: BaseActivity<LoginItemPlantOneBinding>() {
                     val intent = Intent(
                         this@StartActivity, OffLineMainActivity::class.java
                     )
+                    intent.putExtra("strainName", it)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
                     finish()
@@ -46,6 +47,12 @@ class StartActivity: BaseActivity<LoginItemPlantOneBinding>() {
                     finish()
                 })).show()
             }
+        }
+
+        binding.ivDeviceList.setSafeOnClickListener {
+            startActivity(Intent(this@StartActivity, OffLineDeviceActivity::class.java).apply {
+                putExtra("devId", deviceId)
+            })
         }
 
     }

@@ -45,6 +45,20 @@
             android:layout_marginEnd="20dp"
             android:background="@color/lineBg" />
 
+        <com.cl.common_base.widget.FeatureItemView
+            app:hideArrow="true"
+            android:id="@+id/ft_device_id"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:itemTitle="@string/string_2274" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height=".5dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@color/lineBg" />
+
         <!--删除设备隐藏、因为现在合并设备了。-->
         <com.cl.common_base.widget.FeatureItemView
             app:hideArrow="true"

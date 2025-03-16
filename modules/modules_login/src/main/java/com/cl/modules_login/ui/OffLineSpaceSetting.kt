@@ -57,6 +57,23 @@ class OffLineSpaceSetting : BaseActivity<LoginSpaceSettingBinding>() {
     override fun initData() {
         binding.dtDeleteDevice.setSafeOnClickListener {
 
+            // 判断设备是否离线，離線了就直接刪除
+            if (device?.isOnline == false) {
+                val accessoryList = device?.accessoryList?.firstOrNull { it.accessoryType == "Camera" }
+                if (null != accessoryList) {
+                    // 移除摄像头
+                    tuyaUtils.unBindCamera(accessoryList.cameraId.toString(), onSuccessAction = {
+                        queryDevice()
+                    }, onErrorAction = {
+                        ToastUtil.shortShow(it)
+                        queryDevice()
+                    })
+                    return@setSafeOnClickListener
+                }
+                queryDevice()
+                return@setSafeOnClickListener
+            }
+
             // 发送dp点
             val dpBean = AllDpBean(
                 cmd = "6",  gl = "0", `in` = "0", ex = "0", ap = "false", al = "false", gls = "0", gle = "0"
@@ -81,6 +98,7 @@ class OffLineSpaceSetting : BaseActivity<LoginSpaceSettingBinding>() {
                                     queryDevice()
                                 }, onErrorAction = {
                                     ToastUtil.shortShow(it)
+                                    queryDevice()
                                 })
                                 return
                             }
@@ -97,6 +115,8 @@ class OffLineSpaceSetting : BaseActivity<LoginSpaceSettingBinding>() {
                 binding.ftCurrentFir.setShowUpdateRedDot(isShow)
             }
         }
+
+        binding.ftDeviceId.setItemValue(deviceId)
     }
 
 

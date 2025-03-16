@@ -23,6 +23,7 @@ data class OffLineDeviceBean(
     var type: String? = null,
     var productId: String? = null,
     var isChoose: Boolean? = null,
+    var isOnline: Boolean? = null,
     var dps: Map<String?, Any?>? = null,
     var accessoryList: MutableList<AccessoryListBean>? = null,
     var textDesc: String? = null, // 文字描述
@@ -40,8 +41,9 @@ data class OffLineDeviceBean(
     companion object {
         // WiFi Temperature & Humidity
         const val DEVICE_VERSION_O1_TH = "ijfxt5wvgjoze4xr"
+        const val DEVICE_VERSION_O1_TH_TWO = "maf9ld3qn7xnzqri"
 
-        // WIFI温湿度传感器
+        // WIFI温湿度传感器带屏幕
         const val DEVICE_VERSION_O1_TH_CN = "kerdtowolkik1r6m"
 
         const val DEVICE_VERSION_O1 = "wvyxyxi1f9sb4hai"
