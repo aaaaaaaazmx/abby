@@ -1,14 +1,10 @@
 package com.cl.modules_login.adapter
 
-import android.app.Activity
-import android.content.Intent
-import com.alibaba.android.arouter.launcher.ARouter
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
 import com.cl.common_base.bean.AccessoryListBean
 import com.cl.common_base.bean.AllDpBean
 import com.cl.common_base.constants.Constants
-import com.cl.common_base.constants.RouterPath
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.setVisible
@@ -21,7 +17,6 @@ import com.cl.common_base.widget.toast.ToastUtil
 import com.cl.modules_login.R
 import com.cl.modules_login.databinding.LoginAccessItemBinding
 import com.cl.modules_login.response.OffLineDeviceBean
-import kotlin.math.log
 
 class OffLineAccessAdapter(
     data: MutableList<AccessoryListBean>?,
@@ -75,6 +70,10 @@ class OffLineAccessAdapter(
 
             ftCheck.setSwitchClickListener {
                 val b = ftCheck.isItemChecked
+                Prefs.getObjects()?.firstOrNull { it.id == item.deviceId }?.let { a ->
+                    item.isCheck = b
+                    Prefs.modifyObjectAccessory(a.id.toString(), a, item, holder.layoutPosition)
+                }
                 logI("1231231$b")
                 val usbPort = when (type) {
                     // 一个usb口的

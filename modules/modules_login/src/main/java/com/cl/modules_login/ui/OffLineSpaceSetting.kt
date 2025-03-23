@@ -8,6 +8,7 @@ import com.cl.common_base.ext.containsIgnoreCase
 import com.cl.common_base.ext.logI
 import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
+import com.cl.common_base.ext.xpopup
 import com.cl.common_base.report.Reporter
 import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.DeviceControl
@@ -56,21 +57,26 @@ class OffLineSpaceSetting : BaseActivity<LoginSpaceSettingBinding>() {
 
     override fun initData() {
         binding.dtDeleteDevice.setSafeOnClickListener {
-
             // 判断设备是否离线，離線了就直接刪除
             if (device?.isOnline == false) {
                 val accessoryList = device?.accessoryList?.firstOrNull { it.accessoryType == "Camera" }
-                if (null != accessoryList) {
-                    // 移除摄像头
-                    tuyaUtils.unBindCamera(accessoryList.cameraId.toString(), onSuccessAction = {
-                        queryDevice()
-                    }, onErrorAction = {
-                        ToastUtil.shortShow(it)
-                        queryDevice()
-                    })
-                    return@setSafeOnClickListener
-                }
-                queryDevice()
+                ThingHomeSdk.newDeviceInstance(deviceId).removeDevice(object : IResultCallback {
+                    override fun onError(code: String?, error: String?) {
+                        ToastUtil.shortShow(error)
+                    }
+
+                    override fun onSuccess() {
+                        if (null != accessoryList) {
+                            tuyaUtils.unBindCamera(accessoryList.cameraId.toString(), onSuccessAction =  {
+                                queryDevice()
+                            }, onErrorAction = {
+                                ToastUtil.shortShow(it)
+                            })
+                        } else {
+                            queryDevice()
+                        }
+                    }
+                })
                 return@setSafeOnClickListener
             }
 

@@ -47,6 +47,8 @@ class OffLineUsbPop(context: Context, private val usbNumber: MutableList<Int?>? 
                 xpopup(context) {
                     asCustom(BaseCenterPop(context, content = "All USB ports are currently occupied. Please remove an accessory before proceeding with the selection", onConfirmAction = {
                         this@OffLineUsbPop.dismiss()
+                    }, onCancelAction = {
+                        this@OffLineUsbPop.dismiss()
                     })).show()
                 }
             }

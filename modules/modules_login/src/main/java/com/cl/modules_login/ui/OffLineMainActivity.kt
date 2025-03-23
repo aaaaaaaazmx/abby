@@ -310,7 +310,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                         envReq.humidityCurrent = value.safeToInt()
                         // 湿度
                         val temp = temperatureConversionTwo(value.safeToFloat(), isMetric())
-                        binding.tvGoing.text = "$temp%"
+                        binding.tvGoing.text = "${value.safeToFloat()}%"
                     }
 
                     TuYaDeviceConstants.KEY_DEVICE_BRIGHT_VALUE -> {
@@ -434,7 +434,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                     TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_HUMIDITY_CURRENT_INSTRUCTION -> {
                         // 湿度
                         val temp = temperatureConversionTwo(value.safeToFloat(), isMetric())
-                        binding.tvGoing.text = "$temp%"
+                        binding.tvGoing.text = "${value.safeToFloat()}%"
                     }
 
                     TuYaDeviceConstants.DeviceInstructions.KEY_DEVICE_INPUT_AIR_FLOW_INSTRUCTION -> {

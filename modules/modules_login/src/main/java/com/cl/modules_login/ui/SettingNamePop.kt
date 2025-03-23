@@ -38,6 +38,10 @@ class SettingNamePop(
             // btn_success 点击之后根据对应设备id 保存 strainName
             // 然后跳转到主页
             btnSuccess.setOnClickListener {
+                if (etEmail.text.toString().isBlank()) {
+                    ToastUtil.shortShow("Please enter the name of the plant")
+                    return@setOnClickListener
+                }
                 // 保存 strainName
                 doneAction?.invoke(etEmail.text.toString())
                 dismiss()

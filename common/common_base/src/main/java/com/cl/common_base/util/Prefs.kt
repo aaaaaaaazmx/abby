@@ -131,6 +131,24 @@ object Prefs {
         addObject(obj.id.toString(), obj)
     }
 
+    // 修改配件
+    fun modifyObjectAccessory(
+        devId: String,
+        obj: PresetData,
+        b: AccessoryListBean,
+        layoutPosition: Int
+    ) {
+        synchronized(devId) {
+            obj.accessoryList?.get(layoutPosition)?.let {
+                obj.accessoryList?.set(layoutPosition, b)
+            }
+            // 更新当前
+            addObject(obj.id.toString(), obj)
+        }
+    }
+
+    // xigai
+
     private fun saveObjects(objects: List<PresetData>?) {
       GSON.toJsonInBackground(objects) {
             mmkv.putString(Constants.Global.KEY_GLOBAL_PRO_MODEL, it)

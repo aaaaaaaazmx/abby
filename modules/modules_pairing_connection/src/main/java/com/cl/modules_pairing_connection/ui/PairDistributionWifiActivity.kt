@@ -58,6 +58,7 @@ import com.thingclips.smart.sdk.api.IThingSmartCameraActivatorListener
 import com.thingclips.smart.sdk.bean.DeviceBean
 import com.thingclips.smart.sdk.bean.MultiModeActivatorBean
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.Serializable
 import javax.inject.Inject
 import kotlin.random.Random
 

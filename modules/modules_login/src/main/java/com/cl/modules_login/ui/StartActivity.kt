@@ -13,6 +13,7 @@ import com.cl.common_base.util.Prefs
 import com.cl.modules_login.databinding.LoginItemPlantOneBinding
 import com.cl.modules_login.response.OffLineDeviceBean
 import com.thingclips.smart.home.sdk.ThingHomeSdk
+import com.thingclips.smart.sdk.bean.DeviceBean
 import dagger.hilt.android.AndroidEntryPoint
 
 @Route(path = RouterPath.LoginRegister.PAGE_PLANT_ONE)
@@ -21,6 +22,7 @@ class StartActivity: BaseActivity<LoginItemPlantOneBinding>() {
     private val deviceId by lazy {
         Prefs.getString(Constants.Tuya.KEY_DEVICE_ID)
     }
+
     override fun initView() {
 
         //  跳转到环境设置界面

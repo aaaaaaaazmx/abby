@@ -13,6 +13,7 @@ import com.cl.common_base.ext.safeToInt
 import com.cl.common_base.ext.setSafeOnClickListener
 import com.cl.common_base.ext.temperatureConversionTwo
 import com.cl.common_base.pop.ChooseTimePop
+import com.cl.common_base.util.Prefs
 import com.cl.common_base.util.device.DeviceControl
 import com.cl.common_base.util.device.TuYaDeviceConstants
 import com.cl.common_base.util.json.GSON
@@ -117,9 +118,9 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
                         val muteOff = endTime
                         logI("toDP: $fanIntake, $fanExhaust, $lightIntensity, $lightSchedule, $muteOn, $muteOff")
 
-                        fanIntake?.let { it1 -> mViewMode.setFanIntake(it1.toString()) }
-                        fanExhaust?.let { it1 -> mViewMode.setFanExhaust(it1.toString()) }
-                        lightIntensity?.let { it1 -> mViewMode.setGrowLight(it1.toString()) }
+                        fanIntake?.let { it1 -> mViewMode.setFanIntake(it1) }
+                        fanExhaust?.let { it1 -> mViewMode.setFanExhaust(it1) }
+                        lightIntensity?.let { it1 -> mViewMode.setGrowLight(it1) }
                         binding.ftTimer.text = "$lightSchedule"
                         mViewMode.setmuteOff(muteOff.toString())
                         mViewMode.setmuteOn(muteOn.toString())
@@ -133,6 +134,9 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
             finish()
         }
 
+        // 保存index
+        index = Prefs.getInt(devId ?: "", index)
+        updateBackground(index - 1)  // 由于index从1开始，数组索引从0开始，因此减去1
     }
 
     override fun observe() {
@@ -344,6 +348,8 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         viexs.forEachIndexed { index, view ->
             view.setTextColor(if (index == selectedIndex) Color.WHITE else getColor(com.cl.common_base.R.color.mainColor))
         }
+        // 保存
+        Prefs.putIntAsync(devId ?: "", index)
     }
 
     // 提取公共代码：设置和发送数据
