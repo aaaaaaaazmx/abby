@@ -1,6 +1,7 @@
 package com.cl.modules_login.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import androidx.lifecycle.repeatOnLifecycle
 import com.chad.library.adapter.base.viewholder.BaseDataBindingHolder
@@ -42,6 +43,10 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         intent.getStringExtra("devId")
     }
 
+    private val endTime by lazy {
+        intent.getIntExtra("endTime", -1)
+    }
+
     override fun initView() {
         // json to map
         GSON.parseObjectInBackground(dps, Map::class.java) { map ->
@@ -70,7 +75,8 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
                     TuYaDeviceConstants.KEY_DEVICE_MULTIPLE_DP -> {
                         // 解析时间
                         val dpBean = GSON.parseObject(value.toString(), AllDpBean::class.java)
-                        val closeTime = dpBean?.gle.safeToInt()
+                        // val closeTime = dpBean?.gle.safeToInt()
+                        val closeTime = endTime
                         val openTime = dpBean?.gls.safeToInt()
                         // 0- 12, 12-24
                         val startTime = when (openTime) {
@@ -79,11 +85,11 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
                             else -> openTime ?: 12
                         }
 
-                        val endTime = when (closeTime) {
+                        /*val endTime = when (closeTime) {
                             0 -> 12
                             12 -> 24
                             else -> closeTime ?: 12
-                        }
+                        }*/
 
                         val ftTurnOn = startTime.let {
                             if (it > 12) {
@@ -131,6 +137,8 @@ class OffLineHardSetActivity : BaseActivity<LoginOfflineHardBinding>() {
         }
 
         binding.rlBtn.setSafeOnClickListener {
+            logI("123123123: ${mViewMode.muteOff.toString()}")
+            setResult(RESULT_OK, Intent().putExtra("endTimess", mViewMode.muteOff.toString()))
             finish()
         }
 

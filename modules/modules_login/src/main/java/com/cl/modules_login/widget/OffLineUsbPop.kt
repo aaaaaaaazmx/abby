@@ -65,6 +65,7 @@ class OffLineUsbPop(context: Context, private val usbNumber: MutableList<Int?>? 
             usbMapping.forEach { (num, pair) ->
                 val (relativeLayout, _) = pair
                 relativeLayout.setSafeOnClickListener {
+                    if (!remainingNumbers.contains(num)) return@setSafeOnClickListener
                     usbPort = num
                     openUsb()
                     refreshUsbButtons()

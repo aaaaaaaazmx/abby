@@ -1,7 +1,9 @@
 package com.cl.modules_login.ui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
 import com.alibaba.android.arouter.facade.annotation.Route
 import com.cl.common_base.base.BaseActivity
 import com.cl.common_base.bean.AllDpBean
@@ -77,13 +79,40 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
     override fun observe() {
     }
 
+    private fun extractFtTurnOffValue(inputString: String): String? {
+        val regex =
+            Regex("will turn off at (\\d{1,2}):00 (?:AM|PM) today")  // 匹配 "will turn off at HH:00 AM/PM today"
+        val matchResult = regex.find(inputString)
+
+        return matchResult?.let {
+            it.groupValues[1]  // 提取第一个捕获组，即 HH
+        }
+    }
+
+    var endTime: Int = -1
+    private val myActivityLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
+            if (activityResult.resultCode == Activity.RESULT_OK) {
+                endTime = activityResult.data?.getStringExtra("endTimess").safeToInt()
+                val (ftTurnOn, ftTurnOff) = pairTwo(0, endTime.safeToInt())
+                // period_status
+                binding.periodStatus.text = "will turn off at $ftTurnOff today"
+            }
+        }
+
     override fun initData() {
         binding.ivLightStatus.setSafeOnClickListener {
             // 跳转到灯光设置页面
             GSON.toJsonInBackground(viewModel.currentDeviceData.value?.dps) { json ->
-                startActivity(Intent(this, OffLineHardSetActivity::class.java).apply {
+                myActivityLauncher.launch(Intent(this, OffLineHardSetActivity::class.java).apply {
+                    // 12:AM 0:PM
+                    /*logI("12312132: ${}")
+                    val time = when( extractFtTurnOffValue(binding.periodStatus.text.toString())) {
+                        "12","0" ->
+                    }*/
                     putExtra("123123", json)
                     putExtra("devId", viewModel.currentDeviceData.value?.devId)
+                    putExtra("endTime", endTime)
                 })
             }
         }
@@ -215,9 +244,13 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
         }
 
         binding.cbNight.setSafeOnClickListener {
-            startActivity(Intent(this@OffLineMainActivity, OffLineDeviceActivity::class.java).apply {
-                putExtra("devId", devId())
-            })
+            startActivity(
+                Intent(
+                    this@OffLineMainActivity,
+                    OffLineDeviceActivity::class.java
+                ).apply {
+                    putExtra("devId", devId())
+                })
         }
     }
 
@@ -246,7 +279,9 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                 Prefs.putStringAsync(Constants.Tuya.KEY_DEVICE_ID, currentDevice?.devId.toString())
 
                 // 获取植物名字
-                binding.tv.text = Prefs.getObjects()?.firstOrNull { it.id == currentDevice?.devId }?.strainName ?: currentDevice?.name
+                binding.tv.text =
+                    Prefs.getObjects()?.firstOrNull { it.id == currentDevice?.devId }?.strainName
+                        ?: currentDevice?.name
 
 
                 // 获取环境信息
@@ -265,7 +300,7 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
 
     override fun onResume() {
         super.onResume()
-         getCurrentDeviceData(devId())
+        getCurrentDeviceData(devId())
     }
 
     // 获取当前设备环境信息
@@ -332,9 +367,12 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                     }
 
                     TuYaDeviceConstants.KEY_DEVICE_TURN_OFF_LIGHT -> {
+                        if (endTime != -1) return@forEach
+                        logI("!2312312: $value")
                         // 关灯时间
                         val (startTime, endTime) = pair(0, value.safeToInt())
                         val (ftTurnOn, ftTurnOff) = pairTwo(startTime, endTime)
+                        this@OffLineMainActivity.endTime = endTime
                         // period_status
                         binding.periodStatus.text = "will turn off at $ftTurnOff today"
                     }
@@ -428,6 +466,13 @@ class OffLineMainActivity : BaseActivity<LoginOfflineMainBinding>() {
                         ) { allDpBean ->
                             // cmd == 3 返回实际灯光配置参数
                             // cmd == 1 返回实际全部配置参数
+                            if (allDpBean?.cmd == "3" || allDpBean?.cmd == "1") {
+                                // 关灯时间
+                                val (startTime, endTime) = pair(0, allDpBean.gle.safeToInt())
+                                val (ftTurnOn, ftTurnOff) = pairTwo(startTime, endTime)
+                                // period_status
+                                binding.periodStatus.text = "will turn off at $ftTurnOff today"
+                            }
                         }
                     }
 
