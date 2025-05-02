@@ -43,7 +43,7 @@ object Constants {
         const val WEB_PRODUCTION_URL = "https://www.beheyabby.com:9998/"
 
         // 测试环境
-        const val TEST_URL = "http://192.168.3.6:9997/"
+        const val TEST_URL = "https://2549m9264b.zicp.fun/"
 
         // 本地环境
         const val BD_URL = "http://192.168.3.113:9330/"

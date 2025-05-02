@@ -16,8 +16,8 @@ object Version {
     const val applicationId = "com.cl.abby"
     const val minSdk = 26
     const val targetSdk = 34
-    val versionCode = 80
-    const val versionName = "4.1.1"
+    val versionCode = 82
+    const val versionName = "4.1.2"
 
     const val coreKtxVersion = "1.9.0"
     const val appCompatVersion = "1.6.1"
@@ -96,7 +96,7 @@ object Version {
 
     const val lottieVersion = "6.4.1"
 
-    const val videoPlayer = "v8.6.0"
+    const val videoPlayer = "v10.0.0"
 
     const val interCome = "15.7.1"
 
@@ -255,7 +255,7 @@ object Deps {
     const val lottie = "com.airbnb.android:lottie:${Version.lottieVersion}"
 
     // VideoPlay
-    const val videoPlayer = "com.github.CarGuo.GSYVideoPlayer:GSYVideoPlayer:${Version.videoPlayer}-release-jitpack"
+    const val videoPlayer = "com.github.CarGuo.GSYVideoPlayer:gsyvideoplayer:${Version.videoPlayer}"
 
     // interCome
     const val interCome = "io.intercom.android:intercom-sdk:${Version.interCome}"

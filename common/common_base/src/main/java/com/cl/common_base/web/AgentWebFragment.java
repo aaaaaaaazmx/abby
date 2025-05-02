@@ -1,6 +1,8 @@
 package com.cl.common_base.web;
 
 
+import static com.cl.common_base.ext.LogKt.logI;
+
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -312,7 +314,12 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
         @Override
         public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-            handler.proceed();
+            logI("handler111: " + handler.toString()+ "12312313: " + error.toString());
+            new AlertDialog.Builder(getActivity())
+                    .setMessage("SSL Certificate Validation Failure")
+                    .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
+                    .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
+                    .show();
         }
 
         @Override
@@ -583,7 +590,12 @@ public class AgentWebFragment extends Fragment implements FragmentKeyDown {
 
             @Override
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-                handler.proceed();
+                logI("handler2: " + handler.toString()+ "12312313: " + error.toString());
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("SSL Certificate Validation Failure")
+                        .setPositiveButton("Continue", (dialog, which) -> handler.proceed())
+                        .setNegativeButton("Cancel", (dialog, which) -> handler.cancel())
+                        .show();
             }
         };
     }
